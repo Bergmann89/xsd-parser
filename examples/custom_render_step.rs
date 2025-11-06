@@ -236,12 +236,12 @@ impl CustomRenderStep {
         let code = match mode {
             TypedefMode::Auto => unreachable!(),
             TypedefMode::Typedef => {
-                let target_type = occurs.make_type(&target_type, false);
+                let target_type = occurs.make_type(ctx, &target_type, false);
 
                 quote! { pub type #type_ident = #target_type; }
             }
             TypedefMode::NewType => {
-                let target_type = occurs.make_type(&target_type, false);
+                let target_type = occurs.make_type(ctx, &target_type, false);
                 let extra_derive =
                     matches!(occurs, Occurs::Optional | Occurs::DynamicList).then_some("Default");
                 let derive = get_derive(ctx, extra_derive);
@@ -393,7 +393,7 @@ impl CustomRenderStep {
         let variant_ident = &el.variant_ident;
 
         let target_type = ctx.resolve_type_for_module(&el.target_type);
-        let target_type = el.occurs.make_type(&target_type, el.need_indirection);
+        let target_type = el.occurs.make_type(ctx, &target_type, el.need_indirection);
 
         quote! {
             #variant_ident(#target_type),
@@ -470,7 +470,7 @@ impl CustomRenderStep {
         let target_type = ctx.resolve_type_for_module(&field.target_type);
         let target_type = field
             .occurs
-            .make_type(&target_type, field.need_indirection)
+            .make_type(ctx, &target_type, field.need_indirection)
             .unwrap();
 
         quote! {
@@ -484,7 +484,7 @@ impl CustomRenderStep {
         ctx: &Context<'_, '_>,
     ) -> Option<TokenStream> {
         let target_type = ctx.resolve_type_for_module(&content.target_type);
-        let target_type = content.occurs.make_type(&target_type, false)?;
+        let target_type = content.occurs.make_type(ctx, &target_type, false)?;
 
         Some(quote! {
             pub content: #target_type,

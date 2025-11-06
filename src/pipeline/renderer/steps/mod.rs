@@ -103,17 +103,21 @@ impl SimpleData<'_> {
         } = self;
 
         let target_type = ctx.resolve_type_for_module(target_type);
-        let target_type = occurs.make_type(&target_type, false).unwrap();
+        let target_type = occurs.make_type(ctx, &target_type, false).unwrap();
 
         let validate_str = constrains.render_fn_validate_str(ctx);
-        let validate_value = constrains.render_fn_validate_value(&target_type);
+        let validate_value = constrains.render_fn_validate_value(ctx, &target_type);
         let call_validate_value = validate_value
             .as_ref()
             .map(|_| quote! { Self::validate_value(&inner)?; });
 
+        let from = ctx.resolve_build_in("::core::convert::From");
+        let result = ctx.resolve_build_in("::core::result::Result");
+        let try_from = ctx.resolve_build_in("::core::convert::TryFrom");
+
         let code = quote! {
             impl #type_ident {
-                pub fn new(inner: #target_type) -> Result<Self, ValidateError> {
+                pub fn new(inner: #target_type) -> #result<Self, ValidateError> {
                     #call_validate_value
 
                     Ok(Self(inner))
@@ -127,16 +131,16 @@ impl SimpleData<'_> {
                 #validate_value
             }
 
-            impl From<#type_ident> for #target_type {
+            impl #from<#type_ident> for #target_type {
                 fn from(value: #type_ident) -> #target_type {
                     value.0
                 }
             }
 
-            impl TryFrom<#target_type> for #type_ident {
+            impl #try_from<#target_type> for #type_ident {
                 type Error = ValidateError;
 
-                fn try_from(value: #target_type) -> Result<Self, ValidateError> {
+                fn try_from(value: #target_type) -> #result<Self, ValidateError> {
                     Self::new(value)
                 }
             }
@@ -150,7 +154,7 @@ impl SimpleData<'_> {
             }
         };
 
-        ctx.add_usings(["core::ops::Deref", "xsd_parser::quick_xml::ValidateError"]);
+        ctx.add_usings(["::core::ops::Deref", "xsd_parser::quick_xml::ValidateError"]);
         ctx.current_module().append(code);
     }
 }
@@ -162,8 +166,10 @@ impl ConstrainsData<'_> {
             let validate_total_digits = self.render_validate_total_digits(ctx);
             let validate_fraction_digits = self.render_validate_fraction_digits(ctx);
 
+            let result = ctx.resolve_build_in("::core::result::Result");
+
             quote! {
-                pub fn validate_str(s: &str) -> Result<(), ValidateError> {
+                pub fn validate_str(s: &str) -> #result<(), ValidateError> {
                     #validate_pattern
                     #validate_total_digits
                     #validate_fraction_digits
@@ -174,15 +180,21 @@ impl ConstrainsData<'_> {
         })
     }
 
-    fn render_fn_validate_value(&self, target_type: &TokenStream) -> Option<TokenStream> {
+    fn render_fn_validate_value(
+        &self,
+        ctx: &Context<'_, '_>,
+        target_type: &TokenStream,
+    ) -> Option<TokenStream> {
         self.meta.need_value_validation().then(|| {
             let validate_range_start = self.render_validate_range_start();
             let validate_range_end = self.render_validate_range_end();
             let validate_min_length = self.render_validate_min_length();
             let validate_max_length = self.render_validate_max_length();
 
+            let result = ctx.resolve_build_in("::core::result::Result");
+
             quote! {
-                pub fn validate_value(value: &#target_type) -> Result<(), ValidateError> {
+                pub fn validate_value(value: &#target_type) -> #result<(), ValidateError> {
                     #validate_range_start
                     #validate_range_end
                     #validate_min_length

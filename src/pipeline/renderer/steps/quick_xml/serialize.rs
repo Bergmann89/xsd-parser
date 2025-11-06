@@ -81,6 +81,9 @@ impl UnionData<'_> {
             .map(UnionTypeVariant::render_serializer_variant)
             .collect::<Vec<_>>();
 
+        let result = ctx.resolve_build_in("::core::result::Result");
+        let option = ctx.resolve_build_in("::core::option::Option");
+
         ctx.add_usings([
             "std::borrow::Cow",
             "xsd_parser::quick_xml::Error",
@@ -89,7 +92,7 @@ impl UnionData<'_> {
 
         let code = quote! {
             impl SerializeBytes for #type_ident {
-                fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+                fn serialize_bytes(&self) -> #result<#option<Cow<'_, str>>, Error> {
                     match self {
                         #( #variants )*
                     }
@@ -117,6 +120,9 @@ impl DynamicData<'_> {
     pub(crate) fn render_serializer(&self, ctx: &mut Context<'_, '_>) {
         let Self { type_ident, .. } = self;
 
+        let result = ctx.resolve_build_in("::core::result::Result");
+        let option = ctx.resolve_build_in("::core::option::Option");
+
         ctx.add_usings([
             "xsd_parser::quick_xml::Error",
             "xsd_parser::quick_xml::WithSerializer",
@@ -129,9 +135,9 @@ impl DynamicData<'_> {
 
                 fn serializer<'ser>(
                     &'ser self,
-                    name: Option<&'ser str>,
+                    name: #option<&'ser str>,
                     is_root: bool
-                ) -> Result<Self::Serializer<'ser>, Error> {
+                ) -> #result<Self::Serializer<'ser>, Error> {
                     let _name = name;
 
                     self.0.serializer(None, is_root)
@@ -175,12 +181,14 @@ impl ReferenceData<'_> {
                 }
             }
             Occurs::DynamicList | Occurs::StaticList(_) => {
+                let string = ctx.resolve_build_in("::alloc::string::String");
+
                 quote! {
                     if self.0.is_empty() {
                         return Ok(None);
                     }
 
-                    let mut data = String::new();
+                    let mut data = #string::new();
                     for item in &self.0 {
                         if let Some(bytes) = item.serialize_bytes()? {
                             if !data.is_empty() {
@@ -196,6 +204,9 @@ impl ReferenceData<'_> {
             }
         };
 
+        let result = ctx.resolve_build_in("::core::result::Result");
+        let option = ctx.resolve_build_in("::core::option::Option");
+
         ctx.add_usings([
             "std::borrow::Cow",
             "xsd_parser::quick_xml::Error",
@@ -204,7 +215,7 @@ impl ReferenceData<'_> {
 
         let code = quote! {
             impl SerializeBytes for #type_ident {
-                fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+                fn serialize_bytes(&self) -> #result<#option<Cow<'_, str>>, Error> {
                     #body
                 }
             }
@@ -228,6 +239,9 @@ impl EnumerationData<'_> {
             .iter()
             .map(EnumerationTypeVariant::render_serializer_variant);
 
+        let result = ctx.resolve_build_in("::core::result::Result");
+        let option = ctx.resolve_build_in("::core::option::Option");
+
         ctx.add_usings([
             "std::borrow::Cow",
             "xsd_parser::quick_xml::Error",
@@ -236,7 +250,7 @@ impl EnumerationData<'_> {
 
         let code = quote! {
             impl SerializeBytes for #type_ident {
-                fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+                fn serialize_bytes(&self) -> #result<#option<Cow<'_, str>>, Error> {
                     match self {
                         #( #variants )*
                     }
@@ -275,6 +289,9 @@ impl SimpleData<'_> {
     pub(crate) fn render_serializer(&self, ctx: &mut Context<'_, '_>) {
         let Self { type_ident, .. } = self;
 
+        let result = ctx.resolve_build_in("::core::result::Result");
+        let option = ctx.resolve_build_in("::core::option::Option");
+
         ctx.add_usings([
             "std::borrow::Cow",
             "xsd_parser::quick_xml::Error",
@@ -290,12 +307,14 @@ impl SimpleData<'_> {
                 Ok(Some(Cow::Owned(format!(#format))))
             }
         } else if self.meta.is_list {
+            let string = ctx.resolve_build_in("::alloc::string::String");
+
             quote! {
                 if self.0.is_empty() {
                     return Ok(None);
                 }
 
-                let mut data = String::new();
+                let mut data = #string::new();
                 for item in &self.0 {
                     if let Some(bytes) = item.serialize_bytes()? {
                         if !data.is_empty() {
@@ -316,7 +335,7 @@ impl SimpleData<'_> {
 
         let code = quote! {
             impl SerializeBytes for #type_ident {
-                fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+                fn serialize_bytes(&self) -> #result<#option<Cow<'_, str>>, Error> {
                     #body
                 }
             }
@@ -367,10 +386,13 @@ impl ComplexBase<'_> {
             let config = ctx.get_ref::<SerializerConfig>();
             let tag_name = tag_name.get_for_default_namespace(&config.default_namespace);
 
-            self.render_with_serializer_for_element(&tag_name)
+            self.render_with_serializer_for_element(ctx, &tag_name)
         } else {
-            self.render_with_serializer_for_content(forward_root)
+            self.render_with_serializer_for_content(ctx, forward_root)
         };
+
+        let result = ctx.resolve_build_in("::core::result::Result");
+        let option = ctx.resolve_build_in("::core::option::Option");
 
         ctx.add_usings([
             "xsd_parser::quick_xml::Error",
@@ -383,9 +405,9 @@ impl ComplexBase<'_> {
 
                 fn serializer<'ser>(
                     &'ser self,
-                    name: Option<&'ser str>,
+                    name: #option<&'ser str>,
                     is_root: bool
-                ) -> Result<Self::Serializer<'ser>, Error> {
+                ) -> #result<Self::Serializer<'ser>, Error> {
                     #body
                 }
             }
@@ -394,24 +416,34 @@ impl ComplexBase<'_> {
         ctx.current_module().append(code);
     }
 
-    fn render_with_serializer_for_element(&self, tag_name: &str) -> TokenStream {
+    fn render_with_serializer_for_element(
+        &self,
+        ctx: &Context<'_, '_>,
+        tag_name: &str,
+    ) -> TokenStream {
         let Self {
             serializer_ident,
             serializer_state_ident,
             ..
         } = self;
 
+        let box_ = ctx.resolve_build_in("::alloc::boxed::Box");
+
         quote! {
             Ok(quick_xml_serialize::#serializer_ident {
                 value: self,
-                state: Box::new(quick_xml_serialize::#serializer_state_ident::Init__),
+                state: #box_::new(quick_xml_serialize::#serializer_state_ident::Init__),
                 name: name.unwrap_or(#tag_name),
                 is_root,
             })
         }
     }
 
-    fn render_with_serializer_for_content(&self, forward_root: bool) -> TokenStream {
+    fn render_with_serializer_for_content(
+        &self,
+        ctx: &Context<'_, '_>,
+        forward_root: bool,
+    ) -> TokenStream {
         let Self {
             serializer_ident,
             serializer_state_ident,
@@ -421,13 +453,15 @@ impl ComplexBase<'_> {
         let drop_root = (!forward_root).then(|| quote!(let _is_root = is_root;));
         let forward_root = forward_root.then(|| quote!(is_root,));
 
+        let box_ = ctx.resolve_build_in("::alloc::boxed::Box");
+
         quote! {
             let _name = name;
             #drop_root
 
             Ok(quick_xml_serialize::#serializer_ident {
                 value: self,
-                state: Box::new(quick_xml_serialize::#serializer_state_ident::Init__),
+                state: #box_::new(quick_xml_serialize::#serializer_state_ident::Init__),
                 #forward_root
             })
         }
@@ -452,11 +486,13 @@ impl ComplexBase<'_> {
             }
         });
 
+        let box_ = ctx.resolve_build_in("::alloc::boxed::Box");
+
         let code = quote! {
             #[derive(Debug)]
             pub struct #serializer_ident<'ser> {
                 pub(super) value: &'ser super::#type_ident,
-                pub(super) state: Box<#serializer_state_ident<'ser>>,
+                pub(super) state: #box_<#serializer_state_ident<'ser>>,
                 #name
                 #is_root
             }
@@ -624,15 +660,18 @@ impl ComplexDataEnum<'_> {
             .serializer_need_end_state()
             .then(|| self.render_serializer_handle_state_end(ctx));
 
+        let result = ctx.resolve_build_in("::core::result::Result");
+        let option = ctx.resolve_build_in("::core::option::Option");
+
         ctx.add_quick_xml_serialize_usings([
-            "core::iter::Iterator",
+            "::core::iter::Iterator",
             "xsd_parser::quick_xml::Event",
             "xsd_parser::quick_xml::Error",
         ]);
 
         let code = quote! {
             impl<'ser> #serializer_ident<'ser> {
-                fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+                fn next_event(&mut self) -> #result<#option<Event<'ser>>, Error> {
                     loop {
                         match &mut *self.state {
                             #serializer_state_ident::Init__ => {
@@ -649,9 +688,9 @@ impl ComplexDataEnum<'_> {
             }
 
             impl<'ser> Iterator for #serializer_ident<'ser> {
-                type Item = Result<Event<'ser>, Error>;
+                type Item = #result<Event<'ser>, Error>;
 
-                fn next(&mut self) -> Option<Self::Item> {
+                fn next(&mut self) -> #option<Self::Item> {
                     match self.next_event() {
                         Ok(Some(event)) => Some(Ok(event)),
                         Ok(None) => None,
@@ -798,15 +837,18 @@ impl ComplexDataStruct<'_> {
             .serializer_need_end_state()
             .then(|| self.render_serializer_handle_state_end(ctx));
 
+        let result = ctx.resolve_build_in("::core::result::Result");
+        let option = ctx.resolve_build_in("::core::option::Option");
+
         ctx.add_quick_xml_serialize_usings([
-            "core::iter::Iterator",
+            "::core::iter::Iterator",
             "xsd_parser::quick_xml::Event",
             "xsd_parser::quick_xml::Error",
         ]);
 
         let code = quote! {
             impl<'ser> #serializer_ident<'ser> {
-                fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error>
+                fn next_event(&mut self) -> #result<#option<Event<'ser>>, Error>
                 {
                     loop {
                         match &mut *self.state {
@@ -825,9 +867,9 @@ impl ComplexDataStruct<'_> {
             }
 
             impl<'ser> Iterator for #serializer_ident<'ser> {
-                type Item = Result<Event<'ser>, Error>;
+                type Item = #result<Event<'ser>, Error>;
 
-                fn next(&mut self) -> Option<Self::Item> {
+                fn next(&mut self) -> #option<Self::Item> {
                     match self.next_event() {
                         Ok(Some(event)) => Some(Ok(event)),
                         Ok(None) => None,
@@ -905,6 +947,7 @@ impl ComplexDataStruct<'_> {
 impl ComplexDataContent<'_> {
     fn render_serializer_state_variant(&self, ctx: &Context<'_, '_>) -> Option<TokenStream> {
         let serializer = self.occurs.make_serializer_type(
+            ctx,
             &ctx.resolve_type_for_serialize_module(&self.target_type),
             false,
         )?;
@@ -966,7 +1009,7 @@ impl ComplexDataElement<'_> {
         let variant_ident = &self.variant_ident;
         let serializer = self
             .occurs
-            .make_serializer_type(&target_type, self.need_indirection);
+            .make_serializer_type(ctx, &target_type, self.need_indirection);
 
         quote! {
             #variant_ident(#serializer),
@@ -1078,6 +1121,7 @@ impl ComplexDataElement<'_> {
 impl Occurs {
     fn make_serializer_type(
         &self,
+        ctx: &Context<'_, '_>,
         target_type: &TokenStream,
         need_indirection: bool,
     ) -> Option<TokenStream> {
@@ -1085,11 +1129,17 @@ impl Occurs {
             Occurs::None => None,
             Occurs::Single => Some(quote!(<#target_type as WithSerializer>::Serializer<'ser>)),
             Occurs::Optional => {
-                Some(quote!(IterSerializer<'ser, Option<&'ser #target_type>, #target_type>))
+                let option = ctx.resolve_build_in("::core::option::Option");
+
+                Some(quote!(IterSerializer<'ser, #option<&'ser #target_type>, #target_type>))
             }
-            Occurs::StaticList(..) if need_indirection => Some(
-                quote!(IterSerializer<'ser, DerefIter<&'ser [Box<#target_type>]>, #target_type>),
-            ),
+            Occurs::StaticList(..) if need_indirection => {
+                let box_ = ctx.resolve_build_in("::alloc::boxed::Box");
+
+                Some(
+                    quote!(IterSerializer<'ser, DerefIter<&'ser [#box_<#target_type>]>, #target_type>),
+                )
+            }
             Occurs::DynamicList | Occurs::StaticList(..) => {
                 Some(quote!(IterSerializer<'ser, &'ser [#target_type], #target_type>))
             }

@@ -360,6 +360,7 @@ pub fn exec_render(config: RendererConfig, types: &DataTypes<'_>) -> Result<Modu
 
     let mut renderer = Renderer::new(types)
         .flags(config.flags)
+        .alloc_crate(config.alloc)
         .xsd_parser_crate(config.xsd_parser);
 
     if let Some(derive) = config.derive {

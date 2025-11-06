@@ -256,6 +256,10 @@ impl Display for IdentPath {
 
 impl ToTokens for IdentPath {
     fn to_tokens(&self, tokens: &mut TokenStream) {
+        if self.is_absolute {
+            tokens.extend(quote!(::));
+        }
+
         if let Some(path) = &self.path {
             for module in &path.0 {
                 tokens.extend(quote!(#module::));

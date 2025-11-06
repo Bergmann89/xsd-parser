@@ -165,11 +165,11 @@ bitflags! {
         /// ```
         const NILLABLE_TYPE_SUPPORT = 1 << 5;
 
-        /// Use absolute paths for build in types.
+        /// Use absolute paths for build-in types and traits.
         ///
         /// Using this flag will instruct the generator to use absolute paths
-        /// for build in types (e.g. `usize` or `String`) to avoid naming
-        /// conflicts with generated types.
+        /// for build-in types and traits (e.g. `usize`, `String` or `From`) to
+        /// avoid naming conflicts with generated types.
         ///
         /// # Examples
         ///

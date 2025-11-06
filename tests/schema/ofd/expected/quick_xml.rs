@@ -31,8 +31,8 @@ pub mod annotations {
     }
     #[derive(Debug)]
     pub struct AnnotationsPageXElementType {
-        pub page_id: ::core::primitive::u32,
-        pub file_loc: ::std::string::String,
+        pub page_id: u32,
+        pub file_loc: String,
     }
     impl WithSerializer for AnnotationsPageXElementType {
         type Serializer<'x> = quick_xml_serialize::AnnotationsPageXElementTypeSerializer<'x>;
@@ -266,14 +266,14 @@ pub mod annotations {
         }
         #[derive(Debug)]
         pub struct AnnotationsPageXElementTypeDeserializer {
-            page_id: ::core::primitive::u32,
-            file_loc: Option<::std::string::String>,
+            page_id: u32,
+            file_loc: Option<String>,
             state__: Box<AnnotationsPageXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum AnnotationsPageXElementTypeDeserializerState {
             Init__,
-            FileLoc(Option<<::std::string::String as WithDeserializer>::Deserializer>),
+            FileLoc(Option<<String as WithDeserializer>::Deserializer>),
             Done__,
             Unknown__,
         }
@@ -282,7 +282,7 @@ pub mod annotations {
             where
                 R: DeserializeReader,
             {
-                let mut page_id: Option<::core::primitive::u32> = None;
+                let mut page_id: Option<u32> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -319,7 +319,7 @@ pub mod annotations {
                 }
                 Ok(())
             }
-            fn store_file_loc(&mut self, value: ::std::string::String) -> Result<(), Error> {
+            fn store_file_loc(&mut self, value: String) -> Result<(), Error> {
                 if self.file_loc.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"FileLoc",
@@ -331,7 +331,7 @@ pub mod annotations {
             fn handle_file_loc<'de, R>(
                 &mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, ::std::string::String>,
+                output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<AnnotationsPageXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -580,7 +580,7 @@ pub mod annotations {
         #[derive(Debug)]
         pub(super) enum AnnotationsPageXElementTypeSerializerState<'ser> {
             Init__,
-            FileLoc(<::std::string::String as WithSerializer>::Serializer<'ser>),
+            FileLoc(<String as WithSerializer>::Serializer<'ser>),
             End__,
             Done__,
             Phantom__(&'ser ()),
@@ -670,39 +670,39 @@ pub mod annotion {
     }
     #[derive(Debug)]
     pub struct PageAnnotAnnotXElementType {
-        pub id: ::core::primitive::u32,
+        pub id: u32,
         pub type_: PageAnnotAnnotTypeXType,
-        pub creator: ::std::string::String,
-        pub last_mod_date: ::std::string::String,
-        pub visible: ::core::primitive::bool,
-        pub subtype: Option<::std::string::String>,
-        pub print: ::core::primitive::bool,
-        pub no_zoom: ::core::primitive::bool,
-        pub no_rotate: ::core::primitive::bool,
-        pub read_only: ::core::primitive::bool,
-        pub remark: Option<::std::string::String>,
+        pub creator: String,
+        pub last_mod_date: String,
+        pub visible: bool,
+        pub subtype: Option<String>,
+        pub print: bool,
+        pub no_zoom: bool,
+        pub no_rotate: bool,
+        pub read_only: bool,
+        pub remark: Option<String>,
         pub parameters: Option<PageAnnotAnnotParametersXElementType>,
         pub appearance: PageAnnotAnnotAppearanceXElementType,
     }
     impl PageAnnotAnnotXElementType {
         #[must_use]
-        pub fn default_visible() -> ::core::primitive::bool {
+        pub fn default_visible() -> bool {
             true
         }
         #[must_use]
-        pub fn default_print() -> ::core::primitive::bool {
+        pub fn default_print() -> bool {
             true
         }
         #[must_use]
-        pub fn default_no_zoom() -> ::core::primitive::bool {
+        pub fn default_no_zoom() -> bool {
             false
         }
         #[must_use]
-        pub fn default_no_rotate() -> ::core::primitive::bool {
+        pub fn default_no_rotate() -> bool {
             false
         }
         #[must_use]
-        pub fn default_read_only() -> ::core::primitive::bool {
+        pub fn default_read_only() -> bool {
             true
         }
     }
@@ -783,7 +783,7 @@ pub mod annotion {
     }
     #[derive(Debug)]
     pub struct PageAnnotAnnotAppearanceXElementType {
-        pub boundary: Option<::std::string::String>,
+        pub boundary: Option<String>,
         pub content: Vec<PageAnnotAnnotAppearanceXElementTypeContent>,
     }
     #[derive(Debug)]
@@ -1046,17 +1046,17 @@ pub mod annotion {
         }
         #[derive(Debug)]
         pub struct PageAnnotAnnotXElementTypeDeserializer {
-            id: ::core::primitive::u32,
+            id: u32,
             type_: super::PageAnnotAnnotTypeXType,
-            creator: ::std::string::String,
-            last_mod_date: ::std::string::String,
-            visible: ::core::primitive::bool,
-            subtype: Option<::std::string::String>,
-            print: ::core::primitive::bool,
-            no_zoom: ::core::primitive::bool,
-            no_rotate: ::core::primitive::bool,
-            read_only: ::core::primitive::bool,
-            remark: Option<::std::string::String>,
+            creator: String,
+            last_mod_date: String,
+            visible: bool,
+            subtype: Option<String>,
+            print: bool,
+            no_zoom: bool,
+            no_rotate: bool,
+            read_only: bool,
+            remark: Option<String>,
             parameters: Option<super::PageAnnotAnnotParametersXElementType>,
             appearance: Option<super::PageAnnotAnnotAppearanceXElementType>,
             state__: Box<PageAnnotAnnotXElementTypeDeserializerState>,
@@ -1064,7 +1064,7 @@ pub mod annotion {
         #[derive(Debug)]
         enum PageAnnotAnnotXElementTypeDeserializerState {
             Init__,
-            Remark(Option<<::std::string::String as WithDeserializer>::Deserializer>),
+            Remark(Option<<String as WithDeserializer>::Deserializer>),
             Parameters(
                 Option<
                     <super::PageAnnotAnnotParametersXElementType as WithDeserializer>::Deserializer,
@@ -1083,16 +1083,16 @@ pub mod annotion {
             where
                 R: DeserializeReader,
             {
-                let mut id: Option<::core::primitive::u32> = None;
+                let mut id: Option<u32> = None;
                 let mut type_: Option<super::PageAnnotAnnotTypeXType> = None;
-                let mut creator: Option<::std::string::String> = None;
-                let mut last_mod_date: Option<::std::string::String> = None;
-                let mut visible: Option<::core::primitive::bool> = None;
-                let mut subtype: Option<::std::string::String> = None;
-                let mut print: Option<::core::primitive::bool> = None;
-                let mut no_zoom: Option<::core::primitive::bool> = None;
-                let mut no_rotate: Option<::core::primitive::bool> = None;
-                let mut read_only: Option<::core::primitive::bool> = None;
+                let mut creator: Option<String> = None;
+                let mut last_mod_date: Option<String> = None;
+                let mut visible: Option<bool> = None;
+                let mut subtype: Option<String> = None;
+                let mut print: Option<bool> = None;
+                let mut no_zoom: Option<bool> = None;
+                let mut no_rotate: Option<bool> = None;
+                let mut read_only: Option<bool> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -1201,7 +1201,7 @@ pub mod annotion {
                 }
                 Ok(())
             }
-            fn store_remark(&mut self, value: ::std::string::String) -> Result<(), Error> {
+            fn store_remark(&mut self, value: String) -> Result<(), Error> {
                 if self.remark.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Remark",
@@ -1237,7 +1237,7 @@ pub mod annotion {
             fn handle_remark<'de, R>(
                 &mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, ::std::string::String>,
+                output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<PageAnnotAnnotXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -1803,7 +1803,7 @@ pub mod annotion {
         }
         #[derive(Debug)]
         pub struct PageAnnotAnnotAppearanceXElementTypeDeserializer {
-            boundary: Option<::std::string::String>,
+            boundary: Option<String>,
             content: Vec<super::PageAnnotAnnotAppearanceXElementTypeContent>,
             state__: Box<PageAnnotAnnotAppearanceXElementTypeDeserializerState>,
         }
@@ -1815,7 +1815,7 @@ pub mod annotion {
             where
                 R: DeserializeReader,
             {
-                let mut boundary: Option<::std::string::String> = None;
+                let mut boundary: Option<String> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -2785,9 +2785,7 @@ pub mod annotion {
         #[derive(Debug)]
         pub(super) enum PageAnnotAnnotXElementTypeSerializerState<'ser> {
             Init__,
-            Remark(
-                IterSerializer<'ser, Option<&'ser ::std::string::String>, ::std::string::String>,
-            ),
+            Remark(IterSerializer<'ser, Option<&'ser String>, String>),
             Parameters(
                 IterSerializer<
                     'ser,
@@ -3110,23 +3108,23 @@ pub mod attachments {
     }
     #[derive(Debug)]
     pub struct CtAttachmentXType {
-        pub id: ::std::string::String,
-        pub name: ::std::string::String,
-        pub format: Option<::std::string::String>,
-        pub creation_date: Option<::std::string::String>,
-        pub mod_date: Option<::std::string::String>,
-        pub size: Option<::core::primitive::f64>,
-        pub visible: ::core::primitive::bool,
-        pub usage: ::std::string::String,
-        pub file_loc: ::std::string::String,
+        pub id: String,
+        pub name: String,
+        pub format: Option<String>,
+        pub creation_date: Option<String>,
+        pub mod_date: Option<String>,
+        pub size: Option<f64>,
+        pub visible: bool,
+        pub usage: String,
+        pub file_loc: String,
     }
     impl CtAttachmentXType {
         #[must_use]
-        pub fn default_visible() -> ::core::primitive::bool {
+        pub fn default_visible() -> bool {
             true
         }
         #[must_use]
-        pub fn default_usage() -> ::std::string::String {
+        pub fn default_usage() -> String {
             String::from("none")
         }
     }
@@ -3364,21 +3362,21 @@ pub mod attachments {
         }
         #[derive(Debug)]
         pub struct CtAttachmentXTypeDeserializer {
-            id: ::std::string::String,
-            name: ::std::string::String,
-            format: Option<::std::string::String>,
-            creation_date: Option<::std::string::String>,
-            mod_date: Option<::std::string::String>,
-            size: Option<::core::primitive::f64>,
-            visible: ::core::primitive::bool,
-            usage: ::std::string::String,
-            file_loc: Option<::std::string::String>,
+            id: String,
+            name: String,
+            format: Option<String>,
+            creation_date: Option<String>,
+            mod_date: Option<String>,
+            size: Option<f64>,
+            visible: bool,
+            usage: String,
+            file_loc: Option<String>,
             state__: Box<CtAttachmentXTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtAttachmentXTypeDeserializerState {
             Init__,
-            FileLoc(Option<<::std::string::String as WithDeserializer>::Deserializer>),
+            FileLoc(Option<<String as WithDeserializer>::Deserializer>),
             Done__,
             Unknown__,
         }
@@ -3387,14 +3385,14 @@ pub mod attachments {
             where
                 R: DeserializeReader,
             {
-                let mut id: Option<::std::string::String> = None;
-                let mut name: Option<::std::string::String> = None;
-                let mut format: Option<::std::string::String> = None;
-                let mut creation_date: Option<::std::string::String> = None;
-                let mut mod_date: Option<::std::string::String> = None;
-                let mut size: Option<::core::primitive::f64> = None;
-                let mut visible: Option<::core::primitive::bool> = None;
-                let mut usage: Option<::std::string::String> = None;
+                let mut id: Option<String> = None;
+                let mut name: Option<String> = None;
+                let mut format: Option<String> = None;
+                let mut creation_date: Option<String> = None;
+                let mut mod_date: Option<String> = None;
+                let mut size: Option<f64> = None;
+                let mut visible: Option<bool> = None;
+                let mut usage: Option<String> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -3475,7 +3473,7 @@ pub mod attachments {
                 }
                 Ok(())
             }
-            fn store_file_loc(&mut self, value: ::std::string::String) -> Result<(), Error> {
+            fn store_file_loc(&mut self, value: String) -> Result<(), Error> {
                 if self.file_loc.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"FileLoc",
@@ -3487,7 +3485,7 @@ pub mod attachments {
             fn handle_file_loc<'de, R>(
                 &mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, ::std::string::String>,
+                output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<CtAttachmentXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -3734,7 +3732,7 @@ pub mod attachments {
         #[derive(Debug)]
         pub(super) enum CtAttachmentXTypeSerializerState<'ser> {
             Init__,
-            FileLoc(<::std::string::String as WithSerializer>::Serializer<'ser>),
+            FileLoc(<String as WithSerializer>::Serializer<'ser>),
             End__,
             Done__,
             Phantom__(&'ser ()),
@@ -3830,9 +3828,9 @@ pub mod custom_tags {
     }
     #[derive(Debug)]
     pub struct CustomTagsCustomTagXElementType {
-        pub name_space: ::std::string::String,
-        pub schema_loc: Option<::std::string::String>,
-        pub file_loc: ::std::string::String,
+        pub name_space: String,
+        pub schema_loc: Option<String>,
+        pub file_loc: String,
     }
     impl WithSerializer for CustomTagsCustomTagXElementType {
         type Serializer<'x> = quick_xml_serialize::CustomTagsCustomTagXElementTypeSerializer<'x>;
@@ -4074,16 +4072,16 @@ pub mod custom_tags {
         }
         #[derive(Debug)]
         pub struct CustomTagsCustomTagXElementTypeDeserializer {
-            name_space: ::std::string::String,
-            schema_loc: Option<::std::string::String>,
-            file_loc: Option<::std::string::String>,
+            name_space: String,
+            schema_loc: Option<String>,
+            file_loc: Option<String>,
             state__: Box<CustomTagsCustomTagXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CustomTagsCustomTagXElementTypeDeserializerState {
             Init__,
-            SchemaLoc(Option<<::std::string::String as WithDeserializer>::Deserializer>),
-            FileLoc(Option<<::std::string::String as WithDeserializer>::Deserializer>),
+            SchemaLoc(Option<<String as WithDeserializer>::Deserializer>),
+            FileLoc(Option<<String as WithDeserializer>::Deserializer>),
             Done__,
             Unknown__,
         }
@@ -4092,7 +4090,7 @@ pub mod custom_tags {
             where
                 R: DeserializeReader,
             {
-                let mut name_space: Option<::std::string::String> = None;
+                let mut name_space: Option<String> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -4133,7 +4131,7 @@ pub mod custom_tags {
                 }
                 Ok(())
             }
-            fn store_schema_loc(&mut self, value: ::std::string::String) -> Result<(), Error> {
+            fn store_schema_loc(&mut self, value: String) -> Result<(), Error> {
                 if self.schema_loc.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"SchemaLoc",
@@ -4142,7 +4140,7 @@ pub mod custom_tags {
                 self.schema_loc = Some(value);
                 Ok(())
             }
-            fn store_file_loc(&mut self, value: ::std::string::String) -> Result<(), Error> {
+            fn store_file_loc(&mut self, value: String) -> Result<(), Error> {
                 if self.file_loc.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"FileLoc",
@@ -4154,7 +4152,7 @@ pub mod custom_tags {
             fn handle_schema_loc<'de, R>(
                 &mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, ::std::string::String>,
+                output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<CustomTagsCustomTagXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -4209,7 +4207,7 @@ pub mod custom_tags {
             fn handle_file_loc<'de, R>(
                 &mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, ::std::string::String>,
+                output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<CustomTagsCustomTagXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -4496,10 +4494,8 @@ pub mod custom_tags {
         #[derive(Debug)]
         pub(super) enum CustomTagsCustomTagXElementTypeSerializerState<'ser> {
             Init__,
-            SchemaLoc(
-                IterSerializer<'ser, Option<&'ser ::std::string::String>, ::std::string::String>,
-            ),
-            FileLoc(<::std::string::String as WithSerializer>::Serializer<'ser>),
+            SchemaLoc(IterSerializer<'ser, Option<&'ser String>, String>),
+            FileLoc(<String as WithSerializer>::Serializer<'ser>),
             End__,
             Done__,
             Phantom__(&'ser ()),
@@ -4636,12 +4632,12 @@ pub mod definition {
     #[derive(Debug)]
     pub struct CtDestXType {
         pub type_: CtDestTypeXType,
-        pub page_id: ::core::primitive::u32,
-        pub left: Option<::core::primitive::f64>,
-        pub top: Option<::core::primitive::f64>,
-        pub right: Option<::core::primitive::f64>,
-        pub bottom: Option<::core::primitive::f64>,
-        pub zoom: Option<::core::primitive::f64>,
+        pub page_id: u32,
+        pub left: Option<f64>,
+        pub top: Option<f64>,
+        pub right: Option<f64>,
+        pub bottom: Option<f64>,
+        pub zoom: Option<f64>,
     }
     impl WithSerializer for CtDestXType {
         type Serializer<'x> = quick_xml_serialize::CtDestXTypeSerializer<'x>;
@@ -4663,10 +4659,10 @@ pub mod definition {
     }
     #[derive(Debug)]
     pub struct CtPageAreaXType {
-        pub physical_box: ::std::string::String,
-        pub application_box: Option<::std::string::String>,
-        pub content_box: Option<::std::string::String>,
-        pub bleed_box: Option<::std::string::String>,
+        pub physical_box: String,
+        pub application_box: Option<String>,
+        pub content_box: Option<String>,
+        pub bleed_box: Option<String>,
     }
     impl WithSerializer for CtPageAreaXType {
         type Serializer<'x> = quick_xml_serialize::CtPageAreaXTypeSerializer<'x>;
@@ -4708,12 +4704,12 @@ pub mod definition {
     impl WithDeserializer for CtRegionXType {
         type Deserializer = quick_xml_deserialize::CtRegionXTypeDeserializer;
     }
-    pub type StArrayXType = ::std::string::String;
-    pub type StBoxXType = ::std::string::String;
-    pub type StIdXType = ::core::primitive::u32;
-    pub type StLocXType = ::std::string::String;
-    pub type StPosXType = ::std::string::String;
-    pub type StRefIdXType = ::core::primitive::u32;
+    pub type StArrayXType = String;
+    pub type StBoxXType = String;
+    pub type StIdXType = u32;
+    pub type StLocXType = String;
+    pub type StPosXType = String;
+    pub type StRefIdXType = u32;
     #[derive(Debug)]
     pub enum CtActionEventXType {
         Do,
@@ -4772,9 +4768,9 @@ pub mod definition {
     }
     #[derive(Debug)]
     pub struct CtActionUriXElementType {
-        pub uri: ::std::string::String,
-        pub base: Option<::std::string::String>,
-        pub target: Option<::std::string::String>,
+        pub uri: String,
+        pub base: Option<String>,
+        pub target: Option<String>,
     }
     impl WithSerializer for CtActionUriXElementType {
         type Serializer<'x> = quick_xml_serialize::CtActionUriXElementTypeSerializer<'x>;
@@ -4798,12 +4794,12 @@ pub mod definition {
     }
     #[derive(Debug)]
     pub struct CtActionGotoAxElementType {
-        pub attach_id: ::std::string::String,
-        pub new_window: ::core::primitive::bool,
+        pub attach_id: String,
+        pub new_window: bool,
     }
     impl CtActionGotoAxElementType {
         #[must_use]
-        pub fn default_new_window() -> ::core::primitive::bool {
+        pub fn default_new_window() -> bool {
             true
         }
     }
@@ -4829,10 +4825,10 @@ pub mod definition {
     }
     #[derive(Debug)]
     pub struct CtActionSoundXElementType {
-        pub resource_id: ::core::primitive::u32,
-        pub volume: Option<::core::primitive::i32>,
-        pub repeat: Option<::core::primitive::bool>,
-        pub synchronous: Option<::core::primitive::bool>,
+        pub resource_id: u32,
+        pub volume: Option<i32>,
+        pub repeat: Option<bool>,
+        pub synchronous: Option<bool>,
     }
     impl WithSerializer for CtActionSoundXElementType {
         type Serializer<'x> = quick_xml_serialize::CtActionSoundXElementTypeSerializer<'x>;
@@ -4856,7 +4852,7 @@ pub mod definition {
     }
     #[derive(Debug)]
     pub struct CtActionMovieXElementType {
-        pub resource_id: ::core::primitive::u32,
+        pub resource_id: u32,
         pub operator: CtActionMovieOperatorXType,
     }
     impl CtActionMovieXElementType {
@@ -4924,7 +4920,7 @@ pub mod definition {
     }
     #[derive(Debug)]
     pub struct CtRegionAreaXElementType {
-        pub start: ::std::string::String,
+        pub start: String,
         pub content: Vec<CtRegionAreaXElementTypeContent>,
     }
     #[derive(Debug)]
@@ -4980,7 +4976,7 @@ pub mod definition {
     }
     #[derive(Debug)]
     pub struct CtActionGotoBookmarkXElementType {
-        pub name: ::std::string::String,
+        pub name: String,
     }
     impl WithSerializer for CtActionGotoBookmarkXElementType {
         type Serializer<'x> = quick_xml_serialize::CtActionGotoBookmarkXElementTypeSerializer<'x>;
@@ -5031,7 +5027,7 @@ pub mod definition {
     }
     #[derive(Debug)]
     pub struct CtRegionAreaLineXElementType {
-        pub point_1: ::std::string::String,
+        pub point_1: String,
     }
     impl WithSerializer for CtRegionAreaLineXElementType {
         type Serializer<'x> = quick_xml_serialize::CtRegionAreaLineXElementTypeSerializer<'x>;
@@ -5057,8 +5053,8 @@ pub mod definition {
     }
     #[derive(Debug)]
     pub struct CtRegionAreaOuadraticBezierXElementType {
-        pub pointl: ::std::string::String,
-        pub point_2: ::std::string::String,
+        pub pointl: String,
+        pub point_2: String,
     }
     impl WithSerializer for CtRegionAreaOuadraticBezierXElementType {
         type Serializer<'x> =
@@ -5077,9 +5073,9 @@ pub mod definition {
     }
     #[derive(Debug)]
     pub struct CtRegionAreaCubicBezierXElementType {
-        pub point_1: Option<::std::string::String>,
-        pub point_2: Option<::std::string::String>,
-        pub point_3: ::std::string::String,
+        pub point_1: Option<String>,
+        pub point_2: Option<String>,
+        pub point_3: String,
     }
     impl WithSerializer for CtRegionAreaCubicBezierXElementType {
         type Serializer<'x> =
@@ -5097,11 +5093,11 @@ pub mod definition {
     }
     #[derive(Debug)]
     pub struct CtRegionAreaArcXElementType {
-        pub sweep_direction: ::core::primitive::bool,
-        pub large_arc: ::core::primitive::bool,
-        pub rotation_anglet: ::core::primitive::f64,
-        pub ellipse_size: ::std::string::String,
-        pub end_point: ::std::string::String,
+        pub sweep_direction: bool,
+        pub large_arc: bool,
+        pub rotation_anglet: f64,
+        pub ellipse_size: String,
+        pub end_point: String,
     }
     impl WithSerializer for CtRegionAreaArcXElementType {
         type Serializer<'x> = quick_xml_serialize::CtRegionAreaArcXElementTypeSerializer<'x>;
@@ -6145,12 +6141,12 @@ pub mod definition {
         #[derive(Debug)]
         pub struct CtDestXTypeDeserializer {
             type_: super::CtDestTypeXType,
-            page_id: ::core::primitive::u32,
-            left: Option<::core::primitive::f64>,
-            top: Option<::core::primitive::f64>,
-            right: Option<::core::primitive::f64>,
-            bottom: Option<::core::primitive::f64>,
-            zoom: Option<::core::primitive::f64>,
+            page_id: u32,
+            left: Option<f64>,
+            top: Option<f64>,
+            right: Option<f64>,
+            bottom: Option<f64>,
+            zoom: Option<f64>,
             state__: Box<CtDestXTypeDeserializerState>,
         }
         #[derive(Debug)]
@@ -6164,12 +6160,12 @@ pub mod definition {
                 R: DeserializeReader,
             {
                 let mut type_: Option<super::CtDestTypeXType> = None;
-                let mut page_id: Option<::core::primitive::u32> = None;
-                let mut left: Option<::core::primitive::f64> = None;
-                let mut top: Option<::core::primitive::f64> = None;
-                let mut right: Option<::core::primitive::f64> = None;
-                let mut bottom: Option<::core::primitive::f64> = None;
-                let mut zoom: Option<::core::primitive::f64> = None;
+                let mut page_id: Option<u32> = None;
+                let mut left: Option<f64> = None;
+                let mut top: Option<f64> = None;
+                let mut right: Option<f64> = None;
+                let mut bottom: Option<f64> = None;
+                let mut zoom: Option<f64> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -6285,19 +6281,19 @@ pub mod definition {
         }
         #[derive(Debug)]
         pub struct CtPageAreaXTypeDeserializer {
-            physical_box: Option<::std::string::String>,
-            application_box: Option<::std::string::String>,
-            content_box: Option<::std::string::String>,
-            bleed_box: Option<::std::string::String>,
+            physical_box: Option<String>,
+            application_box: Option<String>,
+            content_box: Option<String>,
+            bleed_box: Option<String>,
             state__: Box<CtPageAreaXTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtPageAreaXTypeDeserializerState {
             Init__,
-            PhysicalBox(Option<<::std::string::String as WithDeserializer>::Deserializer>),
-            ApplicationBox(Option<<::std::string::String as WithDeserializer>::Deserializer>),
-            ContentBox(Option<<::std::string::String as WithDeserializer>::Deserializer>),
-            BleedBox(Option<<::std::string::String as WithDeserializer>::Deserializer>),
+            PhysicalBox(Option<<String as WithDeserializer>::Deserializer>),
+            ApplicationBox(Option<<String as WithDeserializer>::Deserializer>),
+            ContentBox(Option<<String as WithDeserializer>::Deserializer>),
+            BleedBox(Option<<String as WithDeserializer>::Deserializer>),
             Done__,
             Unknown__,
         }
@@ -6344,7 +6340,7 @@ pub mod definition {
                 }
                 Ok(())
             }
-            fn store_physical_box(&mut self, value: ::std::string::String) -> Result<(), Error> {
+            fn store_physical_box(&mut self, value: String) -> Result<(), Error> {
                 if self.physical_box.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"PhysicalBox",
@@ -6353,7 +6349,7 @@ pub mod definition {
                 self.physical_box = Some(value);
                 Ok(())
             }
-            fn store_application_box(&mut self, value: ::std::string::String) -> Result<(), Error> {
+            fn store_application_box(&mut self, value: String) -> Result<(), Error> {
                 if self.application_box.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"ApplicationBox",
@@ -6362,7 +6358,7 @@ pub mod definition {
                 self.application_box = Some(value);
                 Ok(())
             }
-            fn store_content_box(&mut self, value: ::std::string::String) -> Result<(), Error> {
+            fn store_content_box(&mut self, value: String) -> Result<(), Error> {
                 if self.content_box.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"ContentBox",
@@ -6371,7 +6367,7 @@ pub mod definition {
                 self.content_box = Some(value);
                 Ok(())
             }
-            fn store_bleed_box(&mut self, value: ::std::string::String) -> Result<(), Error> {
+            fn store_bleed_box(&mut self, value: String) -> Result<(), Error> {
                 if self.bleed_box.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"BleedBox",
@@ -6383,7 +6379,7 @@ pub mod definition {
             fn handle_physical_box<'de, R>(
                 &mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, ::std::string::String>,
+                output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<CtPageAreaXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -6439,7 +6435,7 @@ pub mod definition {
             fn handle_application_box<'de, R>(
                 &mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, ::std::string::String>,
+                output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<CtPageAreaXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -6489,7 +6485,7 @@ pub mod definition {
             fn handle_content_box<'de, R>(
                 &mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, ::std::string::String>,
+                output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<CtPageAreaXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -6539,7 +6535,7 @@ pub mod definition {
             fn handle_bleed_box<'de, R>(
                 &mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, ::std::string::String>,
+                output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<CtPageAreaXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -7348,9 +7344,9 @@ pub mod definition {
         }
         #[derive(Debug)]
         pub struct CtActionUriXElementTypeDeserializer {
-            uri: ::std::string::String,
-            base: Option<::std::string::String>,
-            target: Option<::std::string::String>,
+            uri: String,
+            base: Option<String>,
+            target: Option<String>,
             state__: Box<CtActionUriXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
@@ -7363,9 +7359,9 @@ pub mod definition {
             where
                 R: DeserializeReader,
             {
-                let mut uri: Option<::std::string::String> = None;
-                let mut base: Option<::std::string::String> = None;
-                let mut target: Option<::std::string::String> = None;
+                let mut uri: Option<String> = None;
+                let mut base: Option<String> = None;
+                let mut target: Option<String> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -7459,8 +7455,8 @@ pub mod definition {
         }
         #[derive(Debug)]
         pub struct CtActionGotoAxElementTypeDeserializer {
-            attach_id: ::std::string::String,
-            new_window: ::core::primitive::bool,
+            attach_id: String,
+            new_window: bool,
             state__: Box<CtActionGotoAxElementTypeDeserializerState>,
         }
         #[derive(Debug)]
@@ -7473,8 +7469,8 @@ pub mod definition {
             where
                 R: DeserializeReader,
             {
-                let mut attach_id: Option<::std::string::String> = None;
-                let mut new_window: Option<::core::primitive::bool> = None;
+                let mut attach_id: Option<String> = None;
+                let mut new_window: Option<bool> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -7562,10 +7558,10 @@ pub mod definition {
         }
         #[derive(Debug)]
         pub struct CtActionSoundXElementTypeDeserializer {
-            resource_id: ::core::primitive::u32,
-            volume: Option<::core::primitive::i32>,
-            repeat: Option<::core::primitive::bool>,
-            synchronous: Option<::core::primitive::bool>,
+            resource_id: u32,
+            volume: Option<i32>,
+            repeat: Option<bool>,
+            synchronous: Option<bool>,
             state__: Box<CtActionSoundXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
@@ -7578,10 +7574,10 @@ pub mod definition {
             where
                 R: DeserializeReader,
             {
-                let mut resource_id: Option<::core::primitive::u32> = None;
-                let mut volume: Option<::core::primitive::i32> = None;
-                let mut repeat: Option<::core::primitive::bool> = None;
-                let mut synchronous: Option<::core::primitive::bool> = None;
+                let mut resource_id: Option<u32> = None;
+                let mut volume: Option<i32> = None;
+                let mut repeat: Option<bool> = None;
+                let mut synchronous: Option<bool> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -7682,7 +7678,7 @@ pub mod definition {
         }
         #[derive(Debug)]
         pub struct CtActionMovieXElementTypeDeserializer {
-            resource_id: ::core::primitive::u32,
+            resource_id: u32,
             operator: super::CtActionMovieOperatorXType,
             state__: Box<CtActionMovieXElementTypeDeserializerState>,
         }
@@ -7696,7 +7692,7 @@ pub mod definition {
             where
                 R: DeserializeReader,
             {
-                let mut resource_id: Option<::core::primitive::u32> = None;
+                let mut resource_id: Option<u32> = None;
                 let mut operator: Option<super::CtActionMovieOperatorXType> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
@@ -7785,7 +7781,7 @@ pub mod definition {
         }
         #[derive(Debug)]
         pub struct CtRegionAreaXElementTypeDeserializer {
-            start: ::std::string::String,
+            start: String,
             content: Vec<super::CtRegionAreaXElementTypeContent>,
             state__: Box<CtRegionAreaXElementTypeDeserializerState>,
         }
@@ -7801,7 +7797,7 @@ pub mod definition {
             where
                 R: DeserializeReader,
             {
-                let mut start: Option<::std::string::String> = None;
+                let mut start: Option<String> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -8847,7 +8843,7 @@ pub mod definition {
         }
         #[derive(Debug)]
         pub struct CtActionGotoBookmarkXElementTypeDeserializer {
-            name: ::std::string::String,
+            name: String,
             state__: Box<CtActionGotoBookmarkXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
@@ -8860,7 +8856,7 @@ pub mod definition {
             where
                 R: DeserializeReader,
             {
-                let mut name: Option<::std::string::String> = None;
+                let mut name: Option<String> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -8941,7 +8937,7 @@ pub mod definition {
         }
         #[derive(Debug)]
         pub struct CtRegionAreaLineXElementTypeDeserializer {
-            point_1: ::std::string::String,
+            point_1: String,
             state__: Box<CtRegionAreaLineXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
@@ -8954,7 +8950,7 @@ pub mod definition {
             where
                 R: DeserializeReader,
             {
-                let mut point_1: Option<::std::string::String> = None;
+                let mut point_1: Option<String> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -9034,8 +9030,8 @@ pub mod definition {
         }
         #[derive(Debug)]
         pub struct CtRegionAreaOuadraticBezierXElementTypeDeserializer {
-            pointl: ::std::string::String,
-            point_2: ::std::string::String,
+            pointl: String,
+            point_2: String,
             state__: Box<CtRegionAreaOuadraticBezierXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
@@ -9048,8 +9044,8 @@ pub mod definition {
             where
                 R: DeserializeReader,
             {
-                let mut pointl: Option<::std::string::String> = None;
-                let mut point_2: Option<::std::string::String> = None;
+                let mut pointl: Option<String> = None;
+                let mut point_2: Option<String> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -9143,9 +9139,9 @@ pub mod definition {
         }
         #[derive(Debug)]
         pub struct CtRegionAreaCubicBezierXElementTypeDeserializer {
-            point_1: Option<::std::string::String>,
-            point_2: Option<::std::string::String>,
-            point_3: ::std::string::String,
+            point_1: Option<String>,
+            point_2: Option<String>,
+            point_3: String,
             state__: Box<CtRegionAreaCubicBezierXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
@@ -9158,9 +9154,9 @@ pub mod definition {
             where
                 R: DeserializeReader,
             {
-                let mut point_1: Option<::std::string::String> = None;
-                let mut point_2: Option<::std::string::String> = None;
-                let mut point_3: Option<::std::string::String> = None;
+                let mut point_1: Option<String> = None;
+                let mut point_2: Option<String> = None;
+                let mut point_3: Option<String> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -9257,11 +9253,11 @@ pub mod definition {
         }
         #[derive(Debug)]
         pub struct CtRegionAreaArcXElementTypeDeserializer {
-            sweep_direction: ::core::primitive::bool,
-            large_arc: ::core::primitive::bool,
-            rotation_anglet: ::core::primitive::f64,
-            ellipse_size: ::std::string::String,
-            end_point: ::std::string::String,
+            sweep_direction: bool,
+            large_arc: bool,
+            rotation_anglet: f64,
+            ellipse_size: String,
+            end_point: String,
             state__: Box<CtRegionAreaArcXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
@@ -9274,11 +9270,11 @@ pub mod definition {
             where
                 R: DeserializeReader,
             {
-                let mut sweep_direction: Option<::core::primitive::bool> = None;
-                let mut large_arc: Option<::core::primitive::bool> = None;
-                let mut rotation_anglet: Option<::core::primitive::f64> = None;
-                let mut ellipse_size: Option<::std::string::String> = None;
-                let mut end_point: Option<::std::string::String> = None;
+                let mut sweep_direction: Option<bool> = None;
+                let mut large_arc: Option<bool> = None;
+                let mut rotation_anglet: Option<f64> = None;
+                let mut ellipse_size: Option<String> = None;
+                let mut end_point: Option<String> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -9645,16 +9641,10 @@ pub mod definition {
         #[derive(Debug)]
         pub(super) enum CtPageAreaXTypeSerializerState<'ser> {
             Init__,
-            PhysicalBox(<::std::string::String as WithSerializer>::Serializer<'ser>),
-            ApplicationBox(
-                IterSerializer<'ser, Option<&'ser ::std::string::String>, ::std::string::String>,
-            ),
-            ContentBox(
-                IterSerializer<'ser, Option<&'ser ::std::string::String>, ::std::string::String>,
-            ),
-            BleedBox(
-                IterSerializer<'ser, Option<&'ser ::std::string::String>, ::std::string::String>,
-            ),
+            PhysicalBox(<String as WithSerializer>::Serializer<'ser>),
+            ApplicationBox(IterSerializer<'ser, Option<&'ser String>, String>),
+            ContentBox(IterSerializer<'ser, Option<&'ser String>, String>),
+            BleedBox(IterSerializer<'ser, Option<&'ser String>, String>),
             End__,
             Done__,
             Phantom__(&'ser ()),
@@ -10589,7 +10579,7 @@ pub mod document {
     };
     #[derive(Debug)]
     pub struct CtBookmarkXType {
-        pub name: ::std::string::String,
+        pub name: String,
         pub dest: super::definition::CtDestXType,
     }
     impl WithSerializer for CtBookmarkXType {
@@ -10612,15 +10602,15 @@ pub mod document {
     }
     #[derive(Debug)]
     pub struct CtOutlineElemXType {
-        pub title: ::std::string::String,
-        pub count: Option<::core::primitive::i32>,
-        pub expanded: ::core::primitive::bool,
+        pub title: String,
+        pub count: Option<i32>,
+        pub expanded: bool,
         pub actions: Option<super::page::CtGraphicUnitActionsXElementType>,
         pub outline_elem: Vec<CtOutlineElemXType>,
     }
     impl CtOutlineElemXType {
         #[must_use]
-        pub fn default_expanded() -> ::core::primitive::bool {
+        pub fn default_expanded() -> bool {
             true
         }
     }
@@ -10644,12 +10634,12 @@ pub mod document {
     }
     #[derive(Debug)]
     pub struct CtPermissionXType {
-        pub edit: Option<::core::primitive::bool>,
-        pub annot: Option<::core::primitive::bool>,
-        pub export: Option<::core::primitive::bool>,
-        pub signature: Option<::core::primitive::bool>,
-        pub watermark: Option<::core::primitive::bool>,
-        pub print_screen: Option<::core::primitive::bool>,
+        pub edit: Option<bool>,
+        pub annot: Option<bool>,
+        pub export: Option<bool>,
+        pub signature: Option<bool>,
+        pub watermark: Option<bool>,
+        pub print_screen: Option<bool>,
         pub print: Option<CtPermissionPrintXElementType>,
         pub valid_period: Option<CtPermissionValidPeriodXElementType>,
     }
@@ -10680,11 +10670,11 @@ pub mod document {
         PageMode(CtVPreferencesPageModeXElementType),
         PageLayout(CtVPreferencesPageLayoutXElementType),
         TabDisplay(CtVPreferencesTabDisplayXElementType),
-        HideToolbar(::core::primitive::bool),
-        HideMenubar(::core::primitive::bool),
-        HideWindowUi(::core::primitive::bool),
+        HideToolbar(bool),
+        HideMenubar(bool),
+        HideWindowUi(bool),
         ZoomMode(CtVPreferencesZoomModeXElementType),
-        Zoom(::core::primitive::f64),
+        Zoom(f64),
     }
     impl WithSerializer for CtVPreferencesXType {
         type Serializer<'x> = quick_xml_serialize::CtVPreferencesXTypeSerializer<'x>;
@@ -10734,10 +10724,10 @@ pub mod document {
         pub actions: Option<super::page::CtGraphicUnitActionsXElementType>,
         pub v_preferences: Option<CtVPreferencesXType>,
         pub bookmarks: Option<DocumentBookmarksXElementType>,
-        pub annotations: Option<::std::string::String>,
-        pub custom_tags: Option<::std::string::String>,
-        pub attachments: Option<::std::string::String>,
-        pub extensions: Option<::std::string::String>,
+        pub annotations: Option<String>,
+        pub custom_tags: Option<String>,
+        pub attachments: Option<String>,
+        pub extensions: Option<String>,
     }
     impl WithSerializer for DocumentXElementType {
         type Serializer<'x> = quick_xml_serialize::DocumentXElementTypeSerializer<'x>;
@@ -10759,12 +10749,12 @@ pub mod document {
     }
     #[derive(Debug)]
     pub struct CtPermissionPrintXElementType {
-        pub printable: ::core::primitive::bool,
-        pub copies: ::core::primitive::i32,
+        pub printable: bool,
+        pub copies: i32,
     }
     impl CtPermissionPrintXElementType {
         #[must_use]
-        pub fn default_copies() -> ::core::primitive::i32 {
+        pub fn default_copies() -> i32 {
             -1i32
         }
     }
@@ -10792,8 +10782,8 @@ pub mod document {
     }
     #[derive(Debug)]
     pub struct CtPermissionValidPeriodXElementType {
-        pub start_date: Option<::std::string::String>,
-        pub end_date: Option<::std::string::String>,
+        pub start_date: Option<String>,
+        pub end_date: Option<String>,
     }
     impl WithSerializer for CtPermissionValidPeriodXElementType {
         type Serializer<'x> =
@@ -10959,12 +10949,12 @@ pub mod document {
     }
     #[derive(Debug)]
     pub struct DocumentCommonDataXElementType {
-        pub max_unit_id: ::core::primitive::u32,
+        pub max_unit_id: u32,
         pub page_area: super::definition::CtPageAreaXType,
-        pub public_res: Vec<::std::string::String>,
-        pub document_res: Vec<::std::string::String>,
+        pub public_res: Vec<String>,
+        pub document_res: Vec<String>,
         pub template_page: Vec<DocumentCommonDataTemplatePageXElementType>,
-        pub default_cs: Option<::core::primitive::u32>,
+        pub default_cs: Option<u32>,
     }
     impl WithSerializer for DocumentCommonDataXElementType {
         type Serializer<'x> = quick_xml_serialize::DocumentCommonDataXElementTypeSerializer<'x>;
@@ -11066,10 +11056,10 @@ pub mod document {
     }
     #[derive(Debug)]
     pub struct DocumentCommonDataTemplatePageXElementType {
-        pub id: ::std::string::String,
-        pub name: Option<::std::string::String>,
+        pub id: String,
+        pub name: Option<String>,
         pub z_order: Option<DocumentCommonDataTemplatePageZOrderXType>,
-        pub base_loc: ::std::string::String,
+        pub base_loc: String,
     }
     impl WithSerializer for DocumentCommonDataTemplatePageXElementType {
         type Serializer<'x> =
@@ -11088,8 +11078,8 @@ pub mod document {
     }
     #[derive(Debug)]
     pub struct DocumentPagesPageXElementType {
-        pub id: ::core::primitive::u32,
-        pub base_loc: ::std::string::String,
+        pub id: u32,
+        pub base_loc: String,
     }
     impl WithSerializer for DocumentPagesPageXElementType {
         type Serializer<'x> = quick_xml_serialize::DocumentPagesPageXElementTypeSerializer<'x>;
@@ -11150,7 +11140,7 @@ pub mod document {
         };
         #[derive(Debug)]
         pub struct CtBookmarkXTypeDeserializer {
-            name: ::std::string::String,
+            name: String,
             dest: Option<super::super::definition::CtDestXType>,
             state__: Box<CtBookmarkXTypeDeserializerState>,
         }
@@ -11166,7 +11156,7 @@ pub mod document {
             where
                 R: DeserializeReader,
             {
-                let mut name: Option<::std::string::String> = None;
+                let mut name: Option<String> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -11372,9 +11362,9 @@ pub mod document {
         }
         #[derive(Debug)]
         pub struct CtOutlineElemXTypeDeserializer {
-            title: ::std::string::String,
-            count: Option<::core::primitive::i32>,
-            expanded: ::core::primitive::bool,
+            title: String,
+            count: Option<i32>,
+            expanded: bool,
             actions: Option<super::super::page::CtGraphicUnitActionsXElementType>,
             outline_elem: Vec<super::CtOutlineElemXType>,
             state__: Box<CtOutlineElemXTypeDeserializerState>,
@@ -11387,9 +11377,9 @@ pub mod document {
             where
                 R: DeserializeReader,
             {
-                let mut title: Option<::std::string::String> = None;
-                let mut count: Option<::core::primitive::i32> = None;
-                let mut expanded: Option<::core::primitive::bool> = None;
+                let mut title: Option<String> = None;
+                let mut count: Option<i32> = None;
+                let mut expanded: Option<bool> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -11705,12 +11695,12 @@ pub mod document {
         }
         #[derive(Debug)]
         pub struct CtPermissionXTypeDeserializer {
-            edit: Option<::core::primitive::bool>,
-            annot: Option<::core::primitive::bool>,
-            export: Option<::core::primitive::bool>,
-            signature: Option<::core::primitive::bool>,
-            watermark: Option<::core::primitive::bool>,
-            print_screen: Option<::core::primitive::bool>,
+            edit: Option<bool>,
+            annot: Option<bool>,
+            export: Option<bool>,
+            signature: Option<bool>,
+            watermark: Option<bool>,
+            print_screen: Option<bool>,
             print: Option<super::CtPermissionPrintXElementType>,
             valid_period: Option<super::CtPermissionValidPeriodXElementType>,
             state__: Box<CtPermissionXTypeDeserializerState>,
@@ -11718,12 +11708,12 @@ pub mod document {
         #[derive(Debug)]
         enum CtPermissionXTypeDeserializerState {
             Init__,
-            Edit(Option<<::core::primitive::bool as WithDeserializer>::Deserializer>),
-            Annot(Option<<::core::primitive::bool as WithDeserializer>::Deserializer>),
-            Export(Option<<::core::primitive::bool as WithDeserializer>::Deserializer>),
-            Signature(Option<<::core::primitive::bool as WithDeserializer>::Deserializer>),
-            Watermark(Option<<::core::primitive::bool as WithDeserializer>::Deserializer>),
-            PrintScreen(Option<<::core::primitive::bool as WithDeserializer>::Deserializer>),
+            Edit(Option<<bool as WithDeserializer>::Deserializer>),
+            Annot(Option<<bool as WithDeserializer>::Deserializer>),
+            Export(Option<<bool as WithDeserializer>::Deserializer>),
+            Signature(Option<<bool as WithDeserializer>::Deserializer>),
+            Watermark(Option<<bool as WithDeserializer>::Deserializer>),
+            PrintScreen(Option<<bool as WithDeserializer>::Deserializer>),
             Print(Option<<super::CtPermissionPrintXElementType as WithDeserializer>::Deserializer>),
             ValidPeriod(
                 Option<
@@ -11790,14 +11780,14 @@ pub mod document {
                 }
                 Ok(())
             }
-            fn store_edit(&mut self, value: ::core::primitive::bool) -> Result<(), Error> {
+            fn store_edit(&mut self, value: bool) -> Result<(), Error> {
                 if self.edit.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(b"Edit")))?;
                 }
                 self.edit = Some(value);
                 Ok(())
             }
-            fn store_annot(&mut self, value: ::core::primitive::bool) -> Result<(), Error> {
+            fn store_annot(&mut self, value: bool) -> Result<(), Error> {
                 if self.annot.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Annot",
@@ -11806,7 +11796,7 @@ pub mod document {
                 self.annot = Some(value);
                 Ok(())
             }
-            fn store_export(&mut self, value: ::core::primitive::bool) -> Result<(), Error> {
+            fn store_export(&mut self, value: bool) -> Result<(), Error> {
                 if self.export.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Export",
@@ -11815,7 +11805,7 @@ pub mod document {
                 self.export = Some(value);
                 Ok(())
             }
-            fn store_signature(&mut self, value: ::core::primitive::bool) -> Result<(), Error> {
+            fn store_signature(&mut self, value: bool) -> Result<(), Error> {
                 if self.signature.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Signature",
@@ -11824,7 +11814,7 @@ pub mod document {
                 self.signature = Some(value);
                 Ok(())
             }
-            fn store_watermark(&mut self, value: ::core::primitive::bool) -> Result<(), Error> {
+            fn store_watermark(&mut self, value: bool) -> Result<(), Error> {
                 if self.watermark.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Watermark",
@@ -11833,7 +11823,7 @@ pub mod document {
                 self.watermark = Some(value);
                 Ok(())
             }
-            fn store_print_screen(&mut self, value: ::core::primitive::bool) -> Result<(), Error> {
+            fn store_print_screen(&mut self, value: bool) -> Result<(), Error> {
                 if self.print_screen.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"PrintScreen",
@@ -11869,7 +11859,7 @@ pub mod document {
             fn handle_edit<'de, R>(
                 &mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, ::core::primitive::bool>,
+                output: DeserializerOutput<'de, bool>,
                 fallback: &mut Option<CtPermissionXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -11916,7 +11906,7 @@ pub mod document {
             fn handle_annot<'de, R>(
                 &mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, ::core::primitive::bool>,
+                output: DeserializerOutput<'de, bool>,
                 fallback: &mut Option<CtPermissionXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -11963,7 +11953,7 @@ pub mod document {
             fn handle_export<'de, R>(
                 &mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, ::core::primitive::bool>,
+                output: DeserializerOutput<'de, bool>,
                 fallback: &mut Option<CtPermissionXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -12010,7 +12000,7 @@ pub mod document {
             fn handle_signature<'de, R>(
                 &mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, ::core::primitive::bool>,
+                output: DeserializerOutput<'de, bool>,
                 fallback: &mut Option<CtPermissionXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -12060,7 +12050,7 @@ pub mod document {
             fn handle_watermark<'de, R>(
                 &mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, ::core::primitive::bool>,
+                output: DeserializerOutput<'de, bool>,
                 fallback: &mut Option<CtPermissionXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -12111,7 +12101,7 @@ pub mod document {
             fn handle_print_screen<'de, R>(
                 &mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, ::core::primitive::bool>,
+                output: DeserializerOutput<'de, bool>,
                 fallback: &mut Option<CtPermissionXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -12770,16 +12760,16 @@ pub mod document {
                 >,
             ),
             HideToolbar(
-                Option<::core::primitive::bool>,
-                Option<<::core::primitive::bool as WithDeserializer>::Deserializer>,
+                Option<bool>,
+                Option<<bool as WithDeserializer>::Deserializer>,
             ),
             HideMenubar(
-                Option<::core::primitive::bool>,
-                Option<<::core::primitive::bool as WithDeserializer>::Deserializer>,
+                Option<bool>,
+                Option<<bool as WithDeserializer>::Deserializer>,
             ),
             HideWindowUi(
-                Option<::core::primitive::bool>,
-                Option<<::core::primitive::bool as WithDeserializer>::Deserializer>,
+                Option<bool>,
+                Option<<bool as WithDeserializer>::Deserializer>,
             ),
             ZoomMode(
                 Option<super::CtVPreferencesZoomModeXElementType>,
@@ -12787,10 +12777,7 @@ pub mod document {
                     <super::CtVPreferencesZoomModeXElementType as WithDeserializer>::Deserializer,
                 >,
             ),
-            Zoom(
-                Option<::core::primitive::f64>,
-                Option<<::core::primitive::f64 as WithDeserializer>::Deserializer>,
-            ),
+            Zoom(Option<f64>, Option<<f64 as WithDeserializer>::Deserializer>),
             Done__(super::CtVPreferencesXTypeContent),
             Unknown__,
         }
@@ -12845,10 +12832,7 @@ pub mod document {
                         reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"HideToolbar")
                     ) {
-                        let output =
-                            <::core::primitive::bool as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
+                        let output = <bool as WithDeserializer>::Deserializer::init(reader, event)?;
                         return self.handle_hide_toolbar(
                             reader,
                             Default::default(),
@@ -12860,10 +12844,7 @@ pub mod document {
                         reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"HideMenubar")
                     ) {
-                        let output =
-                            <::core::primitive::bool as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
+                        let output = <bool as WithDeserializer>::Deserializer::init(reader, event)?;
                         return self.handle_hide_menubar(
                             reader,
                             Default::default(),
@@ -12875,10 +12856,7 @@ pub mod document {
                         reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"HideWindowUI")
                     ) {
-                        let output =
-                            <::core::primitive::bool as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
+                        let output = <bool as WithDeserializer>::Deserializer::init(reader, event)?;
                         return self.handle_hide_window_ui(
                             reader,
                             Default::default(),
@@ -12902,10 +12880,7 @@ pub mod document {
                         reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"Zoom")
                     ) {
-                        let output =
-                            <::core::primitive::f64 as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
+                        let output = <f64 as WithDeserializer>::Deserializer::init(reader, event)?;
                         return self.handle_zoom(
                             reader,
                             Default::default(),
@@ -13044,10 +13019,7 @@ pub mod document {
                 *values = Some(value);
                 Ok(())
             }
-            fn store_hide_toolbar(
-                values: &mut Option<::core::primitive::bool>,
-                value: ::core::primitive::bool,
-            ) -> Result<(), Error> {
+            fn store_hide_toolbar(values: &mut Option<bool>, value: bool) -> Result<(), Error> {
                 if values.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"HideToolbar",
@@ -13056,10 +13028,7 @@ pub mod document {
                 *values = Some(value);
                 Ok(())
             }
-            fn store_hide_menubar(
-                values: &mut Option<::core::primitive::bool>,
-                value: ::core::primitive::bool,
-            ) -> Result<(), Error> {
+            fn store_hide_menubar(values: &mut Option<bool>, value: bool) -> Result<(), Error> {
                 if values.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"HideMenubar",
@@ -13068,10 +13037,7 @@ pub mod document {
                 *values = Some(value);
                 Ok(())
             }
-            fn store_hide_window_ui(
-                values: &mut Option<::core::primitive::bool>,
-                value: ::core::primitive::bool,
-            ) -> Result<(), Error> {
+            fn store_hide_window_ui(values: &mut Option<bool>, value: bool) -> Result<(), Error> {
                 if values.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"HideWindowUI",
@@ -13092,10 +13058,7 @@ pub mod document {
                 *values = Some(value);
                 Ok(())
             }
-            fn store_zoom(
-                values: &mut Option<::core::primitive::f64>,
-                value: ::core::primitive::f64,
-            ) -> Result<(), Error> {
+            fn store_zoom(values: &mut Option<f64>, value: f64) -> Result<(), Error> {
                 if values.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(b"Zoom")))?;
                 }
@@ -13301,8 +13264,8 @@ pub mod document {
             fn handle_hide_toolbar<'de, R>(
                 &mut self,
                 reader: &R,
-                mut values: Option<::core::primitive::bool>,
-                output: DeserializerOutput<'de, ::core::primitive::bool>,
+                mut values: Option<bool>,
+                output: DeserializerOutput<'de, bool>,
                 fallback: &mut Option<CtVPreferencesXTypeContentDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -13367,8 +13330,8 @@ pub mod document {
             fn handle_hide_menubar<'de, R>(
                 &mut self,
                 reader: &R,
-                mut values: Option<::core::primitive::bool>,
-                output: DeserializerOutput<'de, ::core::primitive::bool>,
+                mut values: Option<bool>,
+                output: DeserializerOutput<'de, bool>,
                 fallback: &mut Option<CtVPreferencesXTypeContentDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -13433,8 +13396,8 @@ pub mod document {
             fn handle_hide_window_ui<'de, R>(
                 &mut self,
                 reader: &R,
-                mut values: Option<::core::primitive::bool>,
-                output: DeserializerOutput<'de, ::core::primitive::bool>,
+                mut values: Option<bool>,
+                output: DeserializerOutput<'de, bool>,
                 fallback: &mut Option<CtVPreferencesXTypeContentDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -13563,8 +13526,8 @@ pub mod document {
             fn handle_zoom<'de, R>(
                 &mut self,
                 reader: &R,
-                mut values: Option<::core::primitive::f64>,
-                output: DeserializerOutput<'de, ::core::primitive::f64>,
+                mut values: Option<f64>,
+                output: DeserializerOutput<'de, f64>,
                 fallback: &mut Option<CtVPreferencesXTypeContentDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -13911,15 +13874,15 @@ pub mod document {
             actions: Option<super::super::page::CtGraphicUnitActionsXElementType>,
             v_preferences: Option<super::CtVPreferencesXType>,
             bookmarks: Option<super::DocumentBookmarksXElementType>,
-            annotations: Option<::std::string::String>,
-            custom_tags: Option<::std::string::String>,
-            attachments: Option<::std::string::String>,
-            extensions: Option<::std::string::String>,
+            annotations: Option<String>,
+            custom_tags: Option<String>,
+            attachments: Option<String>,
+            extensions: Option<String>,
             state__: Box<DocumentXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum DocumentXElementTypeDeserializerState {
-            Init__ , CommonData (Option << super :: DocumentCommonDataXElementType as WithDeserializer > :: Deserializer >) , Pages (Option << super :: DocumentPagesXElementType as WithDeserializer > :: Deserializer >) , Outlines (Option << super :: DocumentOutlinesXElementType as WithDeserializer > :: Deserializer >) , Permissions (Option << super :: CtPermissionXType as WithDeserializer > :: Deserializer >) , Actions (Option << super :: super :: page :: CtGraphicUnitActionsXElementType as WithDeserializer > :: Deserializer >) , VPreferences (Option << super :: CtVPreferencesXType as WithDeserializer > :: Deserializer >) , Bookmarks (Option << super :: DocumentBookmarksXElementType as WithDeserializer > :: Deserializer >) , Annotations (Option << :: std :: string :: String as WithDeserializer > :: Deserializer >) , CustomTags (Option << :: std :: string :: String as WithDeserializer > :: Deserializer >) , Attachments (Option << :: std :: string :: String as WithDeserializer > :: Deserializer >) , Extensions (Option << :: std :: string :: String as WithDeserializer > :: Deserializer >) , Done__ , Unknown__ , }
+            Init__ , CommonData (Option << super :: DocumentCommonDataXElementType as WithDeserializer > :: Deserializer >) , Pages (Option << super :: DocumentPagesXElementType as WithDeserializer > :: Deserializer >) , Outlines (Option << super :: DocumentOutlinesXElementType as WithDeserializer > :: Deserializer >) , Permissions (Option << super :: CtPermissionXType as WithDeserializer > :: Deserializer >) , Actions (Option << super :: super :: page :: CtGraphicUnitActionsXElementType as WithDeserializer > :: Deserializer >) , VPreferences (Option << super :: CtVPreferencesXType as WithDeserializer > :: Deserializer >) , Bookmarks (Option << super :: DocumentBookmarksXElementType as WithDeserializer > :: Deserializer >) , Annotations (Option << String as WithDeserializer > :: Deserializer >) , CustomTags (Option << String as WithDeserializer > :: Deserializer >) , Attachments (Option << String as WithDeserializer > :: Deserializer >) , Extensions (Option << String as WithDeserializer > :: Deserializer >) , Done__ , Unknown__ , }
         impl DocumentXElementTypeDeserializer {
             fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
             where
@@ -14072,7 +14035,7 @@ pub mod document {
                 self.bookmarks = Some(value);
                 Ok(())
             }
-            fn store_annotations(&mut self, value: ::std::string::String) -> Result<(), Error> {
+            fn store_annotations(&mut self, value: String) -> Result<(), Error> {
                 if self.annotations.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Annotations",
@@ -14081,7 +14044,7 @@ pub mod document {
                 self.annotations = Some(value);
                 Ok(())
             }
-            fn store_custom_tags(&mut self, value: ::std::string::String) -> Result<(), Error> {
+            fn store_custom_tags(&mut self, value: String) -> Result<(), Error> {
                 if self.custom_tags.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"CustomTags",
@@ -14090,7 +14053,7 @@ pub mod document {
                 self.custom_tags = Some(value);
                 Ok(())
             }
-            fn store_attachments(&mut self, value: ::std::string::String) -> Result<(), Error> {
+            fn store_attachments(&mut self, value: String) -> Result<(), Error> {
                 if self.attachments.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Attachments",
@@ -14099,7 +14062,7 @@ pub mod document {
                 self.attachments = Some(value);
                 Ok(())
             }
-            fn store_extensions(&mut self, value: ::std::string::String) -> Result<(), Error> {
+            fn store_extensions(&mut self, value: String) -> Result<(), Error> {
                 if self.extensions.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Extensions",
@@ -14483,7 +14446,7 @@ pub mod document {
             fn handle_annotations<'de, R>(
                 &mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, ::std::string::String>,
+                output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<DocumentXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -14535,7 +14498,7 @@ pub mod document {
             fn handle_custom_tags<'de, R>(
                 &mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, ::std::string::String>,
+                output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<DocumentXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -14586,7 +14549,7 @@ pub mod document {
             fn handle_attachments<'de, R>(
                 &mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, ::std::string::String>,
+                output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<DocumentXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -14638,7 +14601,7 @@ pub mod document {
             fn handle_extensions<'de, R>(
                 &mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, ::std::string::String>,
+                output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<DocumentXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -15095,8 +15058,8 @@ pub mod document {
         }
         #[derive(Debug)]
         pub struct CtPermissionPrintXElementTypeDeserializer {
-            printable: ::core::primitive::bool,
-            copies: ::core::primitive::i32,
+            printable: bool,
+            copies: i32,
             state__: Box<CtPermissionPrintXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
@@ -15109,8 +15072,8 @@ pub mod document {
             where
                 R: DeserializeReader,
             {
-                let mut printable: Option<::core::primitive::bool> = None;
-                let mut copies: Option<::core::primitive::i32> = None;
+                let mut printable: Option<bool> = None;
+                let mut copies: Option<i32> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -15201,8 +15164,8 @@ pub mod document {
         }
         #[derive(Debug)]
         pub struct CtPermissionValidPeriodXElementTypeDeserializer {
-            start_date: Option<::std::string::String>,
-            end_date: Option<::std::string::String>,
+            start_date: Option<String>,
+            end_date: Option<String>,
             state__: Box<CtPermissionValidPeriodXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
@@ -15215,8 +15178,8 @@ pub mod document {
             where
                 R: DeserializeReader,
             {
-                let mut start_date: Option<::std::string::String> = None;
-                let mut end_date: Option<::std::string::String> = None;
+                let mut start_date: Option<String> = None;
+                let mut end_date: Option<String> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -15304,17 +15267,17 @@ pub mod document {
         }
         #[derive(Debug)]
         pub struct DocumentCommonDataXElementTypeDeserializer {
-            max_unit_id: Option<::core::primitive::u32>,
+            max_unit_id: Option<u32>,
             page_area: Option<super::super::definition::CtPageAreaXType>,
-            public_res: Vec<::std::string::String>,
-            document_res: Vec<::std::string::String>,
+            public_res: Vec<String>,
+            document_res: Vec<String>,
             template_page: Vec<super::DocumentCommonDataTemplatePageXElementType>,
-            default_cs: Option<::core::primitive::u32>,
+            default_cs: Option<u32>,
             state__: Box<DocumentCommonDataXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum DocumentCommonDataXElementTypeDeserializerState {
-            Init__ , MaxUnitId (Option << :: core :: primitive :: u32 as WithDeserializer > :: Deserializer >) , PageArea (Option << super :: super :: definition :: CtPageAreaXType as WithDeserializer > :: Deserializer >) , PublicRes (Option << :: std :: string :: String as WithDeserializer > :: Deserializer >) , DocumentRes (Option << :: std :: string :: String as WithDeserializer > :: Deserializer >) , TemplatePage (Option << super :: DocumentCommonDataTemplatePageXElementType as WithDeserializer > :: Deserializer >) , DefaultCs (Option << :: core :: primitive :: u32 as WithDeserializer > :: Deserializer >) , Done__ , Unknown__ , }
+            Init__ , MaxUnitId (Option << u32 as WithDeserializer > :: Deserializer >) , PageArea (Option << super :: super :: definition :: CtPageAreaXType as WithDeserializer > :: Deserializer >) , PublicRes (Option << String as WithDeserializer > :: Deserializer >) , DocumentRes (Option << String as WithDeserializer > :: Deserializer >) , TemplatePage (Option << super :: DocumentCommonDataTemplatePageXElementType as WithDeserializer > :: Deserializer >) , DefaultCs (Option << u32 as WithDeserializer > :: Deserializer >) , Done__ , Unknown__ , }
         impl DocumentCommonDataXElementTypeDeserializer {
             fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
             where
@@ -15366,7 +15329,7 @@ pub mod document {
                 }
                 Ok(())
             }
-            fn store_max_unit_id(&mut self, value: ::core::primitive::u32) -> Result<(), Error> {
+            fn store_max_unit_id(&mut self, value: u32) -> Result<(), Error> {
                 if self.max_unit_id.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"MaxUnitID",
@@ -15387,11 +15350,11 @@ pub mod document {
                 self.page_area = Some(value);
                 Ok(())
             }
-            fn store_public_res(&mut self, value: ::std::string::String) -> Result<(), Error> {
+            fn store_public_res(&mut self, value: String) -> Result<(), Error> {
                 self.public_res.push(value);
                 Ok(())
             }
-            fn store_document_res(&mut self, value: ::std::string::String) -> Result<(), Error> {
+            fn store_document_res(&mut self, value: String) -> Result<(), Error> {
                 self.document_res.push(value);
                 Ok(())
             }
@@ -15402,7 +15365,7 @@ pub mod document {
                 self.template_page.push(value);
                 Ok(())
             }
-            fn store_default_cs(&mut self, value: ::core::primitive::u32) -> Result<(), Error> {
+            fn store_default_cs(&mut self, value: u32) -> Result<(), Error> {
                 if self.default_cs.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"DefaultCs",
@@ -15414,7 +15377,7 @@ pub mod document {
             fn handle_max_unit_id<'de, R>(
                 &mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, ::core::primitive::u32>,
+                output: DeserializerOutput<'de, u32>,
                 fallback: &mut Option<DocumentCommonDataXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -15540,7 +15503,7 @@ pub mod document {
             fn handle_public_res<'de, R>(
                 &mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, ::std::string::String>,
+                output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<DocumentCommonDataXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -15598,7 +15561,7 @@ pub mod document {
             fn handle_document_res<'de, R>(
                 &mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, ::std::string::String>,
+                output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<DocumentCommonDataXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -15714,7 +15677,7 @@ pub mod document {
             fn handle_default_cs<'de, R>(
                 &mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, ::core::primitive::u32>,
+                output: DeserializerOutput<'de, u32>,
                 fallback: &mut Option<DocumentCommonDataXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -16695,10 +16658,10 @@ pub mod document {
         }
         #[derive(Debug)]
         pub struct DocumentCommonDataTemplatePageXElementTypeDeserializer {
-            id: ::std::string::String,
-            name: Option<::std::string::String>,
+            id: String,
+            name: Option<String>,
             z_order: Option<super::DocumentCommonDataTemplatePageZOrderXType>,
-            base_loc: ::std::string::String,
+            base_loc: String,
             state__: Box<DocumentCommonDataTemplatePageXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
@@ -16711,10 +16674,10 @@ pub mod document {
             where
                 R: DeserializeReader,
             {
-                let mut id: Option<::std::string::String> = None;
-                let mut name: Option<::std::string::String> = None;
+                let mut id: Option<String> = None;
+                let mut name: Option<String> = None;
                 let mut z_order: Option<super::DocumentCommonDataTemplatePageZOrderXType> = None;
-                let mut base_loc: Option<::std::string::String> = None;
+                let mut base_loc: Option<String> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -16822,8 +16785,8 @@ pub mod document {
         }
         #[derive(Debug)]
         pub struct DocumentPagesPageXElementTypeDeserializer {
-            id: ::core::primitive::u32,
-            base_loc: ::std::string::String,
+            id: u32,
+            base_loc: String,
             state__: Box<DocumentPagesPageXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
@@ -16836,8 +16799,8 @@ pub mod document {
             where
                 R: DeserializeReader,
             {
-                let mut id: Option<::core::primitive::u32> = None;
-                let mut base_loc: Option<::std::string::String> = None;
+                let mut id: Option<u32> = None;
+                let mut base_loc: Option<String> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -17094,48 +17057,12 @@ pub mod document {
         #[derive(Debug)]
         pub(super) enum CtPermissionXTypeSerializerState<'ser> {
             Init__,
-            Edit(
-                IterSerializer<
-                    'ser,
-                    Option<&'ser ::core::primitive::bool>,
-                    ::core::primitive::bool,
-                >,
-            ),
-            Annot(
-                IterSerializer<
-                    'ser,
-                    Option<&'ser ::core::primitive::bool>,
-                    ::core::primitive::bool,
-                >,
-            ),
-            Export(
-                IterSerializer<
-                    'ser,
-                    Option<&'ser ::core::primitive::bool>,
-                    ::core::primitive::bool,
-                >,
-            ),
-            Signature(
-                IterSerializer<
-                    'ser,
-                    Option<&'ser ::core::primitive::bool>,
-                    ::core::primitive::bool,
-                >,
-            ),
-            Watermark(
-                IterSerializer<
-                    'ser,
-                    Option<&'ser ::core::primitive::bool>,
-                    ::core::primitive::bool,
-                >,
-            ),
-            PrintScreen(
-                IterSerializer<
-                    'ser,
-                    Option<&'ser ::core::primitive::bool>,
-                    ::core::primitive::bool,
-                >,
-            ),
+            Edit(IterSerializer<'ser, Option<&'ser bool>, bool>),
+            Annot(IterSerializer<'ser, Option<&'ser bool>, bool>),
+            Export(IterSerializer<'ser, Option<&'ser bool>, bool>),
+            Signature(IterSerializer<'ser, Option<&'ser bool>, bool>),
+            Watermark(IterSerializer<'ser, Option<&'ser bool>, bool>),
+            PrintScreen(IterSerializer<'ser, Option<&'ser bool>, bool>),
             Print(
                 IterSerializer<
                     'ser,
@@ -17374,13 +17301,13 @@ pub mod document {
             TabDisplay(
                 <super::CtVPreferencesTabDisplayXElementType as WithSerializer>::Serializer<'ser>,
             ),
-            HideToolbar(<::core::primitive::bool as WithSerializer>::Serializer<'ser>),
-            HideMenubar(<::core::primitive::bool as WithSerializer>::Serializer<'ser>),
-            HideWindowUi(<::core::primitive::bool as WithSerializer>::Serializer<'ser>),
+            HideToolbar(<bool as WithSerializer>::Serializer<'ser>),
+            HideMenubar(<bool as WithSerializer>::Serializer<'ser>),
+            HideWindowUi(<bool as WithSerializer>::Serializer<'ser>),
             ZoomMode(
                 <super::CtVPreferencesZoomModeXElementType as WithSerializer>::Serializer<'ser>,
             ),
-            Zoom(<::core::primitive::f64 as WithSerializer>::Serializer<'ser>),
+            Zoom(<f64 as WithSerializer>::Serializer<'ser>),
             Done__,
             Phantom__(&'ser ()),
         }
@@ -17561,18 +17488,10 @@ pub mod document {
                     super::DocumentBookmarksXElementType,
                 >,
             ),
-            Annotations(
-                IterSerializer<'ser, Option<&'ser ::std::string::String>, ::std::string::String>,
-            ),
-            CustomTags(
-                IterSerializer<'ser, Option<&'ser ::std::string::String>, ::std::string::String>,
-            ),
-            Attachments(
-                IterSerializer<'ser, Option<&'ser ::std::string::String>, ::std::string::String>,
-            ),
-            Extensions(
-                IterSerializer<'ser, Option<&'ser ::std::string::String>, ::std::string::String>,
-            ),
+            Annotations(IterSerializer<'ser, Option<&'ser String>, String>),
+            CustomTags(IterSerializer<'ser, Option<&'ser String>, String>),
+            Attachments(IterSerializer<'ser, Option<&'ser String>, String>),
+            Extensions(IterSerializer<'ser, Option<&'ser String>, String>),
             End__,
             Done__,
             Phantom__(&'ser ()),
@@ -17882,12 +17801,12 @@ pub mod document {
         #[derive(Debug)]
         pub(super) enum DocumentCommonDataXElementTypeSerializerState<'ser> {
             Init__,
-            MaxUnitId(<::core::primitive::u32 as WithSerializer>::Serializer<'ser>),
+            MaxUnitId(<u32 as WithSerializer>::Serializer<'ser>),
             PageArea(
                 <super::super::definition::CtPageAreaXType as WithSerializer>::Serializer<'ser>,
             ),
-            PublicRes(IterSerializer<'ser, &'ser [::std::string::String], ::std::string::String>),
-            DocumentRes(IterSerializer<'ser, &'ser [::std::string::String], ::std::string::String>),
+            PublicRes(IterSerializer<'ser, &'ser [String], String>),
+            DocumentRes(IterSerializer<'ser, &'ser [String], String>),
             TemplatePage(
                 IterSerializer<
                     'ser,
@@ -17895,9 +17814,7 @@ pub mod document {
                     super::DocumentCommonDataTemplatePageXElementType,
                 >,
             ),
-            DefaultCs(
-                IterSerializer<'ser, Option<&'ser ::core::primitive::u32>, ::core::primitive::u32>,
-            ),
+            DefaultCs(IterSerializer<'ser, Option<&'ser u32>, u32>),
             End__,
             Done__,
             Phantom__(&'ser ()),
@@ -18353,18 +18270,18 @@ pub mod extensions {
     use xsd_parser::quick_xml::{Error, WithDeserializer, WithSerializer};
     #[derive(Debug)]
     pub struct CtExtensionXType {
-        pub app_name: ::std::string::String,
-        pub company: Option<::std::string::String>,
-        pub app_version: Option<::std::string::String>,
-        pub date: Option<::std::string::String>,
-        pub ref_id: ::core::primitive::u32,
+        pub app_name: String,
+        pub company: Option<String>,
+        pub app_version: Option<String>,
+        pub date: Option<String>,
+        pub ref_id: u32,
         pub content: Vec<CtExtensionXTypeContent>,
     }
     #[derive(Debug)]
     pub enum CtExtensionXTypeContent {
         Property(CtExtensionPropertyXElementType),
         Data(super::xs::AnyTypeXType),
-        ExtendData(::std::string::String),
+        ExtendData(String),
     }
     impl WithSerializer for CtExtensionXType {
         type Serializer<'x> = quick_xml_serialize::CtExtensionXTypeSerializer<'x>;
@@ -18429,9 +18346,9 @@ pub mod extensions {
     }
     #[derive(Debug)]
     pub struct CtExtensionPropertyXElementType {
-        pub name: ::std::string::String,
-        pub type_: Option<::std::string::String>,
-        pub content: ::std::string::String,
+        pub name: String,
+        pub type_: Option<String>,
+        pub content: String,
     }
     impl WithSerializer for CtExtensionPropertyXElementType {
         type Serializer<'x> = quick_xml_serialize::CtExtensionPropertyXElementTypeSerializer<'x>;
@@ -18465,11 +18382,11 @@ pub mod extensions {
         };
         #[derive(Debug)]
         pub struct CtExtensionXTypeDeserializer {
-            app_name: ::std::string::String,
-            company: Option<::std::string::String>,
-            app_version: Option<::std::string::String>,
-            date: Option<::std::string::String>,
-            ref_id: ::core::primitive::u32,
+            app_name: String,
+            company: Option<String>,
+            app_version: Option<String>,
+            date: Option<String>,
+            ref_id: u32,
             content: Vec<super::CtExtensionXTypeContent>,
             state__: Box<CtExtensionXTypeDeserializerState>,
         }
@@ -18485,11 +18402,11 @@ pub mod extensions {
             where
                 R: DeserializeReader,
             {
-                let mut app_name: Option<::std::string::String> = None;
-                let mut company: Option<::std::string::String> = None;
-                let mut app_version: Option<::std::string::String> = None;
-                let mut date: Option<::std::string::String> = None;
-                let mut ref_id: Option<::core::primitive::u32> = None;
+                let mut app_name: Option<String> = None;
+                let mut company: Option<String> = None;
+                let mut app_version: Option<String> = None;
+                let mut date: Option<String> = None;
+                let mut ref_id: Option<u32> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -18699,8 +18616,8 @@ pub mod extensions {
                 Option<<super::super::xs::AnyTypeXType as WithDeserializer>::Deserializer>,
             ),
             ExtendData(
-                Option<::std::string::String>,
-                Option<<::std::string::String as WithDeserializer>::Deserializer>,
+                Option<String>,
+                Option<<String as WithDeserializer>::Deserializer>,
             ),
             Done__(super::CtExtensionXTypeContent),
             Unknown__,
@@ -18745,9 +18662,7 @@ pub mod extensions {
                         Some(b"ExtendData")
                     ) {
                         let output =
-                            <::std::string::String as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
+                            <String as WithDeserializer>::Deserializer::init(reader, event)?;
                         return self.handle_extend_data(
                             reader,
                             Default::default(),
@@ -18824,10 +18739,7 @@ pub mod extensions {
                 *values = Some(value);
                 Ok(())
             }
-            fn store_extend_data(
-                values: &mut Option<::std::string::String>,
-                value: ::std::string::String,
-            ) -> Result<(), Error> {
+            fn store_extend_data(values: &mut Option<String>, value: String) -> Result<(), Error> {
                 if values.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"ExtendData",
@@ -18964,8 +18876,8 @@ pub mod extensions {
             fn handle_extend_data<'de, R>(
                 &mut self,
                 reader: &R,
-                mut values: Option<::std::string::String>,
-                output: DeserializerOutput<'de, ::std::string::String>,
+                mut values: Option<String>,
+                output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<CtExtensionXTypeContentDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -19394,15 +19306,15 @@ pub mod extensions {
         }
         #[derive(Debug)]
         pub struct CtExtensionPropertyXElementTypeDeserializer {
-            name: ::std::string::String,
-            type_: Option<::std::string::String>,
-            content: Option<::std::string::String>,
+            name: String,
+            type_: Option<String>,
+            content: Option<String>,
             state__: Box<CtExtensionPropertyXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtExtensionPropertyXElementTypeDeserializerState {
             Init__,
-            Content__(<::std::string::String as WithDeserializer>::Deserializer),
+            Content__(<String as WithDeserializer>::Deserializer),
             Unknown__,
         }
         impl CtExtensionPropertyXElementTypeDeserializer {
@@ -19410,8 +19322,8 @@ pub mod extensions {
             where
                 R: DeserializeReader,
             {
-                let mut name: Option<::std::string::String> = None;
-                let mut type_: Option<::std::string::String> = None;
+                let mut name: Option<String> = None;
+                let mut type_: Option<String> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -19452,7 +19364,7 @@ pub mod extensions {
                 }
                 Ok(())
             }
-            fn store_content(&mut self, value: ::std::string::String) -> Result<(), Error> {
+            fn store_content(&mut self, value: String) -> Result<(), Error> {
                 if self.content.is_some() {
                     Err(ErrorKind::DuplicateContent)?;
                 }
@@ -19462,7 +19374,7 @@ pub mod extensions {
             fn handle_content<'de, R>(
                 mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, ::std::string::String>,
+                output: DeserializerOutput<'de, String>,
             ) -> DeserializerResult<'de, super::CtExtensionPropertyXElementType>
             where
                 R: DeserializeReader,
@@ -19647,7 +19559,7 @@ pub mod extensions {
             Init__,
             Property(<super::CtExtensionPropertyXElementType as WithSerializer>::Serializer<'ser>),
             Data(<super::super::xs::AnyTypeXType as WithSerializer>::Serializer<'ser>),
-            ExtendData(<::std::string::String as WithSerializer>::Serializer<'ser>),
+            ExtendData(<String as WithSerializer>::Serializer<'ser>),
             Done__,
             Phantom__(&'ser ()),
         }
@@ -19792,7 +19704,7 @@ pub mod extensions {
         #[derive(Debug)]
         pub(super) enum CtExtensionPropertyXElementTypeSerializerState<'ser> {
             Init__,
-            Content__(<::std::string::String as WithSerializer>::Serializer<'ser>),
+            Content__(<String as WithSerializer>::Serializer<'ser>),
             End__,
             Done__,
             Phantom__(&'ser ()),
@@ -19860,18 +19772,18 @@ pub mod ofd {
     };
     #[derive(Debug)]
     pub struct CtDocInfoXType {
-        pub doc_id: ::std::string::String,
-        pub title: Option<::std::string::String>,
-        pub author: Option<::std::string::String>,
-        pub subject: Option<::std::string::String>,
-        pub abstract_: Option<::std::string::String>,
-        pub creation_date: Option<::std::string::String>,
-        pub mod_date: Option<::std::string::String>,
-        pub doc_usage: Option<::std::string::String>,
-        pub cover: Option<::std::string::String>,
+        pub doc_id: String,
+        pub title: Option<String>,
+        pub author: Option<String>,
+        pub subject: Option<String>,
+        pub abstract_: Option<String>,
+        pub creation_date: Option<String>,
+        pub mod_date: Option<String>,
+        pub doc_usage: Option<String>,
+        pub cover: Option<String>,
         pub keywords: Option<CtDocInfoKeywordsXElementType>,
-        pub creator: Option<::std::string::String>,
-        pub creator_version: Option<::std::string::String>,
+        pub creator: Option<String>,
+        pub creator_version: Option<String>,
         pub custom_datas: Option<CtDocInfoCustomDatasXElementType>,
     }
     impl WithSerializer for CtDocInfoXType {
@@ -19895,7 +19807,7 @@ pub mod ofd {
     pub type Ofd = OfdXElementType;
     #[derive(Debug)]
     pub struct OfdXElementType {
-        pub version: ::std::string::String,
+        pub version: String,
         pub doc_type: OfdDocTypeXType,
         pub doc_body: Vec<OfdDocBodyXElementType>,
     }
@@ -19919,7 +19831,7 @@ pub mod ofd {
     }
     #[derive(Debug)]
     pub struct CtDocInfoKeywordsXElementType {
-        pub keyword: Vec<::std::string::String>,
+        pub keyword: Vec<String>,
     }
     impl WithSerializer for CtDocInfoKeywordsXElementType {
         type Serializer<'x> = quick_xml_serialize::CtDocInfoKeywordsXElementTypeSerializer<'x>;
@@ -19988,9 +19900,9 @@ pub mod ofd {
     #[derive(Debug)]
     pub struct OfdDocBodyXElementType {
         pub doc_info: CtDocInfoXType,
-        pub doc_root: ::std::string::String,
+        pub doc_root: String,
         pub versions: Option<OfdDocBodyVersionsXElementType>,
-        pub signatures: Option<::std::string::String>,
+        pub signatures: Option<String>,
     }
     impl WithSerializer for OfdDocBodyXElementType {
         type Serializer<'x> = quick_xml_serialize::OfdDocBodyXElementTypeSerializer<'x>;
@@ -20012,8 +19924,8 @@ pub mod ofd {
     }
     #[derive(Debug)]
     pub struct CtDocInfoCustomDatasCustomDataXElementType {
-        pub name: ::std::string::String,
-        pub content: ::std::string::String,
+        pub name: String,
+        pub content: String,
     }
     impl WithSerializer for CtDocInfoCustomDatasCustomDataXElementType {
         type Serializer<'x> =
@@ -20058,14 +19970,14 @@ pub mod ofd {
     }
     #[derive(Debug)]
     pub struct OfdDocBodyVersionsVersionXElementType {
-        pub id: ::std::string::String,
-        pub index: ::core::primitive::i32,
-        pub current: ::core::primitive::bool,
-        pub base_loc: ::std::string::String,
+        pub id: String,
+        pub index: i32,
+        pub current: bool,
+        pub base_loc: String,
     }
     impl OfdDocBodyVersionsVersionXElementType {
         #[must_use]
-        pub fn default_current() -> ::core::primitive::bool {
+        pub fn default_current() -> bool {
             false
         }
     }
@@ -20094,38 +20006,38 @@ pub mod ofd {
         };
         #[derive(Debug)]
         pub struct CtDocInfoXTypeDeserializer {
-            doc_id: Option<::std::string::String>,
-            title: Option<::std::string::String>,
-            author: Option<::std::string::String>,
-            subject: Option<::std::string::String>,
-            abstract_: Option<::std::string::String>,
-            creation_date: Option<::std::string::String>,
-            mod_date: Option<::std::string::String>,
-            doc_usage: Option<::std::string::String>,
-            cover: Option<::std::string::String>,
+            doc_id: Option<String>,
+            title: Option<String>,
+            author: Option<String>,
+            subject: Option<String>,
+            abstract_: Option<String>,
+            creation_date: Option<String>,
+            mod_date: Option<String>,
+            doc_usage: Option<String>,
+            cover: Option<String>,
             keywords: Option<super::CtDocInfoKeywordsXElementType>,
-            creator: Option<::std::string::String>,
-            creator_version: Option<::std::string::String>,
+            creator: Option<String>,
+            creator_version: Option<String>,
             custom_datas: Option<super::CtDocInfoCustomDatasXElementType>,
             state__: Box<CtDocInfoXTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtDocInfoXTypeDeserializerState {
             Init__,
-            DocId(Option<<::std::string::String as WithDeserializer>::Deserializer>),
-            Title(Option<<::std::string::String as WithDeserializer>::Deserializer>),
-            Author(Option<<::std::string::String as WithDeserializer>::Deserializer>),
-            Subject(Option<<::std::string::String as WithDeserializer>::Deserializer>),
-            Abstract(Option<<::std::string::String as WithDeserializer>::Deserializer>),
-            CreationDate(Option<<::std::string::String as WithDeserializer>::Deserializer>),
-            ModDate(Option<<::std::string::String as WithDeserializer>::Deserializer>),
-            DocUsage(Option<<::std::string::String as WithDeserializer>::Deserializer>),
-            Cover(Option<<::std::string::String as WithDeserializer>::Deserializer>),
+            DocId(Option<<String as WithDeserializer>::Deserializer>),
+            Title(Option<<String as WithDeserializer>::Deserializer>),
+            Author(Option<<String as WithDeserializer>::Deserializer>),
+            Subject(Option<<String as WithDeserializer>::Deserializer>),
+            Abstract(Option<<String as WithDeserializer>::Deserializer>),
+            CreationDate(Option<<String as WithDeserializer>::Deserializer>),
+            ModDate(Option<<String as WithDeserializer>::Deserializer>),
+            DocUsage(Option<<String as WithDeserializer>::Deserializer>),
+            Cover(Option<<String as WithDeserializer>::Deserializer>),
             Keywords(
                 Option<<super::CtDocInfoKeywordsXElementType as WithDeserializer>::Deserializer>,
             ),
-            Creator(Option<<::std::string::String as WithDeserializer>::Deserializer>),
-            CreatorVersion(Option<<::std::string::String as WithDeserializer>::Deserializer>),
+            Creator(Option<<String as WithDeserializer>::Deserializer>),
+            CreatorVersion(Option<<String as WithDeserializer>::Deserializer>),
             CustomDatas(
                 Option<<super::CtDocInfoCustomDatasXElementType as WithDeserializer>::Deserializer>,
             ),
@@ -20211,7 +20123,7 @@ pub mod ofd {
                 }
                 Ok(())
             }
-            fn store_doc_id(&mut self, value: ::std::string::String) -> Result<(), Error> {
+            fn store_doc_id(&mut self, value: String) -> Result<(), Error> {
                 if self.doc_id.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"DocID",
@@ -20220,7 +20132,7 @@ pub mod ofd {
                 self.doc_id = Some(value);
                 Ok(())
             }
-            fn store_title(&mut self, value: ::std::string::String) -> Result<(), Error> {
+            fn store_title(&mut self, value: String) -> Result<(), Error> {
                 if self.title.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Title",
@@ -20229,7 +20141,7 @@ pub mod ofd {
                 self.title = Some(value);
                 Ok(())
             }
-            fn store_author(&mut self, value: ::std::string::String) -> Result<(), Error> {
+            fn store_author(&mut self, value: String) -> Result<(), Error> {
                 if self.author.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Author",
@@ -20238,7 +20150,7 @@ pub mod ofd {
                 self.author = Some(value);
                 Ok(())
             }
-            fn store_subject(&mut self, value: ::std::string::String) -> Result<(), Error> {
+            fn store_subject(&mut self, value: String) -> Result<(), Error> {
                 if self.subject.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Subject",
@@ -20247,7 +20159,7 @@ pub mod ofd {
                 self.subject = Some(value);
                 Ok(())
             }
-            fn store_abstract_(&mut self, value: ::std::string::String) -> Result<(), Error> {
+            fn store_abstract_(&mut self, value: String) -> Result<(), Error> {
                 if self.abstract_.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Abstract",
@@ -20256,7 +20168,7 @@ pub mod ofd {
                 self.abstract_ = Some(value);
                 Ok(())
             }
-            fn store_creation_date(&mut self, value: ::std::string::String) -> Result<(), Error> {
+            fn store_creation_date(&mut self, value: String) -> Result<(), Error> {
                 if self.creation_date.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"CreationDate",
@@ -20265,7 +20177,7 @@ pub mod ofd {
                 self.creation_date = Some(value);
                 Ok(())
             }
-            fn store_mod_date(&mut self, value: ::std::string::String) -> Result<(), Error> {
+            fn store_mod_date(&mut self, value: String) -> Result<(), Error> {
                 if self.mod_date.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"ModDate",
@@ -20274,7 +20186,7 @@ pub mod ofd {
                 self.mod_date = Some(value);
                 Ok(())
             }
-            fn store_doc_usage(&mut self, value: ::std::string::String) -> Result<(), Error> {
+            fn store_doc_usage(&mut self, value: String) -> Result<(), Error> {
                 if self.doc_usage.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"DocUsage",
@@ -20283,7 +20195,7 @@ pub mod ofd {
                 self.doc_usage = Some(value);
                 Ok(())
             }
-            fn store_cover(&mut self, value: ::std::string::String) -> Result<(), Error> {
+            fn store_cover(&mut self, value: String) -> Result<(), Error> {
                 if self.cover.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Cover",
@@ -20304,7 +20216,7 @@ pub mod ofd {
                 self.keywords = Some(value);
                 Ok(())
             }
-            fn store_creator(&mut self, value: ::std::string::String) -> Result<(), Error> {
+            fn store_creator(&mut self, value: String) -> Result<(), Error> {
                 if self.creator.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Creator",
@@ -20313,7 +20225,7 @@ pub mod ofd {
                 self.creator = Some(value);
                 Ok(())
             }
-            fn store_creator_version(&mut self, value: ::std::string::String) -> Result<(), Error> {
+            fn store_creator_version(&mut self, value: String) -> Result<(), Error> {
                 if self.creator_version.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"CreatorVersion",
@@ -20337,7 +20249,7 @@ pub mod ofd {
             fn handle_doc_id<'de, R>(
                 &mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, ::std::string::String>,
+                output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<CtDocInfoXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -20389,7 +20301,7 @@ pub mod ofd {
             fn handle_title<'de, R>(
                 &mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, ::std::string::String>,
+                output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<CtDocInfoXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -20436,7 +20348,7 @@ pub mod ofd {
             fn handle_author<'de, R>(
                 &mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, ::std::string::String>,
+                output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<CtDocInfoXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -20483,7 +20395,7 @@ pub mod ofd {
             fn handle_subject<'de, R>(
                 &mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, ::std::string::String>,
+                output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<CtDocInfoXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -20530,7 +20442,7 @@ pub mod ofd {
             fn handle_abstract_<'de, R>(
                 &mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, ::std::string::String>,
+                output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<CtDocInfoXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -20577,7 +20489,7 @@ pub mod ofd {
             fn handle_creation_date<'de, R>(
                 &mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, ::std::string::String>,
+                output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<CtDocInfoXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -20627,7 +20539,7 @@ pub mod ofd {
             fn handle_mod_date<'de, R>(
                 &mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, ::std::string::String>,
+                output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<CtDocInfoXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -20674,7 +20586,7 @@ pub mod ofd {
             fn handle_doc_usage<'de, R>(
                 &mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, ::std::string::String>,
+                output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<CtDocInfoXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -20721,7 +20633,7 @@ pub mod ofd {
             fn handle_cover<'de, R>(
                 &mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, ::std::string::String>,
+                output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<CtDocInfoXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -20815,7 +20727,7 @@ pub mod ofd {
             fn handle_creator<'de, R>(
                 &mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, ::std::string::String>,
+                output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<CtDocInfoXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -20863,7 +20775,7 @@ pub mod ofd {
             fn handle_creator_version<'de, R>(
                 &mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, ::std::string::String>,
+                output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<CtDocInfoXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -21428,7 +21340,7 @@ pub mod ofd {
         }
         #[derive(Debug)]
         pub struct OfdXElementTypeDeserializer {
-            version: ::std::string::String,
+            version: String,
             doc_type: super::OfdDocTypeXType,
             doc_body: Vec<super::OfdDocBodyXElementType>,
             state__: Box<OfdXElementTypeDeserializerState>,
@@ -21445,7 +21357,7 @@ pub mod ofd {
             where
                 R: DeserializeReader,
             {
-                let mut version: Option<::std::string::String> = None;
+                let mut version: Option<String> = None;
                 let mut doc_type: Option<super::OfdDocTypeXType> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
@@ -21662,13 +21574,13 @@ pub mod ofd {
         }
         #[derive(Debug)]
         pub struct CtDocInfoKeywordsXElementTypeDeserializer {
-            keyword: Vec<::std::string::String>,
+            keyword: Vec<String>,
             state__: Box<CtDocInfoKeywordsXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtDocInfoKeywordsXElementTypeDeserializerState {
             Init__,
-            Keyword(Option<<::std::string::String as WithDeserializer>::Deserializer>),
+            Keyword(Option<<String as WithDeserializer>::Deserializer>),
             Done__,
             Unknown__,
         }
@@ -21703,14 +21615,14 @@ pub mod ofd {
                 }
                 Ok(())
             }
-            fn store_keyword(&mut self, value: ::std::string::String) -> Result<(), Error> {
+            fn store_keyword(&mut self, value: String) -> Result<(), Error> {
                 self.keyword.push(value);
                 Ok(())
             }
             fn handle_keyword<'de, R>(
                 &mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, ::std::string::String>,
+                output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<CtDocInfoKeywordsXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -22109,20 +22021,20 @@ pub mod ofd {
         #[derive(Debug)]
         pub struct OfdDocBodyXElementTypeDeserializer {
             doc_info: Option<super::CtDocInfoXType>,
-            doc_root: Option<::std::string::String>,
+            doc_root: Option<String>,
             versions: Option<super::OfdDocBodyVersionsXElementType>,
-            signatures: Option<::std::string::String>,
+            signatures: Option<String>,
             state__: Box<OfdDocBodyXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum OfdDocBodyXElementTypeDeserializerState {
             Init__,
             DocInfo(Option<<super::CtDocInfoXType as WithDeserializer>::Deserializer>),
-            DocRoot(Option<<::std::string::String as WithDeserializer>::Deserializer>),
+            DocRoot(Option<<String as WithDeserializer>::Deserializer>),
             Versions(
                 Option<<super::OfdDocBodyVersionsXElementType as WithDeserializer>::Deserializer>,
             ),
-            Signatures(Option<<::std::string::String as WithDeserializer>::Deserializer>),
+            Signatures(Option<<String as WithDeserializer>::Deserializer>),
             Done__,
             Unknown__,
         }
@@ -22178,7 +22090,7 @@ pub mod ofd {
                 self.doc_info = Some(value);
                 Ok(())
             }
-            fn store_doc_root(&mut self, value: ::std::string::String) -> Result<(), Error> {
+            fn store_doc_root(&mut self, value: String) -> Result<(), Error> {
                 if self.doc_root.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"DocRoot",
@@ -22199,7 +22111,7 @@ pub mod ofd {
                 self.versions = Some(value);
                 Ok(())
             }
-            fn store_signatures(&mut self, value: ::std::string::String) -> Result<(), Error> {
+            fn store_signatures(&mut self, value: String) -> Result<(), Error> {
                 if self.signatures.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Signatures",
@@ -22268,7 +22180,7 @@ pub mod ofd {
             fn handle_doc_root<'de, R>(
                 &mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, ::std::string::String>,
+                output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<OfdDocBodyXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -22376,7 +22288,7 @@ pub mod ofd {
             fn handle_signatures<'de, R>(
                 &mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, ::std::string::String>,
+                output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<OfdDocBodyXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -22624,14 +22536,14 @@ pub mod ofd {
         }
         #[derive(Debug)]
         pub struct CtDocInfoCustomDatasCustomDataXElementTypeDeserializer {
-            name: ::std::string::String,
-            content: Option<::std::string::String>,
+            name: String,
+            content: Option<String>,
             state__: Box<CtDocInfoCustomDatasCustomDataXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtDocInfoCustomDatasCustomDataXElementTypeDeserializerState {
             Init__,
-            Content__(<::std::string::String as WithDeserializer>::Deserializer),
+            Content__(<String as WithDeserializer>::Deserializer),
             Unknown__,
         }
         impl CtDocInfoCustomDatasCustomDataXElementTypeDeserializer {
@@ -22639,7 +22551,7 @@ pub mod ofd {
             where
                 R: DeserializeReader,
             {
-                let mut name: Option<::std::string::String> = None;
+                let mut name: Option<String> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -22677,7 +22589,7 @@ pub mod ofd {
                 }
                 Ok(())
             }
-            fn store_content(&mut self, value: ::std::string::String) -> Result<(), Error> {
+            fn store_content(&mut self, value: String) -> Result<(), Error> {
                 if self.content.is_some() {
                     Err(ErrorKind::DuplicateContent)?;
                 }
@@ -22687,7 +22599,7 @@ pub mod ofd {
             fn handle_content<'de, R>(
                 mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, ::std::string::String>,
+                output: DeserializerOutput<'de, String>,
             ) -> DeserializerResult<'de, super::CtDocInfoCustomDatasCustomDataXElementType>
             where
                 R: DeserializeReader,
@@ -23008,10 +22920,10 @@ pub mod ofd {
         }
         #[derive(Debug)]
         pub struct OfdDocBodyVersionsVersionXElementTypeDeserializer {
-            id: ::std::string::String,
-            index: ::core::primitive::i32,
-            current: ::core::primitive::bool,
-            base_loc: ::std::string::String,
+            id: String,
+            index: i32,
+            current: bool,
+            base_loc: String,
             state__: Box<OfdDocBodyVersionsVersionXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
@@ -23024,10 +22936,10 @@ pub mod ofd {
             where
                 R: DeserializeReader,
             {
-                let mut id: Option<::std::string::String> = None;
-                let mut index: Option<::core::primitive::i32> = None;
-                let mut current: Option<::core::primitive::bool> = None;
-                let mut base_loc: Option<::std::string::String> = None;
+                let mut id: Option<String> = None;
+                let mut index: Option<i32> = None;
+                let mut current: Option<bool> = None;
+                let mut base_loc: Option<String> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -23153,27 +23065,15 @@ pub mod ofd {
         #[derive(Debug)]
         pub(super) enum CtDocInfoXTypeSerializerState<'ser> {
             Init__,
-            DocId(<::std::string::String as WithSerializer>::Serializer<'ser>),
-            Title(IterSerializer<'ser, Option<&'ser ::std::string::String>, ::std::string::String>),
-            Author(
-                IterSerializer<'ser, Option<&'ser ::std::string::String>, ::std::string::String>,
-            ),
-            Subject(
-                IterSerializer<'ser, Option<&'ser ::std::string::String>, ::std::string::String>,
-            ),
-            Abstract(
-                IterSerializer<'ser, Option<&'ser ::std::string::String>, ::std::string::String>,
-            ),
-            CreationDate(
-                IterSerializer<'ser, Option<&'ser ::std::string::String>, ::std::string::String>,
-            ),
-            ModDate(
-                IterSerializer<'ser, Option<&'ser ::std::string::String>, ::std::string::String>,
-            ),
-            DocUsage(
-                IterSerializer<'ser, Option<&'ser ::std::string::String>, ::std::string::String>,
-            ),
-            Cover(IterSerializer<'ser, Option<&'ser ::std::string::String>, ::std::string::String>),
+            DocId(<String as WithSerializer>::Serializer<'ser>),
+            Title(IterSerializer<'ser, Option<&'ser String>, String>),
+            Author(IterSerializer<'ser, Option<&'ser String>, String>),
+            Subject(IterSerializer<'ser, Option<&'ser String>, String>),
+            Abstract(IterSerializer<'ser, Option<&'ser String>, String>),
+            CreationDate(IterSerializer<'ser, Option<&'ser String>, String>),
+            ModDate(IterSerializer<'ser, Option<&'ser String>, String>),
+            DocUsage(IterSerializer<'ser, Option<&'ser String>, String>),
+            Cover(IterSerializer<'ser, Option<&'ser String>, String>),
             Keywords(
                 IterSerializer<
                     'ser,
@@ -23181,12 +23081,8 @@ pub mod ofd {
                     super::CtDocInfoKeywordsXElementType,
                 >,
             ),
-            Creator(
-                IterSerializer<'ser, Option<&'ser ::std::string::String>, ::std::string::String>,
-            ),
-            CreatorVersion(
-                IterSerializer<'ser, Option<&'ser ::std::string::String>, ::std::string::String>,
-            ),
+            Creator(IterSerializer<'ser, Option<&'ser String>, String>),
+            CreatorVersion(IterSerializer<'ser, Option<&'ser String>, String>),
             CustomDatas(
                 IterSerializer<
                     'ser,
@@ -23466,7 +23362,7 @@ pub mod ofd {
         #[derive(Debug)]
         pub(super) enum CtDocInfoKeywordsXElementTypeSerializerState<'ser> {
             Init__,
-            Keyword(IterSerializer<'ser, &'ser [::std::string::String], ::std::string::String>),
+            Keyword(IterSerializer<'ser, &'ser [String], String>),
             End__,
             Done__,
             Phantom__(&'ser ()),
@@ -23614,7 +23510,7 @@ pub mod ofd {
         pub(super) enum OfdDocBodyXElementTypeSerializerState<'ser> {
             Init__,
             DocInfo(<super::CtDocInfoXType as WithSerializer>::Serializer<'ser>),
-            DocRoot(<::std::string::String as WithSerializer>::Serializer<'ser>),
+            DocRoot(<String as WithSerializer>::Serializer<'ser>),
             Versions(
                 IterSerializer<
                     'ser,
@@ -23622,9 +23518,7 @@ pub mod ofd {
                     super::OfdDocBodyVersionsXElementType,
                 >,
             ),
-            Signatures(
-                IterSerializer<'ser, Option<&'ser ::std::string::String>, ::std::string::String>,
-            ),
+            Signatures(IterSerializer<'ser, Option<&'ser String>, String>),
             End__,
             Done__,
             Phantom__(&'ser ()),
@@ -23731,7 +23625,7 @@ pub mod ofd {
         #[derive(Debug)]
         pub(super) enum CtDocInfoCustomDatasCustomDataXElementTypeSerializerState<'ser> {
             Init__,
-            Content__(<::std::string::String as WithSerializer>::Serializer<'ser>),
+            Content__(<String as WithSerializer>::Serializer<'ser>),
             End__,
             Done__,
             Phantom__(&'ser ()),
@@ -23900,10 +23794,10 @@ pub mod page {
     #[derive(Debug)]
     pub struct CtAxialShdXType {
         pub map_type: CtAxialShdMapTypeXType,
-        pub map_unit: Option<::core::primitive::f64>,
+        pub map_unit: Option<f64>,
         pub extend: CtAxialShdExtendXType,
-        pub start_point: ::std::string::String,
-        pub end_point: ::std::string::String,
+        pub start_point: String,
+        pub end_point: String,
         pub segment: Vec<CtAxialShdSegmentXElementType>,
     }
     impl CtAxialShdXType {
@@ -23936,18 +23830,18 @@ pub mod page {
     }
     #[derive(Debug)]
     pub struct CtCgTransformXType {
-        pub code_position: ::core::primitive::i32,
-        pub code_count: ::core::primitive::i32,
-        pub glyph_count: ::core::primitive::i32,
-        pub glyphs: Option<::std::string::String>,
+        pub code_position: i32,
+        pub code_count: i32,
+        pub glyph_count: i32,
+        pub glyphs: Option<String>,
     }
     impl CtCgTransformXType {
         #[must_use]
-        pub fn default_code_count() -> ::core::primitive::i32 {
+        pub fn default_code_count() -> i32 {
             1i32
         }
         #[must_use]
-        pub fn default_glyph_count() -> ::core::primitive::i32 {
+        pub fn default_glyph_count() -> i32 {
             1i32
         }
     }
@@ -23993,10 +23887,10 @@ pub mod page {
     }
     #[derive(Debug)]
     pub struct CtColorXType {
-        pub value: Option<::std::string::String>,
-        pub index: Option<::core::primitive::i32>,
-        pub color_space: Option<::core::primitive::u32>,
-        pub alpha: ::core::primitive::i32,
+        pub value: Option<String>,
+        pub index: Option<i32>,
+        pub color_space: Option<u32>,
+        pub alpha: i32,
         pub content: Option<CtColorXTypeContent>,
     }
     #[derive(Debug)]
@@ -24009,7 +23903,7 @@ pub mod page {
     }
     impl CtColorXType {
         #[must_use]
-        pub fn default_alpha() -> ::core::primitive::i32 {
+        pub fn default_alpha() -> i32 {
             255i32
         }
     }
@@ -24051,29 +23945,29 @@ pub mod page {
     }
     #[derive(Debug)]
     pub struct CtCompositeXType {
-        pub boundary: ::std::string::String,
-        pub name: Option<::std::string::String>,
-        pub visible: ::core::primitive::bool,
-        pub ctm: Option<::std::string::String>,
-        pub draw_param: Option<::core::primitive::u32>,
-        pub line_width: ::core::primitive::f64,
+        pub boundary: String,
+        pub name: Option<String>,
+        pub visible: bool,
+        pub ctm: Option<String>,
+        pub draw_param: Option<u32>,
+        pub line_width: f64,
         pub cap: CtGraphicUnitCapXType,
         pub join: CtGraphicUnitJoinXType,
-        pub miter_limit: ::core::primitive::f64,
-        pub dash_offset: ::core::primitive::f64,
-        pub dash_pattern: Option<::std::string::String>,
-        pub alpha: ::core::primitive::i32,
-        pub resource_id: ::core::primitive::u32,
+        pub miter_limit: f64,
+        pub dash_offset: f64,
+        pub dash_pattern: Option<String>,
+        pub alpha: i32,
+        pub resource_id: u32,
         pub actions: Option<CtGraphicUnitActionsXElementType>,
         pub clips: Option<CtGraphicUnitClipsXElementType>,
     }
     impl CtCompositeXType {
         #[must_use]
-        pub fn default_visible() -> ::core::primitive::bool {
+        pub fn default_visible() -> bool {
             true
         }
         #[must_use]
-        pub fn default_line_width() -> ::core::primitive::f64 {
+        pub fn default_line_width() -> f64 {
             0.353f64
         }
         #[must_use]
@@ -24085,15 +23979,15 @@ pub mod page {
             CtGraphicUnitJoinXType::Miter
         }
         #[must_use]
-        pub fn default_miter_limit() -> ::core::primitive::f64 {
+        pub fn default_miter_limit() -> f64 {
             4.234f64
         }
         #[must_use]
-        pub fn default_dash_offset() -> ::core::primitive::f64 {
+        pub fn default_dash_offset() -> f64 {
             0f64
         }
         #[must_use]
-        pub fn default_alpha() -> ::core::primitive::i32 {
+        pub fn default_alpha() -> i32 {
             255i32
         }
     }
@@ -24117,7 +24011,7 @@ pub mod page {
     }
     #[derive(Debug)]
     pub struct CtGouraudShdXType {
-        pub extend: Option<::core::primitive::i32>,
+        pub extend: Option<i32>,
         pub point: Vec<CtGouraudShdPointXElementType>,
         pub back_color: Option<Box<CtColorXType>>,
     }
@@ -24141,28 +24035,28 @@ pub mod page {
     }
     #[derive(Debug)]
     pub struct CtGraphicUnitXType {
-        pub boundary: ::std::string::String,
-        pub name: Option<::std::string::String>,
-        pub visible: ::core::primitive::bool,
-        pub ctm: Option<::std::string::String>,
-        pub draw_param: Option<::core::primitive::u32>,
-        pub line_width: ::core::primitive::f64,
+        pub boundary: String,
+        pub name: Option<String>,
+        pub visible: bool,
+        pub ctm: Option<String>,
+        pub draw_param: Option<u32>,
+        pub line_width: f64,
         pub cap: CtGraphicUnitCapXType,
         pub join: CtGraphicUnitJoinXType,
-        pub miter_limit: ::core::primitive::f64,
-        pub dash_offset: ::core::primitive::f64,
-        pub dash_pattern: Option<::std::string::String>,
-        pub alpha: ::core::primitive::i32,
+        pub miter_limit: f64,
+        pub dash_offset: f64,
+        pub dash_pattern: Option<String>,
+        pub alpha: i32,
         pub actions: Option<CtGraphicUnitActionsXElementType>,
         pub clips: Option<CtGraphicUnitClipsXElementType>,
     }
     impl CtGraphicUnitXType {
         #[must_use]
-        pub fn default_visible() -> ::core::primitive::bool {
+        pub fn default_visible() -> bool {
             true
         }
         #[must_use]
-        pub fn default_line_width() -> ::core::primitive::f64 {
+        pub fn default_line_width() -> f64 {
             0.353f64
         }
         #[must_use]
@@ -24174,15 +24068,15 @@ pub mod page {
             CtGraphicUnitJoinXType::Miter
         }
         #[must_use]
-        pub fn default_miter_limit() -> ::core::primitive::f64 {
+        pub fn default_miter_limit() -> f64 {
             4.234f64
         }
         #[must_use]
-        pub fn default_dash_offset() -> ::core::primitive::f64 {
+        pub fn default_dash_offset() -> f64 {
             0f64
         }
         #[must_use]
-        pub fn default_alpha() -> ::core::primitive::i32 {
+        pub fn default_alpha() -> i32 {
             255i32
         }
     }
@@ -24206,32 +24100,32 @@ pub mod page {
     }
     #[derive(Debug)]
     pub struct CtImageXType {
-        pub boundary: ::std::string::String,
-        pub name: Option<::std::string::String>,
-        pub visible: ::core::primitive::bool,
-        pub ctm: Option<::std::string::String>,
-        pub draw_param: Option<::core::primitive::u32>,
-        pub line_width: ::core::primitive::f64,
+        pub boundary: String,
+        pub name: Option<String>,
+        pub visible: bool,
+        pub ctm: Option<String>,
+        pub draw_param: Option<u32>,
+        pub line_width: f64,
         pub cap: CtGraphicUnitCapXType,
         pub join: CtGraphicUnitJoinXType,
-        pub miter_limit: ::core::primitive::f64,
-        pub dash_offset: ::core::primitive::f64,
-        pub dash_pattern: Option<::std::string::String>,
-        pub alpha: ::core::primitive::i32,
-        pub resource_id: ::core::primitive::u32,
-        pub substitution: Option<::core::primitive::u32>,
-        pub image_mask: Option<::core::primitive::u32>,
+        pub miter_limit: f64,
+        pub dash_offset: f64,
+        pub dash_pattern: Option<String>,
+        pub alpha: i32,
+        pub resource_id: u32,
+        pub substitution: Option<u32>,
+        pub image_mask: Option<u32>,
         pub actions: Option<CtGraphicUnitActionsXElementType>,
         pub clips: Option<CtGraphicUnitClipsXElementType>,
         pub border: Option<CtImageBorderXElementType>,
     }
     impl CtImageXType {
         #[must_use]
-        pub fn default_visible() -> ::core::primitive::bool {
+        pub fn default_visible() -> bool {
             true
         }
         #[must_use]
-        pub fn default_line_width() -> ::core::primitive::f64 {
+        pub fn default_line_width() -> f64 {
             0.353f64
         }
         #[must_use]
@@ -24243,15 +24137,15 @@ pub mod page {
             CtGraphicUnitJoinXType::Miter
         }
         #[must_use]
-        pub fn default_miter_limit() -> ::core::primitive::f64 {
+        pub fn default_miter_limit() -> f64 {
             4.234f64
         }
         #[must_use]
-        pub fn default_dash_offset() -> ::core::primitive::f64 {
+        pub fn default_dash_offset() -> f64 {
             0f64
         }
         #[must_use]
-        pub fn default_alpha() -> ::core::primitive::i32 {
+        pub fn default_alpha() -> i32 {
             255i32
         }
     }
@@ -24275,8 +24169,8 @@ pub mod page {
     }
     #[derive(Debug)]
     pub struct CtLaGouraudShdXType {
-        pub vertices_per_row: ::core::primitive::i32,
-        pub extend: Option<::core::primitive::i32>,
+        pub vertices_per_row: i32,
+        pub extend: Option<i32>,
         pub point: Vec<CtLaGouraudShdPointXElementType>,
         pub back_color: Option<Box<CtColorXType>>,
     }
@@ -24301,7 +24195,7 @@ pub mod page {
     #[derive(Debug)]
     pub struct CtLayerXType {
         pub type_: CtLayerTypeXType,
-        pub draw_param: Option<::core::primitive::u32>,
+        pub draw_param: Option<u32>,
         pub content: Vec<CtLayerXTypeContent>,
     }
     #[derive(Debug)]
@@ -24406,34 +24300,34 @@ pub mod page {
     }
     #[derive(Debug)]
     pub struct CtPathXType {
-        pub boundary: ::std::string::String,
-        pub name: Option<::std::string::String>,
-        pub visible: ::core::primitive::bool,
-        pub ctm: Option<::std::string::String>,
-        pub draw_param: Option<::core::primitive::u32>,
-        pub line_width: ::core::primitive::f64,
+        pub boundary: String,
+        pub name: Option<String>,
+        pub visible: bool,
+        pub ctm: Option<String>,
+        pub draw_param: Option<u32>,
+        pub line_width: f64,
         pub cap: CtGraphicUnitCapXType,
         pub join: CtGraphicUnitJoinXType,
-        pub miter_limit: ::core::primitive::f64,
-        pub dash_offset: ::core::primitive::f64,
-        pub dash_pattern: Option<::std::string::String>,
-        pub alpha: ::core::primitive::i32,
-        pub stroke: ::core::primitive::bool,
-        pub fill: ::core::primitive::bool,
+        pub miter_limit: f64,
+        pub dash_offset: f64,
+        pub dash_pattern: Option<String>,
+        pub alpha: i32,
+        pub stroke: bool,
+        pub fill: bool,
         pub rule: CtPathRuleXType,
         pub actions: Option<CtGraphicUnitActionsXElementType>,
         pub clips: Option<CtGraphicUnitClipsXElementType>,
         pub stroke_color: Option<CtColorXType>,
         pub fill_color: Option<CtColorXType>,
-        pub abbreviated_data: ::std::string::String,
+        pub abbreviated_data: String,
     }
     impl CtPathXType {
         #[must_use]
-        pub fn default_visible() -> ::core::primitive::bool {
+        pub fn default_visible() -> bool {
             true
         }
         #[must_use]
-        pub fn default_line_width() -> ::core::primitive::f64 {
+        pub fn default_line_width() -> f64 {
             0.353f64
         }
         #[must_use]
@@ -24445,23 +24339,23 @@ pub mod page {
             CtGraphicUnitJoinXType::Miter
         }
         #[must_use]
-        pub fn default_miter_limit() -> ::core::primitive::f64 {
+        pub fn default_miter_limit() -> f64 {
             4.234f64
         }
         #[must_use]
-        pub fn default_dash_offset() -> ::core::primitive::f64 {
+        pub fn default_dash_offset() -> f64 {
             0f64
         }
         #[must_use]
-        pub fn default_alpha() -> ::core::primitive::i32 {
+        pub fn default_alpha() -> i32 {
             255i32
         }
         #[must_use]
-        pub fn default_stroke() -> ::core::primitive::bool {
+        pub fn default_stroke() -> bool {
             true
         }
         #[must_use]
-        pub fn default_fill() -> ::core::primitive::bool {
+        pub fn default_fill() -> bool {
             false
         }
         #[must_use]
@@ -24489,13 +24383,13 @@ pub mod page {
     }
     #[derive(Debug)]
     pub struct CtPatternXType {
-        pub width: ::core::primitive::f64,
-        pub height: ::core::primitive::f64,
-        pub x_step: Option<::core::primitive::f64>,
-        pub y_step: Option<::core::primitive::f64>,
+        pub width: f64,
+        pub height: f64,
+        pub x_step: Option<f64>,
+        pub y_step: Option<f64>,
         pub reflect_method: CtPatternReflectMethodXType,
         pub relative_to: CtPatternRelativeToXType,
-        pub ctm: Option<::std::string::String>,
+        pub ctm: Option<String>,
         pub cell_content: CtPatternCellContentXElementType,
     }
     impl CtPatternXType {
@@ -24529,14 +24423,14 @@ pub mod page {
     #[derive(Debug)]
     pub struct CtRadialShdXType {
         pub map_type: CtAxialShdMapTypeXType,
-        pub map_unit: Option<::core::primitive::f64>,
-        pub eccentricity: ::core::primitive::f64,
-        pub angle: ::core::primitive::f64,
-        pub start_point: ::std::string::String,
-        pub start_radius: ::core::primitive::f64,
-        pub end_point: ::std::string::String,
-        pub end_radius: ::core::primitive::f64,
-        pub extend: ::core::primitive::i32,
+        pub map_unit: Option<f64>,
+        pub eccentricity: f64,
+        pub angle: f64,
+        pub start_point: String,
+        pub start_radius: f64,
+        pub end_point: String,
+        pub end_radius: f64,
+        pub extend: i32,
         pub seqment: Vec<CtAxialShdSegmentXElementType>,
     }
     impl CtRadialShdXType {
@@ -24545,19 +24439,19 @@ pub mod page {
             CtAxialShdMapTypeXType::Direct
         }
         #[must_use]
-        pub fn default_eccentricity() -> ::core::primitive::f64 {
+        pub fn default_eccentricity() -> f64 {
             0f64
         }
         #[must_use]
-        pub fn default_angle() -> ::core::primitive::f64 {
+        pub fn default_angle() -> f64 {
             0f64
         }
         #[must_use]
-        pub fn default_start_radius() -> ::core::primitive::f64 {
+        pub fn default_start_radius() -> f64 {
             0f64
         }
         #[must_use]
-        pub fn default_extend() -> ::core::primitive::i32 {
+        pub fn default_extend() -> i32 {
             0i32
         }
     }
@@ -24581,27 +24475,27 @@ pub mod page {
     }
     #[derive(Debug)]
     pub struct CtTextXType {
-        pub boundary: ::std::string::String,
-        pub name: Option<::std::string::String>,
-        pub visible: ::core::primitive::bool,
-        pub ctm: Option<::std::string::String>,
-        pub draw_param: Option<::core::primitive::u32>,
-        pub line_width: ::core::primitive::f64,
+        pub boundary: String,
+        pub name: Option<String>,
+        pub visible: bool,
+        pub ctm: Option<String>,
+        pub draw_param: Option<u32>,
+        pub line_width: f64,
         pub cap: CtGraphicUnitCapXType,
         pub join: CtGraphicUnitJoinXType,
-        pub miter_limit: ::core::primitive::f64,
-        pub dash_offset: ::core::primitive::f64,
-        pub dash_pattern: Option<::std::string::String>,
-        pub alpha: ::core::primitive::i32,
-        pub font: ::core::primitive::u32,
-        pub size: ::core::primitive::f64,
-        pub stroke: ::core::primitive::bool,
-        pub fill: ::core::primitive::bool,
-        pub h_scale: ::core::primitive::f64,
-        pub read_direction: ::core::primitive::i32,
-        pub char_direction: ::core::primitive::i32,
+        pub miter_limit: f64,
+        pub dash_offset: f64,
+        pub dash_pattern: Option<String>,
+        pub alpha: i32,
+        pub font: u32,
+        pub size: f64,
+        pub stroke: bool,
+        pub fill: bool,
+        pub h_scale: f64,
+        pub read_direction: i32,
+        pub char_direction: i32,
         pub weight: CtTextWeightXType,
-        pub italic: ::core::primitive::bool,
+        pub italic: bool,
         pub content: Vec<CtTextXTypeContent>,
     }
     #[derive(Debug)]
@@ -24615,11 +24509,11 @@ pub mod page {
     }
     impl CtTextXType {
         #[must_use]
-        pub fn default_visible() -> ::core::primitive::bool {
+        pub fn default_visible() -> bool {
             true
         }
         #[must_use]
-        pub fn default_line_width() -> ::core::primitive::f64 {
+        pub fn default_line_width() -> f64 {
             0.353f64
         }
         #[must_use]
@@ -24631,35 +24525,35 @@ pub mod page {
             CtGraphicUnitJoinXType::Miter
         }
         #[must_use]
-        pub fn default_miter_limit() -> ::core::primitive::f64 {
+        pub fn default_miter_limit() -> f64 {
             4.234f64
         }
         #[must_use]
-        pub fn default_dash_offset() -> ::core::primitive::f64 {
+        pub fn default_dash_offset() -> f64 {
             0f64
         }
         #[must_use]
-        pub fn default_alpha() -> ::core::primitive::i32 {
+        pub fn default_alpha() -> i32 {
             255i32
         }
         #[must_use]
-        pub fn default_stroke() -> ::core::primitive::bool {
+        pub fn default_stroke() -> bool {
             false
         }
         #[must_use]
-        pub fn default_fill() -> ::core::primitive::bool {
+        pub fn default_fill() -> bool {
             true
         }
         #[must_use]
-        pub fn default_h_scale() -> ::core::primitive::f64 {
+        pub fn default_h_scale() -> f64 {
             1f64
         }
         #[must_use]
-        pub fn default_read_direction() -> ::core::primitive::i32 {
+        pub fn default_read_direction() -> i32 {
             0i32
         }
         #[must_use]
-        pub fn default_char_direction() -> ::core::primitive::i32 {
+        pub fn default_char_direction() -> i32 {
             0i32
         }
         #[must_use]
@@ -24667,7 +24561,7 @@ pub mod page {
             CtTextWeightXType::_400
         }
         #[must_use]
-        pub fn default_italic() -> ::core::primitive::bool {
+        pub fn default_italic() -> bool {
             false
         }
     }
@@ -24711,7 +24605,7 @@ pub mod page {
     #[derive(Debug)]
     pub struct PageXElementType {
         pub template: Vec<PageTemplateXElementType>,
-        pub page_res: Vec<::std::string::String>,
+        pub page_res: Vec<String>,
         pub area: Option<super::definition::CtPageAreaXType>,
         pub content: Option<PageContentXElementType>,
         pub actions: Option<CtGraphicUnitActionsXElementType>,
@@ -24801,7 +24695,7 @@ pub mod page {
     }
     #[derive(Debug)]
     pub struct CtAxialShdSegmentXElementType {
-        pub position: Option<::core::primitive::f64>,
+        pub position: Option<f64>,
         pub color: Box<CtColorXType>,
     }
     impl WithSerializer for CtAxialShdSegmentXElementType {
@@ -24828,8 +24722,8 @@ pub mod page {
     }
     #[derive(Debug)]
     pub struct CtClipAreaXElementType {
-        pub draw_param: Option<::core::primitive::u32>,
-        pub ctm: Option<::std::string::String>,
+        pub draw_param: Option<u32>,
+        pub ctm: Option<String>,
         pub content: CtClipAreaXElementTypeContent,
     }
     #[derive(Debug)]
@@ -24984,8 +24878,8 @@ pub mod page {
     }
     #[derive(Debug)]
     pub struct CtGouraudShdPointXElementType {
-        pub x: ::core::primitive::f64,
-        pub y: ::core::primitive::f64,
+        pub x: f64,
+        pub y: f64,
         pub edge_flag: Option<CtGouraudShdPointEdgeFlagXType>,
         pub color: Box<CtColorXType>,
     }
@@ -25013,28 +24907,28 @@ pub mod page {
     }
     #[derive(Debug)]
     pub struct CtImageBorderXElementType {
-        pub line_width: ::core::primitive::f64,
-        pub horizonal_corner_radius: ::core::primitive::f64,
-        pub vertical_corner_radius: ::core::primitive::f64,
-        pub dash_offset: ::core::primitive::f64,
-        pub dash_pattern: Option<::std::string::String>,
+        pub line_width: f64,
+        pub horizonal_corner_radius: f64,
+        pub vertical_corner_radius: f64,
+        pub dash_offset: f64,
+        pub dash_pattern: Option<String>,
         pub border_color: Option<CtColorXType>,
     }
     impl CtImageBorderXElementType {
         #[must_use]
-        pub fn default_line_width() -> ::core::primitive::f64 {
+        pub fn default_line_width() -> f64 {
             0.353f64
         }
         #[must_use]
-        pub fn default_horizonal_corner_radius() -> ::core::primitive::f64 {
+        pub fn default_horizonal_corner_radius() -> f64 {
             0f64
         }
         #[must_use]
-        pub fn default_vertical_corner_radius() -> ::core::primitive::f64 {
+        pub fn default_vertical_corner_radius() -> f64 {
             0f64
         }
         #[must_use]
-        pub fn default_dash_offset() -> ::core::primitive::f64 {
+        pub fn default_dash_offset() -> f64 {
             0f64
         }
     }
@@ -25060,8 +24954,8 @@ pub mod page {
     }
     #[derive(Debug)]
     pub struct CtLaGouraudShdPointXElementType {
-        pub x: Option<::core::primitive::f64>,
-        pub y: Option<::core::primitive::f64>,
+        pub x: Option<f64>,
+        pub y: Option<f64>,
         pub color: Box<CtColorXType>,
     }
     impl WithSerializer for CtLaGouraudShdPointXElementType {
@@ -25122,28 +25016,28 @@ pub mod page {
     }
     #[derive(Debug)]
     pub struct CtPageBlockTextObjectXElementType {
-        pub boundary: ::std::string::String,
-        pub name: Option<::std::string::String>,
-        pub visible: ::core::primitive::bool,
-        pub ctm: Option<::std::string::String>,
-        pub draw_param: Option<::core::primitive::u32>,
-        pub line_width: ::core::primitive::f64,
+        pub boundary: String,
+        pub name: Option<String>,
+        pub visible: bool,
+        pub ctm: Option<String>,
+        pub draw_param: Option<u32>,
+        pub line_width: f64,
         pub cap: CtGraphicUnitCapXType,
         pub join: CtGraphicUnitJoinXType,
-        pub miter_limit: ::core::primitive::f64,
-        pub dash_offset: ::core::primitive::f64,
-        pub dash_pattern: Option<::std::string::String>,
-        pub alpha: ::core::primitive::i32,
-        pub font: ::core::primitive::u32,
-        pub size: ::core::primitive::f64,
-        pub stroke: ::core::primitive::bool,
-        pub fill: ::core::primitive::bool,
-        pub h_scale: ::core::primitive::f64,
-        pub read_direction: ::core::primitive::i32,
-        pub char_direction: ::core::primitive::i32,
+        pub miter_limit: f64,
+        pub dash_offset: f64,
+        pub dash_pattern: Option<String>,
+        pub alpha: i32,
+        pub font: u32,
+        pub size: f64,
+        pub stroke: bool,
+        pub fill: bool,
+        pub h_scale: f64,
+        pub read_direction: i32,
+        pub char_direction: i32,
         pub weight: CtTextWeightXType,
-        pub italic: ::core::primitive::bool,
-        pub id: ::core::primitive::u32,
+        pub italic: bool,
+        pub id: u32,
         pub content: Vec<CtPageBlockTextObjectXElementTypeContent>,
     }
     #[derive(Debug)]
@@ -25157,11 +25051,11 @@ pub mod page {
     }
     impl CtPageBlockTextObjectXElementType {
         #[must_use]
-        pub fn default_visible() -> ::core::primitive::bool {
+        pub fn default_visible() -> bool {
             true
         }
         #[must_use]
-        pub fn default_line_width() -> ::core::primitive::f64 {
+        pub fn default_line_width() -> f64 {
             0.353f64
         }
         #[must_use]
@@ -25173,35 +25067,35 @@ pub mod page {
             CtGraphicUnitJoinXType::Miter
         }
         #[must_use]
-        pub fn default_miter_limit() -> ::core::primitive::f64 {
+        pub fn default_miter_limit() -> f64 {
             4.234f64
         }
         #[must_use]
-        pub fn default_dash_offset() -> ::core::primitive::f64 {
+        pub fn default_dash_offset() -> f64 {
             0f64
         }
         #[must_use]
-        pub fn default_alpha() -> ::core::primitive::i32 {
+        pub fn default_alpha() -> i32 {
             255i32
         }
         #[must_use]
-        pub fn default_stroke() -> ::core::primitive::bool {
+        pub fn default_stroke() -> bool {
             false
         }
         #[must_use]
-        pub fn default_fill() -> ::core::primitive::bool {
+        pub fn default_fill() -> bool {
             true
         }
         #[must_use]
-        pub fn default_h_scale() -> ::core::primitive::f64 {
+        pub fn default_h_scale() -> f64 {
             1f64
         }
         #[must_use]
-        pub fn default_read_direction() -> ::core::primitive::i32 {
+        pub fn default_read_direction() -> i32 {
             0i32
         }
         #[must_use]
-        pub fn default_char_direction() -> ::core::primitive::i32 {
+        pub fn default_char_direction() -> i32 {
             0i32
         }
         #[must_use]
@@ -25209,7 +25103,7 @@ pub mod page {
             CtTextWeightXType::_400
         }
         #[must_use]
-        pub fn default_italic() -> ::core::primitive::bool {
+        pub fn default_italic() -> bool {
             false
         }
     }
@@ -25245,35 +25139,35 @@ pub mod page {
     }
     #[derive(Debug)]
     pub struct CtPageBlockPathObjectXElementType {
-        pub boundary: ::std::string::String,
-        pub name: Option<::std::string::String>,
-        pub visible: ::core::primitive::bool,
-        pub ctm: Option<::std::string::String>,
-        pub draw_param: Option<::core::primitive::u32>,
-        pub line_width: ::core::primitive::f64,
+        pub boundary: String,
+        pub name: Option<String>,
+        pub visible: bool,
+        pub ctm: Option<String>,
+        pub draw_param: Option<u32>,
+        pub line_width: f64,
         pub cap: CtGraphicUnitCapXType,
         pub join: CtGraphicUnitJoinXType,
-        pub miter_limit: ::core::primitive::f64,
-        pub dash_offset: ::core::primitive::f64,
-        pub dash_pattern: Option<::std::string::String>,
-        pub alpha: ::core::primitive::i32,
-        pub stroke: ::core::primitive::bool,
-        pub fill: ::core::primitive::bool,
+        pub miter_limit: f64,
+        pub dash_offset: f64,
+        pub dash_pattern: Option<String>,
+        pub alpha: i32,
+        pub stroke: bool,
+        pub fill: bool,
         pub rule: CtPathRuleXType,
-        pub id: ::core::primitive::u32,
+        pub id: u32,
         pub actions: Option<CtGraphicUnitActionsXElementType>,
         pub clips: Option<CtGraphicUnitClipsXElementType>,
         pub stroke_color: Option<CtColorXType>,
         pub fill_color: Option<CtColorXType>,
-        pub abbreviated_data: ::std::string::String,
+        pub abbreviated_data: String,
     }
     impl CtPageBlockPathObjectXElementType {
         #[must_use]
-        pub fn default_visible() -> ::core::primitive::bool {
+        pub fn default_visible() -> bool {
             true
         }
         #[must_use]
-        pub fn default_line_width() -> ::core::primitive::f64 {
+        pub fn default_line_width() -> f64 {
             0.353f64
         }
         #[must_use]
@@ -25285,23 +25179,23 @@ pub mod page {
             CtGraphicUnitJoinXType::Miter
         }
         #[must_use]
-        pub fn default_miter_limit() -> ::core::primitive::f64 {
+        pub fn default_miter_limit() -> f64 {
             4.234f64
         }
         #[must_use]
-        pub fn default_dash_offset() -> ::core::primitive::f64 {
+        pub fn default_dash_offset() -> f64 {
             0f64
         }
         #[must_use]
-        pub fn default_alpha() -> ::core::primitive::i32 {
+        pub fn default_alpha() -> i32 {
             255i32
         }
         #[must_use]
-        pub fn default_stroke() -> ::core::primitive::bool {
+        pub fn default_stroke() -> bool {
             true
         }
         #[must_use]
-        pub fn default_fill() -> ::core::primitive::bool {
+        pub fn default_fill() -> bool {
             false
         }
         #[must_use]
@@ -25324,33 +25218,33 @@ pub mod page {
     }
     #[derive(Debug)]
     pub struct CtPageBlockImageObjectXElementType {
-        pub boundary: ::std::string::String,
-        pub name: Option<::std::string::String>,
-        pub visible: ::core::primitive::bool,
-        pub ctm: Option<::std::string::String>,
-        pub draw_param: Option<::core::primitive::u32>,
-        pub line_width: ::core::primitive::f64,
+        pub boundary: String,
+        pub name: Option<String>,
+        pub visible: bool,
+        pub ctm: Option<String>,
+        pub draw_param: Option<u32>,
+        pub line_width: f64,
         pub cap: CtGraphicUnitCapXType,
         pub join: CtGraphicUnitJoinXType,
-        pub miter_limit: ::core::primitive::f64,
-        pub dash_offset: ::core::primitive::f64,
-        pub dash_pattern: Option<::std::string::String>,
-        pub alpha: ::core::primitive::i32,
-        pub resource_id: ::core::primitive::u32,
-        pub substitution: Option<::core::primitive::u32>,
-        pub image_mask: Option<::core::primitive::u32>,
-        pub id: ::core::primitive::u32,
+        pub miter_limit: f64,
+        pub dash_offset: f64,
+        pub dash_pattern: Option<String>,
+        pub alpha: i32,
+        pub resource_id: u32,
+        pub substitution: Option<u32>,
+        pub image_mask: Option<u32>,
+        pub id: u32,
         pub actions: Option<CtGraphicUnitActionsXElementType>,
         pub clips: Option<CtGraphicUnitClipsXElementType>,
         pub border: Option<CtImageBorderXElementType>,
     }
     impl CtPageBlockImageObjectXElementType {
         #[must_use]
-        pub fn default_visible() -> ::core::primitive::bool {
+        pub fn default_visible() -> bool {
             true
         }
         #[must_use]
-        pub fn default_line_width() -> ::core::primitive::f64 {
+        pub fn default_line_width() -> f64 {
             0.353f64
         }
         #[must_use]
@@ -25362,15 +25256,15 @@ pub mod page {
             CtGraphicUnitJoinXType::Miter
         }
         #[must_use]
-        pub fn default_miter_limit() -> ::core::primitive::f64 {
+        pub fn default_miter_limit() -> f64 {
             4.234f64
         }
         #[must_use]
-        pub fn default_dash_offset() -> ::core::primitive::f64 {
+        pub fn default_dash_offset() -> f64 {
             0f64
         }
         #[must_use]
-        pub fn default_alpha() -> ::core::primitive::i32 {
+        pub fn default_alpha() -> i32 {
             255i32
         }
     }
@@ -25389,30 +25283,30 @@ pub mod page {
     }
     #[derive(Debug)]
     pub struct CtPageBlockCompositeObjectXElementType {
-        pub boundary: ::std::string::String,
-        pub name: Option<::std::string::String>,
-        pub visible: ::core::primitive::bool,
-        pub ctm: Option<::std::string::String>,
-        pub draw_param: Option<::core::primitive::u32>,
-        pub line_width: ::core::primitive::f64,
+        pub boundary: String,
+        pub name: Option<String>,
+        pub visible: bool,
+        pub ctm: Option<String>,
+        pub draw_param: Option<u32>,
+        pub line_width: f64,
         pub cap: CtGraphicUnitCapXType,
         pub join: CtGraphicUnitJoinXType,
-        pub miter_limit: ::core::primitive::f64,
-        pub dash_offset: ::core::primitive::f64,
-        pub dash_pattern: Option<::std::string::String>,
-        pub alpha: ::core::primitive::i32,
-        pub resource_id: ::core::primitive::u32,
-        pub id: ::core::primitive::u32,
+        pub miter_limit: f64,
+        pub dash_offset: f64,
+        pub dash_pattern: Option<String>,
+        pub alpha: i32,
+        pub resource_id: u32,
+        pub id: u32,
         pub actions: Option<CtGraphicUnitActionsXElementType>,
         pub clips: Option<CtGraphicUnitClipsXElementType>,
     }
     impl CtPageBlockCompositeObjectXElementType {
         #[must_use]
-        pub fn default_visible() -> ::core::primitive::bool {
+        pub fn default_visible() -> bool {
             true
         }
         #[must_use]
-        pub fn default_line_width() -> ::core::primitive::f64 {
+        pub fn default_line_width() -> f64 {
             0.353f64
         }
         #[must_use]
@@ -25424,15 +25318,15 @@ pub mod page {
             CtGraphicUnitJoinXType::Miter
         }
         #[must_use]
-        pub fn default_miter_limit() -> ::core::primitive::f64 {
+        pub fn default_miter_limit() -> f64 {
             4.234f64
         }
         #[must_use]
-        pub fn default_dash_offset() -> ::core::primitive::f64 {
+        pub fn default_dash_offset() -> f64 {
             0f64
         }
         #[must_use]
-        pub fn default_alpha() -> ::core::primitive::i32 {
+        pub fn default_alpha() -> i32 {
             255i32
         }
     }
@@ -25453,7 +25347,7 @@ pub mod page {
     }
     #[derive(Debug)]
     pub struct CtPageBlockPageBlockXElementType {
-        pub id: ::core::primitive::u32,
+        pub id: u32,
         pub content: Vec<CtPageBlockPageBlockXElementTypeContent>,
     }
     #[derive(Debug)]
@@ -25586,7 +25480,7 @@ pub mod page {
     }
     #[derive(Debug)]
     pub struct CtPatternCellContentXElementType {
-        pub thumbnail: Option<::core::primitive::u32>,
+        pub thumbnail: Option<u32>,
         pub content: Vec<CtPatternCellContentXElementTypeContent>,
     }
     #[derive(Debug)]
@@ -25684,11 +25578,11 @@ pub mod page {
     }
     #[derive(Debug)]
     pub struct CtTextTextCodeXElementType {
-        pub x: Option<::core::primitive::f64>,
-        pub y: Option<::core::primitive::f64>,
-        pub delta_x: Option<::std::string::String>,
-        pub deltay: Option<::std::string::String>,
-        pub content: ::std::string::String,
+        pub x: Option<f64>,
+        pub y: Option<f64>,
+        pub delta_x: Option<String>,
+        pub deltay: Option<String>,
+        pub content: String,
     }
     impl WithSerializer for CtTextTextCodeXElementType {
         type Serializer<'x> = quick_xml_serialize::CtTextTextCodeXElementTypeSerializer<'x>;
@@ -25712,7 +25606,7 @@ pub mod page {
     }
     #[derive(Debug)]
     pub struct PageTemplateXElementType {
-        pub template_id: ::core::primitive::u32,
+        pub template_id: u32,
         pub z_order: PageTemplateZOrderXType,
     }
     impl PageTemplateXElementType {
@@ -25827,8 +25721,8 @@ pub mod page {
     #[derive(Debug)]
     pub struct PageContentLayerXElementType {
         pub type_: CtLayerTypeXType,
-        pub draw_param: Option<::core::primitive::u32>,
-        pub id: ::core::primitive::u32,
+        pub draw_param: Option<u32>,
+        pub id: u32,
         pub content: Vec<PageContentLayerXElementTypeContent>,
     }
     #[derive(Debug)]
@@ -25894,10 +25788,10 @@ pub mod page {
         #[derive(Debug)]
         pub struct CtAxialShdXTypeDeserializer {
             map_type: super::CtAxialShdMapTypeXType,
-            map_unit: Option<::core::primitive::f64>,
+            map_unit: Option<f64>,
             extend: super::CtAxialShdExtendXType,
-            start_point: ::std::string::String,
-            end_point: ::std::string::String,
+            start_point: String,
+            end_point: String,
             segment: Vec<super::CtAxialShdSegmentXElementType>,
             state__: Box<CtAxialShdXTypeDeserializerState>,
         }
@@ -25916,10 +25810,10 @@ pub mod page {
                 R: DeserializeReader,
             {
                 let mut map_type: Option<super::CtAxialShdMapTypeXType> = None;
-                let mut map_unit: Option<::core::primitive::f64> = None;
+                let mut map_unit: Option<f64> = None;
                 let mut extend: Option<super::CtAxialShdExtendXType> = None;
-                let mut start_point: Option<::std::string::String> = None;
-                let mut end_point: Option<::std::string::String> = None;
+                let mut start_point: Option<String> = None;
+                let mut end_point: Option<String> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -26156,16 +26050,16 @@ pub mod page {
         }
         #[derive(Debug)]
         pub struct CtCgTransformXTypeDeserializer {
-            code_position: ::core::primitive::i32,
-            code_count: ::core::primitive::i32,
-            glyph_count: ::core::primitive::i32,
-            glyphs: Option<::std::string::String>,
+            code_position: i32,
+            code_count: i32,
+            glyph_count: i32,
+            glyphs: Option<String>,
             state__: Box<CtCgTransformXTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtCgTransformXTypeDeserializerState {
             Init__,
-            Glyphs(Option<<::std::string::String as WithDeserializer>::Deserializer>),
+            Glyphs(Option<<String as WithDeserializer>::Deserializer>),
             Done__,
             Unknown__,
         }
@@ -26174,9 +26068,9 @@ pub mod page {
             where
                 R: DeserializeReader,
             {
-                let mut code_position: Option<::core::primitive::i32> = None;
-                let mut code_count: Option<::core::primitive::i32> = None;
-                let mut glyph_count: Option<::core::primitive::i32> = None;
+                let mut code_position: Option<i32> = None;
+                let mut code_count: Option<i32> = None;
+                let mut glyph_count: Option<i32> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -26227,7 +26121,7 @@ pub mod page {
                 }
                 Ok(())
             }
-            fn store_glyphs(&mut self, value: ::std::string::String) -> Result<(), Error> {
+            fn store_glyphs(&mut self, value: String) -> Result<(), Error> {
                 if self.glyphs.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Glyphs",
@@ -26239,7 +26133,7 @@ pub mod page {
             fn handle_glyphs<'de, R>(
                 &mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, ::std::string::String>,
+                output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<CtCgTransformXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -26589,10 +26483,10 @@ pub mod page {
         }
         #[derive(Debug)]
         pub struct CtColorXTypeDeserializer {
-            value: Option<::std::string::String>,
-            index: Option<::core::primitive::i32>,
-            color_space: Option<::core::primitive::u32>,
-            alpha: ::core::primitive::i32,
+            value: Option<String>,
+            index: Option<i32>,
+            color_space: Option<u32>,
+            alpha: i32,
             content: Option<super::CtColorXTypeContent>,
             state__: Box<CtColorXTypeDeserializerState>,
         }
@@ -26608,10 +26502,10 @@ pub mod page {
             where
                 R: DeserializeReader,
             {
-                let mut value: Option<::std::string::String> = None;
-                let mut index: Option<::core::primitive::i32> = None;
-                let mut color_space: Option<::core::primitive::u32> = None;
-                let mut alpha: Option<::core::primitive::i32> = None;
+                let mut value: Option<String> = None;
+                let mut index: Option<i32> = None;
+                let mut color_space: Option<u32> = None;
+                let mut alpha: Option<i32> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -27541,19 +27435,19 @@ pub mod page {
         }
         #[derive(Debug)]
         pub struct CtCompositeXTypeDeserializer {
-            boundary: ::std::string::String,
-            name: Option<::std::string::String>,
-            visible: ::core::primitive::bool,
-            ctm: Option<::std::string::String>,
-            draw_param: Option<::core::primitive::u32>,
-            line_width: ::core::primitive::f64,
+            boundary: String,
+            name: Option<String>,
+            visible: bool,
+            ctm: Option<String>,
+            draw_param: Option<u32>,
+            line_width: f64,
             cap: super::CtGraphicUnitCapXType,
             join: super::CtGraphicUnitJoinXType,
-            miter_limit: ::core::primitive::f64,
-            dash_offset: ::core::primitive::f64,
-            dash_pattern: Option<::std::string::String>,
-            alpha: ::core::primitive::i32,
-            resource_id: ::core::primitive::u32,
+            miter_limit: f64,
+            dash_offset: f64,
+            dash_pattern: Option<String>,
+            alpha: i32,
+            resource_id: u32,
             actions: Option<super::CtGraphicUnitActionsXElementType>,
             clips: Option<super::CtGraphicUnitClipsXElementType>,
             state__: Box<CtCompositeXTypeDeserializerState>,
@@ -27575,19 +27469,19 @@ pub mod page {
             where
                 R: DeserializeReader,
             {
-                let mut boundary: Option<::std::string::String> = None;
-                let mut name: Option<::std::string::String> = None;
-                let mut visible: Option<::core::primitive::bool> = None;
-                let mut ctm: Option<::std::string::String> = None;
-                let mut draw_param: Option<::core::primitive::u32> = None;
-                let mut line_width: Option<::core::primitive::f64> = None;
+                let mut boundary: Option<String> = None;
+                let mut name: Option<String> = None;
+                let mut visible: Option<bool> = None;
+                let mut ctm: Option<String> = None;
+                let mut draw_param: Option<u32> = None;
+                let mut line_width: Option<f64> = None;
                 let mut cap: Option<super::CtGraphicUnitCapXType> = None;
                 let mut join: Option<super::CtGraphicUnitJoinXType> = None;
-                let mut miter_limit: Option<::core::primitive::f64> = None;
-                let mut dash_offset: Option<::core::primitive::f64> = None;
-                let mut dash_pattern: Option<::std::string::String> = None;
-                let mut alpha: Option<::core::primitive::i32> = None;
-                let mut resource_id: Option<::core::primitive::u32> = None;
+                let mut miter_limit: Option<f64> = None;
+                let mut dash_offset: Option<f64> = None;
+                let mut dash_pattern: Option<String> = None;
+                let mut alpha: Option<i32> = None;
+                let mut resource_id: Option<u32> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -27972,7 +27866,7 @@ pub mod page {
         }
         #[derive(Debug)]
         pub struct CtGouraudShdXTypeDeserializer {
-            extend: Option<::core::primitive::i32>,
+            extend: Option<i32>,
             point: Vec<super::CtGouraudShdPointXElementType>,
             back_color: Option<super::CtColorXType>,
             state__: Box<CtGouraudShdXTypeDeserializerState>,
@@ -27990,7 +27884,7 @@ pub mod page {
             where
                 R: DeserializeReader,
             {
-                let mut extend: Option<::core::primitive::i32> = None;
+                let mut extend: Option<i32> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -28289,18 +28183,18 @@ pub mod page {
         }
         #[derive(Debug)]
         pub struct CtGraphicUnitXTypeDeserializer {
-            boundary: ::std::string::String,
-            name: Option<::std::string::String>,
-            visible: ::core::primitive::bool,
-            ctm: Option<::std::string::String>,
-            draw_param: Option<::core::primitive::u32>,
-            line_width: ::core::primitive::f64,
+            boundary: String,
+            name: Option<String>,
+            visible: bool,
+            ctm: Option<String>,
+            draw_param: Option<u32>,
+            line_width: f64,
             cap: super::CtGraphicUnitCapXType,
             join: super::CtGraphicUnitJoinXType,
-            miter_limit: ::core::primitive::f64,
-            dash_offset: ::core::primitive::f64,
-            dash_pattern: Option<::std::string::String>,
-            alpha: ::core::primitive::i32,
+            miter_limit: f64,
+            dash_offset: f64,
+            dash_pattern: Option<String>,
+            alpha: i32,
             actions: Option<super::CtGraphicUnitActionsXElementType>,
             clips: Option<super::CtGraphicUnitClipsXElementType>,
             state__: Box<CtGraphicUnitXTypeDeserializerState>,
@@ -28322,18 +28216,18 @@ pub mod page {
             where
                 R: DeserializeReader,
             {
-                let mut boundary: Option<::std::string::String> = None;
-                let mut name: Option<::std::string::String> = None;
-                let mut visible: Option<::core::primitive::bool> = None;
-                let mut ctm: Option<::std::string::String> = None;
-                let mut draw_param: Option<::core::primitive::u32> = None;
-                let mut line_width: Option<::core::primitive::f64> = None;
+                let mut boundary: Option<String> = None;
+                let mut name: Option<String> = None;
+                let mut visible: Option<bool> = None;
+                let mut ctm: Option<String> = None;
+                let mut draw_param: Option<u32> = None;
+                let mut line_width: Option<f64> = None;
                 let mut cap: Option<super::CtGraphicUnitCapXType> = None;
                 let mut join: Option<super::CtGraphicUnitJoinXType> = None;
-                let mut miter_limit: Option<::core::primitive::f64> = None;
-                let mut dash_offset: Option<::core::primitive::f64> = None;
-                let mut dash_pattern: Option<::std::string::String> = None;
-                let mut alpha: Option<::core::primitive::i32> = None;
+                let mut miter_limit: Option<f64> = None;
+                let mut dash_offset: Option<f64> = None;
+                let mut dash_pattern: Option<String> = None;
+                let mut alpha: Option<i32> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -28712,21 +28606,21 @@ pub mod page {
         }
         #[derive(Debug)]
         pub struct CtImageXTypeDeserializer {
-            boundary: ::std::string::String,
-            name: Option<::std::string::String>,
-            visible: ::core::primitive::bool,
-            ctm: Option<::std::string::String>,
-            draw_param: Option<::core::primitive::u32>,
-            line_width: ::core::primitive::f64,
+            boundary: String,
+            name: Option<String>,
+            visible: bool,
+            ctm: Option<String>,
+            draw_param: Option<u32>,
+            line_width: f64,
             cap: super::CtGraphicUnitCapXType,
             join: super::CtGraphicUnitJoinXType,
-            miter_limit: ::core::primitive::f64,
-            dash_offset: ::core::primitive::f64,
-            dash_pattern: Option<::std::string::String>,
-            alpha: ::core::primitive::i32,
-            resource_id: ::core::primitive::u32,
-            substitution: Option<::core::primitive::u32>,
-            image_mask: Option<::core::primitive::u32>,
+            miter_limit: f64,
+            dash_offset: f64,
+            dash_pattern: Option<String>,
+            alpha: i32,
+            resource_id: u32,
+            substitution: Option<u32>,
+            image_mask: Option<u32>,
             actions: Option<super::CtGraphicUnitActionsXElementType>,
             clips: Option<super::CtGraphicUnitClipsXElementType>,
             border: Option<super::CtImageBorderXElementType>,
@@ -28750,21 +28644,21 @@ pub mod page {
             where
                 R: DeserializeReader,
             {
-                let mut boundary: Option<::std::string::String> = None;
-                let mut name: Option<::std::string::String> = None;
-                let mut visible: Option<::core::primitive::bool> = None;
-                let mut ctm: Option<::std::string::String> = None;
-                let mut draw_param: Option<::core::primitive::u32> = None;
-                let mut line_width: Option<::core::primitive::f64> = None;
+                let mut boundary: Option<String> = None;
+                let mut name: Option<String> = None;
+                let mut visible: Option<bool> = None;
+                let mut ctm: Option<String> = None;
+                let mut draw_param: Option<u32> = None;
+                let mut line_width: Option<f64> = None;
                 let mut cap: Option<super::CtGraphicUnitCapXType> = None;
                 let mut join: Option<super::CtGraphicUnitJoinXType> = None;
-                let mut miter_limit: Option<::core::primitive::f64> = None;
-                let mut dash_offset: Option<::core::primitive::f64> = None;
-                let mut dash_pattern: Option<::std::string::String> = None;
-                let mut alpha: Option<::core::primitive::i32> = None;
-                let mut resource_id: Option<::core::primitive::u32> = None;
-                let mut substitution: Option<::core::primitive::u32> = None;
-                let mut image_mask: Option<::core::primitive::u32> = None;
+                let mut miter_limit: Option<f64> = None;
+                let mut dash_offset: Option<f64> = None;
+                let mut dash_pattern: Option<String> = None;
+                let mut alpha: Option<i32> = None;
+                let mut resource_id: Option<u32> = None;
+                let mut substitution: Option<u32> = None;
+                let mut image_mask: Option<u32> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -29252,8 +29146,8 @@ pub mod page {
         }
         #[derive(Debug)]
         pub struct CtLaGouraudShdXTypeDeserializer {
-            vertices_per_row: ::core::primitive::i32,
-            extend: Option<::core::primitive::i32>,
+            vertices_per_row: i32,
+            extend: Option<i32>,
             point: Vec<super::CtLaGouraudShdPointXElementType>,
             back_color: Option<super::CtColorXType>,
             state__: Box<CtLaGouraudShdXTypeDeserializerState>,
@@ -29273,8 +29167,8 @@ pub mod page {
             where
                 R: DeserializeReader,
             {
-                let mut vertices_per_row: Option<::core::primitive::i32> = None;
-                let mut extend: Option<::core::primitive::i32> = None;
+                let mut vertices_per_row: Option<i32> = None;
+                let mut extend: Option<i32> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -29588,7 +29482,7 @@ pub mod page {
         #[derive(Debug)]
         pub struct CtLayerXTypeDeserializer {
             type_: super::CtLayerTypeXType,
-            draw_param: Option<::core::primitive::u32>,
+            draw_param: Option<u32>,
             content: Vec<super::CtLayerXTypeContent>,
             state__: Box<CtLayerXTypeDeserializerState>,
         }
@@ -29605,7 +29499,7 @@ pub mod page {
                 R: DeserializeReader,
             {
                 let mut type_: Option<super::CtLayerTypeXType> = None;
-                let mut draw_param: Option<::core::primitive::u32> = None;
+                let mut draw_param: Option<u32> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -31405,26 +31299,26 @@ pub mod page {
         }
         #[derive(Debug)]
         pub struct CtPathXTypeDeserializer {
-            boundary: ::std::string::String,
-            name: Option<::std::string::String>,
-            visible: ::core::primitive::bool,
-            ctm: Option<::std::string::String>,
-            draw_param: Option<::core::primitive::u32>,
-            line_width: ::core::primitive::f64,
+            boundary: String,
+            name: Option<String>,
+            visible: bool,
+            ctm: Option<String>,
+            draw_param: Option<u32>,
+            line_width: f64,
             cap: super::CtGraphicUnitCapXType,
             join: super::CtGraphicUnitJoinXType,
-            miter_limit: ::core::primitive::f64,
-            dash_offset: ::core::primitive::f64,
-            dash_pattern: Option<::std::string::String>,
-            alpha: ::core::primitive::i32,
-            stroke: ::core::primitive::bool,
-            fill: ::core::primitive::bool,
+            miter_limit: f64,
+            dash_offset: f64,
+            dash_pattern: Option<String>,
+            alpha: i32,
+            stroke: bool,
+            fill: bool,
             rule: super::CtPathRuleXType,
             actions: Option<super::CtGraphicUnitActionsXElementType>,
             clips: Option<super::CtGraphicUnitClipsXElementType>,
             stroke_color: Option<super::CtColorXType>,
             fill_color: Option<super::CtColorXType>,
-            abbreviated_data: Option<::std::string::String>,
+            abbreviated_data: Option<String>,
             state__: Box<CtPathXTypeDeserializerState>,
         }
         #[derive(Debug)]
@@ -31438,7 +31332,7 @@ pub mod page {
             ),
             StrokeColor(Option<<super::CtColorXType as WithDeserializer>::Deserializer>),
             FillColor(Option<<super::CtColorXType as WithDeserializer>::Deserializer>),
-            AbbreviatedData(Option<<::std::string::String as WithDeserializer>::Deserializer>),
+            AbbreviatedData(Option<<String as WithDeserializer>::Deserializer>),
             Done__,
             Unknown__,
         }
@@ -31447,20 +31341,20 @@ pub mod page {
             where
                 R: DeserializeReader,
             {
-                let mut boundary: Option<::std::string::String> = None;
-                let mut name: Option<::std::string::String> = None;
-                let mut visible: Option<::core::primitive::bool> = None;
-                let mut ctm: Option<::std::string::String> = None;
-                let mut draw_param: Option<::core::primitive::u32> = None;
-                let mut line_width: Option<::core::primitive::f64> = None;
+                let mut boundary: Option<String> = None;
+                let mut name: Option<String> = None;
+                let mut visible: Option<bool> = None;
+                let mut ctm: Option<String> = None;
+                let mut draw_param: Option<u32> = None;
+                let mut line_width: Option<f64> = None;
                 let mut cap: Option<super::CtGraphicUnitCapXType> = None;
                 let mut join: Option<super::CtGraphicUnitJoinXType> = None;
-                let mut miter_limit: Option<::core::primitive::f64> = None;
-                let mut dash_offset: Option<::core::primitive::f64> = None;
-                let mut dash_pattern: Option<::std::string::String> = None;
-                let mut alpha: Option<::core::primitive::i32> = None;
-                let mut stroke: Option<::core::primitive::bool> = None;
-                let mut fill: Option<::core::primitive::bool> = None;
+                let mut miter_limit: Option<f64> = None;
+                let mut dash_offset: Option<f64> = None;
+                let mut dash_pattern: Option<String> = None;
+                let mut alpha: Option<i32> = None;
+                let mut stroke: Option<bool> = None;
+                let mut fill: Option<bool> = None;
                 let mut rule: Option<super::CtPathRuleXType> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
@@ -31642,10 +31536,7 @@ pub mod page {
                 self.fill_color = Some(value);
                 Ok(())
             }
-            fn store_abbreviated_data(
-                &mut self,
-                value: ::std::string::String,
-            ) -> Result<(), Error> {
+            fn store_abbreviated_data(&mut self, value: String) -> Result<(), Error> {
                 if self.abbreviated_data.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"AbbreviatedData",
@@ -31845,7 +31736,7 @@ pub mod page {
             fn handle_abbreviated_data<'de, R>(
                 &mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, ::std::string::String>,
+                output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<CtPathXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -32134,13 +32025,13 @@ pub mod page {
         }
         #[derive(Debug)]
         pub struct CtPatternXTypeDeserializer {
-            width: ::core::primitive::f64,
-            height: ::core::primitive::f64,
-            x_step: Option<::core::primitive::f64>,
-            y_step: Option<::core::primitive::f64>,
+            width: f64,
+            height: f64,
+            x_step: Option<f64>,
+            y_step: Option<f64>,
             reflect_method: super::CtPatternReflectMethodXType,
             relative_to: super::CtPatternRelativeToXType,
-            ctm: Option<::std::string::String>,
+            ctm: Option<String>,
             cell_content: Option<super::CtPatternCellContentXElementType>,
             state__: Box<CtPatternXTypeDeserializerState>,
         }
@@ -32158,13 +32049,13 @@ pub mod page {
             where
                 R: DeserializeReader,
             {
-                let mut width: Option<::core::primitive::f64> = None;
-                let mut height: Option<::core::primitive::f64> = None;
-                let mut x_step: Option<::core::primitive::f64> = None;
-                let mut y_step: Option<::core::primitive::f64> = None;
+                let mut width: Option<f64> = None;
+                let mut height: Option<f64> = None;
+                let mut x_step: Option<f64> = None;
+                let mut y_step: Option<f64> = None;
                 let mut reflect_method: Option<super::CtPatternReflectMethodXType> = None;
                 let mut relative_to: Option<super::CtPatternRelativeToXType> = None;
-                let mut ctm: Option<::std::string::String> = None;
+                let mut ctm: Option<String> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -32424,14 +32315,14 @@ pub mod page {
         #[derive(Debug)]
         pub struct CtRadialShdXTypeDeserializer {
             map_type: super::CtAxialShdMapTypeXType,
-            map_unit: Option<::core::primitive::f64>,
-            eccentricity: ::core::primitive::f64,
-            angle: ::core::primitive::f64,
-            start_point: ::std::string::String,
-            start_radius: ::core::primitive::f64,
-            end_point: ::std::string::String,
-            end_radius: ::core::primitive::f64,
-            extend: ::core::primitive::i32,
+            map_unit: Option<f64>,
+            eccentricity: f64,
+            angle: f64,
+            start_point: String,
+            start_radius: f64,
+            end_point: String,
+            end_radius: f64,
+            extend: i32,
             seqment: Vec<super::CtAxialShdSegmentXElementType>,
             state__: Box<CtRadialShdXTypeDeserializerState>,
         }
@@ -32450,14 +32341,14 @@ pub mod page {
                 R: DeserializeReader,
             {
                 let mut map_type: Option<super::CtAxialShdMapTypeXType> = None;
-                let mut map_unit: Option<::core::primitive::f64> = None;
-                let mut eccentricity: Option<::core::primitive::f64> = None;
-                let mut angle: Option<::core::primitive::f64> = None;
-                let mut start_point: Option<::std::string::String> = None;
-                let mut start_radius: Option<::core::primitive::f64> = None;
-                let mut end_point: Option<::std::string::String> = None;
-                let mut end_radius: Option<::core::primitive::f64> = None;
-                let mut extend: Option<::core::primitive::i32> = None;
+                let mut map_unit: Option<f64> = None;
+                let mut eccentricity: Option<f64> = None;
+                let mut angle: Option<f64> = None;
+                let mut start_point: Option<String> = None;
+                let mut start_radius: Option<f64> = None;
+                let mut end_point: Option<String> = None;
+                let mut end_radius: Option<f64> = None;
+                let mut extend: Option<i32> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -32727,27 +32618,27 @@ pub mod page {
         }
         #[derive(Debug)]
         pub struct CtTextXTypeDeserializer {
-            boundary: ::std::string::String,
-            name: Option<::std::string::String>,
-            visible: ::core::primitive::bool,
-            ctm: Option<::std::string::String>,
-            draw_param: Option<::core::primitive::u32>,
-            line_width: ::core::primitive::f64,
+            boundary: String,
+            name: Option<String>,
+            visible: bool,
+            ctm: Option<String>,
+            draw_param: Option<u32>,
+            line_width: f64,
             cap: super::CtGraphicUnitCapXType,
             join: super::CtGraphicUnitJoinXType,
-            miter_limit: ::core::primitive::f64,
-            dash_offset: ::core::primitive::f64,
-            dash_pattern: Option<::std::string::String>,
-            alpha: ::core::primitive::i32,
-            font: ::core::primitive::u32,
-            size: ::core::primitive::f64,
-            stroke: ::core::primitive::bool,
-            fill: ::core::primitive::bool,
-            h_scale: ::core::primitive::f64,
-            read_direction: ::core::primitive::i32,
-            char_direction: ::core::primitive::i32,
+            miter_limit: f64,
+            dash_offset: f64,
+            dash_pattern: Option<String>,
+            alpha: i32,
+            font: u32,
+            size: f64,
+            stroke: bool,
+            fill: bool,
+            h_scale: f64,
+            read_direction: i32,
+            char_direction: i32,
             weight: super::CtTextWeightXType,
-            italic: ::core::primitive::bool,
+            italic: bool,
             content: Vec<super::CtTextXTypeContent>,
             state__: Box<CtTextXTypeDeserializerState>,
         }
@@ -32763,27 +32654,27 @@ pub mod page {
             where
                 R: DeserializeReader,
             {
-                let mut boundary: Option<::std::string::String> = None;
-                let mut name: Option<::std::string::String> = None;
-                let mut visible: Option<::core::primitive::bool> = None;
-                let mut ctm: Option<::std::string::String> = None;
-                let mut draw_param: Option<::core::primitive::u32> = None;
-                let mut line_width: Option<::core::primitive::f64> = None;
+                let mut boundary: Option<String> = None;
+                let mut name: Option<String> = None;
+                let mut visible: Option<bool> = None;
+                let mut ctm: Option<String> = None;
+                let mut draw_param: Option<u32> = None;
+                let mut line_width: Option<f64> = None;
                 let mut cap: Option<super::CtGraphicUnitCapXType> = None;
                 let mut join: Option<super::CtGraphicUnitJoinXType> = None;
-                let mut miter_limit: Option<::core::primitive::f64> = None;
-                let mut dash_offset: Option<::core::primitive::f64> = None;
-                let mut dash_pattern: Option<::std::string::String> = None;
-                let mut alpha: Option<::core::primitive::i32> = None;
-                let mut font: Option<::core::primitive::u32> = None;
-                let mut size: Option<::core::primitive::f64> = None;
-                let mut stroke: Option<::core::primitive::bool> = None;
-                let mut fill: Option<::core::primitive::bool> = None;
-                let mut h_scale: Option<::core::primitive::f64> = None;
-                let mut read_direction: Option<::core::primitive::i32> = None;
-                let mut char_direction: Option<::core::primitive::i32> = None;
+                let mut miter_limit: Option<f64> = None;
+                let mut dash_offset: Option<f64> = None;
+                let mut dash_pattern: Option<String> = None;
+                let mut alpha: Option<i32> = None;
+                let mut font: Option<u32> = None;
+                let mut size: Option<f64> = None;
+                let mut stroke: Option<bool> = None;
+                let mut fill: Option<bool> = None;
+                let mut h_scale: Option<f64> = None;
+                let mut read_direction: Option<i32> = None;
+                let mut char_direction: Option<i32> = None;
                 let mut weight: Option<super::CtTextWeightXType> = None;
-                let mut italic: Option<::core::primitive::bool> = None;
+                let mut italic: Option<bool> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -33941,7 +33832,7 @@ pub mod page {
         #[derive(Debug)]
         pub struct PageXElementTypeDeserializer {
             template: Vec<super::PageTemplateXElementType>,
-            page_res: Vec<::std::string::String>,
+            page_res: Vec<String>,
             area: Option<super::super::definition::CtPageAreaXType>,
             content: Option<super::PageContentXElementType>,
             actions: Option<super::CtGraphicUnitActionsXElementType>,
@@ -33951,7 +33842,7 @@ pub mod page {
         enum PageXElementTypeDeserializerState {
             Init__,
             Template(Option<<super::PageTemplateXElementType as WithDeserializer>::Deserializer>),
-            PageRes(Option<<::std::string::String as WithDeserializer>::Deserializer>),
+            PageRes(Option<<String as WithDeserializer>::Deserializer>),
             Area(
                 Option<
                     <super::super::definition::CtPageAreaXType as WithDeserializer>::Deserializer,
@@ -34016,7 +33907,7 @@ pub mod page {
                 self.template.push(value);
                 Ok(())
             }
-            fn store_page_res(&mut self, value: ::std::string::String) -> Result<(), Error> {
+            fn store_page_res(&mut self, value: String) -> Result<(), Error> {
                 self.page_res.push(value);
                 Ok(())
             }
@@ -34104,7 +33995,7 @@ pub mod page {
             fn handle_page_res<'de, R>(
                 &mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, ::std::string::String>,
+                output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<PageXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -34515,7 +34406,7 @@ pub mod page {
         }
         #[derive(Debug)]
         pub struct CtAxialShdSegmentXElementTypeDeserializer {
-            position: Option<::core::primitive::f64>,
+            position: Option<f64>,
             color: Option<super::CtColorXType>,
             state__: Box<CtAxialShdSegmentXElementTypeDeserializerState>,
         }
@@ -34531,7 +34422,7 @@ pub mod page {
             where
                 R: DeserializeReader,
             {
-                let mut position: Option<::core::primitive::f64> = None;
+                let mut position: Option<f64> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -34750,8 +34641,8 @@ pub mod page {
         }
         #[derive(Debug)]
         pub struct CtClipAreaXElementTypeDeserializer {
-            draw_param: Option<::core::primitive::u32>,
-            ctm: Option<::std::string::String>,
+            draw_param: Option<u32>,
+            ctm: Option<String>,
             content: Option<super::CtClipAreaXElementTypeContent>,
             state__: Box<CtClipAreaXElementTypeDeserializerState>,
         }
@@ -34767,8 +34658,8 @@ pub mod page {
             where
                 R: DeserializeReader,
             {
-                let mut draw_param: Option<::core::primitive::u32> = None;
-                let mut ctm: Option<::std::string::String> = None;
+                let mut draw_param: Option<u32> = None;
+                let mut ctm: Option<String> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -35753,8 +35644,8 @@ pub mod page {
         }
         #[derive(Debug)]
         pub struct CtGouraudShdPointXElementTypeDeserializer {
-            x: ::core::primitive::f64,
-            y: ::core::primitive::f64,
+            x: f64,
+            y: f64,
             edge_flag: Option<super::CtGouraudShdPointEdgeFlagXType>,
             color: Option<super::CtColorXType>,
             state__: Box<CtGouraudShdPointXElementTypeDeserializerState>,
@@ -35771,8 +35662,8 @@ pub mod page {
             where
                 R: DeserializeReader,
             {
-                let mut x: Option<::core::primitive::f64> = None;
-                let mut y: Option<::core::primitive::f64> = None;
+                let mut x: Option<f64> = None;
+                let mut y: Option<f64> = None;
                 let mut edge_flag: Option<super::CtGouraudShdPointEdgeFlagXType> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
@@ -36006,11 +35897,11 @@ pub mod page {
         }
         #[derive(Debug)]
         pub struct CtImageBorderXElementTypeDeserializer {
-            line_width: ::core::primitive::f64,
-            horizonal_corner_radius: ::core::primitive::f64,
-            vertical_corner_radius: ::core::primitive::f64,
-            dash_offset: ::core::primitive::f64,
-            dash_pattern: Option<::std::string::String>,
+            line_width: f64,
+            horizonal_corner_radius: f64,
+            vertical_corner_radius: f64,
+            dash_offset: f64,
+            dash_pattern: Option<String>,
             border_color: Option<super::CtColorXType>,
             state__: Box<CtImageBorderXElementTypeDeserializerState>,
         }
@@ -36026,11 +35917,11 @@ pub mod page {
             where
                 R: DeserializeReader,
             {
-                let mut line_width: Option<::core::primitive::f64> = None;
-                let mut horizonal_corner_radius: Option<::core::primitive::f64> = None;
-                let mut vertical_corner_radius: Option<::core::primitive::f64> = None;
-                let mut dash_offset: Option<::core::primitive::f64> = None;
-                let mut dash_pattern: Option<::std::string::String> = None;
+                let mut line_width: Option<f64> = None;
+                let mut horizonal_corner_radius: Option<f64> = None;
+                let mut vertical_corner_radius: Option<f64> = None;
+                let mut dash_offset: Option<f64> = None;
+                let mut dash_pattern: Option<String> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -36279,8 +36170,8 @@ pub mod page {
         }
         #[derive(Debug)]
         pub struct CtLaGouraudShdPointXElementTypeDeserializer {
-            x: Option<::core::primitive::f64>,
-            y: Option<::core::primitive::f64>,
+            x: Option<f64>,
+            y: Option<f64>,
             color: Option<super::CtColorXType>,
             state__: Box<CtLaGouraudShdPointXElementTypeDeserializerState>,
         }
@@ -36296,8 +36187,8 @@ pub mod page {
             where
                 R: DeserializeReader,
             {
-                let mut x: Option<::core::primitive::f64> = None;
-                let mut y: Option<::core::primitive::f64> = None;
+                let mut x: Option<f64> = None;
+                let mut y: Option<f64> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -36524,28 +36415,28 @@ pub mod page {
         }
         #[derive(Debug)]
         pub struct CtPageBlockTextObjectXElementTypeDeserializer {
-            boundary: ::std::string::String,
-            name: Option<::std::string::String>,
-            visible: ::core::primitive::bool,
-            ctm: Option<::std::string::String>,
-            draw_param: Option<::core::primitive::u32>,
-            line_width: ::core::primitive::f64,
+            boundary: String,
+            name: Option<String>,
+            visible: bool,
+            ctm: Option<String>,
+            draw_param: Option<u32>,
+            line_width: f64,
             cap: super::CtGraphicUnitCapXType,
             join: super::CtGraphicUnitJoinXType,
-            miter_limit: ::core::primitive::f64,
-            dash_offset: ::core::primitive::f64,
-            dash_pattern: Option<::std::string::String>,
-            alpha: ::core::primitive::i32,
-            font: ::core::primitive::u32,
-            size: ::core::primitive::f64,
-            stroke: ::core::primitive::bool,
-            fill: ::core::primitive::bool,
-            h_scale: ::core::primitive::f64,
-            read_direction: ::core::primitive::i32,
-            char_direction: ::core::primitive::i32,
+            miter_limit: f64,
+            dash_offset: f64,
+            dash_pattern: Option<String>,
+            alpha: i32,
+            font: u32,
+            size: f64,
+            stroke: bool,
+            fill: bool,
+            h_scale: f64,
+            read_direction: i32,
+            char_direction: i32,
             weight: super::CtTextWeightXType,
-            italic: ::core::primitive::bool,
-            id: ::core::primitive::u32,
+            italic: bool,
+            id: u32,
             content: Vec<super::CtPageBlockTextObjectXElementTypeContent>,
             state__: Box<CtPageBlockTextObjectXElementTypeDeserializerState>,
         }
@@ -36563,28 +36454,28 @@ pub mod page {
             where
                 R: DeserializeReader,
             {
-                let mut boundary: Option<::std::string::String> = None;
-                let mut name: Option<::std::string::String> = None;
-                let mut visible: Option<::core::primitive::bool> = None;
-                let mut ctm: Option<::std::string::String> = None;
-                let mut draw_param: Option<::core::primitive::u32> = None;
-                let mut line_width: Option<::core::primitive::f64> = None;
+                let mut boundary: Option<String> = None;
+                let mut name: Option<String> = None;
+                let mut visible: Option<bool> = None;
+                let mut ctm: Option<String> = None;
+                let mut draw_param: Option<u32> = None;
+                let mut line_width: Option<f64> = None;
                 let mut cap: Option<super::CtGraphicUnitCapXType> = None;
                 let mut join: Option<super::CtGraphicUnitJoinXType> = None;
-                let mut miter_limit: Option<::core::primitive::f64> = None;
-                let mut dash_offset: Option<::core::primitive::f64> = None;
-                let mut dash_pattern: Option<::std::string::String> = None;
-                let mut alpha: Option<::core::primitive::i32> = None;
-                let mut font: Option<::core::primitive::u32> = None;
-                let mut size: Option<::core::primitive::f64> = None;
-                let mut stroke: Option<::core::primitive::bool> = None;
-                let mut fill: Option<::core::primitive::bool> = None;
-                let mut h_scale: Option<::core::primitive::f64> = None;
-                let mut read_direction: Option<::core::primitive::i32> = None;
-                let mut char_direction: Option<::core::primitive::i32> = None;
+                let mut miter_limit: Option<f64> = None;
+                let mut dash_offset: Option<f64> = None;
+                let mut dash_pattern: Option<String> = None;
+                let mut alpha: Option<i32> = None;
+                let mut font: Option<u32> = None;
+                let mut size: Option<f64> = None;
+                let mut stroke: Option<bool> = None;
+                let mut fill: Option<bool> = None;
+                let mut h_scale: Option<f64> = None;
+                let mut read_direction: Option<i32> = None;
+                let mut char_direction: Option<i32> = None;
                 let mut weight: Option<super::CtTextWeightXType> = None;
-                let mut italic: Option<::core::primitive::bool> = None;
-                let mut id: Option<::core::primitive::u32> = None;
+                let mut italic: Option<bool> = None;
+                let mut id: Option<u32> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -37890,27 +37781,27 @@ pub mod page {
         }
         #[derive(Debug)]
         pub struct CtPageBlockPathObjectXElementTypeDeserializer {
-            boundary: ::std::string::String,
-            name: Option<::std::string::String>,
-            visible: ::core::primitive::bool,
-            ctm: Option<::std::string::String>,
-            draw_param: Option<::core::primitive::u32>,
-            line_width: ::core::primitive::f64,
+            boundary: String,
+            name: Option<String>,
+            visible: bool,
+            ctm: Option<String>,
+            draw_param: Option<u32>,
+            line_width: f64,
             cap: super::CtGraphicUnitCapXType,
             join: super::CtGraphicUnitJoinXType,
-            miter_limit: ::core::primitive::f64,
-            dash_offset: ::core::primitive::f64,
-            dash_pattern: Option<::std::string::String>,
-            alpha: ::core::primitive::i32,
-            stroke: ::core::primitive::bool,
-            fill: ::core::primitive::bool,
+            miter_limit: f64,
+            dash_offset: f64,
+            dash_pattern: Option<String>,
+            alpha: i32,
+            stroke: bool,
+            fill: bool,
             rule: super::CtPathRuleXType,
-            id: ::core::primitive::u32,
+            id: u32,
             actions: Option<super::CtGraphicUnitActionsXElementType>,
             clips: Option<super::CtGraphicUnitClipsXElementType>,
             stroke_color: Option<super::CtColorXType>,
             fill_color: Option<super::CtColorXType>,
-            abbreviated_data: Option<::std::string::String>,
+            abbreviated_data: Option<String>,
             state__: Box<CtPageBlockPathObjectXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
@@ -37924,7 +37815,7 @@ pub mod page {
             ),
             StrokeColor(Option<<super::CtColorXType as WithDeserializer>::Deserializer>),
             FillColor(Option<<super::CtColorXType as WithDeserializer>::Deserializer>),
-            AbbreviatedData(Option<<::std::string::String as WithDeserializer>::Deserializer>),
+            AbbreviatedData(Option<<String as WithDeserializer>::Deserializer>),
             Done__,
             Unknown__,
         }
@@ -37933,22 +37824,22 @@ pub mod page {
             where
                 R: DeserializeReader,
             {
-                let mut boundary: Option<::std::string::String> = None;
-                let mut name: Option<::std::string::String> = None;
-                let mut visible: Option<::core::primitive::bool> = None;
-                let mut ctm: Option<::std::string::String> = None;
-                let mut draw_param: Option<::core::primitive::u32> = None;
-                let mut line_width: Option<::core::primitive::f64> = None;
+                let mut boundary: Option<String> = None;
+                let mut name: Option<String> = None;
+                let mut visible: Option<bool> = None;
+                let mut ctm: Option<String> = None;
+                let mut draw_param: Option<u32> = None;
+                let mut line_width: Option<f64> = None;
                 let mut cap: Option<super::CtGraphicUnitCapXType> = None;
                 let mut join: Option<super::CtGraphicUnitJoinXType> = None;
-                let mut miter_limit: Option<::core::primitive::f64> = None;
-                let mut dash_offset: Option<::core::primitive::f64> = None;
-                let mut dash_pattern: Option<::std::string::String> = None;
-                let mut alpha: Option<::core::primitive::i32> = None;
-                let mut stroke: Option<::core::primitive::bool> = None;
-                let mut fill: Option<::core::primitive::bool> = None;
+                let mut miter_limit: Option<f64> = None;
+                let mut dash_offset: Option<f64> = None;
+                let mut dash_pattern: Option<String> = None;
+                let mut alpha: Option<i32> = None;
+                let mut stroke: Option<bool> = None;
+                let mut fill: Option<bool> = None;
                 let mut rule: Option<super::CtPathRuleXType> = None;
-                let mut id: Option<::core::primitive::u32> = None;
+                let mut id: Option<u32> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -38147,10 +38038,7 @@ pub mod page {
                 self.fill_color = Some(value);
                 Ok(())
             }
-            fn store_abbreviated_data(
-                &mut self,
-                value: ::std::string::String,
-            ) -> Result<(), Error> {
+            fn store_abbreviated_data(&mut self, value: String) -> Result<(), Error> {
                 if self.abbreviated_data.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"AbbreviatedData",
@@ -38390,7 +38278,7 @@ pub mod page {
             fn handle_abbreviated_data<'de, R>(
                 &mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, ::std::string::String>,
+                output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<CtPageBlockPathObjectXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -38694,22 +38582,22 @@ pub mod page {
         }
         #[derive(Debug)]
         pub struct CtPageBlockImageObjectXElementTypeDeserializer {
-            boundary: ::std::string::String,
-            name: Option<::std::string::String>,
-            visible: ::core::primitive::bool,
-            ctm: Option<::std::string::String>,
-            draw_param: Option<::core::primitive::u32>,
-            line_width: ::core::primitive::f64,
+            boundary: String,
+            name: Option<String>,
+            visible: bool,
+            ctm: Option<String>,
+            draw_param: Option<u32>,
+            line_width: f64,
             cap: super::CtGraphicUnitCapXType,
             join: super::CtGraphicUnitJoinXType,
-            miter_limit: ::core::primitive::f64,
-            dash_offset: ::core::primitive::f64,
-            dash_pattern: Option<::std::string::String>,
-            alpha: ::core::primitive::i32,
-            resource_id: ::core::primitive::u32,
-            substitution: Option<::core::primitive::u32>,
-            image_mask: Option<::core::primitive::u32>,
-            id: ::core::primitive::u32,
+            miter_limit: f64,
+            dash_offset: f64,
+            dash_pattern: Option<String>,
+            alpha: i32,
+            resource_id: u32,
+            substitution: Option<u32>,
+            image_mask: Option<u32>,
+            id: u32,
             actions: Option<super::CtGraphicUnitActionsXElementType>,
             clips: Option<super::CtGraphicUnitClipsXElementType>,
             border: Option<super::CtImageBorderXElementType>,
@@ -38733,22 +38621,22 @@ pub mod page {
             where
                 R: DeserializeReader,
             {
-                let mut boundary: Option<::std::string::String> = None;
-                let mut name: Option<::std::string::String> = None;
-                let mut visible: Option<::core::primitive::bool> = None;
-                let mut ctm: Option<::std::string::String> = None;
-                let mut draw_param: Option<::core::primitive::u32> = None;
-                let mut line_width: Option<::core::primitive::f64> = None;
+                let mut boundary: Option<String> = None;
+                let mut name: Option<String> = None;
+                let mut visible: Option<bool> = None;
+                let mut ctm: Option<String> = None;
+                let mut draw_param: Option<u32> = None;
+                let mut line_width: Option<f64> = None;
                 let mut cap: Option<super::CtGraphicUnitCapXType> = None;
                 let mut join: Option<super::CtGraphicUnitJoinXType> = None;
-                let mut miter_limit: Option<::core::primitive::f64> = None;
-                let mut dash_offset: Option<::core::primitive::f64> = None;
-                let mut dash_pattern: Option<::std::string::String> = None;
-                let mut alpha: Option<::core::primitive::i32> = None;
-                let mut resource_id: Option<::core::primitive::u32> = None;
-                let mut substitution: Option<::core::primitive::u32> = None;
-                let mut image_mask: Option<::core::primitive::u32> = None;
-                let mut id: Option<::core::primitive::u32> = None;
+                let mut miter_limit: Option<f64> = None;
+                let mut dash_offset: Option<f64> = None;
+                let mut dash_pattern: Option<String> = None;
+                let mut alpha: Option<i32> = None;
+                let mut resource_id: Option<u32> = None;
+                let mut substitution: Option<u32> = None;
+                let mut image_mask: Option<u32> = None;
+                let mut id: Option<u32> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -39290,20 +39178,20 @@ pub mod page {
         }
         #[derive(Debug)]
         pub struct CtPageBlockCompositeObjectXElementTypeDeserializer {
-            boundary: ::std::string::String,
-            name: Option<::std::string::String>,
-            visible: ::core::primitive::bool,
-            ctm: Option<::std::string::String>,
-            draw_param: Option<::core::primitive::u32>,
-            line_width: ::core::primitive::f64,
+            boundary: String,
+            name: Option<String>,
+            visible: bool,
+            ctm: Option<String>,
+            draw_param: Option<u32>,
+            line_width: f64,
             cap: super::CtGraphicUnitCapXType,
             join: super::CtGraphicUnitJoinXType,
-            miter_limit: ::core::primitive::f64,
-            dash_offset: ::core::primitive::f64,
-            dash_pattern: Option<::std::string::String>,
-            alpha: ::core::primitive::i32,
-            resource_id: ::core::primitive::u32,
-            id: ::core::primitive::u32,
+            miter_limit: f64,
+            dash_offset: f64,
+            dash_pattern: Option<String>,
+            alpha: i32,
+            resource_id: u32,
+            id: u32,
             actions: Option<super::CtGraphicUnitActionsXElementType>,
             clips: Option<super::CtGraphicUnitClipsXElementType>,
             state__: Box<CtPageBlockCompositeObjectXElementTypeDeserializerState>,
@@ -39325,20 +39213,20 @@ pub mod page {
             where
                 R: DeserializeReader,
             {
-                let mut boundary: Option<::std::string::String> = None;
-                let mut name: Option<::std::string::String> = None;
-                let mut visible: Option<::core::primitive::bool> = None;
-                let mut ctm: Option<::std::string::String> = None;
-                let mut draw_param: Option<::core::primitive::u32> = None;
-                let mut line_width: Option<::core::primitive::f64> = None;
+                let mut boundary: Option<String> = None;
+                let mut name: Option<String> = None;
+                let mut visible: Option<bool> = None;
+                let mut ctm: Option<String> = None;
+                let mut draw_param: Option<u32> = None;
+                let mut line_width: Option<f64> = None;
                 let mut cap: Option<super::CtGraphicUnitCapXType> = None;
                 let mut join: Option<super::CtGraphicUnitJoinXType> = None;
-                let mut miter_limit: Option<::core::primitive::f64> = None;
-                let mut dash_offset: Option<::core::primitive::f64> = None;
-                let mut dash_pattern: Option<::std::string::String> = None;
-                let mut alpha: Option<::core::primitive::i32> = None;
-                let mut resource_id: Option<::core::primitive::u32> = None;
-                let mut id: Option<::core::primitive::u32> = None;
+                let mut miter_limit: Option<f64> = None;
+                let mut dash_offset: Option<f64> = None;
+                let mut dash_pattern: Option<String> = None;
+                let mut alpha: Option<i32> = None;
+                let mut resource_id: Option<u32> = None;
+                let mut id: Option<u32> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -39764,7 +39652,7 @@ pub mod page {
         }
         #[derive(Debug)]
         pub struct CtPageBlockPageBlockXElementTypeDeserializer {
-            id: ::core::primitive::u32,
+            id: u32,
             content: Vec<super::CtPageBlockPageBlockXElementTypeContent>,
             state__: Box<CtPageBlockPageBlockXElementTypeDeserializerState>,
         }
@@ -39782,7 +39670,7 @@ pub mod page {
             where
                 R: DeserializeReader,
             {
-                let mut id: Option<::core::primitive::u32> = None;
+                let mut id: Option<u32> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -40731,7 +40619,7 @@ pub mod page {
         }
         #[derive(Debug)]
         pub struct CtPatternCellContentXElementTypeDeserializer {
-            thumbnail: Option<::core::primitive::u32>,
+            thumbnail: Option<u32>,
             content: Vec<super::CtPatternCellContentXElementTypeContent>,
             state__: Box<CtPatternCellContentXElementTypeDeserializerState>,
         }
@@ -40749,7 +40637,7 @@ pub mod page {
             where
                 R: DeserializeReader,
             {
-                let mut thumbnail: Option<::core::primitive::u32> = None;
+                let mut thumbnail: Option<u32> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -41696,17 +41584,17 @@ pub mod page {
         }
         #[derive(Debug)]
         pub struct CtTextTextCodeXElementTypeDeserializer {
-            x: Option<::core::primitive::f64>,
-            y: Option<::core::primitive::f64>,
-            delta_x: Option<::std::string::String>,
-            deltay: Option<::std::string::String>,
-            content: Option<::std::string::String>,
+            x: Option<f64>,
+            y: Option<f64>,
+            delta_x: Option<String>,
+            deltay: Option<String>,
+            content: Option<String>,
             state__: Box<CtTextTextCodeXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtTextTextCodeXElementTypeDeserializerState {
             Init__,
-            Content__(<::std::string::String as WithDeserializer>::Deserializer),
+            Content__(<String as WithDeserializer>::Deserializer),
             Unknown__,
         }
         impl CtTextTextCodeXElementTypeDeserializer {
@@ -41714,10 +41602,10 @@ pub mod page {
             where
                 R: DeserializeReader,
             {
-                let mut x: Option<::core::primitive::f64> = None;
-                let mut y: Option<::core::primitive::f64> = None;
-                let mut delta_x: Option<::std::string::String> = None;
-                let mut deltay: Option<::std::string::String> = None;
+                let mut x: Option<f64> = None;
+                let mut y: Option<f64> = None;
+                let mut delta_x: Option<String> = None;
+                let mut deltay: Option<String> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -41767,7 +41655,7 @@ pub mod page {
                 }
                 Ok(())
             }
-            fn store_content(&mut self, value: ::std::string::String) -> Result<(), Error> {
+            fn store_content(&mut self, value: String) -> Result<(), Error> {
                 if self.content.is_some() {
                     Err(ErrorKind::DuplicateContent)?;
                 }
@@ -41777,7 +41665,7 @@ pub mod page {
             fn handle_content<'de, R>(
                 mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, ::std::string::String>,
+                output: DeserializerOutput<'de, String>,
             ) -> DeserializerResult<'de, super::CtTextTextCodeXElementType>
             where
                 R: DeserializeReader,
@@ -41874,7 +41762,7 @@ pub mod page {
         }
         #[derive(Debug)]
         pub struct PageTemplateXElementTypeDeserializer {
-            template_id: ::core::primitive::u32,
+            template_id: u32,
             z_order: super::PageTemplateZOrderXType,
             state__: Box<PageTemplateXElementTypeDeserializerState>,
         }
@@ -41888,7 +41776,7 @@ pub mod page {
             where
                 R: DeserializeReader,
             {
-                let mut template_id: Option<::core::primitive::u32> = None;
+                let mut template_id: Option<u32> = None;
                 let mut z_order: Option<super::PageTemplateZOrderXType> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
@@ -42194,8 +42082,8 @@ pub mod page {
         #[derive(Debug)]
         pub struct PageContentLayerXElementTypeDeserializer {
             type_: super::CtLayerTypeXType,
-            draw_param: Option<::core::primitive::u32>,
-            id: ::core::primitive::u32,
+            draw_param: Option<u32>,
+            id: u32,
             content: Vec<super::PageContentLayerXElementTypeContent>,
             state__: Box<PageContentLayerXElementTypeDeserializerState>,
         }
@@ -42214,8 +42102,8 @@ pub mod page {
                 R: DeserializeReader,
             {
                 let mut type_: Option<super::CtLayerTypeXType> = None;
-                let mut draw_param: Option<::core::primitive::u32> = None;
-                let mut id: Option<::core::primitive::u32> = None;
+                let mut draw_param: Option<u32> = None;
+                let mut id: Option<u32> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -43273,9 +43161,7 @@ pub mod page {
         #[derive(Debug)]
         pub(super) enum CtCgTransformXTypeSerializerState<'ser> {
             Init__,
-            Glyphs(
-                IterSerializer<'ser, Option<&'ser ::std::string::String>, ::std::string::String>,
-            ),
+            Glyphs(IterSerializer<'ser, Option<&'ser String>, String>),
             End__,
             Done__,
             Phantom__(&'ser ()),
@@ -44445,7 +44331,7 @@ pub mod page {
                 IterSerializer<'ser, Option<&'ser super::CtColorXType>, super::CtColorXType>,
             ),
             FillColor(IterSerializer<'ser, Option<&'ser super::CtColorXType>, super::CtColorXType>),
-            AbbreviatedData(<::std::string::String as WithSerializer>::Serializer<'ser>),
+            AbbreviatedData(<String as WithSerializer>::Serializer<'ser>),
             End__,
             Done__,
             Phantom__(&'ser ()),
@@ -44918,7 +44804,7 @@ pub mod page {
                     super::PageTemplateXElementType,
                 >,
             ),
-            PageRes(IterSerializer<'ser, &'ser [::std::string::String], ::std::string::String>),
+            PageRes(IterSerializer<'ser, &'ser [String], String>),
             Area(
                 IterSerializer<
                     'ser,
@@ -45774,7 +45660,7 @@ pub mod page {
                 IterSerializer<'ser, Option<&'ser super::CtColorXType>, super::CtColorXType>,
             ),
             FillColor(IterSerializer<'ser, Option<&'ser super::CtColorXType>, super::CtColorXType>),
-            AbbreviatedData(<::std::string::String as WithSerializer>::Serializer<'ser>),
+            AbbreviatedData(<String as WithSerializer>::Serializer<'ser>),
             End__,
             Done__,
             Phantom__(&'ser ()),
@@ -46416,7 +46302,7 @@ pub mod page {
         #[derive(Debug)]
         pub(super) enum CtTextTextCodeXElementTypeSerializerState<'ser> {
             Init__,
-            Content__(<::std::string::String as WithSerializer>::Serializer<'ser>),
+            Content__(<String as WithSerializer>::Serializer<'ser>),
             End__,
             Done__,
             Phantom__(&'ser ()),
@@ -46772,13 +46658,13 @@ pub mod res {
     #[derive(Debug)]
     pub struct CtColorSpaceXType {
         pub type_: CtColorSpaceTypeXType,
-        pub bits_per_component: ::core::primitive::i32,
-        pub profile: Option<::std::string::String>,
+        pub bits_per_component: i32,
+        pub profile: Option<String>,
         pub palette: Option<CtColorSpacePaletteXElementType>,
     }
     impl CtColorSpaceXType {
         #[must_use]
-        pub fn default_bits_per_component() -> ::core::primitive::i32 {
+        pub fn default_bits_per_component() -> i32 {
             8i32
         }
     }
@@ -46802,35 +46688,35 @@ pub mod res {
     }
     #[derive(Debug)]
     pub struct CtDrawParamXType {
-        pub relative: Option<::core::primitive::u32>,
-        pub line_width: ::core::primitive::f64,
-        pub join: ::std::string::String,
-        pub cap: ::std::string::String,
-        pub dash_offset: ::core::primitive::f64,
-        pub dash_pattern: Option<::std::string::String>,
-        pub miter_limit: ::core::primitive::f64,
+        pub relative: Option<u32>,
+        pub line_width: f64,
+        pub join: String,
+        pub cap: String,
+        pub dash_offset: f64,
+        pub dash_pattern: Option<String>,
+        pub miter_limit: f64,
         pub fill_color: Option<super::page::CtColorXType>,
         pub stroke_color: Option<super::page::CtColorXType>,
     }
     impl CtDrawParamXType {
         #[must_use]
-        pub fn default_line_width() -> ::core::primitive::f64 {
+        pub fn default_line_width() -> f64 {
             0.353f64
         }
         #[must_use]
-        pub fn default_join() -> ::std::string::String {
+        pub fn default_join() -> String {
             String::from("Miter")
         }
         #[must_use]
-        pub fn default_cap() -> ::std::string::String {
+        pub fn default_cap() -> String {
             String::from("Butt")
         }
         #[must_use]
-        pub fn default_dash_offset() -> ::core::primitive::f64 {
+        pub fn default_dash_offset() -> f64 {
             0f64
         }
         #[must_use]
-        pub fn default_miter_limit() -> ::core::primitive::f64 {
+        pub fn default_miter_limit() -> f64 {
             4.234f64
         }
     }
@@ -46854,14 +46740,14 @@ pub mod res {
     }
     #[derive(Debug)]
     pub struct CtFontXType {
-        pub font_name: ::std::string::String,
-        pub family_name: Option<::std::string::String>,
+        pub font_name: String,
+        pub family_name: Option<String>,
         pub charset: CtFontCharsetXType,
-        pub italic: ::core::primitive::bool,
-        pub bold: ::core::primitive::bool,
-        pub serif: ::core::primitive::bool,
-        pub fixed_width: ::core::primitive::bool,
-        pub font_file: Option<::std::string::String>,
+        pub italic: bool,
+        pub bold: bool,
+        pub serif: bool,
+        pub fixed_width: bool,
+        pub font_file: Option<String>,
     }
     impl CtFontXType {
         #[must_use]
@@ -46869,19 +46755,19 @@ pub mod res {
             CtFontCharsetXType::Unicode
         }
         #[must_use]
-        pub fn default_italic() -> ::core::primitive::bool {
+        pub fn default_italic() -> bool {
             false
         }
         #[must_use]
-        pub fn default_bold() -> ::core::primitive::bool {
+        pub fn default_bold() -> bool {
             false
         }
         #[must_use]
-        pub fn default_serif() -> ::core::primitive::bool {
+        pub fn default_serif() -> bool {
             false
         }
         #[must_use]
-        pub fn default_fixed_width() -> ::core::primitive::bool {
+        pub fn default_fixed_width() -> bool {
             false
         }
     }
@@ -46906,8 +46792,8 @@ pub mod res {
     #[derive(Debug)]
     pub struct CtMultiMediaXType {
         pub type_: CtMultiMediaTypeXType,
-        pub format: Option<::std::string::String>,
-        pub media_file: ::std::string::String,
+        pub format: Option<String>,
+        pub media_file: String,
     }
     impl WithSerializer for CtMultiMediaXType {
         type Serializer<'x> = quick_xml_serialize::CtMultiMediaXTypeSerializer<'x>;
@@ -46929,10 +46815,10 @@ pub mod res {
     }
     #[derive(Debug)]
     pub struct CtVectorGxType {
-        pub width: ::core::primitive::f64,
-        pub height: ::core::primitive::f64,
-        pub thumbnail: Option<::core::primitive::u32>,
-        pub substitution: Option<::core::primitive::u32>,
+        pub width: f64,
+        pub height: f64,
+        pub thumbnail: Option<u32>,
+        pub substitution: Option<u32>,
         pub content: super::page::CtPageBlockXType,
     }
     impl WithSerializer for CtVectorGxType {
@@ -46956,7 +46842,7 @@ pub mod res {
     pub type Res = ResXElementType;
     #[derive(Debug)]
     pub struct ResXElementType {
-        pub base_loc: ::std::string::String,
+        pub base_loc: String,
         pub content: Vec<ResXElementTypeContent>,
     }
     #[derive(Debug)]
@@ -47036,7 +46922,7 @@ pub mod res {
     }
     #[derive(Debug)]
     pub struct CtColorSpacePaletteXElementType {
-        pub cv: Vec<::std::string::String>,
+        pub cv: Vec<String>,
     }
     impl WithSerializer for CtColorSpacePaletteXElementType {
         type Serializer<'x> = quick_xml_serialize::CtColorSpacePaletteXElementTypeSerializer<'x>;
@@ -47249,14 +47135,14 @@ pub mod res {
     #[derive(Debug)]
     pub struct ResColorSpacesColorSpaceXElementType {
         pub type_: CtColorSpaceTypeXType,
-        pub bits_per_component: ::core::primitive::i32,
-        pub profile: Option<::std::string::String>,
-        pub id: ::core::primitive::u32,
+        pub bits_per_component: i32,
+        pub profile: Option<String>,
+        pub id: u32,
         pub palette: Option<CtColorSpacePaletteXElementType>,
     }
     impl ResColorSpacesColorSpaceXElementType {
         #[must_use]
-        pub fn default_bits_per_component() -> ::core::primitive::i32 {
+        pub fn default_bits_per_component() -> i32 {
             8i32
         }
     }
@@ -47276,36 +47162,36 @@ pub mod res {
     }
     #[derive(Debug)]
     pub struct ResDrawParamsDrawParamXElementType {
-        pub relative: Option<::core::primitive::u32>,
-        pub line_width: ::core::primitive::f64,
-        pub join: ::std::string::String,
-        pub cap: ::std::string::String,
-        pub dash_offset: ::core::primitive::f64,
-        pub dash_pattern: Option<::std::string::String>,
-        pub miter_limit: ::core::primitive::f64,
-        pub id: ::core::primitive::u32,
+        pub relative: Option<u32>,
+        pub line_width: f64,
+        pub join: String,
+        pub cap: String,
+        pub dash_offset: f64,
+        pub dash_pattern: Option<String>,
+        pub miter_limit: f64,
+        pub id: u32,
         pub fill_color: Option<super::page::CtColorXType>,
         pub stroke_color: Option<super::page::CtColorXType>,
     }
     impl ResDrawParamsDrawParamXElementType {
         #[must_use]
-        pub fn default_line_width() -> ::core::primitive::f64 {
+        pub fn default_line_width() -> f64 {
             0.353f64
         }
         #[must_use]
-        pub fn default_join() -> ::std::string::String {
+        pub fn default_join() -> String {
             String::from("Miter")
         }
         #[must_use]
-        pub fn default_cap() -> ::std::string::String {
+        pub fn default_cap() -> String {
             String::from("Butt")
         }
         #[must_use]
-        pub fn default_dash_offset() -> ::core::primitive::f64 {
+        pub fn default_dash_offset() -> f64 {
             0f64
         }
         #[must_use]
-        pub fn default_miter_limit() -> ::core::primitive::f64 {
+        pub fn default_miter_limit() -> f64 {
             4.234f64
         }
     }
@@ -47324,15 +47210,15 @@ pub mod res {
     }
     #[derive(Debug)]
     pub struct ResFontsFontXElementType {
-        pub font_name: ::std::string::String,
-        pub family_name: Option<::std::string::String>,
+        pub font_name: String,
+        pub family_name: Option<String>,
         pub charset: CtFontCharsetXType,
-        pub italic: ::core::primitive::bool,
-        pub bold: ::core::primitive::bool,
-        pub serif: ::core::primitive::bool,
-        pub fixed_width: ::core::primitive::bool,
-        pub id: ::core::primitive::u32,
-        pub font_file: Option<::std::string::String>,
+        pub italic: bool,
+        pub bold: bool,
+        pub serif: bool,
+        pub fixed_width: bool,
+        pub id: u32,
+        pub font_file: Option<String>,
     }
     impl ResFontsFontXElementType {
         #[must_use]
@@ -47340,19 +47226,19 @@ pub mod res {
             CtFontCharsetXType::Unicode
         }
         #[must_use]
-        pub fn default_italic() -> ::core::primitive::bool {
+        pub fn default_italic() -> bool {
             false
         }
         #[must_use]
-        pub fn default_bold() -> ::core::primitive::bool {
+        pub fn default_bold() -> bool {
             false
         }
         #[must_use]
-        pub fn default_serif() -> ::core::primitive::bool {
+        pub fn default_serif() -> bool {
             false
         }
         #[must_use]
-        pub fn default_fixed_width() -> ::core::primitive::bool {
+        pub fn default_fixed_width() -> bool {
             false
         }
     }
@@ -47379,9 +47265,9 @@ pub mod res {
     #[derive(Debug)]
     pub struct ResMultiMediasMultiMediaXElementType {
         pub type_: CtMultiMediaTypeXType,
-        pub format: Option<::std::string::String>,
-        pub id: ::core::primitive::u32,
-        pub media_file: ::std::string::String,
+        pub format: Option<String>,
+        pub id: u32,
+        pub media_file: String,
     }
     impl WithSerializer for ResMultiMediasMultiMediaXElementType {
         type Serializer<'x> =
@@ -47399,11 +47285,11 @@ pub mod res {
     }
     #[derive(Debug)]
     pub struct ResCompositeGraphicUnitsCompositeGraphicUnitXElementType {
-        pub width: ::core::primitive::f64,
-        pub height: ::core::primitive::f64,
-        pub id: ::core::primitive::u32,
-        pub thumbnail: Option<::core::primitive::u32>,
-        pub substitution: Option<::core::primitive::u32>,
+        pub width: f64,
+        pub height: f64,
+        pub id: u32,
+        pub thumbnail: Option<u32>,
+        pub substitution: Option<u32>,
         pub content: super::page::CtPageBlockXType,
     }
     impl WithSerializer for ResCompositeGraphicUnitsCompositeGraphicUnitXElementType {
@@ -47432,8 +47318,8 @@ pub mod res {
         #[derive(Debug)]
         pub struct CtColorSpaceXTypeDeserializer {
             type_: super::CtColorSpaceTypeXType,
-            bits_per_component: ::core::primitive::i32,
-            profile: Option<::std::string::String>,
+            bits_per_component: i32,
+            profile: Option<String>,
             palette: Option<super::CtColorSpacePaletteXElementType>,
             state__: Box<CtColorSpaceXTypeDeserializerState>,
         }
@@ -47452,8 +47338,8 @@ pub mod res {
                 R: DeserializeReader,
             {
                 let mut type_: Option<super::CtColorSpaceTypeXType> = None;
-                let mut bits_per_component: Option<::core::primitive::i32> = None;
-                let mut profile: Option<::std::string::String> = None;
+                let mut bits_per_component: Option<i32> = None;
+                let mut profile: Option<String> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -47675,13 +47561,13 @@ pub mod res {
         }
         #[derive(Debug)]
         pub struct CtDrawParamXTypeDeserializer {
-            relative: Option<::core::primitive::u32>,
-            line_width: ::core::primitive::f64,
-            join: ::std::string::String,
-            cap: ::std::string::String,
-            dash_offset: ::core::primitive::f64,
-            dash_pattern: Option<::std::string::String>,
-            miter_limit: ::core::primitive::f64,
+            relative: Option<u32>,
+            line_width: f64,
+            join: String,
+            cap: String,
+            dash_offset: f64,
+            dash_pattern: Option<String>,
+            miter_limit: f64,
             fill_color: Option<super::super::page::CtColorXType>,
             stroke_color: Option<super::super::page::CtColorXType>,
             state__: Box<CtDrawParamXTypeDeserializerState>,
@@ -47701,13 +47587,13 @@ pub mod res {
             where
                 R: DeserializeReader,
             {
-                let mut relative: Option<::core::primitive::u32> = None;
-                let mut line_width: Option<::core::primitive::f64> = None;
-                let mut join: Option<::std::string::String> = None;
-                let mut cap: Option<::std::string::String> = None;
-                let mut dash_offset: Option<::core::primitive::f64> = None;
-                let mut dash_pattern: Option<::std::string::String> = None;
-                let mut miter_limit: Option<::core::primitive::f64> = None;
+                let mut relative: Option<u32> = None;
+                let mut line_width: Option<f64> = None;
+                let mut join: Option<String> = None;
+                let mut cap: Option<String> = None;
+                let mut dash_offset: Option<f64> = None;
+                let mut dash_pattern: Option<String> = None;
+                let mut miter_limit: Option<f64> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -48053,20 +47939,20 @@ pub mod res {
         }
         #[derive(Debug)]
         pub struct CtFontXTypeDeserializer {
-            font_name: ::std::string::String,
-            family_name: Option<::std::string::String>,
+            font_name: String,
+            family_name: Option<String>,
             charset: super::CtFontCharsetXType,
-            italic: ::core::primitive::bool,
-            bold: ::core::primitive::bool,
-            serif: ::core::primitive::bool,
-            fixed_width: ::core::primitive::bool,
-            font_file: Option<::std::string::String>,
+            italic: bool,
+            bold: bool,
+            serif: bool,
+            fixed_width: bool,
+            font_file: Option<String>,
             state__: Box<CtFontXTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtFontXTypeDeserializerState {
             Init__,
-            FontFile(Option<<::std::string::String as WithDeserializer>::Deserializer>),
+            FontFile(Option<<String as WithDeserializer>::Deserializer>),
             Done__,
             Unknown__,
         }
@@ -48075,13 +47961,13 @@ pub mod res {
             where
                 R: DeserializeReader,
             {
-                let mut font_name: Option<::std::string::String> = None;
-                let mut family_name: Option<::std::string::String> = None;
+                let mut font_name: Option<String> = None;
+                let mut family_name: Option<String> = None;
                 let mut charset: Option<super::CtFontCharsetXType> = None;
-                let mut italic: Option<::core::primitive::bool> = None;
-                let mut bold: Option<::core::primitive::bool> = None;
-                let mut serif: Option<::core::primitive::bool> = None;
-                let mut fixed_width: Option<::core::primitive::bool> = None;
+                let mut italic: Option<bool> = None;
+                let mut bold: Option<bool> = None;
+                let mut serif: Option<bool> = None;
+                let mut fixed_width: Option<bool> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -48155,7 +48041,7 @@ pub mod res {
                 }
                 Ok(())
             }
-            fn store_font_file(&mut self, value: ::std::string::String) -> Result<(), Error> {
+            fn store_font_file(&mut self, value: String) -> Result<(), Error> {
                 if self.font_file.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"FontFile",
@@ -48167,7 +48053,7 @@ pub mod res {
             fn handle_font_file<'de, R>(
                 &mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, ::std::string::String>,
+                output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<CtFontXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -48319,14 +48205,14 @@ pub mod res {
         #[derive(Debug)]
         pub struct CtMultiMediaXTypeDeserializer {
             type_: super::CtMultiMediaTypeXType,
-            format: Option<::std::string::String>,
-            media_file: Option<::std::string::String>,
+            format: Option<String>,
+            media_file: Option<String>,
             state__: Box<CtMultiMediaXTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtMultiMediaXTypeDeserializerState {
             Init__,
-            MediaFile(Option<<::std::string::String as WithDeserializer>::Deserializer>),
+            MediaFile(Option<<String as WithDeserializer>::Deserializer>),
             Done__,
             Unknown__,
         }
@@ -48336,7 +48222,7 @@ pub mod res {
                 R: DeserializeReader,
             {
                 let mut type_: Option<super::CtMultiMediaTypeXType> = None;
-                let mut format: Option<::std::string::String> = None;
+                let mut format: Option<String> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -48379,7 +48265,7 @@ pub mod res {
                 }
                 Ok(())
             }
-            fn store_media_file(&mut self, value: ::std::string::String) -> Result<(), Error> {
+            fn store_media_file(&mut self, value: String) -> Result<(), Error> {
                 if self.media_file.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"MediaFile",
@@ -48391,7 +48277,7 @@ pub mod res {
             fn handle_media_file<'de, R>(
                 &mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, ::std::string::String>,
+                output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<CtMultiMediaXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -48553,18 +48439,18 @@ pub mod res {
         }
         #[derive(Debug)]
         pub struct CtVectorGxTypeDeserializer {
-            width: ::core::primitive::f64,
-            height: ::core::primitive::f64,
-            thumbnail: Option<::core::primitive::u32>,
-            substitution: Option<::core::primitive::u32>,
+            width: f64,
+            height: f64,
+            thumbnail: Option<u32>,
+            substitution: Option<u32>,
             content: Option<super::super::page::CtPageBlockXType>,
             state__: Box<CtVectorGxTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtVectorGxTypeDeserializerState {
             Init__,
-            Thumbnail(Option<<::core::primitive::u32 as WithDeserializer>::Deserializer>),
-            Substitution(Option<<::core::primitive::u32 as WithDeserializer>::Deserializer>),
+            Thumbnail(Option<<u32 as WithDeserializer>::Deserializer>),
+            Substitution(Option<<u32 as WithDeserializer>::Deserializer>),
             Content(
                 Option<<super::super::page::CtPageBlockXType as WithDeserializer>::Deserializer>,
             ),
@@ -48576,8 +48462,8 @@ pub mod res {
             where
                 R: DeserializeReader,
             {
-                let mut width: Option<::core::primitive::f64> = None;
-                let mut height: Option<::core::primitive::f64> = None;
+                let mut width: Option<f64> = None;
+                let mut height: Option<f64> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -48630,7 +48516,7 @@ pub mod res {
                 }
                 Ok(())
             }
-            fn store_thumbnail(&mut self, value: ::core::primitive::u32) -> Result<(), Error> {
+            fn store_thumbnail(&mut self, value: u32) -> Result<(), Error> {
                 if self.thumbnail.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Thumbnail",
@@ -48639,7 +48525,7 @@ pub mod res {
                 self.thumbnail = Some(value);
                 Ok(())
             }
-            fn store_substitution(&mut self, value: ::core::primitive::u32) -> Result<(), Error> {
+            fn store_substitution(&mut self, value: u32) -> Result<(), Error> {
                 if self.substitution.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Substitution",
@@ -48663,7 +48549,7 @@ pub mod res {
             fn handle_thumbnail<'de, R>(
                 &mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, ::core::primitive::u32>,
+                output: DeserializerOutput<'de, u32>,
                 fallback: &mut Option<CtVectorGxTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -48710,7 +48596,7 @@ pub mod res {
             fn handle_substitution<'de, R>(
                 &mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, ::core::primitive::u32>,
+                output: DeserializerOutput<'de, u32>,
                 fallback: &mut Option<CtVectorGxTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -48979,7 +48865,7 @@ pub mod res {
         }
         #[derive(Debug)]
         pub struct ResXElementTypeDeserializer {
-            base_loc: ::std::string::String,
+            base_loc: String,
             content: Vec<super::ResXElementTypeContent>,
             state__: Box<ResXElementTypeDeserializerState>,
         }
@@ -48995,7 +48881,7 @@ pub mod res {
             where
                 R: DeserializeReader,
             {
-                let mut base_loc: Option<::std::string::String> = None;
+                let mut base_loc: Option<String> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -49922,13 +49808,13 @@ pub mod res {
         }
         #[derive(Debug)]
         pub struct CtColorSpacePaletteXElementTypeDeserializer {
-            cv: Vec<::std::string::String>,
+            cv: Vec<String>,
             state__: Box<CtColorSpacePaletteXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtColorSpacePaletteXElementTypeDeserializerState {
             Init__,
-            Cv(Option<<::std::string::String as WithDeserializer>::Deserializer>),
+            Cv(Option<<String as WithDeserializer>::Deserializer>),
             Done__,
             Unknown__,
         }
@@ -49961,14 +49847,14 @@ pub mod res {
                 }
                 Ok(())
             }
-            fn store_cv(&mut self, value: ::std::string::String) -> Result<(), Error> {
+            fn store_cv(&mut self, value: String) -> Result<(), Error> {
                 self.cv.push(value);
                 Ok(())
             }
             fn handle_cv<'de, R>(
                 &mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, ::std::string::String>,
+                output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<CtColorSpacePaletteXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -51253,9 +51139,9 @@ pub mod res {
         #[derive(Debug)]
         pub struct ResColorSpacesColorSpaceXElementTypeDeserializer {
             type_: super::CtColorSpaceTypeXType,
-            bits_per_component: ::core::primitive::i32,
-            profile: Option<::std::string::String>,
-            id: ::core::primitive::u32,
+            bits_per_component: i32,
+            profile: Option<String>,
+            id: u32,
             palette: Option<super::CtColorSpacePaletteXElementType>,
             state__: Box<ResColorSpacesColorSpaceXElementTypeDeserializerState>,
         }
@@ -51274,9 +51160,9 @@ pub mod res {
                 R: DeserializeReader,
             {
                 let mut type_: Option<super::CtColorSpaceTypeXType> = None;
-                let mut bits_per_component: Option<::core::primitive::i32> = None;
-                let mut profile: Option<::std::string::String> = None;
-                let mut id: Option<::core::primitive::u32> = None;
+                let mut bits_per_component: Option<i32> = None;
+                let mut profile: Option<String> = None;
+                let mut id: Option<u32> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -51526,14 +51412,14 @@ pub mod res {
         }
         #[derive(Debug)]
         pub struct ResDrawParamsDrawParamXElementTypeDeserializer {
-            relative: Option<::core::primitive::u32>,
-            line_width: ::core::primitive::f64,
-            join: ::std::string::String,
-            cap: ::std::string::String,
-            dash_offset: ::core::primitive::f64,
-            dash_pattern: Option<::std::string::String>,
-            miter_limit: ::core::primitive::f64,
-            id: ::core::primitive::u32,
+            relative: Option<u32>,
+            line_width: f64,
+            join: String,
+            cap: String,
+            dash_offset: f64,
+            dash_pattern: Option<String>,
+            miter_limit: f64,
+            id: u32,
             fill_color: Option<super::super::page::CtColorXType>,
             stroke_color: Option<super::super::page::CtColorXType>,
             state__: Box<ResDrawParamsDrawParamXElementTypeDeserializerState>,
@@ -51553,14 +51439,14 @@ pub mod res {
             where
                 R: DeserializeReader,
             {
-                let mut relative: Option<::core::primitive::u32> = None;
-                let mut line_width: Option<::core::primitive::f64> = None;
-                let mut join: Option<::std::string::String> = None;
-                let mut cap: Option<::std::string::String> = None;
-                let mut dash_offset: Option<::core::primitive::f64> = None;
-                let mut dash_pattern: Option<::std::string::String> = None;
-                let mut miter_limit: Option<::core::primitive::f64> = None;
-                let mut id: Option<::core::primitive::u32> = None;
+                let mut relative: Option<u32> = None;
+                let mut line_width: Option<f64> = None;
+                let mut join: Option<String> = None;
+                let mut cap: Option<String> = None;
+                let mut dash_offset: Option<f64> = None;
+                let mut dash_pattern: Option<String> = None;
+                let mut miter_limit: Option<f64> = None;
+                let mut id: Option<u32> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -51928,21 +51814,21 @@ pub mod res {
         }
         #[derive(Debug)]
         pub struct ResFontsFontXElementTypeDeserializer {
-            font_name: ::std::string::String,
-            family_name: Option<::std::string::String>,
+            font_name: String,
+            family_name: Option<String>,
             charset: super::CtFontCharsetXType,
-            italic: ::core::primitive::bool,
-            bold: ::core::primitive::bool,
-            serif: ::core::primitive::bool,
-            fixed_width: ::core::primitive::bool,
-            id: ::core::primitive::u32,
-            font_file: Option<::std::string::String>,
+            italic: bool,
+            bold: bool,
+            serif: bool,
+            fixed_width: bool,
+            id: u32,
+            font_file: Option<String>,
             state__: Box<ResFontsFontXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum ResFontsFontXElementTypeDeserializerState {
             Init__,
-            FontFile(Option<<::std::string::String as WithDeserializer>::Deserializer>),
+            FontFile(Option<<String as WithDeserializer>::Deserializer>),
             Done__,
             Unknown__,
         }
@@ -51951,14 +51837,14 @@ pub mod res {
             where
                 R: DeserializeReader,
             {
-                let mut font_name: Option<::std::string::String> = None;
-                let mut family_name: Option<::std::string::String> = None;
+                let mut font_name: Option<String> = None;
+                let mut family_name: Option<String> = None;
                 let mut charset: Option<super::CtFontCharsetXType> = None;
-                let mut italic: Option<::core::primitive::bool> = None;
-                let mut bold: Option<::core::primitive::bool> = None;
-                let mut serif: Option<::core::primitive::bool> = None;
-                let mut fixed_width: Option<::core::primitive::bool> = None;
-                let mut id: Option<::core::primitive::u32> = None;
+                let mut italic: Option<bool> = None;
+                let mut bold: Option<bool> = None;
+                let mut serif: Option<bool> = None;
+                let mut fixed_width: Option<bool> = None;
+                let mut id: Option<u32> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -52041,7 +51927,7 @@ pub mod res {
                 }
                 Ok(())
             }
-            fn store_font_file(&mut self, value: ::std::string::String) -> Result<(), Error> {
+            fn store_font_file(&mut self, value: String) -> Result<(), Error> {
                 if self.font_file.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"FontFile",
@@ -52053,7 +51939,7 @@ pub mod res {
             fn handle_font_file<'de, R>(
                 &mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, ::std::string::String>,
+                output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<ResFontsFontXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -52219,15 +52105,15 @@ pub mod res {
         #[derive(Debug)]
         pub struct ResMultiMediasMultiMediaXElementTypeDeserializer {
             type_: super::CtMultiMediaTypeXType,
-            format: Option<::std::string::String>,
-            id: ::core::primitive::u32,
-            media_file: Option<::std::string::String>,
+            format: Option<String>,
+            id: u32,
+            media_file: Option<String>,
             state__: Box<ResMultiMediasMultiMediaXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum ResMultiMediasMultiMediaXElementTypeDeserializerState {
             Init__,
-            MediaFile(Option<<::std::string::String as WithDeserializer>::Deserializer>),
+            MediaFile(Option<<String as WithDeserializer>::Deserializer>),
             Done__,
             Unknown__,
         }
@@ -52237,8 +52123,8 @@ pub mod res {
                 R: DeserializeReader,
             {
                 let mut type_: Option<super::CtMultiMediaTypeXType> = None;
-                let mut format: Option<::std::string::String> = None;
-                let mut id: Option<::core::primitive::u32> = None;
+                let mut format: Option<String> = None;
+                let mut id: Option<u32> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -52291,7 +52177,7 @@ pub mod res {
                 }
                 Ok(())
             }
-            fn store_media_file(&mut self, value: ::std::string::String) -> Result<(), Error> {
+            fn store_media_file(&mut self, value: String) -> Result<(), Error> {
                 if self.media_file.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"MediaFile",
@@ -52303,7 +52189,7 @@ pub mod res {
             fn handle_media_file<'de, R>(
                 &mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, ::std::string::String>,
+                output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<ResMultiMediasMultiMediaXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -52474,19 +52360,19 @@ pub mod res {
         }
         #[derive(Debug)]
         pub struct ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializer {
-            width: ::core::primitive::f64,
-            height: ::core::primitive::f64,
-            id: ::core::primitive::u32,
-            thumbnail: Option<::core::primitive::u32>,
-            substitution: Option<::core::primitive::u32>,
+            width: f64,
+            height: f64,
+            id: u32,
+            thumbnail: Option<u32>,
+            substitution: Option<u32>,
             content: Option<super::super::page::CtPageBlockXType>,
             state__: Box<ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState {
             Init__,
-            Thumbnail(Option<<::core::primitive::u32 as WithDeserializer>::Deserializer>),
-            Substitution(Option<<::core::primitive::u32 as WithDeserializer>::Deserializer>),
+            Thumbnail(Option<<u32 as WithDeserializer>::Deserializer>),
+            Substitution(Option<<u32 as WithDeserializer>::Deserializer>),
             Content(
                 Option<<super::super::page::CtPageBlockXType as WithDeserializer>::Deserializer>,
             ),
@@ -52498,9 +52384,9 @@ pub mod res {
             where
                 R: DeserializeReader,
             {
-                let mut width: Option<::core::primitive::f64> = None;
-                let mut height: Option<::core::primitive::f64> = None;
-                let mut id: Option<::core::primitive::u32> = None;
+                let mut width: Option<f64> = None;
+                let mut height: Option<f64> = None;
+                let mut id: Option<u32> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -52547,7 +52433,7 @@ pub mod res {
                 }
                 Ok(())
             }
-            fn store_thumbnail(&mut self, value: ::core::primitive::u32) -> Result<(), Error> {
+            fn store_thumbnail(&mut self, value: u32) -> Result<(), Error> {
                 if self.thumbnail.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Thumbnail",
@@ -52556,7 +52442,7 @@ pub mod res {
                 self.thumbnail = Some(value);
                 Ok(())
             }
-            fn store_substitution(&mut self, value: ::core::primitive::u32) -> Result<(), Error> {
+            fn store_substitution(&mut self, value: u32) -> Result<(), Error> {
                 if self.substitution.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Substitution",
@@ -52580,7 +52466,7 @@ pub mod res {
             fn handle_thumbnail<'de, R>(
                 &mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, ::core::primitive::u32>,
+                output: DeserializerOutput<'de, u32>,
                 fallback: &mut Option<
                     ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState,
                 >,
@@ -52626,7 +52512,7 @@ pub mod res {
             fn handle_substitution<'de, R>(
                 &mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, ::core::primitive::u32>,
+                output: DeserializerOutput<'de, u32>,
                 fallback: &mut Option<
                     ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState,
                 >,
@@ -53091,9 +52977,7 @@ pub mod res {
         #[derive(Debug)]
         pub(super) enum CtFontXTypeSerializerState<'ser> {
             Init__,
-            FontFile(
-                IterSerializer<'ser, Option<&'ser ::std::string::String>, ::std::string::String>,
-            ),
+            FontFile(IterSerializer<'ser, Option<&'ser String>, String>),
             End__,
             Done__,
             Phantom__(&'ser ()),
@@ -53162,7 +53046,7 @@ pub mod res {
         #[derive(Debug)]
         pub(super) enum CtMultiMediaXTypeSerializerState<'ser> {
             Init__,
-            MediaFile(<::std::string::String as WithSerializer>::Serializer<'ser>),
+            MediaFile(<String as WithSerializer>::Serializer<'ser>),
             End__,
             Done__,
             Phantom__(&'ser ()),
@@ -53229,12 +53113,8 @@ pub mod res {
         #[derive(Debug)]
         pub(super) enum CtVectorGxTypeSerializerState<'ser> {
             Init__,
-            Thumbnail(
-                IterSerializer<'ser, Option<&'ser ::core::primitive::u32>, ::core::primitive::u32>,
-            ),
-            Substitution(
-                IterSerializer<'ser, Option<&'ser ::core::primitive::u32>, ::core::primitive::u32>,
-            ),
+            Thumbnail(IterSerializer<'ser, Option<&'ser u32>, u32>),
+            Substitution(IterSerializer<'ser, Option<&'ser u32>, u32>),
             Content(<super::super::page::CtPageBlockXType as WithSerializer>::Serializer<'ser>),
             End__,
             Done__,
@@ -53498,7 +53378,7 @@ pub mod res {
         #[derive(Debug)]
         pub(super) enum CtColorSpacePaletteXElementTypeSerializerState<'ser> {
             Init__,
-            Cv(IterSerializer<'ser, &'ser [::std::string::String], ::std::string::String>),
+            Cv(IterSerializer<'ser, &'ser [String], String>),
             End__,
             Done__,
             Phantom__(&'ser ()),
@@ -54083,9 +53963,7 @@ pub mod res {
         #[derive(Debug)]
         pub(super) enum ResFontsFontXElementTypeSerializerState<'ser> {
             Init__,
-            FontFile(
-                IterSerializer<'ser, Option<&'ser ::std::string::String>, ::std::string::String>,
-            ),
+            FontFile(IterSerializer<'ser, Option<&'ser String>, String>),
             End__,
             Done__,
             Phantom__(&'ser ()),
@@ -54159,7 +54037,7 @@ pub mod res {
         #[derive(Debug)]
         pub(super) enum ResMultiMediasMultiMediaXElementTypeSerializerState<'ser> {
             Init__,
-            MediaFile(<::std::string::String as WithSerializer>::Serializer<'ser>),
+            MediaFile(<String as WithSerializer>::Serializer<'ser>),
             End__,
             Done__,
             Phantom__(&'ser ()),
@@ -54239,12 +54117,8 @@ pub mod res {
             'ser,
         > {
             Init__,
-            Thumbnail(
-                IterSerializer<'ser, Option<&'ser ::core::primitive::u32>, ::core::primitive::u32>,
-            ),
-            Substitution(
-                IterSerializer<'ser, Option<&'ser ::core::primitive::u32>, ::core::primitive::u32>,
-            ),
+            Thumbnail(IterSerializer<'ser, Option<&'ser u32>, u32>),
+            Substitution(IterSerializer<'ser, Option<&'ser u32>, u32>),
             Content(<super::super::page::CtPageBlockXType as WithSerializer>::Serializer<'ser>),
             End__,
             Done__,
@@ -54282,7 +54156,7 @@ pub mod signature {
     #[derive(Debug)]
     pub struct SianatureXElementType {
         pub siqned_info: SianatureSiqnedInfoXElementType,
-        pub signed_value: ::std::string::String,
+        pub signed_value: String,
     }
     impl WithSerializer for SianatureXElementType {
         type Serializer<'x> = quick_xml_serialize::SianatureXElementTypeSerializer<'x>;
@@ -54305,8 +54179,8 @@ pub mod signature {
     #[derive(Debug)]
     pub struct SianatureSiqnedInfoXElementType {
         pub provider: SianatureSiqnedInfoProviderXElementType,
-        pub signature_method: Option<::std::string::String>,
-        pub sianature_date_time: Option<::std::string::String>,
+        pub signature_method: Option<String>,
+        pub sianature_date_time: Option<String>,
         pub references: SianatureSiqnedInfoReferencesXElementType,
         pub stamp_annot: Vec<SianatureSiqnedInfoStampAnnotXElementType>,
         pub seal: Option<SianatureSiqnedInfoSealXElementType>,
@@ -54335,9 +54209,9 @@ pub mod signature {
     }
     #[derive(Debug)]
     pub struct SianatureSiqnedInfoProviderXElementType {
-        pub provider_name: ::std::string::String,
-        pub version: Option<::std::string::String>,
-        pub company: Option<::std::string::String>,
+        pub provider_name: String,
+        pub version: Option<String>,
+        pub company: Option<String>,
     }
     impl WithSerializer for SianatureSiqnedInfoProviderXElementType {
         type Serializer<'x> =
@@ -54382,10 +54256,10 @@ pub mod signature {
     }
     #[derive(Debug)]
     pub struct SianatureSiqnedInfoStampAnnotXElementType {
-        pub id: ::std::string::String,
-        pub page_ref: ::core::primitive::u32,
-        pub boundary: ::std::string::String,
-        pub clip: Option<::std::string::String>,
+        pub id: String,
+        pub page_ref: u32,
+        pub boundary: String,
+        pub clip: Option<String>,
     }
     impl WithSerializer for SianatureSiqnedInfoStampAnnotXElementType {
         type Serializer<'x> =
@@ -54404,7 +54278,7 @@ pub mod signature {
     }
     #[derive(Debug)]
     pub struct SianatureSiqnedInfoSealXElementType {
-        pub base_loc: ::std::string::String,
+        pub base_loc: String,
     }
     impl WithSerializer for SianatureSiqnedInfoSealXElementType {
         type Serializer<'x> =
@@ -54450,8 +54324,8 @@ pub mod signature {
     }
     #[derive(Debug)]
     pub struct SianatureSiqnedInfoReferencesReferenceXElementType {
-        pub file_ref: ::std::string::String,
-        pub check_value: ::std::string::String,
+        pub file_ref: String,
+        pub check_value: String,
     }
     impl WithSerializer for SianatureSiqnedInfoReferencesReferenceXElementType {
         type Serializer<'x> =
@@ -54478,7 +54352,7 @@ pub mod signature {
         #[derive(Debug)]
         pub struct SianatureXElementTypeDeserializer {
             siqned_info: Option<super::SianatureSiqnedInfoXElementType>,
-            signed_value: Option<::std::string::String>,
+            signed_value: Option<String>,
             state__: Box<SianatureXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
@@ -54487,7 +54361,7 @@ pub mod signature {
             SiqnedInfo(
                 Option<<super::SianatureSiqnedInfoXElementType as WithDeserializer>::Deserializer>,
             ),
-            SignedValue(Option<<::std::string::String as WithDeserializer>::Deserializer>),
+            SignedValue(Option<<String as WithDeserializer>::Deserializer>),
             Done__,
             Unknown__,
         }
@@ -54538,7 +54412,7 @@ pub mod signature {
                 self.siqned_info = Some(value);
                 Ok(())
             }
-            fn store_signed_value(&mut self, value: ::std::string::String) -> Result<(), Error> {
+            fn store_signed_value(&mut self, value: String) -> Result<(), Error> {
                 if self.signed_value.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"SignedValue",
@@ -54608,7 +54482,7 @@ pub mod signature {
             fn handle_signed_value<'de, R>(
                 &mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, ::std::string::String>,
+                output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<SianatureXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -54804,8 +54678,8 @@ pub mod signature {
         #[derive(Debug)]
         pub struct SianatureSiqnedInfoXElementTypeDeserializer {
             provider: Option<super::SianatureSiqnedInfoProviderXElementType>,
-            signature_method: Option<::std::string::String>,
-            sianature_date_time: Option<::std::string::String>,
+            signature_method: Option<String>,
+            sianature_date_time: Option<String>,
             references: Option<super::SianatureSiqnedInfoReferencesXElementType>,
             stamp_annot: Vec<super::SianatureSiqnedInfoStampAnnotXElementType>,
             seal: Option<super::SianatureSiqnedInfoSealXElementType>,
@@ -54813,7 +54687,7 @@ pub mod signature {
         }
         #[derive(Debug)]
         enum SianatureSiqnedInfoXElementTypeDeserializerState {
-            Init__ , Provider (Option << super :: SianatureSiqnedInfoProviderXElementType as WithDeserializer > :: Deserializer >) , SignatureMethod (Option << :: std :: string :: String as WithDeserializer > :: Deserializer >) , SianatureDateTime (Option << :: std :: string :: String as WithDeserializer > :: Deserializer >) , References (Option << super :: SianatureSiqnedInfoReferencesXElementType as WithDeserializer > :: Deserializer >) , StampAnnot (Option << super :: SianatureSiqnedInfoStampAnnotXElementType as WithDeserializer > :: Deserializer >) , Seal (Option << super :: SianatureSiqnedInfoSealXElementType as WithDeserializer > :: Deserializer >) , Done__ , Unknown__ , }
+            Init__ , Provider (Option << super :: SianatureSiqnedInfoProviderXElementType as WithDeserializer > :: Deserializer >) , SignatureMethod (Option << String as WithDeserializer > :: Deserializer >) , SianatureDateTime (Option << String as WithDeserializer > :: Deserializer >) , References (Option << super :: SianatureSiqnedInfoReferencesXElementType as WithDeserializer > :: Deserializer >) , StampAnnot (Option << super :: SianatureSiqnedInfoStampAnnotXElementType as WithDeserializer > :: Deserializer >) , Seal (Option << super :: SianatureSiqnedInfoSealXElementType as WithDeserializer > :: Deserializer >) , Done__ , Unknown__ , }
         impl SianatureSiqnedInfoXElementTypeDeserializer {
             fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
             where
@@ -54875,10 +54749,7 @@ pub mod signature {
                 self.provider = Some(value);
                 Ok(())
             }
-            fn store_signature_method(
-                &mut self,
-                value: ::std::string::String,
-            ) -> Result<(), Error> {
+            fn store_signature_method(&mut self, value: String) -> Result<(), Error> {
                 if self.signature_method.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"SignatureMethod",
@@ -54887,10 +54758,7 @@ pub mod signature {
                 self.signature_method = Some(value);
                 Ok(())
             }
-            fn store_sianature_date_time(
-                &mut self,
-                value: ::std::string::String,
-            ) -> Result<(), Error> {
+            fn store_sianature_date_time(&mut self, value: String) -> Result<(), Error> {
                 if self.sianature_date_time.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"SianatureDateTime",
@@ -54992,7 +54860,7 @@ pub mod signature {
             fn handle_signature_method<'de, R>(
                 &mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, ::std::string::String>,
+                output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<SianatureSiqnedInfoXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -55042,7 +54910,7 @@ pub mod signature {
             fn handle_sianature_date_time<'de, R>(
                 &mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, ::std::string::String>,
+                output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<SianatureSiqnedInfoXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -55534,9 +55402,9 @@ pub mod signature {
         }
         #[derive(Debug)]
         pub struct SianatureSiqnedInfoProviderXElementTypeDeserializer {
-            provider_name: ::std::string::String,
-            version: Option<::std::string::String>,
-            company: Option<::std::string::String>,
+            provider_name: String,
+            version: Option<String>,
+            company: Option<String>,
             state__: Box<SianatureSiqnedInfoProviderXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
@@ -55549,9 +55417,9 @@ pub mod signature {
             where
                 R: DeserializeReader,
             {
-                let mut provider_name: Option<::std::string::String> = None;
-                let mut version: Option<::std::string::String> = None;
-                let mut company: Option<::std::string::String> = None;
+                let mut provider_name: Option<String> = None;
+                let mut version: Option<String> = None;
+                let mut company: Option<String> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -55888,10 +55756,10 @@ pub mod signature {
         }
         #[derive(Debug)]
         pub struct SianatureSiqnedInfoStampAnnotXElementTypeDeserializer {
-            id: ::std::string::String,
-            page_ref: ::core::primitive::u32,
-            boundary: ::std::string::String,
-            clip: Option<::std::string::String>,
+            id: String,
+            page_ref: u32,
+            boundary: String,
+            clip: Option<String>,
             state__: Box<SianatureSiqnedInfoStampAnnotXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
@@ -55904,10 +55772,10 @@ pub mod signature {
             where
                 R: DeserializeReader,
             {
-                let mut id: Option<::std::string::String> = None;
-                let mut page_ref: Option<::core::primitive::u32> = None;
-                let mut boundary: Option<::std::string::String> = None;
-                let mut clip: Option<::std::string::String> = None;
+                let mut id: Option<String> = None;
+                let mut page_ref: Option<u32> = None;
+                let mut boundary: Option<String> = None;
+                let mut clip: Option<String> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -56017,13 +55885,13 @@ pub mod signature {
         }
         #[derive(Debug)]
         pub struct SianatureSiqnedInfoSealXElementTypeDeserializer {
-            base_loc: Option<::std::string::String>,
+            base_loc: Option<String>,
             state__: Box<SianatureSiqnedInfoSealXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum SianatureSiqnedInfoSealXElementTypeDeserializerState {
             Init__,
-            BaseLoc(Option<<::std::string::String as WithDeserializer>::Deserializer>),
+            BaseLoc(Option<<String as WithDeserializer>::Deserializer>),
             Done__,
             Unknown__,
         }
@@ -56058,7 +55926,7 @@ pub mod signature {
                 }
                 Ok(())
             }
-            fn store_base_loc(&mut self, value: ::std::string::String) -> Result<(), Error> {
+            fn store_base_loc(&mut self, value: String) -> Result<(), Error> {
                 if self.base_loc.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"BaseLoc",
@@ -56070,7 +55938,7 @@ pub mod signature {
             fn handle_base_loc<'de, R>(
                 &mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, ::std::string::String>,
+                output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<SianatureSiqnedInfoSealXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -56243,14 +56111,14 @@ pub mod signature {
         }
         #[derive(Debug)]
         pub struct SianatureSiqnedInfoReferencesReferenceXElementTypeDeserializer {
-            file_ref: ::std::string::String,
-            check_value: Option<::std::string::String>,
+            file_ref: String,
+            check_value: Option<String>,
             state__: Box<SianatureSiqnedInfoReferencesReferenceXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum SianatureSiqnedInfoReferencesReferenceXElementTypeDeserializerState {
             Init__,
-            CheckValue(Option<<::std::string::String as WithDeserializer>::Deserializer>),
+            CheckValue(Option<<String as WithDeserializer>::Deserializer>),
             Done__,
             Unknown__,
         }
@@ -56259,7 +56127,7 @@ pub mod signature {
             where
                 R: DeserializeReader,
             {
-                let mut file_ref: Option<::std::string::String> = None;
+                let mut file_ref: Option<String> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -56298,7 +56166,7 @@ pub mod signature {
                 }
                 Ok(())
             }
-            fn store_check_value(&mut self, value: ::std::string::String) -> Result<(), Error> {
+            fn store_check_value(&mut self, value: String) -> Result<(), Error> {
                 if self.check_value.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"CheckValue",
@@ -56310,7 +56178,7 @@ pub mod signature {
             fn handle_check_value<'de, R>(
                 &mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, ::std::string::String>,
+                output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<
                     SianatureSiqnedInfoReferencesReferenceXElementTypeDeserializerState,
                 >,
@@ -56490,7 +56358,7 @@ pub mod signature {
             SiqnedInfo(
                 <super::SianatureSiqnedInfoXElementType as WithSerializer>::Serializer<'ser>,
             ),
-            SignedValue(<::std::string::String as WithSerializer>::Serializer<'ser>),
+            SignedValue(<String as WithSerializer>::Serializer<'ser>),
             End__,
             Done__,
             Phantom__(&'ser ()),
@@ -56574,12 +56442,8 @@ pub mod signature {
                     'ser,
                 >,
             ),
-            SignatureMethod(
-                IterSerializer<'ser, Option<&'ser ::std::string::String>, ::std::string::String>,
-            ),
-            SianatureDateTime(
-                IterSerializer<'ser, Option<&'ser ::std::string::String>, ::std::string::String>,
-            ),
+            SignatureMethod(IterSerializer<'ser, Option<&'ser String>, String>),
+            SianatureDateTime(IterSerializer<'ser, Option<&'ser String>, String>),
             References(
                 <super::SianatureSiqnedInfoReferencesXElementType as WithSerializer>::Serializer<
                     'ser,
@@ -56826,7 +56690,7 @@ pub mod signature {
         #[derive(Debug)]
         pub(super) enum SianatureSiqnedInfoSealXElementTypeSerializerState<'ser> {
             Init__,
-            BaseLoc(<::std::string::String as WithSerializer>::Serializer<'ser>),
+            BaseLoc(<String as WithSerializer>::Serializer<'ser>),
             End__,
             Done__,
             Phantom__(&'ser ()),
@@ -56901,7 +56765,7 @@ pub mod signature {
         #[derive(Debug)]
         pub(super) enum SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState<'ser> {
             Init__,
-            CheckValue(<::std::string::String as WithSerializer>::Serializer<'ser>),
+            CheckValue(<String as WithSerializer>::Serializer<'ser>),
             End__,
             Done__,
             Phantom__(&'ser ()),
@@ -56937,7 +56801,7 @@ pub mod signatures {
     pub type Siqnatures = SiqnaturesXElementType;
     #[derive(Debug)]
     pub struct SiqnaturesXElementType {
-        pub max_sign_id: Option<::std::string::String>,
+        pub max_sign_id: Option<String>,
         pub signature: Vec<SiqnaturesSignatureXElementType>,
     }
     impl WithSerializer for SiqnaturesXElementType {
@@ -56960,9 +56824,9 @@ pub mod signatures {
     }
     #[derive(Debug)]
     pub struct SiqnaturesSignatureXElementType {
-        pub id: ::std::string::String,
+        pub id: String,
         pub type_: SiqnaturesSignatureTypeXType,
-        pub base_loc: ::std::string::String,
+        pub base_loc: String,
     }
     impl SiqnaturesSignatureXElementType {
         #[must_use]
@@ -57029,14 +56893,14 @@ pub mod signatures {
         };
         #[derive(Debug)]
         pub struct SiqnaturesXElementTypeDeserializer {
-            max_sign_id: Option<::std::string::String>,
+            max_sign_id: Option<String>,
             signature: Vec<super::SiqnaturesSignatureXElementType>,
             state__: Box<SiqnaturesXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum SiqnaturesXElementTypeDeserializerState {
             Init__,
-            MaxSignId(Option<<::std::string::String as WithDeserializer>::Deserializer>),
+            MaxSignId(Option<<String as WithDeserializer>::Deserializer>),
             Signature(
                 Option<<super::SiqnaturesSignatureXElementType as WithDeserializer>::Deserializer>,
             ),
@@ -57078,7 +56942,7 @@ pub mod signatures {
                 }
                 Ok(())
             }
-            fn store_max_sign_id(&mut self, value: ::std::string::String) -> Result<(), Error> {
+            fn store_max_sign_id(&mut self, value: String) -> Result<(), Error> {
                 if self.max_sign_id.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"MaxSignId",
@@ -57097,7 +56961,7 @@ pub mod signatures {
             fn handle_max_sign_id<'de, R>(
                 &mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, ::std::string::String>,
+                output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<SiqnaturesXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -57335,9 +57199,9 @@ pub mod signatures {
         }
         #[derive(Debug)]
         pub struct SiqnaturesSignatureXElementTypeDeserializer {
-            id: ::std::string::String,
+            id: String,
             type_: super::SiqnaturesSignatureTypeXType,
-            base_loc: ::std::string::String,
+            base_loc: String,
             state__: Box<SiqnaturesSignatureXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
@@ -57350,9 +57214,9 @@ pub mod signatures {
             where
                 R: DeserializeReader,
             {
-                let mut id: Option<::std::string::String> = None;
+                let mut id: Option<String> = None;
                 let mut type_: Option<super::SiqnaturesSignatureTypeXType> = None;
-                let mut base_loc: Option<::std::string::String> = None;
+                let mut base_loc: Option<String> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -57466,9 +57330,7 @@ pub mod signatures {
         #[derive(Debug)]
         pub(super) enum SiqnaturesXElementTypeSerializerState<'ser> {
             Init__,
-            MaxSignId(
-                IterSerializer<'ser, Option<&'ser ::std::string::String>, ::std::string::String>,
-            ),
+            MaxSignId(IterSerializer<'ser, Option<&'ser String>, String>),
             Signature(
                 IterSerializer<
                     'ser,
@@ -57603,12 +57465,12 @@ pub mod version {
     pub type DocVersion = DocVersionXElementType;
     #[derive(Debug)]
     pub struct DocVersionXElementType {
-        pub id: ::std::string::String,
-        pub version: Option<::std::string::String>,
-        pub name: Option<::std::string::String>,
-        pub creation_date: Option<::std::string::String>,
+        pub id: String,
+        pub version: Option<String>,
+        pub name: Option<String>,
+        pub creation_date: Option<String>,
         pub file_list: DocVersionFileListXElementType,
-        pub doc_root: ::std::string::String,
+        pub doc_root: String,
     }
     impl WithSerializer for DocVersionXElementType {
         type Serializer<'x> = quick_xml_serialize::DocVersionXElementTypeSerializer<'x>;
@@ -57656,8 +57518,8 @@ pub mod version {
     }
     #[derive(Debug)]
     pub struct DocVersionFileListFileXElementType {
-        pub id: ::std::string::String,
-        pub content: ::std::string::String,
+        pub id: String,
+        pub content: String,
     }
     impl WithSerializer for DocVersionFileListFileXElementType {
         type Serializer<'x> = quick_xml_serialize::DocVersionFileListFileXElementTypeSerializer<'x>;
@@ -57682,12 +57544,12 @@ pub mod version {
         };
         #[derive(Debug)]
         pub struct DocVersionXElementTypeDeserializer {
-            id: ::std::string::String,
-            version: Option<::std::string::String>,
-            name: Option<::std::string::String>,
-            creation_date: Option<::std::string::String>,
+            id: String,
+            version: Option<String>,
+            name: Option<String>,
+            creation_date: Option<String>,
             file_list: Option<super::DocVersionFileListXElementType>,
-            doc_root: Option<::std::string::String>,
+            doc_root: Option<String>,
             state__: Box<DocVersionXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
@@ -57696,7 +57558,7 @@ pub mod version {
             FileList(
                 Option<<super::DocVersionFileListXElementType as WithDeserializer>::Deserializer>,
             ),
-            DocRoot(Option<<::std::string::String as WithDeserializer>::Deserializer>),
+            DocRoot(Option<<String as WithDeserializer>::Deserializer>),
             Done__,
             Unknown__,
         }
@@ -57705,10 +57567,10 @@ pub mod version {
             where
                 R: DeserializeReader,
             {
-                let mut id: Option<::std::string::String> = None;
-                let mut version: Option<::std::string::String> = None;
-                let mut name: Option<::std::string::String> = None;
-                let mut creation_date: Option<::std::string::String> = None;
+                let mut id: Option<String> = None;
+                let mut version: Option<String> = None;
+                let mut name: Option<String> = None;
+                let mut creation_date: Option<String> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -57779,7 +57641,7 @@ pub mod version {
                 self.file_list = Some(value);
                 Ok(())
             }
-            fn store_doc_root(&mut self, value: ::std::string::String) -> Result<(), Error> {
+            fn store_doc_root(&mut self, value: String) -> Result<(), Error> {
                 if self.doc_root.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"DocRoot",
@@ -57848,7 +57710,7 @@ pub mod version {
             fn handle_doc_root<'de, R>(
                 &mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, ::std::string::String>,
+                output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<DocVersionXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -58269,14 +58131,14 @@ pub mod version {
         }
         #[derive(Debug)]
         pub struct DocVersionFileListFileXElementTypeDeserializer {
-            id: ::std::string::String,
-            content: Option<::std::string::String>,
+            id: String,
+            content: Option<String>,
             state__: Box<DocVersionFileListFileXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum DocVersionFileListFileXElementTypeDeserializerState {
             Init__,
-            Content__(<::std::string::String as WithDeserializer>::Deserializer),
+            Content__(<String as WithDeserializer>::Deserializer),
             Unknown__,
         }
         impl DocVersionFileListFileXElementTypeDeserializer {
@@ -58284,7 +58146,7 @@ pub mod version {
             where
                 R: DeserializeReader,
             {
-                let mut id: Option<::std::string::String> = None;
+                let mut id: Option<String> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -58320,7 +58182,7 @@ pub mod version {
                 }
                 Ok(())
             }
-            fn store_content(&mut self, value: ::std::string::String) -> Result<(), Error> {
+            fn store_content(&mut self, value: String) -> Result<(), Error> {
                 if self.content.is_some() {
                     Err(ErrorKind::DuplicateContent)?;
                 }
@@ -58330,7 +58192,7 @@ pub mod version {
             fn handle_content<'de, R>(
                 mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, ::std::string::String>,
+                output: DeserializerOutput<'de, String>,
             ) -> DeserializerResult<'de, super::DocVersionFileListFileXElementType>
             where
                 R: DeserializeReader,
@@ -58443,7 +58305,7 @@ pub mod version {
         pub(super) enum DocVersionXElementTypeSerializerState<'ser> {
             Init__,
             FileList(<super::DocVersionFileListXElementType as WithSerializer>::Serializer<'ser>),
-            DocRoot(<::std::string::String as WithSerializer>::Serializer<'ser>),
+            DocRoot(<String as WithSerializer>::Serializer<'ser>),
             End__,
             Done__,
             Phantom__(&'ser ()),
@@ -58602,7 +58464,7 @@ pub mod version {
         #[derive(Debug)]
         pub(super) enum DocVersionFileListFileXElementTypeSerializerState<'ser> {
             Init__,
-            Content__(<::std::string::String as WithSerializer>::Serializer<'ser>),
+            Content__(<String as WithSerializer>::Serializer<'ser>),
             End__,
             Done__,
             Phantom__(&'ser ()),
@@ -58672,7 +58534,7 @@ pub mod xs {
         WithSerializer,
     };
     #[derive(Debug, Default)]
-    pub struct EntitiesXType(pub Vec<::std::string::String>);
+    pub struct EntitiesXType(pub Vec<String>);
     impl SerializeBytes for EntitiesXType {
         fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
             if self.0.is_empty() {
@@ -58698,22 +58560,22 @@ pub mod xs {
             Ok(Self(
                 bytes
                     .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
-                    .map(|bytes| ::std::string::String::deserialize_bytes(reader, bytes))
+                    .map(|bytes| String::deserialize_bytes(reader, bytes))
                     .collect::<Result<Vec<_>, _>>()?,
             ))
         }
     }
     pub type EntityXType = EntitiesXType;
-    pub type IdXType = ::std::string::String;
-    pub type IdrefXType = ::std::string::String;
+    pub type IdXType = String;
+    pub type IdrefXType = String;
     pub type IdrefsXType = EntitiesXType;
-    pub type NcNameXType = ::std::string::String;
-    pub type NmtokenXType = ::std::string::String;
+    pub type NcNameXType = String;
+    pub type NmtokenXType = String;
     pub type NmtokensXType = EntitiesXType;
-    pub type NotationXType = ::std::string::String;
-    pub type NameXType = ::std::string::String;
-    pub type QNameXType = ::std::string::String;
-    pub type AnySimpleTypeXType = ::std::string::String;
+    pub type NotationXType = String;
+    pub type NameXType = String;
+    pub type QNameXType = String;
+    pub type AnySimpleTypeXType = String;
     #[derive(Debug)]
     pub struct AnyTypeXType;
     impl WithSerializer for AnyTypeXType {
@@ -58734,39 +58596,39 @@ pub mod xs {
     impl WithDeserializer for AnyTypeXType {
         type Deserializer = quick_xml_deserialize::AnyTypeXTypeDeserializer;
     }
-    pub type AnyUriXType = ::std::string::String;
-    pub type Base64BinaryXType = ::std::string::String;
-    pub type BooleanXType = ::core::primitive::bool;
-    pub type ByteXType = ::core::primitive::i8;
-    pub type DateXType = ::std::string::String;
-    pub type DateTimeXType = ::std::string::String;
-    pub type DecimalXType = ::core::primitive::f64;
-    pub type DoubleXType = ::core::primitive::f64;
-    pub type DurationXType = ::std::string::String;
-    pub type FloatXType = ::core::primitive::f32;
-    pub type GDayXType = ::std::string::String;
-    pub type GMonthXType = ::std::string::String;
-    pub type GMonthDayXType = ::std::string::String;
-    pub type GYearXType = ::std::string::String;
-    pub type GYearMonthXType = ::std::string::String;
-    pub type HexBinaryXType = ::std::string::String;
-    pub type IntXType = ::core::primitive::i32;
+    pub type AnyUriXType = String;
+    pub type Base64BinaryXType = String;
+    pub type BooleanXType = bool;
+    pub type ByteXType = i8;
+    pub type DateXType = String;
+    pub type DateTimeXType = String;
+    pub type DecimalXType = f64;
+    pub type DoubleXType = f64;
+    pub type DurationXType = String;
+    pub type FloatXType = f32;
+    pub type GDayXType = String;
+    pub type GMonthXType = String;
+    pub type GMonthDayXType = String;
+    pub type GYearXType = String;
+    pub type GYearMonthXType = String;
+    pub type HexBinaryXType = String;
+    pub type IntXType = i32;
     pub type IntegerXType = BigInt;
-    pub type LanguageXType = ::std::string::String;
-    pub type LongXType = ::core::primitive::i64;
+    pub type LanguageXType = String;
+    pub type LongXType = i64;
     pub type NegativeIntegerXType = BigInt;
     pub type NonNegativeIntegerXType = BigUint;
     pub type NonPositiveIntegerXType = BigInt;
-    pub type NormalizedStringXType = ::std::string::String;
+    pub type NormalizedStringXType = String;
     pub type PositiveIntegerXType = BigUint;
-    pub type ShortXType = ::core::primitive::i16;
-    pub type StringXType = ::std::string::String;
-    pub type TimeXType = ::std::string::String;
-    pub type TokenXType = ::std::string::String;
-    pub type UnsignedByteXType = ::core::primitive::u8;
-    pub type UnsignedIntXType = ::core::primitive::u32;
-    pub type UnsignedLongXType = ::core::primitive::u64;
-    pub type UnsignedShortXType = ::core::primitive::u16;
+    pub type ShortXType = i16;
+    pub type StringXType = String;
+    pub type TimeXType = String;
+    pub type TokenXType = String;
+    pub type UnsignedByteXType = u8;
+    pub type UnsignedIntXType = u32;
+    pub type UnsignedLongXType = u64;
+    pub type UnsignedShortXType = u16;
     pub mod quick_xml_deserialize {
         use core::mem::replace;
         use xsd_parser::quick_xml::{

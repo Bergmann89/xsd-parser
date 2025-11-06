@@ -26,7 +26,11 @@ fn config() -> Config {
         .with_parser_flags(ParserFlags::all())
         .with_interpreter_flags(InterpreterFlags::all())
         .with_optimizer_flags(OptimizerFlags::all())
-        .with_generator_flags(GeneratorFlags::all() - GeneratorFlags::NILLABLE_TYPE_SUPPORT);
+        .with_generator_flags(
+            GeneratorFlags::all()
+                - GeneratorFlags::NILLABLE_TYPE_SUPPORT
+                - GeneratorFlags::BUILD_IN_ABSOLUTE_PATHS,
+        );
 
     config.generator.type_postfix.type_ = "XType".into();
     config.generator.type_postfix.element = String::new();

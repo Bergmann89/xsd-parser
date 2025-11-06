@@ -1,5 +1,6 @@
 #![allow(unused_mut, missing_docs, unused_variables, unreachable_pub)]
 
+mod absolute_paths;
 mod all;
 mod any;
 mod build_in;

@@ -1,13 +1,15 @@
 use std::any::{Any, TypeId};
+use std::borrow::Cow;
 use std::collections::HashMap;
 use std::ops::Deref;
+use std::str::FromStr;
 
 use parking_lot::Mutex;
 use proc_macro2::TokenStream;
 use quote::format_ident;
 
 use crate::config::GeneratorFlags;
-use crate::models::code::ModuleIdent;
+use crate::models::code::{IdentPath, ModuleIdent};
 use crate::models::{
     code::{Module, ModulePath},
     data::{DataType, PathData},
@@ -51,6 +53,28 @@ impl<'a, 'types> Context<'a, 'types> {
         self.add_usings(&target_type.usings);
 
         target_type.resolve_relative_to(&self.module_path)
+    }
+
+    /// Resolves the passed identifier `path` for build-in types before it can
+    /// be rendered.
+    ///
+    /// If [`GeneratorFlags::BUILD_IN_ABSOLUTE_PATHS`] is set, the path is returned
+    /// as it, otherwise it will return the identifier only (without the path).
+    ///
+    /// # Panics
+    ///
+    /// Panics if the passed `path` is not a valid [`IdentPath`].
+    pub fn resolve_build_in(&self, path: &str) -> IdentPath {
+        let path = self.patch_using(Cow::Borrowed(path));
+        let path = IdentPath::from_str(&path).unwrap();
+
+        if self.check_generator_flags(GeneratorFlags::BUILD_IN_ABSOLUTE_PATHS) {
+            path
+        } else {
+            let (ident, _path, _absolute) = path.into_parts();
+
+            IdentPath::from_ident(ident)
+        }
     }
 
     /// Add using directives to the module the of the current rendered type.
@@ -144,32 +168,43 @@ impl<'a, 'types> Context<'a, 'types> {
     }
 
     /// Takes an iterator of usings (anything that implements `ToString`) and
-    /// replaces the `xsd_parser::` in the path with the configured name for
-    /// `xsd-parser`.
+    /// executes [`patch_using`](Self::patch_using) for each element.
+    pub fn patch_usings<I>(&self, usings: I) -> impl Iterator<Item = String> + use<'_, 'a, I>
+    where
+        I: IntoIterator,
+        I::Item: ToString,
+    {
+        usings
+            .into_iter()
+            .map(move |s| self.patch_using(Cow::Owned(s.to_string())).into_owned())
+    }
+
+    /// Replaces the `alloc::` and `xsd_parser::` in the path with the configured
+    /// name for the `alloc` and `xsd-parser` crate.
     ///
-    /// See [`Renderer::xsd_parser_crate`](crate::pipeline::Renderer::xsd_parser_crate)
+    /// See [`Renderer::alloc_crate`](crate::pipeline::Renderer::alloc_crate) and
+    /// [`Renderer::xsd_parser_crate`](crate::pipeline::Renderer::xsd_parser_crate)
     /// for details.
     ///
     /// This should be used before you add using directives to a module manually.
     /// Normally you should use [`add_usings`](Self::add_usings) which does the
     /// patching automatically, but if you want to add code somewhere in the module
     /// tree, this might be useful.
-    pub fn patch_usings<I>(&self, usings: I) -> impl Iterator<Item = String> + use<'_, I>
-    where
-        I: IntoIterator,
-        I::Item: ToString,
-    {
+    pub fn patch_using<'x>(&self, using: Cow<'x, str>) -> Cow<'x, str> {
+        let alloc = &self.alloc_crate;
         let xsd_parser = &self.xsd_parser_crate;
 
-        usings.into_iter().map(move |s| {
-            let s = s.to_string();
-
-            if let Some(s) = s.strip_prefix("xsd_parser::") {
-                format!("{xsd_parser}::{s}")
-            } else {
-                s
-            }
-        })
+        if let Some(s) = using.strip_prefix("xsd_parser::") {
+            Cow::Owned(format!("{xsd_parser}::{s}"))
+        } else if let Some(s) = using.strip_prefix("::xsd_parser::") {
+            Cow::Owned(format!("::{xsd_parser}::{s}"))
+        } else if let Some(s) = using.strip_prefix("alloc::") {
+            Cow::Owned(format!("{alloc}::{s}"))
+        } else if let Some(s) = using.strip_prefix("::alloc::") {
+            Cow::Owned(format!("::{alloc}::{s}"))
+        } else {
+            using
+        }
     }
 
     pub(crate) fn resolve_type_for_serialize_module(&self, target_type: &PathData) -> TokenStream {

@@ -27,12 +27,13 @@ use std::fmt::{Debug, Display};
 use std::str::FromStr;
 
 use inflector::Inflector;
-use quote::format_ident;
+use proc_macro2::TokenStream;
+use quote::{format_ident, quote};
 
 use crate::config::{DynTypeTraits, RendererFlags};
 use crate::models::{
     code::{IdentPath, Module},
-    data::{DataTypeVariant, DataTypes, PathData},
+    data::{DataTypeVariant, DataTypes, Occurs, PathData},
     meta::ModuleMeta,
 };
 
@@ -74,6 +75,7 @@ impl<'types> Renderer<'types> {
             flags: RendererFlags::empty(),
             derive: vec![IdentPath::from_ident(format_ident!("Debug"))],
             dyn_type_traits: Vec::new(),
+            alloc_crate: format_ident!("std"),
             xsd_parser_crate: format_ident!("xsd_parser"),
         };
 
@@ -157,7 +159,7 @@ impl<'types> Renderer<'types> {
     ///
     /// ```ignore
     /// let generator = Generator::new(types)
-    ///     .dyn_type_traits(["core::fmt::Debug", "core::any::Any"]);
+    ///     .dyn_type_traits(["::core::fmt::Debug", "::core::any::Any"]);
     /// ```
     pub fn dyn_type_traits<I>(mut self, value: I) -> Result<Self, Error>
     where
@@ -175,6 +177,19 @@ impl<'types> Renderer<'types> {
         self.dyn_type_traits = DynTypeTraits::Custom(traits);
 
         Ok(self)
+    }
+
+    /// Set the name of the `alloc` create that the generator should use for
+    /// generating the code.
+    ///
+    /// This is useful if the `alloc` create can not be resolved by the default
+    /// name in your environment. You can just set a name that suites your needs.
+    ///
+    /// By default `std` is used as `alloc` crate.
+    pub fn alloc_crate<S: Display>(mut self, value: S) -> Self {
+        self.meta.alloc_crate = format_ident!("{value}");
+
+        self
     }
 
     /// Set the name of the `xsd-parser` create that the generator should use for
@@ -201,8 +216,8 @@ impl<'types> Renderer<'types> {
         meta.dyn_type_traits = match dyn_type_traits {
             DynTypeTraits::Auto => {
                 let traits = meta.derive.iter().map(|x| match x.to_string().as_ref() {
-                    "Debug" => IdentPath::from_str("core::fmt::Debug").unwrap(),
-                    "Hash" => IdentPath::from_str("core::hash::Hash").unwrap(),
+                    "Debug" => IdentPath::from_str("::core::fmt::Debug").unwrap(),
+                    "Hash" => IdentPath::from_str("::core::hash::Hash").unwrap(),
                     _ => x.clone(),
                 });
 
@@ -318,5 +333,55 @@ impl ModuleMeta {
         let path = IdentPath::from_parts([], ident);
 
         PathData::from_path(path)
+    }
+}
+
+impl Occurs {
+    /// Wrapped the passed type `ident` into a suitable rust type depending on
+    /// the occurrence and the need of indirection (boxing).
+    ///
+    /// # Examples
+    /// - `Occurs::Single` will return the type as is, or as `Box<T>`
+    /// - `Occurs::Optional` will return the type as `Option<T>`
+    /// - `Occurs::DynamicList` will return the type as `Vec<T>`
+    /// - `Occurs::StaticList` will return the type as array `[T; SIZE]`
+    #[must_use]
+    pub fn make_type(
+        self,
+        ctx: &Context<'_, '_>,
+        ident: &TokenStream,
+        need_indirection: bool,
+    ) -> Option<TokenStream> {
+        match self {
+            Self::None => None,
+            Self::Single if need_indirection => {
+                let box_ = ctx.resolve_build_in("::alloc::boxed::Box");
+
+                Some(quote! { #box_<#ident> })
+            }
+            Self::Single => Some(quote! { #ident }),
+            Self::Optional if need_indirection => {
+                let box_ = ctx.resolve_build_in("::alloc::boxed::Box");
+                let option = ctx.resolve_build_in("::core::option::Option");
+
+                Some(quote! { #option<#box_<#ident>> })
+            }
+            Self::Optional => {
+                let option = ctx.resolve_build_in("::core::option::Option");
+
+                Some(quote! { #option<#ident> })
+            }
+            Self::DynamicList => {
+                let vec = ctx.resolve_build_in("::alloc::vec::Vec");
+
+                Some(quote! { #vec<#ident> })
+            }
+            Self::StaticList(sz) if need_indirection => {
+                let box_ = ctx.resolve_build_in("::alloc::boxed::Box");
+
+                Some(quote! { [#box_<#ident>; #sz] })
+            }
+            Self::StaticList(sz) => Some(quote! { [#ident; #sz] }),
+        }
     }
 }

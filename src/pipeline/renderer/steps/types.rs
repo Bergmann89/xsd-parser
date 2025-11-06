@@ -101,10 +101,12 @@ impl DynamicData<'_> {
             |traits| format_traits(traits.iter().map(|x| ctx.resolve_type_for_module(x))),
         );
 
+        let box_ = ctx.resolve_build_in("::alloc::boxed::Box");
+
         let code = quote! {
             #docs
             #derive
-            pub struct #type_ident(pub Box<dyn #trait_ident>);
+            pub struct #type_ident(pub #box_<dyn #trait_ident>);
 
             pub trait #trait_ident: #dyn_traits { }
 
@@ -134,7 +136,7 @@ impl ReferenceData<'_> {
         let code = match mode {
             TypedefMode::Auto => crate::unreachable!(),
             TypedefMode::Typedef => {
-                let target_type = occurs.make_type(&target_type, false);
+                let target_type = occurs.make_type(ctx, &target_type, false);
                 let trait_impls = render_trait_impls(type_ident, trait_impls);
 
                 quote! {
@@ -145,7 +147,7 @@ impl ReferenceData<'_> {
                 }
             }
             TypedefMode::NewType => {
-                let target_type = occurs.make_type(&target_type, false);
+                let target_type = occurs.make_type(ctx, &target_type, false);
                 let extra_derive =
                     matches!(occurs, Occurs::Optional | Occurs::DynamicList).then_some("Default");
                 let derive = get_derive(ctx, extra_derive);
@@ -239,7 +241,7 @@ impl SimpleData<'_> {
 
         let docs = ctx.render_type_docs();
         let target_type = ctx.resolve_type_for_module(target_type);
-        let target_type = occurs.make_type(&target_type, false);
+        let target_type = occurs.make_type(ctx, &target_type, false);
 
         let derive = get_derive(ctx, Option::<String>::None);
         let trait_impls = render_trait_impls(type_ident, trait_impls);
@@ -349,7 +351,7 @@ impl ComplexDataStruct<'_> {
 impl ComplexDataContent<'_> {
     fn render_field(&self, ctx: &Context<'_, '_>) -> Option<TokenStream> {
         let target_type = ctx.resolve_type_for_module(&self.target_type);
-        let target_type = self.occurs.make_type(&target_type, false)?;
+        let target_type = self.occurs.make_type(ctx, &target_type, false)?;
 
         Some(quote! {
             pub content: #target_type,
@@ -361,9 +363,11 @@ impl ComplexDataAttribute<'_> {
     fn render_field(&self, ctx: &Context<'_, '_>) -> TokenStream {
         let field_ident = &self.ident;
 
+        let option = ctx.resolve_build_in("::core::option::Option");
+
         let target_type = ctx.resolve_type_for_module(&self.target_type);
         let target_type = if self.is_option {
-            quote!(Option<#target_type>)
+            quote!(#option<#target_type>)
         } else {
             target_type
         };
@@ -387,7 +391,7 @@ impl ComplexDataElement<'_> {
         let target_type = ctx.resolve_type_for_module(&self.target_type);
         let target_type = self
             .occurs
-            .make_type(&target_type, self.need_indirection)
+            .make_type(ctx, &target_type, self.need_indirection)
             .unwrap();
 
         let docs = ctx.render_docs(
@@ -405,7 +409,9 @@ impl ComplexDataElement<'_> {
         let variant_ident = &self.variant_ident;
 
         let target_type = ctx.resolve_type_for_module(&self.target_type);
-        let target_type = self.occurs.make_type(&target_type, self.need_indirection);
+        let target_type = self
+            .occurs
+            .make_type(ctx, &target_type, self.need_indirection);
 
         let docs = ctx.render_docs(
             RendererFlags::RENDER_ELEMENT_DOCS,

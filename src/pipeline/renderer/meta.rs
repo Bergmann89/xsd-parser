@@ -23,6 +23,9 @@ pub struct MetaData<'types> {
     /// List of traits that should be implemented by dynamic types.
     pub dyn_type_traits: Vec<IdentPath>,
 
+    /// Name of the `alloc` crate.
+    pub alloc_crate: Ident2,
+
     /// Name of the `xsd_parser` crate.
     pub xsd_parser_crate: Ident2,
 }
