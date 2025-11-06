@@ -5,6 +5,7 @@ use xsd_parser::quick_xml::{DeserializeSync, IoReader, SerializeSync, Writer, Xm
 #[allow(
     dead_code,
     unused_mut,
+    unused_imports,
     unused_variables,
     clippy::never_loop,
     clippy::single_match,

@@ -14,7 +14,8 @@ fn config() -> Config {
             GeneratorFlags::all()
                 - GeneratorFlags::USE_SCHEMA_MODULES
                 - GeneratorFlags::BUILD_IN_ABSOLUTE_PATHS
-                - GeneratorFlags::NILLABLE_TYPE_SUPPORT,
+                - GeneratorFlags::NILLABLE_TYPE_SUPPORT
+                - GeneratorFlags::ABSOLUTE_PATHS_INSTEAD_USINGS,
         )
         .with_optimizer_flags(
             OptimizerFlags::all()

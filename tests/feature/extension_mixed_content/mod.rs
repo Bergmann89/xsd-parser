@@ -17,7 +17,7 @@ macro_rules! check_obj {
     ($module:ident, $obj:expr) => {{
         use xsd_parser::xml::Text;
 
-        let obj = dbg!($obj);
+        let obj = $obj;
 
         assert_eq!(obj.base_attrib, "base attrib content");
         assert_eq!(obj.data_type, "data type attrib content");

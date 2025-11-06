@@ -183,6 +183,18 @@ bitflags! {
         #[doc = include_str!("../../tests/generator/generator_flags/expected/build_in_absolute_paths.rs")]
         /// ```
         const BUILD_IN_ABSOLUTE_PATHS = 1 << 6;
+
+        /// Use absolute paths instead of using directives for all non build-in
+        /// types and traits.
+        ///
+        /// Using this flag will instruct the generator to use absolute paths
+        /// for non build-in and generated types and traits to avoid naming
+        /// conflicts with other generated types.
+        ///
+        /// This does not include build-in types (like `usize`, `String` or `From`),
+        /// to use absolute paths for these also, you have to add the
+        /// [`BUILD_IN_ABSOLUTE_PATHS`](Self::BUILD_IN_ABSOLUTE_PATHS) as well.
+        const ABSOLUTE_PATHS_INSTEAD_USINGS = 1 << 7;
     }
 }
 

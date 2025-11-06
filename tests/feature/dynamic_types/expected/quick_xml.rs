@@ -720,7 +720,6 @@ pub mod quick_xml_deserialize {
     }
 }
 pub mod quick_xml_serialize {
-    use core::iter::Iterator;
     use xsd_parser::quick_xml::{
         write_attrib_opt, BytesEnd, BytesStart, Error, Event, IterSerializer,
     };

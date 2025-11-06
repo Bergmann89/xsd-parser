@@ -1,4 +1,4 @@
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::BTreeMap;
 use std::fs::{create_dir_all, write};
 use std::io::Error as IoError;
 use std::mem::replace;
@@ -20,7 +20,7 @@ pub struct Module {
     pub code: TokenStream,
 
     /// A set of using directives this module needs.
-    pub usings: BTreeSet<String>,
+    pub usings: BTreeMap<String, bool>,
 
     /// A map of sub-modules contained inside this module.
     pub modules: BTreeMap<String, Module>,
@@ -79,13 +79,13 @@ impl Module {
     }
 
     /// Add using directives to the set of this module.
-    pub fn usings<I>(&mut self, usings: I) -> &mut Self
+    pub fn usings<I>(&mut self, anonymous: bool, usings: I) -> &mut Self
     where
         I: IntoIterator,
         I::Item: ToString,
     {
         for using in usings {
-            self.usings.insert(using.to_string());
+            *self.usings.entry(using.to_string()).or_insert(anonymous) &= anonymous;
         }
 
         self
@@ -227,14 +227,14 @@ impl ToTokens for Module {
     }
 }
 
-fn render_usings<I>(usings: I) -> TokenStream
+fn render_usings<'x, I, X>(usings: I) -> TokenStream
 where
-    I: IntoIterator,
-    I::Item: AsRef<str>,
+    I: IntoIterator<Item = (X, &'x bool)>,
+    X: AsRef<str>,
 {
     #[derive(Default)]
     struct Module {
-        usings: BTreeSet<Ident2>,
+        usings: BTreeMap<Ident2, bool>,
         sub_modules: BTreeMap<Ident2, Module>,
     }
 
@@ -242,7 +242,13 @@ where
         fn render(&self) -> TokenStream {
             let count = self.usings.len() + self.sub_modules.len();
 
-            let usings = self.usings.iter().map(|ident| quote!(#ident));
+            let usings = self.usings.iter().map(|(ident, anonymous)| {
+                if *anonymous {
+                    quote!(#ident as _)
+                } else {
+                    quote!(#ident)
+                }
+            });
             let sub_modules = self.sub_modules.iter().map(|(ident, module)| {
                 let using = module.render();
 
@@ -261,7 +267,7 @@ where
 
     let mut root = Module::default();
 
-    for using in usings {
+    for (using, anonymous) in usings {
         let using = using.as_ref();
         let Ok(ident) = IdentPath::from_str(using) else {
             continue;
@@ -274,7 +280,7 @@ where
             module = module.sub_modules.entry(part).or_default();
         }
 
-        module.usings.insert(ident);
+        *module.usings.entry(ident).or_insert(*anonymous) &= *anonymous;
     }
 
     let mut ret = TokenStream::new();

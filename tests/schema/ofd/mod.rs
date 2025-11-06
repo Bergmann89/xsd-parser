@@ -29,7 +29,8 @@ fn config() -> Config {
         .with_generator_flags(
             GeneratorFlags::all()
                 - GeneratorFlags::NILLABLE_TYPE_SUPPORT
-                - GeneratorFlags::BUILD_IN_ABSOLUTE_PATHS,
+                - GeneratorFlags::BUILD_IN_ABSOLUTE_PATHS
+                - GeneratorFlags::ABSOLUTE_PATHS_INSTEAD_USINGS,
         );
 
     config.generator.type_postfix.type_ = "XType".into();

@@ -328,7 +328,6 @@ pub mod other {
         }
     }
     pub mod quick_xml_serialize {
-        use core::iter::Iterator;
         use xsd_parser::quick_xml::{BytesEnd, BytesStart, Error, Event, WithSerializer};
         #[derive(Debug)]
         pub struct BarTypeSerializer<'ser> {
@@ -732,7 +731,6 @@ pub mod tns {
         }
     }
     pub mod quick_xml_serialize {
-        use core::iter::Iterator;
         use xsd_parser::quick_xml::{BytesEnd, BytesStart, Error, Event, WithSerializer};
         #[derive(Debug)]
         pub struct FooTypeSerializer<'ser> {
