@@ -5,7 +5,6 @@ mod serde_xml_rs_v8;
 use std::str::FromStr;
 
 use proc_macro2::TokenStream;
-use quote::quote;
 
 use crate::models::code::IdentPath;
 use crate::models::data::ComplexDataContent;
@@ -36,7 +35,7 @@ fn get_derive<I>(ctx: &Context<'_, '_>, extra: I) -> TokenStream
 where
     I: IntoIterator<Item = &'static str>,
 {
-    ctx.add_usings([quote!(serde::Serialize), quote!(serde::Deserialize)]);
+    ctx.add_usings(["serde::Serialize", "serde::Deserialize"]);
 
     super::get_derive(ctx, DERIVE.into_iter().chain(extra))
 }

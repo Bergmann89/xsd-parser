@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:simpleType name="Test">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="0" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:element name="Option" type="Test" />
+    <xs:element name="Result" type="Test" />
+    <xs:element name="String" type="Test" />
+    <xs:element name="ToString" type="Test" />
+    <xs:element name="Vec" type="Test" />
+    <xs:element name="Box" type="Test" />
+    <xs:element name="Clone" type="Test" />
+    <xs:element name="Copy" type="Test" />
+    <xs:element name="Debug" type="Test" />
+    <xs:element name="Default" type="Test" />
+    <xs:element name="Eq" type="Test" />
+    <xs:element name="Ord" type="Test" />
+    <xs:element name="PartialEq" type="Test" />
+    <xs:element name="PartialOrd" type="Test" />
+    <xs:element name="Drop" type="Test" />
+    <xs:element name="Iterator" type="Test" />
+    <xs:element name="IntoIterator" type="Test" />
+    <xs:element name="FromIterator" type="Test" />
+    <xs:element name="Send" type="Test" />
+    <xs:element name="Sync" type="Test" />
+    <xs:element name="Sized" type="Test" />
+    <xs:element name="Unpin" type="Test" />
+    <xs:element name="AsRef" type="Test" />
+    <xs:element name="AsMut" type="Test" />
+    <xs:element name="From" type="Test" />
+    <xs:element name="TryFrom" type="Test" />
+    <xs:element name="Into" type="Test" />
+    <xs:element name="TryInto" type="Test" />
+    <xs:element name="Fn" type="Test" />
+    <xs:element name="FnMut" type="Test" />
+    <xs:element name="FnOnce" type="Test" />
+</xs:schema>

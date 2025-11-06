@@ -22,6 +22,9 @@ pub struct RendererConfig {
     /// See [`derive`](crate::Renderer::derive) for more details.
     pub derive: Option<Vec<String>>,
 
+    /// Name of the `alloc` crate that is used for the generated code.
+    pub alloc: String,
+
     /// Name of the `xsd-parser` crate that is used for the generated code.
     pub xsd_parser: String,
 
@@ -37,6 +40,7 @@ impl Default for RendererConfig {
             steps: vec![Box::new(RenderStep::Types)],
             flags: RendererFlags::empty(),
             derive: None,
+            alloc: "std".into(),
             xsd_parser: "xsd_parser".into(),
             dyn_type_traits: None,
         }
@@ -49,6 +53,7 @@ impl Clone for RendererConfig {
             steps: self.steps.iter().map(|x| x.boxed_clone()).collect(),
             flags: self.flags,
             derive: self.derive.clone(),
+            alloc: self.alloc.clone(),
             xsd_parser: self.xsd_parser.clone(),
             dyn_type_traits: self.dyn_type_traits.clone(),
         }

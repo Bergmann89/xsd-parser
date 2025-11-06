@@ -81,6 +81,9 @@ impl UnionData<'_> {
             .iter()
             .map(|var| var.render_deserializer_variant(ctx, validation.is_some()));
 
+        let vec = ctx.resolve_build_in("::alloc::vec::Vec");
+        let result = ctx.resolve_build_in("::core::result::Result");
+
         ctx.add_usings([
             "xsd_parser::quick_xml::Error",
             "xsd_parser::quick_xml::ErrorKind",
@@ -93,11 +96,11 @@ impl UnionData<'_> {
                 fn deserialize_bytes<R>(
                     reader: &R,
                     bytes: &[u8],
-                ) -> Result<Self, Error>
+                ) -> #result<Self, Error>
                 where
                     R: XmlReader
                 {
-                    let mut errors = Vec::new();
+                    let mut errors = #vec::new();
 
                     #validation
 
@@ -122,18 +125,20 @@ impl UnionTypeVariant<'_> {
 
         let target_type = ctx.resolve_type_for_module(target_type);
 
+        let box_ = ctx.resolve_build_in("::alloc::boxed::Box");
+
         if as_str {
             quote! {
                 match #target_type::deserialize_str(reader, s) {
                     Ok(value) => return Ok(Self::#variant_ident(value)),
-                    Err(error) => errors.push(Box::new(error)),
+                    Err(error) => errors.push(#box_::new(error)),
                 }
             }
         } else {
             quote! {
                 match #target_type::deserialize_bytes(reader, bytes) {
                     Ok(value) => return Ok(Self::#variant_ident(value)),
-                    Err(error) => errors.push(Box::new(error)),
+                    Err(error) => errors.push(#box_::new(error)),
                 }
             }
         }
@@ -158,7 +163,9 @@ impl DynamicData<'_> {
 
         let config = ctx.get_ref::<DeserializerConfig>();
         let deserializer_type = if config.boxed_deserializer {
-            quote!(Box<quick_xml_deserialize::#deserializer_ident>)
+            let box_ = ctx.resolve_build_in("::alloc::boxed::Box");
+
+            quote!(#box_<quick_xml_deserialize::#deserializer_ident>)
         } else {
             quote!(quick_xml_deserialize::#deserializer_ident)
         };
@@ -212,7 +219,9 @@ impl DynamicData<'_> {
 
         let config = ctx.get_ref::<DeserializerConfig>();
         let deserializer_type = if config.boxed_deserializer {
-            quote!(Box<#deserializer_ident>)
+            let box_ = ctx.resolve_build_in("::alloc::boxed::Box");
+
+            quote!(#box_<#deserializer_ident>)
         } else {
             quote!(#deserializer_ident)
         };
@@ -229,10 +238,14 @@ impl DynamicData<'_> {
         let variants_finish = derived_types.iter().map(|x| {
             let variant_ident = &x.variant_ident;
 
+            let box_ = ctx.resolve_build_in("::alloc::boxed::Box");
+
             quote! {
-                #boxed_deserializer_ident::#variant_ident(x) => Ok(super::#type_ident(Box::new(x.finish(reader)?))),
+                #boxed_deserializer_ident::#variant_ident(x) => Ok(super::#type_ident(#box_::new(x.finish(reader)?))),
             }
         });
+
+        let result = ctx.resolve_build_in("::core::result::Result");
 
         ctx.add_quick_xml_deserialize_usings([
             "xsd_parser::quick_xml::Event",
@@ -288,7 +301,7 @@ impl DynamicData<'_> {
                 fn finish<R>(
                     self,
                     reader: &R
-                ) -> Result<super::#type_ident, Error>
+                ) -> #result<super::#type_ident, Error>
                 where
                     R: DeserializeReader
                 {
@@ -321,11 +334,13 @@ impl DerivedType {
         let config = ctx.get_ref::<DeserializerConfig>();
         let boxed_deserializer_ident =
             boxed_deserializer_ident(config.boxed_deserializer, deserializer_ident);
-        let deserialize_mapper = do_box(
+        let deserialize_mapper = ctx.do_box(
             config.boxed_deserializer,
             quote!(#boxed_deserializer_ident::#variant_ident(x)),
         );
         let target_type = ctx.resolve_type_for_deserialize_module(target_type);
+
+        let box_ = ctx.resolve_build_in("::alloc::boxed::Box");
 
         ctx.add_quick_xml_deserialize_usings([
             "xsd_parser::quick_xml::QName",
@@ -342,7 +357,7 @@ impl DerivedType {
 
             return Ok(DeserializerOutput {
                 artifact: artifact.map(
-                    |x| super::#type_ident(Box::new(x)),
+                    |x| super::#type_ident(#box_::new(x)),
                     |x| #deserialize_mapper,
                 ),
                 event,
@@ -381,10 +396,12 @@ impl DerivedType {
         let config = ctx.get_ref::<DeserializerConfig>();
         let boxed_deserializer_ident =
             boxed_deserializer_ident(config.boxed_deserializer, deserializer_ident);
-        let deserialize_mapper = do_box(
+        let deserialize_mapper = ctx.do_box(
             config.boxed_deserializer,
             quote!(#boxed_deserializer_ident::#variant_ident(x)),
         );
+
+        let box_ = ctx.resolve_build_in("::alloc::boxed::Box");
 
         quote! {
             #boxed_deserializer_ident::#variant_ident(x) => {
@@ -396,7 +413,7 @@ impl DerivedType {
 
                 Ok(DeserializerOutput {
                     artifact: artifact.map(
-                        |x| super::#type_ident(Box::new(x)),
+                        |x| super::#type_ident(#box_::new(x)),
                         |x| #deserialize_mapper,
                     ),
                     event,
@@ -424,6 +441,10 @@ impl ReferenceData<'_> {
         }
 
         let target_type = ctx.resolve_type_for_module(target_type);
+
+        let vec = ctx.resolve_build_in("::alloc::vec::Vec");
+        let result = ctx.resolve_build_in("::core::result::Result");
+
         let body = match occurs {
             Occurs::None => return,
             Occurs::Single => {
@@ -441,15 +462,17 @@ impl ReferenceData<'_> {
                     Ok(Self(bytes
                         .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
                         .map(|bytes| #target_type::deserialize_bytes(reader, bytes))
-                        .collect::<Result<Vec<_>, _>>()?
+                        .collect::<#result<#vec<_>, _>>()?
                     ))
                 }
             }
             Occurs::StaticList(size) => {
+                let option = ctx.resolve_build_in("::core::option::Option");
+
                 ctx.add_quick_xml_deserialize_usings(["xsd_parser::quick_xml::ErrorKind"]);
 
                 quote! {
-                    let arr: [Option<#target_type>; #size];
+                    let arr: [#option<#target_type>; #size];
                     let parts = bytes
                         .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
                         .map(|bytes| #target_type::deserialize_bytes(reader, bytes));
@@ -493,7 +516,7 @@ impl ReferenceData<'_> {
                 fn deserialize_bytes<R>(
                     reader: &R,
                     bytes: &[u8],
-                ) -> Result<Self, Error>
+                ) -> #result<Self, Error>
                 where
                     R: DeserializeReader
                 {
@@ -540,6 +563,8 @@ impl EnumerationData<'_> {
             }
         });
 
+        let result = ctx.resolve_build_in("::core::result::Result");
+
         ctx.add_usings([
             "xsd_parser::quick_xml::Error",
             "xsd_parser::quick_xml::DeserializeBytes",
@@ -551,7 +576,7 @@ impl EnumerationData<'_> {
                 fn deserialize_bytes<R>(
                     reader: &R,
                     bytes: &[u8],
-                ) -> Result<Self, Error>
+                ) -> #result<Self, Error>
                 where
                     R: DeserializeReader
                 {
@@ -609,6 +634,8 @@ impl SimpleData<'_> {
 
         let target_type = ctx.resolve_type_for_module(target_type);
 
+        let result = ctx.resolve_build_in("::core::result::Result");
+
         ctx.add_usings([
             "xsd_parser::quick_xml::ErrorKind",
             "xsd_parser::quick_xml::DeserializeBytes",
@@ -633,7 +660,7 @@ impl SimpleData<'_> {
                     let inner = bytes
                         .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
                         .map(|bytes| #target_type::deserialize_bytes(reader, bytes))
-                        .collect::<Result<Vec<_>, _>>()?;
+                        .collect::<#result<Vec<_>, _>>()?;
                 }
             }
             (need_str, occurs) => {
@@ -646,7 +673,7 @@ impl SimpleData<'_> {
                 fn deserialize_bytes<R>(
                     reader: &R,
                     bytes: &[u8],
-                ) -> Result<Self, Error>
+                ) -> #result<Self, Error>
                 where
                     R: DeserializeReader
                 {
@@ -764,7 +791,9 @@ impl ComplexBase<'_> {
 
         let config = ctx.get_ref::<DeserializerConfig>();
         let deserializer_type = if config.boxed_deserializer {
-            quote!(Box<quick_xml_deserialize::#deserializer_ident>)
+            let box_ = ctx.resolve_build_in("::alloc::boxed::Box");
+
+            quote!(#box_<quick_xml_deserialize::#deserializer_ident>)
         } else {
             quote!(quick_xml_deserialize::#deserializer_ident)
         };
@@ -792,11 +821,15 @@ impl ComplexBase<'_> {
         let deserializer_ident = &self.deserializer_ident;
         let config = ctx.get_ref::<DeserializerConfig>();
         let deserializer_type = if config.boxed_deserializer {
-            quote!(Box<#deserializer_ident>)
+            let box_ = ctx.resolve_build_in("::alloc::boxed::Box");
+
+            quote!(#box_<#deserializer_ident>)
         } else {
             quote!(#deserializer_ident)
         };
         let mut_ = finish_mut_self.then(|| quote!(mut));
+
+        let result = ctx.resolve_build_in("::core::result::Result");
 
         ctx.add_quick_xml_deserialize_usings([
             "xsd_parser::quick_xml::Event",
@@ -829,7 +862,7 @@ impl ComplexBase<'_> {
                     #fn_next
                 }
 
-                fn finish<R>(#mut_ self, reader: &R) -> Result<super::#type_ident, Error>
+                fn finish<R>(#mut_ self, reader: &R) -> #result<super::#type_ident, Error>
                 where
                     R: DeserializeReader,
                 {
@@ -867,10 +900,12 @@ impl ComplexDataEnum<'_> {
         let deserializer_ident = &self.deserializer_ident;
         let deserializer_state_ident = &self.deserializer_state_ident;
 
+        let box_ = ctx.resolve_build_in("::alloc::boxed::Box");
+
         let code = quote! {
             #[derive(Debug)]
             pub struct #deserializer_ident {
-                state__: Box<#deserializer_state_ident>,
+                state__: #box_<#deserializer_state_ident>,
             }
         };
 
@@ -988,6 +1023,9 @@ impl ComplexDataEnum<'_> {
             }
         });
 
+        let result = ctx.resolve_build_in("::core::result::Result");
+        let option = ctx.resolve_build_in("::core::option::Option");
+
         ctx.add_quick_xml_deserialize_usings([
             "xsd_parser::quick_xml::Error",
             "xsd_parser::quick_xml::ElementHandlerOutput",
@@ -1000,8 +1038,8 @@ impl ComplexDataEnum<'_> {
                 &mut self,
                 reader: &R,
                 event: Event<'de>,
-                fallback: &mut Option<#deserializer_state_ident>,
-            ) -> Result<ElementHandlerOutput<'de>, Error>
+                fallback: &mut #option<#deserializer_state_ident>,
+            ) -> #result<ElementHandlerOutput<'de>, Error>
             where
                 R: DeserializeReader,
             {
@@ -1023,17 +1061,19 @@ impl ComplexDataEnum<'_> {
         let config = ctx.get_ref::<DeserializerConfig>();
         let deserializer_state_ident = &self.deserializer_state_ident;
 
+        let box_ = ctx.resolve_build_in("::alloc::boxed::Box");
+
         let self_type = if config.boxed_deserializer {
-            quote!(Box<Self>)
+            quote!(#box_<Self>)
         } else {
             quote!(Self)
         };
 
-        let self_ctor = do_box(
+        let self_ctor = ctx.do_box(
             config.boxed_deserializer,
             quote! {
                 Self {
-                    state__: Box::new(#deserializer_state_ident::Init__)
+                    state__: #box_::new(#deserializer_state_ident::Init__)
                 }
             },
         );
@@ -1051,6 +1091,8 @@ impl ComplexDataEnum<'_> {
             }
         });
 
+        let result = ctx.resolve_build_in("::core::result::Result");
+
         ctx.add_quick_xml_deserialize_usings([
             "xsd_parser::quick_xml::Error",
             "xsd_parser::quick_xml::BytesStart",
@@ -1061,7 +1103,7 @@ impl ComplexDataEnum<'_> {
             fn from_bytes_start<R>(
                 reader: &R,
                 bytes_start: &BytesStart<'_>
-            ) -> Result<#self_type, Error>
+            ) -> #result<#self_type, Error>
             where
                 R: DeserializeReader,
             {
@@ -1086,10 +1128,12 @@ impl ComplexDataEnum<'_> {
             )
         });
 
+        let result = ctx.resolve_build_in("::core::result::Result");
+
         ctx.add_quick_xml_deserialize_usings(["xsd_parser::quick_xml::ErrorKind"]);
 
         quote! {
-            fn finish_state<R>(reader: &R, state: #deserializer_state_ident) -> Result<super::#type_ident, Error>
+            fn finish_state<R>(reader: &R, state: #deserializer_state_ident) -> #result<super::#type_ident, Error>
             where
                 R: DeserializeReader,
             {
@@ -1131,11 +1175,13 @@ impl ComplexDataEnum<'_> {
             boxed_deserializer_ident(config.boxed_deserializer, deserializer_ident);
         let deserializer_state_ident = &self.deserializer_state_ident;
 
-        let init_deserializer = do_box(
+        let box_ = ctx.resolve_build_in("::alloc::boxed::Box");
+
+        let init_deserializer = ctx.do_box(
             config.boxed_deserializer,
             quote! {
                 #boxed_deserializer_ident {
-                    state__: Box::new(#deserializer_state_ident::Init__),
+                    state__: #box_::new(#deserializer_state_ident::Init__),
                 }
             },
         );
@@ -1172,7 +1218,7 @@ impl ComplexDataEnum<'_> {
             .map(|x| x.deserializer_enum_variant_fn_next_create(ctx));
 
         ctx.add_quick_xml_deserialize_usings([
-            "core::mem::replace",
+            "::core::mem::replace",
             "xsd_parser::quick_xml::DeserializerEvent",
             "xsd_parser::quick_xml::DeserializerOutput",
             "xsd_parser::quick_xml::DeserializerArtifact",
@@ -1257,13 +1303,15 @@ impl ComplexDataStruct<'_> {
             .map(|x| x.deserializer_struct_field_decl(ctx));
         let content = self.content().map(|x| x.deserializer_field_decl(ctx));
 
+        let box_ = ctx.resolve_build_in("::alloc::boxed::Box");
+
         let code = quote! {
             #[derive(Debug)]
             pub struct #deserializer_ident {
                 #( #attributes )*
                 #( #elements )*
                 #content
-                state__: Box<#deserializer_state_ident>,
+                state__: #box_<#deserializer_state_ident>,
             }
         };
 
@@ -1328,8 +1376,10 @@ impl ComplexDataStruct<'_> {
                     let target_type = ctx.resolve_type_for_deserialize_module(&element.target_type);
                     let variant_ident = &element.variant_ident;
 
+                    let option = ctx.resolve_build_in("::core::option::Option");
+
                     quote! {
-                        #variant_ident(Option<<#target_type as WithDeserializer>::Deserializer>),
+                        #variant_ident(#option<<#target_type as WithDeserializer>::Deserializer>),
                     }
                 });
 
@@ -1445,6 +1495,9 @@ impl ComplexDataStruct<'_> {
                 }
             });
 
+        let result = ctx.resolve_build_in("::core::result::Result");
+        let option = ctx.resolve_build_in("::core::option::Option");
+
         ctx.add_quick_xml_deserialize_usings([
             "xsd_parser::quick_xml::Error",
             "xsd_parser::quick_xml::ElementHandlerOutput",
@@ -1457,8 +1510,8 @@ impl ComplexDataStruct<'_> {
                 &mut self,
                 reader: &R,
                 event: Event<'de>,
-                fallback: &mut Option<#deserializer_state_ident>,
-            ) -> Result<ElementHandlerOutput<'de>, Error>
+                fallback: &mut #option<#deserializer_state_ident>,
+            ) -> #result<ElementHandlerOutput<'de>, Error>
             where
                 R: DeserializeReader,
             {
@@ -1482,6 +1535,8 @@ impl ComplexDataStruct<'_> {
         let mut index = 0;
         let mut any_attribute = None;
 
+        let box_ = ctx.resolve_build_in("::alloc::boxed::Box");
+
         let attrib_var = self.attributes.iter().map(|x| x.deserializer_var_decl(ctx));
         let attrib_match = self
             .attributes
@@ -1495,10 +1550,10 @@ impl ComplexDataStruct<'_> {
         let element_init = self
             .elements()
             .iter()
-            .map(ComplexDataElement::deserializer_struct_field_init);
+            .map(|x| x.deserializer_struct_field_init(ctx));
         let content_init = self
             .content()
-            .map(ComplexDataContent::deserializer_struct_field_init);
+            .map(|x| x.deserializer_struct_field_init(ctx));
 
         let has_normal_attributes = index > 0;
         let need_default_handler = !self.allow_any_attribute || any_attribute.is_some();
@@ -1535,22 +1590,24 @@ impl ComplexDataStruct<'_> {
         });
 
         let self_type = if config.boxed_deserializer {
-            quote!(Box<Self>)
+            quote!(#box_<Self>)
         } else {
             quote!(Self)
         };
 
-        let self_ctor = do_box(
+        let self_ctor = ctx.do_box(
             config.boxed_deserializer,
             quote! {
                 Self {
                     #( #attrib_init )*
                     #( #element_init )*
                     #content_init
-                    state__: Box::new(#deserializer_state_ident::Init__),
+                    state__: #box_::new(#deserializer_state_ident::Init__),
                 }
             },
         );
+
+        let result = ctx.resolve_build_in("::core::result::Result");
 
         ctx.add_quick_xml_deserialize_usings([
             "xsd_parser::quick_xml::Error",
@@ -1562,7 +1619,7 @@ impl ComplexDataStruct<'_> {
             fn from_bytes_start<R>(
                 reader: &R,
                 bytes_start: &BytesStart<'_>
-            ) -> Result<#self_type, Error>
+            ) -> #result<#self_type, Error>
             where
                 R: DeserializeReader,
             {
@@ -1623,13 +1680,15 @@ impl ComplexDataStruct<'_> {
             _ => quote! { Ok(()) },
         };
 
+        let result = ctx.resolve_build_in("::core::result::Result");
+
         ctx.add_quick_xml_deserialize_usings([
             "xsd_parser::quick_xml::Error",
             "xsd_parser::quick_xml::DeserializeReader",
         ]);
 
         quote! {
-            fn finish_state<R>(&mut self, reader: &R, state: #deserializer_state_ident) -> Result<(), Error>
+            fn finish_state<R>(&mut self, reader: &R, state: #deserializer_state_ident) -> #result<(), Error>
             where
                 R: DeserializeReader,
             {
@@ -1691,20 +1750,22 @@ impl ComplexDataStruct<'_> {
             boxed_deserializer_ident(config.boxed_deserializer, deserializer_ident);
         let deserializer_state_ident = &self.deserializer_state_ident;
 
+        let box_ = ctx.resolve_build_in("::alloc::boxed::Box");
+
         let element_init = self
             .elements()
             .iter()
-            .map(ComplexDataElement::deserializer_struct_field_init);
+            .map(|x| x.deserializer_struct_field_init(ctx));
         let content_init = self
             .content()
-            .map(ComplexDataContent::deserializer_struct_field_init);
-        let init_deserializer = do_box(
+            .map(|x| x.deserializer_struct_field_init(ctx));
+        let init_deserializer = ctx.do_box(
             config.boxed_deserializer,
             quote! {
                 #boxed_deserializer_ident {
                     #( #element_init )*
                     #content_init
-                    state__: Box::new(#deserializer_state_ident::Init__),
+                    state__: #box_::new(#deserializer_state_ident::Init__),
                 }
             },
         );
@@ -1954,7 +2015,7 @@ impl ComplexDataStruct<'_> {
         });
 
         ctx.add_quick_xml_deserialize_usings([
-            "core::mem::replace",
+            "::core::mem::replace",
             "xsd_parser::quick_xml::Event",
             "xsd_parser::quick_xml::WithDeserializer",
             "xsd_parser::quick_xml::DeserializerEvent",
@@ -2108,8 +2169,16 @@ impl ComplexDataContent<'_> {
         let target_type = ctx.resolve_type_for_deserialize_module(&self.target_type);
 
         let target_type = match self.occurs {
-            Occurs::Single | Occurs::Optional => quote!(Option<#target_type>),
-            Occurs::DynamicList | Occurs::StaticList(_) => quote!(Vec<#target_type>),
+            Occurs::Single | Occurs::Optional => {
+                let option = ctx.resolve_build_in("::core::option::Option");
+
+                quote!(#option<#target_type>)
+            }
+            Occurs::DynamicList | Occurs::StaticList(_) => {
+                let vec = ctx.resolve_build_in("::alloc::vec::Vec");
+
+                quote!(#vec<#target_type>)
+            }
             e => crate::unreachable!("{:?}", e),
         };
 
@@ -2118,11 +2187,15 @@ impl ComplexDataContent<'_> {
         }
     }
 
-    fn deserializer_struct_field_init(&self) -> TokenStream {
+    fn deserializer_struct_field_init(&self, ctx: &Context<'_, '_>) -> TokenStream {
         match self.occurs {
             Occurs::None => quote!(),
             Occurs::Single | Occurs::Optional => quote!(content: None,),
-            Occurs::DynamicList | Occurs::StaticList(_) => quote!(content: Vec::new(),),
+            Occurs::DynamicList | Occurs::StaticList(_) => {
+                let vec = ctx.resolve_build_in("::alloc::vec::Vec");
+
+                quote!(content: #vec::new(),)
+            }
         }
     }
 
@@ -2142,8 +2215,10 @@ impl ComplexDataContent<'_> {
             Occurs::StaticList(sz) => {
                 ctx.add_quick_xml_deserialize_usings(["xsd_parser::quick_xml::ErrorKind"]);
 
+                let vec = ctx.resolve_build_in("::alloc::vec::Vec");
+
                 quote! {
-                    self.content.try_into().map_err(|vec: Vec<_>| ErrorKind::InsufficientSize {
+                    self.content.try_into().map_err(|vec: #vec<_>| ErrorKind::InsufficientSize {
                         min: #sz,
                         max: #sz,
                         actual: vec.len(),
@@ -2178,10 +2253,12 @@ impl ComplexDataContent<'_> {
             },
         };
 
+        let result = ctx.resolve_build_in("::core::result::Result");
+
         ctx.add_quick_xml_deserialize_usings(["xsd_parser::quick_xml::Error"]);
 
         quote! {
-            fn store_content(&mut self, value: #target_type) -> Result<(), Error> {
+            fn store_content(&mut self, value: #target_type) -> #result<(), Error> {
                 #body
 
                 Ok(())
@@ -2217,9 +2294,11 @@ impl ComplexDataContent<'_> {
         type_ident: &Ident2,
         deserializer_state_ident: &Ident2,
     ) -> TokenStream {
+        let box_ = ctx.resolve_build_in("::alloc::boxed::Box");
+
         let target_type = ctx.resolve_type_for_deserialize_module(&self.target_type);
         let config = ctx.get_ref::<DeserializerConfig>();
-        let self_type = config.boxed_deserializer.then(|| quote!(: Box<Self>));
+        let self_type = config.boxed_deserializer.then(|| quote!(: #box_<Self>));
 
         ctx.add_quick_xml_deserialize_usings([
             "xsd_parser::quick_xml::DeserializeReader",
@@ -2382,13 +2461,16 @@ impl ComplexDataContent<'_> {
             },
         };
 
+        let result = ctx.resolve_build_in("::core::result::Result");
+        let option = ctx.resolve_build_in("::core::option::Option");
+
         quote! {
             fn handle_content<'de, R>(
                 &mut self,
                 reader: &R,
                 output: DeserializerOutput<'de, #target_type>,
-                fallback: &mut Option<#deserializer_state_ident>,
-            ) -> Result<ElementHandlerOutput<'de>, Error>
+                fallback: &mut #option<#deserializer_state_ident>,
+            ) -> #result<ElementHandlerOutput<'de>, Error>
             where
                 R: DeserializeReader,
             {
@@ -2475,7 +2557,9 @@ impl ComplexDataAttribute<'_> {
         if self.meta.is_any() {
             quote!(let mut #field_ident = #target_type::default();)
         } else {
-            quote!(let mut #field_ident: Option<#target_type> = None;)
+            let option = ctx.resolve_build_in("::core::option::Option");
+
+            quote!(let mut #field_ident: #option<#target_type> = None;)
         }
     }
 
@@ -2484,7 +2568,9 @@ impl ComplexDataAttribute<'_> {
         let target_type = ctx.resolve_type_for_deserialize_module(&self.target_type);
 
         let target_type = if self.is_option {
-            quote!(Option<#target_type>)
+            let option = ctx.resolve_build_in("::core::option::Option");
+
+            quote!(#option<#target_type>)
         } else {
             target_type
         };
@@ -2694,12 +2780,21 @@ impl ComplexDataElement<'_> {
         ctx.add_quick_xml_deserialize_usings(["xsd_parser::quick_xml::WithDeserializer"]);
 
         match self.occurs {
-            Occurs::Single | Occurs::Optional => quote! {
-                #variant_ident(Option<#target_type>, Option<<#target_type as WithDeserializer>::Deserializer>),
-            },
-            Occurs::DynamicList | Occurs::StaticList(_) => quote! {
-                #variant_ident(Vec<#target_type>, Option<<#target_type as WithDeserializer>::Deserializer>),
-            },
+            Occurs::Single | Occurs::Optional => {
+                let option = ctx.resolve_build_in("::core::option::Option");
+
+                quote! {
+                    #variant_ident(#option<#target_type>, #option<<#target_type as WithDeserializer>::Deserializer>),
+                }
+            }
+            Occurs::DynamicList | Occurs::StaticList(_) => {
+                let vec = ctx.resolve_build_in("::alloc::vec::Vec");
+                let option = ctx.resolve_build_in("::core::option::Option");
+
+                quote! {
+                    #variant_ident(#vec<#target_type>, #option<<#target_type as WithDeserializer>::Deserializer>),
+                }
+            }
             e => crate::unreachable!("{:?}", e),
         }
     }
@@ -2779,27 +2874,33 @@ impl ComplexDataElement<'_> {
             Occurs::Single => {
                 ctx.add_quick_xml_deserialize_usings(["xsd_parser::quick_xml::ErrorKind"]);
 
-                let mut ctx = quote! {
+                let mut content = quote! {
                     values.ok_or_else(|| ErrorKind::MissingElement(#name.into()))?
                 };
 
                 if self.need_indirection {
-                    ctx = quote! { Box::new(#ctx) };
+                    let box_ = ctx.resolve_build_in("::alloc::boxed::Box");
+
+                    content = quote! { #box_::new(#content) };
                 }
 
-                ctx
+                content
             }
             Occurs::Optional if self.need_indirection => {
-                quote! { values.map(Box::new) }
+                let box_ = ctx.resolve_build_in("::alloc::boxed::Box");
+
+                quote! { values.map(#box_::new) }
             }
             Occurs::Optional | Occurs::DynamicList => {
                 quote! { values }
             }
             Occurs::StaticList(sz) => {
+                let vec = ctx.resolve_build_in("::alloc::vec::Vec");
+
                 ctx.add_quick_xml_deserialize_usings(["xsd_parser::quick_xml::ErrorKind"]);
 
                 quote! {
-                    values.try_into().map_err(|vec: Vec<_>| ErrorKind::InsufficientSize {
+                    values.try_into().map_err(|vec: #vec<_>| ErrorKind::InsufficientSize {
                         min: #sz,
                         max: #sz,
                         actual: vec.len(),
@@ -2831,6 +2932,9 @@ impl ComplexDataElement<'_> {
         match self.occurs {
             Occurs::None => crate::unreachable!(),
             Occurs::Single | Occurs::Optional => {
+                let result = ctx.resolve_build_in("::core::result::Result");
+                let option = ctx.resolve_build_in("::core::option::Option");
+
                 ctx.add_quick_xml_deserialize_usings([
                     "xsd_parser::quick_xml::Error",
                     "xsd_parser::quick_xml::ErrorKind",
@@ -2838,7 +2942,7 @@ impl ComplexDataElement<'_> {
                 ]);
 
                 quote! {
-                    fn #store_ident(values: &mut Option<#target_type>, value: #target_type) -> Result<(), Error> {
+                    fn #store_ident(values: &mut #option<#target_type>, value: #target_type) -> #result<(), Error> {
                         if values.is_some() {
                             Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(#name)))?;
                         }
@@ -2850,10 +2954,13 @@ impl ComplexDataElement<'_> {
                 }
             }
             Occurs::DynamicList | Occurs::StaticList(_) => {
+                let vec = ctx.resolve_build_in("::alloc::vec::Vec");
+                let result = ctx.resolve_build_in("::core::result::Result");
+
                 ctx.add_quick_xml_deserialize_usings(["xsd_parser::quick_xml::Error"]);
 
                 quote! {
-                    fn #store_ident(values: &mut Vec<#target_type>, value: #target_type) -> Result<(), Error> {
+                    fn #store_ident(values: &mut #vec<#target_type>, value: #target_type) -> #result<(), Error> {
                         values.push(value);
 
                         Ok(())
@@ -2877,6 +2984,9 @@ impl ComplexDataElement<'_> {
         let handler_ident = self.handler_ident();
         let variant_ident = &self.variant_ident;
 
+        let result = ctx.resolve_build_in("::core::result::Result");
+        let option = ctx.resolve_build_in("::core::option::Option");
+
         ctx.add_quick_xml_deserialize_usings([
             "xsd_parser::quick_xml::Error",
             "xsd_parser::quick_xml::ElementHandlerOutput",
@@ -2887,8 +2997,12 @@ impl ComplexDataElement<'_> {
 
         let values = match self.occurs {
             Occurs::None => crate::unreachable!(),
-            Occurs::Single | Occurs::Optional => quote!(Option<#target_type>),
-            Occurs::DynamicList | Occurs::StaticList(_) => quote!(Vec<#target_type>),
+            Occurs::Single | Occurs::Optional => quote!(#option<#target_type>),
+            Occurs::DynamicList | Occurs::StaticList(_) => {
+                let vec = ctx.resolve_build_in("::alloc::vec::Vec");
+
+                quote!(#vec<#target_type>)
+            }
         };
         let fallback_to_init_check = match self.occurs {
             Occurs::Single => Some(quote!(values.is_none())),
@@ -3009,8 +3123,8 @@ impl ComplexDataElement<'_> {
                 reader: &R,
                 mut values: #values,
                 output: DeserializerOutput<'de, #target_type>,
-                fallback: &mut Option<#deserializer_state_ident>,
-            ) -> Result<ElementHandlerOutput<'de>, Error>
+                fallback: &mut #option<#deserializer_state_ident>,
+            ) -> #result<ElementHandlerOutput<'de>, Error>
             where
                 R: DeserializeReader,
             {
@@ -3131,9 +3245,22 @@ impl ComplexDataElement<'_> {
 
         let target_type = ctx.resolve_type_for_deserialize_module(&self.target_type);
         let target_type = match self.occurs {
-            Occurs::Single | Occurs::Optional => quote!(Option<#target_type>),
-            Occurs::StaticList(_) if self.need_indirection => quote!(Vec<Box<#target_type>>),
-            Occurs::StaticList(_) | Occurs::DynamicList => quote!(Vec<#target_type>),
+            Occurs::Single | Occurs::Optional => {
+                let option = ctx.resolve_build_in("::core::option::Option");
+
+                quote!(#option<#target_type>)
+            }
+            Occurs::StaticList(_) if self.need_indirection => {
+                let vec = ctx.resolve_build_in("::alloc::vec::Vec");
+                let box_ = ctx.resolve_build_in("::alloc::boxed::Box");
+
+                quote!(#vec<#box_<#target_type>>)
+            }
+            Occurs::StaticList(_) | Occurs::DynamicList => {
+                let vec = ctx.resolve_build_in("::alloc::vec::Vec");
+
+                quote!(#vec<#target_type>)
+            }
             e => crate::unreachable!("{:?}", e),
         };
 
@@ -3142,14 +3269,18 @@ impl ComplexDataElement<'_> {
         }
     }
 
-    fn deserializer_struct_field_init(&self) -> TokenStream {
+    fn deserializer_struct_field_init(&self, ctx: &Context<'_, '_>) -> TokenStream {
         let occurs = self.occurs;
         let field_ident = &self.field_ident;
 
         match occurs {
             Occurs::None => quote!(),
             Occurs::Single | Occurs::Optional => quote!(#field_ident: None,),
-            Occurs::DynamicList | Occurs::StaticList(_) => quote!(#field_ident: Vec::new(),),
+            Occurs::DynamicList | Occurs::StaticList(_) => {
+                let vec = ctx.resolve_build_in("::alloc::vec::Vec");
+
+                quote!(#field_ident: #vec::new(),)
+            }
         }
     }
 
@@ -3213,27 +3344,33 @@ impl ComplexDataElement<'_> {
             Occurs::Single => {
                 ctx.add_quick_xml_deserialize_usings(["xsd_parser::quick_xml::ErrorKind"]);
 
-                let mut ctx = quote! {
+                let mut content = quote! {
                     self.#field_ident.ok_or_else(|| ErrorKind::MissingElement(#name.into()))?
                 };
 
                 if self.need_indirection {
-                    ctx = quote! { Box::new(#ctx) };
+                    let box_ = ctx.resolve_build_in("::alloc::boxed::Box");
+
+                    content = quote! { #box_::new(#content) };
                 }
 
-                ctx
+                content
             }
             Occurs::Optional if self.need_indirection => {
-                quote! { self.#field_ident.map(Box::new) }
+                let box_ = ctx.resolve_build_in("::alloc::boxed::Box");
+
+                quote! { self.#field_ident.map(#box_::new) }
             }
             Occurs::Optional | Occurs::DynamicList => {
                 quote! { self.#field_ident }
             }
             Occurs::StaticList(sz) => {
+                let vec = ctx.resolve_build_in("::alloc::vec::Vec");
+
                 ctx.add_quick_xml_deserialize_usings(["xsd_parser::quick_xml::ErrorKind"]);
 
                 quote! {
-                    self.#field_ident.try_into().map_err(|vec: Vec<_>| ErrorKind::InsufficientSize {
+                    self.#field_ident.try_into().map_err(|vec: #vec<_>| ErrorKind::InsufficientSize {
                         min: #sz,
                         max: #sz,
                         actual: vec.len(),
@@ -3270,18 +3407,24 @@ impl ComplexDataElement<'_> {
                     self.#field_ident = Some(value);
                 }
             }
-            Occurs::StaticList(_) if self.need_indirection => quote! {
-                self.#field_ident.push(Box::new(value));
-            },
+            Occurs::StaticList(_) if self.need_indirection => {
+                let box_ = ctx.resolve_build_in("::alloc::boxed::Box");
+
+                quote! {
+                    self.#field_ident.push(#box_::new(value));
+                }
+            }
             Occurs::DynamicList | Occurs::StaticList(_) => quote! {
                 self.#field_ident.push(value);
             },
         };
 
+        let result = ctx.resolve_build_in("::core::result::Result");
+
         ctx.add_quick_xml_deserialize_usings(["xsd_parser::quick_xml::Error"]);
 
         quote! {
-            fn #store_ident(&mut self, value: #target_type) -> Result<(), Error> {
+            fn #store_ident(&mut self, value: #target_type) -> #result<(), Error> {
                 #body
 
                 Ok(())
@@ -3300,6 +3443,9 @@ impl ComplexDataElement<'_> {
         let handler_ident = self.handler_ident();
         let variant_ident = &self.variant_ident;
 
+        let result = ctx.resolve_build_in("::core::result::Result");
+        let option = ctx.resolve_build_in("::core::option::Option");
+
         ctx.add_quick_xml_deserialize_usings([
             "xsd_parser::quick_xml::Event",
             "xsd_parser::quick_xml::DeserializeReader",
@@ -3313,8 +3459,8 @@ impl ComplexDataElement<'_> {
                 &mut self,
                 reader: &R,
                 output: DeserializerOutput<'de, #target_type>,
-                fallback: &mut Option<#deserializer_state_ident>,
-            ) -> Result<ElementHandlerOutput<'de>, Error>
+                fallback: &mut #option<#deserializer_state_ident>,
+            ) -> #result<ElementHandlerOutput<'de>, Error>
             where
                 R: DeserializeReader,
             {
@@ -3382,6 +3528,9 @@ impl ComplexDataElement<'_> {
         let field_ident = &self.field_ident;
         let variant_ident = &self.variant_ident;
         let handler_ident = self.handler_ident();
+
+        let result = ctx.resolve_build_in("::core::result::Result");
+        let option = ctx.resolve_build_in("::core::option::Option");
 
         ctx.add_quick_xml_deserialize_usings([
             "xsd_parser::quick_xml::Error",
@@ -3494,8 +3643,8 @@ impl ComplexDataElement<'_> {
                 &mut self,
                 reader: &R,
                 output: DeserializerOutput<'de, #target_type>,
-                fallback: &mut Option<#deserializer_state_ident>,
-            ) -> Result<ElementHandlerOutput<'de>, Error>
+                fallback: &mut #option<#deserializer_state_ident>,
+            ) -> #result<ElementHandlerOutput<'de>, Error>
             where
                 R: DeserializeReader,
             {
@@ -3692,11 +3841,15 @@ impl ComplexDataElement<'_> {
     }
 }
 
-fn do_box(is_boxed: bool, tokens: TokenStream) -> TokenStream {
-    if is_boxed {
-        quote!(Box::new(#tokens))
-    } else {
-        tokens
+impl Context<'_, '_> {
+    fn do_box(&self, is_boxed: bool, tokens: TokenStream) -> TokenStream {
+        if is_boxed {
+            let box_ = self.resolve_build_in("::alloc::boxed::Box");
+
+            quote!(#box_::new(#tokens))
+        } else {
+            tokens
+        }
     }
 }
 
