@@ -1,5 +1,3 @@
-use core::ops::Deref;
-use xsd_parser::quick_xml::ValidateError;
 pub type AsMut = TestType;
 pub type AsRef = TestType;
 pub type Box = TestType;
@@ -29,7 +27,9 @@ pub type Sync = TestType;
 #[derive(Debug)]
 pub struct TestType(pub ::std::string::String);
 impl TestType {
-    pub fn new(inner: ::std::string::String) -> ::core::result::Result<Self, ValidateError> {
+    pub fn new(
+        inner: ::std::string::String,
+    ) -> ::core::result::Result<Self, ::xsd_parser::quick_xml::ValidateError> {
         Self::validate_value(&inner)?;
         Ok(Self(inner))
     }
@@ -38,9 +38,9 @@ impl TestType {
     }
     pub fn validate_value(
         value: &::std::string::String,
-    ) -> ::core::result::Result<(), ValidateError> {
+    ) -> ::core::result::Result<(), ::xsd_parser::quick_xml::ValidateError> {
         if !value.is_empty() {
-            return Err(ValidateError::MaxLength(0usize));
+            return Err(::xsd_parser::quick_xml::ValidateError::MaxLength(0usize));
         }
         Ok(())
     }
@@ -51,12 +51,14 @@ impl ::core::convert::From<TestType> for ::std::string::String {
     }
 }
 impl ::core::convert::TryFrom<::std::string::String> for TestType {
-    type Error = ValidateError;
-    fn try_from(value: ::std::string::String) -> ::core::result::Result<Self, ValidateError> {
+    type Error = ::xsd_parser::quick_xml::ValidateError;
+    fn try_from(
+        value: ::std::string::String,
+    ) -> ::core::result::Result<Self, ::xsd_parser::quick_xml::ValidateError> {
         Self::new(value)
     }
 }
-impl Deref for TestType {
+impl ::core::ops::Deref for TestType {
     type Target = ::std::string::String;
     fn deref(&self) -> &Self::Target {
         &self.0

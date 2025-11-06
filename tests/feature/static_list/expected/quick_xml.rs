@@ -228,7 +228,6 @@ pub mod quick_xml_deserialize {
     }
 }
 pub mod quick_xml_serialize {
-    use core::iter::Iterator;
     use xsd_parser::quick_xml::{BytesEnd, BytesStart, Error, Event, IterSerializer};
     #[derive(Debug)]
     pub struct ArrayTypeSerializer<'ser> {

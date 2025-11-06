@@ -499,7 +499,6 @@ pub mod annotations {
         }
     }
     pub mod quick_xml_serialize {
-        use core::iter::Iterator;
         use xsd_parser::quick_xml::{
             write_attrib, BytesEnd, BytesStart, Error, Event, IterSerializer, WithSerializer,
         };
@@ -2703,7 +2702,6 @@ pub mod annotion {
         }
     }
     pub mod quick_xml_serialize {
-        use core::iter::Iterator;
         use xsd_parser::quick_xml::{
             write_attrib, write_attrib_opt, BytesEnd, BytesStart, Error, Event, IterSerializer,
             WithSerializer,
@@ -3650,7 +3648,6 @@ pub mod attachments {
         }
     }
     pub mod quick_xml_serialize {
-        use core::iter::Iterator;
         use xsd_parser::quick_xml::{
             write_attrib, write_attrib_opt, BytesEnd, BytesStart, Error, Event, IterSerializer,
             WithSerializer,
@@ -4409,7 +4406,6 @@ pub mod custom_tags {
         }
     }
     pub mod quick_xml_serialize {
-        use core::iter::Iterator;
         use xsd_parser::quick_xml::{
             write_attrib, BytesEnd, BytesStart, Error, Event, IterSerializer, WithSerializer,
         };
@@ -9398,7 +9394,6 @@ pub mod definition {
         }
     }
     pub mod quick_xml_serialize {
-        use core::iter::Iterator;
         use xsd_parser::quick_xml::{
             write_attrib, write_attrib_opt, BytesEnd, BytesStart, Error, Event, IterSerializer,
             WithSerializer,
@@ -16892,7 +16887,6 @@ pub mod document {
         }
     }
     pub mod quick_xml_serialize {
-        use core::iter::Iterator;
         use xsd_parser::quick_xml::{
             write_attrib, write_attrib_opt, BytesEnd, BytesStart, Error, Event, IterSerializer,
             WithSerializer,
@@ -19472,7 +19466,6 @@ pub mod extensions {
         }
     }
     pub mod quick_xml_serialize {
-        use core::iter::Iterator;
         use xsd_parser::quick_xml::{
             write_attrib, write_attrib_opt, BytesEnd, BytesStart, Error, Event, IterSerializer,
             WithSerializer,
@@ -23051,7 +23044,6 @@ pub mod ofd {
         }
     }
     pub mod quick_xml_serialize {
-        use core::iter::Iterator;
         use xsd_parser::quick_xml::{
             write_attrib, BytesEnd, BytesStart, Error, Event, IterSerializer, WithSerializer,
         };
@@ -43073,7 +43065,6 @@ pub mod page {
         }
     }
     pub mod quick_xml_serialize {
-        use core::iter::Iterator;
         use xsd_parser::quick_xml::{
             write_attrib, write_attrib_opt, BytesEnd, BytesStart, Error, Event, IterSerializer,
             WithSerializer,
@@ -52787,7 +52778,6 @@ pub mod res {
         }
     }
     pub mod quick_xml_serialize {
-        use core::iter::Iterator;
         use xsd_parser::quick_xml::{
             write_attrib, write_attrib_opt, BytesEnd, BytesStart, Error, Event, IterSerializer,
             WithSerializer,
@@ -56340,7 +56330,6 @@ pub mod signature {
         }
     }
     pub mod quick_xml_serialize {
-        use core::iter::Iterator;
         use xsd_parser::quick_xml::{
             write_attrib, write_attrib_opt, BytesEnd, BytesStart, Error, Event, IterSerializer,
             WithSerializer,
@@ -57316,7 +57305,6 @@ pub mod signatures {
         }
     }
     pub mod quick_xml_serialize {
-        use core::iter::Iterator;
         use xsd_parser::quick_xml::{
             write_attrib, BytesEnd, BytesStart, Error, Event, IterSerializer,
         };
@@ -58289,7 +58277,6 @@ pub mod version {
         }
     }
     pub mod quick_xml_serialize {
-        use core::iter::Iterator;
         use xsd_parser::quick_xml::{
             write_attrib, write_attrib_opt, BytesEnd, BytesStart, Error, Event, IterSerializer,
             WithSerializer,
@@ -58707,7 +58694,6 @@ pub mod xs {
         }
     }
     pub mod quick_xml_serialize {
-        use core::iter::Iterator;
         use xsd_parser::quick_xml::{BytesStart, Error, Event};
         #[derive(Debug)]
         pub struct AnyTypeXTypeSerializer<'ser> {

@@ -265,7 +265,6 @@ pub mod bar {
         }
     }
     pub mod quick_xml_serialize {
-        use core::iter::Iterator;
         use xsd_parser::quick_xml::{BytesEnd, BytesStart, Error, Event, WithSerializer};
         #[derive(Debug)]
         pub struct InnerTypeSerializer<'ser> {
@@ -568,7 +567,6 @@ pub mod baz {
         }
     }
     pub mod quick_xml_serialize {
-        use core::iter::Iterator;
         use xsd_parser::quick_xml::{BytesEnd, BytesStart, Error, Event, WithSerializer};
         #[derive(Debug)]
         pub struct InnerTypeSerializer<'ser> {
@@ -871,7 +869,6 @@ pub mod biz {
         }
     }
     pub mod quick_xml_serialize {
-        use core::iter::Iterator;
         use xsd_parser::quick_xml::{BytesEnd, BytesStart, Error, Event, WithSerializer};
         #[derive(Debug)]
         pub struct InnerTypeSerializer<'ser> {
@@ -1353,7 +1350,6 @@ pub mod quick_xml_deserialize {
     }
 }
 pub mod quick_xml_serialize {
-    use core::iter::Iterator;
     use xsd_parser::quick_xml::{BytesEnd, BytesStart, Error, Event, WithSerializer};
     #[derive(Debug)]
     pub struct OuterTypeSerializer<'ser> {

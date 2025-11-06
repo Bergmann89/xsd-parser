@@ -1,5 +1,6 @@
+use core::str::from_utf8;
 use regex::Regex;
-use std::{borrow::Cow, str::from_utf8, sync::LazyLock};
+use std::{borrow::Cow, sync::LazyLock};
 use xsd_parser::{
     models::schema::Namespace,
     quick_xml::{
@@ -282,7 +283,6 @@ pub mod quick_xml_deserialize {
     }
 }
 pub mod quick_xml_serialize {
-    use core::iter::Iterator;
     use xsd_parser::quick_xml::{BytesEnd, BytesStart, Error, Event, WithSerializer};
     #[derive(Debug)]
     pub struct FooTypeSerializer<'ser> {

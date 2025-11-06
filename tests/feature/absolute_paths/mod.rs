@@ -8,7 +8,9 @@ use crate::utils::{generate_test, ConfigEx};
 fn config() -> Config {
     Config::test_default()
         .without_optimizer_flags(OptimizerFlags::all())
-        .with_generator_flags(GeneratorFlags::BUILD_IN_ABSOLUTE_PATHS)
+        .with_generator_flags(
+            GeneratorFlags::BUILD_IN_ABSOLUTE_PATHS | GeneratorFlags::ABSOLUTE_PATHS_INSTEAD_USINGS,
+        )
 }
 
 /* default */

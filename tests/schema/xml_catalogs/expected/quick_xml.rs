@@ -5141,7 +5141,6 @@ pub mod er {
         }
     }
     pub mod quick_xml_serialize {
-        use core::iter::Iterator;
         use xsd_parser::quick_xml::{
             write_attrib, write_attrib_opt, BytesEnd, BytesStart, Error, Event, IterSerializer,
             WithSerializer,
@@ -6347,7 +6346,6 @@ pub mod xs {
         }
     }
     pub mod quick_xml_serialize {
-        use core::iter::Iterator;
         use xsd_parser::quick_xml::{BytesStart, Error, Event};
         #[derive(Debug)]
         pub struct AnyTypeSerializer<'ser> {

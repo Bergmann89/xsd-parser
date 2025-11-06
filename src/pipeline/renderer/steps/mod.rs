@@ -64,7 +64,6 @@ impl EnumerationData<'_> {
                 }
             };
 
-            ctx.add_usings(["xsd_parser::quick_xml::ValidateError"]);
             ctx.current_module().append(code);
         }
     }
@@ -85,7 +84,6 @@ impl UnionData<'_> {
                 }
             };
 
-            ctx.add_usings(["xsd_parser::quick_xml::ValidateError"]);
             ctx.current_module().append(code);
         }
     }
@@ -114,10 +112,12 @@ impl SimpleData<'_> {
         let from = ctx.resolve_build_in("::core::convert::From");
         let result = ctx.resolve_build_in("::core::result::Result");
         let try_from = ctx.resolve_build_in("::core::convert::TryFrom");
+        let deref = ctx.resolve_ident_path("::core::ops::Deref");
+        let validate_error = ctx.resolve_ident_path("::xsd_parser::quick_xml::ValidateError");
 
         let code = quote! {
             impl #type_ident {
-                pub fn new(inner: #target_type) -> #result<Self, ValidateError> {
+                pub fn new(inner: #target_type) -> #result<Self, #validate_error> {
                     #call_validate_value
 
                     Ok(Self(inner))
@@ -138,14 +138,14 @@ impl SimpleData<'_> {
             }
 
             impl #try_from<#target_type> for #type_ident {
-                type Error = ValidateError;
+                type Error = #validate_error;
 
-                fn try_from(value: #target_type) -> #result<Self, ValidateError> {
+                fn try_from(value: #target_type) -> #result<Self, #validate_error> {
                     Self::new(value)
                 }
             }
 
-            impl Deref for #type_ident {
+            impl #deref for #type_ident {
                 type Target = #target_type;
 
                 fn deref(&self) -> &Self::Target {
@@ -154,7 +154,6 @@ impl SimpleData<'_> {
             }
         };
 
-        ctx.add_usings(["::core::ops::Deref", "xsd_parser::quick_xml::ValidateError"]);
         ctx.current_module().append(code);
     }
 }
@@ -186,15 +185,17 @@ impl ConstrainsData<'_> {
         target_type: &TokenStream,
     ) -> Option<TokenStream> {
         self.meta.need_value_validation().then(|| {
-            let validate_range_start = self.render_validate_range_start();
-            let validate_range_end = self.render_validate_range_end();
-            let validate_min_length = self.render_validate_min_length();
-            let validate_max_length = self.render_validate_max_length();
+            let validate_range_start = self.render_validate_range_start(ctx);
+            let validate_range_end = self.render_validate_range_end(ctx);
+            let validate_min_length = self.render_validate_min_length(ctx);
+            let validate_max_length = self.render_validate_max_length(ctx);
 
             let result = ctx.resolve_build_in("::core::result::Result");
 
+            let validate_error = ctx.resolve_ident_path("::xsd_parser::quick_xml::ValidateError");
+
             quote! {
-                pub fn validate_value(value: &#target_type) -> #result<(), ValidateError> {
+                pub fn validate_value(value: &#target_type) -> #result<(), #validate_error> {
                     #validate_range_start
                     #validate_range_end
                     #validate_min_length
@@ -211,21 +212,23 @@ impl ConstrainsData<'_> {
             return None;
         }
 
-        ctx.add_usings(["regex::Regex", "std::sync::LazyLock"]);
+        let regex = ctx.resolve_ident_path("::regex::Regex");
+        let lazy_lock = ctx.resolve_ident_path("::std::sync::LazyLock");
+        let validate_error = ctx.resolve_ident_path("::xsd_parser::quick_xml::ValidateError");
 
         let sz = self.meta.patterns.len();
         let patterns = self.meta.patterns.iter().map(|x| {
             let rx = Literal::string(x);
 
-            quote!(Regex::new(#rx).unwrap())
+            quote!(#regex::new(#rx).unwrap())
         });
 
         Some(quote! {
-            static PATTERNS: LazyLock<[Regex; #sz]> = LazyLock::new(|| [ #( #patterns )* ]);
+            static PATTERNS: #lazy_lock<[#regex; #sz]> = #lazy_lock::new(|| [ #( #patterns )* ]);
 
             for pattern in PATTERNS.iter() {
                 if !pattern.is_match(s) {
-                    return Err(ValidateError::Pattern(pattern.as_str()));
+                    return Err(#validate_error::Pattern(pattern.as_str()));
                 }
             }
         })
@@ -233,25 +236,26 @@ impl ConstrainsData<'_> {
 
     fn render_validate_total_digits(&self, ctx: &Context<'_, '_>) -> Option<TokenStream> {
         self.meta.total_digits.map(|x| {
-            ctx.add_usings(["xsd_parser::quick_xml::total_digits"]);
+            let total_digits = ctx.resolve_ident_path("::xsd_parser::quick_xml::total_digits");
 
             quote! {
-                total_digits(s, #x)?;
+                #total_digits(s, #x)?;
             }
         })
     }
 
     fn render_validate_fraction_digits(&self, ctx: &Context<'_, '_>) -> Option<TokenStream> {
         self.meta.fraction_digits.map(|x| {
-            ctx.add_usings(["xsd_parser::quick_xml::fraction_digits"]);
+            let fraction_digits =
+                ctx.resolve_ident_path("::xsd_parser::quick_xml::fraction_digits");
 
             quote! {
-                fraction_digits(s, #x)?;
+                #fraction_digits(s, #x)?;
             }
         })
     }
 
-    fn render_validate_min_length(&self) -> Option<TokenStream> {
+    fn render_validate_min_length(&self, ctx: &Context<'_, '_>) -> Option<TokenStream> {
         self.meta.min_length.as_ref().and_then(|x| {
             if *x == 0 {
                 return None;
@@ -263,15 +267,17 @@ impl ConstrainsData<'_> {
                 quote!(value.len() < #x)
             };
 
+            let validate_error = ctx.resolve_ident_path("::xsd_parser::quick_xml::ValidateError");
+
             Some(quote! {
                 if #check {
-                    return Err(ValidateError::MinLength(#x));
+                    return Err(#validate_error::MinLength(#x));
                 }
             })
         })
     }
 
-    fn render_validate_max_length(&self) -> Option<TokenStream> {
+    fn render_validate_max_length(&self, ctx: &Context<'_, '_>) -> Option<TokenStream> {
         self.meta.max_length.as_ref().map(|x| {
             let check = if *x == 0 {
                 quote!(!value.is_empty())
@@ -279,15 +285,17 @@ impl ConstrainsData<'_> {
                 quote!(value.len() > #x)
             };
 
+            let validate_error = ctx.resolve_ident_path("::xsd_parser::quick_xml::ValidateError");
+
             quote! {
                 if #check {
-                    return Err(ValidateError::MaxLength(#x));
+                    return Err(#validate_error::MaxLength(#x));
                 }
             }
         })
     }
 
-    fn render_validate_range_start(&self) -> Option<TokenStream> {
+    fn render_validate_range_start(&self, ctx: &Context<'_, '_>) -> Option<TokenStream> {
         match &self.range.start {
             Bound::Unbounded => None,
             Bound::Included(x) => {
@@ -295,9 +303,12 @@ impl ConstrainsData<'_> {
                     unreachable!();
                 };
 
+                let validate_error =
+                    ctx.resolve_ident_path("::xsd_parser::quick_xml::ValidateError");
+
                 Some(quote! {
                     if *value < #x {
-                        return Err(ValidateError::LessThan(#val));
+                        return Err(#validate_error::LessThan(#val));
                     }
                 })
             }
@@ -306,16 +317,19 @@ impl ConstrainsData<'_> {
                     unreachable!();
                 };
 
+                let validate_error =
+                    ctx.resolve_ident_path("::xsd_parser::quick_xml::ValidateError");
+
                 Some(quote! {
                     if *value <= #x {
-                        return Err(ValidateError::LessEqualThan(#val));
+                        return Err(#validate_error::LessEqualThan(#val));
                     }
                 })
             }
         }
     }
 
-    fn render_validate_range_end(&self) -> Option<TokenStream> {
+    fn render_validate_range_end(&self, ctx: &Context<'_, '_>) -> Option<TokenStream> {
         match &self.range.end {
             Bound::Unbounded => None,
             Bound::Included(x) => {
@@ -323,9 +337,12 @@ impl ConstrainsData<'_> {
                     unreachable!();
                 };
 
+                let validate_error =
+                    ctx.resolve_ident_path("::xsd_parser::quick_xml::ValidateError");
+
                 Some(quote! {
                     if *value > #x {
-                        return Err(ValidateError::GraterThan(#val));
+                        return Err(#validate_error::GraterThan(#val));
                     }
                 })
             }
@@ -334,9 +351,12 @@ impl ConstrainsData<'_> {
                     unreachable!();
                 };
 
+                let validate_error =
+                    ctx.resolve_ident_path("::xsd_parser::quick_xml::ValidateError");
+
                 Some(quote! {
                     if *value >= #x {
-                        return Err(ValidateError::GraterEqualThan(#val));
+                        return Err(#validate_error::GraterEqualThan(#val));
                     }
                 })
             }
@@ -374,9 +394,7 @@ where
     I: IntoIterator<Item = &'a IdentPath>,
 {
     format_traits(ctx.dyn_type_traits.iter().chain(extra).map(|ident| {
-        ctx.add_usings([quote!(#ident)]);
-
-        let ident = ident.ident();
+        let ident = ctx.resolve_ident_path(&ident.to_string());
 
         quote!(#ident)
     }))

@@ -5,7 +5,7 @@ use std::ops::Deref;
 use std::str::FromStr;
 
 use parking_lot::Mutex;
-use proc_macro2::TokenStream;
+use proc_macro2::{Ident as Ident2, TokenStream};
 use quote::format_ident;
 
 use crate::config::GeneratorFlags;
@@ -77,6 +77,16 @@ impl<'a, 'types> Context<'a, 'types> {
         }
     }
 
+    /// Resolve the passed identifier `path` before it can be rendered.
+    ///
+    /// If [`GeneratorFlags::ABSOLUTE_PATHS_INSTEAD_USINGS`] is set this will
+    /// returns the `path` as is, otherwise it will add a suitable using
+    /// (see [`add_usings`](Context::add_usings)) and returns the identifier
+    /// only (without the path).
+    pub fn resolve_ident_path(&self, path: &str) -> IdentPath {
+        self.resolve_ident_path_impl(path, Self::add_usings)
+    }
+
     /// Add using directives to the module the of the current rendered type.
     pub fn add_usings<I>(&self, usings: I)
     where
@@ -85,7 +95,7 @@ impl<'a, 'types> Context<'a, 'types> {
     {
         let usings = self.patch_usings(usings);
         let mut root = self.module.lock();
-        Self::get_current_module(&self.module_path.0, &mut root).usings(usings);
+        Self::get_current_module(&self.module_path.0, &mut root).usings(false, usings);
     }
 
     /// Add using directives to the root module.
@@ -95,7 +105,7 @@ impl<'a, 'types> Context<'a, 'types> {
         I::Item: ToString,
     {
         let usings = self.patch_usings(usings);
-        self.module.lock().usings(usings);
+        self.module.lock().usings(false, usings);
     }
 
     /// Returns a mutable reference to the main module.
@@ -169,14 +179,17 @@ impl<'a, 'types> Context<'a, 'types> {
 
     /// Takes an iterator of usings (anything that implements `ToString`) and
     /// executes [`patch_using`](Self::patch_using) for each element.
-    pub fn patch_usings<I>(&self, usings: I) -> impl Iterator<Item = String> + use<'_, 'a, I>
+    pub fn patch_usings<I>(&self, usings: I) -> impl Iterator<Item = String> + use<'_, I>
     where
         I: IntoIterator,
         I::Item: ToString,
     {
-        usings
-            .into_iter()
-            .map(move |s| self.patch_using(Cow::Owned(s.to_string())).into_owned())
+        let alloc = &self.alloc_crate;
+        let xsd_parser = &self.xsd_parser_crate;
+
+        usings.into_iter().map(move |s| {
+            Self::patch_using_impl(alloc, xsd_parser, Cow::Owned(s.to_string())).into_owned()
+        })
     }
 
     /// Replaces the `alloc::` and `xsd_parser::` in the path with the configured
@@ -191,20 +204,11 @@ impl<'a, 'types> Context<'a, 'types> {
     /// patching automatically, but if you want to add code somewhere in the module
     /// tree, this might be useful.
     pub fn patch_using<'x>(&self, using: Cow<'x, str>) -> Cow<'x, str> {
-        let alloc = &self.alloc_crate;
-        let xsd_parser = &self.xsd_parser_crate;
+        Self::patch_using_impl(&self.alloc_crate, &self.xsd_parser_crate, using)
+    }
 
-        if let Some(s) = using.strip_prefix("xsd_parser::") {
-            Cow::Owned(format!("{xsd_parser}::{s}"))
-        } else if let Some(s) = using.strip_prefix("::xsd_parser::") {
-            Cow::Owned(format!("::{xsd_parser}::{s}"))
-        } else if let Some(s) = using.strip_prefix("alloc::") {
-            Cow::Owned(format!("{alloc}::{s}"))
-        } else if let Some(s) = using.strip_prefix("::alloc::") {
-            Cow::Owned(format!("::{alloc}::{s}"))
-        } else {
-            using
-        }
+    pub(crate) fn resolve_root_ident_path(&self, path: &str) -> IdentPath {
+        self.resolve_ident_path_impl(path, Self::add_root_usings)
     }
 
     pub(crate) fn resolve_type_for_serialize_module(&self, target_type: &PathData) -> TokenStream {
@@ -217,7 +221,7 @@ impl<'a, 'types> Context<'a, 'types> {
         &self,
         target_type: &PathData,
     ) -> TokenStream {
-        self.add_quick_xml_deserialize_usings(&target_type.usings);
+        self.add_quick_xml_deserialize_usings(false, &target_type.usings);
 
         target_type.resolve_relative_to(&self.deserialize_module_path)
     }
@@ -230,6 +234,16 @@ impl<'a, 'types> Context<'a, 'types> {
         self.current_module().module_mut("quick_xml_deserialize")
     }
 
+    pub(crate) fn resolve_quick_xml_serialize_ident_path(&self, path: &str) -> IdentPath {
+        self.resolve_ident_path_impl(path, Self::add_quick_xml_serialize_usings)
+    }
+
+    pub(crate) fn resolve_quick_xml_deserialize_ident_path(&self, path: &str) -> IdentPath {
+        self.resolve_ident_path_impl(path, |x, path| {
+            x.add_quick_xml_deserialize_usings(false, path);
+        })
+    }
+
     pub(crate) fn add_quick_xml_serialize_usings<I>(&self, usings: I)
     where
         I: IntoIterator,
@@ -240,10 +254,10 @@ impl<'a, 'types> Context<'a, 'types> {
         let mut root = self.module.lock();
         Self::get_current_module(&self.module_path.0, &mut root)
             .module_mut("quick_xml_serialize")
-            .usings(usings);
+            .usings(false, usings);
     }
 
-    pub(crate) fn add_quick_xml_deserialize_usings<I>(&self, usings: I)
+    pub(crate) fn add_quick_xml_deserialize_usings<I>(&self, anonymous: bool, usings: I)
     where
         I: IntoIterator,
         I::Item: ToString,
@@ -253,7 +267,7 @@ impl<'a, 'types> Context<'a, 'types> {
         let mut root = self.module.lock();
         Self::get_current_module(&self.module_path.0, &mut root)
             .module_mut("quick_xml_deserialize")
-            .usings(usings);
+            .usings(anonymous, usings);
     }
 
     pub(super) fn new(
@@ -302,6 +316,41 @@ impl<'a, 'types> Context<'a, 'types> {
         }
 
         module
+    }
+
+    fn resolve_ident_path_impl<'x, F>(&self, path: &'x str, add_usings: F) -> IdentPath
+    where
+        F: FnOnce(&Self, [Cow<'x, str>; 1]),
+    {
+        let path = self.patch_using(Cow::Borrowed(path));
+        let ret = IdentPath::from_str(&path).unwrap();
+
+        if self.check_generator_flags(GeneratorFlags::ABSOLUTE_PATHS_INSTEAD_USINGS) {
+            ret
+        } else {
+            add_usings(self, [path]);
+            let (ident, _path, _absolute) = ret.into_parts();
+
+            IdentPath::from_ident(ident)
+        }
+    }
+
+    fn patch_using_impl<'x>(
+        alloc: &Ident2,
+        xsd_parser: &Ident2,
+        using: Cow<'x, str>,
+    ) -> Cow<'x, str> {
+        if let Some(s) = using.strip_prefix("xsd_parser::") {
+            Cow::Owned(format!("{xsd_parser}::{s}"))
+        } else if let Some(s) = using.strip_prefix("::xsd_parser::") {
+            Cow::Owned(format!("::{xsd_parser}::{s}"))
+        } else if let Some(s) = using.strip_prefix("alloc::") {
+            Cow::Owned(format!("{alloc}::{s}"))
+        } else if let Some(s) = using.strip_prefix("::alloc::") {
+            Cow::Owned(format!("::{alloc}::{s}"))
+        } else {
+            using
+        }
     }
 }
 
