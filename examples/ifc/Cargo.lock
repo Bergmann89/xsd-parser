@@ -91,12 +91,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5c8214115b7bf84099f1309324e63141d4c5d7cc26862f97a0a857dbefe165bd"
 
 [[package]]
-name = "bitset"
-version = "0.1.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cd450435a044ff3a192c9b0063e9f612ee3e2b2e23388332bc3aada13e3f7f6b"
-
-[[package]]
 name = "bytes"
 version = "1.10.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -384,6 +378,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "ifc"
+version = "0.1.0"
+dependencies = [
+ "num",
+ "xsd-parser",
+]
+
+[[package]]
 name = "indexmap"
 version = "2.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -593,14 +595,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1885c039570dc00dcb4ff087a89e185fd56bae234ddc7f056a945bf36467248d"
 dependencies = [
  "proc-macro2",
-]
-
-[[package]]
-name = "read_write"
-version = "0.1.0"
-dependencies = [
- "num",
- "xsd-parser",
 ]
 
 [[package]]
@@ -908,7 +902,6 @@ dependencies = [
  "base64",
  "bit-set",
  "bitflags",
- "bitset",
  "encoding_rs",
  "futures",
  "indexmap",

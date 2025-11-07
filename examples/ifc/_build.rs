@@ -1,29 +1,13 @@
-#![allow(missing_docs)]
-
-use std::time::Instant;
-
-use anyhow::Error;
-use tracing_subscriber::{fmt, EnvFilter};
 use xsd_parser::{
-    config::{GeneratorFlags, IdentTriple, InterpreterFlags, OptimizerFlags, ParserFlags, Schema},
+    Config, Error, IdentType, MetaTypes, Schemas,
+    config::{GeneratorFlags, InterpreterFlags, OptimizerFlags},
+    config::{IdentTriple, ParserFlags, Schema},
     exec_generator, exec_interpreter, exec_optimizer, exec_parser, exec_render,
     models::meta::{AttributeMetaVariant, MetaTypeVariant},
-    Config, IdentType, MetaTypes, Schemas,
 };
 
 fn main() -> Result<(), Error> {
-    // Initialize the logging framework. Log output can be controlled using the
-    // `RUST_LOG` environment variable.
-    fmt()
-        .without_time()
-        .with_file(true)
-        .with_level(true)
-        .with_line_number(true)
-        .with_thread_ids(true)
-        .with_thread_names(true)
-        .pretty()
-        .with_env_filter(EnvFilter::from_default_env())
-        .init();
+    println!("cargo::rerun-if-changed=schema.xsd");
 
     let mut config = Config::default()
         .with_parser_flags(ParserFlags::all())
@@ -32,10 +16,8 @@ fn main() -> Result<(), Error> {
         .with_generator_flags(GeneratorFlags::all())
         .with_quick_xml_serialize()
         .with_quick_xml_deserialize_config(true)
-        .with_schema(Schema::File("examples/ifc/schema.xsd".into()))
-        .with_generate([(IdentType::Element, "ifc:ifcXML")])
-        //.with_generate([(IdentType::Type, "ifc:IfcConversionBasedUnit")])
-        ;
+        .with_schema(Schema::File("schema.xsd".into()))
+        .with_generate([(IdentType::Element, "ifc:ifcXML")]);
 
     config.generator.type_postfix.type_ = "XType".into();
     config.generator.type_postfix.element = "XElement".into();
@@ -45,13 +27,7 @@ fn main() -> Result<(), Error> {
     config.interpreter.debug_output = Some("target/interpreter.log".into());
     config.optimizer.debug_output = Some("target/optimizer.log".into());
 
-    tracing::info!("Code generator uses the following config: {config:#?}");
-
-    let start = Instant::now();
     generate(config)?;
-    let time = start.elapsed();
-
-    tracing::info!("Execution time: {}", time.as_secs_f64());
 
     Ok(())
 }
@@ -63,11 +39,10 @@ fn generate(config: Config) -> Result<(), Error> {
     let meta_types = resolve_compound_plane_angle_measure_conflict(&schemas, meta_types);
     let meta_types = resolve_naming_conflicts(&schemas, meta_types);
     let meta_types = exec_optimizer(config.optimizer, meta_types)?;
-    let meta_types = reduce_entities(&schemas, meta_types);
     let data_types = exec_generator(config.generator, &schemas, &meta_types)?;
     let modules = exec_render(config.renderer, &data_types)?;
 
-    modules.write_to_files("examples/ifc/src/schema")?;
+    modules.write_to_files("src/schema")?;
 
     Ok(())
 }
@@ -171,27 +146,4 @@ where
             break;
         }
     }
-}
-
-fn reduce_entities(schemas: &Schemas, mut types: MetaTypes) -> MetaTypes {
-    let ident = IdentTriple::from((IdentType::Element, "ifc:Entity"))
-        .resolve(schemas)
-        .unwrap();
-    let MetaTypeVariant::ComplexType(ci) = types.get_variant_mut(&ident).unwrap() else {
-        panic!();
-    };
-    let ident = ci.content.clone().unwrap();
-
-    let MetaTypeVariant::Choice(ci) = types.get_variant_mut(&ident).unwrap() else {
-        panic!();
-    };
-
-    ci.elements.retain(|el| {
-        matches!(
-            el.ident.name.as_str(),
-            "IfcConversionBasedUnit" | "IfcExternalReferenceRelationship"
-        )
-    });
-
-    types
 }

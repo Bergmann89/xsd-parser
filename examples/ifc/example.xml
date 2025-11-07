@@ -1,0 +1,416 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ifc:ifcXML xsi:schemaLocation="http://www.buildingsmart-tech.org/ifcXML/IFC4/Add2 IFC4_ADD2_TC1.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ifc="http://www.buildingsmart-tech.org/ifcXML/IFC4/Add2" xmlns="http://www.buildingsmart-tech.org/ifcXML/IFC4/Add2">
+<IfcProject id="i12" GlobalId="28hypXUBvBefc20SI8kfA$" Name="Default Project" Description="Description of Default Project">
+ <OwnerHistory id="i2" ChangeAction="notdefined" CreationDate="1323724715">
+  <OwningUser>
+   <ThePerson FamilyName="Bonsma" GivenName="Peter" />
+   <TheOrganization id="i1" Name="RDF" Description="RDF Ltd." />
+  </OwningUser>
+  <OwningApplication Version="0.10" ApplicationFullName="Test Application" ApplicationIdentifier="TA 1001">
+   <ApplicationDeveloper xsi:nil="true" href="i1" />
+  </OwningApplication>
+ </OwnerHistory>
+ <IsDecomposedBy>
+  <IfcRelAggregates GlobalId="3IdcKtxyTFSPDjAagDGuOq" Name="ProjectContainer" Description="ProjectContainer for Sites">
+   <OwnerHistory xsi:nil="true" href="i2" />
+   <RelatedObjects>
+    <IfcSite GlobalId="1cwlDi_hLEvPsClAelBNnz" Name="Default Site" Description="Description of Default Site" CompositionType="element" RefLatitude="24 28 0" RefLongitude="54 25 0" RefElevation="10">
+     <OwnerHistory xsi:nil="true" href="i2" />
+     <IsDecomposedBy>
+      <IfcRelAggregates GlobalId="16zMrDm_P2fv4w8_JewkSy" Name="SiteContainer" Description="SiteContainer For Buildings">
+       <OwnerHistory xsi:nil="true" href="i2" />
+       <RelatedObjects>
+        <IfcBuilding GlobalId="0AqAhXVxvCy9m0OX1nxY1A" Name="Default Building" Description="Description of Default Building" CompositionType="element">
+         <OwnerHistory xsi:nil="true" href="i2" />
+         <IsDecomposedBy>
+          <IfcRelAggregates GlobalId="1Lm3qeFdPFmvCQm$QtrkO_" Name="BuildingContainer" Description="BuildingContainer for BuildigStories">
+           <OwnerHistory xsi:nil="true" href="i2" />
+           <RelatedObjects>
+            <IfcBuildingStorey GlobalId="2GNgSHJ5j9BRUjqT$7tE8w" Name="Default Building Storey" Description="Description of Default Building Storey" CompositionType="element" Elevation="0">
+             <OwnerHistory xsi:nil="true" href="i2" />
+             <ObjectPlacement xsi:type="IfcLocalPlacement" id="i4">
+              <PlacementRelTo xsi:type="IfcLocalPlacement" id="i10">
+               <PlacementRelTo xsi:type="IfcLocalPlacement" id="i11">
+                <RelativePlacement>
+                 <IfcAxis2Placement3D>
+                  <Location id="i3" Coordinates="0 0 0" />
+                 </IfcAxis2Placement3D>
+                </RelativePlacement>
+               </PlacementRelTo>
+               <RelativePlacement>
+                <IfcAxis2Placement3D>
+                 <Location xsi:nil="true" href="i3" />
+                </IfcAxis2Placement3D>
+               </RelativePlacement>
+              </PlacementRelTo>
+              <RelativePlacement>
+               <IfcAxis2Placement3D>
+                <Location xsi:nil="true" href="i3" />
+               </IfcAxis2Placement3D>
+              </RelativePlacement>
+             </ObjectPlacement>
+             <ContainsElements>
+              <IfcRelContainedInSpatialStructure GlobalId="0w_L$jTK98v8wOzKFGjTuo" Name="Default Building" Description="Contents of Building Storey">
+               <OwnerHistory xsi:nil="true" href="i2" />
+               <RelatedElements>
+                <IfcWall id="i13" GlobalId="3ZYW59sxj8lei475l7EhLU" Name="Wall for Test Example" Description="Description of Wall">
+                 <OwnerHistory xsi:nil="true" href="i2" />
+                 <IsDefinedBy>
+                  <IfcRelDefinesByProperties GlobalId="29JB4VSyHEhx7go0x$VxZ2">
+                   <OwnerHistory xsi:nil="true" href="i2" />
+                   <RelatingPropertyDefinition>
+                    <IfcPropertySet GlobalId="3nMqHLyZHAegWs5Yyxh1ry" Name="Pset_WallCommon">
+                     <OwnerHistory xsi:nil="true" href="i2" />
+                     <HasProperties>
+                      <IfcPropertySingleValue Name="Reference" Description="Reference">
+                       <NominalValue>
+                        <IfcIdentifier-wrapper></IfcIdentifier-wrapper>
+                       </NominalValue>
+                      </IfcPropertySingleValue>
+                      <IfcPropertySingleValue Name="AcousticRating" Description="AcousticRating">
+                       <NominalValue>
+                        <IfcLabel-wrapper></IfcLabel-wrapper>
+                       </NominalValue>
+                      </IfcPropertySingleValue>
+                      <IfcPropertySingleValue Name="FireRating" Description="FireRating">
+                       <NominalValue>
+                        <IfcLabel-wrapper></IfcLabel-wrapper>
+                       </NominalValue>
+                      </IfcPropertySingleValue>
+                      <IfcPropertySingleValue Name="Combustible" Description="Combustible">
+                       <NominalValue>
+                        <IfcBoolean-wrapper>false</IfcBoolean-wrapper>
+                       </NominalValue>
+                      </IfcPropertySingleValue>
+                      <IfcPropertySingleValue Name="SurfaceSpreadOfFlame" Description="SurfaceSpreadOfFlame">
+                       <NominalValue>
+                        <IfcLabel-wrapper></IfcLabel-wrapper>
+                       </NominalValue>
+                      </IfcPropertySingleValue>
+                      <IfcPropertySingleValue Name="ThermalTransmittance" Description="ThermalTransmittance">
+                       <NominalValue>
+                        <IfcThermalTransmittanceMeasure-wrapper>0,24</IfcThermalTransmittanceMeasure-wrapper>
+                       </NominalValue>
+                      </IfcPropertySingleValue>
+                      <IfcPropertySingleValue Name="IsExternal" Description="IsExternal">
+                       <NominalValue>
+                        <IfcBoolean-wrapper>true</IfcBoolean-wrapper>
+                       </NominalValue>
+                      </IfcPropertySingleValue>
+                      <IfcPropertySingleValue Name="ExtendToStructure" Description="ExtendToStructure">
+                       <NominalValue>
+                        <IfcBoolean-wrapper>false</IfcBoolean-wrapper>
+                       </NominalValue>
+                      </IfcPropertySingleValue>
+                      <IfcPropertySingleValue Name="LoadBearing" Description="LoadBearing">
+                       <NominalValue>
+                        <IfcBoolean-wrapper>false</IfcBoolean-wrapper>
+                       </NominalValue>
+                      </IfcPropertySingleValue>
+                      <IfcPropertySingleValue Name="Compartmentation" Description="Compartmentation">
+                       <NominalValue>
+                        <IfcBoolean-wrapper>false</IfcBoolean-wrapper>
+                       </NominalValue>
+                      </IfcPropertySingleValue>
+                     </HasProperties>
+                    </IfcPropertySet>
+                   </RelatingPropertyDefinition>
+                  </IfcRelDefinesByProperties>
+                 </IsDefinedBy>
+                 <ObjectPlacement xsi:type="IfcLocalPlacement" id="i6">
+                  <PlacementRelTo xsi:type="IfcLocalPlacement" xsi:nil="true" href="i4" />
+                  <RelativePlacement>
+                   <IfcAxis2Placement3D>
+                    <Location xsi:nil="true" href="i3" />
+                   </IfcAxis2Placement3D>
+                  </RelativePlacement>
+                 </ObjectPlacement>
+                 <Representation xsi:type="IfcProductDefinitionShape">
+                  <Representations>
+                   <IfcShapeRepresentation RepresentationIdentifier="Axis" RepresentationType="Curve2D">
+                    <ContextOfItems xsi:type="IfcGeometricRepresentationContext" id="i5" ContextType="Model" CoordinateSpaceDimension="3" Precision="1E-05">
+                     <WorldCoordinateSystem>
+                      <IfcAxis2Placement3D>
+                       <Location Coordinates="0 0 0" />
+                      </IfcAxis2Placement3D>
+                     </WorldCoordinateSystem>
+                     <TrueNorth DirectionRatios="0 1" />
+                    </ContextOfItems>
+                    <Items>
+                     <IfcPolyline>
+                      <Points>
+                       <IfcCartesianPoint Coordinates="0 150" />
+                       <IfcCartesianPoint Coordinates="3000 150" />
+                      </Points>
+                     </IfcPolyline>
+                    </Items>
+                   </IfcShapeRepresentation>
+                   <IfcShapeRepresentation RepresentationIdentifier="Body" RepresentationType="SweptSolid">
+                    <ContextOfItems xsi:type="IfcGeometricRepresentationContext" xsi:nil="true" href="i5" />
+                    <Items>
+                     <IfcExtrudedAreaSolid Depth="2000">
+                      <SweptArea xsi:type="IfcArbitraryClosedProfileDef" ProfileType="area">
+                       <OuterCurve xsi:type="IfcPolyline">
+                        <Points>
+                         <IfcCartesianPoint Coordinates="0 0" />
+                         <IfcCartesianPoint Coordinates="0 300" />
+                         <IfcCartesianPoint Coordinates="3000 300" />
+                         <IfcCartesianPoint Coordinates="3000 0" />
+                         <IfcCartesianPoint Coordinates="0 0" />
+                        </Points>
+                       </OuterCurve>
+                      </SweptArea>
+                      <Position>
+                       <Location xsi:nil="true" href="i3" />
+                      </Position>
+                      <ExtrudedDirection id="i7" DirectionRatios="0 0 1" />
+                     </IfcExtrudedAreaSolid>
+                    </Items>
+                   </IfcShapeRepresentation>
+                  </Representations>
+                 </Representation>
+                 <HasOpenings GlobalId="1nwVYC$VTDeuSc8zbOa89u">
+                  <OwnerHistory xsi:nil="true" href="i2" />
+                  <RelatedOpeningElement xsi:type="IfcOpeningElement" GlobalId="2bJiss68D6hvLKV8O1xmqJ" Name="Opening Element for Test Example" Description="Description of Opening" PredefinedType="opening">
+                   <OwnerHistory xsi:nil="true" href="i2" />
+                   <ObjectPlacement xsi:type="IfcLocalPlacement" id="i8">
+                    <PlacementRelTo xsi:type="IfcLocalPlacement" xsi:nil="true" href="i6" />
+                    <RelativePlacement>
+                     <IfcAxis2Placement3D>
+                      <Location Coordinates="1000 0 500" />
+                     </IfcAxis2Placement3D>
+                    </RelativePlacement>
+                   </ObjectPlacement>
+                   <Representation xsi:type="IfcProductDefinitionShape">
+                    <Representations>
+                     <IfcShapeRepresentation RepresentationIdentifier="Body" RepresentationType="SweptSolid">
+                      <ContextOfItems xsi:type="IfcGeometricRepresentationContext" xsi:nil="true" href="i5" />
+                      <Items>
+                       <IfcExtrudedAreaSolid Depth="1000">
+                        <SweptArea xsi:type="IfcArbitraryClosedProfileDef" ProfileType="area">
+                         <OuterCurve xsi:type="IfcPolyline">
+                          <Points>
+                           <IfcCartesianPoint Coordinates="0 0" />
+                           <IfcCartesianPoint Coordinates="0 300" />
+                           <IfcCartesianPoint Coordinates="1000 300" />
+                           <IfcCartesianPoint Coordinates="1000 0" />
+                           <IfcCartesianPoint Coordinates="0 0" />
+                          </Points>
+                         </OuterCurve>
+                        </SweptArea>
+                        <Position>
+                         <Location xsi:nil="true" href="i3" />
+                        </Position>
+                        <ExtrudedDirection xsi:nil="true" href="i7" />
+                       </IfcExtrudedAreaSolid>
+                      </Items>
+                     </IfcShapeRepresentation>
+                    </Representations>
+                   </Representation>
+                   <HasFillings GlobalId="0YVioT$0bDzPFxfmI$Sb2G">
+                    <OwnerHistory xsi:nil="true" href="i2" />
+                    <RelatedBuildingElement xsi:type="IfcWindow" id="i9" GlobalId="0tA4DSHd50le6Ov9Yu0I9X" Name="Window for Test Example" Description="Description of Window" OverallHeight="1000" OverallWidth="1000" PredefinedType="window" PartitioningType="single_panel">
+                     <OwnerHistory xsi:nil="true" href="i2" />
+                     <IsTypedBy GlobalId="33ZWGsuJ9CIw2bpc0Zk0Dl">
+                      <OwnerHistory xsi:nil="true" href="i2" />
+                      <RelatingType xsi:type="IfcWindowType" id="i14" GlobalId="0Ps4H3X0nAxfqkHNemLE6f" Name="Window for Test Example" Description="Description of Window Type" PredefinedType="window" PartitioningType="single_panel">
+                       <OwnerHistory xsi:nil="true" href="i2" />
+                      </RelatingType>
+                     </IsTypedBy>
+                     <IsDefinedBy>
+                      <IfcRelDefinesByProperties GlobalId="17cvqmufjDQ9MHuuJCJrDN">
+                       <OwnerHistory xsi:nil="true" href="i2" />
+                       <RelatingPropertyDefinition>
+                        <IfcPropertySet GlobalId="1lZ4zPst55PhFcUG69u5jM" Name="Pset_WindowCommon">
+                         <OwnerHistory xsi:nil="true" href="i2" />
+                         <HasProperties>
+                          <IfcPropertySingleValue Name="Reference" Description="Reference">
+                           <NominalValue>
+                            <IfcIdentifier-wrapper></IfcIdentifier-wrapper>
+                           </NominalValue>
+                          </IfcPropertySingleValue>
+                          <IfcPropertySingleValue Name="FireRating" Description="FireRating">
+                           <NominalValue>
+                            <IfcLabel-wrapper></IfcLabel-wrapper>
+                           </NominalValue>
+                          </IfcPropertySingleValue>
+                          <IfcPropertySingleValue Name="AcousticRating" Description="AcousticRating">
+                           <NominalValue>
+                            <IfcLabel-wrapper></IfcLabel-wrapper>
+                           </NominalValue>
+                          </IfcPropertySingleValue>
+                          <IfcPropertySingleValue Name="SecurityRating" Description="SecurityRating">
+                           <NominalValue>
+                            <IfcLabel-wrapper></IfcLabel-wrapper>
+                           </NominalValue>
+                          </IfcPropertySingleValue>
+                          <IfcPropertySingleValue Name="IsExternal" Description="IsExternal">
+                           <NominalValue>
+                            <IfcBoolean-wrapper>true</IfcBoolean-wrapper>
+                           </NominalValue>
+                          </IfcPropertySingleValue>
+                          <IfcPropertySingleValue Name="Infiltration" Description="Infiltration">
+                           <NominalValue>
+                            <IfcVolumetricFlowRateMeasure-wrapper>0,3</IfcVolumetricFlowRateMeasure-wrapper>
+                           </NominalValue>
+                          </IfcPropertySingleValue>
+                          <IfcPropertySingleValue Name="ThermalTransmittance" Description="ThermalTransmittance">
+                           <NominalValue>
+                            <IfcThermalTransmittanceMeasure-wrapper>0,24</IfcThermalTransmittanceMeasure-wrapper>
+                           </NominalValue>
+                          </IfcPropertySingleValue>
+                          <IfcPropertySingleValue Name="GlazingAreaFraction" Description="GlazingAreaFraction">
+                           <NominalValue>
+                            <IfcPositiveRatioMeasure-wrapper>0,7</IfcPositiveRatioMeasure-wrapper>
+                           </NominalValue>
+                          </IfcPropertySingleValue>
+                          <IfcPropertySingleValue Name="SmokeStop" Description="SmokeStop">
+                           <NominalValue>
+                            <IfcBoolean-wrapper>false</IfcBoolean-wrapper>
+                           </NominalValue>
+                          </IfcPropertySingleValue>
+                         </HasProperties>
+                        </IfcPropertySet>
+                       </RelatingPropertyDefinition>
+                      </IfcRelDefinesByProperties>
+                     </IsDefinedBy>
+                     <ObjectPlacement xsi:type="IfcLocalPlacement">
+                      <PlacementRelTo xsi:type="IfcLocalPlacement" xsi:nil="true" href="i8" />
+                      <RelativePlacement>
+                       <IfcAxis2Placement3D>
+                        <Location Coordinates="0 50 0" />
+                       </IfcAxis2Placement3D>
+                      </RelativePlacement>
+                     </ObjectPlacement>
+                     <Representation xsi:type="IfcProductDefinitionShape">
+                      <Representations>
+                       <IfcShapeRepresentation RepresentationIdentifier="Body" RepresentationType="SweptSolid">
+                        <ContextOfItems xsi:type="IfcGeometricRepresentationContext" xsi:nil="true" href="i5" />
+                        <Items>
+                         <IfcExtrudedAreaSolid Depth="1000">
+                          <SweptArea xsi:type="IfcArbitraryClosedProfileDef" ProfileType="area">
+                           <OuterCurve xsi:type="IfcPolyline">
+                            <Points>
+                             <IfcCartesianPoint Coordinates="0 0" />
+                             <IfcCartesianPoint Coordinates="0 200" />
+                             <IfcCartesianPoint Coordinates="1000 200" />
+                             <IfcCartesianPoint Coordinates="1000 0" />
+                             <IfcCartesianPoint Coordinates="0 0" />
+                            </Points>
+                           </OuterCurve>
+                          </SweptArea>
+                          <Position>
+                           <Location xsi:nil="true" href="i3" />
+                          </Position>
+                          <ExtrudedDirection xsi:nil="true" href="i7" />
+                         </IfcExtrudedAreaSolid>
+                        </Items>
+                       </IfcShapeRepresentation>
+                      </Representations>
+                     </Representation>
+                    </RelatedBuildingElement>
+                   </HasFillings>
+                  </RelatedOpeningElement>
+                 </HasOpenings>
+                </IfcWall>
+                <IfcWindow xsi:nil="true" href="i9" />
+               </RelatedElements>
+              </IfcRelContainedInSpatialStructure>
+             </ContainsElements>
+            </IfcBuildingStorey>
+           </RelatedObjects>
+          </IfcRelAggregates>
+         </IsDecomposedBy>
+         <ObjectPlacement xsi:type="IfcLocalPlacement" xsi:nil="true" href="i10" />
+         <BuildingAddress PostalBox="32" Town="Bankya" Region="Sofia" PostalCode="1320" Country="Bulgaria">
+          <AddressLines>
+           <IfcLabel-wrapper>RDF Ltd.</IfcLabel-wrapper>
+           <IfcLabel-wrapper>Main Office</IfcLabel-wrapper>
+          </AddressLines>
+         </BuildingAddress>
+        </IfcBuilding>
+       </RelatedObjects>
+      </IfcRelAggregates>
+     </IsDecomposedBy>
+     <ObjectPlacement xsi:type="IfcLocalPlacement" xsi:nil="true" href="i11" />
+    </IfcSite>
+   </RelatedObjects>
+  </IfcRelAggregates>
+ </IsDecomposedBy>
+ <RepresentationContexts>
+  <IfcGeometricRepresentationContext xsi:nil="true" href="i5" />
+ </RepresentationContexts>
+ <UnitsInContext>
+  <Units>
+   <IfcSIUnit UnitType="lengthunit" Prefix="milli" Name="metre" />
+   <IfcSIUnit UnitType="areaunit" Name="square_metre" />
+   <IfcSIUnit UnitType="volumeunit" Name="cubic_metre" />
+   <IfcConversionBasedUnit UnitType="planeangleunit" Name="DEGREE">
+    <Dimensions LengthExponent="0" MassExponent="0" TimeExponent="0" ElectricCurrentExponent="0" ThermodynamicTemperatureExponent="0" AmountOfSubstanceExponent="0" LuminousIntensityExponent="0" />
+    <ConversionFactor>
+     <ValueComponent>
+      <IfcPlaneAngleMeasure-wrapper>0,01745</IfcPlaneAngleMeasure-wrapper>
+     </ValueComponent>
+     <UnitComponent>
+      <IfcSIUnit UnitType="planeangleunit" Name="radian" />
+     </UnitComponent>
+    </ConversionFactor>
+   </IfcConversionBasedUnit>
+   <IfcSIUnit UnitType="solidangleunit" Name="steradian" />
+   <IfcSIUnit UnitType="massunit" Name="gram" />
+   <IfcSIUnit UnitType="timeunit" Name="second" />
+   <IfcSIUnit UnitType="thermodynamictemperatureunit" Name="degree_celsius" />
+   <IfcSIUnit UnitType="luminousintensityunit" Name="lumen" />
+  </Units>
+ </UnitsInContext>
+</IfcProject>
+<IfcRelDeclares GlobalId="3za3M6A5r4wQ3Luv68n$31">
+ <OwnerHistory xsi:nil="true" href="i2" />
+ <RelatedDefinitions>
+  <IfcProject xsi:nil="true" href="i12" />
+ </RelatedDefinitions>
+</IfcRelDeclares>
+<IfcRelAssociatesMaterial GlobalId="3DQ2_rihzBm8nLF98euhbs">
+ <OwnerHistory xsi:nil="true" href="i2" />
+ <RelatedObjects>
+  <IfcWall xsi:nil="true" href="i13" />
+ </RelatedObjects>
+ <RelatingMaterial>
+  <IfcMaterialLayerSetUsage LayerSetDirection="axis2" DirectionSense="positive" OffsetFromReferenceLine="-150">
+   <ForLayerSet>
+    <MaterialLayers>
+     <IfcMaterialLayer LayerThickness="300">
+      <Material Name="Name of the material used for the wall" />
+     </IfcMaterialLayer>
+    </MaterialLayers>
+   </ForLayerSet>
+  </IfcMaterialLayerSetUsage>
+ </RelatingMaterial>
+</IfcRelAssociatesMaterial>
+<IfcRelAssociatesMaterial GlobalId="2umeFbHwL6GAUKTaYomo7u">
+ <OwnerHistory xsi:nil="true" href="i2" />
+ <RelatedObjects>
+  <IfcWindow xsi:nil="true" href="i9" />
+ </RelatedObjects>
+ <RelatingMaterial>
+  <IfcMaterialConstituentSet Name="Constituent Set for Window">
+   <MaterialConstituents>
+    <IfcMaterialConstituent Name="Framing">
+     <Material Name="Glass" />
+    </IfcMaterialConstituent>
+    <IfcMaterialConstituent Name="Framing">
+     <Material Name="Wood" />
+    </IfcMaterialConstituent>
+   </MaterialConstituents>
+  </IfcMaterialConstituentSet>
+ </RelatingMaterial>
+</IfcRelAssociatesMaterial>
+<IfcRelDeclares GlobalId="1PDtajAqHD6xd3QiWD$I1W">
+ <OwnerHistory xsi:nil="true" href="i2" />
+ <RelatedDefinitions>
+  <IfcWindowType xsi:nil="true" href="i14" />
+ </RelatedDefinitions>
+</IfcRelDeclares>
+</ifc:ifcXML>
+
+
