@@ -986,6 +986,7 @@ impl NotNamespaceType {
         Self::validate_value(&inner)?;
         Ok(Self(inner))
     }
+    #[must_use]
     pub fn into_inner(self) -> Vec<BasicNamespaceListItemType> {
         self.0
     }

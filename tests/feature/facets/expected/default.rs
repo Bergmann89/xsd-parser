@@ -20,6 +20,7 @@ impl NegativeDecimalType {
         Self::validate_value(&inner)?;
         Ok(Self(inner))
     }
+    #[must_use]
     pub fn into_inner(self) -> f64 {
         self.0
     }
@@ -61,6 +62,7 @@ impl PositiveDecimalType {
         Self::validate_value(&inner)?;
         Ok(Self(inner))
     }
+    #[must_use]
     pub fn into_inner(self) -> f64 {
         self.0
     }
@@ -102,6 +104,7 @@ impl RestrictedStringType {
         Self::validate_value(&inner)?;
         Ok(Self(inner))
     }
+    #[must_use]
     pub fn into_inner(self) -> String {
         self.0
     }
