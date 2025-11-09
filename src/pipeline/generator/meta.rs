@@ -30,7 +30,7 @@ pub struct MetaData<'types> {
     pub any_type: Option<IdentPath>,
 
     /// Type to use to store unstructured `xs:anyAttribute` attributes.
-    pub any_attribute_type: Option<IdentPath>,
+    pub any_attributes_type: Option<IdentPath>,
 }
 
 impl MetaData<'_> {

@@ -8,7 +8,7 @@ fn config() -> Config {
         .with_generate([(IdentType::Element, "tns:Foo")]);
 
     config.generator.any_type = Some("xsd_parser::xml::AnyElement".into());
-    config.generator.any_attribute_type = Some("xsd_parser::xml::AnyAttributes".into());
+    config.generator.any_attributes_type = Some("xsd_parser::xml::AnyAttributes".into());
 
     config
 }

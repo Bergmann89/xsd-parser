@@ -105,7 +105,7 @@ impl<'types> Generator<'types> {
             box_flags: BoxFlags::AUTO,
             typedef_mode: TypedefMode::Auto,
             any_type: None,
-            any_attribute_type: None,
+            any_attributes_type: None,
         };
         let state = State {
             cache: BTreeMap::new(),
@@ -163,11 +163,11 @@ impl<'types> Generator<'types> {
     /// # Errors
     ///
     /// Forwards the error that is thrown, if `path` could not be converted.
-    pub fn any_attribute_type<P>(mut self, path: P) -> Result<Self, P::Error>
+    pub fn any_attributes_type<P>(mut self, path: P) -> Result<Self, P::Error>
     where
         P: TryInto<IdentPath>,
     {
-        self.meta.any_attribute_type = Some(path.try_into()?);
+        self.meta.any_attributes_type = Some(path.try_into()?);
 
         Ok(self)
     }

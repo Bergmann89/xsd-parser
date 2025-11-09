@@ -306,9 +306,9 @@ pub fn exec_generator<'types>(
         generator = generator.any_type(any_type).map_err(GeneratorError::from)?;
     }
 
-    if let Some(any_attribute_type) = config.any_attribute_type {
+    if let Some(any_attributes_type) = config.any_attributes_type {
         generator = generator
-            .any_attribute_type(any_attribute_type)
+            .any_attributes_type(any_attributes_type)
             .map_err(GeneratorError::from)?;
     }
 
