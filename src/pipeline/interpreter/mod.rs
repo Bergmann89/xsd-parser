@@ -282,8 +282,11 @@ impl<'a> Interpreter<'a> {
         any.min_occurs = 0;
         any.max_occurs = MaxOccurs::Unbounded;
 
-        let mut content_sequence = GroupMeta::default();
-        content_sequence.elements.push_any(any);
+        let mut content_sequence = GroupMeta {
+            is_mixed: true,
+            ..GroupMeta::default()
+        };
+        content_sequence.elements.push(any);
 
         let content_name = self.state.name_builder().shared_name("Content").finish();
         let content_ident = Ident::new(content_name).with_ns(Some(xs));
@@ -312,6 +315,7 @@ impl<'a> Interpreter<'a> {
 
         let mut complex = ComplexMeta {
             content: Some(content_ident),
+            is_mixed: true,
             min_occurs: 1,
             max_occurs: MaxOccurs::Bounded(1),
             ..Default::default()
@@ -349,7 +353,7 @@ impl<'a> Interpreter<'a> {
         }
 
         let big_int = CustomMeta::new("BigInt")
-            .include_from("num::BigInt")
+            .include_from("::num::BigInt")
             .with_default(|s: &str| {
                 let code = quote! {
                     <num::BigInt as core::str::FromStr>::from_str(#s).unwrap()
@@ -359,7 +363,7 @@ impl<'a> Interpreter<'a> {
             });
 
         let big_uint = CustomMeta::new("BigUint")
-            .include_from("num::BigUint")
+            .include_from("::num::BigUint")
             .with_default(|s: &str| {
                 let code = quote! {
                     <num::BigUint as core::str::FromStr>::from_str(#s).unwrap()

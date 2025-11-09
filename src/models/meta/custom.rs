@@ -7,17 +7,20 @@ use proc_macro2::TokenStream;
 
 /// Type information for a custom defined type.
 pub struct CustomMeta {
-    name: &'static str,
-    include: Option<&'static str>,
+    name: String,
+    include: Option<String>,
     default: Option<Box<dyn CustomDefaultImpl>>,
 }
 
 impl CustomMeta {
     /// Create a new custom type information with the passed `name`.
     #[must_use]
-    pub fn new(name: &'static str) -> Self {
+    pub fn new<X>(name: X) -> Self
+    where
+        X: Into<String>,
+    {
         Self {
-            name,
+            name: name.into(),
             include: None,
             default: None,
         }
@@ -25,22 +28,25 @@ impl CustomMeta {
 
     /// Get the name of the custom defined type.
     #[must_use]
-    pub fn name(&self) -> &'static str {
-        self.name
+    pub fn name(&self) -> &str {
+        &self.name
     }
 
     /// Get the include path of the custom defined type.
     #[must_use]
-    pub fn include(&self) -> Option<&'static str> {
-        self.include
+    pub fn include(&self) -> Option<&str> {
+        self.include.as_deref()
     }
 
     /// The the path the type should be included from.
     ///
     /// The path should be absolute, or relative to the root of the generated code.
     #[must_use]
-    pub fn include_from(mut self, s: &'static str) -> Self {
-        self.include = Some(s);
+    pub fn include_from<X>(mut self, include: X) -> Self
+    where
+        X: Into<String>,
+    {
+        self.include = Some(include.into());
 
         self
     }
@@ -66,8 +72,8 @@ impl CustomMeta {
 impl Clone for CustomMeta {
     fn clone(&self) -> Self {
         Self {
-            name: self.name,
-            include: self.include,
+            name: self.name.clone(),
+            include: self.include.clone(),
             default: self
                 .default
                 .as_ref()
@@ -90,7 +96,7 @@ impl Eq for CustomMeta {}
 
 impl PartialEq for CustomMeta {
     fn eq(&self, other: &Self) -> bool {
-        self.name.eq(other.name)
+        self.name.eq(&other.name)
     }
 }
 
