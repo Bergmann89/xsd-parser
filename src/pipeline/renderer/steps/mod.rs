@@ -5,6 +5,7 @@ mod serde;
 mod types;
 mod with_namespace_trait;
 
+use std::collections::HashSet;
 use std::ops::Bound;
 use std::str::FromStr;
 
@@ -375,10 +376,12 @@ where
     let types = ctx.derive.iter().cloned().chain(extra);
 
     let types = match &ctx.data.derive {
-        ConfigValue::Default => types.collect::<Vec<_>>(),
-        ConfigValue::Extend(extra) => types.chain(extra.iter().cloned()).collect::<Vec<_>>(),
-        ConfigValue::Overwrite(types) => types.clone(),
+        ConfigValue::Default => types.collect::<HashSet<_>>(),
+        ConfigValue::Extend(extra) => types.chain(extra.iter().cloned()).collect::<HashSet<_>>(),
+        ConfigValue::Overwrite(types) => types.iter().cloned().collect::<HashSet<_>>(),
     };
+    let mut types = types.into_iter().collect::<Vec<_>>();
+    types.sort();
 
     if types.is_empty() {
         quote! {}
