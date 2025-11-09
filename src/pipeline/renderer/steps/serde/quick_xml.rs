@@ -67,10 +67,12 @@ impl UnionData<'_> {
         let variants = variants
             .iter()
             .map(|x| x.render_variant_serde_quick_xml(ctx));
+        let extra_attributes = &ctx.data.extra_attributes;
 
         let code = quote! {
             #docs
             #derive
+            #( #[#extra_attributes] )*
             pub enum #type_ident {
                 #( #variants )*
             }
@@ -91,12 +93,14 @@ impl UnionTypeVariant<'_> {
         let Self {
             target_type,
             variant_ident,
+            extra_attributes,
             ..
         } = self;
 
         let target_type = ctx.resolve_type_for_module(target_type);
 
         quote! {
+            #( #[#extra_attributes] )*
             #variant_ident ( #target_type ),
         }
     }
@@ -120,12 +124,14 @@ impl DynamicData<'_> {
             || get_dyn_type_traits(ctx),
             |traits| format_traits(traits.iter().map(|x| ctx.resolve_type_for_module(x))),
         );
+        let extra_attributes = &ctx.data.extra_attributes;
 
         let box_ = ctx.resolve_build_in("::alloc::boxed::Box");
 
         let code = quote! {
             #docs
             #derive
+            #( #[#extra_attributes] )*
             pub struct #type_ident(pub #box_<dyn #trait_ident>);
 
             pub trait #trait_ident: #dyn_traits { }
@@ -169,10 +175,12 @@ impl ReferenceData<'_> {
                     matches!(occurs, Occurs::Optional | Occurs::DynamicList).then_some("Default");
                 let derive = get_derive(ctx, extra_derive);
                 let trait_impls = render_trait_impls(type_ident, trait_impls);
+                let extra_attributes = &ctx.data.extra_attributes;
 
                 quote! {
                     #docs
                     #derive
+                    #( #[#extra_attributes] )*
                     pub struct #type_ident(pub #target_type);
 
                     #( #trait_impls )*
@@ -198,6 +206,7 @@ impl EnumerationData<'_> {
         let docs = ctx.render_type_docs();
         let derive = get_derive(ctx, []);
         let trait_impls = render_trait_impls(type_ident, trait_impls);
+        let extra_attributes = &ctx.data.extra_attributes;
 
         let variants = variants
             .iter()
@@ -207,6 +216,7 @@ impl EnumerationData<'_> {
         let code = quote! {
             #docs
             #derive
+            #( #[#extra_attributes] )*
             pub enum #type_ident {
                 #( #variants )*
             }
@@ -227,6 +237,7 @@ impl EnumerationTypeVariant<'_> {
             meta,
             variant_ident,
             target_type,
+            extra_attributes,
             ..
         } = self;
 
@@ -247,6 +258,7 @@ impl EnumerationTypeVariant<'_> {
         quote! {
             #docs
             #serde
+            #( #[#extra_attributes] )*
             #variant_ident #target_type,
         }
     }
@@ -265,6 +277,7 @@ impl SimpleData<'_> {
         let docs = ctx.render_type_docs();
         let target_type = ctx.resolve_type_for_module(target_type);
         let target_type = occurs.make_type(ctx, &target_type, false);
+        let extra_attributes = &ctx.data.extra_attributes;
 
         let derive = get_derive(ctx, []);
         let trait_impls = render_trait_impls(type_ident, trait_impls);
@@ -272,6 +285,7 @@ impl SimpleData<'_> {
         let code = quote! {
             #docs
             #derive
+            #( #[#extra_attributes] )*
             pub struct #type_ident(pub #target_type);
 
             #( #trait_impls )*
@@ -318,6 +332,7 @@ impl ComplexDataEnum<'_> {
         let derive = get_derive(ctx, []);
         let type_ident = &self.type_ident;
         let trait_impls = render_trait_impls(type_ident, &self.trait_impls);
+        let extra_attributes = &ctx.data.extra_attributes;
 
         let variants = self
             .elements
@@ -327,6 +342,7 @@ impl ComplexDataEnum<'_> {
         let code = quote! {
             #docs
             #derive
+            #( #[#extra_attributes] )*
             pub enum #type_ident {
                 #( #variants )*
             }
@@ -344,6 +360,7 @@ impl ComplexDataStruct<'_> {
         let derive = get_derive(ctx, []);
         let type_ident = &self.type_ident;
         let trait_impls = render_trait_impls(type_ident, &self.trait_impls);
+        let extra_attributes = &ctx.data.extra_attributes;
 
         let attributes = self
             .attributes
@@ -373,6 +390,7 @@ impl ComplexDataStruct<'_> {
         let code = quote! {
             #docs
             #derive
+            #( #[#extra_attributes] )*
             pub struct #type_ident
                 #struct_data
 
@@ -387,12 +405,14 @@ impl ComplexDataContent<'_> {
     fn render_field_serde_quick_xml(&self, ctx: &Context<'_, '_>) -> Option<TokenStream> {
         let target_type = ctx.resolve_type_for_module(&self.target_type);
         let target_type = self.occurs.make_type(ctx, &target_type, false)?;
+        let extra_attributes = &self.extra_attributes;
 
         let default =
             (self.is_empty_string_content(ctx) || self.min_occurs == 0).then(|| quote!(default,));
         let name = if self.is_simple() { "$text" } else { "$value" };
 
         Some(quote! {
+            #( #[#extra_attributes] )*
             #[serde(#default rename = #name)]
             pub content: #target_type,
         })
@@ -408,6 +428,7 @@ impl ComplexDataAttribute<'_> {
         let Self {
             ident: field_ident,
             s_name,
+            extra_attributes,
             ..
         } = self;
 
@@ -439,6 +460,7 @@ impl ComplexDataAttribute<'_> {
 
         quote! {
             #docs
+            #( #[#extra_attributes] )*
             #[serde(#default rename = #name)]
             pub #field_ident: #target_type,
         }
@@ -450,6 +472,7 @@ impl ComplexDataElement<'_> {
         let Self {
             s_name,
             field_ident,
+            extra_attributes,
             ..
         } = self;
 
@@ -477,6 +500,7 @@ impl ComplexDataElement<'_> {
 
         quote! {
             #docs
+            #( #[#extra_attributes] )*
             #[serde(#default rename = #name)]
             pub #field_ident: #target_type,
         }
@@ -486,6 +510,7 @@ impl ComplexDataElement<'_> {
         let Self {
             s_name,
             variant_ident,
+            extra_attributes,
             ..
         } = self;
 
@@ -507,6 +532,7 @@ impl ComplexDataElement<'_> {
 
         quote! {
             #docs
+            #( #[#extra_attributes] )*
             #[serde(rename = #name)]
             #variant_ident(#target_type),
         }

@@ -4,12 +4,12 @@ use serde::{Deserialize, Serialize};
 use std::sync::LazyLock;
 use xsd_parser::quick_xml::{fraction_digits, ValidateError};
 pub type Root = RootType;
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct RootType {
     #[serde(default, rename = "$value")]
     pub content: Vec<RootTypeContent>,
 }
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub enum RootTypeContent {
     #[serde(rename = "NegativeDecimal")]
     NegativeDecimal(NegativeDecimalType),
@@ -18,7 +18,7 @@ pub enum RootTypeContent {
     #[serde(rename = "RestrictedString")]
     RestrictedString(RestrictedStringType),
 }
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct NegativeDecimalType(pub f64);
 impl NegativeDecimalType {
     pub fn new(inner: f64) -> Result<Self, ValidateError> {
@@ -59,7 +59,7 @@ impl Deref for NegativeDecimalType {
         &self.0
     }
 }
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct PositiveDecimalType(pub f64);
 impl PositiveDecimalType {
     pub fn new(inner: f64) -> Result<Self, ValidateError> {
@@ -100,7 +100,7 @@ impl Deref for PositiveDecimalType {
         &self.0
     }
 }
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct RestrictedStringType(pub String);
 impl RestrictedStringType {
     pub fn new(inner: String) -> Result<Self, ValidateError> {

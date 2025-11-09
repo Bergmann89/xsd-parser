@@ -1,5 +1,7 @@
 use std::ops::Deref;
 
+use proc_macro2::TokenStream;
+
 use crate::models::{code::IdentPath, meta::MetaType};
 
 use super::{
@@ -26,6 +28,9 @@ pub struct DataType<'types> {
 
     /// The variant of the data type.
     pub variant: DataTypeVariant<'types>,
+
+    /// Additional attributes that will be added to the type.
+    pub extra_attributes: Vec<TokenStream>,
 }
 
 /// Represents the specific form of a [`DataType`] as evaluated by the generator.

@@ -187,6 +187,7 @@ impl<'types> ComplexData<'types> {
             min_occurs,
             max_occurs,
             target_type,
+            extra_attributes: Vec::new(),
         };
 
         let type_ = ComplexDataStruct {
@@ -299,6 +300,7 @@ impl<'types> ComplexData<'types> {
                 min_occurs,
                 max_occurs,
                 target_type,
+                extra_attributes: Vec::new(),
             };
 
             StructMode::Content { content }
@@ -457,6 +459,7 @@ impl<'types> ComplexData<'types> {
                 min_occurs,
                 max_occurs,
                 target_type,
+                extra_attributes: Vec::new(),
             };
 
             StructMode::Content { content }
@@ -637,6 +640,7 @@ impl<'types> ComplexDataElement<'types> {
         };
 
         let need_indirection = (direct_usage && need_box) || force_box;
+        let extra_attributes = Vec::new();
 
         Ok(Some(Self {
             origin,
@@ -649,6 +653,7 @@ impl<'types> ComplexDataElement<'types> {
             target_type,
             need_indirection,
             target_is_dynamic,
+            extra_attributes,
         }))
     }
 
@@ -671,6 +676,7 @@ impl<'types> ComplexDataElement<'types> {
             .format_variant_ident(&meta.ident.name, None);
         let origin = ComplexDataElementOrigin::Generated(Box::new(meta));
         let absolute = ctx.check_generator_flags(GeneratorFlags::ABSOLUTE_PATHS_INSTEAD_USINGS);
+        let extra_attributes = Vec::new();
 
         Self {
             origin,
@@ -683,6 +689,7 @@ impl<'types> ComplexDataElement<'types> {
             target_type: PathData::text(absolute),
             need_indirection: false,
             target_is_dynamic: false,
+            extra_attributes,
         }
     }
 
@@ -712,6 +719,7 @@ impl<'types> ComplexDataElement<'types> {
 
         let target_type = (*type_ref.path).clone().with_ident(content_ident);
         let target_type = PathData::from_path(target_type);
+        let extra_attributes = Vec::new();
 
         Self {
             origin,
@@ -724,6 +732,7 @@ impl<'types> ComplexDataElement<'types> {
             target_type,
             need_indirection: false,
             target_is_dynamic: false,
+            extra_attributes,
         }
     }
 }
@@ -785,6 +794,7 @@ impl<'types> ComplexDataAttribute<'types> {
             is_option,
             target_type,
             default_value,
+            extra_attributes: Vec::new(),
         }))
     }
 }

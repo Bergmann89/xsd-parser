@@ -43,4 +43,7 @@ pub struct EnumerationTypeVariant<'types> {
 
     /// Target type of this variant.
     pub target_type: Option<PathData>,
+
+    /// Additional attributes that will be added to the variant.
+    pub extra_attributes: Vec<TokenStream>,
 }

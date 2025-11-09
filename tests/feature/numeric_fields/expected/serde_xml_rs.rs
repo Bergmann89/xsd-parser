@@ -1,12 +1,12 @@
 use core::ops::{Deref, DerefMut};
 use serde::{Deserialize, Serialize};
 pub type Foo = FooType;
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct FooType {
     #[serde(rename = "tns:4")]
     pub _4: EnumType,
 }
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct EnumType {
     #[serde(rename = "#text")]
     pub value: EnumTypeValue,
@@ -32,7 +32,7 @@ impl DerefMut for EnumType {
         &mut self.value
     }
 }
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub enum EnumTypeValue {
     #[serde(rename = "1")]
     _1,

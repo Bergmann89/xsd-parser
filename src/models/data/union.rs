@@ -42,4 +42,7 @@ pub struct UnionTypeVariant<'types> {
 
     /// Identifier of this variant.
     pub variant_ident: Ident2,
+
+    /// Additional attributes that will be added to the variant.
+    pub extra_attributes: Vec<TokenStream>,
 }

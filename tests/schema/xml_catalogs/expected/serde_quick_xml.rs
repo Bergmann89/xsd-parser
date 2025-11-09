@@ -1,6 +1,6 @@
 pub mod er {
     use serde::{Deserialize, Serialize};
-    #[derive(Debug, Serialize, Deserialize)]
+    #[derive(Debug, Deserialize, Serialize)]
     pub struct CatalogType {
         #[serde(default, rename = "@id")]
         pub id: Option<String>,
@@ -9,7 +9,7 @@ pub mod er {
         #[serde(rename = "$value")]
         pub content: Vec<CatalogTypeContent>,
     }
-    #[derive(Debug, Serialize, Deserialize)]
+    #[derive(Debug, Deserialize, Serialize)]
     pub enum CatalogTypeContent {
         #[serde(rename = "public")]
         Public(PublicType),
@@ -37,7 +37,7 @@ pub mod er {
         Group(GroupType),
     }
     pub type Catalog = CatalogType;
-    #[derive(Debug, Serialize, Deserialize)]
+    #[derive(Debug, Deserialize, Serialize)]
     pub struct DelegatePublicType {
         #[serde(rename = "@publicIdStartString")]
         pub public_id_start_string: String,
@@ -47,7 +47,7 @@ pub mod er {
         pub id: Option<String>,
     }
     pub type DelegatePublic = DelegatePublicType;
-    #[derive(Debug, Serialize, Deserialize)]
+    #[derive(Debug, Deserialize, Serialize)]
     pub struct DelegateSystemType {
         #[serde(rename = "@systemIdStartString")]
         pub system_id_start_string: String,
@@ -57,7 +57,7 @@ pub mod er {
         pub id: Option<String>,
     }
     pub type DelegateSystem = DelegateSystemType;
-    #[derive(Debug, Serialize, Deserialize)]
+    #[derive(Debug, Deserialize, Serialize)]
     pub struct DelegateUriType {
         #[serde(rename = "@uriStartString")]
         pub uri_start_string: String,
@@ -67,7 +67,7 @@ pub mod er {
         pub id: Option<String>,
     }
     pub type DelegateUri = DelegateUriType;
-    #[derive(Debug, Serialize, Deserialize)]
+    #[derive(Debug, Deserialize, Serialize)]
     pub struct GroupType {
         #[serde(default, rename = "@prefer")]
         pub prefer: Option<SystemOrPublicType>,
@@ -76,7 +76,7 @@ pub mod er {
         #[serde(rename = "$value")]
         pub content: Vec<GroupTypeContent>,
     }
-    #[derive(Debug, Serialize, Deserialize)]
+    #[derive(Debug, Deserialize, Serialize)]
     pub enum GroupTypeContent {
         #[serde(rename = "public")]
         Public(PublicType),
@@ -102,7 +102,7 @@ pub mod er {
         NextCatalog(NextCatalogType),
     }
     pub type Group = GroupType;
-    #[derive(Debug, Serialize, Deserialize)]
+    #[derive(Debug, Deserialize, Serialize)]
     pub struct NextCatalogType {
         #[serde(rename = "@catalog")]
         pub catalog: String,
@@ -112,7 +112,7 @@ pub mod er {
     pub type NextCatalog = NextCatalogType;
     pub type PartialPublicIdentifierType = String;
     pub type PubIdCharsType = String;
-    #[derive(Debug, Serialize, Deserialize)]
+    #[derive(Debug, Deserialize, Serialize)]
     pub struct PublicType {
         #[serde(rename = "@publicId")]
         pub public_id: String,
@@ -123,7 +123,7 @@ pub mod er {
     }
     pub type Public = PublicType;
     pub type PublicIdentifierType = String;
-    #[derive(Debug, Serialize, Deserialize)]
+    #[derive(Debug, Deserialize, Serialize)]
     pub struct RewriteSystemType {
         #[serde(rename = "@systemIdStartString")]
         pub system_id_start_string: String,
@@ -133,7 +133,7 @@ pub mod er {
         pub id: Option<String>,
     }
     pub type RewriteSystem = RewriteSystemType;
-    #[derive(Debug, Serialize, Deserialize)]
+    #[derive(Debug, Deserialize, Serialize)]
     pub struct RewriteUriType {
         #[serde(rename = "@uriStartString")]
         pub uri_start_string: String,
@@ -143,7 +143,7 @@ pub mod er {
         pub id: Option<String>,
     }
     pub type RewriteUri = RewriteUriType;
-    #[derive(Debug, Serialize, Deserialize)]
+    #[derive(Debug, Deserialize, Serialize)]
     pub struct SystemType {
         #[serde(rename = "@systemId")]
         pub system_id: String,
@@ -153,14 +153,14 @@ pub mod er {
         pub id: Option<String>,
     }
     pub type System = SystemType;
-    #[derive(Debug, Serialize, Deserialize)]
+    #[derive(Debug, Deserialize, Serialize)]
     pub enum SystemOrPublicType {
         #[serde(rename = "system")]
         System,
         #[serde(rename = "public")]
         Public,
     }
-    #[derive(Debug, Serialize, Deserialize)]
+    #[derive(Debug, Deserialize, Serialize)]
     pub struct SystemSuffixType {
         #[serde(rename = "@systemIdSuffix")]
         pub system_id_suffix: String,
@@ -170,7 +170,7 @@ pub mod er {
         pub id: Option<String>,
     }
     pub type SystemSuffix = SystemSuffixType;
-    #[derive(Debug, Serialize, Deserialize)]
+    #[derive(Debug, Deserialize, Serialize)]
     pub struct UriType {
         #[serde(rename = "@name")]
         pub name: String,
@@ -180,7 +180,7 @@ pub mod er {
         pub id: Option<String>,
     }
     pub type Uri = UriType;
-    #[derive(Debug, Serialize, Deserialize)]
+    #[derive(Debug, Deserialize, Serialize)]
     pub struct UriSuffixType {
         #[serde(rename = "@uriSuffix")]
         pub uri_suffix: String,
@@ -193,7 +193,7 @@ pub mod er {
 }
 pub mod xs {
     use serde::{Deserialize, Serialize};
-    #[derive(Debug, Serialize, Deserialize, Default)]
+    #[derive(Debug, Default, Deserialize, Serialize)]
     pub struct EntitiesType(pub Vec<String>);
     pub type EntityType = EntitiesType;
     pub type IdType = String;
@@ -206,7 +206,7 @@ pub mod xs {
     pub type NameType = String;
     pub type QNameType = String;
     pub type AnySimpleType = String;
-    #[derive(Debug, Serialize, Deserialize)]
+    #[derive(Debug, Deserialize, Serialize)]
     pub struct AnyType;
     pub type AnyUriType = String;
     pub type Base64BinaryType = String;

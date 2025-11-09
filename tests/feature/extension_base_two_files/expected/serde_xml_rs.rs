@@ -1,6 +1,6 @@
 pub mod other {
     use serde::{Deserialize, Serialize};
-    #[derive(Debug, Serialize, Deserialize)]
+    #[derive(Debug, Deserialize, Serialize)]
     pub struct BarType {
         #[serde(rename = "other:b")]
         pub b: i32,
@@ -11,7 +11,7 @@ pub mod other {
 pub mod tns {
     use serde::{Deserialize, Serialize};
     pub type Foo = FooType;
-    #[derive(Debug, Serialize, Deserialize)]
+    #[derive(Debug, Deserialize, Serialize)]
     pub struct FooType {
         #[serde(rename = "tns:a")]
         pub a: f32,

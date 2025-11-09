@@ -1,11 +1,11 @@
 use serde::{Deserialize, Serialize};
 pub type Foo = FooType;
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct FooType {
     #[serde(rename = "tns:Messages")]
     pub messages: FooTypeMessagesType,
 }
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct FooTypeMessagesType {
     #[serde(rename = "tns:aa")]
     pub aa: i32,

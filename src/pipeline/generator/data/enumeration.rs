@@ -71,6 +71,7 @@ impl EnumerationMetaVariant {
                 let s_name = self.ident.name.to_string();
                 let b_name = Literal::byte_string(s_name.as_bytes());
                 let target_type = type_ref.map(|x| x.path.clone());
+                let extra_attributes = Vec::new();
 
                 Some(Ok(EnumerationTypeVariant {
                     meta: self,
@@ -78,6 +79,7 @@ impl EnumerationMetaVariant {
                     b_name,
                     variant_ident,
                     target_type,
+                    extra_attributes,
                 }))
             }
         }
