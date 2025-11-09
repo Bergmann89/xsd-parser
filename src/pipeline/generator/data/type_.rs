@@ -30,11 +30,13 @@ impl<'types> DataType<'types> {
             M::ComplexType(x) => D::Complex(ComplexData::new_complex(x, ctx, meta.form())?),
             M::SimpleType(x) => D::Simple(SimpleData::new(x, ctx)?),
         };
+        let extra_attributes = Vec::new();
 
         Ok(Self {
             meta,
             derive,
             variant,
+            extra_attributes,
         })
     }
 }

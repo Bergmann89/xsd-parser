@@ -45,6 +45,7 @@ impl UnionMetaType {
             .types
             .naming
             .format_variant_ident(&self.type_.name, self.display_name.as_deref());
+        let extra_attributes = Vec::new();
 
         Ok(UnionTypeVariant {
             meta: self,
@@ -52,6 +53,7 @@ impl UnionMetaType {
             b_name,
             target_type,
             variant_ident,
+            extra_attributes,
         })
     }
 }

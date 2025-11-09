@@ -3,12 +3,12 @@ use serde::{Deserialize, Serialize};
 use std::sync::LazyLock;
 use xsd_parser::quick_xml::ValidateError;
 pub type Foo = FooType;
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct FooType {
     #[serde(rename = "Enum")]
     pub enum_: EnumType,
 }
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub enum EnumType {
     #[serde(rename = "OFF")]
     Off,

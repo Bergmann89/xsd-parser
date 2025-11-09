@@ -1,15 +1,16 @@
 use core::ops::{Deref, DerefMut};
-use regex::Regex;
 use serde::{Deserialize, Serialize};
-use std::sync::LazyLock;
-use xsd_parser::quick_xml::ValidateError;
 pub type Foo = FooType;
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Clone, Debug, Default, Deserialize, Eq, PartialEq, Serialize)]
 pub struct FooType {
-    #[serde(rename = "tns:Enum")]
-    pub enum_: EnumType,
+    #[serde(rename = "tns:Min")]
+    pub min: i32,
+    #[serde(rename = "tns:Max")]
+    pub max: i32,
+    #[serde(rename = "tns:Value")]
+    pub value: EnumType,
 }
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Clone, Debug, Default, Deserialize, Eq, PartialEq, Serialize)]
 pub struct EnumType {
     #[serde(rename = "#text")]
     pub value: EnumTypeValue,
@@ -35,24 +36,13 @@ impl DerefMut for EnumType {
         &mut self.value
     }
 }
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Clone, Debug, Default, Deserialize, Eq, PartialEq, Serialize)]
 pub enum EnumTypeValue {
     #[serde(rename = "OFF")]
     Off,
     #[serde(rename = "ON")]
     On,
+    #[default]
     #[serde(rename = "AUTO")]
     Auto,
-}
-impl EnumType {
-    pub fn validate_str(s: &str) -> Result<(), ValidateError> {
-        static PATTERNS: LazyLock<[Regex; 1usize]> =
-            LazyLock::new(|| [Regex::new("[A-Z]+").unwrap()]);
-        for pattern in PATTERNS.iter() {
-            if !pattern.is_match(s) {
-                return Err(ValidateError::Pattern(pattern.as_str()));
-            }
-        }
-        Ok(())
-    }
 }

@@ -1,11 +1,11 @@
 use serde::{Deserialize, Serialize};
 pub type Foo = FooType;
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct FooType {
     #[serde(rename = "$value")]
     pub content: Vec<FooTypeContent>,
 }
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub enum FooTypeContent {
     #[serde(rename = "Bar")]
     Bar(String),

@@ -202,6 +202,9 @@ pub struct ComplexDataContent<'types> {
 
     /// Actual target type of the content.
     pub target_type: PathData,
+
+    /// Additional attributes that will be added to the element.
+    pub extra_attributes: Vec<TokenStream>,
 }
 
 /// Contains the details of an XML element.
@@ -240,6 +243,9 @@ pub struct ComplexDataElement<'types> {
     /// `true` if the target type of this element is dynamic,
     /// `false` otherwise.
     pub target_is_dynamic: bool,
+
+    /// Additional attributes that will be added to the element.
+    pub extra_attributes: Vec<TokenStream>,
 }
 
 /// Origin of a [`ComplexDataElement`].
@@ -280,6 +286,9 @@ pub struct ComplexDataAttribute<'types> {
 
     /// The default value of the attribute.
     pub default_value: Option<TokenStream>,
+
+    /// Additional attributes that will be added to the attribute.
+    pub extra_attributes: Vec<TokenStream>,
 }
 
 impl<'types> ComplexBase<'types> {

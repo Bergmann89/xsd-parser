@@ -1,4 +1,4 @@
-#[derive(Debug, Default, Eq, PartialEq, Hash)]
+#[derive(Debug, Default, Eq, Hash, PartialEq)]
 pub struct FooType {
     pub a: Option<String>,
 }

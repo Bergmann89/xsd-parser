@@ -1,12 +1,12 @@
 use core::ops::{Deref, DerefMut};
 use serde::{Deserialize, Serialize};
 pub type Urlset = UrlsetType;
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct UrlsetType {
     #[serde(default, rename = "url")]
     pub url: Vec<TUrlType>,
 }
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct TUrlType {
     #[serde(rename = "loc")]
     pub loc: String,
@@ -17,7 +17,7 @@ pub struct TUrlType {
     #[serde(default, rename = "priority")]
     pub priority: Option<f64>,
 }
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct TChangeFreqType {
     #[serde(rename = "#text")]
     pub value: TChangeFreqValue,
@@ -43,7 +43,7 @@ impl DerefMut for TChangeFreqType {
         &mut self.value
     }
 }
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub enum TChangeFreqValue {
     #[serde(rename = "always")]
     Always,

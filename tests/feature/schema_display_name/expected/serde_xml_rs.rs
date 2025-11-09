@@ -1,7 +1,7 @@
 pub mod example {
     use serde::{Deserialize, Serialize};
     pub type Foo = FooType;
-    #[derive(Debug, Serialize, Deserialize)]
+    #[derive(Debug, Deserialize, Serialize)]
     pub struct FooType {
         #[serde(rename = "Once")]
         pub once: i32,

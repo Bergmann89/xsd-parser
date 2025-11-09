@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 pub type DirectoryReq = DirectoryReqType;
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct DirectoryReqType {
     #[serde(rename = "@version")]
     pub version: String,
@@ -11,14 +11,14 @@ pub struct DirectoryReqType {
     #[serde(rename = "Signature")]
     pub signature: SignatureType,
 }
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct DirectoryReqMerchantType {
     #[serde(rename = "merchantID")]
     pub merchant_id: String,
     #[serde(rename = "subID")]
     pub sub_id: usize,
 }
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct SignatureType {
     #[serde(default, rename = "@Id")]
     pub id: Option<String>,
@@ -31,7 +31,7 @@ pub struct SignatureType {
     #[serde(default, rename = "Object")]
     pub object: Vec<ObjectType>,
 }
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct SignedInfoType {
     #[serde(default, rename = "@Id")]
     pub id: Option<String>,
@@ -42,21 +42,21 @@ pub struct SignedInfoType {
     #[serde(default, rename = "Reference")]
     pub reference: Vec<ReferenceType>,
 }
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct SignatureValueType {
     #[serde(default, rename = "@Id")]
     pub id: Option<String>,
     #[serde(default, rename = "$text")]
     pub content: String,
 }
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct KeyInfoType {
     #[serde(default, rename = "@Id")]
     pub id: Option<String>,
     #[serde(rename = "$value")]
     pub content: Vec<KeyInfoTypeContent>,
 }
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub enum KeyInfoTypeContent {
     #[serde(rename = "KeyName")]
     KeyName(String),
@@ -73,7 +73,7 @@ pub enum KeyInfoTypeContent {
     #[serde(rename = "MgmtData")]
     MgmtData(String),
 }
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct ObjectType {
     #[serde(default, rename = "@Id")]
     pub id: Option<String>,
@@ -82,19 +82,19 @@ pub struct ObjectType {
     #[serde(default, rename = "@Encoding")]
     pub encoding: Option<String>,
 }
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct CanonicalizationMethodType {
     #[serde(rename = "@Algorithm")]
     pub algorithm: String,
 }
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct SignatureMethodType {
     #[serde(rename = "@Algorithm")]
     pub algorithm: String,
     #[serde(default, rename = "HMACOutputLength")]
     pub hmac_output_length: Option<i32>,
 }
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct ReferenceType {
     #[serde(default, rename = "@Id")]
     pub id: Option<String>,
@@ -109,19 +109,19 @@ pub struct ReferenceType {
     #[serde(rename = "DigestValue")]
     pub digest_value: String,
 }
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct KeyValueType {
     #[serde(rename = "$value")]
     pub content: KeyValueTypeContent,
 }
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub enum KeyValueTypeContent {
     #[serde(rename = "DSAKeyValue")]
     DsaKeyValue(DsaKeyValueType),
     #[serde(rename = "RSAKeyValue")]
     RsaKeyValue(RsaKeyValueType),
 }
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct RetrievalMethodType {
     #[serde(default, rename = "@URI")]
     pub uri: Option<String>,
@@ -130,12 +130,12 @@ pub struct RetrievalMethodType {
     #[serde(default, rename = "Transforms")]
     pub transforms: Option<TransformsType>,
 }
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct X509DataType {
     #[serde(rename = "$value")]
     pub content: Vec<X509DataTypeContent>,
 }
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub enum X509DataTypeContent {
     #[serde(rename = "X509IssuerSerial")]
     X509IssuerSerial(X509IssuerSerialType),
@@ -148,39 +148,39 @@ pub enum X509DataTypeContent {
     #[serde(rename = "X509CRL")]
     X509Crl(String),
 }
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct PgpDataType {
     #[serde(rename = "$value")]
     pub content: Vec<PgpDataTypeContent>,
 }
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub enum PgpDataTypeContent {
     #[serde(rename = "PGPKeyID")]
     PgpKeyId(String),
     #[serde(rename = "PGPKeyPacket")]
     PgpKeyPacket(String),
 }
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct SpkiDataType {
     #[serde(rename = "$value")]
     pub content: Vec<SpkiDataTypeContent>,
 }
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct SpkiDataTypeContent {
     #[serde(rename = "SPKISexp")]
     pub spki_sexp: String,
 }
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct TransformsType {
     #[serde(default, rename = "Transform")]
     pub transform: Vec<TransformType>,
 }
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct DigestMethodType {
     #[serde(rename = "@Algorithm")]
     pub algorithm: String,
 }
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct DsaKeyValueType {
     #[serde(default, rename = "P")]
     pub p: Option<String>,
@@ -197,28 +197,28 @@ pub struct DsaKeyValueType {
     #[serde(default, rename = "PgenCounter")]
     pub pgen_counter: Option<String>,
 }
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct RsaKeyValueType {
     #[serde(rename = "Modulus")]
     pub modulus: String,
     #[serde(rename = "Exponent")]
     pub exponent: String,
 }
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct X509IssuerSerialType {
     #[serde(rename = "X509IssuerName")]
     pub x509_issuer_name: String,
     #[serde(rename = "X509SerialNumber")]
     pub x509_serial_number: i32,
 }
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct TransformType {
     #[serde(rename = "@Algorithm")]
     pub algorithm: String,
     #[serde(default, rename = "$value")]
     pub content: Vec<TransformTypeContent>,
 }
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub enum TransformTypeContent {
     #[serde(rename = "XPath")]
     XPath(String),

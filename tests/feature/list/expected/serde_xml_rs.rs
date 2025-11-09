@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 pub type Foo = FooType;
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct FooType {
     #[serde(default = "FooType::default_a_list", rename = "@a-list")]
     pub a_list: ListType,
@@ -11,6 +11,6 @@ impl FooType {
         ListType(Vec::new())
     }
 }
-#[derive(Debug, Serialize, Deserialize, Default)]
+#[derive(Debug, Default, Deserialize, Serialize)]
 pub struct ListType(pub Vec<StringType>);
 pub type StringType = String;

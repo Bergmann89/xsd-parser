@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 pub type Foo = FooType;
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub enum FooType {
     #[serde(rename = "tns:Once")]
     Once(i32),

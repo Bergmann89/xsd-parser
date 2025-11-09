@@ -1,12 +1,12 @@
 use serde::{Deserialize, Serialize};
 use xsd_parser::xml::Text;
 pub type MixedChoiceList = MixedChoiceListType;
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct MixedChoiceListType {
     #[serde(default, rename = "$value")]
     pub content: Vec<MixedChoiceListTypeContent>,
 }
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub enum MixedChoiceListTypeContent {
     #[serde(rename = "Fuu")]
     Fuu(i32),
