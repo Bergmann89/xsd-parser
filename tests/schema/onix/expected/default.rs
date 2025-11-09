@@ -21290,6 +21290,7 @@ pub mod onix {
             Self::validate_value(&inner)?;
             Ok(Self(inner))
         }
+        #[must_use]
         pub fn into_inner(self) -> Vec<List91> {
             self.0
         }
@@ -21333,6 +21334,7 @@ pub mod onix {
             Self::validate_value(&inner)?;
             Ok(Self(inner))
         }
+        #[must_use]
         pub fn into_inner(self) -> Vec<List49> {
             self.0
         }

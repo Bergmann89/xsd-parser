@@ -37,6 +37,7 @@ impl TestType {
         Self::validate_value(&inner)?;
         Ok(Self(inner))
     }
+    #[must_use]
     pub fn into_inner(self) -> ::std::string::String {
         self.0
     }

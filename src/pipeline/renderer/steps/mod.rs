@@ -124,6 +124,7 @@ impl SimpleData<'_> {
                     Ok(Self(inner))
                 }
 
+                #[must_use]
                 pub fn into_inner(self) -> #target_type {
                     self.0
                 }

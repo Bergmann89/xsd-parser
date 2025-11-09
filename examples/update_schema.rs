@@ -107,8 +107,12 @@ fn main() -> Result<(), Error> {
     //   -  Instructs the generator to produce code for the xs:schema element and
     //      its dependent types.
     //   -  Derives the generated types from `Debug`, `Clone`, `Eq`, and `PartialEq`.
-    config.generator.flags =
-        GeneratorFlags::all() - GeneratorFlags::USE_MODULES - GeneratorFlags::MIXED_TYPE_SUPPORT;
+    config.generator.flags = GeneratorFlags::all()
+        - GeneratorFlags::USE_MODULES
+        - GeneratorFlags::MIXED_TYPE_SUPPORT
+        - GeneratorFlags::NILLABLE_TYPE_SUPPORT
+        - GeneratorFlags::BUILD_IN_ABSOLUTE_PATHS
+        - GeneratorFlags::ABSOLUTE_PATHS_INSTEAD_USINGS;
     config.generator.type_postfix.element = String::default();
     config.generator.type_postfix.element_type = String::default();
     config.generator.generate = Generate::Types(vec![IdentTriple::from((

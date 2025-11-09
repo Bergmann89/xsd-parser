@@ -6,8 +6,7 @@ use std::ops::{Deref, DerefMut};
 use crate::models::{
     schema::{
         xs::{
-            BasicNamespaceListType, FormChoiceType, NamespaceListType, ProcessContentsType,
-            QnameListType,
+            FormChoiceType, NamespaceListType, NotNamespaceType, ProcessContentsType, QnameListType,
         },
         MaxOccurs, MinOccurs,
     },
@@ -76,7 +75,7 @@ pub struct AnyMeta {
     pub id: Option<String>,
     pub namespace: Option<NamespaceListType>,
     pub not_q_name: Option<QnameListType>,
-    pub not_namespace: Option<BasicNamespaceListType>,
+    pub not_namespace: Option<NotNamespaceType>,
     pub process_contents: ProcessContentsType,
 }
 
