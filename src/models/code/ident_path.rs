@@ -22,7 +22,7 @@ use crate::models::{
 /// The identifier path contains two parts:
 /// - The identifier itself, which is more or less the name of the object to identify, and
 /// - the path of the module the object is provided at.
-#[derive(Debug, Clone, Eq, PartialEq)]
+#[derive(Debug, Clone, Hash, Eq, PartialEq, Ord, PartialOrd)]
 pub struct IdentPath {
     path: Option<ModulePath>,
     ident: Ident2,
@@ -33,7 +33,7 @@ pub struct IdentPath {
 ///
 /// The module path is a chain ob module names separated by a double colon like
 /// `std::str`. It is used to identify modules inside the code.
-#[derive(Default, Debug, Clone, Eq, PartialEq)]
+#[derive(Default, Debug, Clone, Hash, Eq, PartialEq, Ord, PartialOrd)]
 pub struct ModulePath(pub SmallVec<[Ident2; 2]>);
 
 /// Error that is raised by [`IdentPath`] if parsing the value from string failed.
