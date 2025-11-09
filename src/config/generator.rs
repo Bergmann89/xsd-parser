@@ -35,9 +35,9 @@ pub struct GeneratorConfig {
 
     /// Type to use to store unstructured `xs:anyAttribute` attributes.
     ///
-    /// See [`Generator::any_attribute_type`](crate::Generator::any_attribute_type)
+    /// See [`Generator::any_attributes_type`](crate::Generator::any_attributes_type)
     /// for details.
-    pub any_attribute_type: Option<String>,
+    pub any_attributes_type: Option<String>,
 }
 
 impl Default for GeneratorConfig {
@@ -50,7 +50,7 @@ impl Default for GeneratorConfig {
             generate: Generate::Named,
             flags: GeneratorFlags::empty(),
             any_type: None,
-            any_attribute_type: None,
+            any_attributes_type: None,
         }
     }
 }

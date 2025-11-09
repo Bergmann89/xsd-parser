@@ -755,7 +755,7 @@ impl<'types> ComplexDataAttribute<'types> {
 
         let (target_type, default_value) = match &meta.variant {
             AttributeMetaVariant::Any(_) => {
-                let Some(type_) = ctx.any_attribute_type.as_ref() else {
+                let Some(type_) = ctx.any_attributes_type.as_ref() else {
                     *allow_any_attribute = true;
 
                     return Ok(None);
