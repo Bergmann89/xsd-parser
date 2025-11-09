@@ -254,6 +254,10 @@ pub fn exec_optimizer(config: OptimizerConfig, types: MetaTypes) -> Result<MetaT
         optimizer = optimizer.use_unrestricted_base_type(unrestricted_base);
     }
 
+    exec!(
+        REPLACE_XS_ANY_TYPE_WITH_ANY_ELEMENT,
+        replace_xs_any_type_with_any_element
+    );
     exec!(REMOVE_EMPTY_ENUM_VARIANTS, remove_empty_enum_variants);
     exec!(REMOVE_EMPTY_ENUMS, remove_empty_enums);
     exec!(

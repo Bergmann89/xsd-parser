@@ -115,5 +115,10 @@ bitflags! {
         ///
         /// See [`simplify_mixed_types`](crate::Optimizer::simplify_mixed_types) for details.
         const SIMPLIFY_MIXED_TYPES = 1 << 15;
+
+        /// Wether to replace the `xs:anyType` with [`crate::xml::AnyElement`] or not.
+        ///
+        /// See [`replace_xs_any_type_with_any_element`](crate::Optimizer::replace_xs_any_type_with_any_element) for details.
+        const REPLACE_XS_ANY_TYPE_WITH_ANY_ELEMENT = 1 << 16;
     }
 }
