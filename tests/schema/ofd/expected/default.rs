@@ -1194,6 +1194,7 @@ pub mod version {
 }
 pub mod xs {
     use num::{BigInt, BigUint};
+    use xsd_parser::xml::Text;
     #[derive(Debug, Default)]
     pub struct EntitiesXType(pub Vec<String>);
     pub type EntityXType = EntitiesXType;
@@ -1208,7 +1209,9 @@ pub mod xs {
     pub type QNameXType = String;
     pub type AnySimpleTypeXType = String;
     #[derive(Debug)]
-    pub struct AnyTypeXType;
+    pub struct AnyTypeXType {
+        pub text: Option<Text>,
+    }
     pub type AnyUriXType = String;
     pub type Base64BinaryXType = String;
     pub type BooleanXType = bool;

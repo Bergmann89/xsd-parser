@@ -28,6 +28,7 @@ mod state;
 
 use std::collections::btree_map::{Entry, VacantEntry};
 use std::collections::{BTreeMap, VecDeque};
+use std::str::FromStr;
 
 use quote::format_ident;
 use tracing::instrument;
@@ -422,12 +423,20 @@ impl<'types> State<'types> {
                 PathData::from_path(path)
             }
             MetaTypeVariant::Custom(x) => {
-                let path = IdentPath::from_ident(format_ident!("{}", x.name()));
-
                 if let Some(using) = x.include() {
-                    PathData::from_path(path).with_using(using)
+                    if meta.check_generator_flags(GeneratorFlags::ABSOLUTE_PATHS_INSTEAD_USINGS) {
+                        let path = IdentPath::from_str(using)?;
+
+                        PathData::from_path(path)
+                    } else {
+                        let path = IdentPath::from_ident(format_ident!("{}", x.name()));
+
+                        PathData::from_path(path).with_using(using)
+                    }
                 } else {
-                    PathData::from_path(path.with_path(None))
+                    let path = IdentPath::from_ident(format_ident!("{}", x.name())).with_path(None);
+
+                    PathData::from_path(path)
                 }
             }
             _ => {

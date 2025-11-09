@@ -58516,9 +58516,12 @@ pub mod version {
 pub mod xs {
     use num::{BigInt, BigUint};
     use std::borrow::Cow;
-    use xsd_parser::quick_xml::{
-        DeserializeBytes, DeserializeReader, Error, SerializeBytes, WithDeserializer,
-        WithSerializer,
+    use xsd_parser::{
+        quick_xml::{
+            DeserializeBytes, DeserializeReader, Error, SerializeBytes, WithDeserializer,
+            WithSerializer,
+        },
+        xml::Text,
     };
     #[derive(Debug, Default)]
     pub struct EntitiesXType(pub Vec<String>);
@@ -58564,7 +58567,9 @@ pub mod xs {
     pub type QNameXType = String;
     pub type AnySimpleTypeXType = String;
     #[derive(Debug)]
-    pub struct AnyTypeXType;
+    pub struct AnyTypeXType {
+        pub text: Option<Text>,
+    }
     impl WithSerializer for AnyTypeXType {
         type Serializer<'x> = quick_xml_serialize::AnyTypeXTypeSerializer<'x>;
         fn serializer<'ser>(
@@ -58618,17 +58623,24 @@ pub mod xs {
     pub type UnsignedShortXType = u16;
     pub mod quick_xml_deserialize {
         use core::mem::replace;
-        use xsd_parser::quick_xml::{
-            BytesStart, DeserializeReader, Deserializer, DeserializerArtifact, DeserializerEvent,
-            DeserializerOutput, DeserializerResult, Error, Event,
+        use xsd_parser::{
+            quick_xml::{
+                BytesStart, DeserializeReader, Deserializer, DeserializerArtifact,
+                DeserializerEvent, DeserializerOutput, DeserializerResult, ElementHandlerOutput,
+                Error, ErrorKind, Event, RawByteStr, WithDeserializer,
+            },
+            xml::Text,
         };
         #[derive(Debug)]
         pub struct AnyTypeXTypeDeserializer {
+            text: Option<Text>,
             state__: Box<AnyTypeXTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum AnyTypeXTypeDeserializerState {
             Init__,
+            Text(Option<<Text as WithDeserializer>::Deserializer>),
+            Done__,
             Unknown__,
         }
         impl AnyTypeXTypeDeserializer {
@@ -58637,6 +58649,7 @@ pub mod xs {
                 R: DeserializeReader,
             {
                 Ok(Self {
+                    text: None,
                     state__: Box::new(AnyTypeXTypeDeserializerState::Init__),
                 })
             }
@@ -58648,7 +58661,66 @@ pub mod xs {
             where
                 R: DeserializeReader,
             {
+                use AnyTypeXTypeDeserializerState as S;
+                match state {
+                    S::Text(Some(deserializer)) => self.store_text(deserializer.finish(reader)?)?,
+                    _ => (),
+                }
                 Ok(())
+            }
+            fn store_text(&mut self, value: Text) -> Result<(), Error> {
+                if self.text.is_some() {
+                    Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(b"text")))?;
+                }
+                self.text = Some(value);
+                Ok(())
+            }
+            fn handle_text<'de, R>(
+                &mut self,
+                reader: &R,
+                output: DeserializerOutput<'de, Text>,
+                fallback: &mut Option<AnyTypeXTypeDeserializerState>,
+            ) -> Result<ElementHandlerOutput<'de>, Error>
+            where
+                R: DeserializeReader,
+            {
+                let DeserializerOutput {
+                    artifact,
+                    event,
+                    allow_any,
+                } = output;
+                if artifact.is_none() {
+                    fallback.get_or_insert(AnyTypeXTypeDeserializerState::Text(None));
+                    *self.state__ = AnyTypeXTypeDeserializerState::Done__;
+                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                }
+                if let Some(fallback) = fallback.take() {
+                    self.finish_state(reader, fallback)?;
+                }
+                Ok(match artifact {
+                    DeserializerArtifact::None => unreachable!(),
+                    DeserializerArtifact::Data(data) => {
+                        self.store_text(data)?;
+                        *self.state__ = AnyTypeXTypeDeserializerState::Done__;
+                        ElementHandlerOutput::from_event(event, allow_any)
+                    }
+                    DeserializerArtifact::Deserializer(deserializer) => {
+                        let ret = ElementHandlerOutput::from_event(event, allow_any);
+                        match &ret {
+                            ElementHandlerOutput::Continue { .. } => {
+                                fallback.get_or_insert(AnyTypeXTypeDeserializerState::Text(Some(
+                                    deserializer,
+                                )));
+                                *self.state__ = AnyTypeXTypeDeserializerState::Done__;
+                            }
+                            ElementHandlerOutput::Break { .. } => {
+                                *self.state__ =
+                                    AnyTypeXTypeDeserializerState::Text(Some(deserializer));
+                            }
+                        }
+                        ret
+                    }
+                })
             }
         }
         impl<'de> Deserializer<'de, super::AnyTypeXType> for AnyTypeXTypeDeserializer {
@@ -58669,19 +58741,69 @@ pub mod xs {
             where
                 R: DeserializeReader,
             {
-                if let Event::End(_) = &event {
-                    Ok(DeserializerOutput {
-                        artifact: DeserializerArtifact::Data(self.finish(reader)?),
-                        event: DeserializerEvent::None,
-                        allow_any: false,
-                    })
-                } else {
-                    Ok(DeserializerOutput {
-                        artifact: DeserializerArtifact::Deserializer(self),
-                        event: DeserializerEvent::Break(event),
-                        allow_any: true,
-                    })
+                use AnyTypeXTypeDeserializerState as S;
+                let mut event = event;
+                let mut fallback = None;
+                let mut allow_any_element = false;
+                let (event, allow_any) = loop {
+                    let state = replace(&mut *self.state__, S::Unknown__);
+                    event = match (state, event) {
+                        (S::Text(Some(deserializer)), event) => {
+                            let output = deserializer.next(reader, event)?;
+                            match self.handle_text(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
+                                }
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                            }
+                        }
+                        (_, Event::End(_)) => {
+                            if let Some(fallback) = fallback.take() {
+                                self.finish_state(reader, fallback)?;
+                            }
+                            return Ok(DeserializerOutput {
+                                artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                                event: DeserializerEvent::None,
+                                allow_any: false,
+                            });
+                        }
+                        (S::Init__, event) => {
+                            allow_any_element = true;
+                            fallback.get_or_insert(S::Init__);
+                            *self.state__ = AnyTypeXTypeDeserializerState::Text(None);
+                            event
+                        }
+                        (S::Text(None), event) => {
+                            let output =
+                                <Text as WithDeserializer>::Deserializer::init(reader, event)?;
+                            match self.handle_text(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
+                                }
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                            }
+                        }
+                        (S::Done__, event) => {
+                            fallback.get_or_insert(S::Done__);
+                            break (DeserializerEvent::Continue(event), true);
+                        }
+                        (S::Unknown__, _) => unreachable!(),
+                    }
+                };
+                if let Some(fallback) = fallback {
+                    *self.state__ = fallback;
                 }
+                Ok(DeserializerOutput {
+                    artifact: DeserializerArtifact::Deserializer(self),
+                    event,
+                    allow_any,
+                })
             }
             fn finish<R>(mut self, reader: &R) -> Result<super::AnyTypeXType, Error>
             where
@@ -58689,12 +58811,15 @@ pub mod xs {
             {
                 let state = replace(&mut *self.state__, AnyTypeXTypeDeserializerState::Unknown__);
                 self.finish_state(reader, state)?;
-                Ok(super::AnyTypeXType {})
+                Ok(super::AnyTypeXType { text: self.text })
             }
         }
     }
     pub mod quick_xml_serialize {
-        use xsd_parser::quick_xml::{BytesStart, Error, Event};
+        use xsd_parser::{
+            quick_xml::{BytesEnd, BytesStart, Error, Event, IterSerializer},
+            xml::Text,
+        };
         #[derive(Debug)]
         pub struct AnyTypeXTypeSerializer<'ser> {
             pub(super) value: &'ser super::AnyTypeXType,
@@ -58705,6 +58830,8 @@ pub mod xs {
         #[derive(Debug)]
         pub(super) enum AnyTypeXTypeSerializerState<'ser> {
             Init__,
+            Text(IterSerializer<'ser, Option<&'ser Text>, Text>),
+            End__,
             Done__,
             Phantom__(&'ser ()),
         }
@@ -58713,7 +58840,11 @@ pub mod xs {
                 loop {
                     match &mut *self.state {
                         AnyTypeXTypeSerializerState::Init__ => {
-                            *self.state = AnyTypeXTypeSerializerState::Done__;
+                            *self.state = AnyTypeXTypeSerializerState::Text(IterSerializer::new(
+                                self.value.text.as_ref(),
+                                Some(""),
+                                false,
+                            ));
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
                                 bytes.push_attribute((
@@ -58721,7 +58852,15 @@ pub mod xs {
                                     &super::super::NS_UNNAMED_2[..],
                                 ));
                             }
-                            return Ok(Some(Event::Empty(bytes)));
+                            return Ok(Some(Event::Start(bytes)));
+                        }
+                        AnyTypeXTypeSerializerState::Text(x) => match x.next().transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => *self.state = AnyTypeXTypeSerializerState::End__,
+                        },
+                        AnyTypeXTypeSerializerState::End__ => {
+                            *self.state = AnyTypeXTypeSerializerState::Done__;
+                            return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         AnyTypeXTypeSerializerState::Done__ => return Ok(None),
                         AnyTypeXTypeSerializerState::Phantom__(_) => unreachable!(),

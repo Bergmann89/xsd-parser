@@ -5,8 +5,8 @@ use crate::config::{RendererFlags, TypedefMode};
 use crate::models::{
     data::{
         ComplexData, ComplexDataAttribute, ComplexDataContent, ComplexDataElement, ComplexDataEnum,
-        ComplexDataStruct, CustomData, DynamicData, EnumerationData, EnumerationTypeVariant,
-        Occurs, ReferenceData, SimpleData, UnionData, UnionTypeVariant,
+        ComplexDataStruct, DynamicData, EnumerationData, EnumerationTypeVariant, Occurs,
+        ReferenceData, SimpleData, UnionData, UnionTypeVariant,
     },
     meta::{MetaType, MetaTypeVariant},
     schema::xs::Use,
@@ -30,8 +30,7 @@ impl RenderStep for SerdeXmlRsV8TypesRenderStep {
 
     fn render_type(&mut self, ctx: &mut Context<'_, '_>) {
         match &ctx.data.variant {
-            DataTypeVariant::BuildIn(_) => (),
-            DataTypeVariant::Custom(x) => x.render_type_serde_xml_rs_v8(ctx),
+            DataTypeVariant::BuildIn(_) | DataTypeVariant::Custom(_) => (),
             DataTypeVariant::Union(x) => x.render_type_serde_xml_rs_v8(ctx),
             DataTypeVariant::Dynamic(x) => x.render_type_serde_xml_rs_v8(ctx),
             DataTypeVariant::Reference(x) => x.render_type_serde_xml_rs_v8(ctx),
@@ -39,18 +38,6 @@ impl RenderStep for SerdeXmlRsV8TypesRenderStep {
             DataTypeVariant::Simple(x) => x.render_type_serde_xml_rs_v8(ctx),
             DataTypeVariant::Complex(x) => x.render_type_serde_xml_rs_v8(ctx),
         }
-    }
-}
-
-/* CustomType */
-
-impl CustomData<'_> {
-    fn render_type_serde_xml_rs_v8(&self, ctx: &mut Context<'_, '_>) {
-        let Some(include) = self.meta.include() else {
-            return;
-        };
-
-        ctx.add_usings([include]);
     }
 }
 
