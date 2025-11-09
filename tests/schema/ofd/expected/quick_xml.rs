@@ -4571,9 +4571,12 @@ pub mod custom_tags {
 }
 pub mod definition {
     use std::borrow::Cow;
-    use xsd_parser::quick_xml::{
-        DeserializeBytes, DeserializeReader, Error, ErrorKind, RawByteStr, SerializeBytes,
-        WithDeserializer, WithSerializer,
+    use xsd_parser::{
+        quick_xml::{
+            DeserializeBytes, DeserializeReader, Error, ErrorKind, RawByteStr, SerializeBytes,
+            WithDeserializer, WithSerializer,
+        },
+        xml::AnyElement,
     };
     #[derive(Debug)]
     pub struct CtActionXType {
@@ -4926,7 +4929,7 @@ pub mod definition {
         OuadraticBezier(CtRegionAreaOuadraticBezierXElementType),
         CubicBezier(CtRegionAreaCubicBezierXElementType),
         Arc(CtRegionAreaArcXElementType),
-        Close(super::xs::AnyTypeXType),
+        Close(AnyElement),
     }
     impl WithSerializer for CtRegionAreaXElementType {
         type Serializer<'x> = quick_xml_serialize::CtRegionAreaXElementTypeSerializer<'x>;
@@ -5117,10 +5120,13 @@ pub mod definition {
     }
     pub mod quick_xml_deserialize {
         use core::mem::replace;
-        use xsd_parser::quick_xml::{
-            filter_xmlns_attributes, BytesStart, DeserializeReader, Deserializer,
-            DeserializerArtifact, DeserializerEvent, DeserializerOutput, DeserializerResult,
-            ElementHandlerOutput, Error, ErrorKind, Event, RawByteStr, WithDeserializer,
+        use xsd_parser::{
+            quick_xml::{
+                filter_xmlns_attributes, BytesStart, DeserializeReader, Deserializer,
+                DeserializerArtifact, DeserializerEvent, DeserializerOutput, DeserializerResult,
+                ElementHandlerOutput, Error, ErrorKind, Event, RawByteStr, WithDeserializer,
+            },
+            xml::AnyElement,
         };
         #[derive(Debug)]
         pub struct CtActionXTypeDeserializer {
@@ -7969,7 +7975,7 @@ pub mod definition {
         }
         #[derive(Debug)]
         pub enum CtRegionAreaXElementTypeContentDeserializerState {
-            Init__ , Move (Option < super :: CtRegionAreaLineXElementType > , Option << super :: CtRegionAreaLineXElementType as WithDeserializer > :: Deserializer >) , Line (Option < super :: CtRegionAreaLineXElementType > , Option << super :: CtRegionAreaLineXElementType as WithDeserializer > :: Deserializer >) , OuadraticBezier (Option < super :: CtRegionAreaOuadraticBezierXElementType > , Option << super :: CtRegionAreaOuadraticBezierXElementType as WithDeserializer > :: Deserializer >) , CubicBezier (Option < super :: CtRegionAreaCubicBezierXElementType > , Option << super :: CtRegionAreaCubicBezierXElementType as WithDeserializer > :: Deserializer >) , Arc (Option < super :: CtRegionAreaArcXElementType > , Option << super :: CtRegionAreaArcXElementType as WithDeserializer > :: Deserializer >) , Close (Option < super :: super :: xs :: AnyTypeXType > , Option << super :: super :: xs :: AnyTypeXType as WithDeserializer > :: Deserializer >) , Done__ (super :: CtRegionAreaXElementTypeContent) , Unknown__ , }
+            Init__ , Move (Option < super :: CtRegionAreaLineXElementType > , Option << super :: CtRegionAreaLineXElementType as WithDeserializer > :: Deserializer >) , Line (Option < super :: CtRegionAreaLineXElementType > , Option << super :: CtRegionAreaLineXElementType as WithDeserializer > :: Deserializer >) , OuadraticBezier (Option < super :: CtRegionAreaOuadraticBezierXElementType > , Option << super :: CtRegionAreaOuadraticBezierXElementType as WithDeserializer > :: Deserializer >) , CubicBezier (Option < super :: CtRegionAreaCubicBezierXElementType > , Option << super :: CtRegionAreaCubicBezierXElementType as WithDeserializer > :: Deserializer >) , Arc (Option < super :: CtRegionAreaArcXElementType > , Option << super :: CtRegionAreaArcXElementType as WithDeserializer > :: Deserializer >) , Close (Option < AnyElement > , Option << AnyElement as WithDeserializer > :: Deserializer >) , Done__ (super :: CtRegionAreaXElementTypeContent) , Unknown__ , }
         impl CtRegionAreaXElementTypeContentDeserializer {
             fn find_suitable<'de, R>(
                 &mut self,
@@ -8040,7 +8046,8 @@ pub mod definition {
                         reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"Close")
                     ) {
-                        let output = < super :: super :: xs :: AnyTypeXType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                        let output =
+                            <AnyElement as WithDeserializer>::Deserializer::init(reader, event)?;
                         return self.handle_close(
                             reader,
                             Default::default(),
@@ -8180,8 +8187,8 @@ pub mod definition {
                 Ok(())
             }
             fn store_close(
-                values: &mut Option<super::super::xs::AnyTypeXType>,
-                value: super::super::xs::AnyTypeXType,
+                values: &mut Option<AnyElement>,
+                value: AnyElement,
             ) -> Result<(), Error> {
                 if values.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
@@ -8540,8 +8547,8 @@ pub mod definition {
             fn handle_close<'de, R>(
                 &mut self,
                 reader: &R,
-                mut values: Option<super::super::xs::AnyTypeXType>,
-                output: DeserializerOutput<'de, super::super::xs::AnyTypeXType>,
+                mut values: Option<AnyElement>,
+                output: DeserializerOutput<'de, AnyElement>,
                 fallback: &mut Option<CtRegionAreaXElementTypeContentDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -9394,9 +9401,12 @@ pub mod definition {
         }
     }
     pub mod quick_xml_serialize {
-        use xsd_parser::quick_xml::{
-            write_attrib, write_attrib_opt, BytesEnd, BytesStart, Error, Event, IterSerializer,
-            WithSerializer,
+        use xsd_parser::{
+            quick_xml::{
+                write_attrib, write_attrib_opt, BytesEnd, BytesStart, Error, Event, IterSerializer,
+                WithSerializer,
+            },
+            xml::AnyElement,
         };
         #[derive(Debug)]
         pub struct CtActionXTypeSerializer<'ser> {
@@ -10175,7 +10185,7 @@ pub mod definition {
                 <super::CtRegionAreaCubicBezierXElementType as WithSerializer>::Serializer<'ser>,
             ),
             Arc(<super::CtRegionAreaArcXElementType as WithSerializer>::Serializer<'ser>),
-            Close(<super::super::xs::AnyTypeXType as WithSerializer>::Serializer<'ser>),
+            Close(<AnyElement as WithSerializer>::Serializer<'ser>),
             Done__,
             Phantom__(&'ser ()),
         }
@@ -18261,7 +18271,10 @@ pub mod document {
     }
 }
 pub mod extensions {
-    use xsd_parser::quick_xml::{Error, WithDeserializer, WithSerializer};
+    use xsd_parser::{
+        quick_xml::{Error, WithDeserializer, WithSerializer},
+        xml::AnyElement,
+    };
     #[derive(Debug)]
     pub struct CtExtensionXType {
         pub app_name: String,
@@ -18274,7 +18287,7 @@ pub mod extensions {
     #[derive(Debug)]
     pub enum CtExtensionXTypeContent {
         Property(CtExtensionPropertyXElementType),
-        Data(super::xs::AnyTypeXType),
+        Data(AnyElement),
         ExtendData(String),
     }
     impl WithSerializer for CtExtensionXType {
@@ -18368,11 +18381,14 @@ pub mod extensions {
     }
     pub mod quick_xml_deserialize {
         use core::mem::replace;
-        use xsd_parser::quick_xml::{
-            filter_xmlns_attributes, BytesStart, ContentDeserializer, DeserializeReader,
-            Deserializer, DeserializerArtifact, DeserializerEvent, DeserializerOutput,
-            DeserializerResult, ElementHandlerOutput, Error, ErrorKind, Event, RawByteStr,
-            WithDeserializer,
+        use xsd_parser::{
+            quick_xml::{
+                filter_xmlns_attributes, BytesStart, ContentDeserializer, DeserializeReader,
+                Deserializer, DeserializerArtifact, DeserializerEvent, DeserializerOutput,
+                DeserializerResult, ElementHandlerOutput, Error, ErrorKind, Event, RawByteStr,
+                WithDeserializer,
+            },
+            xml::AnyElement,
         };
         #[derive(Debug)]
         pub struct CtExtensionXTypeDeserializer {
@@ -18606,8 +18622,8 @@ pub mod extensions {
                 Option<<super::CtExtensionPropertyXElementType as WithDeserializer>::Deserializer>,
             ),
             Data(
-                Option<super::super::xs::AnyTypeXType>,
-                Option<<super::super::xs::AnyTypeXType as WithDeserializer>::Deserializer>,
+                Option<AnyElement>,
+                Option<<AnyElement as WithDeserializer>::Deserializer>,
             ),
             ExtendData(
                 Option<String>,
@@ -18643,7 +18659,8 @@ pub mod extensions {
                         reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"Data")
                     ) {
-                        let output = < super :: super :: xs :: AnyTypeXType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                        let output =
+                            <AnyElement as WithDeserializer>::Deserializer::init(reader, event)?;
                         return self.handle_data(
                             reader,
                             Default::default(),
@@ -18723,10 +18740,7 @@ pub mod extensions {
                 *values = Some(value);
                 Ok(())
             }
-            fn store_data(
-                values: &mut Option<super::super::xs::AnyTypeXType>,
-                value: super::super::xs::AnyTypeXType,
-            ) -> Result<(), Error> {
+            fn store_data(values: &mut Option<AnyElement>, value: AnyElement) -> Result<(), Error> {
                 if values.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(b"Data")))?;
                 }
@@ -18809,8 +18823,8 @@ pub mod extensions {
             fn handle_data<'de, R>(
                 &mut self,
                 reader: &R,
-                mut values: Option<super::super::xs::AnyTypeXType>,
-                output: DeserializerOutput<'de, super::super::xs::AnyTypeXType>,
+                mut values: Option<AnyElement>,
+                output: DeserializerOutput<'de, AnyElement>,
                 fallback: &mut Option<CtExtensionXTypeContentDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -19466,9 +19480,12 @@ pub mod extensions {
         }
     }
     pub mod quick_xml_serialize {
-        use xsd_parser::quick_xml::{
-            write_attrib, write_attrib_opt, BytesEnd, BytesStart, Error, Event, IterSerializer,
-            WithSerializer,
+        use xsd_parser::{
+            quick_xml::{
+                write_attrib, write_attrib_opt, BytesEnd, BytesStart, Error, Event, IterSerializer,
+                WithSerializer,
+            },
+            xml::AnyElement,
         };
         #[derive(Debug)]
         pub struct CtExtensionXTypeSerializer<'ser> {
@@ -19551,7 +19568,7 @@ pub mod extensions {
         pub(super) enum CtExtensionXTypeContentSerializerState<'ser> {
             Init__,
             Property(<super::CtExtensionPropertyXElementType as WithSerializer>::Serializer<'ser>),
-            Data(<super::super::xs::AnyTypeXType as WithSerializer>::Serializer<'ser>),
+            Data(<AnyElement as WithSerializer>::Serializer<'ser>),
             ExtendData(<String as WithSerializer>::Serializer<'ser>),
             Done__,
             Phantom__(&'ser ()),
@@ -58516,13 +58533,7 @@ pub mod version {
 pub mod xs {
     use num::{BigInt, BigUint};
     use std::borrow::Cow;
-    use xsd_parser::{
-        quick_xml::{
-            DeserializeBytes, DeserializeReader, Error, SerializeBytes, WithDeserializer,
-            WithSerializer,
-        },
-        xml::Text,
-    };
+    use xsd_parser::quick_xml::{DeserializeBytes, DeserializeReader, Error, SerializeBytes};
     #[derive(Debug, Default)]
     pub struct EntitiesXType(pub Vec<String>);
     impl SerializeBytes for EntitiesXType {
@@ -58566,28 +58577,6 @@ pub mod xs {
     pub type NameXType = String;
     pub type QNameXType = String;
     pub type AnySimpleTypeXType = String;
-    #[derive(Debug)]
-    pub struct AnyTypeXType {
-        pub text: Option<Text>,
-    }
-    impl WithSerializer for AnyTypeXType {
-        type Serializer<'x> = quick_xml_serialize::AnyTypeXTypeSerializer<'x>;
-        fn serializer<'ser>(
-            &'ser self,
-            name: Option<&'ser str>,
-            is_root: bool,
-        ) -> Result<Self::Serializer<'ser>, Error> {
-            Ok(quick_xml_serialize::AnyTypeXTypeSerializer {
-                value: self,
-                state: Box::new(quick_xml_serialize::AnyTypeXTypeSerializerState::Init__),
-                name: name.unwrap_or("anyType"),
-                is_root,
-            })
-        }
-    }
-    impl WithDeserializer for AnyTypeXType {
-        type Deserializer = quick_xml_deserialize::AnyTypeXTypeDeserializer;
-    }
     pub type AnyUriXType = String;
     pub type Base64BinaryXType = String;
     pub type BooleanXType = bool;
@@ -58621,265 +58610,4 @@ pub mod xs {
     pub type UnsignedIntXType = u32;
     pub type UnsignedLongXType = u64;
     pub type UnsignedShortXType = u16;
-    pub mod quick_xml_deserialize {
-        use core::mem::replace;
-        use xsd_parser::{
-            quick_xml::{
-                BytesStart, DeserializeReader, Deserializer, DeserializerArtifact,
-                DeserializerEvent, DeserializerOutput, DeserializerResult, ElementHandlerOutput,
-                Error, ErrorKind, Event, RawByteStr, WithDeserializer,
-            },
-            xml::Text,
-        };
-        #[derive(Debug)]
-        pub struct AnyTypeXTypeDeserializer {
-            text: Option<Text>,
-            state__: Box<AnyTypeXTypeDeserializerState>,
-        }
-        #[derive(Debug)]
-        enum AnyTypeXTypeDeserializerState {
-            Init__,
-            Text(Option<<Text as WithDeserializer>::Deserializer>),
-            Done__,
-            Unknown__,
-        }
-        impl AnyTypeXTypeDeserializer {
-            fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-            where
-                R: DeserializeReader,
-            {
-                Ok(Self {
-                    text: None,
-                    state__: Box::new(AnyTypeXTypeDeserializerState::Init__),
-                })
-            }
-            fn finish_state<R>(
-                &mut self,
-                reader: &R,
-                state: AnyTypeXTypeDeserializerState,
-            ) -> Result<(), Error>
-            where
-                R: DeserializeReader,
-            {
-                use AnyTypeXTypeDeserializerState as S;
-                match state {
-                    S::Text(Some(deserializer)) => self.store_text(deserializer.finish(reader)?)?,
-                    _ => (),
-                }
-                Ok(())
-            }
-            fn store_text(&mut self, value: Text) -> Result<(), Error> {
-                if self.text.is_some() {
-                    Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(b"text")))?;
-                }
-                self.text = Some(value);
-                Ok(())
-            }
-            fn handle_text<'de, R>(
-                &mut self,
-                reader: &R,
-                output: DeserializerOutput<'de, Text>,
-                fallback: &mut Option<AnyTypeXTypeDeserializerState>,
-            ) -> Result<ElementHandlerOutput<'de>, Error>
-            where
-                R: DeserializeReader,
-            {
-                let DeserializerOutput {
-                    artifact,
-                    event,
-                    allow_any,
-                } = output;
-                if artifact.is_none() {
-                    fallback.get_or_insert(AnyTypeXTypeDeserializerState::Text(None));
-                    *self.state__ = AnyTypeXTypeDeserializerState::Done__;
-                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                }
-                if let Some(fallback) = fallback.take() {
-                    self.finish_state(reader, fallback)?;
-                }
-                Ok(match artifact {
-                    DeserializerArtifact::None => unreachable!(),
-                    DeserializerArtifact::Data(data) => {
-                        self.store_text(data)?;
-                        *self.state__ = AnyTypeXTypeDeserializerState::Done__;
-                        ElementHandlerOutput::from_event(event, allow_any)
-                    }
-                    DeserializerArtifact::Deserializer(deserializer) => {
-                        let ret = ElementHandlerOutput::from_event(event, allow_any);
-                        match &ret {
-                            ElementHandlerOutput::Continue { .. } => {
-                                fallback.get_or_insert(AnyTypeXTypeDeserializerState::Text(Some(
-                                    deserializer,
-                                )));
-                                *self.state__ = AnyTypeXTypeDeserializerState::Done__;
-                            }
-                            ElementHandlerOutput::Break { .. } => {
-                                *self.state__ =
-                                    AnyTypeXTypeDeserializerState::Text(Some(deserializer));
-                            }
-                        }
-                        ret
-                    }
-                })
-            }
-        }
-        impl<'de> Deserializer<'de, super::AnyTypeXType> for AnyTypeXTypeDeserializer {
-            fn init<R>(
-                reader: &R,
-                event: Event<'de>,
-            ) -> DeserializerResult<'de, super::AnyTypeXType>
-            where
-                R: DeserializeReader,
-            {
-                reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
-            }
-            fn next<R>(
-                mut self,
-                reader: &R,
-                event: Event<'de>,
-            ) -> DeserializerResult<'de, super::AnyTypeXType>
-            where
-                R: DeserializeReader,
-            {
-                use AnyTypeXTypeDeserializerState as S;
-                let mut event = event;
-                let mut fallback = None;
-                let mut allow_any_element = false;
-                let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state__, S::Unknown__);
-                    event = match (state, event) {
-                        (S::Text(Some(deserializer)), event) => {
-                            let output = deserializer.next(reader, event)?;
-                            match self.handle_text(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
-                            }
-                        }
-                        (_, Event::End(_)) => {
-                            if let Some(fallback) = fallback.take() {
-                                self.finish_state(reader, fallback)?;
-                            }
-                            return Ok(DeserializerOutput {
-                                artifact: DeserializerArtifact::Data(self.finish(reader)?),
-                                event: DeserializerEvent::None,
-                                allow_any: false,
-                            });
-                        }
-                        (S::Init__, event) => {
-                            allow_any_element = true;
-                            fallback.get_or_insert(S::Init__);
-                            *self.state__ = AnyTypeXTypeDeserializerState::Text(None);
-                            event
-                        }
-                        (S::Text(None), event) => {
-                            let output =
-                                <Text as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_text(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
-                            }
-                        }
-                        (S::Done__, event) => {
-                            fallback.get_or_insert(S::Done__);
-                            break (DeserializerEvent::Continue(event), true);
-                        }
-                        (S::Unknown__, _) => unreachable!(),
-                    }
-                };
-                if let Some(fallback) = fallback {
-                    *self.state__ = fallback;
-                }
-                Ok(DeserializerOutput {
-                    artifact: DeserializerArtifact::Deserializer(self),
-                    event,
-                    allow_any,
-                })
-            }
-            fn finish<R>(mut self, reader: &R) -> Result<super::AnyTypeXType, Error>
-            where
-                R: DeserializeReader,
-            {
-                let state = replace(&mut *self.state__, AnyTypeXTypeDeserializerState::Unknown__);
-                self.finish_state(reader, state)?;
-                Ok(super::AnyTypeXType { text: self.text })
-            }
-        }
-    }
-    pub mod quick_xml_serialize {
-        use xsd_parser::{
-            quick_xml::{BytesEnd, BytesStart, Error, Event, IterSerializer},
-            xml::Text,
-        };
-        #[derive(Debug)]
-        pub struct AnyTypeXTypeSerializer<'ser> {
-            pub(super) value: &'ser super::AnyTypeXType,
-            pub(super) state: Box<AnyTypeXTypeSerializerState<'ser>>,
-            pub(super) name: &'ser str,
-            pub(super) is_root: bool,
-        }
-        #[derive(Debug)]
-        pub(super) enum AnyTypeXTypeSerializerState<'ser> {
-            Init__,
-            Text(IterSerializer<'ser, Option<&'ser Text>, Text>),
-            End__,
-            Done__,
-            Phantom__(&'ser ()),
-        }
-        impl<'ser> AnyTypeXTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
-                loop {
-                    match &mut *self.state {
-                        AnyTypeXTypeSerializerState::Init__ => {
-                            *self.state = AnyTypeXTypeSerializerState::Text(IterSerializer::new(
-                                self.value.text.as_ref(),
-                                Some(""),
-                                false,
-                            ));
-                            let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            return Ok(Some(Event::Start(bytes)));
-                        }
-                        AnyTypeXTypeSerializerState::Text(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = AnyTypeXTypeSerializerState::End__,
-                        },
-                        AnyTypeXTypeSerializerState::End__ => {
-                            *self.state = AnyTypeXTypeSerializerState::Done__;
-                            return Ok(Some(Event::End(BytesEnd::new(self.name))));
-                        }
-                        AnyTypeXTypeSerializerState::Done__ => return Ok(None),
-                        AnyTypeXTypeSerializerState::Phantom__(_) => unreachable!(),
-                    }
-                }
-            }
-        }
-        impl<'ser> Iterator for AnyTypeXTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
-                    Ok(Some(event)) => Some(Ok(event)),
-                    Ok(None) => None,
-                    Err(error) => {
-                        *self.state = AnyTypeXTypeSerializerState::Done__;
-                        Some(Err(error))
-                    }
-                }
-            }
-        }
-    }
 }

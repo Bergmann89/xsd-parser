@@ -160,3 +160,20 @@ fn simplify_mixed_types() {
         Config::test_default().with_generator_flags(GeneratorFlags::MIXED_TYPE_SUPPORT),
     );
 }
+
+#[test]
+fn replace_xs_any_type_with_any_element() {
+    optimizer_test_with_config(
+        "tests/optimizer/any_type.xsd",
+        "tests/optimizer/expected0/replace_xs_any_type_with_any_element.rs",
+        "tests/optimizer/expected1/replace_xs_any_type_with_any_element.rs",
+        [(IdentType::Element, "Foo")],
+        OptimizerFlags::REPLACE_XS_ANY_TYPE_WITH_ANY_ELEMENT,
+        Config::test_default()
+            .with_any_support(
+                "xsd_parser::xml::AnyElement",
+                "xsd_parser::xml::AnyAttributes",
+            )
+            .with_generator_flags(GeneratorFlags::MIXED_TYPE_SUPPORT),
+    );
+}

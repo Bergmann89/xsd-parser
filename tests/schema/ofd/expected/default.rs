@@ -91,6 +91,7 @@ pub mod custom_tags {
     }
 }
 pub mod definition {
+    use xsd_parser::xml::AnyElement;
     #[derive(Debug)]
     pub struct CtActionXType {
         pub event: CtActionEventXType,
@@ -186,7 +187,7 @@ pub mod definition {
         OuadraticBezier(CtRegionAreaOuadraticBezierXElementType),
         CubicBezier(CtRegionAreaCubicBezierXElementType),
         Arc(CtRegionAreaArcXElementType),
-        Close(super::xs::AnyTypeXType),
+        Close(AnyElement),
     }
     #[derive(Debug)]
     pub struct CtActionGotoBookmarkXElementType {
@@ -360,6 +361,7 @@ pub mod document {
     }
 }
 pub mod extensions {
+    use xsd_parser::xml::AnyElement;
     #[derive(Debug)]
     pub struct CtExtensionXType {
         pub app_name: String,
@@ -372,7 +374,7 @@ pub mod extensions {
     #[derive(Debug)]
     pub enum CtExtensionXTypeContent {
         Property(CtExtensionPropertyXElementType),
-        Data(super::xs::AnyTypeXType),
+        Data(AnyElement),
         ExtendData(String),
     }
     pub type Extensions = ExtensionsXElementType;
@@ -1194,7 +1196,6 @@ pub mod version {
 }
 pub mod xs {
     use num::{BigInt, BigUint};
-    use xsd_parser::xml::Text;
     #[derive(Debug, Default)]
     pub struct EntitiesXType(pub Vec<String>);
     pub type EntityXType = EntitiesXType;
@@ -1208,10 +1209,6 @@ pub mod xs {
     pub type NameXType = String;
     pub type QNameXType = String;
     pub type AnySimpleTypeXType = String;
-    #[derive(Debug)]
-    pub struct AnyTypeXType {
-        pub text: Option<Text>,
-    }
     pub type AnyUriXType = String;
     pub type Base64BinaryXType = String;
     pub type BooleanXType = bool;

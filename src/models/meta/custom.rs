@@ -10,6 +10,7 @@ pub struct CustomMeta {
     name: String,
     include: Option<String>,
     default: Option<Box<dyn CustomDefaultImpl>>,
+    allow_any: bool,
 }
 
 impl CustomMeta {
@@ -23,6 +24,7 @@ impl CustomMeta {
             name: name.into(),
             include: None,
             default: None,
+            allow_any: false,
         }
     }
 
@@ -67,6 +69,20 @@ impl CustomMeta {
 
         self
     }
+
+    /// Returns `true` if this type contains `xs:any` elements, `false` otherwise.
+    #[must_use]
+    pub fn allow_any(&self) -> bool {
+        self.allow_any
+    }
+
+    /// Set wether this custom type contains`xs:any` elements or not.
+    #[must_use]
+    pub fn with_allow_any(mut self, value: bool) -> Self {
+        self.allow_any = value;
+
+        self
+    }
 }
 
 impl Clone for CustomMeta {
@@ -78,6 +94,7 @@ impl Clone for CustomMeta {
                 .default
                 .as_ref()
                 .map(|x| CustomDefaultImpl::clone(&**x)),
+            allow_any: self.allow_any,
         }
     }
 }
@@ -88,6 +105,7 @@ impl Debug for CustomMeta {
             .field("name", &self.name)
             .field("include", &self.include)
             .field("default", &self.default.is_some())
+            .field("allow_any", &self.allow_any)
             .finish()
     }
 }

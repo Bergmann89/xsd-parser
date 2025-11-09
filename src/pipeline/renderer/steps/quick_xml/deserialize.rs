@@ -2736,6 +2736,7 @@ impl ComplexDataElement<'_> {
                     content: Some(content),
                     ..
                 })) => walk(types, visit, content),
+                Some(MetaTypeVariant::Custom(x)) => x.allow_any(),
                 _ => false,
             }
         }

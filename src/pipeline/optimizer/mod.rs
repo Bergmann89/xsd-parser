@@ -22,6 +22,7 @@ mod merge_choice_cardinality;
 mod merge_enum_unions;
 mod misc;
 mod remove_duplicates;
+mod replace_xs_any_type_with_any_element;
 mod resolve_typedefs;
 mod simplify_mixed_types;
 mod unrestricted_base;
