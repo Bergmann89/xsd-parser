@@ -648,7 +648,7 @@ pub mod quick_xml_serialize {
                         None => {
                             *self.state = AnyTypeSerializerState::Any(IterSerializer::new(
                                 &self.value.any[..],
-                                Some("any"),
+                                None,
                                 false,
                             ))
                         }

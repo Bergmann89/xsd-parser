@@ -124,10 +124,9 @@ impl<'el> WithSerializer for Element<'el> {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
-        let _name = name;
         let _is_root = is_root;
 
-        Ok(ElementSerializer::new(self))
+        Ok(ElementSerializer::new(self, name))
     }
 }
 
@@ -138,16 +137,20 @@ impl WithDeserializer for Element<'static> {
 #[derive(Debug)]
 pub enum ElementSerializer<'ser, 'el> {
     Start {
+        name: Option<&'ser str>,
         element: &'ser Element<'el>,
     },
     End {
+        name: Option<&'ser str>,
         element: &'ser Element<'el>,
     },
     NextValue {
+        name: Option<&'ser str>,
         element: &'ser Element<'el>,
         values: Iter<'ser, Value<'el>>,
     },
     SubElement {
+        name: Option<&'ser str>,
         element: &'ser Element<'el>,
         values: Iter<'ser, Value<'el>>,
         serializer: Box<ElementSerializer<'ser, 'el>>,
@@ -156,21 +159,21 @@ pub enum ElementSerializer<'ser, 'el> {
 }
 
 impl<'ser, 'el> ElementSerializer<'ser, 'el> {
-    fn new(element: &'ser Element<'el>) -> Self {
-        Self::Start { element }
+    fn new(element: &'ser Element<'el>, name: Option<&'ser str>) -> Self {
+        Self::Start { name, element }
     }
 
     fn next_item(&mut self) -> Result<Option<Event<'ser>>, Error> {
         loop {
             match replace(self, Self::Done) {
-                Self::Start { element } => {
-                    let name = from_utf8(&element.name)?;
+                Self::Start { name, element } => {
+                    let element_name = name.map_or_else(|| from_utf8(&element.name), Ok)?;
                     let attributes = element.attributes.iter().map(|(k, v)| Attribute {
                         key: QName(k),
                         value: Cow::Borrowed(&v.0),
                     });
 
-                    let mut start = BytesStart::new(name);
+                    let mut start = BytesStart::new(element_name);
                     start.extend_attributes(attributes);
 
                     let event = if element.values.is_empty() {
@@ -178,58 +181,84 @@ impl<'ser, 'el> ElementSerializer<'ser, 'el> {
                     } else {
                         let values = element.values.iter();
 
-                        *self = Self::NextValue { element, values };
+                        *self = Self::NextValue {
+                            name,
+                            element,
+                            values,
+                        };
 
                         Event::Start(start)
                     };
 
                     return Ok(Some(event));
                 }
-                Self::End { element } => {
-                    let name = from_utf8(&element.name)?;
-                    let end = BytesEnd::new(name);
+                Self::End { name, element } => {
+                    let element_name = name.map_or_else(|| from_utf8(&element.name), Ok)?;
+                    let end = BytesEnd::new(element_name);
                     let event = Event::End(end);
 
                     return Ok(Some(event));
                 }
                 Self::NextValue {
+                    name,
                     element,
                     mut values,
                 } => match values.next() {
-                    None => *self = Self::End { element },
+                    None => *self = Self::End { name, element },
                     Some(Value::Element(sub)) => {
-                        let serializer = Box::new(Self::new(sub));
+                        let serializer = Box::new(Self::new(sub, None));
 
                         *self = Self::SubElement {
+                            name,
                             element,
                             values,
                             serializer,
                         };
                     }
                     Some(Value::Comment(comment)) => {
-                        *self = Self::NextValue { element, values };
+                        *self = Self::NextValue {
+                            name,
+                            element,
+                            values,
+                        };
 
                         return Ok(Some(Event::Comment(comment.borrow())));
                     }
                     Some(Value::CData(cdata)) => {
-                        *self = Self::NextValue { element, values };
+                        *self = Self::NextValue {
+                            name,
+                            element,
+                            values,
+                        };
 
                         return Ok(Some(Event::CData(cdata.borrow())));
                     }
                     Some(Value::Text(text)) => {
-                        *self = Self::NextValue { element, values };
+                        *self = Self::NextValue {
+                            name,
+                            element,
+                            values,
+                        };
 
                         return Ok(Some(Event::Text(text.borrow())));
                     }
                 },
                 Self::SubElement {
+                    name,
                     element,
                     values,
                     mut serializer,
                 } => match serializer.next() {
-                    None => *self = Self::NextValue { element, values },
+                    None => {
+                        *self = Self::NextValue {
+                            name,
+                            element,
+                            values,
+                        }
+                    }
                     Some(event) => {
                         *self = Self::SubElement {
+                            name,
                             element,
                             values,
                             serializer,
@@ -467,7 +496,7 @@ mod tests {
     #[test]
     fn serialize() {
         let mut root = Element::new();
-        root.name = b"names".into();
+        root.name = b"root".into();
 
         root.values.push(Value::Text(BytesText::new("\n    ")));
 
@@ -490,7 +519,7 @@ mod tests {
 
         let mut buffer = Vec::new();
         let mut writer = Writer::new(&mut buffer);
-        root.serialize("", &mut writer).unwrap();
+        root.serialize("names", &mut writer).unwrap();
 
         let xml = from_utf8(&buffer).unwrap();
         assert_eq!(xml, XML.trim());

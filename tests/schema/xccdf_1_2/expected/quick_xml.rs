@@ -34680,7 +34680,7 @@ pub mod cdf {
                         DcStatusTypeSerializerState::Init__ => {
                             *self.state = DcStatusTypeSerializerState::Any(IterSerializer::new(
                                 &self.value.any[..],
-                                Some("any6"),
+                                None,
                                 false,
                             ));
                             let mut bytes = BytesStart::new(self.name);
@@ -34887,7 +34887,7 @@ pub mod cdf {
                             }
                             super::HtmlTextWithSubTypeContent::Any(x) => {
                                 *self.state = HtmlTextWithSubTypeContentSerializerState::Any(
-                                    WithSerializer::serializer(x, Some("any17"), false)?,
+                                    WithSerializer::serializer(x, None, false)?,
                                 )
                             }
                             super::HtmlTextWithSubTypeContent::Text(x) => {
@@ -34982,16 +34982,16 @@ pub mod cdf {
                             write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
-                        NoticeTypeSerializerState::TextBefore(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => {
-                                *self.state = NoticeTypeSerializerState::Any(IterSerializer::new(
-                                    &self.value.any[..],
-                                    Some("any4"),
-                                    false,
-                                ))
+                        NoticeTypeSerializerState::TextBefore(x) => {
+                            match x.next().transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => {
+                                    *self.state = NoticeTypeSerializerState::Any(
+                                        IterSerializer::new(&self.value.any[..], None, false),
+                                    )
+                                }
                             }
-                        },
+                        }
                         NoticeTypeSerializerState::Any(x) => match x.next().transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = NoticeTypeSerializerState::End__,
@@ -35065,12 +35065,9 @@ pub mod cdf {
                             match x.next().transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
-                                    *self.state =
-                                        ReferenceTypeSerializerState::Any(IterSerializer::new(
-                                            &self.value.any[..],
-                                            Some("any8"),
-                                            false,
-                                        ))
+                                    *self.state = ReferenceTypeSerializerState::Any(
+                                        IterSerializer::new(&self.value.any[..], None, false),
+                                    )
                                 }
                             }
                         }
@@ -35304,7 +35301,7 @@ pub mod cdf {
                         MetadataTypeSerializerState::Init__ => {
                             *self.state = MetadataTypeSerializerState::Any(IterSerializer::new(
                                 &self.value.any[..],
-                                Some("any12"),
+                                None,
                                 false,
                             ));
                             let mut bytes = BytesStart::new(self.name);
@@ -36920,7 +36917,7 @@ pub mod cdf {
                             }
                             super::TestResultTypeContent::Any(x) => {
                                 *self.state = TestResultTypeContentSerializerState::Any(
-                                    WithSerializer::serializer(x, Some("any54"), false)?,
+                                    WithSerializer::serializer(x, None, false)?,
                                 )
                             }
                             super::TestResultTypeContent::Platform(x) => {
@@ -37117,7 +37114,7 @@ pub mod cdf {
                     match &mut *self.state {
                         SignatureTypeSerializerState::Init__ => {
                             *self.state = SignatureTypeSerializerState::Any(
-                                WithSerializer::serializer(&self.value.any, Some("any10"), false)?,
+                                WithSerializer::serializer(&self.value.any, None, false)?,
                             );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
@@ -37852,7 +37849,7 @@ pub mod cdf {
                             }
                             super::WarningTypeContent::Any(x) => {
                                 *self.state = WarningTypeContentSerializerState::Any(
-                                    WithSerializer::serializer(x, Some("any17"), false)?,
+                                    WithSerializer::serializer(x, None, false)?,
                                 )
                             }
                             super::WarningTypeContent::Text(x) => {
@@ -38545,7 +38542,7 @@ pub mod cdf {
                             }
                             super::ProfileNoteTypeContent::Any(x) => {
                                 *self.state = ProfileNoteTypeContentSerializerState::Any(
-                                    WithSerializer::serializer(x, Some("any19"), false)?,
+                                    WithSerializer::serializer(x, None, false)?,
                                 )
                             }
                             super::ProfileNoteTypeContent::Text(x) => {
@@ -38689,7 +38686,7 @@ pub mod cdf {
                             }
                             super::FixTextTypeContent::Any(x) => {
                                 *self.state = FixTextTypeContentSerializerState::Any(
-                                    WithSerializer::serializer(x, Some("any17"), false)?,
+                                    WithSerializer::serializer(x, None, false)?,
                                 )
                             }
                             super::FixTextTypeContent::Text(x) => {
@@ -39880,12 +39877,9 @@ pub mod cdf {
                             match x.next().transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
-                                    *self.state =
-                                        CheckImportTypeSerializerState::Any(IterSerializer::new(
-                                            self.value.any.as_ref(),
-                                            Some("any36"),
-                                            false,
-                                        ))
+                                    *self.state = CheckImportTypeSerializerState::Any(
+                                        IterSerializer::new(self.value.any.as_ref(), None, false),
+                                    )
                                 }
                             }
                         }
@@ -40127,7 +40121,7 @@ pub mod cdf {
                         CheckContentTypeContentSerializerState::Init__ => match self.value {
                             super::CheckContentTypeContent::Any(x) => {
                                 *self.state = CheckContentTypeContentSerializerState::Any(
-                                    WithSerializer::serializer(x, Some("any38"), false)?,
+                                    WithSerializer::serializer(x, None, false)?,
                                 )
                             }
                             super::CheckContentTypeContent::Text(x) => {
