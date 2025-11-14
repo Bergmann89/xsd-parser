@@ -1084,6 +1084,12 @@ impl ComplexDataElement<'_> {
             quote!(false)
         };
 
+        let element_name = self
+            .meta()
+            .is_any()
+            .then(|| quote!(None))
+            .unwrap_or_else(|| quote!(Some(#field_name)));
+
         match self.occurs {
             Occurs::None => crate::unreachable!(),
             Occurs::Single => {
@@ -1092,7 +1098,7 @@ impl ComplexDataElement<'_> {
 
                 quote! {
                     *self.state = #state_ident::#variant_ident(
-                        #with_serializer::serializer(#value, Some(#field_name), #is_root)?
+                        #with_serializer::serializer(#value, #element_name, #is_root)?
                     )
                 }
             }
@@ -1106,7 +1112,7 @@ impl ComplexDataElement<'_> {
                     *self.state = #state_ident::#variant_ident(
                         #iter_serializer::new(
                             #deref_iter::new(#value),
-                            Some(#field_name),
+                            #element_name,
                             #is_root
                         )
                     )
@@ -1120,7 +1126,7 @@ impl ComplexDataElement<'_> {
                     *self.state = #state_ident::#variant_ident(
                         #iter_serializer::new(
                             #value,
-                            Some(#field_name),
+                            #element_name,
                             #is_root
                         )
                     )

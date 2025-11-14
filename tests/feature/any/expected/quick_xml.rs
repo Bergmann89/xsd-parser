@@ -1087,7 +1087,7 @@ pub mod quick_xml_serialize {
                         None => {
                             *self.state = FooTypeSerializerState::Any0(IterSerializer::new(
                                 &self.value.any_0[..],
-                                Some("any4"),
+                                None,
                                 false,
                             ))
                         }
@@ -1107,7 +1107,7 @@ pub mod quick_xml_serialize {
                         None => {
                             *self.state = FooTypeSerializerState::Any1(IterSerializer::new(
                                 &self.value.any_1[..],
-                                Some("any5"),
+                                None,
                                 false,
                             ))
                         }
@@ -1221,7 +1221,7 @@ pub mod quick_xml_serialize {
                         }
                         super::ChoiceTypeContent::Any(x) => {
                             *self.state = ChoiceTypeContentSerializerState::Any(
-                                WithSerializer::serializer(x, Some("any2"), false)?,
+                                WithSerializer::serializer(x, None, false)?,
                             )
                         }
                     },

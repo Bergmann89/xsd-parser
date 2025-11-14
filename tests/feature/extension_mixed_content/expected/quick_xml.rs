@@ -530,7 +530,7 @@ pub mod quick_xml_serialize {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state = AttributeValueTypeSerializerState::Any(
-                                    IterSerializer::new(&self.value.any[..], Some("any4"), false),
+                                    IterSerializer::new(&self.value.any[..], None, false),
                                 )
                             }
                         }
