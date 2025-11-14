@@ -377,6 +377,15 @@ pub mod quick_xml_deserialize {
                     event: ::xsd_parser::quick_xml::DeserializerEvent::None,
                     allow_any: false,
                 })
+            } else if matches!(
+                &event,
+                ::xsd_parser::quick_xml::Event::Text(_) | ::xsd_parser::quick_xml::Event::CData(_)
+            ) {
+                Ok(::xsd_parser::quick_xml::DeserializerOutput {
+                    artifact: ::xsd_parser::quick_xml::DeserializerArtifact::Deserializer(self),
+                    event: ::xsd_parser::quick_xml::DeserializerEvent::None,
+                    allow_any: true,
+                })
             } else {
                 Ok(::xsd_parser::quick_xml::DeserializerOutput {
                     artifact: ::xsd_parser::quick_xml::DeserializerArtifact::Deserializer(self),

@@ -32,9 +32,10 @@ enum TypeMode<'types> {
     Simple { simple_type: &'types Ident },
 }
 
-#[derive(Debug, Clone, Copy, Eq, PartialEq)]
+#[derive(Debug, Clone, Copy)]
 enum MixedMode {
     None,
+    Weak,
     Group,
     Complex,
 }
@@ -167,7 +168,7 @@ impl<'types> ComplexData<'types> {
         max_occurs: MaxOccurs,
         attributes: &'types [AttributeMeta],
     ) -> Result<Self, Error> {
-        let base = ComplexBase::new(ctx, false, false, form)?;
+        let base = ComplexBase::new(ctx, false, false, false, form)?;
         let occurs = Occurs::from_occurs(min_occurs, max_occurs);
 
         let content_ref = ctx.get_or_create_type_ref_for_value(simple_type, occurs.is_direct())?;
@@ -213,7 +214,7 @@ impl<'types> ComplexData<'types> {
         elements: &'types [ElementMeta],
     ) -> Result<Self, Error> {
         let has_any = ctx.any_type.is_some() && elements.iter().any(ElementMeta::is_any);
-        let mut base = ComplexBase::new(ctx, has_any, false, form)?;
+        let mut base = ComplexBase::new(ctx, has_any, mixed_mode.is_mixed(), false, form)?;
         let occurs = Occurs::from_occurs(min_occurs, max_occurs);
 
         let mut allow_any_attribute = false;
@@ -233,14 +234,14 @@ impl<'types> ComplexData<'types> {
                     ctx,
                     &mut allow_any,
                     occurs.is_direct(),
-                    mixed_mode != MixedMode::None,
+                    mixed_mode.use_mixed_type(),
                 )
                 .transpose()
             })
             .collect::<Result<Vec<_>, _>>()?;
 
         let flatten = occurs == Occurs::Single
-            && mixed_mode != MixedMode::Complex
+            && !mixed_mode.is_complex()
             && attributes.is_empty()
             && ctx.check_generator_flags(GeneratorFlags::FLATTEN_ENUM_CONTENT);
 
@@ -264,7 +265,12 @@ impl<'types> ComplexData<'types> {
 
         let content_type = has_content.then(|| {
             let type_ = ComplexDataEnum {
-                base: ComplexBase::new_empty(content_ident.clone(), take(&mut base.has_any), true),
+                base: ComplexBase::new_empty(
+                    content_ident.clone(),
+                    mixed_mode.is_mixed(),
+                    take(&mut base.has_any),
+                    true,
+                ),
                 elements: take(&mut elements),
                 allow_any,
                 allow_any_attribute,
@@ -278,7 +284,7 @@ impl<'types> ComplexData<'types> {
 
         let mode = if !has_content {
             StructMode::Empty { allow_any }
-        } else if mixed_mode == MixedMode::Complex {
+        } else if mixed_mode.is_complex() {
             let elements = vec![
                 ComplexDataElement::new_text_before(ctx, "text_before"),
                 ComplexDataElement::new_content(ctx, min_occurs, max_occurs, content_ident),
@@ -332,7 +338,7 @@ impl<'types> ComplexData<'types> {
         elements: &'types [ElementMeta],
     ) -> Result<Self, Error> {
         let has_any = ctx.any_type.is_some() && elements.iter().any(ElementMeta::is_any);
-        let mut base = ComplexBase::new(ctx, has_any, false, form)?;
+        let mut base = ComplexBase::new(ctx, has_any, mixed_mode.is_mixed(), false, form)?;
         let occurs = Occurs::from_occurs(min_occurs, max_occurs);
         let flatten = occurs == Occurs::Single
             && ctx.check_generator_flags(GeneratorFlags::FLATTEN_STRUCT_CONTENT);
@@ -354,12 +360,12 @@ impl<'types> ComplexData<'types> {
                     ctx,
                     &mut allow_any,
                     occurs.is_direct(),
-                    mixed_mode != MixedMode::None,
+                    mixed_mode.use_mixed_type(),
                 )
                 .transpose()
             })
             .collect::<Result<Vec<_>, _>>()?;
-        let text_before = (mixed_mode == MixedMode::Complex).then(|| {
+        let text_before = mixed_mode.is_complex().then(|| {
             ComplexDataElement::new_text_before(
                 ctx,
                 if normal_fields.is_empty() {
@@ -422,7 +428,12 @@ impl<'types> ComplexData<'types> {
             };
 
             let type_ = ComplexDataStruct {
-                base: ComplexBase::new_empty(content_ident.clone(), take(&mut base.has_any), true),
+                base: ComplexBase::new_empty(
+                    content_ident.clone(),
+                    mixed_mode.is_mixed(),
+                    take(&mut base.has_any),
+                    true,
+                ),
                 mode,
 
                 attributes: Vec::new(),
@@ -484,13 +495,14 @@ impl<'types> ComplexBase<'types> {
     fn new(
         ctx: &mut Context<'_, 'types>,
         has_any: bool,
+        is_mixed: bool,
         is_content: bool,
         form: FormChoiceType,
     ) -> Result<Self, Error> {
         let type_ref = ctx.current_type_ref();
         let type_ident = type_ref.path.ident().clone();
 
-        let mut ret = Self::new_empty(type_ident, has_any, is_content);
+        let mut ret = Self::new_empty(type_ident, has_any, is_mixed, is_content);
         ret.tag_name = Some(TagName::new(ctx.types, ctx.ident, form));
         ret.trait_impls = ctx.make_trait_impls()?;
 
@@ -502,7 +514,7 @@ impl<'types> ComplexBase<'types> {
         Ok(ret)
     }
 
-    fn new_empty(type_ident: Ident2, has_any: bool, is_content: bool) -> Self {
+    fn new_empty(type_ident: Ident2, has_any: bool, is_mixed: bool, is_content: bool) -> Self {
         let serializer_ident = format_ident!("{type_ident}Serializer");
         let serializer_state_ident = format_ident!("{type_ident}SerializerState");
 
@@ -516,6 +528,7 @@ impl<'types> ComplexBase<'types> {
             tag_name: None,
             has_any,
 
+            is_mixed,
             is_content,
             is_complex: false,
             is_dynamic: false,
@@ -816,6 +829,8 @@ impl Context<'_, '_> {
     fn mixed_mode(&self, is_mixed: bool, mode: MixedMode) -> MixedMode {
         if is_mixed && self.check_generator_flags(GeneratorFlags::MIXED_TYPE_SUPPORT) {
             mode
+        } else if is_mixed {
+            MixedMode::Weak
         } else {
             MixedMode::None
         }
@@ -854,5 +869,19 @@ impl MetaTypes {
                 .all(|element| check_element(self, element)),
             _ => false,
         }
+    }
+}
+
+impl MixedMode {
+    fn is_mixed(self) -> bool {
+        matches!(self, Self::Weak | Self::Group | Self::Complex)
+    }
+
+    fn use_mixed_type(self) -> bool {
+        matches!(self, Self::Group | Self::Complex)
+    }
+
+    fn is_complex(self) -> bool {
+        matches!(self, Self::Complex)
     }
 }

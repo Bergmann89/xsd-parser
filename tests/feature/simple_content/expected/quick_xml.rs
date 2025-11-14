@@ -187,6 +187,7 @@ pub mod quick_xml_deserialize {
         {
             use FooTypeDeserializerState as S;
             match replace(&mut *self.state__, S::Unknown__) {
+                S::Unknown__ => unreachable!(),
                 S::Init__ => {
                     let output = ContentDeserializer::init(reader, event)?;
                     self.handle_content(reader, output)
@@ -195,7 +196,6 @@ pub mod quick_xml_deserialize {
                     let output = deserializer.next(reader, event)?;
                     self.handle_content(reader, output)
                 }
-                S::Unknown__ => unreachable!(),
             }
         }
         fn finish<R>(mut self, reader: &R) -> Result<super::FooType, Error>

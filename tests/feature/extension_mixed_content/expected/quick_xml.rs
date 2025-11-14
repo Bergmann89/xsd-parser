@@ -321,6 +321,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::TextBefore(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_text_before(reader, output, &mut fallback)? {
@@ -432,7 +433,10 @@ pub mod quick_xml_deserialize {
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
                     }
-                    (S::Unknown__, _) => unreachable!(),
+                    (state, Event::Text(_) | Event::CData(_)) => {
+                        *self.state__ = state;
+                        break (DeserializerEvent::None, false);
+                    }
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);

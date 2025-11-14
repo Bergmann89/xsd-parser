@@ -174,6 +174,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Item(deserializer), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_item(reader, output, &mut fallback)? {
@@ -199,7 +200,6 @@ pub mod quick_xml_deserialize {
                             }
                         }
                     }
-                    (S::Unknown__, _) => unreachable!(),
                 }
             };
             Ok(DeserializerOutput {

@@ -188,6 +188,7 @@ pub mod annotations {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Page(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_page(reader, output, &mut fallback)? {
@@ -236,7 +237,6 @@ pub mod annotations {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -415,6 +415,7 @@ pub mod annotations {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::FileLoc(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_file_loc(reader, output, &mut fallback)? {
@@ -464,7 +465,6 @@ pub mod annotations {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -924,12 +924,7 @@ pub mod annotion {
                                         deserializer,
                                     )),
                                 );
-                                if self.annot.len().saturating_add(1) < 1usize {
-                                    *self.state__ =
-                                        PageAnnotXElementTypeDeserializerState::Annot(None);
-                                } else {
-                                    *self.state__ = PageAnnotXElementTypeDeserializerState::Done__;
-                                }
+                                *self.state__ = PageAnnotXElementTypeDeserializerState::Annot(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
                                 *self.state__ = PageAnnotXElementTypeDeserializerState::Annot(
@@ -967,6 +962,7 @@ pub mod annotion {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Annot(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_annot(reader, output, &mut fallback)? {
@@ -1015,7 +1011,6 @@ pub mod annotion {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -1428,6 +1423,7 @@ pub mod annotion {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Remark(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_remark(reader, output, &mut fallback)? {
@@ -1535,7 +1531,6 @@ pub mod annotion {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -1674,11 +1669,7 @@ pub mod annotion {
                         match &ret {
                             ElementHandlerOutput::Continue { .. } => {
                                 fallback . get_or_insert (PageAnnotAnnotParametersXElementTypeDeserializerState :: Parameter (Some (deserializer))) ;
-                                if self.parameter.len().saturating_add(1) < 1usize {
-                                    * self . state__ = PageAnnotAnnotParametersXElementTypeDeserializerState :: Parameter (None) ;
-                                } else {
-                                    * self . state__ = PageAnnotAnnotParametersXElementTypeDeserializerState :: Done__ ;
-                                }
+                                * self . state__ = PageAnnotAnnotParametersXElementTypeDeserializerState :: Parameter (None) ;
                             }
                             ElementHandlerOutput::Break { .. } => {
                                 * self . state__ = PageAnnotAnnotParametersXElementTypeDeserializerState :: Parameter (Some (deserializer)) ;
@@ -1716,6 +1707,7 @@ pub mod annotion {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Parameter(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_parameter(reader, output, &mut fallback)? {
@@ -1767,7 +1759,6 @@ pub mod annotion {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -1931,6 +1922,7 @@ pub mod annotion {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Content__(deserializer), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_content(reader, output, &mut fallback)? {
@@ -1957,7 +1949,6 @@ pub mod annotion {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::Unknown__, _) => unreachable!(),
                     }
                 };
                 let artifact = DeserializerArtifact::Deserializer(self);
@@ -2078,6 +2069,7 @@ pub mod annotion {
             {
                 use PageAnnotAnnotAppearanceXElementTypeContentDeserializerState as S;
                 match state {
+                    S::Unknown__ => unreachable!(),
                     S::Init__ => Err(ErrorKind::MissingContent.into()),
                     S::TextObject(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
@@ -2144,7 +2136,6 @@ pub mod annotion {
                         )
                     }
                     S::Done__(data) => Ok(data),
-                    S::Unknown__ => unreachable!(),
                 }
             }
             fn store_text_object(
@@ -2530,6 +2521,7 @@ pub mod annotion {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::TextObject(values, Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_text_object(reader, values, output, &mut fallback)? {
@@ -2597,7 +2589,10 @@ pub mod annotion {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::TextObject(values, None), event) => {
+                        (
+                            S::TextObject(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -2611,7 +2606,10 @@ pub mod annotion {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::PathObject(values, None), event) => {
+                        (
+                            S::PathObject(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -2625,7 +2623,10 @@ pub mod annotion {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::ImageObject(values, None), event) => {
+                        (
+                            S::ImageObject(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -2639,7 +2640,10 @@ pub mod annotion {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::CompositeObject(values, None), event) => {
+                        (
+                            S::CompositeObject(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -2658,7 +2662,10 @@ pub mod annotion {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::PageBlock(values, None), event) => {
+                        (
+                            S::PageBlock(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -2676,7 +2683,10 @@ pub mod annotion {
                             *self.state__ = s;
                             break (DeserializerEvent::Continue(event), false);
                         }
-                        (S::Unknown__, _) => unreachable!(),
+                        (state, event) => {
+                            *self.state__ = state;
+                            break (DeserializerEvent::Break(event), false);
+                        }
                     }
                 };
                 let artifact = if matches!(&*self.state__, S::Done__(_)) {
@@ -3279,6 +3289,7 @@ pub mod attachments {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Attachment(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_attachment(reader, output, &mut fallback)? {
@@ -3328,7 +3339,6 @@ pub mod attachments {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -3558,6 +3568,7 @@ pub mod attachments {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::FileLoc(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_file_loc(reader, output, &mut fallback)? {
@@ -3606,7 +3617,6 @@ pub mod attachments {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -3988,6 +3998,7 @@ pub mod custom_tags {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::CustomTag(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_custom_tag(reader, output, &mut fallback)? {
@@ -4037,7 +4048,6 @@ pub mod custom_tags {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -4289,6 +4299,7 @@ pub mod custom_tags {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::SchemaLoc(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_schema_loc(reader, output, &mut fallback)? {
@@ -4367,7 +4378,6 @@ pub mod custom_tags {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -5261,6 +5271,7 @@ pub mod definition {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Content__(deserializer), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_content(reader, output, &mut fallback)? {
@@ -5287,7 +5298,6 @@ pub mod definition {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::Unknown__, _) => unreachable!(),
                     }
                 };
                 let artifact = DeserializerArtifact::Deserializer(self);
@@ -5442,6 +5452,7 @@ pub mod definition {
             {
                 use CtActionXTypeContentDeserializerState as S;
                 match state {
+                    S::Unknown__ => unreachable!(),
                     S::Init__ => Err(ErrorKind::MissingContent.into()),
                     S::Region(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
@@ -5498,7 +5509,6 @@ pub mod definition {
                         )?))
                     }
                     S::Done__(data) => Ok(data),
-                    S::Unknown__ => unreachable!(),
                 }
             }
             fn store_region(
@@ -5960,6 +5970,7 @@ pub mod definition {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Region(values, Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_region(reader, values, output, &mut fallback)? {
@@ -6031,7 +6042,7 @@ pub mod definition {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::Region(values, None), event) => {
+                        (S::Region(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -6045,7 +6056,7 @@ pub mod definition {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::Goto(values, None), event) => {
+                        (S::Goto(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -6059,7 +6070,7 @@ pub mod definition {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::Uri(values, None), event) => {
+                        (S::Uri(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -6073,7 +6084,7 @@ pub mod definition {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::GotoA(values, None), event) => {
+                        (S::GotoA(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -6087,7 +6098,7 @@ pub mod definition {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::Sound(values, None), event) => {
+                        (S::Sound(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -6101,7 +6112,7 @@ pub mod definition {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::Movie(values, None), event) => {
+                        (S::Movie(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -6119,7 +6130,10 @@ pub mod definition {
                             *self.state__ = s;
                             break (DeserializerEvent::Continue(event), false);
                         }
-                        (S::Unknown__, _) => unreachable!(),
+                        (state, event) => {
+                            *self.state__ = state;
+                            break (DeserializerEvent::Break(event), false);
+                        }
                     }
                 };
                 let artifact = if matches!(&*self.state__, S::Done__(_)) {
@@ -6607,6 +6621,7 @@ pub mod definition {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::PhysicalBox(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_physical_box(reader, output, &mut fallback)? {
@@ -6742,7 +6757,6 @@ pub mod definition {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -6863,11 +6877,7 @@ pub mod definition {
                                 fallback.get_or_insert(CtRegionXTypeDeserializerState::Area(Some(
                                     deserializer,
                                 )));
-                                if self.area.len().saturating_add(1) < 1usize {
-                                    *self.state__ = CtRegionXTypeDeserializerState::Area(None);
-                                } else {
-                                    *self.state__ = CtRegionXTypeDeserializerState::Done__;
-                                }
+                                *self.state__ = CtRegionXTypeDeserializerState::Area(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
                                 *self.state__ =
@@ -6904,6 +6914,7 @@ pub mod definition {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Area(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_area(reader, output, &mut fallback)? {
@@ -6952,7 +6963,6 @@ pub mod definition {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -7062,6 +7072,7 @@ pub mod definition {
             {
                 use CtActionGotoXElementTypeDeserializerState as S;
                 match state {
+                    S::Unknown__ => unreachable!(),
                     S::Init__ => Err(ErrorKind::MissingContent.into()),
                     S::Dest(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
@@ -7082,7 +7093,6 @@ pub mod definition {
                         ))
                     }
                     S::Done__(data) => Ok(data),
-                    S::Unknown__ => unreachable!(),
                 }
             }
             fn store_dest(
@@ -7256,6 +7266,7 @@ pub mod definition {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Dest(values, Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_dest(reader, values, output, &mut fallback)? {
@@ -7291,7 +7302,7 @@ pub mod definition {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::Dest(values, None), event) => {
+                        (S::Dest(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -7305,7 +7316,10 @@ pub mod definition {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::Bookmark(values, None), event) => {
+                        (
+                            S::Bookmark(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -7323,7 +7337,10 @@ pub mod definition {
                             *self.state__ = s;
                             break (DeserializerEvent::Continue(event), false);
                         }
-                        (S::Unknown__, _) => unreachable!(),
+                        (state, event) => {
+                            *self.state__ = state;
+                            break (DeserializerEvent::Break(event), false);
+                        }
                     }
                 };
                 let artifact = if matches!(&*self.state__, S::Done__(_)) {
@@ -7918,6 +7935,7 @@ pub mod definition {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Content__(deserializer), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_content(reader, output, &mut fallback)? {
@@ -7944,7 +7962,6 @@ pub mod definition {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::Unknown__, _) => unreachable!(),
                     }
                 };
                 let artifact = DeserializerArtifact::Deserializer(self);
@@ -8070,6 +8087,7 @@ pub mod definition {
             {
                 use CtRegionAreaXElementTypeContentDeserializerState as S;
                 match state {
+                    S::Unknown__ => unreachable!(),
                     S::Init__ => Err(ErrorKind::MissingContent.into()),
                     S::Move(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
@@ -8129,7 +8147,6 @@ pub mod definition {
                         ))
                     }
                     S::Done__(data) => Ok(data),
-                    S::Unknown__ => unreachable!(),
                 }
             }
             fn store_move_(
@@ -8654,6 +8671,7 @@ pub mod definition {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Move(values, Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_move_(reader, values, output, &mut fallback)? {
@@ -8730,7 +8748,7 @@ pub mod definition {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::Move(values, None), event) => {
+                        (S::Move(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -8744,7 +8762,7 @@ pub mod definition {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::Line(values, None), event) => {
+                        (S::Line(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -8758,7 +8776,10 @@ pub mod definition {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::OuadraticBezier(values, None), event) => {
+                        (
+                            S::OuadraticBezier(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -8777,7 +8798,10 @@ pub mod definition {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::CubicBezier(values, None), event) => {
+                        (
+                            S::CubicBezier(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -8791,7 +8815,7 @@ pub mod definition {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::Arc(values, None), event) => {
+                        (S::Arc(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -8805,7 +8829,7 @@ pub mod definition {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::Close(values, None), event) => {
+                        (S::Close(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -8823,7 +8847,10 @@ pub mod definition {
                             *self.state__ = s;
                             break (DeserializerEvent::Continue(event), false);
                         }
-                        (S::Unknown__, _) => unreachable!(),
+                        (state, event) => {
+                            *self.state__ = state;
+                            break (DeserializerEvent::Break(event), false);
+                        }
                     }
                 };
                 let artifact = if matches!(&*self.state__, S::Done__(_)) {
@@ -11284,6 +11311,7 @@ pub mod document {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Dest(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_dest(reader, output, &mut fallback)? {
@@ -11332,7 +11360,6 @@ pub mod document {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -11587,6 +11614,7 @@ pub mod document {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Actions(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_actions(reader, output, &mut fallback)? {
@@ -11664,7 +11692,6 @@ pub mod document {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -12277,6 +12304,7 @@ pub mod document {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Edit(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_edit(reader, output, &mut fallback)? {
@@ -12528,7 +12556,6 @@ pub mod document {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -12689,6 +12716,7 @@ pub mod document {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Content__(deserializer), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_content(reader, output, &mut fallback)? {
@@ -12715,7 +12743,6 @@ pub mod document {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::Unknown__, _) => unreachable!(),
                     }
                 };
                 let artifact = DeserializerArtifact::Deserializer(self);
@@ -12908,6 +12935,7 @@ pub mod document {
             {
                 use CtVPreferencesXTypeContentDeserializerState as S;
                 match state {
+                    S::Unknown__ => unreachable!(),
                     S::Init__ => Err(ErrorKind::MissingContent.into()),
                     S::PageMode(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
@@ -12985,7 +13013,6 @@ pub mod document {
                         ))
                     }
                     S::Done__(data) => Ok(data),
-                    S::Unknown__ => unreachable!(),
                 }
             }
             fn store_page_mode(
@@ -13634,6 +13661,7 @@ pub mod document {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::PageMode(values, Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_page_mode(reader, values, output, &mut fallback)? {
@@ -13728,7 +13756,10 @@ pub mod document {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::PageMode(values, None), event) => {
+                        (
+                            S::PageMode(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -13742,7 +13773,10 @@ pub mod document {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::PageLayout(values, None), event) => {
+                        (
+                            S::PageLayout(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -13756,7 +13790,10 @@ pub mod document {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::TabDisplay(values, None), event) => {
+                        (
+                            S::TabDisplay(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -13770,7 +13807,10 @@ pub mod document {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::HideToolbar(values, None), event) => {
+                        (
+                            S::HideToolbar(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -13784,7 +13824,10 @@ pub mod document {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::HideMenubar(values, None), event) => {
+                        (
+                            S::HideMenubar(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -13798,7 +13841,10 @@ pub mod document {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::HideWindowUi(values, None), event) => {
+                        (
+                            S::HideWindowUi(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -13817,7 +13863,10 @@ pub mod document {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::ZoomMode(values, None), event) => {
+                        (
+                            S::ZoomMode(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -13831,7 +13880,7 @@ pub mod document {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::Zoom(values, None), event) => {
+                        (S::Zoom(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -13849,7 +13898,10 @@ pub mod document {
                             *self.state__ = s;
                             break (DeserializerEvent::Continue(event), false);
                         }
-                        (S::Unknown__, _) => unreachable!(),
+                        (state, event) => {
+                            *self.state__ = state;
+                            break (DeserializerEvent::Break(event), false);
+                        }
                     }
                 };
                 let artifact = if matches!(&*self.state__, S::Done__(_)) {
@@ -14679,6 +14731,7 @@ pub mod document {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::CommonData(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_common_data(reader, output, &mut fallback)? {
@@ -15017,7 +15070,6 @@ pub mod document {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -15761,6 +15813,7 @@ pub mod document {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::MaxUnitId(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_max_unit_id(reader, output, &mut fallback)? {
@@ -15955,7 +16008,6 @@ pub mod document {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -16089,13 +16141,8 @@ pub mod document {
                                         deserializer,
                                     )),
                                 );
-                                if self.page.len().saturating_add(1) < 1usize {
-                                    *self.state__ =
-                                        DocumentPagesXElementTypeDeserializerState::Page(None);
-                                } else {
-                                    *self.state__ =
-                                        DocumentPagesXElementTypeDeserializerState::Done__;
-                                }
+                                *self.state__ =
+                                    DocumentPagesXElementTypeDeserializerState::Page(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
                                 *self.state__ = DocumentPagesXElementTypeDeserializerState::Page(
@@ -16135,6 +16182,7 @@ pub mod document {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Page(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_page(reader, output, &mut fallback)? {
@@ -16183,7 +16231,6 @@ pub mod document {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -16308,15 +16355,10 @@ pub mod document {
                                         Some(deserializer),
                                     ),
                                 );
-                                if self.outline_elem.len().saturating_add(1) < 1usize {
-                                    *self.state__ =
-                                        DocumentOutlinesXElementTypeDeserializerState::OutlineElem(
-                                            None,
-                                        );
-                                } else {
-                                    *self.state__ =
-                                        DocumentOutlinesXElementTypeDeserializerState::Done__;
-                                }
+                                *self.state__ =
+                                    DocumentOutlinesXElementTypeDeserializerState::OutlineElem(
+                                        None,
+                                    );
                             }
                             ElementHandlerOutput::Break { .. } => {
                                 *self.state__ =
@@ -16357,6 +16399,7 @@ pub mod document {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::OutlineElem(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_outline_elem(reader, output, &mut fallback)? {
@@ -16406,7 +16449,6 @@ pub mod document {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -16530,15 +16572,8 @@ pub mod document {
                                         deserializer,
                                     )),
                                 );
-                                if self.bookmark.len().saturating_add(1) < 1usize {
-                                    *self.state__ =
-                                        DocumentBookmarksXElementTypeDeserializerState::Bookmark(
-                                            None,
-                                        );
-                                } else {
-                                    *self.state__ =
-                                        DocumentBookmarksXElementTypeDeserializerState::Done__;
-                                }
+                                *self.state__ =
+                                    DocumentBookmarksXElementTypeDeserializerState::Bookmark(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
                                 *self.state__ =
@@ -16579,6 +16614,7 @@ pub mod document {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Bookmark(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_bookmark(reader, output, &mut fallback)? {
@@ -16628,7 +16664,6 @@ pub mod document {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -18555,6 +18590,7 @@ pub mod extensions {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Content__(deserializer), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_content(reader, output, &mut fallback)? {
@@ -18581,7 +18617,6 @@ pub mod extensions {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::Unknown__, _) => unreachable!(),
                     }
                 };
                 let artifact = DeserializerArtifact::Deserializer(self);
@@ -18696,6 +18731,7 @@ pub mod extensions {
             {
                 use CtExtensionXTypeContentDeserializerState as S;
                 match state {
+                    S::Unknown__ => unreachable!(),
                     S::Init__ => Err(ErrorKind::MissingContent.into()),
                     S::Property(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
@@ -18725,7 +18761,6 @@ pub mod extensions {
                         ))
                     }
                     S::Done__(data) => Ok(data),
-                    S::Unknown__ => unreachable!(),
                 }
             }
             fn store_property(
@@ -18987,6 +19022,7 @@ pub mod extensions {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Property(values, Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_property(reader, values, output, &mut fallback)? {
@@ -19031,7 +19067,10 @@ pub mod extensions {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::Property(values, None), event) => {
+                        (
+                            S::Property(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -19045,7 +19084,7 @@ pub mod extensions {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::Data(values, None), event) => {
+                        (S::Data(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -19059,7 +19098,10 @@ pub mod extensions {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::ExtendData(values, None), event) => {
+                        (
+                            S::ExtendData(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -19077,7 +19119,10 @@ pub mod extensions {
                             *self.state__ = s;
                             break (DeserializerEvent::Continue(event), false);
                         }
-                        (S::Unknown__, _) => unreachable!(),
+                        (state, event) => {
+                            *self.state__ = state;
+                            break (DeserializerEvent::Break(event), false);
+                        }
                     }
                 };
                 let artifact = if matches!(&*self.state__, S::Done__(_)) {
@@ -19190,12 +19235,8 @@ pub mod extensions {
                                         deserializer,
                                     )),
                                 );
-                                if self.extension.len().saturating_add(1) < 1usize {
-                                    *self.state__ =
-                                        ExtensionsXElementTypeDeserializerState::Extension(None);
-                                } else {
-                                    *self.state__ = ExtensionsXElementTypeDeserializerState::Done__;
-                                }
+                                *self.state__ =
+                                    ExtensionsXElementTypeDeserializerState::Extension(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
                                 *self.state__ = ExtensionsXElementTypeDeserializerState::Extension(
@@ -19233,6 +19274,7 @@ pub mod extensions {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Extension(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_extension(reader, output, &mut fallback)? {
@@ -19282,7 +19324,6 @@ pub mod extensions {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -19448,6 +19489,7 @@ pub mod extensions {
             {
                 use CtExtensionPropertyXElementTypeDeserializerState as S;
                 match replace(&mut *self.state__, S::Unknown__) {
+                    S::Unknown__ => unreachable!(),
                     S::Init__ => {
                         let output = ContentDeserializer::init(reader, event)?;
                         self.handle_content(reader, output)
@@ -19456,7 +19498,6 @@ pub mod extensions {
                         let output = deserializer.next(reader, event)?;
                         self.handle_content(reader, output)
                     }
-                    S::Unknown__ => unreachable!(),
                 }
             }
             fn finish<R>(
@@ -20908,6 +20949,7 @@ pub mod ofd {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::DocId(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_doc_id(reader, output, &mut fallback)? {
@@ -21304,7 +21346,6 @@ pub mod ofd {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -21461,11 +21502,7 @@ pub mod ofd {
                                 fallback.get_or_insert(OfdXElementTypeDeserializerState::DocBody(
                                     Some(deserializer),
                                 ));
-                                if self.doc_body.len().saturating_add(1) < 1usize {
-                                    *self.state__ = OfdXElementTypeDeserializerState::DocBody(None);
-                                } else {
-                                    *self.state__ = OfdXElementTypeDeserializerState::Done__;
-                                }
+                                *self.state__ = OfdXElementTypeDeserializerState::DocBody(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
                                 *self.state__ =
@@ -21502,6 +21539,7 @@ pub mod ofd {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::DocBody(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_doc_body(reader, output, &mut fallback)? {
@@ -21550,7 +21588,6 @@ pub mod ofd {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -21676,15 +21713,8 @@ pub mod ofd {
                                         deserializer,
                                     )),
                                 );
-                                if self.keyword.len().saturating_add(1) < 1usize {
-                                    *self.state__ =
-                                        CtDocInfoKeywordsXElementTypeDeserializerState::Keyword(
-                                            None,
-                                        );
-                                } else {
-                                    *self.state__ =
-                                        CtDocInfoKeywordsXElementTypeDeserializerState::Done__;
-                                }
+                                *self.state__ =
+                                    CtDocInfoKeywordsXElementTypeDeserializerState::Keyword(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
                                 *self.state__ =
@@ -21725,6 +21755,7 @@ pub mod ofd {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Keyword(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_keyword(reader, output, &mut fallback)? {
@@ -21774,7 +21805,6 @@ pub mod ofd {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -21900,12 +21930,10 @@ pub mod ofd {
                                         Some(deserializer),
                                     ),
                                 );
-                                if self.custom_data.len().saturating_add(1) < 1usize {
-                                    * self . state__ = CtDocInfoCustomDatasXElementTypeDeserializerState :: CustomData (None) ;
-                                } else {
-                                    *self.state__ =
-                                        CtDocInfoCustomDatasXElementTypeDeserializerState::Done__;
-                                }
+                                *self.state__ =
+                                    CtDocInfoCustomDatasXElementTypeDeserializerState::CustomData(
+                                        None,
+                                    );
                             }
                             ElementHandlerOutput::Break { .. } => {
                                 *self.state__ =
@@ -21946,6 +21974,7 @@ pub mod ofd {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::CustomData(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_custom_data(reader, output, &mut fallback)? {
@@ -21995,7 +22024,6 @@ pub mod ofd {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -22372,6 +22400,7 @@ pub mod ofd {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::DocInfo(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_doc_info(reader, output, &mut fallback)? {
@@ -22507,7 +22536,6 @@ pub mod ofd {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -22675,6 +22703,7 @@ pub mod ofd {
             {
                 use CtDocInfoCustomDatasCustomDataXElementTypeDeserializerState as S;
                 match replace(&mut *self.state__, S::Unknown__) {
+                    S::Unknown__ => unreachable!(),
                     S::Init__ => {
                         let output = ContentDeserializer::init(reader, event)?;
                         self.handle_content(reader, output)
@@ -22683,7 +22712,6 @@ pub mod ofd {
                         let output = deserializer.next(reader, event)?;
                         self.handle_content(reader, output)
                     }
-                    S::Unknown__ => unreachable!(),
                 }
             }
             fn finish<R>(
@@ -22797,15 +22825,8 @@ pub mod ofd {
                                         deserializer,
                                     )),
                                 );
-                                if self.version.len().saturating_add(1) < 1usize {
-                                    *self.state__ =
-                                        OfdDocBodyVersionsXElementTypeDeserializerState::Version(
-                                            None,
-                                        );
-                                } else {
-                                    *self.state__ =
-                                        OfdDocBodyVersionsXElementTypeDeserializerState::Done__;
-                                }
+                                *self.state__ =
+                                    OfdDocBodyVersionsXElementTypeDeserializerState::Version(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
                                 *self.state__ =
@@ -22846,6 +22867,7 @@ pub mod ofd {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Version(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_version(reader, output, &mut fallback)? {
@@ -22895,7 +22917,6 @@ pub mod ofd {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -25933,11 +25954,7 @@ pub mod page {
                                 fallback.get_or_insert(CtAxialShdXTypeDeserializerState::Segment(
                                     Some(deserializer),
                                 ));
-                                if self.segment.len().saturating_add(1) < 2usize {
-                                    *self.state__ = CtAxialShdXTypeDeserializerState::Segment(None);
-                                } else {
-                                    *self.state__ = CtAxialShdXTypeDeserializerState::Done__;
-                                }
+                                *self.state__ = CtAxialShdXTypeDeserializerState::Segment(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
                                 *self.state__ =
@@ -25974,6 +25991,7 @@ pub mod page {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Segment(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_segment(reader, output, &mut fallback)? {
@@ -26022,7 +26040,6 @@ pub mod page {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -26212,6 +26229,7 @@ pub mod page {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Glyphs(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_glyphs(reader, output, &mut fallback)? {
@@ -26260,7 +26278,6 @@ pub mod page {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -26379,11 +26396,7 @@ pub mod page {
                                 fallback.get_or_insert(CtClipXTypeDeserializerState::Area(Some(
                                     deserializer,
                                 )));
-                                if self.area.len().saturating_add(1) < 1usize {
-                                    *self.state__ = CtClipXTypeDeserializerState::Area(None);
-                                } else {
-                                    *self.state__ = CtClipXTypeDeserializerState::Done__;
-                                }
+                                *self.state__ = CtClipXTypeDeserializerState::Area(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
                                 *self.state__ =
@@ -26417,6 +26430,7 @@ pub mod page {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Area(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_area(reader, output, &mut fallback)? {
@@ -26465,7 +26479,6 @@ pub mod page {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -26631,6 +26644,7 @@ pub mod page {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Content__(deserializer), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_content(reader, output, &mut fallback)? {
@@ -26657,7 +26671,6 @@ pub mod page {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::Unknown__, _) => unreachable!(),
                     }
                 };
                 let artifact = DeserializerArtifact::Deserializer(self);
@@ -26813,6 +26826,7 @@ pub mod page {
             {
                 use CtColorXTypeContentDeserializerState as S;
                 match state {
+                    S::Unknown__ => unreachable!(),
                     S::Init__ => Err(ErrorKind::MissingContent.into()),
                     S::Pattern(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
@@ -26861,7 +26875,6 @@ pub mod page {
                         ))
                     }
                     S::Done__(data) => Ok(data),
-                    S::Unknown__ => unreachable!(),
                 }
             }
             fn store_pattern(
@@ -27275,6 +27288,7 @@ pub mod page {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Pattern(values, Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_pattern(reader, values, output, &mut fallback)? {
@@ -27342,7 +27356,7 @@ pub mod page {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::Pattern(values, None), event) => {
+                        (S::Pattern(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -27356,7 +27370,10 @@ pub mod page {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::AxialShd(values, None), event) => {
+                        (
+                            S::AxialShd(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -27370,7 +27387,10 @@ pub mod page {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::RadialShd(values, None), event) => {
+                        (
+                            S::RadialShd(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -27384,7 +27404,10 @@ pub mod page {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::GouraudShd(values, None), event) => {
+                        (
+                            S::GouraudShd(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -27398,7 +27421,10 @@ pub mod page {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::LaGourandShd(values, None), event) => {
+                        (
+                            S::LaGourandShd(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -27421,7 +27447,10 @@ pub mod page {
                             *self.state__ = s;
                             break (DeserializerEvent::Continue(event), false);
                         }
-                        (S::Unknown__, _) => unreachable!(),
+                        (state, event) => {
+                            *self.state__ = state;
+                            break (DeserializerEvent::Break(event), false);
+                        }
                     }
                 };
                 let artifact = if matches!(&*self.state__, S::Done__(_)) {
@@ -27752,6 +27781,7 @@ pub mod page {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Actions(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_actions(reader, output, &mut fallback)? {
@@ -27829,7 +27859,6 @@ pub mod page {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -27989,12 +28018,7 @@ pub mod page {
                                 fallback.get_or_insert(CtGouraudShdXTypeDeserializerState::Point(
                                     Some(deserializer),
                                 ));
-                                if self.point.len().saturating_add(1) < 3usize {
-                                    *self.state__ = CtGouraudShdXTypeDeserializerState::Point(None);
-                                } else {
-                                    *self.state__ =
-                                        CtGouraudShdXTypeDeserializerState::BackColor(None);
-                                }
+                                *self.state__ = CtGouraudShdXTypeDeserializerState::Point(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
                                 *self.state__ =
@@ -28081,6 +28105,7 @@ pub mod page {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Point(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_point(reader, output, &mut fallback)? {
@@ -28158,7 +28183,6 @@ pub mod page {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -28493,6 +28517,7 @@ pub mod page {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Actions(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_actions(reader, output, &mut fallback)? {
@@ -28570,7 +28595,6 @@ pub mod page {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -29003,6 +29027,7 @@ pub mod page {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Actions(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_actions(reader, output, &mut fallback)? {
@@ -29109,7 +29134,6 @@ pub mod page {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -29285,13 +29309,7 @@ pub mod page {
                                 fallback.get_or_insert(
                                     CtLaGouraudShdXTypeDeserializerState::Point(Some(deserializer)),
                                 );
-                                if self.point.len().saturating_add(1) < 4usize {
-                                    *self.state__ =
-                                        CtLaGouraudShdXTypeDeserializerState::Point(None);
-                                } else {
-                                    *self.state__ =
-                                        CtLaGouraudShdXTypeDeserializerState::BackColor(None);
-                                }
+                                *self.state__ = CtLaGouraudShdXTypeDeserializerState::Point(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
                                 *self.state__ =
@@ -29378,6 +29396,7 @@ pub mod page {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Point(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_point(reader, output, &mut fallback)? {
@@ -29455,7 +29474,6 @@ pub mod page {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -29622,6 +29640,7 @@ pub mod page {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Content__(deserializer), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_content(reader, output, &mut fallback)? {
@@ -29648,7 +29667,6 @@ pub mod page {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::Unknown__, _) => unreachable!(),
                     }
                 };
                 let artifact = DeserializerArtifact::Deserializer(self);
@@ -29764,6 +29782,7 @@ pub mod page {
             {
                 use CtLayerXTypeContentDeserializerState as S;
                 match state {
+                    S::Unknown__ => unreachable!(),
                     S::Init__ => Err(ErrorKind::MissingContent.into()),
                     S::TextObject(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
@@ -29813,7 +29832,6 @@ pub mod page {
                         )?))
                     }
                     S::Done__(data) => Ok(data),
-                    S::Unknown__ => unreachable!(),
                 }
             }
             fn store_text_object(
@@ -30233,6 +30251,7 @@ pub mod page {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::TextObject(values, Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_text_object(reader, values, output, &mut fallback)? {
@@ -30300,7 +30319,10 @@ pub mod page {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::TextObject(values, None), event) => {
+                        (
+                            S::TextObject(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -30314,7 +30336,10 @@ pub mod page {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::PathObject(values, None), event) => {
+                        (
+                            S::PathObject(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -30328,7 +30353,10 @@ pub mod page {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::ImageObject(values, None), event) => {
+                        (
+                            S::ImageObject(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -30342,7 +30370,10 @@ pub mod page {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::CompositeObject(values, None), event) => {
+                        (
+                            S::CompositeObject(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -30361,7 +30392,10 @@ pub mod page {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::PageBlock(values, None), event) => {
+                        (
+                            S::PageBlock(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -30379,7 +30413,10 @@ pub mod page {
                             *self.state__ = s;
                             break (DeserializerEvent::Continue(event), false);
                         }
-                        (S::Unknown__, _) => unreachable!(),
+                        (state, event) => {
+                            *self.state__ = state;
+                            break (DeserializerEvent::Break(event), false);
+                        }
                     }
                 };
                 let artifact = if matches!(&*self.state__, S::Done__(_)) {
@@ -30519,6 +30556,7 @@ pub mod page {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Content__(deserializer), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_content(reader, output, &mut fallback)? {
@@ -30545,7 +30583,6 @@ pub mod page {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::Unknown__, _) => unreachable!(),
                     }
                 };
                 let artifact = DeserializerArtifact::Deserializer(self);
@@ -30662,6 +30699,7 @@ pub mod page {
             {
                 use CtPageBlockXTypeContentDeserializerState as S;
                 match state {
+                    S::Unknown__ => unreachable!(),
                     S::Init__ => Err(ErrorKind::MissingContent.into()),
                     S::TextObject(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
@@ -30712,7 +30750,6 @@ pub mod page {
                         ))
                     }
                     S::Done__(data) => Ok(data),
-                    S::Unknown__ => unreachable!(),
                 }
             }
             fn store_text_object(
@@ -31139,6 +31176,7 @@ pub mod page {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::TextObject(values, Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_text_object(reader, values, output, &mut fallback)? {
@@ -31206,7 +31244,10 @@ pub mod page {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::TextObject(values, None), event) => {
+                        (
+                            S::TextObject(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -31220,7 +31261,10 @@ pub mod page {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::PathObject(values, None), event) => {
+                        (
+                            S::PathObject(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -31234,7 +31278,10 @@ pub mod page {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::ImageObject(values, None), event) => {
+                        (
+                            S::ImageObject(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -31248,7 +31295,10 @@ pub mod page {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::CompositeObject(values, None), event) => {
+                        (
+                            S::CompositeObject(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -31267,7 +31317,10 @@ pub mod page {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::PageBlock(values, None), event) => {
+                        (
+                            S::PageBlock(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -31285,7 +31338,10 @@ pub mod page {
                             *self.state__ = s;
                             break (DeserializerEvent::Continue(event), false);
                         }
-                        (S::Unknown__, _) => unreachable!(),
+                        (state, event) => {
+                            *self.state__ = state;
+                            break (DeserializerEvent::Break(event), false);
+                        }
                     }
                 };
                 let artifact = if matches!(&*self.state__, S::Done__(_)) {
@@ -31820,6 +31876,7 @@ pub mod page {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Actions(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_actions(reader, output, &mut fallback)? {
@@ -31984,7 +32041,6 @@ pub mod page {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -32234,6 +32290,7 @@ pub mod page {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::CellContent(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_cell_content(reader, output, &mut fallback)? {
@@ -32282,7 +32339,6 @@ pub mod page {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -32496,12 +32552,7 @@ pub mod page {
                                 fallback.get_or_insert(CtRadialShdXTypeDeserializerState::Seqment(
                                     Some(deserializer),
                                 ));
-                                if self.seqment.len().saturating_add(1) < 2usize {
-                                    *self.state__ =
-                                        CtRadialShdXTypeDeserializerState::Seqment(None);
-                                } else {
-                                    *self.state__ = CtRadialShdXTypeDeserializerState::Done__;
-                                }
+                                *self.state__ = CtRadialShdXTypeDeserializerState::Seqment(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
                                 *self.state__ =
@@ -32538,6 +32589,7 @@ pub mod page {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Seqment(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_seqment(reader, output, &mut fallback)? {
@@ -32586,7 +32638,6 @@ pub mod page {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -32918,6 +32969,7 @@ pub mod page {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Content__(deserializer), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_content(reader, output, &mut fallback)? {
@@ -32944,7 +32996,6 @@ pub mod page {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::Unknown__, _) => unreachable!(),
                     }
                 };
                 let artifact = DeserializerArtifact::Deserializer(self);
@@ -33125,6 +33176,7 @@ pub mod page {
             {
                 use CtTextXTypeContentDeserializerState as S;
                 match state {
+                    S::Unknown__ => unreachable!(),
                     S::Init__ => Err(ErrorKind::MissingContent.into()),
                     S::Actions(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
@@ -33181,7 +33233,6 @@ pub mod page {
                         )?))
                     }
                     S::Done__(data) => Ok(data),
-                    S::Unknown__ => unreachable!(),
                 }
             }
             fn store_actions(
@@ -33658,6 +33709,7 @@ pub mod page {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Actions(values, Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_actions(reader, values, output, &mut fallback)? {
@@ -33729,7 +33781,7 @@ pub mod page {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::Actions(values, None), event) => {
+                        (S::Actions(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -33743,7 +33795,7 @@ pub mod page {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::Clips(values, None), event) => {
+                        (S::Clips(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -33757,7 +33809,10 @@ pub mod page {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::FillColor(values, None), event) => {
+                        (
+                            S::FillColor(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -33771,7 +33826,10 @@ pub mod page {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::StrokeColor(values, None), event) => {
+                        (
+                            S::StrokeColor(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -33785,7 +33843,10 @@ pub mod page {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::CgTransform(values, None), event) => {
+                        (
+                            S::CgTransform(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -33799,7 +33860,10 @@ pub mod page {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::TextCode(values, None), event) => {
+                        (
+                            S::TextCode(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -33817,7 +33881,10 @@ pub mod page {
                             *self.state__ = s;
                             break (DeserializerEvent::Continue(event), false);
                         }
-                        (S::Unknown__, _) => unreachable!(),
+                        (state, event) => {
+                            *self.state__ = state;
+                            break (DeserializerEvent::Break(event), false);
+                        }
                     }
                 };
                 let artifact = if matches!(&*self.state__, S::Done__(_)) {
@@ -34215,6 +34282,7 @@ pub mod page {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Template(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_template(reader, output, &mut fallback)? {
@@ -34379,7 +34447,6 @@ pub mod page {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -34562,6 +34629,7 @@ pub mod page {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Color(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_color(reader, output, &mut fallback)? {
@@ -34611,7 +34679,6 @@ pub mod page {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -34777,6 +34844,7 @@ pub mod page {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Content__(deserializer), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_content(reader, output, &mut fallback)? {
@@ -34803,7 +34871,6 @@ pub mod page {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::Unknown__, _) => unreachable!(),
                     }
                 };
                 let artifact = DeserializerArtifact::Deserializer(self);
@@ -34901,6 +34968,7 @@ pub mod page {
             {
                 use CtClipAreaXElementTypeContentDeserializerState as S;
                 match state {
+                    S::Unknown__ => unreachable!(),
                     S::Init__ => Err(ErrorKind::MissingContent.into()),
                     S::Path(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
@@ -34921,7 +34989,6 @@ pub mod page {
                         ))
                     }
                     S::Done__(data) => Ok(data),
-                    S::Unknown__ => unreachable!(),
                 }
             }
             fn store_path(
@@ -35116,6 +35183,7 @@ pub mod page {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Path(values, Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_path(reader, values, output, &mut fallback)? {
@@ -35151,7 +35219,7 @@ pub mod page {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::Path(values, None), event) => {
+                        (S::Path(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -35165,7 +35233,7 @@ pub mod page {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::Text(values, None), event) => {
+                        (S::Text(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -35183,7 +35251,10 @@ pub mod page {
                             *self.state__ = s;
                             break (DeserializerEvent::Continue(event), false);
                         }
-                        (S::Unknown__, _) => unreachable!(),
+                        (state, event) => {
+                            *self.state__ = state;
+                            break (DeserializerEvent::Break(event), false);
+                        }
                     }
                 };
                 let artifact = if matches!(&*self.state__, S::Done__(_)) {
@@ -35303,15 +35374,8 @@ pub mod page {
                                         Some(deserializer),
                                     ),
                                 );
-                                if self.action.len().saturating_add(1) < 1usize {
-                                    *self.state__ =
-                                        CtGraphicUnitActionsXElementTypeDeserializerState::Action(
-                                            None,
-                                        );
-                                } else {
-                                    *self.state__ =
-                                        CtGraphicUnitActionsXElementTypeDeserializerState::Done__;
-                                }
+                                *self.state__ =
+                                    CtGraphicUnitActionsXElementTypeDeserializerState::Action(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
                                 *self.state__ =
@@ -35352,6 +35416,7 @@ pub mod page {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Action(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_action(reader, output, &mut fallback)? {
@@ -35401,7 +35466,6 @@ pub mod page {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -35524,13 +35588,8 @@ pub mod page {
                                         deserializer,
                                     )),
                                 );
-                                if self.clip.len().saturating_add(1) < 1usize {
-                                    *self.state__ =
-                                        CtGraphicUnitClipsXElementTypeDeserializerState::Clip(None);
-                                } else {
-                                    *self.state__ =
-                                        CtGraphicUnitClipsXElementTypeDeserializerState::Done__;
-                                }
+                                *self.state__ =
+                                    CtGraphicUnitClipsXElementTypeDeserializerState::Clip(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
                                 *self.state__ =
@@ -35571,6 +35630,7 @@ pub mod page {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Clip(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_clip(reader, output, &mut fallback)? {
@@ -35620,7 +35680,6 @@ pub mod page {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -35816,6 +35875,7 @@ pub mod page {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Color(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_color(reader, output, &mut fallback)? {
@@ -35865,7 +35925,6 @@ pub mod page {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -36093,6 +36152,7 @@ pub mod page {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::BorderColor(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_border_color(reader, output, &mut fallback)? {
@@ -36142,7 +36202,6 @@ pub mod page {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -36335,6 +36394,7 @@ pub mod page {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Color(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_color(reader, output, &mut fallback)? {
@@ -36384,7 +36444,6 @@ pub mod page {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -36756,6 +36815,7 @@ pub mod page {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Content__(deserializer), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_content(reader, output, &mut fallback)? {
@@ -36782,7 +36842,6 @@ pub mod page {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::Unknown__, _) => unreachable!(),
                     }
                 };
                 let artifact = DeserializerArtifact::Deserializer(self);
@@ -36970,6 +37029,7 @@ pub mod page {
             {
                 use CtPageBlockTextObjectXElementTypeContentDeserializerState as S;
                 match state {
+                    S::Unknown__ => unreachable!(),
                     S::Init__ => Err(ErrorKind::MissingContent.into()),
                     S::Actions(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
@@ -37034,7 +37094,6 @@ pub mod page {
                         ))
                     }
                     S::Done__(data) => Ok(data),
-                    S::Unknown__ => unreachable!(),
                 }
             }
             fn store_actions(
@@ -37605,6 +37664,7 @@ pub mod page {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Actions(values, Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_actions(reader, values, output, &mut fallback)? {
@@ -37676,7 +37736,7 @@ pub mod page {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::Actions(values, None), event) => {
+                        (S::Actions(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -37690,7 +37750,7 @@ pub mod page {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::Clips(values, None), event) => {
+                        (S::Clips(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -37704,7 +37764,10 @@ pub mod page {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::FillColor(values, None), event) => {
+                        (
+                            S::FillColor(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -37718,7 +37781,10 @@ pub mod page {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::StrokeColor(values, None), event) => {
+                        (
+                            S::StrokeColor(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -37732,7 +37798,10 @@ pub mod page {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::CgTransform(values, None), event) => {
+                        (
+                            S::CgTransform(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -37746,7 +37815,10 @@ pub mod page {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::TextCode(values, None), event) => {
+                        (
+                            S::TextCode(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -37764,7 +37836,10 @@ pub mod page {
                             *self.state__ = s;
                             break (DeserializerEvent::Continue(event), false);
                         }
-                        (S::Unknown__, _) => unreachable!(),
+                        (state, event) => {
+                            *self.state__ = state;
+                            break (DeserializerEvent::Break(event), false);
+                        }
                     }
                 };
                 let artifact = if matches!(&*self.state__, S::Done__(_)) {
@@ -38369,6 +38444,7 @@ pub mod page {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Actions(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_actions(reader, output, &mut fallback)? {
@@ -38534,7 +38610,6 @@ pub mod page {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -39027,6 +39102,7 @@ pub mod page {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Actions(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_actions(reader, output, &mut fallback)? {
@@ -39134,7 +39210,6 @@ pub mod page {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -39531,6 +39606,7 @@ pub mod page {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Actions(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_actions(reader, output, &mut fallback)? {
@@ -39611,7 +39687,6 @@ pub mod page {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -39801,6 +39876,7 @@ pub mod page {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Content__(deserializer), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_content(reader, output, &mut fallback)? {
@@ -39827,7 +39903,6 @@ pub mod page {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::Unknown__, _) => unreachable!(),
                     }
                 };
                 let artifact = DeserializerArtifact::Deserializer(self);
@@ -39948,6 +40023,7 @@ pub mod page {
             {
                 use CtPageBlockPageBlockXElementTypeContentDeserializerState as S;
                 match state {
+                    S::Unknown__ => unreachable!(),
                     S::Init__ => Err(ErrorKind::MissingContent.into()),
                     S::TextObject(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
@@ -40000,7 +40076,6 @@ pub mod page {
                         ))
                     }
                     S::Done__(data) => Ok(data),
-                    S::Unknown__ => unreachable!(),
                 }
             }
             fn store_text_object(
@@ -40456,6 +40531,7 @@ pub mod page {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::TextObject(values, Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_text_object(reader, values, output, &mut fallback)? {
@@ -40523,7 +40599,10 @@ pub mod page {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::TextObject(values, None), event) => {
+                        (
+                            S::TextObject(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -40537,7 +40616,10 @@ pub mod page {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::PathObject(values, None), event) => {
+                        (
+                            S::PathObject(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -40551,7 +40633,10 @@ pub mod page {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::ImageObject(values, None), event) => {
+                        (
+                            S::ImageObject(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -40565,7 +40650,10 @@ pub mod page {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::CompositeObject(values, None), event) => {
+                        (
+                            S::CompositeObject(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -40584,7 +40672,10 @@ pub mod page {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::PageBlock(values, None), event) => {
+                        (
+                            S::PageBlock(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -40602,7 +40693,10 @@ pub mod page {
                             *self.state__ = s;
                             break (DeserializerEvent::Continue(event), false);
                         }
-                        (S::Unknown__, _) => unreachable!(),
+                        (state, event) => {
+                            *self.state__ = state;
+                            break (DeserializerEvent::Break(event), false);
+                        }
                     }
                 };
                 let artifact = if matches!(&*self.state__, S::Done__(_)) {
@@ -40766,6 +40860,7 @@ pub mod page {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Content__(deserializer), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_content(reader, output, &mut fallback)? {
@@ -40792,7 +40887,6 @@ pub mod page {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::Unknown__, _) => unreachable!(),
                     }
                 };
                 let artifact = DeserializerArtifact::Deserializer(self);
@@ -40913,6 +41007,7 @@ pub mod page {
             {
                 use CtPatternCellContentXElementTypeContentDeserializerState as S;
                 match state {
+                    S::Unknown__ => unreachable!(),
                     S::Init__ => Err(ErrorKind::MissingContent.into()),
                     S::TextObject(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
@@ -40965,7 +41060,6 @@ pub mod page {
                         ))
                     }
                     S::Done__(data) => Ok(data),
-                    S::Unknown__ => unreachable!(),
                 }
             }
             fn store_text_object(
@@ -41421,6 +41515,7 @@ pub mod page {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::TextObject(values, Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_text_object(reader, values, output, &mut fallback)? {
@@ -41488,7 +41583,10 @@ pub mod page {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::TextObject(values, None), event) => {
+                        (
+                            S::TextObject(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -41502,7 +41600,10 @@ pub mod page {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::PathObject(values, None), event) => {
+                        (
+                            S::PathObject(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -41516,7 +41617,10 @@ pub mod page {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::ImageObject(values, None), event) => {
+                        (
+                            S::ImageObject(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -41530,7 +41634,10 @@ pub mod page {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::CompositeObject(values, None), event) => {
+                        (
+                            S::CompositeObject(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -41549,7 +41656,10 @@ pub mod page {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::PageBlock(values, None), event) => {
+                        (
+                            S::PageBlock(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -41567,7 +41677,10 @@ pub mod page {
                             *self.state__ = s;
                             break (DeserializerEvent::Continue(event), false);
                         }
-                        (S::Unknown__, _) => unreachable!(),
+                        (state, event) => {
+                            *self.state__ = state;
+                            break (DeserializerEvent::Break(event), false);
+                        }
                     }
                 };
                 let artifact = if matches!(&*self.state__, S::Done__(_)) {
@@ -41740,6 +41853,7 @@ pub mod page {
             {
                 use CtTextTextCodeXElementTypeDeserializerState as S;
                 match replace(&mut *self.state__, S::Unknown__) {
+                    S::Unknown__ => unreachable!(),
                     S::Init__ => {
                         let output = ContentDeserializer::init(reader, event)?;
                         self.handle_content(reader, output)
@@ -41748,7 +41862,6 @@ pub mod page {
                         let output = deserializer.next(reader, event)?;
                         self.handle_content(reader, output)
                     }
-                    S::Unknown__ => unreachable!(),
                 }
             }
             fn finish<R>(mut self, reader: &R) -> Result<super::CtTextTextCodeXElementType, Error>
@@ -41966,13 +42079,8 @@ pub mod page {
                                         deserializer,
                                     )),
                                 );
-                                if self.layer.len().saturating_add(1) < 1usize {
-                                    *self.state__ =
-                                        PageContentXElementTypeDeserializerState::Layer(None);
-                                } else {
-                                    *self.state__ =
-                                        PageContentXElementTypeDeserializerState::Done__;
-                                }
+                                *self.state__ =
+                                    PageContentXElementTypeDeserializerState::Layer(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
                                 *self.state__ = PageContentXElementTypeDeserializerState::Layer(
@@ -42012,6 +42120,7 @@ pub mod page {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Layer(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_layer(reader, output, &mut fallback)? {
@@ -42060,7 +42169,6 @@ pub mod page {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -42246,6 +42354,7 @@ pub mod page {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Content__(deserializer), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_content(reader, output, &mut fallback)? {
@@ -42272,7 +42381,6 @@ pub mod page {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::Unknown__, _) => unreachable!(),
                     }
                 };
                 let artifact = DeserializerArtifact::Deserializer(self);
@@ -42392,6 +42500,7 @@ pub mod page {
             {
                 use PageContentLayerXElementTypeContentDeserializerState as S;
                 match state {
+                    S::Unknown__ => unreachable!(),
                     S::Init__ => Err(ErrorKind::MissingContent.into()),
                     S::TextObject(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
@@ -42442,7 +42551,6 @@ pub mod page {
                         ))
                     }
                     S::Done__(data) => Ok(data),
-                    S::Unknown__ => unreachable!(),
                 }
             }
             fn store_text_object(
@@ -42910,6 +43018,7 @@ pub mod page {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::TextObject(values, Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_text_object(reader, values, output, &mut fallback)? {
@@ -42977,7 +43086,10 @@ pub mod page {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::TextObject(values, None), event) => {
+                        (
+                            S::TextObject(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -42991,7 +43103,10 @@ pub mod page {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::PathObject(values, None), event) => {
+                        (
+                            S::PathObject(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -43005,7 +43120,10 @@ pub mod page {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::ImageObject(values, None), event) => {
+                        (
+                            S::ImageObject(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -43019,7 +43137,10 @@ pub mod page {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::CompositeObject(values, None), event) => {
+                        (
+                            S::CompositeObject(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -43038,7 +43159,10 @@ pub mod page {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::PageBlock(values, None), event) => {
+                        (
+                            S::PageBlock(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -43056,7 +43180,10 @@ pub mod page {
                             *self.state__ = s;
                             break (DeserializerEvent::Continue(event), false);
                         }
-                        (S::Unknown__, _) => unreachable!(),
+                        (state, event) => {
+                            *self.state__ = state;
+                            break (DeserializerEvent::Break(event), false);
+                        }
                     }
                 };
                 let artifact = if matches!(&*self.state__, S::Done__(_)) {
@@ -47486,6 +47613,7 @@ pub mod res {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Palette(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_palette(reader, output, &mut fallback)? {
@@ -47534,7 +47662,6 @@ pub mod res {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -47830,6 +47957,7 @@ pub mod res {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::FillColor(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_fill_color(reader, output, &mut fallback)? {
@@ -47907,7 +48035,6 @@ pub mod res {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -48128,6 +48255,7 @@ pub mod res {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::FontFile(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_font_file(reader, output, &mut fallback)? {
@@ -48176,7 +48304,6 @@ pub mod res {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -48363,6 +48490,7 @@ pub mod res {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::MediaFile(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_media_file(reader, output, &mut fallback)? {
@@ -48411,7 +48539,6 @@ pub mod res {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -48729,6 +48856,7 @@ pub mod res {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Thumbnail(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_thumbnail(reader, output, &mut fallback)? {
@@ -48835,7 +48963,6 @@ pub mod res {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -48999,6 +49126,7 @@ pub mod res {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Content__(deserializer), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_content(reader, output, &mut fallback)? {
@@ -49025,7 +49153,6 @@ pub mod res {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::Unknown__, _) => unreachable!(),
                     }
                 };
                 let artifact = DeserializerArtifact::Deserializer(self);
@@ -49171,6 +49298,7 @@ pub mod res {
             {
                 use ResXElementTypeContentDeserializerState as S;
                 match state {
+                    S::Unknown__ => unreachable!(),
                     S::Init__ => Err(ErrorKind::MissingContent.into()),
                     S::ColorSpaces(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
@@ -49222,7 +49350,6 @@ pub mod res {
                         ))
                     }
                     S::Done__(data) => Ok(data),
-                    S::Unknown__ => unreachable!(),
                 }
             }
             fn store_color_spaces(
@@ -49647,6 +49774,7 @@ pub mod res {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::ColorSpaces(values, Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_color_spaces(reader, values, output, &mut fallback)? {
@@ -49714,7 +49842,10 @@ pub mod res {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::ColorSpaces(values, None), event) => {
+                        (
+                            S::ColorSpaces(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -49728,7 +49859,10 @@ pub mod res {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::DrawParams(values, None), event) => {
+                        (
+                            S::DrawParams(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -49742,7 +49876,7 @@ pub mod res {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::Fonts(values, None), event) => {
+                        (S::Fonts(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -49756,7 +49890,10 @@ pub mod res {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::MultiMedias(values, None), event) => {
+                        (
+                            S::MultiMedias(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -49770,7 +49907,10 @@ pub mod res {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::CompositeGraphicUnits(values, None), event) => {
+                        (
+                            S::CompositeGraphicUnits(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_2),
@@ -49793,7 +49933,10 @@ pub mod res {
                             *self.state__ = s;
                             break (DeserializerEvent::Continue(event), false);
                         }
-                        (S::Unknown__, _) => unreachable!(),
+                        (state, event) => {
+                            *self.state__ = state;
+                            break (DeserializerEvent::Break(event), false);
+                        }
                     }
                 };
                 let artifact = if matches!(&*self.state__, S::Done__(_)) {
@@ -49904,13 +50047,8 @@ pub mod res {
                                         deserializer,
                                     )),
                                 );
-                                if self.cv.len().saturating_add(1) < 1usize {
-                                    *self.state__ =
-                                        CtColorSpacePaletteXElementTypeDeserializerState::Cv(None);
-                                } else {
-                                    *self.state__ =
-                                        CtColorSpacePaletteXElementTypeDeserializerState::Done__;
-                                }
+                                *self.state__ =
+                                    CtColorSpacePaletteXElementTypeDeserializerState::Cv(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
                                 *self.state__ =
@@ -49951,6 +50089,7 @@ pub mod res {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Cv(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_cv(reader, output, &mut fallback)? {
@@ -50000,7 +50139,6 @@ pub mod res {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -50132,15 +50270,8 @@ pub mod res {
                                         deserializer,
                                     )),
                                 );
-                                if self.color_space.len().saturating_add(1) < 1usize {
-                                    *self.state__ =
-                                        ResColorSpacesXElementTypeDeserializerState::ColorSpace(
-                                            None,
-                                        );
-                                } else {
-                                    *self.state__ =
-                                        ResColorSpacesXElementTypeDeserializerState::Done__;
-                                }
+                                *self.state__ =
+                                    ResColorSpacesXElementTypeDeserializerState::ColorSpace(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
                                 *self.state__ =
@@ -50181,6 +50312,7 @@ pub mod res {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::ColorSpace(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_color_space(reader, output, &mut fallback)? {
@@ -50230,7 +50362,6 @@ pub mod res {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -50359,13 +50490,8 @@ pub mod res {
                                         deserializer,
                                     )),
                                 );
-                                if self.draw_param.len().saturating_add(1) < 1usize {
-                                    *self.state__ =
-                                        ResDrawParamsXElementTypeDeserializerState::DrawParam(None);
-                                } else {
-                                    *self.state__ =
-                                        ResDrawParamsXElementTypeDeserializerState::Done__;
-                                }
+                                *self.state__ =
+                                    ResDrawParamsXElementTypeDeserializerState::DrawParam(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
                                 *self.state__ =
@@ -50406,6 +50532,7 @@ pub mod res {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::DrawParam(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_draw_param(reader, output, &mut fallback)? {
@@ -50455,7 +50582,6 @@ pub mod res {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -50571,12 +50697,7 @@ pub mod res {
                                 fallback.get_or_insert(
                                     ResFontsXElementTypeDeserializerState::Font(Some(deserializer)),
                                 );
-                                if self.font.len().saturating_add(1) < 1usize {
-                                    *self.state__ =
-                                        ResFontsXElementTypeDeserializerState::Font(None);
-                                } else {
-                                    *self.state__ = ResFontsXElementTypeDeserializerState::Done__;
-                                }
+                                *self.state__ = ResFontsXElementTypeDeserializerState::Font(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
                                 *self.state__ =
@@ -50613,6 +50734,7 @@ pub mod res {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Font(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_font(reader, output, &mut fallback)? {
@@ -50661,7 +50783,6 @@ pub mod res {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -50790,15 +50911,8 @@ pub mod res {
                                         deserializer,
                                     )),
                                 );
-                                if self.multi_media.len().saturating_add(1) < 1usize {
-                                    *self.state__ =
-                                        ResMultiMediasXElementTypeDeserializerState::MultiMedia(
-                                            None,
-                                        );
-                                } else {
-                                    *self.state__ =
-                                        ResMultiMediasXElementTypeDeserializerState::Done__;
-                                }
+                                *self.state__ =
+                                    ResMultiMediasXElementTypeDeserializerState::MultiMedia(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
                                 *self.state__ =
@@ -50839,6 +50953,7 @@ pub mod res {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::MultiMedia(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_multi_media(reader, output, &mut fallback)? {
@@ -50888,7 +51003,6 @@ pub mod res {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -51010,11 +51124,7 @@ pub mod res {
                         match &ret {
                             ElementHandlerOutput::Continue { .. } => {
                                 fallback . get_or_insert (ResCompositeGraphicUnitsXElementTypeDeserializerState :: CompositeGraphicUnit (Some (deserializer))) ;
-                                if self.composite_graphic_unit.len().saturating_add(1) < 1usize {
-                                    * self . state__ = ResCompositeGraphicUnitsXElementTypeDeserializerState :: CompositeGraphicUnit (None) ;
-                                } else {
-                                    * self . state__ = ResCompositeGraphicUnitsXElementTypeDeserializerState :: Done__ ;
-                                }
+                                * self . state__ = ResCompositeGraphicUnitsXElementTypeDeserializerState :: CompositeGraphicUnit (None) ;
                             }
                             ElementHandlerOutput::Break { .. } => {
                                 * self . state__ = ResCompositeGraphicUnitsXElementTypeDeserializerState :: CompositeGraphicUnit (Some (deserializer)) ;
@@ -51052,6 +51162,7 @@ pub mod res {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::CompositeGraphicUnit(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_composite_graphic_unit(
@@ -51111,7 +51222,6 @@ pub mod res {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -51330,6 +51440,7 @@ pub mod res {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Palette(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_palette(reader, output, &mut fallback)? {
@@ -51381,7 +51492,6 @@ pub mod res {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -51698,6 +51808,7 @@ pub mod res {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::FillColor(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_fill_color(reader, output, &mut fallback)? {
@@ -51778,7 +51889,6 @@ pub mod res {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -52023,6 +52133,7 @@ pub mod res {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::FontFile(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_font_file(reader, output, &mut fallback)? {
@@ -52072,7 +52183,6 @@ pub mod res {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -52277,6 +52387,7 @@ pub mod res {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::MediaFile(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_media_file(reader, output, &mut fallback)? {
@@ -52328,7 +52439,6 @@ pub mod res {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -52648,6 +52758,7 @@ pub mod res {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Thumbnail(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_thumbnail(reader, output, &mut fallback)? {
@@ -52754,7 +52865,6 @@ pub mod res {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -54569,6 +54679,7 @@ pub mod signature {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::SiqnedInfo(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_siqned_info(reader, output, &mut fallback)? {
@@ -54647,7 +54758,6 @@ pub mod signature {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -55168,6 +55278,7 @@ pub mod signature {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Provider(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_provider(reader, output, &mut fallback)? {
@@ -55365,7 +55476,6 @@ pub mod signature {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -55637,11 +55747,7 @@ pub mod signature {
                         match &ret {
                             ElementHandlerOutput::Continue { .. } => {
                                 fallback . get_or_insert (SianatureSiqnedInfoReferencesXElementTypeDeserializerState :: Reference (Some (deserializer))) ;
-                                if self.reference.len().saturating_add(1) < 1usize {
-                                    * self . state__ = SianatureSiqnedInfoReferencesXElementTypeDeserializerState :: Reference (None) ;
-                                } else {
-                                    * self . state__ = SianatureSiqnedInfoReferencesXElementTypeDeserializerState :: Done__ ;
-                                }
+                                * self . state__ = SianatureSiqnedInfoReferencesXElementTypeDeserializerState :: Reference (None) ;
                             }
                             ElementHandlerOutput::Break { .. } => {
                                 * self . state__ = SianatureSiqnedInfoReferencesXElementTypeDeserializerState :: Reference (Some (deserializer)) ;
@@ -55679,6 +55785,7 @@ pub mod signature {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Reference(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_reference(reader, output, &mut fallback)? {
@@ -55727,7 +55834,6 @@ pub mod signature {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -56032,6 +56138,7 @@ pub mod signature {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::BaseLoc(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_base_loc(reader, output, &mut fallback)? {
@@ -56081,7 +56188,6 @@ pub mod signature {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -56261,6 +56367,7 @@ pub mod signature {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::CheckValue(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_check_value(reader, output, &mut fallback)? {
@@ -56309,7 +56416,6 @@ pub mod signature {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -57094,6 +57200,7 @@ pub mod signatures {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::MaxSignId(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_max_sign_id(reader, output, &mut fallback)? {
@@ -57172,7 +57279,6 @@ pub mod signatures {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -57794,6 +57900,7 @@ pub mod version {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::FileList(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_file_list(reader, output, &mut fallback)? {
@@ -57871,7 +57978,6 @@ pub mod version {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -58007,13 +58113,8 @@ pub mod version {
                                         deserializer,
                                     )),
                                 );
-                                if self.file.len().saturating_add(1) < 1usize {
-                                    *self.state__ =
-                                        DocVersionFileListXElementTypeDeserializerState::File(None);
-                                } else {
-                                    *self.state__ =
-                                        DocVersionFileListXElementTypeDeserializerState::Done__;
-                                }
+                                *self.state__ =
+                                    DocVersionFileListXElementTypeDeserializerState::File(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
                                 *self.state__ =
@@ -58054,6 +58155,7 @@ pub mod version {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::File(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_file(reader, output, &mut fallback)? {
@@ -58103,7 +58205,6 @@ pub mod version {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -58263,6 +58364,7 @@ pub mod version {
             {
                 use DocVersionFileListFileXElementTypeDeserializerState as S;
                 match replace(&mut *self.state__, S::Unknown__) {
+                    S::Unknown__ => unreachable!(),
                     S::Init__ => {
                         let output = ContentDeserializer::init(reader, event)?;
                         self.handle_content(reader, output)
@@ -58271,7 +58373,6 @@ pub mod version {
                         let output = deserializer.next(reader, event)?;
                         self.handle_content(reader, output)
                     }
-                    S::Unknown__ => unreachable!(),
                 }
             }
             fn finish<R>(

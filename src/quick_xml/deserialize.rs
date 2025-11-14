@@ -807,7 +807,6 @@ where
             None
             | Some(
                 Event::Decl(_)
-                | Event::Text(_)
                 | Event::Comment(_)
                 | Event::DocType(_)
                 | Event::GeneralRef(_)
@@ -818,6 +817,7 @@ where
                     self.skip_depth = Some(1);
                 }
             }
+            Some(Event::Text(text)) if text.decode()?.trim().is_empty() => (),
             Some(event) => return Err(ErrorKind::UnexpectedEvent(event.into_owned()).into()),
         }
 
