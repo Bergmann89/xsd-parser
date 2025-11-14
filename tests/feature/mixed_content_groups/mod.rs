@@ -50,7 +50,7 @@ fn read_quick_xml_normal() {
     use quick_xml::NormalElement;
 
     let obj = crate::utils::quick_xml_read_test::<NormalElement, _>(
-        "tests/feature/mixed_content_groups/example/example.xml",
+        "tests/feature/mixed_content_groups/example/normal.xml",
     );
 
     assert_eq!(obj.group.fuu, 111);
@@ -65,7 +65,7 @@ fn read_quick_xml_mixed() {
     use xsd_parser::xml::Text;
 
     let obj = crate::utils::quick_xml_read_test::<MixedElement, _>(
-        "tests/feature/mixed_content_groups/example/example.xml",
+        "tests/feature/mixed_content_groups/example/mixed.xml",
     );
 
     assert_eq!(
@@ -86,6 +86,26 @@ fn read_quick_xml_mixed() {
     assert_eq!(
         obj.baz.text_after.as_ref().map(Text::as_str),
         Some("\n    Text after Baz\n")
+    );
+}
+
+#[test]
+#[cfg(not(feature = "update-expectations"))]
+fn write_quick_xml_normal() {
+    use quick_xml::{NormalElement, NormalGroupType};
+
+    let obj = NormalElement {
+        group: NormalGroupType {
+            fuu: 111,
+            bar: "Hello World".into(),
+        },
+        baz: "A string".into(),
+    };
+
+    crate::utils::quick_xml_write_test(
+        &obj,
+        "tns:Example",
+        "tests/feature/mixed_content_groups/example/normal.xml",
     );
 }
 
@@ -116,7 +136,7 @@ fn write_quick_xml_mixed() {
     crate::utils::quick_xml_write_test(
         &obj,
         "tns:Example",
-        "tests/feature/mixed_content_groups/example/example.xml",
+        "tests/feature/mixed_content_groups/example/mixed.xml",
     );
 }
 

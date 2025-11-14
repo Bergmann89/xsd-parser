@@ -358,6 +358,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Content__(deserializer), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_content(reader, output, &mut fallback)? {
@@ -387,7 +388,6 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Unknown__, _) => unreachable!(),
                 }
             };
             let artifact = DeserializerArtifact::Deserializer(self);
@@ -501,6 +501,7 @@ pub mod quick_xml_deserialize {
         {
             use RootTypeContentDeserializerState as S;
             match state {
+                S::Unknown__ => unreachable!(),
                 S::Init__ => Err(ErrorKind::MissingContent.into()),
                 S::NegativeDecimal(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
@@ -531,7 +532,6 @@ pub mod quick_xml_deserialize {
                     ))
                 }
                 S::Done__(data) => Ok(data),
-                S::Unknown__ => unreachable!(),
             }
         }
         fn store_negative_decimal(
@@ -787,6 +787,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::NegativeDecimal(values, Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_negative_decimal(reader, values, output, &mut fallback)? {
@@ -834,7 +835,10 @@ pub mod quick_xml_deserialize {
                         }
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
-                    (S::NegativeDecimal(values, None), event) => {
+                    (
+                        S::NegativeDecimal(values, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_TNS),
@@ -848,7 +852,10 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::PositiveDecimal(values, None), event) => {
+                    (
+                        S::PositiveDecimal(values, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_TNS),
@@ -862,7 +869,10 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::RestrictedString(values, None), event) => {
+                    (
+                        S::RestrictedString(values, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_TNS),
@@ -885,7 +895,10 @@ pub mod quick_xml_deserialize {
                         *self.state__ = s;
                         break (DeserializerEvent::Continue(event), false);
                     }
-                    (S::Unknown__, _) => unreachable!(),
+                    (state, event) => {
+                        *self.state__ = state;
+                        break (DeserializerEvent::Break(event), false);
+                    }
                 }
             };
             let artifact = if matches!(&*self.state__, S::Done__(_)) {

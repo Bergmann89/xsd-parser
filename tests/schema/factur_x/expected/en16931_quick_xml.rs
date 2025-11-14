@@ -1935,6 +1935,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::ExchangedDocumentContext(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_exchanged_document_context(
@@ -2066,7 +2067,6 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(S::Done__);
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
-                    (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -2314,6 +2314,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (
                         S::BusinessProcessSpecifiedDocumentContextParameter(Some(deserializer)),
                         event,
@@ -2416,7 +2417,6 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(S::Done__);
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
-                    (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -2784,6 +2784,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Id(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_id(reader, output, &mut fallback)? {
@@ -2919,7 +2920,6 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(S::Done__);
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
-                    (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -3109,16 +3109,7 @@ pub mod quick_xml_deserialize {
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
                             fallback . get_or_insert (SupplyChainTradeTransactionTypeDeserializerState :: IncludedSupplyChainTradeLineItem (Some (deserializer))) ;
-                            if self
-                                .included_supply_chain_trade_line_item
-                                .len()
-                                .saturating_add(1)
-                                < 1usize
-                            {
-                                * self . state__ = SupplyChainTradeTransactionTypeDeserializerState :: IncludedSupplyChainTradeLineItem (None) ;
-                            } else {
-                                * self . state__ = SupplyChainTradeTransactionTypeDeserializerState :: ApplicableHeaderTradeAgreement (None) ;
-                            }
+                            * self . state__ = SupplyChainTradeTransactionTypeDeserializerState :: IncludedSupplyChainTradeLineItem (None) ;
                         }
                         ElementHandlerOutput::Break { .. } => {
                             * self . state__ = SupplyChainTradeTransactionTypeDeserializerState :: IncludedSupplyChainTradeLineItem (Some (deserializer)) ;
@@ -3304,6 +3295,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::IncludedSupplyChainTradeLineItem(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_included_supply_chain_trade_line_item(
@@ -3483,7 +3475,6 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(S::Done__);
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
-                    (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -3659,6 +3650,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Id(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_id(reader, output, &mut fallback)? {
@@ -3707,7 +3699,6 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(S::Done__);
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
-                    (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -3858,6 +3849,7 @@ pub mod quick_xml_deserialize {
         {
             use IdTypeDeserializerState as S;
             match replace(&mut *self.state__, S::Unknown__) {
+                S::Unknown__ => unreachable!(),
                 S::Init__ => {
                     let output = ContentDeserializer::init(reader, event)?;
                     self.handle_content(reader, output)
@@ -3866,7 +3858,6 @@ pub mod quick_xml_deserialize {
                     let output = deserializer.next(reader, event)?;
                     self.handle_content(reader, output)
                 }
-                S::Unknown__ => unreachable!(),
             }
         }
         fn finish<R>(mut self, reader: &R) -> Result<super::IdType, Error>
@@ -3993,6 +3984,7 @@ pub mod quick_xml_deserialize {
         {
             use DocumentCodeTypeDeserializerState as S;
             match replace(&mut *self.state__, S::Unknown__) {
+                S::Unknown__ => unreachable!(),
                 S::Init__ => {
                     let output = ContentDeserializer::init(reader, event)?;
                     self.handle_content(reader, output)
@@ -4001,7 +3993,6 @@ pub mod quick_xml_deserialize {
                     let output = deserializer.next(reader, event)?;
                     self.handle_content(reader, output)
                 }
-                S::Unknown__ => unreachable!(),
             }
         }
         fn finish<R>(mut self, reader: &R) -> Result<super::DocumentCodeType, Error>
@@ -4122,6 +4113,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Content__(deserializer), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_content(reader, output, &mut fallback)? {
@@ -4151,7 +4143,6 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Unknown__, _) => unreachable!(),
                 }
             };
             let artifact = DeserializerArtifact::Deserializer(self);
@@ -4224,6 +4215,7 @@ pub mod quick_xml_deserialize {
         {
             use DateTimeTypeContentDeserializerState as S;
             match state {
+                S::Unknown__ => unreachable!(),
                 S::Init__ => Err(ErrorKind::MissingContent.into()),
                 S::DateTimeString(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
@@ -4235,7 +4227,6 @@ pub mod quick_xml_deserialize {
                     ))
                 }
                 S::Done__(data) => Ok(data),
-                S::Unknown__ => unreachable!(),
             }
         }
         fn store_date_time_string(
@@ -4351,6 +4342,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::DateTimeString(values, Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_date_time_string(reader, values, output, &mut fallback)? {
@@ -4375,7 +4367,10 @@ pub mod quick_xml_deserialize {
                         }
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
-                    (S::DateTimeString(values, None), event) => {
+                    (
+                        S::DateTimeString(values, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UDT),
@@ -4393,7 +4388,10 @@ pub mod quick_xml_deserialize {
                         *self.state__ = s;
                         break (DeserializerEvent::Continue(event), false);
                     }
-                    (S::Unknown__, _) => unreachable!(),
+                    (state, event) => {
+                        *self.state__ = state;
+                        break (DeserializerEvent::Break(event), false);
+                    }
                 }
             };
             let artifact = if matches!(&*self.state__, S::Done__(_)) {
@@ -4602,6 +4600,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Content(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_content(reader, output, &mut fallback)? {
@@ -4679,7 +4678,6 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(S::Done__);
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
-                    (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -5161,6 +5159,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::AssociatedDocumentLineDocument(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_associated_document_line_document(
@@ -5372,7 +5371,6 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(S::Done__);
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
-                    (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -6115,6 +6113,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::BuyerReference(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_buyer_reference(reader, output, &mut fallback)? {
@@ -6462,7 +6461,6 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(S::Done__);
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
-                    (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -6855,6 +6853,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::ShipToTradeParty(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_ship_to_trade_party(reader, output, &mut fallback)? {
@@ -7024,7 +7023,6 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(S::Done__);
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
-                    (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -7658,14 +7656,10 @@ pub mod quick_xml_deserialize {
                                     Some(deserializer),
                                 ),
                             );
-                            if self.applicable_trade_tax.len().saturating_add(1) < 1usize {
-                                *self.state__ =
-                                    HeaderTradeSettlementTypeDeserializerState::ApplicableTradeTax(
-                                        None,
-                                    );
-                            } else {
-                                * self . state__ = HeaderTradeSettlementTypeDeserializerState :: BillingSpecifiedPeriod (None) ;
-                            }
+                            *self.state__ =
+                                HeaderTradeSettlementTypeDeserializerState::ApplicableTradeTax(
+                                    None,
+                                );
                         }
                         ElementHandlerOutput::Break { .. } => {
                             *self.state__ =
@@ -8004,6 +7998,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::CreditorReferenceId(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_creditor_reference_id(reader, output, &mut fallback)? {
@@ -8473,7 +8468,6 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(S::Done__);
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
-                    (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -8652,6 +8646,7 @@ pub mod quick_xml_deserialize {
         {
             use DateTimeTypeDateTimeStringTypeDeserializerState as S;
             match replace(&mut *self.state__, S::Unknown__) {
+                S::Unknown__ => unreachable!(),
                 S::Init__ => {
                     let output = ContentDeserializer::init(reader, event)?;
                     self.handle_content(reader, output)
@@ -8660,7 +8655,6 @@ pub mod quick_xml_deserialize {
                     let output = deserializer.next(reader, event)?;
                     self.handle_content(reader, output)
                 }
-                S::Unknown__ => unreachable!(),
             }
         }
         fn finish<R>(mut self, reader: &R) -> Result<super::DateTimeTypeDateTimeStringType, Error>
@@ -8787,6 +8781,7 @@ pub mod quick_xml_deserialize {
         {
             use TextTypeDeserializerState as S;
             match replace(&mut *self.state__, S::Unknown__) {
+                S::Unknown__ => unreachable!(),
                 S::Init__ => {
                     let output = ContentDeserializer::init(reader, event)?;
                     self.handle_content(reader, output)
@@ -8795,7 +8790,6 @@ pub mod quick_xml_deserialize {
                     let output = deserializer.next(reader, event)?;
                     self.handle_content(reader, output)
                 }
-                S::Unknown__ => unreachable!(),
             }
         }
         fn finish<R>(mut self, reader: &R) -> Result<super::TextType, Error>
@@ -8936,6 +8930,7 @@ pub mod quick_xml_deserialize {
         {
             use CodeTypeDeserializerState as S;
             match replace(&mut *self.state__, S::Unknown__) {
+                S::Unknown__ => unreachable!(),
                 S::Init__ => {
                     let output = ContentDeserializer::init(reader, event)?;
                     self.handle_content(reader, output)
@@ -8944,7 +8939,6 @@ pub mod quick_xml_deserialize {
                     let output = deserializer.next(reader, event)?;
                     self.handle_content(reader, output)
                 }
-                S::Unknown__ => unreachable!(),
             }
         }
         fn finish<R>(mut self, reader: &R) -> Result<super::CodeType, Error>
@@ -9163,6 +9157,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::LineId(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_line_id(reader, output, &mut fallback)? {
@@ -9240,7 +9235,6 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(S::Done__);
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
-                    (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -9873,6 +9867,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::GlobalId(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_global_id(reader, output, &mut fallback)? {
@@ -10146,7 +10141,6 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(S::Done__);
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
-                    (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -10466,6 +10460,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::BuyerOrderReferencedDocument(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_buyer_order_referenced_document(
@@ -10608,7 +10603,6 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(S::Done__);
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
-                    (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -10777,6 +10771,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::BilledQuantity(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_billed_quantity(reader, output, &mut fallback)? {
@@ -10826,7 +10821,6 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(S::Done__);
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
-                    (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -11359,6 +11353,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::ApplicableTradeTax(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_applicable_trade_tax(reader, output, &mut fallback)? {
@@ -11603,7 +11598,6 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(S::Done__);
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
-                    (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -12264,8 +12258,14 @@ pub mod quick_xml_deserialize {
                                     deserializer,
                                 )),
                             );
-                            *self.state__ =
-                                TradePartyTypeDeserializerState::SpecifiedTaxRegistration(None);
+                            let can_have_more =
+                                self.specified_tax_registration.len().saturating_add(1) < 2usize;
+                            if can_have_more {
+                                *self.state__ =
+                                    TradePartyTypeDeserializerState::SpecifiedTaxRegistration(None);
+                            } else {
+                                *self.state__ = TradePartyTypeDeserializerState::Done__;
+                            }
                         }
                         ElementHandlerOutput::Break { .. } => {
                             *self.state__ =
@@ -12301,6 +12301,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Id(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_id(reader, output, &mut fallback)? {
@@ -12614,7 +12615,6 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(S::Done__);
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
-                    (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -13255,6 +13255,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::IssuerAssignedId(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_issuer_assigned_id(reader, output, &mut fallback)? {
@@ -13521,7 +13522,6 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(S::Done__);
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
-                    (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -13747,6 +13747,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Id(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_id(reader, output, &mut fallback)? {
@@ -13824,7 +13825,6 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(S::Done__);
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
-                    (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -13995,6 +13995,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::OccurrenceDateTime(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_occurrence_date_time(reader, output, &mut fallback)? {
@@ -14044,7 +14045,6 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(S::Done__);
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
-                    (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -14188,6 +14188,7 @@ pub mod quick_xml_deserialize {
         {
             use CurrencyCodeTypeDeserializerState as S;
             match replace(&mut *self.state__, S::Unknown__) {
+                S::Unknown__ => unreachable!(),
                 S::Init__ => {
                     let output = ContentDeserializer::init(reader, event)?;
                     self.handle_content(reader, output)
@@ -14196,7 +14197,6 @@ pub mod quick_xml_deserialize {
                     let output = deserializer.next(reader, event)?;
                     self.handle_content(reader, output)
                 }
-                S::Unknown__ => unreachable!(),
             }
         }
         fn finish<R>(mut self, reader: &R) -> Result<super::CurrencyCodeType, Error>
@@ -14686,6 +14686,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::TypeCode(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_type_code(reader, output, &mut fallback)? {
@@ -14924,7 +14925,6 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(S::Done__);
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
-                    (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -15605,6 +15605,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::CalculatedAmount(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_calculated_amount(reader, output, &mut fallback)? {
@@ -15888,7 +15889,6 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(S::Done__);
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
-                    (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -16120,6 +16120,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::StartDateTime(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_start_date_time(reader, output, &mut fallback)? {
@@ -16197,7 +16198,6 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(S::Done__);
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
-                    (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -16782,6 +16782,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::ChargeIndicator(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_charge_indicator(reader, output, &mut fallback)? {
@@ -17005,7 +17006,6 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(S::Done__);
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
-                    (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -17311,6 +17311,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Description(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_description(reader, output, &mut fallback)? {
@@ -17420,7 +17421,6 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(S::Done__);
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
-                    (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -17862,7 +17862,13 @@ pub mod quick_xml_deserialize {
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
                             fallback . get_or_insert (TradeSettlementHeaderMonetarySummationTypeDeserializerState :: TaxTotalAmount (Some (deserializer))) ;
-                            * self . state__ = TradeSettlementHeaderMonetarySummationTypeDeserializerState :: TaxTotalAmount (None) ;
+                            let can_have_more =
+                                self.tax_total_amount.len().saturating_add(1) < 2usize;
+                            if can_have_more {
+                                * self . state__ = TradeSettlementHeaderMonetarySummationTypeDeserializerState :: TaxTotalAmount (None) ;
+                            } else {
+                                * self . state__ = TradeSettlementHeaderMonetarySummationTypeDeserializerState :: RoundingAmount (None) ;
+                            }
                         }
                         ElementHandlerOutput::Break { .. } => {
                             * self . state__ = TradeSettlementHeaderMonetarySummationTypeDeserializerState :: TaxTotalAmount (Some (deserializer)) ;
@@ -18103,6 +18109,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::LineTotalAmount(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_line_total_amount(reader, output, &mut fallback)? {
@@ -18386,7 +18393,6 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(S::Done__);
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
-                    (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -18563,6 +18569,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Id(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_id(reader, output, &mut fallback)? {
@@ -18611,7 +18618,6 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(S::Done__);
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
-                    (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -18848,6 +18854,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Description(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_description(reader, output, &mut fallback)? {
@@ -18926,7 +18933,6 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(S::Done__);
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
-                    (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -19091,6 +19097,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::ClassCode(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_class_code(reader, output, &mut fallback)? {
@@ -19139,7 +19146,6 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(S::Done__);
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
-                    (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -19295,6 +19301,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Id(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_id(reader, output, &mut fallback)? {
@@ -19343,7 +19350,6 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(S::Done__);
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
-                    (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -19639,6 +19645,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::ChargeAmount(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_charge_amount(reader, output, &mut fallback)? {
@@ -19756,7 +19763,6 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(S::Done__);
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
-                    (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -19909,6 +19915,7 @@ pub mod quick_xml_deserialize {
         {
             use QuantityTypeDeserializerState as S;
             match replace(&mut *self.state__, S::Unknown__) {
+                S::Unknown__ => unreachable!(),
                 S::Init__ => {
                     let output = ContentDeserializer::init(reader, event)?;
                     self.handle_content(reader, output)
@@ -19917,7 +19924,6 @@ pub mod quick_xml_deserialize {
                     let output = deserializer.next(reader, event)?;
                     self.handle_content(reader, output)
                 }
-                S::Unknown__ => unreachable!(),
             }
         }
         fn finish<R>(mut self, reader: &R) -> Result<super::QuantityType, Error>
@@ -20073,6 +20079,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::LineTotalAmount(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_line_total_amount(reader, output, &mut fallback)? {
@@ -20121,7 +20128,6 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(S::Done__);
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
-                    (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -20347,6 +20353,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Id(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_id(reader, output, &mut fallback)? {
@@ -20424,7 +20431,6 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(S::Done__);
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
-                    (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -20801,6 +20807,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::PersonName(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_person_name(reader, output, &mut fallback)? {
@@ -20958,7 +20965,6 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(S::Done__);
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
-                    (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -21500,6 +21506,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::PostcodeCode(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_postcode_code(reader, output, &mut fallback)? {
@@ -21733,7 +21740,6 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(S::Done__);
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
-                    (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -21969,6 +21975,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Uriid(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_uriid(reader, output, &mut fallback)? {
@@ -22046,7 +22053,6 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(S::Done__);
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
-                    (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -22203,6 +22209,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Id(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_id(reader, output, &mut fallback)? {
@@ -22251,7 +22258,6 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(S::Done__);
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
-                    (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -22417,6 +22423,7 @@ pub mod quick_xml_deserialize {
         {
             use BinaryObjectTypeDeserializerState as S;
             match replace(&mut *self.state__, S::Unknown__) {
+                S::Unknown__ => unreachable!(),
                 S::Init__ => {
                     let output = ContentDeserializer::init(reader, event)?;
                     self.handle_content(reader, output)
@@ -22425,7 +22432,6 @@ pub mod quick_xml_deserialize {
                     let output = deserializer.next(reader, event)?;
                     self.handle_content(reader, output)
                 }
-                S::Unknown__ => unreachable!(),
             }
         }
         fn finish<R>(mut self, reader: &R) -> Result<super::BinaryObjectType, Error>
@@ -22556,6 +22562,7 @@ pub mod quick_xml_deserialize {
         {
             use ReferenceCodeTypeDeserializerState as S;
             match replace(&mut *self.state__, S::Unknown__) {
+                S::Unknown__ => unreachable!(),
                 S::Init__ => {
                     let output = ContentDeserializer::init(reader, event)?;
                     self.handle_content(reader, output)
@@ -22564,7 +22571,6 @@ pub mod quick_xml_deserialize {
                     let output = deserializer.next(reader, event)?;
                     self.handle_content(reader, output)
                 }
-                S::Unknown__ => unreachable!(),
             }
         }
         fn finish<R>(mut self, reader: &R) -> Result<super::ReferenceCodeType, Error>
@@ -22723,6 +22729,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::DateTimeString(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_date_time_string(reader, output, &mut fallback)? {
@@ -22772,7 +22779,6 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(S::Done__);
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
-                    (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -22916,6 +22922,7 @@ pub mod quick_xml_deserialize {
         {
             use PaymentMeansCodeTypeDeserializerState as S;
             match replace(&mut *self.state__, S::Unknown__) {
+                S::Unknown__ => unreachable!(),
                 S::Init__ => {
                     let output = ContentDeserializer::init(reader, event)?;
                     self.handle_content(reader, output)
@@ -22924,7 +22931,6 @@ pub mod quick_xml_deserialize {
                     let output = deserializer.next(reader, event)?;
                     self.handle_content(reader, output)
                 }
-                S::Unknown__ => unreachable!(),
             }
         }
         fn finish<R>(mut self, reader: &R) -> Result<super::PaymentMeansCodeType, Error>
@@ -23147,6 +23153,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Id(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_id(reader, output, &mut fallback)? {
@@ -23224,7 +23231,6 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(S::Done__);
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
-                    (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -23391,6 +23397,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Ibanid(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_ibanid(reader, output, &mut fallback)? {
@@ -23439,7 +23446,6 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(S::Done__);
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
-                    (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -23739,6 +23745,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Ibanid(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_ibanid(reader, output, &mut fallback)? {
@@ -23845,7 +23852,6 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(S::Done__);
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
-                    (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -24014,6 +24020,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Bicid(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_bicid(reader, output, &mut fallback)? {
@@ -24063,7 +24070,6 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(S::Done__);
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
-                    (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -24214,6 +24220,7 @@ pub mod quick_xml_deserialize {
         {
             use AmountTypeDeserializerState as S;
             match replace(&mut *self.state__, S::Unknown__) {
+                S::Unknown__ => unreachable!(),
                 S::Init__ => {
                     let output = ContentDeserializer::init(reader, event)?;
                     self.handle_content(reader, output)
@@ -24222,7 +24229,6 @@ pub mod quick_xml_deserialize {
                     let output = deserializer.next(reader, event)?;
                     self.handle_content(reader, output)
                 }
-                S::Unknown__ => unreachable!(),
             }
         }
         fn finish<R>(mut self, reader: &R) -> Result<super::AmountType, Error>
@@ -24346,6 +24352,7 @@ pub mod quick_xml_deserialize {
         {
             use TaxTypeCodeTypeDeserializerState as S;
             match replace(&mut *self.state__, S::Unknown__) {
+                S::Unknown__ => unreachable!(),
                 S::Init__ => {
                     let output = ContentDeserializer::init(reader, event)?;
                     self.handle_content(reader, output)
@@ -24354,7 +24361,6 @@ pub mod quick_xml_deserialize {
                     let output = deserializer.next(reader, event)?;
                     self.handle_content(reader, output)
                 }
-                S::Unknown__ => unreachable!(),
             }
         }
         fn finish<R>(mut self, reader: &R) -> Result<super::TaxTypeCodeType, Error>
@@ -24483,6 +24489,7 @@ pub mod quick_xml_deserialize {
         {
             use TaxCategoryCodeTypeDeserializerState as S;
             match replace(&mut *self.state__, S::Unknown__) {
+                S::Unknown__ => unreachable!(),
                 S::Init__ => {
                     let output = ContentDeserializer::init(reader, event)?;
                     self.handle_content(reader, output)
@@ -24491,7 +24498,6 @@ pub mod quick_xml_deserialize {
                     let output = deserializer.next(reader, event)?;
                     self.handle_content(reader, output)
                 }
-                S::Unknown__ => unreachable!(),
             }
         }
         fn finish<R>(mut self, reader: &R) -> Result<super::TaxCategoryCodeType, Error>
@@ -24610,6 +24616,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Content__(deserializer), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_content(reader, output, &mut fallback)? {
@@ -24639,7 +24646,6 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Unknown__, _) => unreachable!(),
                 }
             };
             let artifact = DeserializerArtifact::Deserializer(self);
@@ -24715,6 +24721,7 @@ pub mod quick_xml_deserialize {
         {
             use DateTypeContentDeserializerState as S;
             match state {
+                S::Unknown__ => unreachable!(),
                 S::Init__ => Err(ErrorKind::MissingContent.into()),
                 S::DateString(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
@@ -24726,7 +24733,6 @@ pub mod quick_xml_deserialize {
                     )?))
                 }
                 S::Done__(data) => Ok(data),
-                S::Unknown__ => unreachable!(),
             }
         }
         fn store_date_string(
@@ -24830,6 +24836,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::DateString(values, Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_date_string(reader, values, output, &mut fallback)? {
@@ -24854,7 +24861,7 @@ pub mod quick_xml_deserialize {
                         }
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
-                    (S::DateString(values, None), event) => {
+                    (S::DateString(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UDT),
@@ -24872,7 +24879,10 @@ pub mod quick_xml_deserialize {
                         *self.state__ = s;
                         break (DeserializerEvent::Continue(event), false);
                     }
-                    (S::Unknown__, _) => unreachable!(),
+                    (state, event) => {
+                        *self.state__ = state;
+                        break (DeserializerEvent::Break(event), false);
+                    }
                 }
             };
             let artifact = if matches!(&*self.state__, S::Done__(_)) {
@@ -25005,6 +25015,7 @@ pub mod quick_xml_deserialize {
         {
             use TimeReferenceCodeTypeDeserializerState as S;
             match replace(&mut *self.state__, S::Unknown__) {
+                S::Unknown__ => unreachable!(),
                 S::Init__ => {
                     let output = ContentDeserializer::init(reader, event)?;
                     self.handle_content(reader, output)
@@ -25013,7 +25024,6 @@ pub mod quick_xml_deserialize {
                     let output = deserializer.next(reader, event)?;
                     self.handle_content(reader, output)
                 }
-                S::Unknown__ => unreachable!(),
             }
         }
         fn finish<R>(mut self, reader: &R) -> Result<super::TimeReferenceCodeType, Error>
@@ -25139,6 +25149,7 @@ pub mod quick_xml_deserialize {
         {
             use PercentTypeDeserializerState as S;
             match replace(&mut *self.state__, S::Unknown__) {
+                S::Unknown__ => unreachable!(),
                 S::Init__ => {
                     let output = ContentDeserializer::init(reader, event)?;
                     self.handle_content(reader, output)
@@ -25147,7 +25158,6 @@ pub mod quick_xml_deserialize {
                     let output = deserializer.next(reader, event)?;
                     self.handle_content(reader, output)
                 }
-                S::Unknown__ => unreachable!(),
             }
         }
         fn finish<R>(mut self, reader: &R) -> Result<super::PercentType, Error>
@@ -25265,6 +25275,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Content__(deserializer), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_content(reader, output, &mut fallback)? {
@@ -25294,7 +25305,6 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Unknown__, _) => unreachable!(),
                 }
             };
             let artifact = DeserializerArtifact::Deserializer(self);
@@ -25370,6 +25380,7 @@ pub mod quick_xml_deserialize {
         {
             use IndicatorTypeContentDeserializerState as S;
             match state {
+                S::Unknown__ => unreachable!(),
                 S::Init__ => Err(ErrorKind::MissingContent.into()),
                 S::Indicator(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
@@ -25381,7 +25392,6 @@ pub mod quick_xml_deserialize {
                     )?))
                 }
                 S::Done__(data) => Ok(data),
-                S::Unknown__ => unreachable!(),
             }
         }
         fn store_indicator(values: &mut Option<bool>, value: bool) -> Result<(), Error> {
@@ -25490,6 +25500,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Indicator(values, Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_indicator(reader, values, output, &mut fallback)? {
@@ -25514,7 +25525,7 @@ pub mod quick_xml_deserialize {
                         }
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
-                    (S::Indicator(values, None), event) => {
+                    (S::Indicator(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UDT),
@@ -25532,7 +25543,10 @@ pub mod quick_xml_deserialize {
                         *self.state__ = s;
                         break (DeserializerEvent::Continue(event), false);
                     }
-                    (S::Unknown__, _) => unreachable!(),
+                    (state, event) => {
+                        *self.state__ = state;
+                        break (DeserializerEvent::Break(event), false);
+                    }
                 }
             };
             let artifact = if matches!(&*self.state__, S::Done__(_)) {
@@ -25667,6 +25681,7 @@ pub mod quick_xml_deserialize {
         {
             use AllowanceChargeReasonCodeTypeDeserializerState as S;
             match replace(&mut *self.state__, S::Unknown__) {
+                S::Unknown__ => unreachable!(),
                 S::Init__ => {
                     let output = ContentDeserializer::init(reader, event)?;
                     self.handle_content(reader, output)
@@ -25675,7 +25690,6 @@ pub mod quick_xml_deserialize {
                     let output = deserializer.next(reader, event)?;
                     self.handle_content(reader, output)
                 }
-                S::Unknown__ => unreachable!(),
             }
         }
         fn finish<R>(mut self, reader: &R) -> Result<super::AllowanceChargeReasonCodeType, Error>
@@ -25801,6 +25815,7 @@ pub mod quick_xml_deserialize {
         {
             use CountryIdTypeDeserializerState as S;
             match replace(&mut *self.state__, S::Unknown__) {
+                S::Unknown__ => unreachable!(),
                 S::Init__ => {
                     let output = ContentDeserializer::init(reader, event)?;
                     self.handle_content(reader, output)
@@ -25809,7 +25824,6 @@ pub mod quick_xml_deserialize {
                     let output = deserializer.next(reader, event)?;
                     self.handle_content(reader, output)
                 }
-                S::Unknown__ => unreachable!(),
             }
         }
         fn finish<R>(mut self, reader: &R) -> Result<super::CountryIdType, Error>
@@ -25955,6 +25969,7 @@ pub mod quick_xml_deserialize {
         {
             use FormattedDateTimeTypeDateTimeStringTypeDeserializerState as S;
             match replace(&mut *self.state__, S::Unknown__) {
+                S::Unknown__ => unreachable!(),
                 S::Init__ => {
                     let output = ContentDeserializer::init(reader, event)?;
                     self.handle_content(reader, output)
@@ -25963,7 +25978,6 @@ pub mod quick_xml_deserialize {
                     let output = deserializer.next(reader, event)?;
                     self.handle_content(reader, output)
                 }
-                S::Unknown__ => unreachable!(),
             }
         }
         fn finish<R>(
@@ -26108,6 +26122,7 @@ pub mod quick_xml_deserialize {
         {
             use DateTypeDateStringTypeDeserializerState as S;
             match replace(&mut *self.state__, S::Unknown__) {
+                S::Unknown__ => unreachable!(),
                 S::Init__ => {
                     let output = ContentDeserializer::init(reader, event)?;
                     self.handle_content(reader, output)
@@ -26116,7 +26131,6 @@ pub mod quick_xml_deserialize {
                     let output = deserializer.next(reader, event)?;
                     self.handle_content(reader, output)
                 }
-                S::Unknown__ => unreachable!(),
             }
         }
         fn finish<R>(mut self, reader: &R) -> Result<super::DateTypeDateStringType, Error>

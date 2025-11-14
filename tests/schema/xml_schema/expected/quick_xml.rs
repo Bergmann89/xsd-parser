@@ -1572,6 +1572,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Content__(deserializer), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_content(reader, output, &mut fallback)? {
@@ -1598,7 +1599,6 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Unknown__, _) => unreachable!(),
                 }
             };
             let artifact = DeserializerArtifact::Deserializer(self);
@@ -1887,6 +1887,7 @@ pub mod quick_xml_deserialize {
         {
             use SchemaElementTypeContentDeserializerState as S;
             match state {
+                S::Unknown__ => unreachable!(),
                 S::Init__ => Err(ErrorKind::MissingContent.into()),
                 S::Include(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
@@ -2008,7 +2009,6 @@ pub mod quick_xml_deserialize {
                     ))
                 }
                 S::Done__(data) => Ok(data),
-                S::Unknown__ => unreachable!(),
             }
         }
         fn store_include(
@@ -3030,6 +3030,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Include(values, Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_include(reader, values, output, &mut fallback)? {
@@ -3167,7 +3168,7 @@ pub mod quick_xml_deserialize {
                         }
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
-                    (S::Include(values, None), event) => {
+                    (S::Include(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -3181,7 +3182,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Import(values, None), event) => {
+                    (S::Import(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -3195,7 +3196,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Redefine(values, None), event) => {
+                    (S::Redefine(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -3209,7 +3210,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Override(values, None), event) => {
+                    (S::Override(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -3223,7 +3224,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Annotation(values, None), event) => {
+                    (S::Annotation(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -3237,7 +3238,10 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::DefaultOpenContent(values, None), event) => {
+                    (
+                        S::DefaultOpenContent(values, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -3256,7 +3260,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::SimpleType(values, None), event) => {
+                    (S::SimpleType(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -3270,7 +3274,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::ComplexType(values, None), event) => {
+                    (S::ComplexType(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -3284,7 +3288,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Group(values, None), event) => {
+                    (S::Group(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -3298,7 +3302,10 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::AttributeGroup(values, None), event) => {
+                    (
+                        S::AttributeGroup(values, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -3312,7 +3319,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Element(values, None), event) => {
+                    (S::Element(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -3326,7 +3333,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Attribute(values, None), event) => {
+                    (S::Attribute(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -3340,7 +3347,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Notation(values, None), event) => {
+                    (S::Notation(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -3358,7 +3365,10 @@ pub mod quick_xml_deserialize {
                         *self.state__ = s;
                         break (DeserializerEvent::Continue(event), false);
                     }
-                    (S::Unknown__, _) => unreachable!(),
+                    (state, event) => {
+                        *self.state__ = state;
+                        break (DeserializerEvent::Break(event), false);
+                    }
                 }
             };
             let artifact = if matches!(&*self.state__, S::Done__(_)) {
@@ -3527,6 +3537,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Annotation(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_annotation(reader, output, &mut fallback)? {
@@ -3575,7 +3586,6 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(S::Done__);
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
-                    (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -3762,6 +3772,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Annotation(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_annotation(reader, output, &mut fallback)? {
@@ -3810,7 +3821,6 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(S::Done__);
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
-                    (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -3983,6 +3993,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Content__(deserializer), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_content(reader, output, &mut fallback)? {
@@ -4009,7 +4020,6 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Unknown__, _) => unreachable!(),
                 }
             };
             let artifact = DeserializerArtifact::Deserializer(self);
@@ -4158,6 +4168,7 @@ pub mod quick_xml_deserialize {
         {
             use RedefineElementTypeContentDeserializerState as S;
             match state {
+                S::Unknown__ => unreachable!(),
                 S::Init__ => Err(ErrorKind::MissingContent.into()),
                 S::Annotation(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
@@ -4205,7 +4216,6 @@ pub mod quick_xml_deserialize {
                     ))
                 }
                 S::Done__(data) => Ok(data),
-                S::Unknown__ => unreachable!(),
             }
         }
         fn store_annotation(
@@ -4629,6 +4639,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Annotation(values, Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_annotation(reader, values, output, &mut fallback)? {
@@ -4689,7 +4700,7 @@ pub mod quick_xml_deserialize {
                         }
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
-                    (S::Annotation(values, None), event) => {
+                    (S::Annotation(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -4703,7 +4714,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::SimpleType(values, None), event) => {
+                    (S::SimpleType(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -4717,7 +4728,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::ComplexType(values, None), event) => {
+                    (S::ComplexType(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -4731,7 +4742,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Group(values, None), event) => {
+                    (S::Group(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -4745,7 +4756,10 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::AttributeGroup(values, None), event) => {
+                    (
+                        S::AttributeGroup(values, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -4763,7 +4777,10 @@ pub mod quick_xml_deserialize {
                         *self.state__ = s;
                         break (DeserializerEvent::Continue(event), false);
                     }
-                    (S::Unknown__, _) => unreachable!(),
+                    (state, event) => {
+                        *self.state__ = state;
+                        break (DeserializerEvent::Break(event), false);
+                    }
                 }
             };
             let artifact = if matches!(&*self.state__, S::Done__(_)) {
@@ -4923,6 +4940,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Content__(deserializer), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_content(reader, output, &mut fallback)? {
@@ -4949,7 +4967,6 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Unknown__, _) => unreachable!(),
                 }
             };
             let artifact = DeserializerArtifact::Deserializer(self);
@@ -5148,6 +5165,7 @@ pub mod quick_xml_deserialize {
         {
             use OverrideElementTypeContentDeserializerState as S;
             match state {
+                S::Unknown__ => unreachable!(),
                 S::Init__ => Err(ErrorKind::MissingContent.into()),
                 S::Annotation(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
@@ -5222,7 +5240,6 @@ pub mod quick_xml_deserialize {
                     ))
                 }
                 S::Done__(data) => Ok(data),
-                S::Unknown__ => unreachable!(),
             }
         }
         fn store_annotation(
@@ -5874,6 +5891,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Annotation(values, Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_annotation(reader, values, output, &mut fallback)? {
@@ -5961,7 +5979,7 @@ pub mod quick_xml_deserialize {
                         }
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
-                    (S::Annotation(values, None), event) => {
+                    (S::Annotation(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -5975,7 +5993,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::SimpleType(values, None), event) => {
+                    (S::SimpleType(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -5989,7 +6007,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::ComplexType(values, None), event) => {
+                    (S::ComplexType(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -6003,7 +6021,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Group(values, None), event) => {
+                    (S::Group(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -6017,7 +6035,10 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::AttributeGroup(values, None), event) => {
+                    (
+                        S::AttributeGroup(values, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -6031,7 +6052,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Element(values, None), event) => {
+                    (S::Element(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -6045,7 +6066,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Attribute(values, None), event) => {
+                    (S::Attribute(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -6059,7 +6080,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Notation(values, None), event) => {
+                    (S::Notation(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -6077,7 +6098,10 @@ pub mod quick_xml_deserialize {
                         *self.state__ = s;
                         break (DeserializerEvent::Continue(event), false);
                     }
-                    (S::Unknown__, _) => unreachable!(),
+                    (state, event) => {
+                        *self.state__ = state;
+                        break (DeserializerEvent::Break(event), false);
+                    }
                 }
             };
             let artifact = if matches!(&*self.state__, S::Done__(_)) {
@@ -6230,6 +6254,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Content__(deserializer), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_content(reader, output, &mut fallback)? {
@@ -6256,7 +6281,6 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Unknown__, _) => unreachable!(),
                 }
             };
             let artifact = DeserializerArtifact::Deserializer(self);
@@ -6351,6 +6375,7 @@ pub mod quick_xml_deserialize {
         {
             use AnnotationElementTypeContentDeserializerState as S;
             match state {
+                S::Unknown__ => unreachable!(),
                 S::Init__ => Err(ErrorKind::MissingContent.into()),
                 S::Appinfo(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
@@ -6371,7 +6396,6 @@ pub mod quick_xml_deserialize {
                     ))
                 }
                 S::Done__(data) => Ok(data),
-                S::Unknown__ => unreachable!(),
             }
         }
         fn store_appinfo(
@@ -6570,6 +6594,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Appinfo(values, Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_appinfo(reader, values, output, &mut fallback)? {
@@ -6603,7 +6628,7 @@ pub mod quick_xml_deserialize {
                         }
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
-                    (S::Appinfo(values, None), event) => {
+                    (S::Appinfo(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -6617,7 +6642,10 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Documentation(values, None), event) => {
+                    (
+                        S::Documentation(values, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -6635,7 +6663,10 @@ pub mod quick_xml_deserialize {
                         *self.state__ = s;
                         break (DeserializerEvent::Continue(event), false);
                     }
-                    (S::Unknown__, _) => unreachable!(),
+                    (state, event) => {
+                        *self.state__ = state;
+                        break (DeserializerEvent::Break(event), false);
+                    }
                 }
             };
             let artifact = if matches!(&*self.state__, S::Done__(_)) {
@@ -6887,6 +6918,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Annotation(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_annotation(reader, output, &mut fallback)? {
@@ -6965,7 +6997,6 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(S::Done__);
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
-                    (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -7149,6 +7180,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Content__(deserializer), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_content(reader, output, &mut fallback)? {
@@ -7178,7 +7210,6 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Unknown__, _) => unreachable!(),
                 }
             };
             let artifact = DeserializerArtifact::Deserializer(self);
@@ -7306,6 +7337,7 @@ pub mod quick_xml_deserialize {
         {
             use SimpleBaseTypeContentDeserializerState as S;
             match state {
+                S::Unknown__ => unreachable!(),
                 S::Init__ => Err(ErrorKind::MissingContent.into()),
                 S::Annotation(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
@@ -7344,7 +7376,6 @@ pub mod quick_xml_deserialize {
                     )?))
                 }
                 S::Done__(data) => Ok(data),
-                S::Unknown__ => unreachable!(),
             }
         }
         fn store_annotation(
@@ -7665,6 +7696,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Annotation(values, Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_annotation(reader, values, output, &mut fallback)? {
@@ -7716,7 +7748,7 @@ pub mod quick_xml_deserialize {
                         }
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
-                    (S::Annotation(values, None), event) => {
+                    (S::Annotation(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -7730,7 +7762,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Restriction(values, None), event) => {
+                    (S::Restriction(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -7744,7 +7776,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::List(values, None), event) => {
+                    (S::List(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -7758,7 +7790,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Union(values, None), event) => {
+                    (S::Union(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -7776,7 +7808,10 @@ pub mod quick_xml_deserialize {
                         *self.state__ = s;
                         break (DeserializerEvent::Continue(event), false);
                     }
-                    (S::Unknown__, _) => unreachable!(),
+                    (state, event) => {
+                        *self.state__ = state;
+                        break (DeserializerEvent::Break(event), false);
+                    }
                 }
             };
             let artifact = if matches!(&*self.state__, S::Done__(_)) {
@@ -7976,6 +8011,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Content__(deserializer), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_content(reader, output, &mut fallback)? {
@@ -8002,7 +8038,6 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Unknown__, _) => unreachable!(),
                 }
             };
             let artifact = DeserializerArtifact::Deserializer(self);
@@ -8268,6 +8303,7 @@ pub mod quick_xml_deserialize {
         {
             use ComplexBaseTypeContentDeserializerState as S;
             match state {
+                S::Unknown__ => unreachable!(),
                 S::Init__ => Err(ErrorKind::MissingContent.into()),
                 S::Annotation(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
@@ -8378,7 +8414,6 @@ pub mod quick_xml_deserialize {
                     )?))
                 }
                 S::Done__(data) => Ok(data),
-                S::Unknown__ => unreachable!(),
             }
         }
         fn store_annotation(
@@ -9292,6 +9327,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Annotation(values, Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_annotation(reader, values, output, &mut fallback)? {
@@ -9415,7 +9451,7 @@ pub mod quick_xml_deserialize {
                         }
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
-                    (S::Annotation(values, None), event) => {
+                    (S::Annotation(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -9429,7 +9465,10 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::SimpleContent(values, None), event) => {
+                    (
+                        S::SimpleContent(values, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -9443,7 +9482,10 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::ComplexContent(values, None), event) => {
+                    (
+                        S::ComplexContent(values, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -9457,7 +9499,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::OpenContent(values, None), event) => {
+                    (S::OpenContent(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -9471,7 +9513,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Group(values, None), event) => {
+                    (S::Group(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -9485,7 +9527,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::All(values, None), event) => {
+                    (S::All(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -9499,7 +9541,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Choice(values, None), event) => {
+                    (S::Choice(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -9513,7 +9555,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Sequence(values, None), event) => {
+                    (S::Sequence(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -9527,7 +9569,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Attribute(values, None), event) => {
+                    (S::Attribute(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -9541,7 +9583,10 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::AttributeGroup(values, None), event) => {
+                    (
+                        S::AttributeGroup(values, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -9555,7 +9600,10 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::AnyAttribute(values, None), event) => {
+                    (
+                        S::AnyAttribute(values, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -9569,7 +9617,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Assert(values, None), event) => {
+                    (S::Assert(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -9587,7 +9635,10 @@ pub mod quick_xml_deserialize {
                         *self.state__ = s;
                         break (DeserializerEvent::Continue(event), false);
                     }
-                    (S::Unknown__, _) => unreachable!(),
+                    (state, event) => {
+                        *self.state__ = state;
+                        break (DeserializerEvent::Break(event), false);
+                    }
                 }
             };
             let artifact = if matches!(&*self.state__, S::Done__(_)) {
@@ -9764,6 +9815,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Content__(deserializer), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_content(reader, output, &mut fallback)? {
@@ -9793,7 +9845,6 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Unknown__, _) => unreachable!(),
                 }
             };
             let artifact = DeserializerArtifact::Deserializer(self);
@@ -9954,6 +10005,7 @@ pub mod quick_xml_deserialize {
         {
             use GroupTypeContentDeserializerState as S;
             match state {
+                S::Unknown__ => unreachable!(),
                 S::Init__ => Err(ErrorKind::MissingContent.into()),
                 S::Annotation(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
@@ -10019,7 +10071,6 @@ pub mod quick_xml_deserialize {
                     ))
                 }
                 S::Done__(data) => Ok(data),
-                S::Unknown__ => unreachable!(),
             }
         }
         fn store_annotation(
@@ -10524,6 +10575,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Annotation(values, Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_annotation(reader, values, output, &mut fallback)? {
@@ -10602,7 +10654,7 @@ pub mod quick_xml_deserialize {
                         }
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
-                    (S::Annotation(values, None), event) => {
+                    (S::Annotation(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -10616,7 +10668,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Element(values, None), event) => {
+                    (S::Element(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -10630,7 +10682,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Group(values, None), event) => {
+                    (S::Group(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -10644,7 +10696,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::All(values, None), event) => {
+                    (S::All(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -10658,7 +10710,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Choice(values, None), event) => {
+                    (S::Choice(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -10672,7 +10724,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Sequence(values, None), event) => {
+                    (S::Sequence(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -10686,7 +10738,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Any(values, None), event) => {
+                    (S::Any(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -10704,7 +10756,10 @@ pub mod quick_xml_deserialize {
                         *self.state__ = s;
                         break (DeserializerEvent::Continue(event), false);
                     }
-                    (S::Unknown__, _) => unreachable!(),
+                    (state, event) => {
+                        *self.state__ = state;
+                        break (DeserializerEvent::Break(event), false);
+                    }
                 }
             };
             let artifact = if matches!(&*self.state__, S::Done__(_)) {
@@ -10870,6 +10925,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Content__(deserializer), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_content(reader, output, &mut fallback)? {
@@ -10896,7 +10952,6 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Unknown__, _) => unreachable!(),
                 }
             };
             let artifact = DeserializerArtifact::Deserializer(self);
@@ -11035,6 +11090,7 @@ pub mod quick_xml_deserialize {
         {
             use AttributeGroupTypeContentDeserializerState as S;
             match state {
+                S::Unknown__ => unreachable!(),
                 S::Init__ => Err(ErrorKind::MissingContent.into()),
                 S::Annotation(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
@@ -11073,7 +11129,6 @@ pub mod quick_xml_deserialize {
                     ))
                 }
                 S::Done__(data) => Ok(data),
-                S::Unknown__ => unreachable!(),
             }
         }
         fn store_annotation(
@@ -11424,6 +11479,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Annotation(values, Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_annotation(reader, values, output, &mut fallback)? {
@@ -11475,7 +11531,7 @@ pub mod quick_xml_deserialize {
                         }
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
-                    (S::Annotation(values, None), event) => {
+                    (S::Annotation(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -11489,7 +11545,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Attribute(values, None), event) => {
+                    (S::Attribute(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -11503,7 +11559,10 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::AttributeGroup(values, None), event) => {
+                    (
+                        S::AttributeGroup(values, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -11517,7 +11576,10 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::AnyAttribute(values, None), event) => {
+                    (
+                        S::AnyAttribute(values, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -11535,7 +11597,10 @@ pub mod quick_xml_deserialize {
                         *self.state__ = s;
                         break (DeserializerEvent::Continue(event), false);
                     }
-                    (S::Unknown__, _) => unreachable!(),
+                    (state, event) => {
+                        *self.state__ = state;
+                        break (DeserializerEvent::Break(event), false);
+                    }
                 }
             };
             let artifact = if matches!(&*self.state__, S::Done__(_)) {
@@ -11797,6 +11862,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Content__(deserializer), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_content(reader, output, &mut fallback)? {
@@ -11826,7 +11892,6 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Unknown__, _) => unreachable!(),
                 }
             };
             let artifact = DeserializerArtifact::Deserializer(self);
@@ -12011,6 +12076,7 @@ pub mod quick_xml_deserialize {
         {
             use ElementTypeContentDeserializerState as S;
             match state {
+                S::Unknown__ => unreachable!(),
                 S::Init__ => Err(ErrorKind::MissingContent.into()),
                 S::Annotation(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
@@ -12076,7 +12142,6 @@ pub mod quick_xml_deserialize {
                     )?))
                 }
                 S::Done__(data) => Ok(data),
-                S::Unknown__ => unreachable!(),
             }
         }
         fn store_annotation(
@@ -12599,6 +12664,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Annotation(values, Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_annotation(reader, values, output, &mut fallback)? {
@@ -12677,7 +12743,7 @@ pub mod quick_xml_deserialize {
                         }
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
-                    (S::Annotation(values, None), event) => {
+                    (S::Annotation(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -12691,7 +12757,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::SimpleType(values, None), event) => {
+                    (S::SimpleType(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -12705,7 +12771,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::ComplexType(values, None), event) => {
+                    (S::ComplexType(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -12719,7 +12785,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Alternative(values, None), event) => {
+                    (S::Alternative(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -12733,7 +12799,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Unique(values, None), event) => {
+                    (S::Unique(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -12747,7 +12813,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Key(values, None), event) => {
+                    (S::Key(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -12761,7 +12827,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Keyref(values, None), event) => {
+                    (S::Keyref(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -12779,7 +12845,10 @@ pub mod quick_xml_deserialize {
                         *self.state__ = s;
                         break (DeserializerEvent::Continue(event), false);
                     }
-                    (S::Unknown__, _) => unreachable!(),
+                    (state, event) => {
+                        *self.state__ = state;
+                        break (DeserializerEvent::Break(event), false);
+                    }
                 }
             };
             let artifact = if matches!(&*self.state__, S::Done__(_)) {
@@ -13069,6 +13138,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Annotation(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_annotation(reader, output, &mut fallback)? {
@@ -13146,7 +13216,6 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(S::Done__);
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
-                    (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -13354,6 +13423,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Annotation(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_annotation(reader, output, &mut fallback)? {
@@ -13402,7 +13472,6 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(S::Done__);
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
-                    (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -13632,6 +13701,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::TextBefore(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_text_before(reader, output, &mut fallback)? {
@@ -13699,7 +13769,10 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(S::Done__);
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
-                    (S::Unknown__, _) => unreachable!(),
+                    (state, Event::Text(_) | Event::CData(_)) => {
+                        *self.state__ = state;
+                        break (DeserializerEvent::None, false);
+                    }
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -13867,6 +13940,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Any(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_any(reader, output, &mut fallback)? {
@@ -13925,7 +13999,10 @@ pub mod quick_xml_deserialize {
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
                     }
-                    (S::Unknown__, _) => unreachable!(),
+                    (state, Event::Text(_) | Event::CData(_)) => {
+                        *self.state__ = state;
+                        break (DeserializerEvent::None, false);
+                    }
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -14173,6 +14250,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::TextBefore(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_text_before(reader, output, &mut fallback)? {
@@ -14240,7 +14318,10 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(S::Done__);
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
-                    (S::Unknown__, _) => unreachable!(),
+                    (state, Event::Text(_) | Event::CData(_)) => {
+                        *self.state__ = state;
+                        break (DeserializerEvent::None, false);
+                    }
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -14414,6 +14495,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Any(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_any(reader, output, &mut fallback)? {
@@ -14472,7 +14554,10 @@ pub mod quick_xml_deserialize {
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
                     }
-                    (S::Unknown__, _) => unreachable!(),
+                    (state, Event::Text(_) | Event::CData(_)) => {
+                        *self.state__ = state;
+                        break (DeserializerEvent::None, false);
+                    }
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -14664,6 +14749,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Annotation(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_annotation(reader, output, &mut fallback)? {
@@ -14712,7 +14798,6 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(S::Done__);
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
-                    (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -14884,6 +14969,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Content__(deserializer), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_content(reader, output, &mut fallback)? {
@@ -14910,7 +14996,6 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Unknown__, _) => unreachable!(),
                 }
             };
             let artifact = DeserializerArtifact::Deserializer(self);
@@ -15046,6 +15131,7 @@ pub mod quick_xml_deserialize {
         {
             use RestrictionElementTypeContentDeserializerState as S;
             match state {
+                S::Unknown__ => unreachable!(),
                 S::Init__ => Err(ErrorKind::MissingContent.into()),
                 S::Annotation(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
@@ -15084,7 +15170,6 @@ pub mod quick_xml_deserialize {
                     ))
                 }
                 S::Done__(data) => Ok(data),
-                S::Unknown__ => unreachable!(),
             }
         }
         fn store_annotation(
@@ -15434,6 +15519,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Annotation(values, Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_annotation(reader, values, output, &mut fallback)? {
@@ -15485,7 +15571,7 @@ pub mod quick_xml_deserialize {
                         }
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
-                    (S::Annotation(values, None), event) => {
+                    (S::Annotation(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -15499,7 +15585,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::SimpleType(values, None), event) => {
+                    (S::SimpleType(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -15513,7 +15599,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Facet(values, None), event) => {
+                    (S::Facet(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             <super::Facet as WithDeserializer>::Deserializer::init(reader, event)?;
                         match self.handle_facet(reader, values, output, &mut fallback)? {
@@ -15523,7 +15609,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Any(values, None), event) => {
+                    (S::Any(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"any130", true)?;
                         match self.handle_any(reader, values, output, &mut fallback)? {
@@ -15537,7 +15623,14 @@ pub mod quick_xml_deserialize {
                         *self.state__ = s;
                         break (DeserializerEvent::Continue(event), false);
                     }
-                    (S::Unknown__, _) => unreachable!(),
+                    (state, Event::Text(_) | Event::CData(_)) => {
+                        *self.state__ = state;
+                        break (DeserializerEvent::None, false);
+                    }
+                    (state, event) => {
+                        *self.state__ = state;
+                        break (DeserializerEvent::Break(event), false);
+                    }
                 }
             };
             let artifact = if matches!(&*self.state__, S::Done__(_)) {
@@ -15763,6 +15856,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Annotation(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_annotation(reader, output, &mut fallback)? {
@@ -15840,7 +15934,6 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(S::Done__);
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
-                    (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -16077,6 +16170,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Annotation(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_annotation(reader, output, &mut fallback)? {
@@ -16154,7 +16248,6 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(S::Done__);
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
-                    (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -16327,6 +16420,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Content__(deserializer), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_content(reader, output, &mut fallback)? {
@@ -16353,7 +16447,6 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Unknown__, _) => unreachable!(),
                 }
             };
             let artifact = DeserializerArtifact::Deserializer(self);
@@ -16470,6 +16563,7 @@ pub mod quick_xml_deserialize {
         {
             use SimpleContentElementTypeContentDeserializerState as S;
             match state {
+                S::Unknown__ => unreachable!(),
                 S::Init__ => Err(ErrorKind::MissingContent.into()),
                 S::Annotation(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
@@ -16499,7 +16593,6 @@ pub mod quick_xml_deserialize {
                     ))
                 }
                 S::Done__(data) => Ok(data),
-                S::Unknown__ => unreachable!(),
             }
         }
         fn store_annotation(
@@ -16778,6 +16871,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Annotation(values, Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_annotation(reader, values, output, &mut fallback)? {
@@ -16820,7 +16914,7 @@ pub mod quick_xml_deserialize {
                         }
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
-                    (S::Annotation(values, None), event) => {
+                    (S::Annotation(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -16834,7 +16928,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Restriction(values, None), event) => {
+                    (S::Restriction(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -16848,7 +16942,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Extension(values, None), event) => {
+                    (S::Extension(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -16866,7 +16960,10 @@ pub mod quick_xml_deserialize {
                         *self.state__ = s;
                         break (DeserializerEvent::Continue(event), false);
                     }
-                    (S::Unknown__, _) => unreachable!(),
+                    (state, event) => {
+                        *self.state__ = state;
+                        break (DeserializerEvent::Break(event), false);
+                    }
                 }
             };
             let artifact = if matches!(&*self.state__, S::Done__(_)) {
@@ -17034,6 +17131,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Content__(deserializer), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_content(reader, output, &mut fallback)? {
@@ -17060,7 +17158,6 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Unknown__, _) => unreachable!(),
                 }
             };
             let artifact = DeserializerArtifact::Deserializer(self);
@@ -17178,6 +17275,7 @@ pub mod quick_xml_deserialize {
         {
             use ComplexContentElementTypeContentDeserializerState as S;
             match state {
+                S::Unknown__ => unreachable!(),
                 S::Init__ => Err(ErrorKind::MissingContent.into()),
                 S::Annotation(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
@@ -17207,7 +17305,6 @@ pub mod quick_xml_deserialize {
                     ))
                 }
                 S::Done__(data) => Ok(data),
-                S::Unknown__ => unreachable!(),
             }
         }
         fn store_annotation(
@@ -17488,6 +17585,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Annotation(values, Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_annotation(reader, values, output, &mut fallback)? {
@@ -17530,7 +17628,7 @@ pub mod quick_xml_deserialize {
                         }
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
-                    (S::Annotation(values, None), event) => {
+                    (S::Annotation(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -17544,7 +17642,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Restriction(values, None), event) => {
+                    (S::Restriction(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -17558,7 +17656,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Extension(values, None), event) => {
+                    (S::Extension(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -17576,7 +17674,10 @@ pub mod quick_xml_deserialize {
                         *self.state__ = s;
                         break (DeserializerEvent::Continue(event), false);
                     }
-                    (S::Unknown__, _) => unreachable!(),
+                    (state, event) => {
+                        *self.state__ = state;
+                        break (DeserializerEvent::Break(event), false);
+                    }
                 }
             };
             let artifact = if matches!(&*self.state__, S::Done__(_)) {
@@ -17804,6 +17905,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Annotation(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_annotation(reader, output, &mut fallback)? {
@@ -17881,7 +17983,6 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(S::Done__);
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
-                    (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -18091,6 +18192,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Annotation(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_annotation(reader, output, &mut fallback)? {
@@ -18139,7 +18241,6 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(S::Done__);
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
-                    (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -18330,6 +18431,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Annotation(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_annotation(reader, output, &mut fallback)? {
@@ -18378,7 +18480,6 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(S::Done__);
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
-                    (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -18596,6 +18697,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Annotation(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_annotation(reader, output, &mut fallback)? {
@@ -18644,7 +18746,6 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(S::Done__);
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
-                    (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -18837,6 +18938,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Content__(deserializer), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_content(reader, output, &mut fallback)? {
@@ -18866,7 +18968,6 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Unknown__, _) => unreachable!(),
                 }
             };
             let artifact = DeserializerArtifact::Deserializer(self);
@@ -18983,6 +19084,7 @@ pub mod quick_xml_deserialize {
         {
             use AltTypeContentDeserializerState as S;
             match state {
+                S::Unknown__ => unreachable!(),
                 S::Init__ => Err(ErrorKind::MissingContent.into()),
                 S::Annotation(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
@@ -19012,7 +19114,6 @@ pub mod quick_xml_deserialize {
                     )?))
                 }
                 S::Done__(data) => Ok(data),
-                S::Unknown__ => unreachable!(),
             }
         }
         fn store_annotation(
@@ -19250,6 +19351,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Annotation(values, Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_annotation(reader, values, output, &mut fallback)? {
@@ -19292,7 +19394,7 @@ pub mod quick_xml_deserialize {
                         }
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
-                    (S::Annotation(values, None), event) => {
+                    (S::Annotation(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -19306,7 +19408,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::SimpleType(values, None), event) => {
+                    (S::SimpleType(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -19320,7 +19422,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::ComplexType(values, None), event) => {
+                    (S::ComplexType(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -19338,7 +19440,10 @@ pub mod quick_xml_deserialize {
                         *self.state__ = s;
                         break (DeserializerEvent::Continue(event), false);
                     }
-                    (S::Unknown__, _) => unreachable!(),
+                    (state, event) => {
+                        *self.state__ = state;
+                        break (DeserializerEvent::Break(event), false);
+                    }
                 }
             };
             let artifact = if matches!(&*self.state__, S::Done__(_)) {
@@ -19492,6 +19597,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Content__(deserializer), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_content(reader, output, &mut fallback)? {
@@ -19521,7 +19627,6 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Unknown__, _) => unreachable!(),
                 }
             };
             let artifact = DeserializerArtifact::Deserializer(self);
@@ -19746,11 +19851,7 @@ pub mod quick_xml_deserialize {
                             fallback.get_or_insert(KeybaseTypeContentDeserializerState::Field(
                                 Some(deserializer),
                             ));
-                            if self.field.len().saturating_add(1) < 1usize {
-                                *self.state__ = KeybaseTypeContentDeserializerState::Field(None);
-                            } else {
-                                *self.state__ = KeybaseTypeContentDeserializerState::Done__;
-                            }
+                            *self.state__ = KeybaseTypeContentDeserializerState::Field(None);
                         }
                         ElementHandlerOutput::Break { .. } => {
                             *self.state__ =
@@ -19802,6 +19903,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Annotation(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_annotation(reader, output, &mut fallback)? {
@@ -19908,7 +20010,6 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(S::Done__);
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
-                    (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -20086,6 +20187,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Content__(deserializer), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_content(reader, output, &mut fallback)? {
@@ -20112,7 +20214,6 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Unknown__, _) => unreachable!(),
                 }
             };
             let artifact = DeserializerArtifact::Deserializer(self);
@@ -20351,12 +20452,7 @@ pub mod quick_xml_deserialize {
                                     deserializer,
                                 )),
                             );
-                            if self.field.len().saturating_add(1) < 1usize {
-                                *self.state__ =
-                                    KeyrefElementTypeContentDeserializerState::Field(None);
-                            } else {
-                                *self.state__ = KeyrefElementTypeContentDeserializerState::Done__;
-                            }
+                            *self.state__ = KeyrefElementTypeContentDeserializerState::Field(None);
                         }
                         ElementHandlerOutput::Break { .. } => {
                             *self.state__ = KeyrefElementTypeContentDeserializerState::Field(Some(
@@ -20414,6 +20510,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Annotation(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_annotation(reader, output, &mut fallback)? {
@@ -20520,7 +20617,6 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(S::Done__);
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
-                    (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -20814,6 +20910,7 @@ pub mod quick_xml_deserialize {
         {
             use FacetDeserializerState as S;
             match state {
+                S::Unknown__ => unreachable!(),
                 S::Init__ => Err(ErrorKind::MissingContent.into()),
                 S::MinExclusive(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
@@ -20942,7 +21039,6 @@ pub mod quick_xml_deserialize {
                     })?))
                 }
                 S::Done__(data) => Ok(data),
-                S::Unknown__ => unreachable!(),
             }
         }
         fn store_min_exclusive(
@@ -21901,6 +21997,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::MinExclusive(values, Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_min_exclusive(reader, values, output, &mut fallback)? {
@@ -22047,7 +22144,10 @@ pub mod quick_xml_deserialize {
                         }
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
-                    (S::MinExclusive(values, None), event) => {
+                    (
+                        S::MinExclusive(values, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -22061,7 +22161,10 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::MinInclusive(values, None), event) => {
+                    (
+                        S::MinInclusive(values, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -22075,7 +22178,10 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::MaxExclusive(values, None), event) => {
+                    (
+                        S::MaxExclusive(values, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -22089,7 +22195,10 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::MaxInclusive(values, None), event) => {
+                    (
+                        S::MaxInclusive(values, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -22103,7 +22212,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::TotalDigits(values, None), event) => {
+                    (S::TotalDigits(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -22117,7 +22226,10 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::FractionDigits(values, None), event) => {
+                    (
+                        S::FractionDigits(values, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -22131,7 +22243,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Length(values, None), event) => {
+                    (S::Length(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -22145,7 +22257,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::MinLength(values, None), event) => {
+                    (S::MinLength(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -22159,7 +22271,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::MaxLength(values, None), event) => {
+                    (S::MaxLength(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -22173,7 +22285,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Enumeration(values, None), event) => {
+                    (S::Enumeration(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -22187,7 +22299,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::WhiteSpace(values, None), event) => {
+                    (S::WhiteSpace(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -22201,7 +22313,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Pattern(values, None), event) => {
+                    (S::Pattern(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -22215,7 +22327,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Assertion(values, None), event) => {
+                    (S::Assertion(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -22229,7 +22341,10 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::ExplicitTimezone(values, None), event) => {
+                    (
+                        S::ExplicitTimezone(values, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -22252,7 +22367,10 @@ pub mod quick_xml_deserialize {
                         *self.state__ = s;
                         break (DeserializerEvent::Continue(event), false);
                     }
-                    (S::Unknown__, _) => unreachable!(),
+                    (state, event) => {
+                        *self.state__ = state;
+                        break (DeserializerEvent::Break(event), false);
+                    }
                 }
             };
             let artifact = if matches!(&*self.state__, S::Done__(_)) {
@@ -22408,6 +22526,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Content__(deserializer), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_content(reader, output, &mut fallback)? {
@@ -22434,7 +22553,6 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Unknown__, _) => unreachable!(),
                 }
             };
             let artifact = DeserializerArtifact::Deserializer(self);
@@ -22711,6 +22829,7 @@ pub mod quick_xml_deserialize {
         {
             use RestrictionTypeContentDeserializerState as S;
             match state {
+                S::Unknown__ => unreachable!(),
                 S::Init__ => Err(ErrorKind::MissingContent.into()),
                 S::Annotation(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
@@ -22830,7 +22949,6 @@ pub mod quick_xml_deserialize {
                     )?))
                 }
                 S::Done__(data) => Ok(data),
-                S::Unknown__ => unreachable!(),
             }
         }
         fn store_annotation(
@@ -23799,6 +23917,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Annotation(values, Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_annotation(reader, values, output, &mut fallback)? {
@@ -23931,7 +24050,7 @@ pub mod quick_xml_deserialize {
                         }
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
-                    (S::Annotation(values, None), event) => {
+                    (S::Annotation(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -23945,7 +24064,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::OpenContent(values, None), event) => {
+                    (S::OpenContent(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -23959,7 +24078,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Group(values, None), event) => {
+                    (S::Group(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -23973,7 +24092,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::All(values, None), event) => {
+                    (S::All(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -23987,7 +24106,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Choice(values, None), event) => {
+                    (S::Choice(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -24001,7 +24120,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Sequence(values, None), event) => {
+                    (S::Sequence(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -24015,7 +24134,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::SimpleType(values, None), event) => {
+                    (S::SimpleType(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -24029,7 +24148,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Facet(values, None), event) => {
+                    (S::Facet(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             <super::Facet as WithDeserializer>::Deserializer::init(reader, event)?;
                         match self.handle_facet(reader, values, output, &mut fallback)? {
@@ -24039,7 +24158,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Any(values, None), event) => {
+                    (S::Any(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"any37", true)?;
                         match self.handle_any(reader, values, output, &mut fallback)? {
@@ -24049,7 +24168,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Attribute(values, None), event) => {
+                    (S::Attribute(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -24063,7 +24182,10 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::AttributeGroup(values, None), event) => {
+                    (
+                        S::AttributeGroup(values, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -24077,7 +24199,10 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::AnyAttribute(values, None), event) => {
+                    (
+                        S::AnyAttribute(values, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -24091,7 +24216,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Assert(values, None), event) => {
+                    (S::Assert(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -24109,7 +24234,14 @@ pub mod quick_xml_deserialize {
                         *self.state__ = s;
                         break (DeserializerEvent::Continue(event), false);
                     }
-                    (S::Unknown__, _) => unreachable!(),
+                    (state, Event::Text(_) | Event::CData(_)) => {
+                        *self.state__ = state;
+                        break (DeserializerEvent::None, false);
+                    }
+                    (state, event) => {
+                        *self.state__ = state;
+                        break (DeserializerEvent::Break(event), false);
+                    }
                 }
             };
             let artifact = if matches!(&*self.state__, S::Done__(_)) {
@@ -24264,6 +24396,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Content__(deserializer), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_content(reader, output, &mut fallback)? {
@@ -24293,7 +24426,6 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Unknown__, _) => unreachable!(),
                 }
             };
             let artifact = DeserializerArtifact::Deserializer(self);
@@ -24516,6 +24648,7 @@ pub mod quick_xml_deserialize {
         {
             use ExtensionTypeContentDeserializerState as S;
             match state {
+                S::Unknown__ => unreachable!(),
                 S::Init__ => Err(ErrorKind::MissingContent.into()),
                 S::Annotation(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
@@ -24608,7 +24741,6 @@ pub mod quick_xml_deserialize {
                     )?))
                 }
                 S::Done__(data) => Ok(data),
-                S::Unknown__ => unreachable!(),
             }
         }
         fn store_annotation(
@@ -25354,6 +25486,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Annotation(values, Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_annotation(reader, values, output, &mut fallback)? {
@@ -25459,7 +25592,7 @@ pub mod quick_xml_deserialize {
                         }
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
-                    (S::Annotation(values, None), event) => {
+                    (S::Annotation(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -25473,7 +25606,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::OpenContent(values, None), event) => {
+                    (S::OpenContent(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -25487,7 +25620,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Group(values, None), event) => {
+                    (S::Group(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -25501,7 +25634,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::All(values, None), event) => {
+                    (S::All(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -25515,7 +25648,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Choice(values, None), event) => {
+                    (S::Choice(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -25529,7 +25662,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Sequence(values, None), event) => {
+                    (S::Sequence(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -25543,7 +25676,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Attribute(values, None), event) => {
+                    (S::Attribute(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -25557,7 +25690,10 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::AttributeGroup(values, None), event) => {
+                    (
+                        S::AttributeGroup(values, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -25571,7 +25707,10 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::AnyAttribute(values, None), event) => {
+                    (
+                        S::AnyAttribute(values, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -25585,7 +25724,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Assert(values, None), event) => {
+                    (S::Assert(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_XS),
@@ -25603,7 +25742,10 @@ pub mod quick_xml_deserialize {
                         *self.state__ = s;
                         break (DeserializerEvent::Continue(event), false);
                     }
-                    (S::Unknown__, _) => unreachable!(),
+                    (state, event) => {
+                        *self.state__ = state;
+                        break (DeserializerEvent::Break(event), false);
+                    }
                 }
             };
             let artifact = if matches!(&*self.state__, S::Done__(_)) {
@@ -25783,6 +25925,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Annotation(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_annotation(reader, output, &mut fallback)? {
@@ -25831,7 +25974,6 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(S::Done__);
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
-                    (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -26017,6 +26159,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Annotation(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_annotation(reader, output, &mut fallback)? {
@@ -26065,7 +26208,6 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(S::Done__);
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
-                    (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);

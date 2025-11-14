@@ -315,11 +315,7 @@ pub mod quick_xml_deserialize {
                             fallback.get_or_insert(FooTypeDeserializerState::TwiceOrMore(Some(
                                 deserializer,
                             )));
-                            if self.twice_or_more.len().saturating_add(1) < 2usize {
-                                *self.state__ = FooTypeDeserializerState::TwiceOrMore(None);
-                            } else {
-                                *self.state__ = FooTypeDeserializerState::Done__;
-                            }
+                            *self.state__ = FooTypeDeserializerState::TwiceOrMore(None);
                         }
                         ElementHandlerOutput::Break { .. } => {
                             *self.state__ =
@@ -353,6 +349,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Once(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_once(reader, output, &mut fallback)? {
@@ -488,7 +485,6 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(S::Done__);
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
-                    (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);

@@ -160,13 +160,21 @@ where
     T: DeserializeSync<'static, ErrorReader<IoReader<BufReader<File>>>>,
     T::Error: Debug,
 {
+    quick_xml_read_test_result::<T, _>(path).unwrap()
+}
+
+#[allow(clippy::missing_errors_doc)]
+pub fn quick_xml_read_test_result<T, P>(path: P) -> Result<T, T::Error>
+where
+    P: AsRef<Path>,
+    T: DeserializeSync<'static, ErrorReader<IoReader<BufReader<File>>>>,
+    T::Error: Debug,
+{
     let reader = File::open(path).unwrap();
     let reader = BufReader::new(reader);
     let mut reader = IoReader::new(reader).with_error_info();
 
-    let ret = T::deserialize(&mut reader).unwrap();
-
-    ret
+    T::deserialize(&mut reader)
 }
 
 pub fn quick_xml_write_test<T, P>(value: &T, root: &str, path: P)

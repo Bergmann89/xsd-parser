@@ -1165,10 +1165,10 @@ impl ComplexDataEnum<'_> {
                 use #deserializer_state_ident as S;
 
                 match state {
+                    S::Unknown__ => unreachable!(),
                     S::Init__ => Err(#error_kind::MissingContent.into()),
                     #( #finish_elements )*
                     S::Done__(data) => Ok(data),
-                    S::Unknown__ => unreachable!(),
                 }
             }
         }
@@ -1234,15 +1234,6 @@ impl ComplexDataEnum<'_> {
         let deserializer_state_ident = &self.deserializer_state_ident;
         let (event_at, return_end_event) = self.return_end_event(ctx);
 
-        let handlers_continue = self
-            .elements
-            .iter()
-            .map(|x| x.deserializer_enum_variant_fn_next_continue(ctx));
-        let handlers_create = self
-            .elements
-            .iter()
-            .map(|x| x.deserializer_enum_variant_fn_next_create(ctx));
-
         let event = resolve_quick_xml_ident!(ctx, "::xsd_parser::quick_xml::Event");
         let replace = resolve_quick_xml_ident!(ctx, "::core::mem::replace");
         let deserializer_event =
@@ -1256,6 +1247,24 @@ impl ComplexDataEnum<'_> {
 
         ctx.add_quick_xml_deserialize_usings(true, ["::xsd_parser::quick_xml::Deserializer"]);
 
+        let handlers_continue = self
+            .elements
+            .iter()
+            .map(|x| x.deserializer_enum_variant_fn_next_continue(ctx));
+        let handlers_create = self
+            .elements
+            .iter()
+            .map(|x| x.deserializer_enum_variant_fn_next_create(ctx));
+
+        let handler_mixed = self.base.is_mixed.then(|| {
+            quote! {
+                (state, Event::Text(_) | Event::CData(_)) => {
+                    *self.state__ = state;
+                    break (#deserializer_event::None, false);
+                }
+            }
+        });
+
         quote! {
             use #deserializer_state_ident as S;
 
@@ -1265,6 +1274,7 @@ impl ComplexDataEnum<'_> {
             let (event, allow_any) = loop {
                 let state = #replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     #( #handlers_continue )*
                     (state, #event_at #event::End(_)) => {
                         return Ok(#deserializer_output {
@@ -1283,7 +1293,11 @@ impl ComplexDataEnum<'_> {
 
                         break (#deserializer_event::Continue(event), false);
                     },
-                    (S::Unknown__, _) => unreachable!(),
+                    #handler_mixed
+                    (state, event) => {
+                        *self.state__ = state;
+                        break (#deserializer_event::Break(event), false);
+                    }
                 }
             };
 
@@ -1854,6 +1868,18 @@ impl ComplexDataStruct<'_> {
 
         ctx.add_quick_xml_deserialize_usings(true, ["::xsd_parser::quick_xml::Deserializer"]);
 
+        let mixed_handler = self.base.is_mixed.then(|| {
+            quote! {
+                else if matches!(&event, #event::Text(_) | #event::CData(_)) {
+                    Ok(#deserializer_output {
+                        artifact: #deserializer_artifact::Deserializer(self),
+                        event: #deserializer_event::None,
+                        allow_any: #allow_any,
+                    })
+                }
+            }
+        });
+
         quote! {
             if let #event::End(_) = &event {
                 Ok(#deserializer_output {
@@ -1861,7 +1887,9 @@ impl ComplexDataStruct<'_> {
                     event: #return_end_event,
                     allow_any: false,
                 })
-            } else {
+            }
+            #mixed_handler
+            else {
                 Ok(#deserializer_output {
                     artifact: #deserializer_artifact::Deserializer(self),
                     event: #deserializer_event::Break(event),
@@ -1884,6 +1912,7 @@ impl ComplexDataStruct<'_> {
             use #deserializer_state_ident as S;
 
             match #replace(&mut *self.state__, S::Unknown__) {
+                S::Unknown__ => unreachable!(),
                 S::Init__ => {
                     let output = #content_deserializer::init(reader, event)?;
                     self.handle_content(reader, output)
@@ -1892,7 +1921,6 @@ impl ComplexDataStruct<'_> {
                     let output = deserializer.next(reader, event)?;
                     self.handle_content(reader, output)
                 }
-                S::Unknown__ => unreachable!(),
             }
         }
     }
@@ -1954,6 +1982,7 @@ impl ComplexDataStruct<'_> {
                 let state = #replace(&mut *self.state__, S::Unknown__);
 
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Content__(deserializer), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_content(reader, output, &mut fallback)? {
@@ -1977,7 +2006,6 @@ impl ComplexDataStruct<'_> {
                         }
                     },
                     #done_handler
-                    (S::Unknown__, _) => unreachable!(),
                 }
             };
 
@@ -2019,6 +2047,7 @@ impl ComplexDataStruct<'_> {
                 let state = #replace(&mut *self.state__, S::Unknown__);
 
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     #( #handlers )*
                     (_, #event_at #event::End(_)) => {
                         return Ok(#deserializer_output {
@@ -2034,7 +2063,6 @@ impl ComplexDataStruct<'_> {
                             #element_handler_output::Break { event, allow_any } => break (event, allow_any),
                         }
                     },
-                    (S::Unknown__, _) => unreachable!(),
                 }
             };
 
@@ -2115,6 +2143,15 @@ impl ComplexDataStruct<'_> {
             };
         }
 
+        let handler_mixed = (!text_only && self.base.is_mixed).then(|| {
+            quote! {
+                (state, Event::Text(_) | Event::CData(_)) => {
+                    *self.state__ = state;
+                    break (#deserializer_event::None, false);
+                }
+            }
+        });
+
         let handler_fallback = text_only.not().then(|| {
             quote! {
                 (state, event) => {
@@ -2136,6 +2173,7 @@ impl ComplexDataStruct<'_> {
                 let state = #replace(&mut *self.state__, S::Unknown__);
 
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     #( #handlers_continue )*
                     (_, #event_at #event::End(_)) => {
                         if let Some(fallback) = fallback.take() {
@@ -2161,7 +2199,7 @@ impl ComplexDataStruct<'_> {
                     (S::Done__, event) => {
                         #handle_done
                     },
-                    (S::Unknown__, _) => unreachable!(),
+                    #handler_mixed
                     #handler_fallback
                 }
             };
@@ -3247,10 +3285,11 @@ impl ComplexDataElement<'_> {
     }
 
     fn deserializer_enum_variant_fn_next_continue(&self, ctx: &Context<'_, '_>) -> TokenStream {
-        let matcher = quote!(Some(deserializer));
+        let deserializer_matcher = quote!(Some(deserializer));
+        let event_matcher = quote!(event);
         let output = quote!(deserializer.next(reader, event));
 
-        self.deserializer_enum_variant_fn_next(ctx, &matcher, &output)
+        self.deserializer_enum_variant_fn_next(ctx, &deserializer_matcher, &event_matcher, &output)
     }
 
     fn deserializer_enum_variant_fn_next_create(&self, ctx: &Context<'_, '_>) -> TokenStream {
@@ -3261,7 +3300,8 @@ impl ComplexDataElement<'_> {
         let with_deserializer =
             resolve_quick_xml_ident!(ctx, "::xsd_parser::quick_xml::WithDeserializer");
 
-        let matcher = quote!(None);
+        let deserializer_matcher = quote!(None);
+        let event_matcher = quote!(event @ (Event::Start(_) | Event::Empty(_)));
 
         let need_name_matcher = !self.target_is_dynamic
             && matches!(
@@ -3294,13 +3334,14 @@ impl ComplexDataElement<'_> {
             }
         };
 
-        self.deserializer_enum_variant_fn_next(ctx, &matcher, &output)
+        self.deserializer_enum_variant_fn_next(ctx, &deserializer_matcher, &event_matcher, &output)
     }
 
     fn deserializer_enum_variant_fn_next(
         &self,
         ctx: &Context<'_, '_>,
-        matcher: &TokenStream,
+        deserializer_matcher: &TokenStream,
+        event_matcher: &TokenStream,
         output: &TokenStream,
     ) -> TokenStream {
         let variant_ident = &self.variant_ident;
@@ -3310,7 +3351,7 @@ impl ComplexDataElement<'_> {
             resolve_quick_xml_ident!(ctx, "::xsd_parser::quick_xml::ElementHandlerOutput");
 
         quote! {
-            (S::#variant_ident(values, #matcher), event) => {
+            (S::#variant_ident(values, #deserializer_matcher), #event_matcher) => {
                 let output = #output?;
 
                 match self.#handler_ident(reader, values, output, &mut fallback)? {
@@ -3706,27 +3747,29 @@ impl ComplexDataElement<'_> {
         };
 
         // Handler for `#deserializer_artifact::Deserializer:
-        let min = self.meta().min_occurs;
-        let deserializer_handler = match self.occurs {
+        let deserializer_handler = match (self.occurs, self.meta().max_occurs) {
             // If we expect only one element we continue to the next state,
             // because the old yet unfinished deserializer already contains
             // this data.
-            Occurs::Single | Occurs::Optional => quote! {
+            (Occurs::Single | Occurs::Optional, _) => quote! {
                 *self.state__ = #next_state;
             },
-            // If we have enough space for more data of the same element, we stay
-            // inside the state, otherwise we continue with the next one.
+            // If we expect multiple elements we only try to initialize a new
+            // deserializer if the maximum has not been reached yet.
             // The `+1` is for the data that is contained in the yet unfinished
             // deserializer.
-            Occurs::DynamicList | Occurs::StaticList(_) if min > 0 => quote! {
-                if self.#field_ident.len().saturating_add(1) < #min {
-                    *self.state__ = #deserializer_state_ident::#variant_ident(None);
-                } else {
-                    *self.state__ = #next_state;
+            (Occurs::DynamicList | Occurs::StaticList(_), MaxOccurs::Bounded(max)) => {
+                quote! {
+                    let can_have_more = self.#field_ident.len().saturating_add(1) < #max;
+                    if can_have_more {
+                        *self.state__ = #deserializer_state_ident::#variant_ident(None);
+                    } else {
+                        *self.state__ = #next_state;
+                    }
                 }
-            },
+            }
             // Infinit amount of data: Stay in the current state.
-            _ => quote! {
+            (_, _) => quote! {
                 *self.state__ = #deserializer_state_ident::#variant_ident(None);
             },
         };

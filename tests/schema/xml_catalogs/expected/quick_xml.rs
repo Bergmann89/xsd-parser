@@ -564,6 +564,7 @@ pub mod er {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Content__(deserializer), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_content(reader, output, &mut fallback)? {
@@ -590,7 +591,6 @@ pub mod er {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::Unknown__, _) => unreachable!(),
                     }
                 };
                 let artifact = DeserializerArtifact::Deserializer(self);
@@ -868,6 +868,7 @@ pub mod er {
             {
                 use CatalogTypeContentDeserializerState as S;
                 match state {
+                    S::Unknown__ => unreachable!(),
                     S::Init__ => Err(ErrorKind::MissingContent.into()),
                     S::Public(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
@@ -983,7 +984,6 @@ pub mod er {
                         )?))
                     }
                     S::Done__(data) => Ok(data),
-                    S::Unknown__ => unreachable!(),
                 }
             }
             fn store_public(
@@ -1900,6 +1900,7 @@ pub mod er {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Public(values, Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_public(reader, values, output, &mut fallback)? {
@@ -2045,7 +2046,7 @@ pub mod er {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::Public(values, None), event) => {
+                        (S::Public(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_ER),
@@ -2059,7 +2060,7 @@ pub mod er {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::System(values, None), event) => {
+                        (S::System(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_ER),
@@ -2073,7 +2074,7 @@ pub mod er {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::Uri(values, None), event) => {
+                        (S::Uri(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_ER),
@@ -2087,7 +2088,10 @@ pub mod er {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::RewriteSystem(values, None), event) => {
+                        (
+                            S::RewriteSystem(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_ER),
@@ -2106,7 +2110,10 @@ pub mod er {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::RewriteUri(values, None), event) => {
+                        (
+                            S::RewriteUri(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_ER),
@@ -2120,7 +2127,10 @@ pub mod er {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::UriSuffix(values, None), event) => {
+                        (
+                            S::UriSuffix(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_ER),
@@ -2134,7 +2144,10 @@ pub mod er {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::SystemSuffix(values, None), event) => {
+                        (
+                            S::SystemSuffix(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_ER),
@@ -2153,7 +2166,10 @@ pub mod er {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::DelegatePublic(values, None), event) => {
+                        (
+                            S::DelegatePublic(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_ER),
@@ -2172,7 +2188,10 @@ pub mod er {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::DelegateSystem(values, None), event) => {
+                        (
+                            S::DelegateSystem(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_ER),
@@ -2191,7 +2210,10 @@ pub mod er {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::DelegateUri(values, None), event) => {
+                        (
+                            S::DelegateUri(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_ER),
@@ -2205,7 +2227,10 @@ pub mod er {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::NextCatalog(values, None), event) => {
+                        (
+                            S::NextCatalog(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_ER),
@@ -2219,7 +2244,7 @@ pub mod er {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::Group(values, None), event) => {
+                        (S::Group(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_ER),
@@ -2237,7 +2262,10 @@ pub mod er {
                             *self.state__ = s;
                             break (DeserializerEvent::Continue(event), false);
                         }
-                        (S::Unknown__, _) => unreachable!(),
+                        (state, event) => {
+                            *self.state__ = state;
+                            break (DeserializerEvent::Break(event), false);
+                        }
                     }
                 };
                 let artifact = if matches!(&*self.state__, S::Done__(_)) {
@@ -2725,6 +2753,7 @@ pub mod er {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Content__(deserializer), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_content(reader, output, &mut fallback)? {
@@ -2754,7 +2783,6 @@ pub mod er {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::Unknown__, _) => unreachable!(),
                     }
                 };
                 let artifact = DeserializerArtifact::Deserializer(self);
@@ -3014,6 +3042,7 @@ pub mod er {
             {
                 use GroupTypeContentDeserializerState as S;
                 match state {
+                    S::Unknown__ => unreachable!(),
                     S::Init__ => Err(ErrorKind::MissingContent.into()),
                     S::Public(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
@@ -3115,7 +3144,6 @@ pub mod er {
                         )?))
                     }
                     S::Done__(data) => Ok(data),
-                    S::Unknown__ => unreachable!(),
                 }
             }
             fn store_public(
@@ -3949,6 +3977,7 @@ pub mod er {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::Public(values, Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_public(reader, values, output, &mut fallback)? {
@@ -4085,7 +4114,7 @@ pub mod er {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::Public(values, None), event) => {
+                        (S::Public(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_ER),
@@ -4099,7 +4128,7 @@ pub mod er {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::System(values, None), event) => {
+                        (S::System(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_ER),
@@ -4113,7 +4142,7 @@ pub mod er {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::Uri(values, None), event) => {
+                        (S::Uri(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_ER),
@@ -4127,7 +4156,10 @@ pub mod er {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::RewriteSystem(values, None), event) => {
+                        (
+                            S::RewriteSystem(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_ER),
@@ -4146,7 +4178,10 @@ pub mod er {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::RewriteUri(values, None), event) => {
+                        (
+                            S::RewriteUri(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_ER),
@@ -4160,7 +4195,10 @@ pub mod er {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::UriSuffix(values, None), event) => {
+                        (
+                            S::UriSuffix(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_ER),
@@ -4174,7 +4212,10 @@ pub mod er {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::SystemSuffix(values, None), event) => {
+                        (
+                            S::SystemSuffix(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_ER),
@@ -4193,7 +4234,10 @@ pub mod er {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::DelegatePublic(values, None), event) => {
+                        (
+                            S::DelegatePublic(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_ER),
@@ -4212,7 +4256,10 @@ pub mod er {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::DelegateSystem(values, None), event) => {
+                        (
+                            S::DelegateSystem(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_ER),
@@ -4231,7 +4278,10 @@ pub mod er {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::DelegateUri(values, None), event) => {
+                        (
+                            S::DelegateUri(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_ER),
@@ -4245,7 +4295,10 @@ pub mod er {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::NextCatalog(values, None), event) => {
+                        (
+                            S::NextCatalog(values, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_ER),
@@ -4263,7 +4316,10 @@ pub mod er {
                             *self.state__ = s;
                             break (DeserializerEvent::Continue(event), false);
                         }
-                        (S::Unknown__, _) => unreachable!(),
+                        (state, event) => {
+                            *self.state__ = state;
+                            break (DeserializerEvent::Break(event), false);
+                        }
                     }
                 };
                 let artifact = if matches!(&*self.state__, S::Done__(_)) {

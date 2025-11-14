@@ -81,6 +81,12 @@ pub mod quick_xml_deserialize {
                     event: DeserializerEvent::None,
                     allow_any: false,
                 })
+            } else if matches!(&event, Event::Text(_) | Event::CData(_)) {
+                Ok(DeserializerOutput {
+                    artifact: DeserializerArtifact::Deserializer(self),
+                    event: DeserializerEvent::None,
+                    allow_any: true,
+                })
             } else {
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),

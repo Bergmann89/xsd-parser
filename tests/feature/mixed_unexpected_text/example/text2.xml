@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tns:Example xmlns:tns="http://example.com">
+    <tns:Fuu>111</tns:Fuu>
+    <tns:Fuu>222</tns:Fuu>
+    Text
+    <tns:Bar>333</tns:Bar>
+    <tns:Bar>444</tns:Bar>
+    <tns:Baz>555</tns:Baz>
+    <tns:Baz>666</tns:Baz>
+</tns:Example>

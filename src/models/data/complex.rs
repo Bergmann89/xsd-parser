@@ -73,6 +73,9 @@ pub struct ComplexBase<'types> {
     /// Whether the type has at least one `xs:any` element or not.
     pub has_any: bool,
 
+    /// `true` if the type is a mixed type, `false` otherwise.
+    pub is_mixed: bool,
+
     /// `true` if the type is a complex type, `false` otherwise.
     pub is_complex: bool,
 

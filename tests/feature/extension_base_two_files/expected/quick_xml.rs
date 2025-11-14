@@ -217,6 +217,7 @@ pub mod other {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::B(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_b(reader, output, &mut fallback)? {
@@ -294,7 +295,6 @@ pub mod other {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
@@ -620,6 +620,7 @@ pub mod tns {
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
                         (S::A(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
                             match self.handle_a(reader, output, &mut fallback)? {
@@ -697,7 +698,6 @@ pub mod tns {
                             fallback.get_or_insert(S::Done__);
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
-                        (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
                             *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);

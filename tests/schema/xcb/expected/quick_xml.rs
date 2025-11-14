@@ -1315,6 +1315,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Content__(deserializer), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_content(reader, output, &mut fallback)? {
@@ -1344,7 +1345,6 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Unknown__, _) => unreachable!(),
                 }
             };
             let artifact = DeserializerArtifact::Deserializer(self);
@@ -1538,6 +1538,7 @@ pub mod quick_xml_deserialize {
         {
             use XcbTypeContentDeserializerState as S;
             match state {
+                S::Unknown__ => unreachable!(),
                 S::Init__ => Err(ErrorKind::MissingContent.into()),
                 S::Request(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
@@ -1648,7 +1649,6 @@ pub mod quick_xml_deserialize {
                     })?))
                 }
                 S::Done__(data) => Ok(data),
-                S::Unknown__ => unreachable!(),
             }
         }
         fn store_request(
@@ -2484,6 +2484,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Request(values, Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_request(reader, values, output, &mut fallback)? {
@@ -2607,7 +2608,7 @@ pub mod quick_xml_deserialize {
                         }
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
-                    (S::Request(values, None), event) => {
+                    (S::Request(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"request", true)?;
                         match self.handle_request(reader, values, output, &mut fallback)? {
@@ -2617,7 +2618,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Event(values, None), event) => {
+                    (S::Event(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"event", true)?;
                         match self.handle_event(reader, values, output, &mut fallback)? {
@@ -2627,7 +2628,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Eventcopy(values, None), event) => {
+                    (S::Eventcopy(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"eventcopy", false)?;
                         match self.handle_eventcopy(reader, values, output, &mut fallback)? {
@@ -2637,7 +2638,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Error(values, None), event) => {
+                    (S::Error(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"error", true)?;
                         match self.handle_error(reader, values, output, &mut fallback)? {
@@ -2647,7 +2648,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Errorcopy(values, None), event) => {
+                    (S::Errorcopy(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"errorcopy", false)?;
                         match self.handle_errorcopy(reader, values, output, &mut fallback)? {
@@ -2657,7 +2658,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Struct(values, None), event) => {
+                    (S::Struct(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"struct", true)?;
                         match self.handle_struct_(reader, values, output, &mut fallback)? {
@@ -2667,7 +2668,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Union(values, None), event) => {
+                    (S::Union(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"union", true)?;
                         match self.handle_union_(reader, values, output, &mut fallback)? {
@@ -2677,7 +2678,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Xidtype(values, None), event) => {
+                    (S::Xidtype(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"xidtype", false)?;
                         match self.handle_xidtype(reader, values, output, &mut fallback)? {
@@ -2687,7 +2688,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Xidunion(values, None), event) => {
+                    (S::Xidunion(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"xidunion", false)?;
                         match self.handle_xidunion(reader, values, output, &mut fallback)? {
@@ -2697,7 +2698,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Enum(values, None), event) => {
+                    (S::Enum(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"enum", false)?;
                         match self.handle_enum_(reader, values, output, &mut fallback)? {
@@ -2707,7 +2708,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Typedef(values, None), event) => {
+                    (S::Typedef(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"typedef", false)?;
                         match self.handle_typedef(reader, values, output, &mut fallback)? {
@@ -2717,7 +2718,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Import(values, None), event) => {
+                    (S::Import(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"import", false)?;
                         match self.handle_import(reader, values, output, &mut fallback)? {
@@ -2731,7 +2732,10 @@ pub mod quick_xml_deserialize {
                         *self.state__ = s;
                         break (DeserializerEvent::Continue(event), false);
                     }
-                    (S::Unknown__, _) => unreachable!(),
+                    (state, event) => {
+                        *self.state__ = state;
+                        break (DeserializerEvent::Break(event), false);
+                    }
                 }
             };
             let artifact = if matches!(&*self.state__, S::Done__(_)) {
@@ -2888,6 +2892,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Content__(deserializer), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_content(reader, output, &mut fallback)? {
@@ -2917,7 +2922,6 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Unknown__, _) => unreachable!(),
                 }
             };
             let artifact = DeserializerArtifact::Deserializer(self);
@@ -3072,6 +3076,7 @@ pub mod quick_xml_deserialize {
         {
             use RequestTypeContentDeserializerState as S;
             match state {
+                S::Unknown__ => unreachable!(),
                 S::Init__ => Err(ErrorKind::MissingContent.into()),
                 S::Pad(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
@@ -3155,7 +3160,6 @@ pub mod quick_xml_deserialize {
                     ))
                 }
                 S::Done__(data) => Ok(data),
-                S::Unknown__ => unreachable!(),
             }
         }
         fn store_pad(
@@ -3793,6 +3797,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Pad(values, Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_pad(reader, values, output, &mut fallback)? {
@@ -3889,7 +3894,7 @@ pub mod quick_xml_deserialize {
                         }
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
-                    (S::Pad(values, None), event) => {
+                    (S::Pad(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"pad", false)?;
                         match self.handle_pad(reader, values, output, &mut fallback)? {
@@ -3899,7 +3904,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Field(values, None), event) => {
+                    (S::Field(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"field", false)?;
                         match self.handle_field(reader, values, output, &mut fallback)? {
@@ -3909,7 +3914,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::List(values, None), event) => {
+                    (S::List(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"list", false)?;
                         match self.handle_list(reader, values, output, &mut fallback)? {
@@ -3919,7 +3924,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Fd(values, None), event) => {
+                    (S::Fd(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"fd", true)?;
                         match self.handle_fd(reader, values, output, &mut fallback)? {
@@ -3929,7 +3934,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Exprfield(values, None), event) => {
+                    (S::Exprfield(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"exprfield", false)?;
                         match self.handle_exprfield(reader, values, output, &mut fallback)? {
@@ -3939,7 +3944,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Valueparam(values, None), event) => {
+                    (S::Valueparam(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             None,
@@ -3953,7 +3958,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Switch(values, None), event) => {
+                    (S::Switch(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"switch", true)?;
                         match self.handle_switch(reader, values, output, &mut fallback)? {
@@ -3963,7 +3968,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Reply(values, None), event) => {
+                    (S::Reply(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"reply", true)?;
                         match self.handle_reply(reader, values, output, &mut fallback)? {
@@ -3973,7 +3978,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Doc(values, None), event) => {
+                    (S::Doc(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"doc", false)?;
                         match self.handle_doc(reader, values, output, &mut fallback)? {
@@ -3987,7 +3992,10 @@ pub mod quick_xml_deserialize {
                         *self.state__ = s;
                         break (DeserializerEvent::Continue(event), false);
                     }
-                    (S::Unknown__, _) => unreachable!(),
+                    (state, event) => {
+                        *self.state__ = state;
+                        break (DeserializerEvent::Break(event), false);
+                    }
                 }
             };
             let artifact = if matches!(&*self.state__, S::Done__(_)) {
@@ -4148,6 +4156,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Content__(deserializer), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_content(reader, output, &mut fallback)? {
@@ -4177,7 +4186,6 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Unknown__, _) => unreachable!(),
                 }
             };
             let artifact = DeserializerArtifact::Deserializer(self);
@@ -4283,6 +4291,7 @@ pub mod quick_xml_deserialize {
         {
             use EventTypeContentDeserializerState as S;
             match state {
+                S::Unknown__ => unreachable!(),
                 S::Init__ => Err(ErrorKind::MissingContent.into()),
                 S::Pad(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
@@ -4330,7 +4339,6 @@ pub mod quick_xml_deserialize {
                     ))
                 }
                 S::Done__(data) => Ok(data),
-                S::Unknown__ => unreachable!(),
             }
         }
         fn store_pad(
@@ -4697,6 +4705,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Pad(values, Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_pad(reader, values, output, &mut fallback)? {
@@ -4757,7 +4766,7 @@ pub mod quick_xml_deserialize {
                         }
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
-                    (S::Pad(values, None), event) => {
+                    (S::Pad(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"pad", false)?;
                         match self.handle_pad(reader, values, output, &mut fallback)? {
@@ -4767,7 +4776,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Field(values, None), event) => {
+                    (S::Field(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"field", false)?;
                         match self.handle_field(reader, values, output, &mut fallback)? {
@@ -4777,7 +4786,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::List(values, None), event) => {
+                    (S::List(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"list", false)?;
                         match self.handle_list(reader, values, output, &mut fallback)? {
@@ -4787,7 +4796,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Fd(values, None), event) => {
+                    (S::Fd(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"fd", true)?;
                         match self.handle_fd(reader, values, output, &mut fallback)? {
@@ -4797,7 +4806,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Doc(values, None), event) => {
+                    (S::Doc(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"doc", false)?;
                         match self.handle_doc(reader, values, output, &mut fallback)? {
@@ -4811,7 +4820,10 @@ pub mod quick_xml_deserialize {
                         *self.state__ = s;
                         break (DeserializerEvent::Continue(event), false);
                     }
-                    (S::Unknown__, _) => unreachable!(),
+                    (state, event) => {
+                        *self.state__ = state;
+                        break (DeserializerEvent::Break(event), false);
+                    }
                 }
             };
             let artifact = if matches!(&*self.state__, S::Done__(_)) {
@@ -5065,6 +5077,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Content__(deserializer), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_content(reader, output, &mut fallback)? {
@@ -5091,7 +5104,6 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Unknown__, _) => unreachable!(),
                 }
             };
             let artifact = DeserializerArtifact::Deserializer(self);
@@ -5189,6 +5201,7 @@ pub mod quick_xml_deserialize {
         {
             use PacketStructTypeContentDeserializerState as S;
             match state {
+                S::Unknown__ => unreachable!(),
                 S::Init__ => Err(ErrorKind::MissingContent.into()),
                 S::Pad(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
@@ -5227,7 +5240,6 @@ pub mod quick_xml_deserialize {
                     ))
                 }
                 S::Done__(data) => Ok(data),
-                S::Unknown__ => unreachable!(),
             }
         }
         fn store_pad(
@@ -5537,6 +5549,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Pad(values, Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_pad(reader, values, output, &mut fallback)? {
@@ -5588,7 +5601,7 @@ pub mod quick_xml_deserialize {
                         }
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
-                    (S::Pad(values, None), event) => {
+                    (S::Pad(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"pad", false)?;
                         match self.handle_pad(reader, values, output, &mut fallback)? {
@@ -5598,7 +5611,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Field(values, None), event) => {
+                    (S::Field(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"field", false)?;
                         match self.handle_field(reader, values, output, &mut fallback)? {
@@ -5608,7 +5621,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::List(values, None), event) => {
+                    (S::List(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"list", false)?;
                         match self.handle_list(reader, values, output, &mut fallback)? {
@@ -5618,7 +5631,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Fd(values, None), event) => {
+                    (S::Fd(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"fd", true)?;
                         match self.handle_fd(reader, values, output, &mut fallback)? {
@@ -5632,7 +5645,10 @@ pub mod quick_xml_deserialize {
                         *self.state__ = s;
                         break (DeserializerEvent::Continue(event), false);
                     }
-                    (S::Unknown__, _) => unreachable!(),
+                    (state, event) => {
+                        *self.state__ = state;
+                        break (DeserializerEvent::Break(event), false);
+                    }
                 }
             };
             let artifact = if matches!(&*self.state__, S::Done__(_)) {
@@ -5773,6 +5789,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Content__(deserializer), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_content(reader, output, &mut fallback)? {
@@ -5802,7 +5819,6 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Unknown__, _) => unreachable!(),
                 }
             };
             let artifact = DeserializerArtifact::Deserializer(self);
@@ -5906,6 +5922,7 @@ pub mod quick_xml_deserialize {
         {
             use StructTypeContentDeserializerState as S;
             match state {
+                S::Unknown__ => unreachable!(),
                 S::Init__ => Err(ErrorKind::MissingContent.into()),
                 S::Pad(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
@@ -5953,7 +5970,6 @@ pub mod quick_xml_deserialize {
                     )?))
                 }
                 S::Done__(data) => Ok(data),
-                S::Unknown__ => unreachable!(),
             }
         }
         fn store_pad(
@@ -6322,6 +6338,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Pad(values, Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_pad(reader, values, output, &mut fallback)? {
@@ -6382,7 +6399,7 @@ pub mod quick_xml_deserialize {
                         }
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
-                    (S::Pad(values, None), event) => {
+                    (S::Pad(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"pad", false)?;
                         match self.handle_pad(reader, values, output, &mut fallback)? {
@@ -6392,7 +6409,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Field(values, None), event) => {
+                    (S::Field(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"field", false)?;
                         match self.handle_field(reader, values, output, &mut fallback)? {
@@ -6402,7 +6419,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::List(values, None), event) => {
+                    (S::List(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"list", false)?;
                         match self.handle_list(reader, values, output, &mut fallback)? {
@@ -6412,7 +6429,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Fd(values, None), event) => {
+                    (S::Fd(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"fd", true)?;
                         match self.handle_fd(reader, values, output, &mut fallback)? {
@@ -6422,7 +6439,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Switch(values, None), event) => {
+                    (S::Switch(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"switch", true)?;
                         match self.handle_switch(reader, values, output, &mut fallback)? {
@@ -6436,7 +6453,10 @@ pub mod quick_xml_deserialize {
                         *self.state__ = s;
                         break (DeserializerEvent::Continue(event), false);
                     }
-                    (S::Unknown__, _) => unreachable!(),
+                    (state, event) => {
+                        *self.state__ = state;
+                        break (DeserializerEvent::Break(event), false);
+                    }
                 }
             };
             let artifact = if matches!(&*self.state__, S::Done__(_)) {
@@ -6630,11 +6650,7 @@ pub mod quick_xml_deserialize {
                             fallback.get_or_insert(XidunionTypeDeserializerState::Type(Some(
                                 deserializer,
                             )));
-                            if self.type_.len().saturating_add(1) < 1usize {
-                                *self.state__ = XidunionTypeDeserializerState::Type(None);
-                            } else {
-                                *self.state__ = XidunionTypeDeserializerState::Done__;
-                            }
+                            *self.state__ = XidunionTypeDeserializerState::Type(None);
                         }
                         ElementHandlerOutput::Break { .. } => {
                             *self.state__ = XidunionTypeDeserializerState::Type(Some(deserializer));
@@ -6667,6 +6683,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Type(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_type_(reader, output, &mut fallback)? {
@@ -6711,7 +6728,6 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(S::Done__);
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
-                    (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -6856,6 +6872,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Content__(deserializer), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_content(reader, output, &mut fallback)? {
@@ -6885,7 +6902,6 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Unknown__, _) => unreachable!(),
                 }
             };
             let artifact = DeserializerArtifact::Deserializer(self);
@@ -7088,6 +7104,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Item(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_item(reader, output, &mut fallback)? {
@@ -7157,7 +7174,6 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(S::Done__);
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
-                    (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -7603,6 +7619,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Content__(deserializer), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_content(reader, output, &mut fallback)? {
@@ -7632,7 +7649,6 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Unknown__, _) => unreachable!(),
                 }
             };
             let artifact = DeserializerArtifact::Deserializer(self);
@@ -7775,6 +7791,7 @@ pub mod quick_xml_deserialize {
         {
             use ListTypeContentDeserializerState as S;
             match state {
+                S::Unknown__ => unreachable!(),
                 S::Init__ => Err(ErrorKind::MissingContent.into()),
                 S::Op(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
@@ -7849,7 +7866,6 @@ pub mod quick_xml_deserialize {
                     ))
                 }
                 S::Done__(data) => Ok(data),
-                S::Unknown__ => unreachable!(),
             }
         }
         fn store_op(values: &mut Option<super::OpType>, value: super::OpType) -> Result<(), Error> {
@@ -8407,6 +8423,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Op(values, Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_op(reader, values, output, &mut fallback)? {
@@ -8494,7 +8511,7 @@ pub mod quick_xml_deserialize {
                         }
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
-                    (S::Op(values, None), event) => {
+                    (S::Op(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"op", false)?;
                         match self.handle_op(reader, values, output, &mut fallback)? {
@@ -8504,7 +8521,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Unop(values, None), event) => {
+                    (S::Unop(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"unop", false)?;
                         match self.handle_unop(reader, values, output, &mut fallback)? {
@@ -8514,7 +8531,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Fieldref(values, None), event) => {
+                    (S::Fieldref(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"fieldref", false)?;
                         match self.handle_fieldref(reader, values, output, &mut fallback)? {
@@ -8524,7 +8541,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Enumref(values, None), event) => {
+                    (S::Enumref(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"enumref", false)?;
                         match self.handle_enumref(reader, values, output, &mut fallback)? {
@@ -8534,7 +8551,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Popcount(values, None), event) => {
+                    (S::Popcount(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"popcount", false)?;
                         match self.handle_popcount(reader, values, output, &mut fallback)? {
@@ -8544,7 +8561,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Sumof(values, None), event) => {
+                    (S::Sumof(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"sumof", false)?;
                         match self.handle_sumof(reader, values, output, &mut fallback)? {
@@ -8554,7 +8571,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Value(values, None), event) => {
+                    (S::Value(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"value", false)?;
                         match self.handle_value(reader, values, output, &mut fallback)? {
@@ -8564,7 +8581,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Bit(values, None), event) => {
+                    (S::Bit(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"bit", false)?;
                         match self.handle_bit(reader, values, output, &mut fallback)? {
@@ -8578,7 +8595,10 @@ pub mod quick_xml_deserialize {
                         *self.state__ = s;
                         break (DeserializerEvent::Continue(event), false);
                     }
-                    (S::Unknown__, _) => unreachable!(),
+                    (state, event) => {
+                        *self.state__ = state;
+                        break (DeserializerEvent::Break(event), false);
+                    }
                 }
             };
             let artifact = if matches!(&*self.state__, S::Done__(_)) {
@@ -8648,6 +8668,12 @@ pub mod quick_xml_deserialize {
                     artifact: DeserializerArtifact::Data(self.finish(reader)?),
                     event: DeserializerEvent::None,
                     allow_any: false,
+                })
+            } else if matches!(&event, Event::Text(_) | Event::CData(_)) {
+                Ok(DeserializerOutput {
+                    artifact: DeserializerArtifact::Deserializer(self),
+                    event: DeserializerEvent::None,
+                    allow_any: true,
                 })
             } else {
                 Ok(DeserializerOutput {
@@ -8799,6 +8825,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Content__(deserializer), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_content(reader, output, &mut fallback)? {
@@ -8828,7 +8855,6 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Unknown__, _) => unreachable!(),
                 }
             };
             let artifact = DeserializerArtifact::Deserializer(self);
@@ -8974,6 +9000,7 @@ pub mod quick_xml_deserialize {
         {
             use ExprfieldTypeContentDeserializerState as S;
             match state {
+                S::Unknown__ => unreachable!(),
                 S::Init__ => Err(ErrorKind::MissingContent.into()),
                 S::Op(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
@@ -9048,7 +9075,6 @@ pub mod quick_xml_deserialize {
                     ))
                 }
                 S::Done__(data) => Ok(data),
-                S::Unknown__ => unreachable!(),
             }
         }
         fn store_op(values: &mut Option<super::OpType>, value: super::OpType) -> Result<(), Error> {
@@ -9615,6 +9641,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Op(values, Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_op(reader, values, output, &mut fallback)? {
@@ -9702,7 +9729,7 @@ pub mod quick_xml_deserialize {
                         }
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
-                    (S::Op(values, None), event) => {
+                    (S::Op(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"op", false)?;
                         match self.handle_op(reader, values, output, &mut fallback)? {
@@ -9712,7 +9739,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Unop(values, None), event) => {
+                    (S::Unop(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"unop", false)?;
                         match self.handle_unop(reader, values, output, &mut fallback)? {
@@ -9722,7 +9749,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Fieldref(values, None), event) => {
+                    (S::Fieldref(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"fieldref", false)?;
                         match self.handle_fieldref(reader, values, output, &mut fallback)? {
@@ -9732,7 +9759,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Enumref(values, None), event) => {
+                    (S::Enumref(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"enumref", false)?;
                         match self.handle_enumref(reader, values, output, &mut fallback)? {
@@ -9742,7 +9769,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Popcount(values, None), event) => {
+                    (S::Popcount(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"popcount", false)?;
                         match self.handle_popcount(reader, values, output, &mut fallback)? {
@@ -9752,7 +9779,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Sumof(values, None), event) => {
+                    (S::Sumof(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"sumof", false)?;
                         match self.handle_sumof(reader, values, output, &mut fallback)? {
@@ -9762,7 +9789,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Value(values, None), event) => {
+                    (S::Value(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"value", false)?;
                         match self.handle_value(reader, values, output, &mut fallback)? {
@@ -9772,7 +9799,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Bit(values, None), event) => {
+                    (S::Bit(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"bit", false)?;
                         match self.handle_bit(reader, values, output, &mut fallback)? {
@@ -9786,7 +9813,10 @@ pub mod quick_xml_deserialize {
                         *self.state__ = s;
                         break (DeserializerEvent::Continue(event), false);
                     }
-                    (S::Unknown__, _) => unreachable!(),
+                    (state, event) => {
+                        *self.state__ = state;
+                        break (DeserializerEvent::Break(event), false);
+                    }
                 }
             };
             let artifact = if matches!(&*self.state__, S::Done__(_)) {
@@ -10029,6 +10059,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Content__(deserializer), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_content(reader, output, &mut fallback)? {
@@ -10058,7 +10089,6 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Unknown__, _) => unreachable!(),
                 }
             };
             let artifact = DeserializerArtifact::Deserializer(self);
@@ -10246,6 +10276,7 @@ pub mod quick_xml_deserialize {
         {
             use SwitchexprTypeContentDeserializerState as S;
             match state {
+                S::Unknown__ => unreachable!(),
                 S::Init__ => Err(ErrorKind::MissingContent.into()),
                 S::Op(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
@@ -10365,7 +10396,6 @@ pub mod quick_xml_deserialize {
                     ))
                 }
                 S::Done__(data) => Ok(data),
-                S::Unknown__ => unreachable!(),
             }
         }
         fn store_op(values: &mut Option<super::OpType>, value: super::OpType) -> Result<(), Error> {
@@ -11271,6 +11301,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Op(values, Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_op(reader, values, output, &mut fallback)? {
@@ -11403,7 +11434,7 @@ pub mod quick_xml_deserialize {
                         }
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
-                    (S::Op(values, None), event) => {
+                    (S::Op(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"op", false)?;
                         match self.handle_op(reader, values, output, &mut fallback)? {
@@ -11413,7 +11444,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Unop(values, None), event) => {
+                    (S::Unop(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"unop", false)?;
                         match self.handle_unop(reader, values, output, &mut fallback)? {
@@ -11423,7 +11454,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Fieldref(values, None), event) => {
+                    (S::Fieldref(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"fieldref", false)?;
                         match self.handle_fieldref(reader, values, output, &mut fallback)? {
@@ -11433,7 +11464,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Enumref(values, None), event) => {
+                    (S::Enumref(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"enumref", false)?;
                         match self.handle_enumref(reader, values, output, &mut fallback)? {
@@ -11443,7 +11474,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Popcount(values, None), event) => {
+                    (S::Popcount(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"popcount", false)?;
                         match self.handle_popcount(reader, values, output, &mut fallback)? {
@@ -11453,7 +11484,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Sumof(values, None), event) => {
+                    (S::Sumof(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"sumof", false)?;
                         match self.handle_sumof(reader, values, output, &mut fallback)? {
@@ -11463,7 +11494,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Value(values, None), event) => {
+                    (S::Value(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"value", false)?;
                         match self.handle_value(reader, values, output, &mut fallback)? {
@@ -11473,7 +11504,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Bit(values, None), event) => {
+                    (S::Bit(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"bit", false)?;
                         match self.handle_bit(reader, values, output, &mut fallback)? {
@@ -11483,7 +11514,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Bitcase(values, None), event) => {
+                    (S::Bitcase(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"bitcase", true)?;
                         match self.handle_bitcase(reader, values, output, &mut fallback)? {
@@ -11493,7 +11524,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Pad(values, None), event) => {
+                    (S::Pad(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"pad", false)?;
                         match self.handle_pad(reader, values, output, &mut fallback)? {
@@ -11503,7 +11534,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Field(values, None), event) => {
+                    (S::Field(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"field", false)?;
                         match self.handle_field(reader, values, output, &mut fallback)? {
@@ -11513,7 +11544,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::List(values, None), event) => {
+                    (S::List(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"list", false)?;
                         match self.handle_list(reader, values, output, &mut fallback)? {
@@ -11523,7 +11554,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Fd(values, None), event) => {
+                    (S::Fd(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"fd", true)?;
                         match self.handle_fd(reader, values, output, &mut fallback)? {
@@ -11537,7 +11568,10 @@ pub mod quick_xml_deserialize {
                         *self.state__ = s;
                         break (DeserializerEvent::Continue(event), false);
                     }
-                    (S::Unknown__, _) => unreachable!(),
+                    (state, event) => {
+                        *self.state__ = state;
+                        break (DeserializerEvent::Break(event), false);
+                    }
                 }
             };
             let artifact = if matches!(&*self.state__, S::Done__(_)) {
@@ -11674,6 +11708,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Content__(deserializer), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_content(reader, output, &mut fallback)? {
@@ -11700,7 +11735,6 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Unknown__, _) => unreachable!(),
                 }
             };
             let artifact = DeserializerArtifact::Deserializer(self);
@@ -11830,6 +11864,7 @@ pub mod quick_xml_deserialize {
         {
             use RequestReplyTypeContentDeserializerState as S;
             match state {
+                S::Unknown__ => unreachable!(),
                 S::Init__ => Err(ErrorKind::MissingContent.into()),
                 S::Pad(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
@@ -11895,7 +11930,6 @@ pub mod quick_xml_deserialize {
                     ))
                 }
                 S::Done__(data) => Ok(data),
-                S::Unknown__ => unreachable!(),
             }
         }
         fn store_pad(
@@ -12418,6 +12452,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Pad(values, Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_pad(reader, values, output, &mut fallback)? {
@@ -12496,7 +12531,7 @@ pub mod quick_xml_deserialize {
                         }
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
-                    (S::Pad(values, None), event) => {
+                    (S::Pad(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"pad", false)?;
                         match self.handle_pad(reader, values, output, &mut fallback)? {
@@ -12506,7 +12541,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Field(values, None), event) => {
+                    (S::Field(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"field", false)?;
                         match self.handle_field(reader, values, output, &mut fallback)? {
@@ -12516,7 +12551,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::List(values, None), event) => {
+                    (S::List(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"list", false)?;
                         match self.handle_list(reader, values, output, &mut fallback)? {
@@ -12526,7 +12561,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Fd(values, None), event) => {
+                    (S::Fd(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"fd", true)?;
                         match self.handle_fd(reader, values, output, &mut fallback)? {
@@ -12536,7 +12571,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Valueparam(values, None), event) => {
+                    (S::Valueparam(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             None,
@@ -12550,7 +12585,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Switch(values, None), event) => {
+                    (S::Switch(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"switch", true)?;
                         match self.handle_switch(reader, values, output, &mut fallback)? {
@@ -12560,7 +12595,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Doc(values, None), event) => {
+                    (S::Doc(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"doc", false)?;
                         match self.handle_doc(reader, values, output, &mut fallback)? {
@@ -12574,7 +12609,10 @@ pub mod quick_xml_deserialize {
                         *self.state__ = s;
                         break (DeserializerEvent::Continue(event), false);
                     }
-                    (S::Unknown__, _) => unreachable!(),
+                    (state, event) => {
+                        *self.state__ = state;
+                        break (DeserializerEvent::Break(event), false);
+                    }
                 }
             };
             let artifact = if matches!(&*self.state__, S::Done__(_)) {
@@ -12704,6 +12742,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Content__(deserializer), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_content(reader, output, &mut fallback)? {
@@ -12733,7 +12772,6 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Unknown__, _) => unreachable!(),
                 }
             };
             let artifact = DeserializerArtifact::Deserializer(self);
@@ -12846,6 +12884,7 @@ pub mod quick_xml_deserialize {
         {
             use DocTypeContentDeserializerState as S;
             match state {
+                S::Unknown__ => unreachable!(),
                 S::Init__ => Err(ErrorKind::MissingContent.into()),
                 S::Brief(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
@@ -12902,7 +12941,6 @@ pub mod quick_xml_deserialize {
                     ))
                 }
                 S::Done__(data) => Ok(data),
-                S::Unknown__ => unreachable!(),
             }
         }
         fn store_brief(values: &mut Option<String>, value: String) -> Result<(), Error> {
@@ -13330,6 +13368,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Brief(values, Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_brief(reader, values, output, &mut fallback)? {
@@ -13399,7 +13438,7 @@ pub mod quick_xml_deserialize {
                         }
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
-                    (S::Brief(values, None), event) => {
+                    (S::Brief(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"brief", false)?;
                         match self.handle_brief(reader, values, output, &mut fallback)? {
@@ -13409,7 +13448,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Description(values, None), event) => {
+                    (S::Description(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
                             None,
@@ -13423,7 +13462,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Example(values, None), event) => {
+                    (S::Example(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"example", false)?;
                         match self.handle_example(reader, values, output, &mut fallback)? {
@@ -13433,7 +13472,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Field(values, None), event) => {
+                    (S::Field(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"field", false)?;
                         match self.handle_field(reader, values, output, &mut fallback)? {
@@ -13443,7 +13482,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Error(values, None), event) => {
+                    (S::Error(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"error", false)?;
                         match self.handle_error(reader, values, output, &mut fallback)? {
@@ -13453,7 +13492,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::See(values, None), event) => {
+                    (S::See(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"see", false)?;
                         match self.handle_see(reader, values, output, &mut fallback)? {
@@ -13467,7 +13506,10 @@ pub mod quick_xml_deserialize {
                         *self.state__ = s;
                         break (DeserializerEvent::Continue(event), false);
                     }
-                    (S::Unknown__, _) => unreachable!(),
+                    (state, event) => {
+                        *self.state__ = state;
+                        break (DeserializerEvent::Break(event), false);
+                    }
                 }
             };
             let artifact = if matches!(&*self.state__, S::Done__(_)) {
@@ -13600,6 +13642,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Content__(deserializer), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_content(reader, output, &mut fallback)? {
@@ -13629,7 +13672,6 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Unknown__, _) => unreachable!(),
                 }
             };
             let artifact = DeserializerArtifact::Deserializer(self);
@@ -13703,6 +13745,7 @@ pub mod quick_xml_deserialize {
         {
             use EnumItemTypeContentDeserializerState as S;
             match state {
+                S::Unknown__ => unreachable!(),
                 S::Init__ => Err(ErrorKind::MissingContent.into()),
                 S::Value(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
@@ -13723,7 +13766,6 @@ pub mod quick_xml_deserialize {
                     ))
                 }
                 S::Done__(data) => Ok(data),
-                S::Unknown__ => unreachable!(),
             }
         }
         fn store_value(
@@ -13892,6 +13934,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Value(values, Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_value(reader, values, output, &mut fallback)? {
@@ -13925,7 +13968,7 @@ pub mod quick_xml_deserialize {
                         }
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
-                    (S::Value(values, None), event) => {
+                    (S::Value(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"value", false)?;
                         match self.handle_value(reader, values, output, &mut fallback)? {
@@ -13935,7 +13978,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Bit(values, None), event) => {
+                    (S::Bit(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"bit", false)?;
                         match self.handle_bit(reader, values, output, &mut fallback)? {
@@ -13949,7 +13992,10 @@ pub mod quick_xml_deserialize {
                         *self.state__ = s;
                         break (DeserializerEvent::Continue(event), false);
                     }
-                    (S::Unknown__, _) => unreachable!(),
+                    (state, event) => {
+                        *self.state__ = state;
+                        break (DeserializerEvent::Break(event), false);
+                    }
                 }
             };
             let artifact = if matches!(&*self.state__, S::Done__(_)) {
@@ -14091,6 +14137,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Content__(deserializer), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_content(reader, output, &mut fallback)? {
@@ -14120,7 +14167,6 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Unknown__, _) => unreachable!(),
                 }
             };
             let artifact = DeserializerArtifact::Deserializer(self);
@@ -14265,6 +14311,7 @@ pub mod quick_xml_deserialize {
         {
             use OpTypeContentDeserializerState as S;
             match state {
+                S::Unknown__ => unreachable!(),
                 S::Init__ => Err(ErrorKind::MissingContent.into()),
                 S::Op(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
@@ -14339,7 +14386,6 @@ pub mod quick_xml_deserialize {
                     ))
                 }
                 S::Done__(data) => Ok(data),
-                S::Unknown__ => unreachable!(),
             }
         }
         fn store_op(values: &mut Option<super::OpType>, value: super::OpType) -> Result<(), Error> {
@@ -14895,6 +14941,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Op(values, Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_op(reader, values, output, &mut fallback)? {
@@ -14982,7 +15029,7 @@ pub mod quick_xml_deserialize {
                         }
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
-                    (S::Op(values, None), event) => {
+                    (S::Op(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"op", false)?;
                         match self.handle_op(reader, values, output, &mut fallback)? {
@@ -14992,7 +15039,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Unop(values, None), event) => {
+                    (S::Unop(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"unop", false)?;
                         match self.handle_unop(reader, values, output, &mut fallback)? {
@@ -15002,7 +15049,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Fieldref(values, None), event) => {
+                    (S::Fieldref(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"fieldref", false)?;
                         match self.handle_fieldref(reader, values, output, &mut fallback)? {
@@ -15012,7 +15059,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Enumref(values, None), event) => {
+                    (S::Enumref(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"enumref", false)?;
                         match self.handle_enumref(reader, values, output, &mut fallback)? {
@@ -15022,7 +15069,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Popcount(values, None), event) => {
+                    (S::Popcount(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"popcount", false)?;
                         match self.handle_popcount(reader, values, output, &mut fallback)? {
@@ -15032,7 +15079,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Sumof(values, None), event) => {
+                    (S::Sumof(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"sumof", false)?;
                         match self.handle_sumof(reader, values, output, &mut fallback)? {
@@ -15042,7 +15089,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Value(values, None), event) => {
+                    (S::Value(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"value", false)?;
                         match self.handle_value(reader, values, output, &mut fallback)? {
@@ -15052,7 +15099,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Bit(values, None), event) => {
+                    (S::Bit(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"bit", false)?;
                         match self.handle_bit(reader, values, output, &mut fallback)? {
@@ -15066,7 +15113,10 @@ pub mod quick_xml_deserialize {
                         *self.state__ = s;
                         break (DeserializerEvent::Continue(event), false);
                     }
-                    (S::Unknown__, _) => unreachable!(),
+                    (state, event) => {
+                        *self.state__ = state;
+                        break (DeserializerEvent::Break(event), false);
+                    }
                 }
             };
             let artifact = if matches!(&*self.state__, S::Done__(_)) {
@@ -15196,6 +15246,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Content__(deserializer), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_content(reader, output, &mut fallback)? {
@@ -15225,7 +15276,6 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Unknown__, _) => unreachable!(),
                 }
             };
             let artifact = DeserializerArtifact::Deserializer(self);
@@ -15364,6 +15414,7 @@ pub mod quick_xml_deserialize {
         {
             use UnopTypeContentDeserializerState as S;
             match state {
+                S::Unknown__ => unreachable!(),
                 S::Init__ => Err(ErrorKind::MissingContent.into()),
                 S::Op(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
@@ -15438,7 +15489,6 @@ pub mod quick_xml_deserialize {
                     ))
                 }
                 S::Done__(data) => Ok(data),
-                S::Unknown__ => unreachable!(),
             }
         }
         fn store_op(values: &mut Option<super::OpType>, value: super::OpType) -> Result<(), Error> {
@@ -15996,6 +16046,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Op(values, Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_op(reader, values, output, &mut fallback)? {
@@ -16083,7 +16134,7 @@ pub mod quick_xml_deserialize {
                         }
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
-                    (S::Op(values, None), event) => {
+                    (S::Op(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"op", false)?;
                         match self.handle_op(reader, values, output, &mut fallback)? {
@@ -16093,7 +16144,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Unop(values, None), event) => {
+                    (S::Unop(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"unop", false)?;
                         match self.handle_unop(reader, values, output, &mut fallback)? {
@@ -16103,7 +16154,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Fieldref(values, None), event) => {
+                    (S::Fieldref(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"fieldref", false)?;
                         match self.handle_fieldref(reader, values, output, &mut fallback)? {
@@ -16113,7 +16164,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Enumref(values, None), event) => {
+                    (S::Enumref(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"enumref", false)?;
                         match self.handle_enumref(reader, values, output, &mut fallback)? {
@@ -16123,7 +16174,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Popcount(values, None), event) => {
+                    (S::Popcount(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"popcount", false)?;
                         match self.handle_popcount(reader, values, output, &mut fallback)? {
@@ -16133,7 +16184,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Sumof(values, None), event) => {
+                    (S::Sumof(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"sumof", false)?;
                         match self.handle_sumof(reader, values, output, &mut fallback)? {
@@ -16143,7 +16194,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Value(values, None), event) => {
+                    (S::Value(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"value", false)?;
                         match self.handle_value(reader, values, output, &mut fallback)? {
@@ -16153,7 +16204,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Bit(values, None), event) => {
+                    (S::Bit(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"bit", false)?;
                         match self.handle_bit(reader, values, output, &mut fallback)? {
@@ -16167,7 +16218,10 @@ pub mod quick_xml_deserialize {
                         *self.state__ = s;
                         break (DeserializerEvent::Continue(event), false);
                     }
-                    (S::Unknown__, _) => unreachable!(),
+                    (state, event) => {
+                        *self.state__ = state;
+                        break (DeserializerEvent::Break(event), false);
+                    }
                 }
             };
             let artifact = if matches!(&*self.state__, S::Done__(_)) {
@@ -16305,6 +16359,7 @@ pub mod quick_xml_deserialize {
         {
             use EnumrefTypeDeserializerState as S;
             match replace(&mut *self.state__, S::Unknown__) {
+                S::Unknown__ => unreachable!(),
                 S::Init__ => {
                     let output = ContentDeserializer::init(reader, event)?;
                     self.handle_content(reader, output)
@@ -16313,7 +16368,6 @@ pub mod quick_xml_deserialize {
                     let output = deserializer.next(reader, event)?;
                     self.handle_content(reader, output)
                 }
-                S::Unknown__ => unreachable!(),
             }
         }
         fn finish<R>(mut self, reader: &R) -> Result<super::EnumrefType, Error>
@@ -16457,6 +16511,7 @@ pub mod quick_xml_deserialize {
         {
             use PopcountTypeDeserializerState as S;
             match state {
+                S::Unknown__ => unreachable!(),
                 S::Init__ => Err(ErrorKind::MissingContent.into()),
                 S::Op(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
@@ -16531,7 +16586,6 @@ pub mod quick_xml_deserialize {
                     ))
                 }
                 S::Done__(data) => Ok(data),
-                S::Unknown__ => unreachable!(),
             }
         }
         fn store_op(values: &mut Option<super::OpType>, value: super::OpType) -> Result<(), Error> {
@@ -17042,6 +17096,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Op(values, Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_op(reader, values, output, &mut fallback)? {
@@ -17129,7 +17184,7 @@ pub mod quick_xml_deserialize {
                         }
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
-                    (S::Op(values, None), event) => {
+                    (S::Op(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"op", false)?;
                         match self.handle_op(reader, values, output, &mut fallback)? {
@@ -17139,7 +17194,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Unop(values, None), event) => {
+                    (S::Unop(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"unop", false)?;
                         match self.handle_unop(reader, values, output, &mut fallback)? {
@@ -17149,7 +17204,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Fieldref(values, None), event) => {
+                    (S::Fieldref(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"fieldref", false)?;
                         match self.handle_fieldref(reader, values, output, &mut fallback)? {
@@ -17159,7 +17214,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Enumref(values, None), event) => {
+                    (S::Enumref(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"enumref", false)?;
                         match self.handle_enumref(reader, values, output, &mut fallback)? {
@@ -17169,7 +17224,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Popcount(values, None), event) => {
+                    (S::Popcount(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"popcount", false)?;
                         match self.handle_popcount(reader, values, output, &mut fallback)? {
@@ -17179,7 +17234,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Sumof(values, None), event) => {
+                    (S::Sumof(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"sumof", false)?;
                         match self.handle_sumof(reader, values, output, &mut fallback)? {
@@ -17189,7 +17244,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Value(values, None), event) => {
+                    (S::Value(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"value", false)?;
                         match self.handle_value(reader, values, output, &mut fallback)? {
@@ -17199,7 +17254,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Bit(values, None), event) => {
+                    (S::Bit(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"bit", false)?;
                         match self.handle_bit(reader, values, output, &mut fallback)? {
@@ -17213,7 +17268,10 @@ pub mod quick_xml_deserialize {
                         *self.state__ = s;
                         break (DeserializerEvent::Continue(event), false);
                     }
-                    (S::Unknown__, _) => unreachable!(),
+                    (state, event) => {
+                        *self.state__ = state;
+                        break (DeserializerEvent::Break(event), false);
+                    }
                 }
             };
             let artifact = if matches!(&*self.state__, S::Done__(_)) {
@@ -17432,6 +17490,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Content__(deserializer), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_content(reader, output, &mut fallback)? {
@@ -17461,7 +17520,6 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Unknown__, _) => unreachable!(),
                 }
             };
             let artifact = DeserializerArtifact::Deserializer(self);
@@ -17646,6 +17704,7 @@ pub mod quick_xml_deserialize {
         {
             use CaseexprTypeContentDeserializerState as S;
             match state {
+                S::Unknown__ => unreachable!(),
                 S::Init__ => Err(ErrorKind::MissingContent.into()),
                 S::Op(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
@@ -17765,7 +17824,6 @@ pub mod quick_xml_deserialize {
                     )?))
                 }
                 S::Done__(data) => Ok(data),
-                S::Unknown__ => unreachable!(),
             }
         }
         fn store_op(values: &mut Option<super::OpType>, value: super::OpType) -> Result<(), Error> {
@@ -18655,6 +18713,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
                     (S::Op(values, Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_op(reader, values, output, &mut fallback)? {
@@ -18787,7 +18846,7 @@ pub mod quick_xml_deserialize {
                         }
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
-                    (S::Op(values, None), event) => {
+                    (S::Op(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"op", false)?;
                         match self.handle_op(reader, values, output, &mut fallback)? {
@@ -18797,7 +18856,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Unop(values, None), event) => {
+                    (S::Unop(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"unop", false)?;
                         match self.handle_unop(reader, values, output, &mut fallback)? {
@@ -18807,7 +18866,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Fieldref(values, None), event) => {
+                    (S::Fieldref(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"fieldref", false)?;
                         match self.handle_fieldref(reader, values, output, &mut fallback)? {
@@ -18817,7 +18876,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Enumref(values, None), event) => {
+                    (S::Enumref(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"enumref", false)?;
                         match self.handle_enumref(reader, values, output, &mut fallback)? {
@@ -18827,7 +18886,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Popcount(values, None), event) => {
+                    (S::Popcount(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"popcount", false)?;
                         match self.handle_popcount(reader, values, output, &mut fallback)? {
@@ -18837,7 +18896,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Sumof(values, None), event) => {
+                    (S::Sumof(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"sumof", false)?;
                         match self.handle_sumof(reader, values, output, &mut fallback)? {
@@ -18847,7 +18906,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Value(values, None), event) => {
+                    (S::Value(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"value", false)?;
                         match self.handle_value(reader, values, output, &mut fallback)? {
@@ -18857,7 +18916,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Bit(values, None), event) => {
+                    (S::Bit(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"bit", false)?;
                         match self.handle_bit(reader, values, output, &mut fallback)? {
@@ -18867,7 +18926,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Pad(values, None), event) => {
+                    (S::Pad(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"pad", false)?;
                         match self.handle_pad(reader, values, output, &mut fallback)? {
@@ -18877,7 +18936,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Field(values, None), event) => {
+                    (S::Field(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"field", false)?;
                         match self.handle_field(reader, values, output, &mut fallback)? {
@@ -18887,7 +18946,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::List(values, None), event) => {
+                    (S::List(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"list", false)?;
                         match self.handle_list(reader, values, output, &mut fallback)? {
@@ -18897,7 +18956,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Fd(values, None), event) => {
+                    (S::Fd(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"fd", true)?;
                         match self.handle_fd(reader, values, output, &mut fallback)? {
@@ -18907,7 +18966,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Switch(values, None), event) => {
+                    (S::Switch(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
                             reader.init_start_tag_deserializer(event, None, b"switch", true)?;
                         match self.handle_switch(reader, values, output, &mut fallback)? {
@@ -18921,7 +18980,10 @@ pub mod quick_xml_deserialize {
                         *self.state__ = s;
                         break (DeserializerEvent::Continue(event), false);
                     }
-                    (S::Unknown__, _) => unreachable!(),
+                    (state, event) => {
+                        *self.state__ = state;
+                        break (DeserializerEvent::Break(event), false);
+                    }
                 }
             };
             let artifact = if matches!(&*self.state__, S::Done__(_)) {
@@ -19058,6 +19120,7 @@ pub mod quick_xml_deserialize {
         {
             use FieldTypeDeserializerState as S;
             match replace(&mut *self.state__, S::Unknown__) {
+                S::Unknown__ => unreachable!(),
                 S::Init__ => {
                     let output = ContentDeserializer::init(reader, event)?;
                     self.handle_content(reader, output)
@@ -19066,7 +19129,6 @@ pub mod quick_xml_deserialize {
                     let output = deserializer.next(reader, event)?;
                     self.handle_content(reader, output)
                 }
-                S::Unknown__ => unreachable!(),
             }
         }
         fn finish<R>(mut self, reader: &R) -> Result<super::FieldType, Error>
@@ -19197,6 +19259,7 @@ pub mod quick_xml_deserialize {
         {
             use ErrorTypeDeserializerState as S;
             match replace(&mut *self.state__, S::Unknown__) {
+                S::Unknown__ => unreachable!(),
                 S::Init__ => {
                     let output = ContentDeserializer::init(reader, event)?;
                     self.handle_content(reader, output)
@@ -19205,7 +19268,6 @@ pub mod quick_xml_deserialize {
                     let output = deserializer.next(reader, event)?;
                     self.handle_content(reader, output)
                 }
-                S::Unknown__ => unreachable!(),
             }
         }
         fn finish<R>(mut self, reader: &R) -> Result<super::ErrorType, Error>
