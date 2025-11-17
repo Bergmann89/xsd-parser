@@ -1,0 +1,16 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="Container">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:choice maxOccurs="unbounded">
+          <xs:element type="xs:string" name="Foo" />
+          <xs:sequence>
+            <xs:choice maxOccurs="unbounded">
+              <xs:element name="Bar" type="xs:string" />
+            </xs:choice>
+          </xs:sequence>
+        </xs:choice>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
