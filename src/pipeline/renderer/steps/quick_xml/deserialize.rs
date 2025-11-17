@@ -1258,7 +1258,7 @@ impl ComplexDataEnum<'_> {
 
         let handler_mixed = self.base.is_mixed.then(|| {
             quote! {
-                (state, Event::Text(_) | Event::CData(_)) => {
+                (state, #event::Text(_) | #event::CData(_)) => {
                     *self.state__ = state;
                     break (#deserializer_event::None, false);
                 }
@@ -2145,7 +2145,7 @@ impl ComplexDataStruct<'_> {
 
         let handler_mixed = (!text_only && self.base.is_mixed).then(|| {
             quote! {
-                (state, Event::Text(_) | Event::CData(_)) => {
+                (state, #event::Text(_) | #event::CData(_)) => {
                     *self.state__ = state;
                     break (#deserializer_event::None, false);
                 }
@@ -3297,11 +3297,12 @@ impl ComplexDataElement<'_> {
         let allow_any = self.target_type_allows_any(ctx.types.meta.types);
         let target_type = ctx.resolve_type_for_deserialize_module(&self.target_type);
 
+        let event = resolve_quick_xml_ident!(ctx, "::xsd_parser::quick_xml::Event");
         let with_deserializer =
             resolve_quick_xml_ident!(ctx, "::xsd_parser::quick_xml::WithDeserializer");
 
         let deserializer_matcher = quote!(None);
-        let event_matcher = quote!(event @ (Event::Start(_) | Event::Empty(_)));
+        let event_matcher = quote!(event @ (#event::Start(_) | #event::Empty(_)));
 
         let need_name_matcher = !self.target_is_dynamic
             && matches!(
