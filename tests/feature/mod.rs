@@ -45,6 +45,7 @@ mod schema_display_name;
 mod schema_no_prefix;
 mod sequence;
 mod sequence_with_choice;
+mod sequence_with_choice_nested;
 mod simple_content;
 mod simple_content_with_extension;
 mod simple_type;
