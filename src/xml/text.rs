@@ -142,13 +142,18 @@ impl<'de> Deserializer<'de, Text> for TextDeserializer {
     {
         let _reader = reader;
 
-        let text = match event {
-            Event::Text(x) => x.decode()?,
+        let text: Cow<'de, str> = match event {
+            Event::Text(x) => {
+                let t = x.decode()?;
+                let u = unescape(&t)?;
+                Cow::Owned(u.into_owned())
+            }
             Event::CData(x) => x.decode()?,
             Event::GeneralRef(x) => {
                 let x = from_utf8(x.as_ref())?;
-
-                Cow::Owned(format!("&{x};"))
+                let s = format!("&{x};");
+                let u = unescape(&s)?;
+                Cow::Owned(u.into_owned())
             }
             event @ (Event::Start(_) | Event::Empty(_) | Event::End(_)) => {
                 let artifact = match self {
@@ -183,7 +188,6 @@ impl<'de> Deserializer<'de, Text> for TextDeserializer {
             Self::Text { value } => value,
         };
 
-        let text = unescape(&text)?;
         value.0.push_str(&text);
 
         Ok(DeserializerOutput {
