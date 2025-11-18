@@ -1,1 +1,1 @@
-tests/**/*.xml text eol=lf
+xsd-parser/tests/**/*.xml text eol=lf

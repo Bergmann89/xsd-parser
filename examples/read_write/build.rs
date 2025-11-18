@@ -3,9 +3,8 @@ use std::io::Write;
 use std::process::{Command, Output, Stdio};
 
 use xsd_parser::{
-    Config, Error,
     config::{GeneratorFlags, InterpreterFlags, OptimizerFlags, RenderStep, Schema},
-    generate,
+    generate, Config, Error,
 };
 
 fn main() -> Result<(), Error> {
@@ -15,6 +14,7 @@ fn main() -> Result<(), Error> {
     config.interpreter.flags = InterpreterFlags::all();
     config.optimizer.flags = OptimizerFlags::all();
     config.generator.flags = GeneratorFlags::all();
+    config.renderer.xsd_parser_types = "xsd_parser_types".into();
 
     // Add renderers for `quick-xml` serializer and deserializer.
     let config = config.with_render_steps([
