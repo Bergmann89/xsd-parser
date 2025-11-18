@@ -1,6 +1,6 @@
 use std::io::{BufReader, BufWriter};
 
-use xsd_parser::quick_xml::{DeserializeSync, IoReader, SerializeSync, Writer, XmlReader};
+use xsd_parser_types::quick_xml::{DeserializeSync, IoReader, SerializeSync, Writer, XmlReader};
 
 #[allow(
     dead_code,

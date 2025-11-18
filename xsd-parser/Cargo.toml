@@ -1,0 +1,61 @@
+[package]
+name = "xsd-parser"
+version = "1.3.0"
+description = "Rust code generator for XML schema files"
+
+license.workspace = true
+edition.workspace = true
+authors.workspace = true
+keywords.workspace = true
+homepage.workspace = true
+repository.workspace = true
+
+[features]
+# Enable support for web resolvers
+web-resolver = [ "reqwest" ]
+
+# Helper feature to automatically update all code expectations of the tests
+update-expectations = [ ]
+
+[dependencies]
+anyhow = { workspace = true }
+bit-set = { workspace = true }
+bitflags = { workspace = true }
+indexmap = { workspace = true }
+Inflector = { workspace = true }
+parking_lot = { workspace = true }
+proc-macro2 = { workspace = true }
+quick-xml = { workspace = true, features = [ "async-tokio", "encoding", "serialize" ] }
+quote = { workspace = true }
+smallvec = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
+unindent = { workspace = true }
+url = { workspace = true }
+
+num = { workspace = true, optional = true }
+reqwest = { workspace = true, features = [ "blocking" ], optional = true }
+serde = { workspace = true, optional = true, features = [ "derive" ] }
+
+xsd-parser-types = { workspace = true, features = [ "quick-xml" ] }
+
+[dev-dependencies]
+clap = { workspace = true, features = [ "derive" ] }
+num = { workspace = true, features = [ "serde" ] }
+regex = { workspace = true }
+rust_decimal = { workspace = true }
+serde = { workspace = true, features = [ "derive" ] }
+serde-xml-rs = { workspace = true }
+serde-xml-rs-v7 = { workspace = true }
+text-diff = { workspace = true }
+tracing-subscriber = { workspace = true, features = [ "std", "env-filter", "json", "tracing-log" ] }
+
+xsd-parser = { workspace = true, features = [ "num" ] }
+xsd-parser-types = { workspace = true, features = [ "num", "quick-xml", "serde", "xml" ] }
+
+[build-dependencies]
+base64 = { workspace = true }
+regex = { workspace = true }
+
+[lints]
+workspace = true

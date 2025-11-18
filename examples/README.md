@@ -1,31 +1,5 @@
-# simple
+This directory contains more advanced examples that show how to use `xsd-parser` for code generation during the build. For more easier examples, that cover additional features of `xsd-parser` parser, please refer to the [integrated examples](../../xsd-parser/examples/README.md).
 
-Probably the most simple example, at least, a starting point to understand `xsd-parser` or start more complex applications.
+Examples contained in this directory:
 
-
-# update_schema
-
-It demonstrates a more advanced use of the generator to create types from the schema with deserialization support enabled.
-
-
-# custom_names
-
-Short example that shows how to assign custom defined names to the generated types.
-
-
-# custom_variants
-
-Similar to `custom_names`, this example shows how to assign custom names for enumeration variants.
-
-
-# custom_render_step
-
-Example that explains how to implement user defined render steps. This is useful if you want to generate additional structures from the already parsed and interpreted schema.
-
-
-# read_write
-
-A more complex example.
-
-It integrates `xsd-parser` in the build phase (`build.rs`) of the application,
-to generate Rust code and use it at run time.
+- [`read_write`](./read_write/README.md) - Generates code from a simple schema using a build script and then uses the generated code to deserialize and serialize a XML file during runtime.

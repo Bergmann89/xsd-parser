@@ -67,7 +67,8 @@ Below you can find a short list of the most important changes for each released 
 
 ## Next
 
-- Make the whole name generation and formatting customizable
+- Make the whole name generation and formatting customizable.
+- Split the whole code base into two crates (`xsd-parser` and `xsd-parser-types`) to make the dependency handling for all dependent crates easier.
 
 ## Version 1.3
 

@@ -53,43 +53,6 @@ jobs:
     - name: cargo build
       run: cargo build --release
 
-  check_examples:
-    name: check examples
-
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: checkout
-      uses: actions/checkout@v4
-
-    - uses: actions/cache@v4
-      with:
-        path: |
-          ~/.cargo/bin/
-          ~/.cargo/registry/index/
-          ~/.cargo/registry/cache/
-          ~/.cargo/git/db/
-          examples/read_write/target/
-        key: ${{ runner.os }}-examples-read-write-${{ hashFiles('**/Cargo.lock') }}
-
-    - name: cargo clippy
-      working-directory: examples/read_write
-      run: cargo clippy --all-targets --all-features -- --deny "warnings"
-
-    - name: cargo fmt
-      working-directory: examples/read_write
-      run: cargo fmt --all --check
-
-    - name: cargo doc
-      working-directory: examples/read_write
-      run: cargo doc --no-deps
-      env:
-        RUSTDOCFLAGS: '-D warnings'
-
-    - name: cargo build
-      working-directory: examples/read_write
-      run: cargo build --release
-
-    - name: cargo run
+    - name: example read_write
       working-directory: examples/read_write
       run: cargo run --release
