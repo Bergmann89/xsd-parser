@@ -267,8 +267,8 @@ impl<'types> ComplexData<'types> {
             let type_ = ComplexDataEnum {
                 base: ComplexBase::new_empty(
                     content_ident.clone(),
-                    mixed_mode.is_mixed(),
                     take(&mut base.has_any),
+                    mixed_mode.is_mixed(),
                     true,
                 ),
                 elements: take(&mut elements),
@@ -430,8 +430,8 @@ impl<'types> ComplexData<'types> {
             let type_ = ComplexDataStruct {
                 base: ComplexBase::new_empty(
                     content_ident.clone(),
-                    mixed_mode.is_mixed(),
                     take(&mut base.has_any),
+                    mixed_mode.is_mixed(),
                     true,
                 ),
                 mode,
