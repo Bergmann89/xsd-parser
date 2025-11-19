@@ -51,9 +51,8 @@ fn read_quick_xml() {
 fn read_quick_xml_cdata() {
     use quick_xml::Foo;
 
-    let obj = crate::utils::quick_xml_read_test::<Foo, _>(
-        "tests/feature/xsd_string/example/cdata.xml",
-    );
+    let obj =
+        crate::utils::quick_xml_read_test::<Foo, _>("tests/feature/xsd_string/example/cdata.xml");
 
     assert_eq!(obj.text, "AT&T <tag>");
 }

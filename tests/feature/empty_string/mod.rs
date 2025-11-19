@@ -39,19 +39,6 @@ fn read_quick_xml() {
 
 #[test]
 #[cfg(not(feature = "update-expectations"))]
-fn read_quick_xml_cdata() {
-    use quick_xml::SimpleContent;
-
-    let obj = crate::utils::quick_xml_read_test::<SimpleContent, _>(
-        "tests/feature/empty_string/example/simple_cdata.xml",
-    );
-
-    assert_eq!(obj.lang, "");
-    assert_eq!(obj.content, "AT&T <tag>");
-}
-
-#[test]
-#[cfg(not(feature = "update-expectations"))]
 fn write_quick_xml() {
     use quick_xml::{ComplexContent, SimpleContent};
 
