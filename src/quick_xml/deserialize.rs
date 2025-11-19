@@ -5,7 +5,7 @@ use std::str::{from_utf8, FromStr};
 
 use quick_xml::{
     escape::unescape,
-    events::{attributes::Attribute, BytesStart, BytesText, Event},
+    events::{attributes::Attribute, BytesStart, Event},
     name::{Namespace, QName, ResolveResult},
 };
 use thiserror::Error;
@@ -442,7 +442,7 @@ impl DeserializeBytesFromStr for num::BigUint {}
 /// Implements a [`Deserializer`] for any type that implements [`DeserializeBytes`].
 #[derive(Debug)]
 pub struct ContentDeserializer<T> {
-    data: Vec<u8>,
+    data: String,
     marker: PhantomData<T>,
 }
 
@@ -457,7 +457,7 @@ where
         match event {
             Event::Start(_) => Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(Self {
-                    data: Vec::new(),
+                    data: String::new(),
                     marker: PhantomData,
                 }),
                 event: DeserializerEvent::None,
@@ -486,7 +486,19 @@ where
     {
         match event {
             Event::Text(x) => {
-                self.data.extend_from_slice(x.as_ref());
+                let text = x.decode()?;
+                let text = unescape(&text)?;
+                self.data.push_str(&text);
+
+                Ok(DeserializerOutput {
+                    artifact: DeserializerArtifact::Deserializer(self),
+                    event: DeserializerEvent::None,
+                    allow_any: false,
+                })
+            }
+            Event::CData(x) => {
+                let text = x.decode()?;
+                self.data.push_str(&text);
 
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -495,9 +507,10 @@ where
                 })
             }
             Event::GeneralRef(x) => {
-                self.data.push(b'&');
-                self.data.extend_from_slice(x.as_ref());
-                self.data.push(b';');
+                let x = from_utf8(x.as_ref())?;
+                let s = format!("&{x};");
+                let text = unescape(&s)?;
+                self.data.push_str(&text);
 
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -526,12 +539,7 @@ where
     where
         R: XmlReader,
     {
-        let text = from_utf8(&self.data[..])?;
-        let text = BytesText::from_escaped(text);
-        let text = text.decode()?;
-        let text = unescape(&text)?;
-
-        T::deserialize_bytes(reader, text.as_bytes().trim_ascii())
+        T::deserialize_bytes(reader, self.data.as_bytes().trim_ascii())
     }
 }
 

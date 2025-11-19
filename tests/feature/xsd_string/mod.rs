@@ -48,6 +48,17 @@ fn read_quick_xml() {
 
 #[test]
 #[cfg(not(feature = "update-expectations"))]
+fn read_quick_xml_cdata() {
+    use quick_xml::Foo;
+
+    let obj =
+        crate::utils::quick_xml_read_test::<Foo, _>("tests/feature/xsd_string/example/cdata.xml");
+
+    assert_eq!(obj.text, "AT&T <tag>");
+}
+
+#[test]
+#[cfg(not(feature = "update-expectations"))]
 fn write_quick_xml() {
     use quick_xml::Foo;
 
