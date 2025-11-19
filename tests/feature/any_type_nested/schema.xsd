@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <!-- Reproduces a bug where has_any is computed at struct level
+       but variable declarations are needed at sequence level.
+       Parent struct (ContainerType) doesn't directly contain xs:any,
+       but its repeated content (the sequence with minOccurs/maxOccurs) does contain xs:any. -->
+
+  <xs:element name="Root">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Container" type="ContainerType" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:complexType name="ContainerType">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="Known" type="xs:string" />
+      <xs:any processContents="lax" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

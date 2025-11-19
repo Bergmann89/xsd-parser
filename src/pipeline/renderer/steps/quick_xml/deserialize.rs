@@ -2105,7 +2105,8 @@ impl ComplexDataStruct<'_> {
         let deserializer_artifact =
             resolve_quick_xml_ident!(ctx, "::xsd_parser::quick_xml::DeserializerArtifact");
 
-        let any_retry = self.has_any.then(|| {
+        let has_any_element = elements.iter().any(|el| el.meta().is_any());
+        let any_retry = has_any_element.then(|| {
             quote! {
                 let mut is_any_retry = false;
                 let mut any_fallback = None;
@@ -2129,7 +2130,7 @@ impl ComplexDataStruct<'_> {
             break (#deserializer_event::Continue(event), #done_allow_any);
         };
 
-        if self.has_any {
+        if has_any_element {
             handle_done = quote! {
                 if let Some(state) = any_fallback.take() {
                     is_any_retry = true;
