@@ -6,10 +6,7 @@ fn config() -> Config {
     Config::test_default()
         .with_generator_flags(GeneratorFlags::MIXED_TYPE_SUPPORT)
         .with_generate([(IdentType::Element, "Root")])
-        .with_any_support(
-            "xsd_parser_types::xml::AnyElement",
-            "xsd_parser_types::xml::AnyAttributes",
-        )
+        .with_any_type_support()
 }
 
 /* quick_xml */

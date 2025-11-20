@@ -4,10 +4,7 @@ use crate::utils::{generate_test, ConfigEx};
 
 fn config() -> Config {
     Config::test_default()
-        .with_any_support(
-            "xsd_parser_types::xml::AnyElement",
-            "xsd_parser_types::xml::AnyAttributes",
-        )
+        .with_any_type_support()
         .with_generator_flags(GeneratorFlags::MIXED_TYPE_SUPPORT)
         .with_generate([(IdentType::Element, "tns:AttributeValue")])
 }

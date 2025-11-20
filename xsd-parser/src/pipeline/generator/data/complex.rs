@@ -213,7 +213,8 @@ impl<'types> ComplexData<'types> {
         attributes: &'types [AttributeMeta],
         elements: &'types [ElementMeta],
     ) -> Result<Self, Error> {
-        let has_any = ctx.any_type.is_some() && elements.iter().any(ElementMeta::is_any);
+        let has_any = ctx.check_generator_flags(GeneratorFlags::ANY_TYPE_SUPPORT)
+            && elements.iter().any(ElementMeta::is_any);
         let mut base = ComplexBase::new(ctx, has_any, mixed_mode.is_mixed(), false, form)?;
         let occurs = Occurs::from_occurs(min_occurs, max_occurs);
 
@@ -337,7 +338,8 @@ impl<'types> ComplexData<'types> {
         attributes: &'types [AttributeMeta],
         elements: &'types [ElementMeta],
     ) -> Result<Self, Error> {
-        let has_any = ctx.any_type.is_some() && elements.iter().any(ElementMeta::is_any);
+        let has_any = ctx.check_generator_flags(GeneratorFlags::ANY_TYPE_SUPPORT)
+            && elements.iter().any(ElementMeta::is_any);
         let mut base = ComplexBase::new(ctx, has_any, mixed_mode.is_mixed(), false, form)?;
         let occurs = Occurs::from_occurs(min_occurs, max_occurs);
         let flatten = occurs == Occurs::Single
@@ -599,16 +601,18 @@ impl<'types> ComplexDataElement<'types> {
 
         let (target_type, target_is_dynamic, need_box) = match &meta.variant {
             ElementMetaVariant::Any { .. } => {
-                let Some(type_) = ctx.any_type.as_ref() else {
+                if !ctx.check_generator_flags(GeneratorFlags::ANY_TYPE_SUPPORT) {
                     *allow_any = true;
 
                     return Ok(None);
-                };
+                }
 
+                let type_ = &ctx.any_type;
                 let absolute =
                     ctx.check_generator_flags(GeneratorFlags::ABSOLUTE_PATHS_INSTEAD_USINGS);
                 let target_type = PathData::from_path(type_.clone()).into_included();
-                let target_type = PathData::from_path_data_mixed(mixed, absolute, target_type)
+                let target_type = ctx
+                    .path_data_mixed(mixed, absolute, target_type)
                     .with_using(format!("{type_}"));
 
                 let target_is_dynamic = false;
@@ -633,9 +637,8 @@ impl<'types> ComplexDataElement<'types> {
                 )?;
 
                 let target_type = target_ref.path.clone();
-                let target_type = PathData::from_path_data_mixed(mixed, absolute, target_type);
-                let target_type =
-                    PathData::from_path_data_nillable(nillable, absolute, target_type);
+                let target_type = ctx.path_data_mixed(mixed, absolute, target_type);
+                let target_type = ctx.path_data_nillable(nillable, absolute, target_type);
 
                 let target_is_dynamic = is_dynamic(type_, ctx.types);
 
@@ -644,7 +647,7 @@ impl<'types> ComplexDataElement<'types> {
             ElementMetaVariant::Text => {
                 let absolute =
                     ctx.check_generator_flags(GeneratorFlags::ABSOLUTE_PATHS_INSTEAD_USINGS);
-                let target_type = PathData::text(absolute);
+                let target_type = ctx.path_data_text(absolute);
                 let target_is_dynamic = false;
                 let need_box = false;
 
@@ -699,7 +702,7 @@ impl<'types> ComplexDataElement<'types> {
             tag_name: TagName::default(),
             field_ident,
             variant_ident,
-            target_type: PathData::text(absolute),
+            target_type: ctx.path_data_text(absolute),
             need_indirection: false,
             target_is_dynamic: false,
             extra_attributes,
@@ -768,12 +771,13 @@ impl<'types> ComplexDataAttribute<'types> {
 
         let (target_type, default_value) = match &meta.variant {
             AttributeMetaVariant::Any(_) => {
-                let Some(type_) = ctx.any_attributes_type.as_ref() else {
+                if !ctx.check_generator_flags(GeneratorFlags::ANY_TYPE_SUPPORT) {
                     *allow_any_attribute = true;
 
                     return Ok(None);
-                };
+                }
 
+                let type_ = &ctx.any_attributes_type;
                 let target_type = IdentPath::from_ident(type_.ident().clone());
                 let target_type = PathData::from_path(target_type).with_using(format!("{type_}"));
 

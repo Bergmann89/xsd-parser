@@ -1,5 +1,4 @@
 use crate::config::{GeneratorFlags, TypedefMode};
-use crate::models::data::PathData;
 use crate::models::{
     data::{Occurs, ReferenceData},
     meta::ReferenceMeta,
@@ -20,7 +19,7 @@ impl<'types> ReferenceData<'types> {
 
         let target_ref = ctx.get_or_create_type_ref_for_value(&meta.type_, occurs.is_direct())?;
         let target_type = target_ref.path.clone();
-        let target_type = PathData::from_path_data_nillable(nillable, absolute, target_type);
+        let target_type = ctx.path_data_nillable(nillable, absolute, target_type);
 
         let trait_impls = ctx.make_trait_impls()?;
 

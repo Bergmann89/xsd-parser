@@ -28,16 +28,31 @@ pub struct GeneratorConfig {
     /// Tells the generator how to deal with type definitions.
     pub typedef_mode: TypedefMode,
 
+    /// Type to use to store unformatted text.
+    ///
+    /// See [`Generator::text_type`](crate::Generator::text_type) for details.
+    pub text_type: String,
+
+    /// Type to use to store mixed types.
+    ///
+    /// See [`Generator::mixed_type`](crate::Generator::mixed_type) for details.
+    pub mixed_type: String,
+
+    /// Type to use to store nillable types.
+    ///
+    /// See [`Generator::nillable_type`](crate::Generator::nillable_type) for details.
+    pub nillable_type: String,
+
     /// Type to use to store unstructured `xs:any` elements.
     ///
     /// See [`Generator::any_type`](crate::Generator::any_type) for details.
-    pub any_type: Option<String>,
+    pub any_type: String,
 
     /// Type to use to store unstructured `xs:anyAttribute` attributes.
     ///
     /// See [`Generator::any_attributes_type`](crate::Generator::any_attributes_type)
     /// for details.
-    pub any_attributes_type: Option<String>,
+    pub any_attributes_type: String,
 }
 
 impl Default for GeneratorConfig {
@@ -49,8 +64,11 @@ impl Default for GeneratorConfig {
             typedef_mode: TypedefMode::Auto,
             generate: Generate::Named,
             flags: GeneratorFlags::empty(),
-            any_type: None,
-            any_attributes_type: None,
+            text_type: "::xsd_parser_types::xml::Text".into(),
+            mixed_type: "::xsd_parser_types::xml::Mixed".into(),
+            nillable_type: "::xsd_parser_types::xml::Nillable".into(),
+            any_type: "::xsd_parser_types::xml::AnyElement".into(),
+            any_attributes_type: "::xsd_parser_types::xml::AnyAttributes".into(),
         }
     }
 }
@@ -165,6 +183,25 @@ bitflags! {
         /// ```
         const NILLABLE_TYPE_SUPPORT = 1 << 5;
 
+        /// Enable support for `xs:any` types.
+        ///
+        /// This will enable code generation for `xs:any` types. This feature needs
+        /// to be used with caution, because support for any types when using
+        /// `serde` is quite limited.
+        ///
+        /// # Examples
+        ///
+        /// Consider the following XML schema:
+        /// ```xml
+        #[doc = include_str!("../../tests/generator/generator_flags/schema.xsd")]
+        /// ```
+        ///
+        /// Enable the `MIXED_TYPE_SUPPORT` feature only will result in the following code:
+        /// ```rust,ignore
+        #[doc = include_str!("../../tests/generator/generator_flags/expected/any_type_support.rs")]
+        /// ```
+        const ANY_TYPE_SUPPORT = 1 << 6;
+
         /// Use absolute paths for build-in types and traits.
         ///
         /// Using this flag will instruct the generator to use absolute paths
@@ -182,7 +219,7 @@ bitflags! {
         /// ```rust,ignore
         #[doc = include_str!("../../tests/generator/generator_flags/expected/build_in_absolute_paths.rs")]
         /// ```
-        const BUILD_IN_ABSOLUTE_PATHS = 1 << 6;
+        const BUILD_IN_ABSOLUTE_PATHS = 1 << 7;
 
         /// Use absolute paths instead of using directives for all non build-in
         /// types and traits.
@@ -194,7 +231,7 @@ bitflags! {
         /// This does not include build-in types (like `usize`, `String` or `From`),
         /// to use absolute paths for these also, you have to add the
         /// [`BUILD_IN_ABSOLUTE_PATHS`](Self::BUILD_IN_ABSOLUTE_PATHS) as well.
-        const ABSOLUTE_PATHS_INSTEAD_USINGS = 1 << 7;
+        const ABSOLUTE_PATHS_INSTEAD_USINGS = 1 << 8;
     }
 }
 

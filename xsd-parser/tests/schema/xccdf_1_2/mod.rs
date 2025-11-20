@@ -19,10 +19,7 @@ fn config() -> Config {
                 - GeneratorFlags::ABSOLUTE_PATHS_INSTEAD_USINGS,
         )
         .with_renderer_flags(RendererFlags::RENDER_DOCS)
-        .with_any_support(
-            "xsd_parser_types::xml::AnyElement",
-            "xsd_parser_types::xml::AnyAttributes",
-        )
+        .with_any_type_support()
         .with_generate([(IdentType::Element, "cdf:Benchmark")])
 }
 

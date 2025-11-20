@@ -13,7 +13,8 @@ fn config() -> Config {
         .set_generator_flags(
             GeneratorFlags::all()
                 - GeneratorFlags::ABSOLUTE_PATHS_INSTEAD_USINGS
-                - GeneratorFlags::BUILD_IN_ABSOLUTE_PATHS,
+                - GeneratorFlags::BUILD_IN_ABSOLUTE_PATHS
+                - GeneratorFlags::ANY_TYPE_SUPPORT,
         )
         .set_renderer_flags(RendererFlags::all())
         .with_generate([(IdentType::Element, "tns:SDL")])
