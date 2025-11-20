@@ -34,6 +34,7 @@ mod include_references;
 mod include_target_namespace;
 mod inline_element_names;
 mod list;
+mod mixed_choice_with_any;
 mod mixed_content;
 mod mixed_content_groups;
 mod mixed_unexpected_text;

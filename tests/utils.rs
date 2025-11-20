@@ -185,12 +185,17 @@ where
     let mut content = Vec::new();
     let mut writer = Writer::new(&mut content);
 
-    let mut actual = value.serializer(Some(root), true).unwrap();
-    let mut expected = IterReader::from_file(path);
+    let mut actual = FilteredIter::new(
+        value
+            .serializer(Some(root), true)
+            .unwrap()
+            .map(|ret| ret.unwrap()),
+    );
+    let mut expected = FilteredIter::new(IterReader::from_file(path));
 
     let (actual, expected) = loop {
+        let actual = actual.next().unwrap_or(Event::Eof);
         let expected = expected.next().unwrap_or(Event::Eof);
-        let actual = actual.next().transpose().unwrap().unwrap_or(Event::Eof);
 
         match quick_xml_event_cmp(&actual, &expected) {
             None => return,
@@ -270,8 +275,8 @@ where
 {
     let content = std::str::from_utf8(actual).unwrap();
 
-    let mut actual = IterReader::from_str(content);
-    let mut expected = IterReader::from_file(expected);
+    let mut actual = FilteredIter::new(IterReader::from_str(content));
+    let mut expected = FilteredIter::new(IterReader::from_file(expected));
 
     let (actual, expected) = loop {
         let expected = expected.next().unwrap_or(Event::Eof);
@@ -294,9 +299,8 @@ where
 /* Misc */
 
 struct IterReader<R> {
-    reader: Reader<R>,
+    reader: Option<Reader<R>>,
     buffer: Vec<u8>,
-    pending: Option<Event<'static>>,
 }
 
 impl IterReader<BufReader<File>> {
@@ -305,9 +309,8 @@ impl IterReader<BufReader<File>> {
         P: AsRef<Path>,
     {
         Self {
-            reader: Reader::from_file(path).unwrap(),
+            reader: Some(Reader::from_file(path).unwrap()),
             buffer: Vec::new(),
-            pending: None,
         }
     }
 }
@@ -315,9 +318,8 @@ impl IterReader<BufReader<File>> {
 impl<'a> IterReader<&'a [u8]> {
     fn from_str(s: &'a str) -> Self {
         Self {
-            reader: Reader::from_str(s),
+            reader: Some(Reader::from_str(s)),
             buffer: Vec::new(),
-            pending: None,
         }
     }
 }
@@ -329,33 +331,71 @@ where
     type Item = Event<'static>;
 
     fn next(&mut self) -> Option<Self::Item> {
+        let reader = self.reader.as_mut()?;
+        let event = reader.read_event_into(&mut self.buffer).unwrap();
+
+        if matches!(&event, Event::Eof) {
+            self.reader = None;
+        }
+
+        Some(event.into_owned())
+    }
+}
+
+struct FilteredIter<'a, I>
+where
+    I: IntoIterator<Item = Event<'a>>,
+{
+    iter: I::IntoIter,
+    pending: Option<Event<'static>>,
+}
+
+impl<'a, I> FilteredIter<'a, I>
+where
+    I: IntoIterator<Item = Event<'a>>,
+{
+    fn new(iter: I) -> Self {
+        Self {
+            iter: iter.into_iter(),
+            pending: None,
+        }
+    }
+}
+
+impl<'a, I> Iterator for FilteredIter<'a, I>
+where
+    I: IntoIterator<Item = Event<'a>>,
+{
+    type Item = Event<'static>;
+
+    fn next(&mut self) -> Option<Self::Item> {
         let mut text = String::new();
 
         loop {
-            match self
-                .pending
-                .take()
-                .unwrap_or_else(|| self.reader.read_event_into(&mut self.buffer).unwrap())
-            {
-                Event::Decl(_) | Event::Comment(_) => (),
-                Event::Text(x) => {
+            match self.pending.take().or_else(|| self.iter.next()) {
+                Some(Event::Decl(_) | Event::Comment(_)) => (),
+                Some(Event::Text(x)) => {
                     let x = x.decode().unwrap();
 
                     text.push_str(&x);
                 }
-                Event::GeneralRef(x) => {
+                Some(Event::GeneralRef(x)) => {
                     use std::fmt::Write;
 
                     let x = x.decode().unwrap();
 
                     write!(text, "&{x};").unwrap();
                 }
-                event if text.trim().is_empty() => return Some(event.into_owned()),
-                event => {
+                Some(event) if text.trim().is_empty() => return Some(event.into_owned()),
+                Some(event) => {
                     self.pending = Some(event.into_owned());
 
                     return Some(Event::Text(BytesText::from_escaped(text)));
                 }
+                None if !text.trim().is_empty() => {
+                    return Some(Event::Text(BytesText::from_escaped(text)))
+                }
+                None => return None,
             }
         }
     }

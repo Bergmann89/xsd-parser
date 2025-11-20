@@ -1337,6 +1337,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
+            let mut event = event;
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if matches!(
                     reader.resolve_local_name(x.name(), &super::NS_TNS),
@@ -1353,8 +1354,19 @@ pub mod quick_xml_deserialize {
                     return self.handle_bar(reader, Default::default(), output, &mut *fallback);
                 }
             }
-            let output = <Text as WithDeserializer>::Deserializer::init(reader, event)?;
-            self.handle_text(reader, Default::default(), output, &mut *fallback)
+            event = {
+                let output = <Text as WithDeserializer>::Deserializer::init(reader, event)?;
+                match self.handle_text(reader, Default::default(), output, &mut *fallback)? {
+                    ElementHandlerOutput::Continue { event, .. } => event,
+                    output => {
+                        return Ok(output);
+                    }
+                }
+            };
+            *self.state__ = fallback
+                .take()
+                .unwrap_or(MixedChoiceListTypeContentDeserializerState::Init__);
+            Ok(ElementHandlerOutput::return_to_parent(event, false))
         }
         fn finish_state<R>(
             reader: &R,

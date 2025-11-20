@@ -1022,9 +1022,7 @@ impl ComplexDataEnum<'_> {
         let groups = self
             .elements
             .iter()
-            .filter_map(|x| {
-                x.deserializer_enum_variant_init_group(ctx, !allow_any && text.is_none())
-            })
+            .filter_map(|x| x.deserializer_enum_variant_init_group(ctx, !allow_any))
             .collect::<Vec<_>>();
         let any = self
             .elements
@@ -1038,10 +1036,9 @@ impl ComplexDataEnum<'_> {
             quote!(x)
         };
 
-        let event_decl =
-            (!groups.is_empty() || !any.is_empty()).then(|| quote!(let mut event = event;));
-        let (allow_any_result, allow_any_decl) = if groups.is_empty() || text.is_some() || allow_any
-        {
+        let event_decl = (!groups.is_empty() || !any.is_empty() || text.is_some())
+            .then(|| quote!(let mut event = event;));
+        let (allow_any_result, allow_any_decl) = if groups.is_empty() || allow_any {
             (quote!(#allow_any), None)
         } else {
             (
@@ -1050,13 +1047,11 @@ impl ComplexDataEnum<'_> {
             )
         };
 
-        let fallback = text.unwrap_or_else(|| {
-            quote! {
-                *self.state__ = fallback.take().unwrap_or(#deserializer_state_ident::Init__);
+        let fallback = quote! {
+            *self.state__ = fallback.take().unwrap_or(#deserializer_state_ident::Init__);
 
-                Ok(#element_handler_output::return_to_parent(event, #allow_any_result))
-            }
-        });
+            Ok(#element_handler_output::return_to_parent(event, #allow_any_result))
+        };
 
         quote! {
             fn find_suitable<'de, R>(
@@ -1077,6 +1072,7 @@ impl ComplexDataEnum<'_> {
                     #( #any )*
                 }
 
+                #text
                 #fallback
             }
         }
@@ -2838,11 +2834,7 @@ impl ComplexDataElement<'_> {
         ctx: &Context<'_, '_>,
         handle_any: bool,
         call_handler: &TokenStream,
-    ) -> Option<TokenStream> {
-        if !self.treat_as_group() {
-            return None;
-        }
-
+    ) -> TokenStream {
         let target_type = ctx.resolve_type_for_deserialize_module(&self.target_type);
 
         let with_deserializer =
@@ -2866,7 +2858,7 @@ impl ComplexDataElement<'_> {
             }
         };
 
-        Some(quote! {
+        quote! {
             event = {
                 let output = <#target_type as #with_deserializer>::Deserializer::init(reader, event)?;
 
@@ -2875,7 +2867,7 @@ impl ComplexDataElement<'_> {
                     output => { return Ok(output); }
                 }
             };
-        })
+        }
     }
 
     fn deserializer_enum_variant_decl(&self, ctx: &Context<'_, '_>) -> TokenStream {
@@ -2918,11 +2910,15 @@ impl ComplexDataElement<'_> {
         ctx: &Context<'_, '_>,
         handle_any: bool,
     ) -> Option<TokenStream> {
+        if !self.treat_as_group() {
+            return None;
+        }
+
         let handler_ident = self.handler_ident();
         let call_handler =
             quote!(self.#handler_ident(reader, Default::default(), output, &mut *fallback));
 
-        self.deserializer_init_group(ctx, handle_any, &call_handler)
+        Some(self.deserializer_init_group(ctx, handle_any, &call_handler))
     }
 
     fn deserializer_enum_variant_init_any(&self, ctx: &Context<'_, '_>) -> Option<TokenStream> {
@@ -2931,25 +2927,10 @@ impl ComplexDataElement<'_> {
         }
 
         let handler_ident = self.handler_ident();
-        let target_type = ctx.resolve_type_for_deserialize_module(&self.target_type);
+        let call_handler =
+            quote!(self.#handler_ident(reader, Default::default(), output, &mut *fallback));
 
-        let with_deserializer =
-            resolve_quick_xml_ident!(ctx, "::xsd_parser::quick_xml::WithDeserializer");
-        let element_handler_output =
-            resolve_quick_xml_ident!(ctx, "::xsd_parser::quick_xml::ElementHandlerOutput");
-
-        ctx.add_quick_xml_deserialize_usings(true, ["::xsd_parser::quick_xml::Deserializer"]);
-
-        Some(quote! {
-            event = {
-                let output = <#target_type as #with_deserializer>::Deserializer::init(reader, event)?;
-
-                match self.#handler_ident(reader, Default::default(), output, &mut *fallback)? {
-                    #element_handler_output::Continue { event, .. } => event,
-                    output => { return Ok(output); }
-                }
-            };
-        })
+        Some(self.deserializer_init_group(ctx, false, &call_handler))
     }
 
     fn deserializer_enum_variant_init_text(&self, ctx: &Context<'_, '_>) -> Option<TokenStream> {
@@ -2958,18 +2939,10 @@ impl ComplexDataElement<'_> {
         }
 
         let handler_ident = self.handler_ident();
-        let target_type = ctx.resolve_type_for_deserialize_module(&self.target_type);
+        let call_handler =
+            quote!(self.#handler_ident(reader, Default::default(), output, &mut *fallback));
 
-        let with_deserializer =
-            resolve_quick_xml_ident!(ctx, "::xsd_parser::quick_xml::WithDeserializer");
-
-        ctx.add_quick_xml_deserialize_usings(true, ["::xsd_parser::quick_xml::Deserializer"]);
-
-        Some(quote! {
-            let output = <#target_type as #with_deserializer>::Deserializer::init(reader, event)?;
-
-            self.#handler_ident(reader, Default::default(), output, &mut *fallback)
-        })
+        Some(self.deserializer_init_group(ctx, false, &call_handler))
     }
 
     fn deserializer_enum_variant_finish(
@@ -3419,10 +3392,14 @@ impl ComplexDataElement<'_> {
         ctx: &Context<'_, '_>,
         handle_any: bool,
     ) -> Option<TokenStream> {
+        if !self.treat_as_group() {
+            return None;
+        }
+
         let handler_ident = self.handler_ident();
         let call_handler = quote!(self.#handler_ident(reader, output, &mut *fallback));
 
-        self.deserializer_init_group(ctx, handle_any, &call_handler)
+        Some(self.deserializer_init_group(ctx, handle_any, &call_handler))
     }
 
     fn deserializer_struct_field_init_text(&self, ctx: &Context<'_, '_>) -> Option<TokenStream> {

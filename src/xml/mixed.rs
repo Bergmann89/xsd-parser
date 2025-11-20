@@ -20,6 +20,25 @@ pub struct Mixed<T> {
     pub text_after: Option<Text>,
 }
 
+impl<T> Mixed<T> {
+    /// Create a new [`Mixed`] instance from the passed `value`.
+    #[must_use]
+    pub fn new(value: T) -> Self {
+        Self {
+            value,
+            text_after: None,
+        }
+    }
+
+    /// Set the text after the actual XML element.
+    #[must_use]
+    pub fn with_text_after(mut self, text: Text) -> Self {
+        self.text_after = Some(text);
+
+        self
+    }
+}
+
 impl<T> Deref for Mixed<T> {
     type Target = T;
 
