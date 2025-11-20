@@ -7761,8 +7761,19 @@ pub mod cdf {
                         }
                     };
                 }
-                let output = <Text as WithDeserializer>::Deserializer::init(reader, event)?;
-                self.handle_text(reader, Default::default(), output, &mut *fallback)
+                event = {
+                    let output = <Text as WithDeserializer>::Deserializer::init(reader, event)?;
+                    match self.handle_text(reader, Default::default(), output, &mut *fallback)? {
+                        ElementHandlerOutput::Continue { event, .. } => event,
+                        output => {
+                            return Ok(output);
+                        }
+                    }
+                };
+                *self.state__ = fallback
+                    .take()
+                    .unwrap_or(HtmlTextWithSubTypeContentDeserializerState::Init__);
+                Ok(ElementHandlerOutput::return_to_parent(event, false))
             }
             fn finish_state<R>(
                 reader: &R,
@@ -24908,8 +24919,19 @@ pub mod cdf {
                         }
                     };
                 }
-                let output = <Text as WithDeserializer>::Deserializer::init(reader, event)?;
-                self.handle_text(reader, Default::default(), output, &mut *fallback)
+                event = {
+                    let output = <Text as WithDeserializer>::Deserializer::init(reader, event)?;
+                    match self.handle_text(reader, Default::default(), output, &mut *fallback)? {
+                        ElementHandlerOutput::Continue { event, .. } => event,
+                        output => {
+                            return Ok(output);
+                        }
+                    }
+                };
+                *self.state__ = fallback
+                    .take()
+                    .unwrap_or(WarningTypeContentDeserializerState::Init__);
+                Ok(ElementHandlerOutput::return_to_parent(event, false))
             }
             fn finish_state<R>(
                 reader: &R,
@@ -27003,8 +27025,19 @@ pub mod cdf {
                         }
                     };
                 }
-                let output = <Text as WithDeserializer>::Deserializer::init(reader, event)?;
-                self.handle_text(reader, Default::default(), output, &mut *fallback)
+                event = {
+                    let output = <Text as WithDeserializer>::Deserializer::init(reader, event)?;
+                    match self.handle_text(reader, Default::default(), output, &mut *fallback)? {
+                        ElementHandlerOutput::Continue { event, .. } => event,
+                        output => {
+                            return Ok(output);
+                        }
+                    }
+                };
+                *self.state__ = fallback
+                    .take()
+                    .unwrap_or(ProfileNoteTypeContentDeserializerState::Init__);
+                Ok(ElementHandlerOutput::return_to_parent(event, false))
             }
             fn finish_state<R>(
                 reader: &R,
@@ -27680,8 +27713,19 @@ pub mod cdf {
                         }
                     };
                 }
-                let output = <Text as WithDeserializer>::Deserializer::init(reader, event)?;
-                self.handle_text(reader, Default::default(), output, &mut *fallback)
+                event = {
+                    let output = <Text as WithDeserializer>::Deserializer::init(reader, event)?;
+                    match self.handle_text(reader, Default::default(), output, &mut *fallback)? {
+                        ElementHandlerOutput::Continue { event, .. } => event,
+                        output => {
+                            return Ok(output);
+                        }
+                    }
+                };
+                *self.state__ = fallback
+                    .take()
+                    .unwrap_or(FixTextTypeContentDeserializerState::Init__);
+                Ok(ElementHandlerOutput::return_to_parent(event, false))
             }
             fn finish_state<R>(
                 reader: &R,
@@ -28316,6 +28360,7 @@ pub mod cdf {
             where
                 R: DeserializeReader,
             {
+                let mut event = event;
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
                         reader.resolve_local_name(x.name(), &super::super::NS_CDF),
@@ -28342,8 +28387,19 @@ pub mod cdf {
                         );
                     }
                 }
-                let output = <Text as WithDeserializer>::Deserializer::init(reader, event)?;
-                self.handle_text(reader, Default::default(), output, &mut *fallback)
+                event = {
+                    let output = <Text as WithDeserializer>::Deserializer::init(reader, event)?;
+                    match self.handle_text(reader, Default::default(), output, &mut *fallback)? {
+                        ElementHandlerOutput::Continue { event, .. } => event,
+                        output => {
+                            return Ok(output);
+                        }
+                    }
+                };
+                *self.state__ = fallback
+                    .take()
+                    .unwrap_or(FixTypeContentDeserializerState::Init__);
+                Ok(ElementHandlerOutput::return_to_parent(event, false))
             }
             fn finish_state<R>(
                 reader: &R,
@@ -33278,8 +33334,19 @@ pub mod cdf {
                         }
                     };
                 }
-                let output = <Text as WithDeserializer>::Deserializer::init(reader, event)?;
-                self.handle_text(reader, Default::default(), output, &mut *fallback)
+                event = {
+                    let output = <Text as WithDeserializer>::Deserializer::init(reader, event)?;
+                    match self.handle_text(reader, Default::default(), output, &mut *fallback)? {
+                        ElementHandlerOutput::Continue { event, .. } => event,
+                        output => {
+                            return Ok(output);
+                        }
+                    }
+                };
+                *self.state__ = fallback
+                    .take()
+                    .unwrap_or(CheckContentTypeContentDeserializerState::Init__);
+                Ok(ElementHandlerOutput::return_to_parent(event, false))
             }
             fn finish_state<R>(
                 reader: &R,

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://example.com"
+    targetNamespace="http://example.com"
+    elementFormDefault="qualified">
+
+    <xs:element name="SDL" type="tns:RootType" />
+
+    <xs:complexType name="RootType">
+        <xs:sequence>
+            <xs:element name="Container" type="tns:ContainerType" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="ContainerType" mixed="true">
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="Known" type="tns:KnownType" />
+            <xs:any processContents="lax" minOccurs="0" maxOccurs="unbounded" />
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="KnownType">
+        <xs:attribute name="name" type="xs:string" />
+    </xs:complexType>
+</xs:schema>
