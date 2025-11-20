@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Root>
+  <Container>
+    <Known>known value 1</Known>
+    <UnknownElement>arbitrary content</UnknownElement>
+    <Known>known value 2</Known>
+    <AnotherUnknown>more content</AnotherUnknown>
+  </Container>
+</Root>
