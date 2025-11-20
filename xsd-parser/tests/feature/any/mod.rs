@@ -3,14 +3,10 @@ use xsd_parser::{config::GeneratorFlags, Config, IdentType};
 use crate::utils::{generate_test, ConfigEx};
 
 fn config() -> Config {
-    let mut config = Config::test_default()
+    Config::test_default()
         .with_generator_flags(GeneratorFlags::FLATTEN_CONTENT)
-        .with_generate([(IdentType::Element, "tns:Foo")]);
-
-    config.generator.any_type = Some("xsd_parser_types::xml::AnyElement".into());
-    config.generator.any_attributes_type = Some("xsd_parser_types::xml::AnyAttributes".into());
-
-    config
+        .with_generate([(IdentType::Element, "tns:Foo")])
+        .with_any_type_support()
 }
 
 #[cfg(not(feature = "update-expectations"))]

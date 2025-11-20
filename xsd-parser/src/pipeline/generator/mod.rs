@@ -105,8 +105,12 @@ impl<'types> Generator<'types> {
             ],
             box_flags: BoxFlags::AUTO,
             typedef_mode: TypedefMode::Auto,
-            any_type: None,
-            any_attributes_type: None,
+            text_type: IdentPath::from_str("::xsd_parser_types::xml::Text").unwrap(),
+            mixed_type: IdentPath::from_str("::xsd_parser_types::xml::Mixed").unwrap(),
+            nillable_type: IdentPath::from_str("::xsd_parser_types::xml::Nillable").unwrap(),
+            any_type: IdentPath::from_str("::xsd_parser_types::xml::AnyElement").unwrap(),
+            any_attributes_type: IdentPath::from_str("::xsd_parser_types::xml::AnyAttributes")
+                .unwrap(),
         };
         let state = State {
             cache: BTreeMap::new(),
@@ -139,10 +143,49 @@ impl<'types> Generator<'types> {
         self
     }
 
-    /// Set the type to use to store unstructured `xs:any` elements.
+    /// Set the type to use to store unformatted text.
     ///
-    /// If this is set, the generator will create additional fields to store
-    /// unstructured XML data for elements that has `xs:any` set.
+    /// # Errors
+    ///
+    /// Forwards the error that is thrown, if `path` could not be converted.
+    pub fn text_type<P>(mut self, path: P) -> Result<Self, P::Error>
+    where
+        P: TryInto<IdentPath>,
+    {
+        self.meta.text_type = path.try_into()?;
+
+        Ok(self)
+    }
+
+    /// Set the type to use to store mixed types.
+    ///
+    /// # Errors
+    ///
+    /// Forwards the error that is thrown, if `path` could not be converted.
+    pub fn mixed_type<P>(mut self, path: P) -> Result<Self, P::Error>
+    where
+        P: TryInto<IdentPath>,
+    {
+        self.meta.mixed_type = path.try_into()?;
+
+        Ok(self)
+    }
+
+    /// Set the type to use to store nillable types.
+    ///
+    /// # Errors
+    ///
+    /// Forwards the error that is thrown, if `path` could not be converted.
+    pub fn nillable_type<P>(mut self, path: P) -> Result<Self, P::Error>
+    where
+        P: TryInto<IdentPath>,
+    {
+        self.meta.nillable_type = path.try_into()?;
+
+        Ok(self)
+    }
+
+    /// Set the type to use to store unstructured `xs:any` elements.
     ///
     /// # Errors
     ///
@@ -151,15 +194,12 @@ impl<'types> Generator<'types> {
     where
         P: TryInto<IdentPath>,
     {
-        self.meta.any_type = Some(path.try_into()?);
+        self.meta.any_type = path.try_into()?;
 
         Ok(self)
     }
 
     /// Set the type to use to store unstructured `xs:anyAttribute` attributes.
-    ///
-    /// If this is set, the generator will create additional fields to store
-    /// unstructured XML attributes for elements that has `xs:anyAttribute` set.
     ///
     /// # Errors
     ///
@@ -168,7 +208,7 @@ impl<'types> Generator<'types> {
     where
         P: TryInto<IdentPath>,
     {
-        self.meta.any_attributes_type = Some(path.try_into()?);
+        self.meta.any_attributes_type = path.try_into()?;
 
         Ok(self)
     }

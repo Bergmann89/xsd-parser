@@ -358,16 +358,21 @@ impl Config {
         self
     }
 
+    /// Enable support for `xs:any` types.
+    pub fn with_any_type_support(self) -> Self {
+        self.with_generator_flags(GeneratorFlags::ANY_TYPE_SUPPORT)
+    }
+
     /// Set the types to use to handle `xs:any` and `xs:anyAttribute` elements.
-    pub fn with_any_support<S, T>(mut self, any_type: S, any_attributes_type: T) -> Self
+    pub fn with_any_types<S, T>(mut self, any_type: S, any_attributes_type: T) -> Self
     where
         S: Into<String>,
         T: Into<String>,
     {
-        self.generator.any_type = Some(any_type.into());
-        self.generator.any_attributes_type = Some(any_attributes_type.into());
+        self.generator.any_type = any_type.into();
+        self.generator.any_attributes_type = any_attributes_type.into();
 
-        self
+        self.with_any_type_support()
     }
 
     /// Enable support for mixed types.
@@ -375,9 +380,31 @@ impl Config {
         self.with_generator_flags(GeneratorFlags::MIXED_TYPE_SUPPORT)
     }
 
+    /// Set the types to use to handle mixed types and text data.
+    pub fn with_mixed_types<S, T>(mut self, text_type: S, mixed_type: T) -> Self
+    where
+        S: Into<String>,
+        T: Into<String>,
+    {
+        self.generator.text_type = text_type.into();
+        self.generator.mixed_type = mixed_type.into();
+
+        self.with_mixed_type_support()
+    }
+
     /// Enable support for nillable types.
     pub fn with_nillable_type_support(self) -> Self {
         self.with_generator_flags(GeneratorFlags::NILLABLE_TYPE_SUPPORT)
+    }
+
+    /// Set the type to use to handle nillable elements.
+    pub fn with_nillable_type<S>(mut self, nillable_type: S) -> Self
+    where
+        S: Into<String>,
+    {
+        self.generator.nillable_type = nillable_type.into();
+
+        self.with_nillable_type_support()
     }
 
     /// Set the [`Naming`] trait that is used to generated names in the interpreter.

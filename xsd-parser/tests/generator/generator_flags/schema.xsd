@@ -8,6 +8,7 @@
             <xs:element name="Optional" type="xs:int" minOccurs="0" />
             <xs:element name="OnceSpecify" type="xs:int" minOccurs="1" />
             <xs:element name="TwiceOrMore" type="xs:int" minOccurs="2" maxOccurs="unbounded" />
+            <xs:any />
         </xs:choice>
     </xs:complexType>
 
@@ -17,6 +18,7 @@
             <xs:element name="Optional" type="xs:int" minOccurs="0" nillable="true" />
             <xs:element name="OnceSpecify" type="xs:int" minOccurs="1" />
             <xs:element name="TwiceOrMore" type="xs:int" minOccurs="2" maxOccurs="unbounded" />
+            <xs:any />
         </xs:sequence>
     </xs:complexType>
 </xs:schema>

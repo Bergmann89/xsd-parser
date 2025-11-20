@@ -170,10 +170,7 @@ fn replace_xs_any_type_with_any_element() {
         [(IdentType::Element, "Foo")],
         OptimizerFlags::REPLACE_XS_ANY_TYPE_WITH_ANY_ELEMENT,
         Config::test_default()
-            .with_any_support(
-                "xsd_parser_types::xml::AnyElement",
-                "xsd_parser_types::xml::AnyAttributes",
-            )
+            .with_any_type_support()
             .with_generator_flags(GeneratorFlags::MIXED_TYPE_SUPPORT),
     );
 }

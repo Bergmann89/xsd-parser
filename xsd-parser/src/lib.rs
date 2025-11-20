@@ -304,15 +304,21 @@ pub fn exec_generator<'types>(
         .box_flags(config.box_flags)
         .typedef_mode(config.typedef_mode);
 
-    if let Some(any_type) = config.any_type {
-        generator = generator.any_type(any_type).map_err(GeneratorError::from)?;
-    }
-
-    if let Some(any_attributes_type) = config.any_attributes_type {
-        generator = generator
-            .any_attributes_type(any_attributes_type)
-            .map_err(GeneratorError::from)?;
-    }
+    generator = generator
+        .text_type(config.text_type)
+        .map_err(GeneratorError::from)?;
+    generator = generator
+        .mixed_type(config.mixed_type)
+        .map_err(GeneratorError::from)?;
+    generator = generator
+        .nillable_type(config.nillable_type)
+        .map_err(GeneratorError::from)?;
+    generator = generator
+        .any_type(config.any_type)
+        .map_err(GeneratorError::from)?;
+    generator = generator
+        .any_attributes_type(config.any_attributes_type)
+        .map_err(GeneratorError::from)?;
 
     generator = generator.with_type_postfix(IdentType::Type, config.type_postfix.type_);
     generator = generator.with_type_postfix(IdentType::Element, config.type_postfix.element);

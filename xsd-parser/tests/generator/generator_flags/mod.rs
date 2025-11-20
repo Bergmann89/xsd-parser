@@ -57,6 +57,15 @@ fn nillable_type_support() {
 }
 
 #[test]
+fn any_type_support() {
+    generate_test(
+        "tests/generator/generator_flags/schema.xsd",
+        "tests/generator/generator_flags/expected/any_type_support.rs",
+        config().set_generator_flags(GeneratorFlags::ANY_TYPE_SUPPORT),
+    );
+}
+
+#[test]
 fn build_in_absolute_paths() {
     generate_test(
         "tests/generator/generator_flags/schema.xsd",

@@ -26,11 +26,20 @@ pub struct MetaData<'types> {
     /// Tells the generator how to deal with type definitions.
     pub typedef_mode: TypedefMode,
 
+    /// Type to use to store unformatted text.
+    pub text_type: IdentPath,
+
+    /// Type to use to store mixed types.
+    pub mixed_type: IdentPath,
+
+    /// Type to use to store nillable types.
+    pub nillable_type: IdentPath,
+
     /// Type to use to store unstructured `xs:any` elements.
-    pub any_type: Option<IdentPath>,
+    pub any_type: IdentPath,
 
     /// Type to use to store unstructured `xs:anyAttribute` attributes.
-    pub any_attributes_type: Option<IdentPath>,
+    pub any_attributes_type: IdentPath,
 }
 
 impl MetaData<'_> {
