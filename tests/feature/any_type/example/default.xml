@@ -1,9 +1,3 @@
 <Foo>
-    <Anything>
-        text before
-        <tag>inner text</tag>
-        text middle
-        <tag>more inner text</tag>
-        text after
-    </Anything>
+    <Anything> text before <tag>inner text</tag> text middle <tag>more inner text</tag> text after </Anything>
 </Foo>

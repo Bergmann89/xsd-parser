@@ -719,10 +719,6 @@ pub mod quick_xml_deserialize {
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
                     }
-                    (state, Event::Text(_) | Event::CData(_)) => {
-                        *self.state__ = state;
-                        break (DeserializerEvent::None, false);
-                    }
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);

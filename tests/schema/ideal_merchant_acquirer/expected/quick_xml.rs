@@ -3698,6 +3698,10 @@ pub mod quick_xml_deserialize {
                         *self.state__ = s;
                         break (DeserializerEvent::Continue(event), false);
                     }
+                    (state, Event::Text(_) | Event::CData(_)) => {
+                        *self.state__ = state;
+                        break (DeserializerEvent::None, false);
+                    }
                     (state, event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
@@ -5078,6 +5082,10 @@ pub mod quick_xml_deserialize {
                     (s @ S::Done__(_), event) => {
                         *self.state__ = s;
                         break (DeserializerEvent::Continue(event), false);
+                    }
+                    (state, Event::Text(_) | Event::CData(_)) => {
+                        *self.state__ = state;
+                        break (DeserializerEvent::None, false);
                     }
                     (state, event) => {
                         *self.state__ = state;
@@ -9611,6 +9619,10 @@ pub mod quick_xml_deserialize {
                     (s @ S::Done__(_), event) => {
                         *self.state__ = s;
                         break (DeserializerEvent::Continue(event), false);
+                    }
+                    (state, Event::Text(_) | Event::CData(_)) => {
+                        *self.state__ = state;
+                        break (DeserializerEvent::None, false);
                     }
                     (state, event) => {
                         *self.state__ = state;
