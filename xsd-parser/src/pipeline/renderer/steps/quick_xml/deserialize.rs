@@ -2924,9 +2924,11 @@ impl ComplexDataElement<'_> {
     }
 
     fn deserializer_enum_variant_init_element(&self, ctx: &Context<'_, '_>) -> Option<TokenStream> {
+        let default = resolve_build_in!(ctx, "::core::default::Default");
+
         let handler_ident = self.handler_ident();
         let call_handler =
-            quote!(self.#handler_ident(reader, Default::default(), output, &mut *fallback));
+            quote!(self.#handler_ident(reader, #default::default(), output, &mut *fallback));
 
         self.deserializer_init_element(ctx, &call_handler)
     }
@@ -2940,9 +2942,11 @@ impl ComplexDataElement<'_> {
             return None;
         }
 
+        let default = resolve_build_in!(ctx, "::core::default::Default");
+
         let handler_ident = self.handler_ident();
         let call_handler =
-            quote!(self.#handler_ident(reader, Default::default(), output, &mut *fallback));
+            quote!(self.#handler_ident(reader, #default::default(), output, &mut *fallback));
 
         Some(self.deserializer_init_group(ctx, handle_any, &call_handler))
     }
@@ -2952,9 +2956,11 @@ impl ComplexDataElement<'_> {
             return None;
         }
 
+        let default = resolve_build_in!(ctx, "::core::default::Default");
+
         let handler_ident = self.handler_ident();
         let call_handler =
-            quote!(self.#handler_ident(reader, Default::default(), output, &mut *fallback));
+            quote!(self.#handler_ident(reader, #default::default(), output, &mut *fallback));
 
         Some(self.deserializer_init_group(ctx, false, &call_handler))
     }
@@ -2964,9 +2970,11 @@ impl ComplexDataElement<'_> {
             return None;
         }
 
+        let default = resolve_build_in!(ctx, "::core::default::Default");
+
         let handler_ident = self.handler_ident();
         let call_handler =
-            quote!(self.#handler_ident(reader, Default::default(), output, &mut *fallback));
+            quote!(self.#handler_ident(reader, #default::default(), output, &mut *fallback));
 
         Some(self.deserializer_init_group(ctx, false, &call_handler))
     }
@@ -3098,6 +3106,7 @@ impl ComplexDataElement<'_> {
 
         let result = resolve_build_in!(ctx, "::core::result::Result");
         let option = resolve_build_in!(ctx, "::core::option::Option");
+        let default = resolve_build_in!(ctx, "::core::default::Default");
 
         let error = resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::Error");
         let deserialize_reader =
@@ -3200,7 +3209,7 @@ impl ComplexDataElement<'_> {
 
                     match (can_have_more, &ret) {
                         (true, #element_handler_output::Continue { .. })  => {
-                            fallback.get_or_insert(#deserializer_state_ident::#variant_ident(Default::default(), Some(deserializer)));
+                            fallback.get_or_insert(#deserializer_state_ident::#variant_ident(#default::default(), Some(deserializer)));
 
                             *self.state__ = #deserializer_state_ident::#variant_ident(values, None);
                         }
@@ -3221,7 +3230,7 @@ impl ComplexDataElement<'_> {
                         *self.state__ = #deserializer_state_ident::#variant_ident(values, Some(deserializer));
                     }
                     #element_handler_output::Continue { .. } => {
-                        fallback.get_or_insert(#deserializer_state_ident::#variant_ident(Default::default(), Some(deserializer)));
+                        fallback.get_or_insert(#deserializer_state_ident::#variant_ident(#default::default(), Some(deserializer)));
 
                         *self.state__ = #deserializer_state_ident::#variant_ident(values, None);
                     }
