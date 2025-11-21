@@ -1,16 +1,17 @@
 use std::collections::BTreeMap;
 use std::ops::Deref;
+use std::str::FromStr;
 
 use bit_set::BitSet;
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 
 use crate::config::GeneratorFlags;
-use crate::models::schema::xs::Use;
 use crate::models::{
-    code::{ModuleIdent, ModulePath},
+    code::{IdentPath, ModuleIdent, ModulePath},
     data::Occurs,
     meta::{BuildInMeta, MetaTypeVariant},
+    schema::xs::Use,
     Ident,
 };
 
@@ -170,7 +171,14 @@ impl<'a, 'types> Context<'a, 'types> {
                 }
             }
             MetaTypeVariant::BuildIn(BuildInMeta::String) => {
-                return Ok(quote!(String::from(#default)));
+                let string = if self.check_generator_flags(GeneratorFlags::BUILD_IN_ABSOLUTE_PATHS)
+                {
+                    BuildInMeta::String.absolute_ident_path()
+                } else {
+                    BuildInMeta::String.ident_path()
+                };
+
+                return Ok(quote!(#string::from(#default)));
             }
 
             MetaTypeVariant::Custom(x) => {
@@ -245,7 +253,15 @@ impl<'a, 'types> Context<'a, 'types> {
                         let module_path = ModulePath::from_ident(types, current_module);
                         let target_type = type_ref.path.relative_to(&module_path);
 
-                        return Ok(quote! { #target_type(Vec::new()) });
+                        let vec = if self
+                            .check_generator_flags(GeneratorFlags::BUILD_IN_ABSOLUTE_PATHS)
+                        {
+                            IdentPath::from_str("::std::vec::Vec").unwrap()
+                        } else {
+                            IdentPath::from_ident(format_ident!("Vec"))
+                        };
+
+                        return Ok(quote! { #target_type(#vec::new()) });
                     }
                     _ => (),
                 }
