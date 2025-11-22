@@ -12,7 +12,7 @@ impl BaseMap {
     pub(crate) fn new(types: &MetaTypes) -> Self {
         let mut ret = HashMap::new();
 
-        for (ident, type_) in &types.items {
+        for (ident, type_) in types.iter_items() {
             match &type_.variant {
                 MetaTypeVariant::Enumeration(ei) => {
                     if matches!(

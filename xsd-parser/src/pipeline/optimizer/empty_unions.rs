@@ -31,7 +31,7 @@ impl Optimizer {
 
         let typedefs = get_typedefs!(self);
 
-        for type_ in self.types.items.values_mut() {
+        for type_ in self.types.iter_types_mut() {
             if let MetaTypeVariant::Union(x) = &mut type_.variant {
                 let mut i = 0;
                 let mut types_ = HashSet::new();
@@ -72,7 +72,7 @@ impl Optimizer {
     pub fn remove_empty_unions(mut self) -> Self {
         tracing::debug!("remove_empty_unions");
 
-        for type_ in self.types.items.values_mut() {
+        for type_ in self.types.iter_types_mut() {
             if let MetaTypeVariant::Union(x) = &type_.variant {
                 if x.types.len() <= 1 {
                     let base = x.types.first().map(|x| &x.type_).or(x.base.as_ident());

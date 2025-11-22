@@ -233,7 +233,7 @@ impl<'types> Renderer<'types> {
             step.initialize(&mut meta);
         }
 
-        for (ident, data) in &meta.types.items {
+        for (ident, data) in meta.types.iter_items() {
             let mut ctx = Context::new(&meta, data, ident, &mut module);
 
             for step in &mut steps {

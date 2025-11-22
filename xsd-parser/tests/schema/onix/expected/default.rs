@@ -14219,10 +14219,10 @@ pub mod onix {
         pub cellspacing: Option<String>,
         pub cellpadding: Option<String>,
         pub caption: Option<AbbrElementType>,
-        pub content_352: Option<TableContent352>,
+        pub content_353: Option<TableContent353>,
         pub thead: Option<TbodyElementType>,
         pub tfoot: Option<TbodyElementType>,
-        pub content_353: TableContent353,
+        pub content_354: TableContent354,
     }
     #[derive(Debug)]
     pub struct BdoElementType {
@@ -14341,8 +14341,8 @@ pub mod onix {
     }
     #[derive(Debug)]
     pub enum RubyElementTypeContent {
-        Content363(RubyContent363),
-        Content366(RubyContent366),
+        Content364(RubyContent364),
+        Content367(RubyContent367),
     }
     ///Illustration and other content type
     #[derive(Debug)]
@@ -19898,7 +19898,7 @@ pub mod onix {
         All,
     }
     #[derive(Debug)]
-    pub enum TableContent352 {
+    pub enum TableContent353 {
         Col(Vec<ColElementType>),
         Colgroup(Vec<ColgroupElementType>),
     }
@@ -19917,7 +19917,7 @@ pub mod onix {
         pub tr: Vec<TrElementType>,
     }
     #[derive(Debug)]
-    pub enum TableContent353 {
+    pub enum TableContent354 {
         Tbody(Vec<TbodyElementType>),
         Tr(Vec<TrElementType>),
     }
@@ -19955,12 +19955,12 @@ pub mod onix {
         Map(Box<MapElementType>),
     }
     #[derive(Debug)]
-    pub struct RubyContent363 {
+    pub struct RubyContent364 {
         pub rb: RbElementType,
-        pub content_364: RubyContent364,
+        pub content_365: RubyContent365,
     }
     #[derive(Debug)]
-    pub struct RubyContent366 {
+    pub struct RubyContent367 {
         pub rbc: RbcElementType,
         pub rtc: Option<RtcElementType>,
     }
@@ -22561,9 +22561,9 @@ pub mod onix {
         Text(Text),
     }
     #[derive(Debug)]
-    pub enum RubyContent364 {
+    pub enum RubyContent365 {
         Rt(RtElementType),
-        Content365(RubyContent365),
+        Content366(RubyContent366),
     }
     #[derive(Debug)]
     pub struct RbcElementType {
@@ -23950,7 +23950,7 @@ pub mod onix {
         Text(Text),
     }
     #[derive(Debug)]
-    pub struct RubyContent365 {
+    pub struct RubyContent366 {
         pub rp: RpElementType,
         pub rt: Box<RtElementType>,
     }

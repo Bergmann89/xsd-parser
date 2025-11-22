@@ -33,14 +33,12 @@ fn generate_default() {
     let mut meta_types = exec_optimizer(config.optimizer, meta_types).expect("Optimizer failed");
 
     let ty1 = meta_types
-        .items
-        .get_mut(&ident_1)
+        .get_type_mut(&ident_1)
         .expect("Failed to resolve `tns:fooType`");
     ty1.display_name = Some("Bar".into());
 
     let ty2 = meta_types
-        .items
-        .get_mut(&ident_2)
+        .get_type_mut(&ident_2)
         .expect("Failed to resolve `tns:FooType`");
 
     let data_types =

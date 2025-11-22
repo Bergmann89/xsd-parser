@@ -200,7 +200,7 @@ impl TypeEq for ElementMeta {
             documentation,
         } = self;
 
-        ident.eq(&other.ident)
+        ident.matches(&other.ident)
             && variant.type_eq(&other.variant, types)
             && form.eq(&other.form)
             && nillable.eq(&other.nillable)

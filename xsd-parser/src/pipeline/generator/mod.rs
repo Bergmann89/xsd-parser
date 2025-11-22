@@ -352,7 +352,7 @@ impl<'types> GeneratorFixed<'types> {
     /// ```
     #[instrument(err, level = "trace", skip(self))]
     pub fn generate_all_types(mut self) -> Result<Self, Error> {
-        for ident in self.data_types.meta.types.items.keys() {
+        for ident in self.data_types.meta.types.iter_type_idents() {
             self.state
                 .get_or_create_type_ref_mut(&self.data_types.meta, ident)?;
         }
@@ -379,7 +379,7 @@ impl<'types> GeneratorFixed<'types> {
     /// ```
     #[instrument(err, level = "trace", skip(self))]
     pub fn generate_named_types(mut self) -> Result<Self, Error> {
-        for ident in self.data_types.meta.types.items.keys() {
+        for ident in self.data_types.meta.types.iter_type_idents() {
             if ident.name.is_named() {
                 self.state
                     .get_or_create_type_ref_mut(&self.data_types.meta, ident)?;
@@ -415,7 +415,7 @@ impl<'types> GeneratorFixed<'types> {
         let mut context = Context::new(&data_types.meta, &ident, state);
         let ty = DataType::new(ty, &mut context)?;
 
-        data_types.items.insert(ident, ty);
+        data_types.insert(ident, ty);
 
         Ok(())
     }
@@ -428,6 +428,7 @@ impl<'types> State<'types> {
         meta: &MetaData<'types>,
         ident: &Ident,
     ) -> Result<&mut TypeRef, Error> {
+        let ident = meta.types.find_original_schema(ident);
         match self.cache.entry(ident.clone()) {
             Entry::Occupied(e) => Ok(e.into_mut()),
             Entry::Vacant(e) => {
@@ -448,8 +449,7 @@ impl<'types> State<'types> {
     ) -> Result<&'a mut TypeRef, Error> {
         let ty = meta
             .types
-            .items
-            .get(ident)
+            .get_type(ident)
             .ok_or_else(|| Error::UnknownType(ident.clone()))?;
         let name = naming.make_type_name(&meta.postfixes, ty, ident);
         let path = match &ty.variant {

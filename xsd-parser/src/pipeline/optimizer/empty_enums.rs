@@ -27,7 +27,7 @@ impl Optimizer {
     pub fn remove_empty_enum_variants(mut self) -> Self {
         tracing::debug!("remove_empty_enum_variants");
 
-        for type_ in self.types.items.values_mut() {
+        for type_ in self.types.iter_types_mut() {
             if let MetaTypeVariant::Enumeration(x) = &mut type_.variant {
                 x.variants
                     .retain(|x| !matches!(&x.ident.name, Name::Named(x) if x.is_empty()));
@@ -63,7 +63,7 @@ impl Optimizer {
     pub fn remove_empty_enums(mut self) -> Self {
         tracing::debug!("remove_empty_enums");
 
-        for type_ in self.types.items.values_mut() {
+        for type_ in self.types.iter_types_mut() {
             if let MetaTypeVariant::Enumeration(x) = &mut type_.variant {
                 if x.variants.is_empty() {
                     if let Some(base) = x.base.as_ident() {

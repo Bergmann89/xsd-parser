@@ -50,7 +50,7 @@ impl Optimizer {
         });
         let ident = Ident::type_("anyType").with_ns(ns);
 
-        if let Some(ty) = self.types.items.get_mut(&ident) {
+        if let Some(ty) = self.types.get_type_mut(&ident) {
             ty.variant = MetaTypeVariant::Custom(
                 CustomMeta::new("AnyElement")
                     .include_from(any_type)

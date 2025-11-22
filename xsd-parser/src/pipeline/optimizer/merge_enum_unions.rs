@@ -49,7 +49,7 @@ impl Optimizer {
         self.merge_enum_union_impl(&ident, None, &mut next);
 
         if let Some(next) = next {
-            let ty = self.types.items.get_mut(&ident).unwrap();
+            let ty = self.types.get_type_mut(&ident).unwrap();
             ty.variant = next;
         }
 
@@ -64,8 +64,7 @@ impl Optimizer {
 
         let idents = self
             .types
-            .items
-            .iter()
+            .iter_items()
             .filter_map(|(ident, type_)| {
                 if matches!(&type_.variant, MetaTypeVariant::Union(_)) {
                     Some(ident)

@@ -64,8 +64,7 @@ fn make_derived_type_data<'types>(
 
     let ty = ctx
         .types
-        .items
-        .get(ident)
+        .get_type(ident)
         .ok_or_else(|| Error::UnknownType(ident.clone()))?;
 
     let base_ident = if let MetaTypeVariant::Dynamic(di) = &ty.variant {

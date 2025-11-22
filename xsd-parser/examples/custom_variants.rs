@@ -60,7 +60,7 @@ fn main() -> Result<(), Error> {
 
 /// Define custom names for specific variants. Plus and minus characters are invalid identifiers in Rust.
 fn replace_variant_names(mut types: MetaTypes) -> MetaTypes {
-    for (_ident, ty) in types.items.iter_mut() {
+    for ty in types.iter_types_mut() {
         if let MetaTypeVariant::Enumeration(enum_meta) = &mut ty.variant {
             for variant in enum_meta.variants.iter_mut() {
                 match variant.ident.name.as_str() {
