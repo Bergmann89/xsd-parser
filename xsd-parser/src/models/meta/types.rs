@@ -144,6 +144,7 @@ impl MetaTypes {
 
     /// Look up a type by Ident.
     /// Types from the schema given by the ident are preferred over types from other schemas.
+    #[must_use]
     pub fn get_type(&self, ident: &Ident) -> Option<&MetaType> {
         self.items.get(ident)
             .or_else(|| {
@@ -162,16 +163,18 @@ impl MetaTypes {
     }
 
     /// Check if this exact Ident (including schema) was added.
+    #[must_use]
     pub fn contains_exact_type(&self, ident: &Ident) -> bool {
         self.items.contains_key(ident)
     }
 
     /// Resolve this Ident to the schema where it was defined.
-    /// If the provided Ident is defined in the schema file specified by Ident::schema,
+    /// If the provided Ident is defined in the schema file specified by `Ident::schema`,
     /// the Ident is returned unchanged.
     /// Else an otherwise identical Ident pointing to a schema where the Ident is defined is returned.
     /// In a valid schema this should be unambiguous. In schemas that define duplicate types,
     /// an arbitrary instance is selected.
+    #[must_use]
     pub fn find_original_schema<'a>(&'a self, ident: &'a Ident) -> &'a Ident {
         if self.items.contains_key(ident) {
             ident

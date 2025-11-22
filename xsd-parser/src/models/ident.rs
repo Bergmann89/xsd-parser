@@ -198,6 +198,7 @@ impl Ident {
     }
 
     /// Returns `true` if this Ident is equal to the given one, ignoring the schema information
+    #[must_use]
     pub fn matches(&self, other: &Ident) -> bool {
         self.name == other.name && self.ns == other.ns && self.type_ == other.type_
     }

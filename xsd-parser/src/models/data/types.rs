@@ -35,17 +35,17 @@ impl<'types> DataTypes<'types> {
         Self { meta, items }
     }
 
-    /// Insert a DataType, overriding any existing element with the same Ident
+    /// Insert a `DataType`, overriding any existing element with the same Ident
     pub fn insert(&mut self, ident: Ident, dt: DataType<'types>) {
         self.items.insert(ident, dt);
     }
 
-    /// Iterate over all Ident-DataType pairs
+    /// Iterate over all `Ident`-`DataType` pairs
     pub fn iter_items(&self) -> impl Iterator<Item = (&Ident, &DataType<'types>)> {
         self.items.iter()
     }
 
-    /// Look up a specific DataType mutably
+    /// Look up a specific `DataType` mutably
     pub fn get_mut(&mut self, ident: &Ident) -> Option<&mut DataType<'types>> {
         self.items.get_mut(self.meta.types.find_original_schema(ident))
     }
