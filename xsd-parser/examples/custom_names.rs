@@ -86,8 +86,7 @@ fn define_custom_names(schemas: &Schemas, mut types: MetaTypes) -> Result<MetaTy
     // `Types` is more or less a map of `Ident` to `Type`, so we can use `get_mut`,
     // to get a mutable reference to the type we want to rename.
     let ty = types
-        .items
-        .get_mut(&ident)
+        .get_type_mut(&ident)
         .ok_or_else(|| anyhow!("Unable to find `xs:schema` element in the types map!"))?;
 
     // Simply set the `display_name` to something that fits more.

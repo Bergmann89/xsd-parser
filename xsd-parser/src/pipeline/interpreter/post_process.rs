@@ -4,7 +4,7 @@ use crate::models::{
 };
 
 pub(super) fn fix_element_naming_conflicts(schemas: &Schemas, types: &mut MetaTypes) {
-    for type_ in types.items.values_mut() {
+    for type_ in types.iter_types_mut() {
         if let MetaTypeVariant::All(gm)
         | MetaTypeVariant::Choice(gm)
         | MetaTypeVariant::Sequence(gm) = &mut type_.variant

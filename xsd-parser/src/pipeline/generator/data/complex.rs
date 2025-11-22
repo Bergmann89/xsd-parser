@@ -817,7 +817,7 @@ impl<'types> ComplexDataAttribute<'types> {
 }
 
 fn is_dynamic(ident: &Ident, types: &MetaTypes) -> bool {
-    let Some(ty) = types.items.get(ident) else {
+    let Some(ty) = types.get_type(ident) else {
         return false;
     };
 
@@ -858,7 +858,7 @@ impl MetaTypes {
             }
         }
 
-        let Some(ty) = self.items.get(ident) else {
+        let Some(ty) = self.get_type(ident) else {
             return false;
         };
 

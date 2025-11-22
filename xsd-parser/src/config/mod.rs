@@ -470,6 +470,7 @@ impl IdentTriple {
             ns,
             name: Name::new_named(self.name),
             type_: self.type_,
+            schema: None,
         })
     }
 }

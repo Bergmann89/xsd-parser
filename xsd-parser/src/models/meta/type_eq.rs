@@ -59,7 +59,7 @@ impl TypeEq for Ident {
         let a = types.get_resolved_ident(self).unwrap_or(self);
         let b = types.get_resolved_ident(other).unwrap_or(other);
 
-        a == b
+        a.matches(b)
     }
 }
 

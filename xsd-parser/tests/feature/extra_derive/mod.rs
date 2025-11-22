@@ -43,7 +43,6 @@ fn generate_default() {
         .resolve(&schemas)
         .expect("Unable to resolve ident for `tns:FooType`");
     let data_type = data_types
-        .items
         .get_mut(&ident)
         .expect("Unable to get data type");
     data_type.derive = ConfigValue::Extend(vec![
@@ -58,7 +57,6 @@ fn generate_default() {
         .resolve(&schemas)
         .expect("Unable to resolve ident for `tns:BarType`");
     let data_type = data_types
-        .items
         .get_mut(&ident)
         .expect("Unable to get data type");
     data_type.derive = ConfigValue::Overwrite(vec![]);

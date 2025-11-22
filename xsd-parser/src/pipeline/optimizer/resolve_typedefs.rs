@@ -41,7 +41,7 @@ impl Optimizer {
 
         let mut replaced_references = HashMap::new();
 
-        for type_ in self.types.items.values_mut() {
+        for type_ in self.types.iter_types_mut() {
             match &mut type_.variant {
                 MetaTypeVariant::Reference(x) if x.is_single() => {
                     let new_type = typedefs.resolve(&x.type_).clone();
@@ -99,7 +99,7 @@ impl Optimizer {
             }
         }
 
-        for type_ in self.types.items.values_mut() {
+        for type_ in self.types.iter_types_mut() {
             let MetaTypeVariant::Dynamic(di) = &mut type_.variant else {
                 continue;
             };

@@ -3,12 +3,12 @@
 use std::fmt::{Display, Formatter, Result as FmtResult};
 use std::hash::Hash;
 
-use crate::models::schema::NamespaceId;
+use crate::models::schema::{NamespaceId, SchemaId};
 
 use super::Name;
 
 /// Represents a type identifier.
-#[derive(Debug, Clone, Eq, PartialEq, Ord, PartialOrd, Hash)]
+#[derive(Debug, Clone, Eq, PartialEq, Ord, PartialOrd)]
 pub struct Ident {
     /// Namespace the type is defined in
     pub ns: Option<NamespaceId>,
@@ -18,6 +18,21 @@ pub struct Ident {
 
     /// Type of the identifier (because pure names are not unique in XSD).
     pub type_: IdentType,
+
+    /// The schema file this identifier is from.
+    /// This is needed to support the case when Identifier are duplicated across schema files.
+    /// If otherwise idential identifiers are encountered in different schema files,
+    /// then references within each defining schema file will prefer the local definition while
+    /// references from other schema files will resolve to an arbitrary instance.
+    pub schema: Option<SchemaId>,
+}
+impl Hash for Ident {
+    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
+        self.ns.hash(state);
+        self.name.hash(state);
+        self.type_.hash(state);
+        // exclude schema from hash
+    }
 }
 
 /// Type of the identifier.
@@ -108,6 +123,7 @@ impl Ident {
             ns: None,
             name,
             type_: IdentType::Type,
+            schema: None,
         }
     }
 
@@ -118,6 +134,7 @@ impl Ident {
             ns: None,
             name: Name::named(name),
             type_: IdentType::Type,
+            schema: None,
         }
     }
 
@@ -128,6 +145,7 @@ impl Ident {
             ns: None,
             name: Name::named(name),
             type_: IdentType::BuildIn,
+            schema: None,
         }
     }
 
@@ -138,6 +156,7 @@ impl Ident {
             ns: None,
             name: Name::named(name),
             type_: IdentType::Element,
+            schema: None,
         }
     }
 
@@ -156,6 +175,14 @@ impl Ident {
         self
     }
 
+    /// Set the schema of the identifier.
+    #[must_use]
+    pub fn with_schema(mut self, schema: Option<SchemaId>) -> Self {
+        self.schema = schema;
+
+        self
+    }
+
     /// Set the type of the identifier.
     #[must_use]
     pub fn with_type(mut self, type_: IdentType) -> Self {
@@ -167,13 +194,18 @@ impl Ident {
     /// Returns `true` if this is build-in type of the rust language, `false` otherwise.
     #[must_use]
     pub fn is_build_in(&self) -> bool {
-        Ident::BUILD_IN.contains(self)
+        Ident::BUILD_IN.iter().any(|x| x.matches(self))
+    }
+
+    /// Returns `true` if this Ident is equal to the given one, ignoring the schema information
+    pub fn matches(&self, other: &Ident) -> bool {
+        self.name == other.name && self.ns == other.ns && self.type_ == other.type_
     }
 }
 
 impl Display for Ident {
     fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
-        let Self { ns, name, type_ } = self;
+        let Self { ns, name, type_, schema } = self;
 
         match type_ {
             IdentType::Type => write!(f, "Type(")?,
@@ -190,10 +222,18 @@ impl Display for Ident {
 
         if f.sign_minus() {
             write!(f, "{name})")?;
-        } else if let Some(ns) = ns {
-            write!(f, "ns={}, name={name})", ns.0)?;
         } else {
-            write!(f, "ns=default, name={name})")?;
+            if let Some(s) = schema {
+                write!(f, "schema={}, ", s.0)?;
+            } else {
+                write!(f, "schema=?, ")?;
+            }
+
+            if let Some(ns) = ns {
+                write!(f, "ns={}, name={name})", ns.0)?;
+            } else {
+                write!(f, "ns=default, name={name})")?;
+            }
         }
 
         Ok(())

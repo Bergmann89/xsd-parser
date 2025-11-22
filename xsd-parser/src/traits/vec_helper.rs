@@ -31,7 +31,7 @@ where
     type Item = T;
 
     fn find(&mut self, ident: Ident) -> Option<&mut Self::Item> {
-        self.iter_mut().find(|x| x.ident() == &ident)
+        self.iter_mut().find(|x| x.ident().matches(&ident))
     }
 
     fn find_or_insert<F>(&mut self, ident: Ident, f: F) -> &mut Self::Item
@@ -40,7 +40,7 @@ where
     {
         let vec = &mut **self;
 
-        if let Some(i) = vec.iter().position(|x| x.ident() == &ident) {
+        if let Some(i) = vec.iter().position(|x| x.ident().matches(&ident)) {
             &mut vec[i]
         } else {
             vec.push(f(ident));

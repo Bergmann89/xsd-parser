@@ -27,14 +27,11 @@ impl Optimizer {
     #[doc = include_str!("../../../tests/optimizer/expected1/convert_dynamic_to_choice.rs")]
     /// ```
     pub fn convert_dynamic_to_choice(mut self) -> Self {
-        use std::collections::btree_map::Entry;
-
         tracing::debug!("convert_dynamic_to_choice");
 
         let idents = self
             .types
-            .items
-            .iter()
+            .iter_items()
             .filter_map(|(ident, ty)| {
                 if matches!(&ty.variant, MetaTypeVariant::Dynamic(_)) {
                     Some(ident)
@@ -47,25 +44,21 @@ impl Optimizer {
 
         for ident in idents {
             let content_name = self.types.name_builder().shared_name("Content").finish();
-            let content_ident = Ident::new(content_name).with_ns(ident.ns);
+            let content_ident = Ident::new(content_name).with_ns(ident.ns).with_schema(ident.schema);
 
             let mut si = GroupMeta::default();
-            let type_ = self.types.items.get(&ident).unwrap();
+            let type_ = self.types.get_type(&ident).unwrap();
             self.add_elements(&mut si, type_);
 
-            let type_ = self.types.items.get_mut(&ident).unwrap();
+            let type_ = self.types.get_type_mut(&ident).unwrap();
             type_.variant = MetaTypeVariant::ComplexType(ComplexMeta {
                 content: Some(content_ident.clone()),
                 is_dynamic: true,
                 ..Default::default()
             });
 
-            match self.types.items.entry(content_ident) {
-                Entry::Vacant(e) => {
-                    e.insert(MetaType::new(MetaTypeVariant::Choice(si)));
-                }
-                Entry::Occupied(_) => crate::unreachable!(),
-            }
+            assert!(!self.types.contains_exact_type(&content_ident));
+            self.types.insert_type(content_ident, MetaType::new(MetaTypeVariant::Choice(si)));
         }
 
         self

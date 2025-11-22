@@ -15166,7 +15166,7 @@ pub mod quick_xml_deserialize {
                         Self::store_any(&mut values, value)?;
                     }
                     Ok(super::RestrictionElementTypeContent::Any(
-                        values.ok_or_else(|| ErrorKind::MissingElement("any130".into()))?,
+                        values.ok_or_else(|| ErrorKind::MissingElement("any132".into()))?,
                     ))
                 }
                 S::Done__(data) => Ok(data),
@@ -15211,7 +15211,7 @@ pub mod quick_xml_deserialize {
         fn store_any(values: &mut Option<AnyElement>, value: AnyElement) -> Result<(), Error> {
             if values.is_some() {
                 Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
-                    b"any130",
+                    b"any132",
                 )))?;
             }
             *values = Some(value);
@@ -15611,7 +15611,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Any(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
-                            reader.init_start_tag_deserializer(event, None, b"any130", true)?;
+                            reader.init_start_tag_deserializer(event, None, b"any132", true)?;
                         match self.handle_any(reader, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)

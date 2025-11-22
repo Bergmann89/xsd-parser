@@ -108,7 +108,7 @@ impl SchemaInterpreter<'_, '_> {
         ident: &Ident,
     ) -> Result<&mut MetaType, Error> {
         // Create the element if it does not exist
-        if !self.state.types.items.contains_key(ident) {
+        if self.state.types.get_type(ident).is_none() {
             let ty = self
                 .find_element(ident.clone())
                 .ok_or_else(|| Error::UnknownType(ident.clone()))?;
@@ -117,7 +117,7 @@ impl SchemaInterpreter<'_, '_> {
             crate::assert_eq!(ident, &new_ident);
         }
 
-        Ok(self.state.types.items.get_mut(ident).unwrap())
+        Ok(self.state.types.get_type_mut(ident).unwrap())
     }
 
     #[instrument(level = "trace", skip(self))]
@@ -125,7 +125,7 @@ impl SchemaInterpreter<'_, '_> {
         &mut self,
         ident: &Ident,
     ) -> Result<&MetaTypeVariant, Error> {
-        if !self.state.types.items.contains_key(ident) {
+        if self.state.types.get_type(ident).is_none() {
             let ty = self
                 .find_simple_type(ident.clone())
                 .ok_or_else(|| Error::UnknownType(ident.clone()))?;
@@ -159,7 +159,7 @@ impl SchemaInterpreter<'_, '_> {
         &mut self,
         ident: &Ident,
     ) -> Result<&MetaTypeVariant, Error> {
-        if !self.state.types.items.contains_key(ident) {
+        if self.state.types.get_type(ident).is_none() {
             let ty = self
                 .find_complex_type(ident.clone())
                 .ok_or_else(|| Error::UnknownType(ident.clone()))?;
@@ -203,6 +203,7 @@ impl<'schema> SchemaInterpreter<'schema, '_> {
             ns,
             name: self.state.name_builder().or(name).or(&ty.name).finish(),
             type_: IdentType::Element,
+            schema: Some(self.schema_id),
         };
 
         self.create_type(ident, |builder| builder.apply_element(ty, true))
@@ -219,6 +220,7 @@ impl<'schema> SchemaInterpreter<'schema, '_> {
             ns,
             name: self.state.name_builder().or(name).or(&ty.name).finish(),
             type_: IdentType::Element,
+            schema: Some(self.schema_id),
         };
 
         self.pending_element_types.push_back((ident.clone(), ty));
@@ -237,6 +239,7 @@ impl<'schema> SchemaInterpreter<'schema, '_> {
             ns,
             name: self.state.name_builder().or(name).or(&ty.name).finish(),
             type_: IdentType::Attribute,
+            schema: Some(self.schema_id),
         };
 
         self.create_type(ident.clone(), |builder| builder.apply_attribute(ty))
@@ -253,6 +256,7 @@ impl<'schema> SchemaInterpreter<'schema, '_> {
             ns,
             name: self.state.name_builder().or(name).or(&ty.name).finish(),
             type_: IdentType::Type,
+            schema: Some(self.schema_id),
         };
 
         self.create_type(ident, |builder| builder.apply_simple_type(ty))
@@ -269,6 +273,7 @@ impl<'schema> SchemaInterpreter<'schema, '_> {
             ns,
             name: self.state.name_builder().or(name).or(&ty.name).finish(),
             type_: IdentType::Type,
+            schema: Some(self.schema_id),
         };
 
         self.create_type(ident, |builder| builder.apply_complex_type(ty))
@@ -278,12 +283,12 @@ impl<'schema> SchemaInterpreter<'schema, '_> {
     where
         F: FnMut(&mut VariantBuilder<'_, 'schema, '_>) -> Result<(), Error>,
     {
-        if self.state.types.items.contains_key(&ident)
+        if self.state.types.contains_exact_type(&ident)
             || self
                 .state
                 .type_stack
                 .iter()
-                .any(|x| matches!(x, StackEntry::Type(x, _) if *x == ident))
+                .any(|x| matches!(x, StackEntry::Type(x, _) if x.matches(&ident)))
         {
             return Ok(ident);
         }
@@ -384,6 +389,7 @@ impl SchemaInterpreter<'_, '_> {
             name: Name::new_named(name),
             ns,
             type_: IdentType::Type,
+            schema: Some(self.schema_id),
         })
     }
 }

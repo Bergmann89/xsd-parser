@@ -121,7 +121,7 @@ impl TypeEq for EnumerationMetaVariant {
             documentation,
         } = self;
 
-        ident.eq(&other.ident)
+        ident.matches(&other.ident)
             && use_.eq(&other.use_)
             && type_.type_eq(&other.type_, types)
             && display_name.eq(&other.display_name)

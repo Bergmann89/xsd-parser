@@ -153,7 +153,7 @@ impl TypeEq for AttributeMeta {
             documentation,
         } = self;
 
-        ident.eq(&other.ident)
+        ident.matches(&other.ident)
             && type_.type_eq(&other.variant, types)
             && use_.eq(&other.use_)
             && form.eq(&other.form)

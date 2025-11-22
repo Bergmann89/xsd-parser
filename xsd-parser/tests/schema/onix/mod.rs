@@ -102,7 +102,7 @@ fn resolve_naming_conflicts(schemas: &Schemas, mut types: MetaTypes) -> MetaType
     let type_ = IdentTriple::from((IdentType::Type, "onix:type"))
         .resolve(schemas)
         .unwrap();
-    let type_ = types.items.get_mut(&type_).unwrap();
+    let type_ = types.get_type_mut(&type_).unwrap();
     let MetaTypeVariant::Enumeration(ei) = &mut type_.variant else {
         unreachable!();
     };
@@ -118,12 +118,12 @@ fn resolve_naming_conflicts(schemas: &Schemas, mut types: MetaTypes) -> MetaType
     let message = IdentTriple::from((IdentType::ElementType, "onix:ONIXMessage"))
         .resolve(schemas)
         .unwrap();
-    let message = types.items.get(&message).unwrap();
+    let message = types.get_type(&message).unwrap();
     let MetaTypeVariant::ComplexType(ci) = &message.variant else {
         unreachable!();
     };
     let content = ci.content.clone().unwrap();
-    let content = types.items.get_mut(&content).unwrap();
+    let content = types.get_type_mut(&content).unwrap();
     let MetaTypeVariant::Sequence(si) = &mut content.variant else {
         unreachable!();
     };
@@ -144,7 +144,7 @@ fn resolve_naming_conflicts(schemas: &Schemas, mut types: MetaTypes) -> MetaType
             }
         })
         .unwrap();
-    let element = types.items.get_mut(&element).unwrap();
+    let element = types.get_type_mut(&element).unwrap();
     element.display_name = Some("ProductOrNoProductChoice".into());
 
     types

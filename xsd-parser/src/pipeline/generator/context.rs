@@ -131,8 +131,7 @@ impl<'a, 'types> Context<'a, 'types> {
     ) -> Result<TokenStream, Error> {
         let types = self.types;
         let ty = types
-            .items
-            .get(ident)
+            .get_type(ident)
             .ok_or_else(|| Error::UnknownType(ident.clone()))?;
         let type_ref = self.get_or_create_type_ref(ident)?;
 
@@ -283,7 +282,7 @@ fn need_box(
     meta: &MetaData<'_>,
     ident: &Ident,
 ) -> bool {
-    let Some(ty) = meta.types.items.get(ident) else {
+    let Some(ty) = meta.types.get_type(ident) else {
         return false;
     };
 

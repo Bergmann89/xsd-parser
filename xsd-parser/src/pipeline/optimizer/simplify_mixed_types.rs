@@ -49,7 +49,7 @@ impl Optimizer {
     pub fn simplify_mixed_type(mut self, ident: Ident) -> Result<Self, Error> {
         tracing::debug!("simplify_mixed_type(ident={ident:?})");
 
-        let Some(ty) = self.types.items.get(&ident) else {
+        let Some(ty) = self.types.get_type(&ident) else {
             return Err(Error::UnknownType(ident));
         };
 
@@ -62,7 +62,7 @@ impl Optimizer {
             return Err(Error::MissingContentType(ident));
         };
 
-        let Some(content) = self.types.items.get_mut(&content_ident) else {
+        let Some(content) = self.types.get_type_mut(&content_ident) else {
             return Err(Error::MissingContentType(ident));
         };
 
@@ -108,7 +108,7 @@ impl Optimizer {
         }
 
         if let MetaTypeVariant::ComplexType(ci) =
-            &mut self.types.items.get_mut(&ident).unwrap().variant
+            &mut self.types.get_type_mut(&ident).unwrap().variant
         {
             ci.is_mixed = false;
         }
@@ -124,8 +124,7 @@ impl Optimizer {
 
         let idents = self
             .types
-            .items
-            .iter()
+            .iter_items()
             .filter_map(|(ident, type_)| {
                 if let MetaTypeVariant::ComplexType(ci) = &type_.variant {
                     if ci.is_mixed {

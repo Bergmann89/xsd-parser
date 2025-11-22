@@ -341,7 +341,7 @@ impl ModuleIdent {
 
         let namespace = with_namespace.then_some(ident.ns).flatten();
         let schema = with_schema
-            .then(|| types.items.get(ident))
+            .then(|| types.get_type(ident))
             .flatten()
             .and_then(|ty| ty.schema);
 
