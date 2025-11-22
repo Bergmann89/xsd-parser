@@ -15,6 +15,7 @@ mod complex_type_with_repeated_content;
 mod custom_type;
 mod derive;
 mod documentation;
+mod duplicate_idents;
 mod dynamic_types;
 mod element_refs_with_ns;
 mod element_without_type;
