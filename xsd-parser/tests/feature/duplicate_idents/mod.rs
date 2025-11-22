@@ -3,8 +3,11 @@ use xsd_parser::{config::GeneratorFlags, Config};
 use crate::utils::{generate_test, ConfigEx};
 
 fn config() -> Config {
-    Config::test_default()
-        .with_generator_flags(GeneratorFlags::FLATTEN_CONTENT | GeneratorFlags::USE_MODULES | GeneratorFlags::USE_SCHEMA_MODULES)
+    Config::test_default().with_generator_flags(
+        GeneratorFlags::FLATTEN_CONTENT
+            | GeneratorFlags::USE_MODULES
+            | GeneratorFlags::USE_SCHEMA_MODULES,
+    )
 }
 
 #[cfg(not(feature = "update-expectations"))]
@@ -19,12 +22,10 @@ macro_rules! check_obj_foo {
 #[cfg(not(feature = "update-expectations"))]
 macro_rules! test_obj_foo {
     ($module:ident) => {{
-        use $module::foo::{Outer, Inner};
+        use $module::foo::{Inner, Outer};
 
         Outer {
-            inner: Inner {
-                a: "a".into(),
-            },
+            inner: Inner { a: "a".into() },
         }
     }};
 }
@@ -41,12 +42,10 @@ macro_rules! check_obj_bar {
 #[cfg(not(feature = "update-expectations"))]
 macro_rules! test_obj_bar {
     ($module:ident) => {{
-        use $module::bar::{Outer, Inner};
+        use $module::bar::{Inner, Outer};
 
         Outer {
-            inner: Inner {
-                b: "b".into(),
-            },
+            inner: Inner { b: "b".into() },
         }
     }};
 }

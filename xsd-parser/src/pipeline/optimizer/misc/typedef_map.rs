@@ -25,9 +25,12 @@ impl TypedefMap {
     }
 
     pub(crate) fn resolve<'a>(&'a self, ident: &'a Ident) -> &'a Ident {
-        let x = self.0.get(ident)
+        let x = self
+            .0
+            .get(ident)
             .or_else(|| {
-                self.0.get(&ident.clone().with_schema(None))
+                self.0
+                    .get(&ident.clone().with_schema(None))
                     .filter(|&o| o != ident)
             })
             .map_or(ident, |x| self.resolve(x));

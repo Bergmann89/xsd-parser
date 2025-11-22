@@ -146,16 +146,19 @@ impl MetaTypes {
     /// Types from the schema given by the ident are preferred over types from other schemas.
     #[must_use]
     pub fn get_type(&self, ident: &Ident) -> Option<&MetaType> {
-        self.items.get(ident)
-            .or_else(|| {
-                self.schema_idents.get(&ident.clone().with_schema(None))
-                    .and_then(|i| self.items.get(i))
-            })
+        self.items.get(ident).or_else(|| {
+            self.schema_idents
+                .get(&ident.clone().with_schema(None))
+                .and_then(|i| self.items.get(i))
+        })
     }
 
     /// Look up a type by Ident mutably.
     /// Types from the schema given by the ident are preferred over types from other schemas.
-    pub fn get_type_mut<'a, 'b>(&'a mut self, mut ident: &'b Ident) -> Option<&'a mut MetaType> where 'a: 'b {
+    pub fn get_type_mut<'a, 'b>(&'a mut self, mut ident: &'b Ident) -> Option<&'a mut MetaType>
+    where
+        'a: 'b,
+    {
         if !self.items.contains_key(ident) {
             ident = self.schema_idents.get(&ident.clone().with_schema(None))?;
         }
@@ -179,13 +182,17 @@ impl MetaTypes {
         if self.items.contains_key(ident) {
             ident
         } else {
-            self.schema_idents.get(&ident.clone().with_schema(None)).unwrap_or(ident)
+            self.schema_idents
+                .get(&ident.clone().with_schema(None))
+                .unwrap_or(ident)
         }
     }
 
     /// Register a type
     pub fn insert_type(&mut self, ident: Ident, type_: MetaType) {
-        self.schema_idents.entry(ident.clone().with_schema(None)).or_insert_with(|| ident.clone());
+        self.schema_idents
+            .entry(ident.clone().with_schema(None))
+            .or_insert_with(|| ident.clone());
         self.items.insert(ident, type_);
     }
 }

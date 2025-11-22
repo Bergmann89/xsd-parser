@@ -44,7 +44,9 @@ impl Optimizer {
 
         for ident in idents {
             let content_name = self.types.name_builder().shared_name("Content").finish();
-            let content_ident = Ident::new(content_name).with_ns(ident.ns).with_schema(ident.schema);
+            let content_ident = Ident::new(content_name)
+                .with_ns(ident.ns)
+                .with_schema(ident.schema);
 
             let mut si = GroupMeta::default();
             let type_ = self.types.get_type(&ident).unwrap();
@@ -58,7 +60,8 @@ impl Optimizer {
             });
 
             assert!(!self.types.contains_exact_type(&content_ident));
-            self.types.insert_type(content_ident, MetaType::new(MetaTypeVariant::Choice(si)));
+            self.types
+                .insert_type(content_ident, MetaType::new(MetaTypeVariant::Choice(si)));
         }
 
         self

@@ -1300,7 +1300,9 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                     }
 
                     let content_name = self.state.make_content_name();
-                    let content_ident = Ident::new(content_name).with_ns(self.state.current_ns()).with_schema(Some(self.owner.schema_id));
+                    let content_ident = Ident::new(content_name)
+                        .with_ns(self.state.current_ns())
+                        .with_schema(Some(self.owner.schema_id));
 
                     self.state
                         .add_type(content_ident.clone(), content_type, false)?;
@@ -1381,7 +1383,9 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 if !self.is_simple_content_unique {
                     self.is_simple_content_unique = true;
                     let content_name = self.owner.state.make_content_name();
-                    content_ident = Ident::new(content_name).with_ns(self.owner.state.current_ns()).with_schema(Some(self.owner.schema_id));
+                    content_ident = Ident::new(content_name)
+                        .with_ns(self.owner.state.current_ns())
+                        .with_schema(Some(self.owner.schema_id));
 
                     ci.content = Some(content_ident.clone());
                 }
@@ -1654,7 +1658,9 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
             .remove_suffix("Content")
             .or(name)
             .finish();
-        let type_ = Ident::new(type_name).with_ns(self.state.current_ns()).with_schema(Some(self.owner.schema_id));
+        let type_ = Ident::new(type_name)
+            .with_ns(self.state.current_ns())
+            .with_schema(Some(self.owner.schema_id));
 
         (field_name, type_)
     }

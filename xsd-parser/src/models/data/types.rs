@@ -47,7 +47,8 @@ impl<'types> DataTypes<'types> {
 
     /// Look up a specific `DataType` mutably
     pub fn get_mut(&mut self, ident: &Ident) -> Option<&mut DataType<'types>> {
-        self.items.get_mut(self.meta.types.find_original_schema(ident))
+        self.items
+            .get_mut(self.meta.types.find_original_schema(ident))
     }
 }
 

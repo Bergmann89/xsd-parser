@@ -206,7 +206,12 @@ impl Ident {
 
 impl Display for Ident {
     fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
-        let Self { ns, name, type_, schema } = self;
+        let Self {
+            ns,
+            name,
+            type_,
+            schema,
+        } = self;
 
         match type_ {
             IdentType::Type => write!(f, "Type(")?,
