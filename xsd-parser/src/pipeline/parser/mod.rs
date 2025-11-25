@@ -21,7 +21,8 @@ pub mod resolver;
 
 mod error;
 
-use std::collections::{BTreeMap, HashSet, VecDeque};
+use std::borrow::Cow;
+use std::collections::{btree_map::Entry, BTreeMap, HashMap, HashSet, VecDeque};
 use std::fmt::Debug;
 use std::io::BufRead;
 use std::path::Path;
@@ -42,8 +43,9 @@ use xsd_parser_types::xml::NamespacesShared;
 
 use crate::models::schema::{
     xs::{Import, Include, Schema, SchemaContent},
-    Schemas,
+    NamespaceId, NamespaceInfo, Schemas,
 };
+use crate::models::schema::{SchemaId, SchemaInfo};
 use crate::pipeline::parser::resolver::ResolveRequestType;
 
 pub use self::error::Error;
@@ -67,11 +69,44 @@ pub use self::resolver::Resolver;
 #[derive(Default, Debug)]
 pub struct Parser<TResolver = NoOpResolver> {
     cache: HashSet<Url>,
-    schemas: Schemas,
+    entries: Vec<ParserEntry>,
     pending: VecDeque<ResolveRequest>,
 
     resolver: TResolver,
     resolve_includes: bool,
+    alternate_prefixes: bool,
+    generate_prefixes: bool,
+}
+
+#[derive(Debug)]
+#[allow(clippy::large_enum_variant)]
+enum ParserEntry {
+    Namespace {
+        prefix: NamespacePrefix,
+        namespace: Namespace,
+    },
+    Schema {
+        name: Option<String>,
+        schema: Schema,
+        location: Option<Url>,
+        target_ns: Option<Namespace>,
+        namespaces: Namespaces,
+    },
+}
+
+#[derive(Debug)]
+struct SchemasBuilder {
+    schemas: Schemas,
+    prefix_cache: HashMap<Option<Namespace>, PrefixEntry>,
+
+    generate_prefixes: bool,
+    alternate_prefixes: bool,
+}
+
+#[derive(Default, Debug)]
+struct PrefixEntry {
+    prefix: Option<NamespacePrefix>,
+    alt_prefixes: HashSet<NamespacePrefix>,
 }
 
 impl Parser {
@@ -94,18 +129,20 @@ impl<TResolver> Parser<TResolver> {
         self,
         resolver: XResolver,
     ) -> Parser<XResolver> {
-        let Self { schemas, .. } = self;
+        let Self { entries, .. } = self;
 
         let cache = HashSet::new();
         let pending = VecDeque::new();
 
         Parser {
             cache,
-            schemas,
+            entries,
             pending,
 
             resolver,
             resolve_includes: true,
+            alternate_prefixes: true,
+            generate_prefixes: true,
         }
     }
 
@@ -116,10 +153,35 @@ impl<TResolver> Parser<TResolver> {
         self
     }
 
+    /// Instructs the parser to use alternate prefixes known from other
+    /// schemas for a certain namespace if its actual prefix is unknown or
+    /// already used.
+    pub fn alternate_prefixes(mut self, value: bool) -> Self {
+        self.alternate_prefixes = value;
+
+        self
+    }
+
+    /// Instructs the parser to generate unique prefixes for a certain namespace
+    /// if its actual prefix is already used.
+    pub fn generate_prefixes(mut self, value: bool) -> Self {
+        self.generate_prefixes = value;
+
+        self
+    }
+
     /// Finish the parsing process by returning the generated [`Schemas`] instance
     /// containing all parsed schemas.
     pub fn finish(self) -> Schemas {
-        self.schemas
+        let builder = SchemasBuilder {
+            schemas: Schemas::default(),
+            prefix_cache: HashMap::new(),
+
+            generate_prefixes: self.generate_prefixes,
+            alternate_prefixes: self.alternate_prefixes,
+        };
+
+        builder.build(self.entries)
     }
 }
 
@@ -154,8 +216,8 @@ where
     /// Will return an error if a problem or mismatch with the already existing
     /// namespaces was encountered.
     pub fn with_namespace(mut self, prefix: NamespacePrefix, namespace: Namespace) -> Self {
-        self.schemas
-            .get_or_create_namespace_info_mut(Some(prefix), Some(namespace));
+        self.entries
+            .push(ParserEntry::Namespace { prefix, namespace });
 
         self
     }
@@ -210,7 +272,7 @@ where
 
         let schema = Schema::deserialize(&mut reader)?;
 
-        self.add_schema(name, schema, None, &reader.namespaces);
+        self.add_schema(name, schema, None, reader.namespaces);
         self.resolve_pending()?;
 
         Ok(self)
@@ -261,7 +323,7 @@ where
 
         let schema = Schema::deserialize(&mut reader)?;
 
-        self.add_schema(name, schema, None, &reader.namespaces);
+        self.add_schema(name, schema, None, reader.namespaces);
         self.resolve_pending()?;
 
         Ok(self)
@@ -370,7 +432,7 @@ where
 
         let reader = reader.into_inner();
 
-        self.add_schema(name, schema, Some(location.clone()), &reader.namespaces);
+        self.add_schema(name, schema, Some(location.clone()), reader.namespaces);
         self.cache.insert(location);
 
         Ok(())
@@ -381,7 +443,7 @@ where
         name: Option<String>,
         schema: Schema,
         location: Option<Url>,
-        namespaces: &Namespaces,
+        namespaces: Namespaces,
     ) {
         tracing::debug!(
             "Process schema (location={:?}, target_namespace={:?}",
@@ -393,7 +455,6 @@ where
             .target_namespace
             .as_deref()
             .map(|ns| Namespace::from(ns.as_bytes().to_owned()));
-        let prefix = namespaces.get(&target_ns).cloned().flatten();
 
         if self.resolve_includes {
             for content in &schema.content {
@@ -411,8 +472,13 @@ where
             }
         }
 
-        self.schemas
-            .add_schema(prefix, target_ns, name, schema, location);
+        self.entries.push(ParserEntry::Schema {
+            name,
+            schema,
+            location,
+            target_ns,
+            namespaces,
+        });
     }
 }
 
@@ -421,7 +487,7 @@ struct SchemaReader<R> {
     namespaces: Namespaces,
 }
 
-type Namespaces = BTreeMap<Option<Namespace>, Option<NamespacePrefix>>;
+type Namespaces = BTreeMap<Option<Namespace>, Vec<NamespacePrefix>>;
 
 impl<R> SchemaReader<R> {
     fn new(inner: R) -> Self {
@@ -469,12 +535,191 @@ where
 
                     self.namespaces
                         .entry(Some(namespace))
-                        .or_insert(Some(prefix));
+                        .or_default()
+                        .push(prefix);
                 }
             }
         }
 
         Ok(event)
+    }
+}
+
+impl SchemasBuilder {
+    fn build(mut self, entries: Vec<ParserEntry>) -> Schemas {
+        self.build_cache(&entries);
+
+        for entry in entries {
+            match entry {
+                ParserEntry::Namespace { namespace, .. } => {
+                    self.get_or_create_namespace_info_mut(Some(namespace));
+                }
+                ParserEntry::Schema {
+                    name,
+                    schema,
+                    location,
+                    target_ns,
+                    ..
+                } => {
+                    self.add_schema(target_ns, name, location, schema);
+                }
+            }
+        }
+
+        self.determine_prefixes();
+
+        self.schemas
+    }
+
+    fn build_cache(&mut self, entries: &[ParserEntry]) {
+        for entry in entries {
+            match entry {
+                ParserEntry::Namespace { prefix, namespace } => {
+                    self.prefix_cache
+                        .entry(Some(namespace.clone()))
+                        .or_default()
+                        .prefix = Some(prefix.clone());
+                }
+                ParserEntry::Schema {
+                    target_ns,
+                    namespaces,
+                    ..
+                } => {
+                    let prefix = namespaces
+                        .get(target_ns)
+                        .and_then(|prefixes| prefixes.first())
+                        .cloned();
+                    let entry = self.prefix_cache.entry(target_ns.clone()).or_default();
+
+                    if entry.prefix.is_none() {
+                        entry.prefix = prefix;
+                    } else if let Some(prefix) = prefix {
+                        entry.alt_prefixes.insert(prefix);
+                    }
+
+                    for (namespace, prefixes) in namespaces {
+                        for prefix in prefixes {
+                            self.prefix_cache
+                                .entry(namespace.clone())
+                                .or_default()
+                                .alt_prefixes
+                                .insert(prefix.clone());
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    fn add_schema(
+        &mut self,
+        namespace: Option<Namespace>,
+        name: Option<String>,
+        location: Option<Url>,
+        schema: Schema,
+    ) {
+        let schema_id = SchemaId(self.schemas.next_schema_id);
+        self.schemas.next_schema_id = self.schemas.next_schema_id.wrapping_add(1);
+
+        let (namespace_id, namespace_info) = self.get_or_create_namespace_info_mut(namespace);
+        namespace_info.schemas.push(schema_id);
+
+        match self.schemas.schemas.entry(schema_id) {
+            Entry::Vacant(e) => e.insert(SchemaInfo {
+                name,
+                schema,
+                location,
+                namespace_id,
+            }),
+            Entry::Occupied(_) => crate::unreachable!(),
+        };
+    }
+
+    fn get_or_create_namespace_info_mut(
+        &mut self,
+        namespace: Option<Namespace>,
+    ) -> (NamespaceId, &mut NamespaceInfo) {
+        match self.schemas.known_namespaces.entry(namespace) {
+            Entry::Occupied(e) => {
+                let id = *e.get();
+                let info = self.schemas.namespace_infos.get_mut(&id).unwrap();
+
+                (id, info)
+            }
+            Entry::Vacant(e) => {
+                let id = NamespaceId(self.schemas.next_namespace_id);
+                self.schemas.next_namespace_id = self.schemas.next_namespace_id.wrapping_add(1);
+
+                let namespace = e.key().clone();
+                e.insert(id);
+
+                let info = match self.schemas.namespace_infos.entry(id) {
+                    Entry::Vacant(e) => e.insert(NamespaceInfo::new(namespace)),
+                    Entry::Occupied(_) => crate::unreachable!(),
+                };
+
+                (id, info)
+            }
+        }
+    }
+
+    fn determine_prefixes(&mut self) {
+        // Insert main prefixes
+        for (id, info) in &mut self.schemas.namespace_infos {
+            if info.prefix.is_some() {
+                continue;
+            }
+
+            let entry = &mut self.prefix_cache.get(&info.namespace).unwrap();
+            if let Some(prefix) = &entry.prefix {
+                if let Entry::Vacant(e) = self.schemas.known_prefixes.entry(prefix.clone()) {
+                    info.prefix = Some(e.key().clone());
+                    e.insert(*id);
+                }
+            }
+        }
+
+        // Fallback to alternate prefixes
+        if self.alternate_prefixes {
+            for (id, info) in &mut self.schemas.namespace_infos {
+                if info.prefix.is_some() {
+                    continue;
+                }
+
+                let entry = &mut self.prefix_cache.get(&info.namespace).unwrap();
+                for alt in &entry.alt_prefixes {
+                    if let Entry::Vacant(e) = self.schemas.known_prefixes.entry(alt.clone()) {
+                        info.prefix = Some(e.key().clone());
+                        e.insert(*id);
+                    }
+                }
+            }
+        }
+
+        // Fallback to generated prefix
+        if self.generate_prefixes {
+            for (id, info) in &mut self.schemas.namespace_infos {
+                if info.prefix.is_some() {
+                    continue;
+                }
+
+                let entry = &mut self.prefix_cache.get(&info.namespace).unwrap();
+                let prefix = entry
+                    .prefix
+                    .clone()
+                    .or_else(|| entry.alt_prefixes.iter().next().cloned());
+                if let Some(prefix) = prefix {
+                    let ext = format!("_{}", id.0);
+                    let ext = ext.as_bytes();
+
+                    let mut p = prefix.0.into_owned();
+                    p.extend_from_slice(ext);
+
+                    let prefix = NamespacePrefix(Cow::Owned(p));
+                    self.schemas.known_prefixes.insert(prefix, *id);
+                }
+            }
+        }
     }
 }
 

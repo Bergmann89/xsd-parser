@@ -3,7 +3,7 @@ pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSc
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
 pub const NS_CDF: Namespace = Namespace::new_const(b"http://checklists.nist.gov/xccdf/1.2");
 pub const NS_CPE: Namespace = Namespace::new_const(b"http://cpe.mitre.org/language/2.0");
-pub const NS_CPE_4: Namespace = Namespace::new_const(b"http://cpe.mitre.org/naming/2.0");
+pub const NS_CPE_NAME: Namespace = Namespace::new_const(b"http://cpe.mitre.org/naming/2.0");
 pub mod cdf {
     use std::borrow::Cow;
     use xsd_parser_types::{
@@ -34572,8 +34572,8 @@ pub mod cdf {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             write_attrib(&mut bytes, "id", &self.value.id)?;
@@ -34975,8 +34975,8 @@ pub mod cdf {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             write_attrib_opt(&mut bytes, "date", &self.value.date)?;
@@ -35043,8 +35043,8 @@ pub mod cdf {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             return Ok(Some(Event::Start(bytes)));
@@ -35106,8 +35106,8 @@ pub mod cdf {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
@@ -35177,8 +35177,8 @@ pub mod cdf {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
@@ -35326,8 +35326,8 @@ pub mod cdf {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             write_attrib_opt(&mut bytes, "id", &self.value.id)?;
@@ -35406,8 +35406,8 @@ pub mod cdf {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             write_attrib_opt(&mut bytes, "href", &self.value.href)?;
@@ -35481,8 +35481,8 @@ pub mod cdf {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             write_attrib(&mut bytes, "id", &self.value.id)?;
@@ -35541,8 +35541,8 @@ pub mod cdf {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             write_attrib(&mut bytes, "idref", &self.value.idref)?;
@@ -35597,8 +35597,8 @@ pub mod cdf {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             write_attrib_opt(&mut bytes, "time", &self.value.time)?;
@@ -35664,8 +35664,8 @@ pub mod cdf {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             return Ok(Some(Event::Start(bytes)));
@@ -35730,8 +35730,8 @@ pub mod cdf {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             write_attrib(&mut bytes, "system", &self.value.system)?;
@@ -35796,8 +35796,8 @@ pub mod cdf {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             write_attrib(&mut bytes, "id", &self.value.id)?;
@@ -36084,8 +36084,8 @@ pub mod cdf {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             write_attrib(&mut bytes, "abstract", &self.value.abstract_)?;
@@ -36438,8 +36438,8 @@ pub mod cdf {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             write_attrib(&mut bytes, "abstract", &self.value.abstract_)?;
@@ -36750,8 +36750,8 @@ pub mod cdf {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             write_attrib(&mut bytes, "abstract", &self.value.abstract_)?;
@@ -37123,8 +37123,8 @@ pub mod cdf {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             write_attrib(&mut bytes, "id", &self.value.id)?;
@@ -37476,8 +37476,8 @@ pub mod cdf {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             return Ok(Some(Event::Start(bytes)));
@@ -37535,8 +37535,8 @@ pub mod cdf {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             write_attrib(&mut bytes, "idref", &self.value.idref)?;
@@ -37592,8 +37592,8 @@ pub mod cdf {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             write_attrib(&mut bytes, "name", &self.value.name)?;
@@ -37660,8 +37660,8 @@ pub mod cdf {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
@@ -37734,8 +37734,8 @@ pub mod cdf {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             write_attrib(&mut bytes, "idref", &self.value.idref)?;
@@ -37794,8 +37794,8 @@ pub mod cdf {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             write_attrib(&mut bytes, "idref", &self.value.idref)?;
@@ -37861,8 +37861,8 @@ pub mod cdf {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             write_attrib(&mut bytes, "idref", &self.value.idref)?;
@@ -37928,8 +37928,8 @@ pub mod cdf {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             write_attrib(&mut bytes, "idref", &self.value.idref)?;
@@ -37997,8 +37997,8 @@ pub mod cdf {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             write_attrib(&mut bytes, "idref", &self.value.idref)?;
@@ -38068,8 +38068,8 @@ pub mod cdf {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             write_attrib(&mut bytes, "idref", &self.value.idref)?;
@@ -38140,8 +38140,8 @@ pub mod cdf {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
@@ -38274,8 +38274,8 @@ pub mod cdf {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             write_attrib(&mut bytes, "selector", &self.value.selector)?;
@@ -38338,8 +38338,8 @@ pub mod cdf {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             write_attrib(&mut bytes, "selector", &self.value.selector)?;
@@ -38404,8 +38404,8 @@ pub mod cdf {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             write_attrib(&mut bytes, "selector", &self.value.selector)?;
@@ -38474,8 +38474,8 @@ pub mod cdf {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             write_attrib_opt(&mut bytes, "mustMatch", &self.value.must_match)?;
@@ -38601,8 +38601,8 @@ pub mod cdf {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             write_attrib(&mut bytes, "uri", &self.value.uri)?;
@@ -38653,8 +38653,8 @@ pub mod cdf {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             write_attrib(&mut bytes, "idref", &self.value.idref)?;
@@ -38705,8 +38705,8 @@ pub mod cdf {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             write_attrib(&mut bytes, "idref", &self.value.idref)?;
@@ -38761,8 +38761,8 @@ pub mod cdf {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             write_attrib(&mut bytes, "system", &self.value.system)?;
@@ -38832,8 +38832,8 @@ pub mod cdf {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
@@ -38973,8 +38973,8 @@ pub mod cdf {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
@@ -39113,8 +39113,8 @@ pub mod cdf {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             write_attrib_opt(&mut bytes, "id", &self.value.id)?;
@@ -39273,8 +39273,8 @@ pub mod cdf {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             write_attrib(&mut bytes, "system", &self.value.system)?;
@@ -39383,8 +39383,8 @@ pub mod cdf {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             write_attrib(&mut bytes, "operator", &self.value.operator)?;
@@ -39514,8 +39514,8 @@ pub mod cdf {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             write_attrib(&mut bytes, "href", &self.value.href)?;
@@ -39567,8 +39567,8 @@ pub mod cdf {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             write_attrib(&mut bytes, "href", &self.value.href)?;
@@ -39626,8 +39626,8 @@ pub mod cdf {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             write_attrib(&mut bytes, "authenticated", &self.value.authenticated)?;
@@ -39691,8 +39691,8 @@ pub mod cdf {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             return Ok(Some(Event::Start(bytes)));
@@ -39750,8 +39750,8 @@ pub mod cdf {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             write_attrib(&mut bytes, "system", &self.value.system)?;
@@ -39814,8 +39814,8 @@ pub mod cdf {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             write_attrib(&mut bytes, "idref", &self.value.idref)?;
@@ -40033,8 +40033,8 @@ pub mod cdf {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             write_attrib_opt(&mut bytes, "system", &self.value.system)?;
@@ -40098,8 +40098,8 @@ pub mod cdf {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             return Ok(Some(Event::Start(bytes)));
@@ -40157,8 +40157,8 @@ pub mod cdf {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             write_attrib(&mut bytes, "context", &self.value.context)?;
@@ -40218,8 +40218,8 @@ pub mod cdf {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             write_attrib(&mut bytes, "import-name", &self.value.import_name)?;
@@ -40303,8 +40303,8 @@ pub mod cdf {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             write_attrib(&mut bytes, "value-id", &self.value.value_id)?;
@@ -40356,8 +40356,8 @@ pub mod cdf {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             write_attrib(&mut bytes, "href", &self.value.href)?;
@@ -40419,8 +40419,8 @@ pub mod cdf {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             return Ok(Some(Event::Start(bytes)));
@@ -40548,8 +40548,8 @@ pub mod cdf {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             write_attrib(&mut bytes, "name", &self.value.name)?;
@@ -40618,8 +40618,8 @@ pub mod cdf {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             write_attrib(&mut bytes, "time", &self.value.time)?;
@@ -40706,8 +40706,8 @@ pub mod cdf {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             write_attrib(&mut bytes, "severity", &self.value.severity)?;
@@ -40770,8 +40770,8 @@ pub mod cdf {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             write_attrib(&mut bytes, "context", &self.value.context)?;
@@ -42461,8 +42461,8 @@ pub mod cpe {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             return Ok(Some(Event::Start(bytes)));
@@ -42531,8 +42531,8 @@ pub mod cpe {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             write_attrib(&mut bytes, "id", &self.value.id)?;
@@ -42620,8 +42620,8 @@ pub mod cpe {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
@@ -42693,8 +42693,8 @@ pub mod cpe {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             write_attrib(&mut bytes, "operator", &self.value.operator)?;
@@ -42782,8 +42782,8 @@ pub mod cpe {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             write_attrib_opt(&mut bytes, "description", &self.value.description)?;
@@ -42835,8 +42835,8 @@ pub mod cpe {
                                 bytes
                                     .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
                                 bytes.push_attribute((
-                                    &b"xmlns:cpe_4"[..],
-                                    &super::super::NS_CPE_4[..],
+                                    &b"xmlns:cpe-name"[..],
+                                    &super::super::NS_CPE_NAME[..],
                                 ));
                             }
                             write_attrib_opt(&mut bytes, "description", &self.value.description)?;

@@ -11,8 +11,7 @@ pub mod xs;
 mod occurs;
 mod qname;
 
-use std::borrow::Cow;
-use std::collections::btree_map::{BTreeMap, Entry, Iter, IterMut};
+use std::collections::btree_map::{BTreeMap, Iter, IterMut};
 
 use url::Url;
 
@@ -37,14 +36,14 @@ pub use self::qname::QName;
 /// as well as resolving prefixes and namespaces during interpretation.
 #[derive(Default, Debug)]
 pub struct Schemas {
-    schemas: SchemaFiles,
-    namespace_infos: NamespaceInfos,
+    pub(crate) schemas: SchemaFiles,
+    pub(crate) namespace_infos: NamespaceInfos,
 
-    known_prefixes: NamespacePrefixes,
-    known_namespaces: Namespaces,
+    pub(crate) known_prefixes: NamespacePrefixes,
+    pub(crate) known_namespaces: Namespaces,
 
-    next_schema_id: usize,
-    next_namespace_id: usize,
+    pub(crate) next_schema_id: usize,
+    pub(crate) next_namespace_id: usize,
 }
 
 /// Contains the information for a specific namespace.
@@ -76,7 +75,7 @@ pub struct SchemaInfo {
     pub location: Option<Url>,
 
     /// Id of the namespace this schema belongs to.
-    namespace_id: NamespaceId,
+    pub(crate) namespace_id: NamespaceId,
 }
 
 /// Represents an unique id for a XML schema.
@@ -102,86 +101,6 @@ pub type NamespacePrefixes = BTreeMap<NamespacePrefix, NamespaceId>;
 /* Schemas */
 
 impl Schemas {
-    /// Add a new schema to the schemas structure.
-    ///
-    /// # Errors
-    ///
-    /// Will just forward the errors from [`get_or_create_namespace_info_mut`](Self::get_or_create_namespace_info_mut).
-    pub fn add_schema(
-        &mut self,
-        prefix: Option<NamespacePrefix>,
-        namespace: Option<Namespace>,
-        name: Option<String>,
-        schema: Schema,
-        location: Option<Url>,
-    ) {
-        let schema_id = SchemaId(self.next_schema_id);
-        let (namespace_id, namespace_info) =
-            self.get_or_create_namespace_info_mut(prefix, namespace);
-        namespace_info.schemas.push(schema_id);
-        self.next_schema_id = self.next_schema_id.wrapping_add(1);
-
-        match self.schemas.entry(schema_id) {
-            Entry::Vacant(e) => e.insert(SchemaInfo {
-                name,
-                schema,
-                location,
-                namespace_id,
-            }),
-            Entry::Occupied(_) => crate::unreachable!(),
-        };
-    }
-
-    /// Get a mutable reference to a [`NamespaceInfo`] or create a new one if needed.
-    pub fn get_or_create_namespace_info_mut(
-        &mut self,
-        prefix: Option<NamespacePrefix>,
-        namespace: Option<Namespace>,
-    ) -> (NamespaceId, &mut NamespaceInfo) {
-        let (ns, id) = match self.known_namespaces.entry(namespace) {
-            Entry::Occupied(e) => {
-                let id = *e.get();
-                let ns = self.namespace_infos.get_mut(&id).unwrap();
-
-                (ns, id)
-            }
-            Entry::Vacant(e) => {
-                let id = NamespaceId(self.next_namespace_id);
-                self.next_namespace_id = self.next_namespace_id.wrapping_add(1);
-
-                let namespace = e.key().clone();
-                e.insert(id);
-
-                let ns = match self.namespace_infos.entry(id) {
-                    Entry::Vacant(e) => e.insert(NamespaceInfo::new(namespace)),
-                    Entry::Occupied(_) => crate::unreachable!(),
-                };
-
-                (ns, id)
-            }
-        };
-
-        if let Some(mut prefix) = prefix {
-            if matches!(self.known_prefixes.get(&prefix), Some(x) if *x != id) {
-                let ext = format!("_{}", id.0);
-                let ext = ext.as_bytes();
-
-                let mut p = prefix.0.into_owned();
-                p.extend_from_slice(ext);
-
-                prefix = NamespacePrefix(Cow::Owned(p));
-            }
-
-            self.known_prefixes.insert(prefix.clone(), id);
-
-            if ns.prefix.is_none() {
-                ns.prefix = Some(prefix);
-            }
-        }
-
-        (id, ns)
-    }
-
     /// Returns an iterator over all schemas stored in this structure.
     pub fn schemas(&self) -> Iter<'_, SchemaId, SchemaInfo> {
         self.schemas.iter()
