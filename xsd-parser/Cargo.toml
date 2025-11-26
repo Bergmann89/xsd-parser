@@ -25,7 +25,7 @@ indexmap = { workspace = true }
 Inflector = { workspace = true }
 parking_lot = { workspace = true }
 proc-macro2 = { workspace = true }
-quick-xml = { workspace = true, features = [ "async-tokio", "encoding", "serialize" ] }
+quick-xml = { workspace = true }
 quote = { workspace = true }
 smallvec = { workspace = true }
 thiserror = { workspace = true }
@@ -42,16 +42,18 @@ xsd-parser-types = { workspace = true, features = [ "quick-xml" ] }
 [dev-dependencies]
 clap = { workspace = true, features = [ "derive" ] }
 num = { workspace = true, features = [ "serde" ] }
+quick-xml = { workspace = true, features = [ "serialize" ]}
 regex = { workspace = true }
 rust_decimal = { workspace = true }
 serde = { workspace = true, features = [ "derive" ] }
 serde-xml-rs = { workspace = true }
 serde-xml-rs-v7 = { workspace = true }
 text-diff = { workspace = true }
+tokio = { workspace = true, features = [ "fs", "io-util", "macros", "rt-multi-thread" ] }
 tracing-subscriber = { workspace = true, features = [ "std", "env-filter", "json", "tracing-log" ] }
 
 xsd-parser = { workspace = true, features = [ "num" ] }
-xsd-parser-types = { workspace = true, features = [ "num", "quick-xml", "serde", "xml" ] }
+xsd-parser-types = { workspace = true, features = [ "async", "num", "quick-xml", "serde", "xml" ] }
 
 [build-dependencies]
 base64 = { workspace = true }
