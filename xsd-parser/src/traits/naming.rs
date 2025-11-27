@@ -45,10 +45,15 @@ pub trait Naming: Debug {
             "_",
         );
 
-        if done {
+        let s = if done {
             s
         } else {
             s.to_screaming_snake_case().to_pascal_case()
+        };
+        if s == "Self" {
+            String::from("Self_")
+        } else {
+            s
         }
     }
 
@@ -528,7 +533,6 @@ impl NameFallback for Option<&str> {
 }
 
 const KEYWORDS: &[(&str, &str)] = &[
-    ("Self", "Self_"),
     ("abstract", "abstract_"),
     ("as", "as_"),
     ("become", "become_"),
