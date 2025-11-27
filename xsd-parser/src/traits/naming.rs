@@ -528,6 +528,7 @@ impl NameFallback for Option<&str> {
 }
 
 const KEYWORDS: &[(&str, &str)] = &[
+    ("Self", "Self_"),
     ("abstract", "abstract_"),
     ("as", "as_"),
     ("become", "become_"),
