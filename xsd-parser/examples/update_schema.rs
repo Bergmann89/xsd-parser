@@ -113,6 +113,7 @@ fn main() -> Result<(), Error> {
     //   -  Derives the generated types from `Debug`, `Clone`, `Eq`, and `PartialEq`.
     config.generator.flags = GeneratorFlags::all()
         - GeneratorFlags::USE_MODULES
+        - GeneratorFlags::ANY_TYPE_SUPPORT
         - GeneratorFlags::MIXED_TYPE_SUPPORT
         - GeneratorFlags::NILLABLE_TYPE_SUPPORT
         - GeneratorFlags::BUILD_IN_ABSOLUTE_PATHS

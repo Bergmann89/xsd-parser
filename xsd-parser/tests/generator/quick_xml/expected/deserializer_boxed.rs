@@ -32,9 +32,9 @@ impl WithDeserializer for MySequenceType {
 pub mod quick_xml_deserialize {
     use core::mem::replace;
     use xsd_parser_types::quick_xml::{
-        filter_xmlns_attributes, BytesStart, DeserializeReader, Deserializer, DeserializerArtifact,
-        DeserializerEvent, DeserializerOutput, DeserializerResult, ElementHandlerOutput, Error,
-        ErrorKind, Event, RawByteStr, WithDeserializer,
+        BytesStart, DeserializeHelper, Deserializer, DeserializerArtifact, DeserializerEvent,
+        DeserializerOutput, DeserializerResult, ElementHandlerOutput, Error, ErrorKind, Event,
+        RawByteStr, WithDeserializer,
     };
     #[derive(Debug)]
     pub struct MyChoiceTypeDeserializer {
@@ -49,29 +49,26 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl MyChoiceTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Box<Self>, Error>
-        where
-            R: DeserializeReader,
-        {
-            for attrib in filter_xmlns_attributes(bytes_start) {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Box<Self>, Error> {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib_checked(attrib)?;
+                helper.raise_unexpected_attrib_checked(&attrib)?;
             }
             Ok(Box::new(Self {
                 content: None,
                 state__: Box::new(MyChoiceTypeDeserializerState::Init__),
             }))
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: MyChoiceTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             if let MyChoiceTypeDeserializerState::Content__(deserializer) = state {
-                self.store_content(deserializer.finish(reader)?)?;
+                self.store_content(deserializer.finish(helper)?)?;
             }
             Ok(())
         }
@@ -82,15 +79,12 @@ pub mod quick_xml_deserialize {
             self.content = Some(value);
             Ok(())
         }
-        fn handle_content<'de, R>(
+        fn handle_content<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::MyChoiceTypeContent>,
             fallback: &mut Option<MyChoiceTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -103,7 +97,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::break_(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -120,23 +114,20 @@ pub mod quick_xml_deserialize {
         }
     }
     impl<'de> Deserializer<'de, super::MyChoiceType> for Box<MyChoiceTypeDeserializer> {
-        fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, super::MyChoiceType>
-        where
-            R: DeserializeReader,
-        {
-            reader.init_deserializer_from_start_event(
+        fn init(
+            helper: &mut DeserializeHelper,
+            event: Event<'de>,
+        ) -> DeserializerResult<'de, super::MyChoiceType> {
+            helper.init_deserializer_from_start_event(
                 event,
                 MyChoiceTypeDeserializer::from_bytes_start,
             )
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::MyChoiceType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::MyChoiceType> {
             use MyChoiceTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -145,8 +136,8 @@ pub mod quick_xml_deserialize {
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
                     (S::Content__(deserializer), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_content(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
@@ -155,7 +146,7 @@ pub mod quick_xml_deserialize {
                     }
                     (_, Event::End(_)) => {
                         return Ok(DeserializerOutput {
-                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            artifact: DeserializerArtifact::Data(self.finish(helper)?),
                             event: DeserializerEvent::None,
                             allow_any: false,
                         });
@@ -164,9 +155,9 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(state);
                         let output =
                             <super::MyChoiceTypeContent as WithDeserializer>::Deserializer::init(
-                                reader, event,
+                                helper, event,
                             )?;
-                        match self.handle_content(reader, output, &mut fallback)? {
+                        match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
@@ -182,12 +173,9 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::MyChoiceType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(mut self, helper: &mut DeserializeHelper) -> Result<super::MyChoiceType, Error> {
             let state = replace(&mut *self.state__, MyChoiceTypeDeserializerState::Unknown__);
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::MyChoiceType {
                 content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
             })
@@ -208,54 +196,51 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl MyChoiceTypeContentDeserializer {
-        fn find_suitable<'de, R>(
+        fn find_suitable<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
             fallback: &mut Option<MyChoiceTypeContentDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if matches!(
-                    reader.resolve_local_name(x.name(), &super::NS_TNS),
+                    helper.resolve_local_name(x.name(), &super::NS_TNS),
                     Some(b"Once")
                 ) {
-                    let output = <i32 as WithDeserializer>::Deserializer::init(reader, event)?;
-                    return self.handle_once(reader, Default::default(), output, &mut *fallback);
+                    let output = <i32 as WithDeserializer>::Deserializer::init(helper, event)?;
+                    return self.handle_once(helper, Default::default(), output, &mut *fallback);
                 }
                 if matches!(
-                    reader.resolve_local_name(x.name(), &super::NS_TNS),
+                    helper.resolve_local_name(x.name(), &super::NS_TNS),
                     Some(b"Optional")
                 ) {
-                    let output = <i32 as WithDeserializer>::Deserializer::init(reader, event)?;
+                    let output = <i32 as WithDeserializer>::Deserializer::init(helper, event)?;
                     return self.handle_optional(
-                        reader,
+                        helper,
                         Default::default(),
                         output,
                         &mut *fallback,
                     );
                 }
                 if matches!(
-                    reader.resolve_local_name(x.name(), &super::NS_TNS),
+                    helper.resolve_local_name(x.name(), &super::NS_TNS),
                     Some(b"OnceSpecify")
                 ) {
-                    let output = <i32 as WithDeserializer>::Deserializer::init(reader, event)?;
+                    let output = <i32 as WithDeserializer>::Deserializer::init(helper, event)?;
                     return self.handle_once_specify(
-                        reader,
+                        helper,
                         Default::default(),
                         output,
                         &mut *fallback,
                     );
                 }
                 if matches!(
-                    reader.resolve_local_name(x.name(), &super::NS_TNS),
+                    helper.resolve_local_name(x.name(), &super::NS_TNS),
                     Some(b"TwiceOrMore")
                 ) {
-                    let output = <i32 as WithDeserializer>::Deserializer::init(reader, event)?;
+                    let output = <i32 as WithDeserializer>::Deserializer::init(helper, event)?;
                     return self.handle_twice_or_more(
-                        reader,
+                        helper,
                         Default::default(),
                         output,
                         &mut *fallback,
@@ -267,20 +252,17 @@ pub mod quick_xml_deserialize {
                 .unwrap_or(MyChoiceTypeContentDeserializerState::Init__);
             Ok(ElementHandlerOutput::return_to_parent(event, false))
         }
-        fn finish_state<R>(
-            reader: &R,
+        fn finish_state(
+            helper: &mut DeserializeHelper,
             state: MyChoiceTypeContentDeserializerState,
-        ) -> Result<super::MyChoiceTypeContent, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<super::MyChoiceTypeContent, Error> {
             use MyChoiceTypeContentDeserializerState as S;
             match state {
                 S::Unknown__ => unreachable!(),
                 S::Init__ => Err(ErrorKind::MissingContent.into()),
                 S::Once(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
-                        let value = deserializer.finish(reader)?;
+                        let value = deserializer.finish(helper)?;
                         MyChoiceTypeContentDeserializer::store_once(&mut values, value)?;
                     }
                     Ok(super::MyChoiceTypeContent::Once(
@@ -289,14 +271,14 @@ pub mod quick_xml_deserialize {
                 }
                 S::Optional(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
-                        let value = deserializer.finish(reader)?;
+                        let value = deserializer.finish(helper)?;
                         MyChoiceTypeContentDeserializer::store_optional(&mut values, value)?;
                     }
                     Ok(super::MyChoiceTypeContent::Optional(values))
                 }
                 S::OnceSpecify(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
-                        let value = deserializer.finish(reader)?;
+                        let value = deserializer.finish(helper)?;
                         MyChoiceTypeContentDeserializer::store_once_specify(&mut values, value)?;
                     }
                     Ok(super::MyChoiceTypeContent::OnceSpecify(values.ok_or_else(
@@ -305,7 +287,7 @@ pub mod quick_xml_deserialize {
                 }
                 S::TwiceOrMore(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
-                        let value = deserializer.finish(reader)?;
+                        let value = deserializer.finish(helper)?;
                         MyChoiceTypeContentDeserializer::store_twice_or_more(&mut values, value)?;
                     }
                     Ok(super::MyChoiceTypeContent::TwiceOrMore(values))
@@ -342,16 +324,13 @@ pub mod quick_xml_deserialize {
             values.push(value);
             Ok(())
         }
-        fn handle_once<'de, R>(
+        fn handle_once<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             mut values: Option<i32>,
             output: DeserializerOutput<'de, i32>,
             fallback: &mut Option<MyChoiceTypeContentDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -374,7 +353,7 @@ pub mod quick_xml_deserialize {
             match fallback.take() {
                 None => (),
                 Some(MyChoiceTypeContentDeserializerState::Once(_, Some(deserializer))) => {
-                    let data = deserializer.finish(reader)?;
+                    let data = deserializer.finish(helper)?;
                     MyChoiceTypeContentDeserializer::store_once(&mut values, data)?;
                 }
                 Some(_) => unreachable!(),
@@ -384,7 +363,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::Data(data) => {
                     MyChoiceTypeContentDeserializer::store_once(&mut values, data)?;
                     let data = MyChoiceTypeContentDeserializer::finish_state(
-                        reader,
+                        helper,
                         MyChoiceTypeContentDeserializerState::Once(values, None),
                     )?;
                     *self.state__ = MyChoiceTypeContentDeserializerState::Done__(data);
@@ -397,16 +376,13 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_optional<'de, R>(
+        fn handle_optional<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             mut values: Option<i32>,
             output: DeserializerOutput<'de, i32>,
             fallback: &mut Option<MyChoiceTypeContentDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -425,7 +401,7 @@ pub mod quick_xml_deserialize {
             match fallback.take() {
                 None => (),
                 Some(MyChoiceTypeContentDeserializerState::Optional(_, Some(deserializer))) => {
-                    let data = deserializer.finish(reader)?;
+                    let data = deserializer.finish(helper)?;
                     MyChoiceTypeContentDeserializer::store_optional(&mut values, data)?;
                 }
                 Some(_) => unreachable!(),
@@ -435,7 +411,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::Data(data) => {
                     MyChoiceTypeContentDeserializer::store_optional(&mut values, data)?;
                     let data = MyChoiceTypeContentDeserializer::finish_state(
-                        reader,
+                        helper,
                         MyChoiceTypeContentDeserializerState::Optional(values, None),
                     )?;
                     *self.state__ = MyChoiceTypeContentDeserializerState::Done__(data);
@@ -448,16 +424,13 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_once_specify<'de, R>(
+        fn handle_once_specify<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             mut values: Option<i32>,
             output: DeserializerOutput<'de, i32>,
             fallback: &mut Option<MyChoiceTypeContentDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -484,7 +457,7 @@ pub mod quick_xml_deserialize {
             match fallback.take() {
                 None => (),
                 Some(MyChoiceTypeContentDeserializerState::OnceSpecify(_, Some(deserializer))) => {
-                    let data = deserializer.finish(reader)?;
+                    let data = deserializer.finish(helper)?;
                     MyChoiceTypeContentDeserializer::store_once_specify(&mut values, data)?;
                 }
                 Some(_) => unreachable!(),
@@ -494,7 +467,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::Data(data) => {
                     MyChoiceTypeContentDeserializer::store_once_specify(&mut values, data)?;
                     let data = MyChoiceTypeContentDeserializer::finish_state(
-                        reader,
+                        helper,
                         MyChoiceTypeContentDeserializerState::OnceSpecify(values, None),
                     )?;
                     *self.state__ = MyChoiceTypeContentDeserializerState::Done__(data);
@@ -509,16 +482,13 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_twice_or_more<'de, R>(
+        fn handle_twice_or_more<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             mut values: Vec<i32>,
             output: DeserializerOutput<'de, i32>,
             fallback: &mut Option<MyChoiceTypeContentDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -545,7 +515,7 @@ pub mod quick_xml_deserialize {
             match fallback.take() {
                 None => (),
                 Some(MyChoiceTypeContentDeserializerState::TwiceOrMore(_, Some(deserializer))) => {
-                    let data = deserializer.finish(reader)?;
+                    let data = deserializer.finish(helper)?;
                     MyChoiceTypeContentDeserializer::store_twice_or_more(&mut values, data)?;
                 }
                 Some(_) => unreachable!(),
@@ -583,17 +553,14 @@ pub mod quick_xml_deserialize {
         }
     }
     impl<'de> Deserializer<'de, super::MyChoiceTypeContent> for Box<MyChoiceTypeContentDeserializer> {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::MyChoiceTypeContent>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::MyChoiceTypeContent> {
             let deserializer = Box::new(MyChoiceTypeContentDeserializer {
                 state__: Box::new(MyChoiceTypeContentDeserializerState::Init__),
             });
-            let mut output = deserializer.next(reader, event)?;
+            let mut output = deserializer.next(helper, event)?;
             output.artifact = match output.artifact {
                 DeserializerArtifact::Deserializer(x)
                     if matches!(&*x.state__, MyChoiceTypeContentDeserializerState::Init__) =>
@@ -604,14 +571,11 @@ pub mod quick_xml_deserialize {
             };
             Ok(output)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::MyChoiceTypeContent>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::MyChoiceTypeContent> {
             use MyChoiceTypeContentDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -620,8 +584,8 @@ pub mod quick_xml_deserialize {
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
                     (S::Once(values, Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_once(reader, values, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_once(helper, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
@@ -629,8 +593,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Optional(values, Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_optional(reader, values, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_optional(helper, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
@@ -638,8 +602,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::OnceSpecify(values, Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_once_specify(reader, values, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_once_specify(helper, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
@@ -647,8 +611,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::TwiceOrMore(values, Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_twice_or_more(reader, values, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_twice_or_more(helper, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
@@ -658,26 +622,26 @@ pub mod quick_xml_deserialize {
                     (state, event @ Event::End(_)) => {
                         return Ok(DeserializerOutput {
                             artifact: DeserializerArtifact::Data(
-                                MyChoiceTypeContentDeserializer::finish_state(reader, state)?,
+                                MyChoiceTypeContentDeserializer::finish_state(helper, state)?,
                             ),
                             event: DeserializerEvent::Continue(event),
                             allow_any: false,
                         });
                     }
-                    (S::Init__, event) => match self.find_suitable(reader, event, &mut fallback)? {
+                    (S::Init__, event) => match self.find_suitable(helper, event, &mut fallback)? {
                         ElementHandlerOutput::Break { event, allow_any } => {
                             break (event, allow_any)
                         }
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
                     (S::Once(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_TNS),
                             b"Once",
                             false,
                         )?;
-                        match self.handle_once(reader, values, output, &mut fallback)? {
+                        match self.handle_once(helper, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
@@ -685,13 +649,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Optional(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_TNS),
                             b"Optional",
                             false,
                         )?;
-                        match self.handle_optional(reader, values, output, &mut fallback)? {
+                        match self.handle_optional(helper, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
@@ -699,13 +663,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::OnceSpecify(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_TNS),
                             b"OnceSpecify",
                             false,
                         )?;
-                        match self.handle_once_specify(reader, values, output, &mut fallback)? {
+                        match self.handle_once_specify(helper, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
@@ -713,13 +677,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::TwiceOrMore(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_TNS),
                             b"TwiceOrMore",
                             false,
                         )?;
-                        match self.handle_twice_or_more(reader, values, output, &mut fallback)? {
+                        match self.handle_twice_or_more(helper, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
@@ -737,7 +701,7 @@ pub mod quick_xml_deserialize {
                 }
             };
             let artifact = if matches!(&*self.state__, S::Done__(_)) {
-                DeserializerArtifact::Data(self.finish(reader)?)
+                DeserializerArtifact::Data(self.finish(helper)?)
             } else {
                 DeserializerArtifact::Deserializer(self)
             };
@@ -747,11 +711,11 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(self, reader: &R) -> Result<super::MyChoiceTypeContent, Error>
-        where
-            R: DeserializeReader,
-        {
-            MyChoiceTypeContentDeserializer::finish_state(reader, *self.state__)
+        fn finish(
+            self,
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::MyChoiceTypeContent, Error> {
+            MyChoiceTypeContentDeserializer::finish_state(helper, *self.state__)
         }
     }
     #[derive(Debug)]
@@ -773,13 +737,13 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl MySequenceTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Box<Self>, Error>
-        where
-            R: DeserializeReader,
-        {
-            for attrib in filter_xmlns_attributes(bytes_start) {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Box<Self>, Error> {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib_checked(attrib)?;
+                helper.raise_unexpected_attrib_checked(&attrib)?;
             }
             Ok(Box::new(Self {
                 once: None,
@@ -789,25 +753,22 @@ pub mod quick_xml_deserialize {
                 state__: Box::new(MySequenceTypeDeserializerState::Init__),
             }))
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: MySequenceTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             use MySequenceTypeDeserializerState as S;
             match state {
-                S::Once(Some(deserializer)) => self.store_once(deserializer.finish(reader)?)?,
+                S::Once(Some(deserializer)) => self.store_once(deserializer.finish(helper)?)?,
                 S::Optional(Some(deserializer)) => {
-                    self.store_optional(deserializer.finish(reader)?)?
+                    self.store_optional(deserializer.finish(helper)?)?
                 }
                 S::OnceSpecify(Some(deserializer)) => {
-                    self.store_once_specify(deserializer.finish(reader)?)?
+                    self.store_once_specify(deserializer.finish(helper)?)?
                 }
                 S::TwiceOrMore(Some(deserializer)) => {
-                    self.store_twice_or_more(deserializer.finish(reader)?)?
+                    self.store_twice_or_more(deserializer.finish(helper)?)?
                 }
                 _ => (),
             }
@@ -842,15 +803,12 @@ pub mod quick_xml_deserialize {
             self.twice_or_more.push(value);
             Ok(())
         }
-        fn handle_once<'de, R>(
+        fn handle_once<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, i32>,
             fallback: &mut Option<MySequenceTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -867,7 +825,7 @@ pub mod quick_xml_deserialize {
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -894,15 +852,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_optional<'de, R>(
+        fn handle_optional<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, i32>,
             fallback: &mut Option<MySequenceTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -914,7 +869,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -941,15 +896,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_once_specify<'de, R>(
+        fn handle_once_specify<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, i32>,
             fallback: &mut Option<MySequenceTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -966,7 +918,7 @@ pub mod quick_xml_deserialize {
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -993,15 +945,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_twice_or_more<'de, R>(
+        fn handle_twice_or_more<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, i32>,
             fallback: &mut Option<MySequenceTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -1018,7 +967,7 @@ pub mod quick_xml_deserialize {
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -1047,23 +996,20 @@ pub mod quick_xml_deserialize {
         }
     }
     impl<'de> Deserializer<'de, super::MySequenceType> for Box<MySequenceTypeDeserializer> {
-        fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, super::MySequenceType>
-        where
-            R: DeserializeReader,
-        {
-            reader.init_deserializer_from_start_event(
+        fn init(
+            helper: &mut DeserializeHelper,
+            event: Event<'de>,
+        ) -> DeserializerResult<'de, super::MySequenceType> {
+            helper.init_deserializer_from_start_event(
                 event,
                 MySequenceTypeDeserializer::from_bytes_start,
             )
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::MySequenceType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::MySequenceType> {
             use MySequenceTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -1073,8 +1019,8 @@ pub mod quick_xml_deserialize {
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
                     (S::Once(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_once(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_once(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -1085,8 +1031,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Optional(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_optional(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_optional(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -1097,8 +1043,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::OnceSpecify(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_once_specify(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_once_specify(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -1109,8 +1055,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::TwiceOrMore(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_twice_or_more(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_twice_or_more(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -1122,10 +1068,10 @@ pub mod quick_xml_deserialize {
                     }
                     (_, Event::End(_)) => {
                         if let Some(fallback) = fallback.take() {
-                            self.finish_state(reader, fallback)?;
+                            self.finish_state(helper, fallback)?;
                         }
                         return Ok(DeserializerOutput {
-                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            artifact: DeserializerArtifact::Data(self.finish(helper)?),
                             event: DeserializerEvent::None,
                             allow_any: false,
                         });
@@ -1136,13 +1082,13 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::Once(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_TNS),
                             b"Once",
                             false,
                         )?;
-                        match self.handle_once(reader, output, &mut fallback)? {
+                        match self.handle_once(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -1153,13 +1099,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Optional(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_TNS),
                             b"Optional",
                             false,
                         )?;
-                        match self.handle_optional(reader, output, &mut fallback)? {
+                        match self.handle_optional(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -1170,13 +1116,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::OnceSpecify(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_TNS),
                             b"OnceSpecify",
                             false,
                         )?;
-                        match self.handle_once_specify(reader, output, &mut fallback)? {
+                        match self.handle_once_specify(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -1187,13 +1133,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::TwiceOrMore(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_TNS),
                             b"TwiceOrMore",
                             false,
                         )?;
-                        match self.handle_twice_or_more(reader, output, &mut fallback)? {
+                        match self.handle_twice_or_more(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -1222,15 +1168,15 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::MySequenceType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(
+            mut self,
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::MySequenceType, Error> {
             let state = replace(
                 &mut *self.state__,
                 MySequenceTypeDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::MySequenceType {
                 once: self
                     .once

@@ -2,15 +2,18 @@ use core::{ops::Deref, str::from_utf8};
 use regex::Regex;
 use std::{borrow::Cow, sync::LazyLock};
 use xsd_parser_types::{
-    misc::Namespace,
+    misc::{Namespace, NamespacePrefix},
     quick_xml::{
-        fraction_digits, whitespace_collapse, DeserializeBytes, DeserializeReader, Error,
-        SerializeBytes, ValidateError, WithDeserializer, WithSerializer,
+        fraction_digits, whitespace_collapse, DeserializeBytes, DeserializeHelper, Error,
+        SerializeBytes, SerializeHelper, ValidateError, WithDeserializer, WithSerializer,
     },
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
 pub const NS_TNS: Namespace = Namespace::new_const(b"http://example.com");
+pub const PREFIX_XS: NamespacePrefix = NamespacePrefix::new_const(b"xs");
+pub const PREFIX_XML: NamespacePrefix = NamespacePrefix::new_const(b"xml");
+pub const PREFIX_TNS: NamespacePrefix = NamespacePrefix::new_const(b"tns");
 pub type Root = RootType;
 #[derive(Debug)]
 pub struct RootType {
@@ -101,19 +104,16 @@ impl Deref for NegativeDecimalType {
     }
 }
 impl SerializeBytes for NegativeDecimalType {
-    fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+    fn serialize_bytes(&self, helper: &mut SerializeHelper) -> Result<Option<Cow<'_, str>>, Error> {
         let Self(inner) = self;
         Ok(Some(Cow::Owned(format!("{inner:.02}"))))
     }
 }
 impl DeserializeBytes for NegativeDecimalType {
-    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
-    where
-        R: DeserializeReader,
-    {
+    fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         let s = from_utf8(bytes).map_err(Error::from)?;
         Self::validate_str(s).map_err(|error| (bytes, error))?;
-        let inner = f64::deserialize_str(reader, s)?;
+        let inner = f64::deserialize_str(helper, s)?;
         Ok(Self::new(inner).map_err(|error| (bytes, error))?)
     }
 }
@@ -160,19 +160,16 @@ impl Deref for PositiveDecimalType {
     }
 }
 impl SerializeBytes for PositiveDecimalType {
-    fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+    fn serialize_bytes(&self, helper: &mut SerializeHelper) -> Result<Option<Cow<'_, str>>, Error> {
         let Self(inner) = self;
         Ok(Some(Cow::Owned(format!("{inner:.02}"))))
     }
 }
 impl DeserializeBytes for PositiveDecimalType {
-    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
-    where
-        R: DeserializeReader,
-    {
+    fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         let s = from_utf8(bytes).map_err(Error::from)?;
         Self::validate_str(s).map_err(|error| (bytes, error))?;
-        let inner = f64::deserialize_str(reader, s)?;
+        let inner = f64::deserialize_str(helper, s)?;
         Ok(Self::new(inner).map_err(|error| (bytes, error))?)
     }
 }
@@ -225,29 +222,26 @@ impl Deref for RestrictedStringType {
     }
 }
 impl SerializeBytes for RestrictedStringType {
-    fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
-        self.0.serialize_bytes()
+    fn serialize_bytes(&self, helper: &mut SerializeHelper) -> Result<Option<Cow<'_, str>>, Error> {
+        self.0.serialize_bytes(helper)
     }
 }
 impl DeserializeBytes for RestrictedStringType {
-    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
-    where
-        R: DeserializeReader,
-    {
+    fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         let s = from_utf8(bytes).map_err(Error::from)?;
         let buffer = whitespace_collapse(s);
         let s = buffer.trim();
         Self::validate_str(s).map_err(|error| (bytes, error))?;
-        let inner = String::deserialize_str(reader, s)?;
+        let inner = String::deserialize_str(helper, s)?;
         Ok(Self::new(inner).map_err(|error| (bytes, error))?)
     }
 }
 pub mod quick_xml_deserialize {
     use core::mem::replace;
     use xsd_parser_types::quick_xml::{
-        filter_xmlns_attributes, BytesStart, DeserializeReader, Deserializer, DeserializerArtifact,
-        DeserializerEvent, DeserializerOutput, DeserializerResult, ElementHandlerOutput, Error,
-        ErrorKind, Event, RawByteStr, WithDeserializer,
+        BytesStart, DeserializeHelper, Deserializer, DeserializerArtifact, DeserializerEvent,
+        DeserializerOutput, DeserializerResult, ElementHandlerOutput, Error, ErrorKind, Event,
+        RawByteStr, WithDeserializer,
     };
     #[derive(Debug)]
     pub struct RootTypeDeserializer {
@@ -262,29 +256,26 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl RootTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
-            for attrib in filter_xmlns_attributes(bytes_start) {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib_checked(attrib)?;
+                helper.raise_unexpected_attrib_checked(&attrib)?;
             }
             Ok(Self {
                 content: Vec::new(),
                 state__: Box::new(RootTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: RootTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             if let RootTypeDeserializerState::Content__(deserializer) = state {
-                self.store_content(deserializer.finish(reader)?)?;
+                self.store_content(deserializer.finish(helper)?)?;
             }
             Ok(())
         }
@@ -292,15 +283,12 @@ pub mod quick_xml_deserialize {
             self.content.push(value);
             Ok(())
         }
-        fn handle_content<'de, R>(
+        fn handle_content<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::RootTypeContent>,
             fallback: &mut Option<RootTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -311,7 +299,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::break_(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -338,20 +326,17 @@ pub mod quick_xml_deserialize {
         }
     }
     impl<'de> Deserializer<'de, super::RootType> for RootTypeDeserializer {
-        fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, super::RootType>
-        where
-            R: DeserializeReader,
-        {
-            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
-        }
-        fn next<R>(
-            mut self,
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::RootType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::RootType> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        }
+        fn next(
+            mut self,
+            helper: &mut DeserializeHelper,
+            event: Event<'de>,
+        ) -> DeserializerResult<'de, super::RootType> {
             use RootTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -360,8 +345,8 @@ pub mod quick_xml_deserialize {
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
                     (S::Content__(deserializer), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_content(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
@@ -370,7 +355,7 @@ pub mod quick_xml_deserialize {
                     }
                     (_, Event::End(_)) => {
                         return Ok(DeserializerOutput {
-                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            artifact: DeserializerArtifact::Data(self.finish(helper)?),
                             event: DeserializerEvent::None,
                             allow_any: false,
                         });
@@ -379,9 +364,9 @@ pub mod quick_xml_deserialize {
                         fallback.get_or_insert(state);
                         let output =
                             <super::RootTypeContent as WithDeserializer>::Deserializer::init(
-                                reader, event,
+                                helper, event,
                             )?;
-                        match self.handle_content(reader, output, &mut fallback)? {
+                        match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
@@ -397,12 +382,9 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::RootType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(mut self, helper: &mut DeserializeHelper) -> Result<super::RootType, Error> {
             let state = replace(&mut *self.state__, RootTypeDeserializerState::Unknown__);
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::RootType {
                 content: self.content,
             })
@@ -431,56 +413,53 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl RootTypeContentDeserializer {
-        fn find_suitable<'de, R>(
+        fn find_suitable<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
             fallback: &mut Option<RootTypeContentDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if matches!(
-                    reader.resolve_local_name(x.name(), &super::NS_TNS),
+                    helper.resolve_local_name(x.name(), &super::NS_TNS),
                     Some(b"NegativeDecimal")
                 ) {
                     let output =
                         <super::NegativeDecimalType as WithDeserializer>::Deserializer::init(
-                            reader, event,
+                            helper, event,
                         )?;
                     return self.handle_negative_decimal(
-                        reader,
+                        helper,
                         Default::default(),
                         output,
                         &mut *fallback,
                     );
                 }
                 if matches!(
-                    reader.resolve_local_name(x.name(), &super::NS_TNS),
+                    helper.resolve_local_name(x.name(), &super::NS_TNS),
                     Some(b"PositiveDecimal")
                 ) {
                     let output =
                         <super::PositiveDecimalType as WithDeserializer>::Deserializer::init(
-                            reader, event,
+                            helper, event,
                         )?;
                     return self.handle_positive_decimal(
-                        reader,
+                        helper,
                         Default::default(),
                         output,
                         &mut *fallback,
                     );
                 }
                 if matches!(
-                    reader.resolve_local_name(x.name(), &super::NS_TNS),
+                    helper.resolve_local_name(x.name(), &super::NS_TNS),
                     Some(b"RestrictedString")
                 ) {
                     let output =
                         <super::RestrictedStringType as WithDeserializer>::Deserializer::init(
-                            reader, event,
+                            helper, event,
                         )?;
                     return self.handle_restricted_string(
-                        reader,
+                        helper,
                         Default::default(),
                         output,
                         &mut *fallback,
@@ -492,20 +471,17 @@ pub mod quick_xml_deserialize {
                 .unwrap_or(RootTypeContentDeserializerState::Init__);
             Ok(ElementHandlerOutput::return_to_parent(event, false))
         }
-        fn finish_state<R>(
-            reader: &R,
+        fn finish_state(
+            helper: &mut DeserializeHelper,
             state: RootTypeContentDeserializerState,
-        ) -> Result<super::RootTypeContent, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<super::RootTypeContent, Error> {
             use RootTypeContentDeserializerState as S;
             match state {
                 S::Unknown__ => unreachable!(),
                 S::Init__ => Err(ErrorKind::MissingContent.into()),
                 S::NegativeDecimal(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
-                        let value = deserializer.finish(reader)?;
+                        let value = deserializer.finish(helper)?;
                         Self::store_negative_decimal(&mut values, value)?;
                     }
                     Ok(super::RootTypeContent::NegativeDecimal(values.ok_or_else(
@@ -514,7 +490,7 @@ pub mod quick_xml_deserialize {
                 }
                 S::PositiveDecimal(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
-                        let value = deserializer.finish(reader)?;
+                        let value = deserializer.finish(helper)?;
                         Self::store_positive_decimal(&mut values, value)?;
                     }
                     Ok(super::RootTypeContent::PositiveDecimal(values.ok_or_else(
@@ -523,7 +499,7 @@ pub mod quick_xml_deserialize {
                 }
                 S::RestrictedString(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
-                        let value = deserializer.finish(reader)?;
+                        let value = deserializer.finish(helper)?;
                         Self::store_restricted_string(&mut values, value)?;
                     }
                     Ok(super::RootTypeContent::RestrictedString(
@@ -570,16 +546,13 @@ pub mod quick_xml_deserialize {
             *values = Some(value);
             Ok(())
         }
-        fn handle_negative_decimal<'de, R>(
+        fn handle_negative_decimal<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             mut values: Option<super::NegativeDecimalType>,
             output: DeserializerOutput<'de, super::NegativeDecimalType>,
             fallback: &mut Option<RootTypeContentDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -606,7 +579,7 @@ pub mod quick_xml_deserialize {
             match fallback.take() {
                 None => (),
                 Some(RootTypeContentDeserializerState::NegativeDecimal(_, Some(deserializer))) => {
-                    let data = deserializer.finish(reader)?;
+                    let data = deserializer.finish(helper)?;
                     Self::store_negative_decimal(&mut values, data)?;
                 }
                 Some(_) => unreachable!(),
@@ -616,7 +589,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::Data(data) => {
                     Self::store_negative_decimal(&mut values, data)?;
                     let data = Self::finish_state(
-                        reader,
+                        helper,
                         RootTypeContentDeserializerState::NegativeDecimal(values, None),
                     )?;
                     *self.state__ = RootTypeContentDeserializerState::Done__(data);
@@ -631,16 +604,13 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_positive_decimal<'de, R>(
+        fn handle_positive_decimal<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             mut values: Option<super::PositiveDecimalType>,
             output: DeserializerOutput<'de, super::PositiveDecimalType>,
             fallback: &mut Option<RootTypeContentDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -667,7 +637,7 @@ pub mod quick_xml_deserialize {
             match fallback.take() {
                 None => (),
                 Some(RootTypeContentDeserializerState::PositiveDecimal(_, Some(deserializer))) => {
-                    let data = deserializer.finish(reader)?;
+                    let data = deserializer.finish(helper)?;
                     Self::store_positive_decimal(&mut values, data)?;
                 }
                 Some(_) => unreachable!(),
@@ -677,7 +647,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::Data(data) => {
                     Self::store_positive_decimal(&mut values, data)?;
                     let data = Self::finish_state(
-                        reader,
+                        helper,
                         RootTypeContentDeserializerState::PositiveDecimal(values, None),
                     )?;
                     *self.state__ = RootTypeContentDeserializerState::Done__(data);
@@ -692,16 +662,13 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_restricted_string<'de, R>(
+        fn handle_restricted_string<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             mut values: Option<super::RestrictedStringType>,
             output: DeserializerOutput<'de, super::RestrictedStringType>,
             fallback: &mut Option<RootTypeContentDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -728,7 +695,7 @@ pub mod quick_xml_deserialize {
             match fallback.take() {
                 None => (),
                 Some(RootTypeContentDeserializerState::RestrictedString(_, Some(deserializer))) => {
-                    let data = deserializer.finish(reader)?;
+                    let data = deserializer.finish(helper)?;
                     Self::store_restricted_string(&mut values, data)?;
                 }
                 Some(_) => unreachable!(),
@@ -738,7 +705,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::Data(data) => {
                     Self::store_restricted_string(&mut values, data)?;
                     let data = Self::finish_state(
-                        reader,
+                        helper,
                         RootTypeContentDeserializerState::RestrictedString(values, None),
                     )?;
                     *self.state__ = RootTypeContentDeserializerState::Done__(data);
@@ -755,14 +722,14 @@ pub mod quick_xml_deserialize {
         }
     }
     impl<'de> Deserializer<'de, super::RootTypeContent> for RootTypeContentDeserializer {
-        fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, super::RootTypeContent>
-        where
-            R: DeserializeReader,
-        {
+        fn init(
+            helper: &mut DeserializeHelper,
+            event: Event<'de>,
+        ) -> DeserializerResult<'de, super::RootTypeContent> {
             let deserializer = Self {
                 state__: Box::new(RootTypeContentDeserializerState::Init__),
             };
-            let mut output = deserializer.next(reader, event)?;
+            let mut output = deserializer.next(helper, event)?;
             output.artifact = match output.artifact {
                 DeserializerArtifact::Deserializer(x)
                     if matches!(&*x.state__, RootTypeContentDeserializerState::Init__) =>
@@ -773,14 +740,11 @@ pub mod quick_xml_deserialize {
             };
             Ok(output)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::RootTypeContent>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::RootTypeContent> {
             use RootTypeContentDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -789,8 +753,8 @@ pub mod quick_xml_deserialize {
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
                     (S::NegativeDecimal(values, Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_negative_decimal(reader, values, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_negative_decimal(helper, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
@@ -798,8 +762,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::PositiveDecimal(values, Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_positive_decimal(reader, values, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_positive_decimal(helper, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
@@ -807,9 +771,9 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::RestrictedString(values, Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
+                        let output = deserializer.next(helper, event)?;
                         match self.handle_restricted_string(
-                            reader,
+                            helper,
                             values,
                             output,
                             &mut fallback,
@@ -823,13 +787,13 @@ pub mod quick_xml_deserialize {
                     (state, event @ Event::End(_)) => {
                         return Ok(DeserializerOutput {
                             artifact: DeserializerArtifact::Data(Self::finish_state(
-                                reader, state,
+                                helper, state,
                             )?),
                             event: DeserializerEvent::Continue(event),
                             allow_any: false,
                         });
                     }
-                    (S::Init__, event) => match self.find_suitable(reader, event, &mut fallback)? {
+                    (S::Init__, event) => match self.find_suitable(helper, event, &mut fallback)? {
                         ElementHandlerOutput::Break { event, allow_any } => {
                             break (event, allow_any)
                         }
@@ -839,13 +803,13 @@ pub mod quick_xml_deserialize {
                         S::NegativeDecimal(values, None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_TNS),
                             b"NegativeDecimal",
                             false,
                         )?;
-                        match self.handle_negative_decimal(reader, values, output, &mut fallback)? {
+                        match self.handle_negative_decimal(helper, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
@@ -856,13 +820,13 @@ pub mod quick_xml_deserialize {
                         S::PositiveDecimal(values, None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_TNS),
                             b"PositiveDecimal",
                             false,
                         )?;
-                        match self.handle_positive_decimal(reader, values, output, &mut fallback)? {
+                        match self.handle_positive_decimal(helper, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
@@ -873,14 +837,14 @@ pub mod quick_xml_deserialize {
                         S::RestrictedString(values, None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_TNS),
                             b"RestrictedString",
                             false,
                         )?;
                         match self.handle_restricted_string(
-                            reader,
+                            helper,
                             values,
                             output,
                             &mut fallback,
@@ -902,7 +866,7 @@ pub mod quick_xml_deserialize {
                 }
             };
             let artifact = if matches!(&*self.state__, S::Done__(_)) {
-                DeserializerArtifact::Data(self.finish(reader)?)
+                DeserializerArtifact::Data(self.finish(helper)?)
             } else {
                 DeserializerArtifact::Deserializer(self)
             };
@@ -912,17 +876,15 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(self, reader: &R) -> Result<super::RootTypeContent, Error>
-        where
-            R: DeserializeReader,
-        {
-            Self::finish_state(reader, *self.state__)
+        fn finish(self, helper: &mut DeserializeHelper) -> Result<super::RootTypeContent, Error> {
+            Self::finish_state(helper, *self.state__)
         }
     }
 }
 pub mod quick_xml_serialize {
     use xsd_parser_types::quick_xml::{
-        BytesEnd, BytesStart, Error, Event, IterSerializer, WithSerializer,
+        BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
+        WithSerializer,
     };
     #[derive(Debug)]
     pub struct RootTypeSerializer<'ser> {
@@ -940,7 +902,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> RootTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     RootTypeSerializerState::Init__ => {
@@ -949,13 +914,10 @@ pub mod quick_xml_serialize {
                             None,
                             false,
                         ));
-                        let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns:tns"[..], &super::NS_TNS[..]));
-                        }
+                        let bytes = BytesStart::new(self.name);
                         return Ok(Some(Event::Start(bytes)));
                     }
-                    RootTypeSerializerState::Content__(x) => match x.next().transpose()? {
+                    RootTypeSerializerState::Content__(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => *self.state = RootTypeSerializerState::End__,
                     },
@@ -969,10 +931,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for RootTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for RootTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -997,7 +958,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> RootTypeContentSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     RootTypeContentSerializerState::Init__ => match self.value {
@@ -1018,19 +982,19 @@ pub mod quick_xml_serialize {
                         }
                     },
                     RootTypeContentSerializerState::NegativeDecimal(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = RootTypeContentSerializerState::Done__,
                         }
                     }
                     RootTypeContentSerializerState::PositiveDecimal(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = RootTypeContentSerializerState::Done__,
                         }
                     }
                     RootTypeContentSerializerState::RestrictedString(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = RootTypeContentSerializerState::Done__,
                         }
@@ -1041,10 +1005,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for RootTypeContentSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for RootTypeContentSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {

@@ -1,4 +1,4 @@
-<Values xmlns:tns="http://example.com">
+<Values>
     <NegativeDecimal>-1234.56</NegativeDecimal>
     <PositiveDecimal>0.01</PositiveDecimal>
     <RestrictedString>Abcdef</RestrictedString>

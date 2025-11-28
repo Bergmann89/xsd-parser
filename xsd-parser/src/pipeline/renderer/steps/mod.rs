@@ -1,5 +1,6 @@
 mod defaults;
 mod namespace_const;
+mod prefix_const;
 mod quick_xml;
 mod serde;
 mod types;
@@ -22,7 +23,10 @@ use super::Context;
 
 pub use self::defaults::DefaultsRenderStep;
 pub use self::namespace_const::NamespaceConstantsRenderStep;
-pub use self::quick_xml::{QuickXmlDeserializeRenderStep, QuickXmlSerializeRenderStep};
+pub use self::prefix_const::PrefixConstantsRenderStep;
+pub use self::quick_xml::{
+    NamespaceSerialization, QuickXmlDeserializeRenderStep, QuickXmlSerializeRenderStep,
+};
 pub use self::serde::{
     SerdeQuickXmlTypesRenderStep, SerdeXmlRsV7TypesRenderStep, SerdeXmlRsV8TypesRenderStep,
 };

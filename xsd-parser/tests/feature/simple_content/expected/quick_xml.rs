@@ -1,14 +1,17 @@
 use std::borrow::Cow;
 use xsd_parser_types::{
-    misc::Namespace,
+    misc::{Namespace, NamespacePrefix},
     quick_xml::{
-        DeserializeBytes, DeserializeReader, Error, ErrorKind, RawByteStr, SerializeBytes,
-        WithDeserializer, WithSerializer,
+        DeserializeBytes, DeserializeHelper, Error, ErrorKind, RawByteStr, SerializeBytes,
+        SerializeHelper, WithDeserializer, WithSerializer,
     },
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
 pub const NS_TNS: Namespace = Namespace::new_const(b"http://example.com");
+pub const PREFIX_XS: NamespacePrefix = NamespacePrefix::new_const(b"xs");
+pub const PREFIX_XML: NamespacePrefix = NamespacePrefix::new_const(b"xml");
+pub const PREFIX_TNS: NamespacePrefix = NamespacePrefix::new_const(b"tns");
 pub type Foo = FooType;
 #[derive(Debug)]
 pub struct FooType {
@@ -40,7 +43,7 @@ pub enum EnumType {
     Auto,
 }
 impl SerializeBytes for EnumType {
-    fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+    fn serialize_bytes(&self, helper: &mut SerializeHelper) -> Result<Option<Cow<'_, str>>, Error> {
         match self {
             Self::Off => Ok(Some(Cow::Borrowed("OFF"))),
             Self::On => Ok(Some(Cow::Borrowed("ON"))),
@@ -49,24 +52,23 @@ impl SerializeBytes for EnumType {
     }
 }
 impl DeserializeBytes for EnumType {
-    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
-    where
-        R: DeserializeReader,
-    {
+    fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
             b"OFF" => Ok(Self::Off),
             b"ON" => Ok(Self::On),
             b"AUTO" => Ok(Self::Auto),
-            x => Err(reader.map_error(ErrorKind::UnknownOrInvalidValue(RawByteStr::from_slice(x)))),
+            x => Err(Error::from(ErrorKind::UnknownOrInvalidValue(
+                RawByteStr::from_slice(x),
+            ))),
         }
     }
 }
 pub mod quick_xml_deserialize {
     use core::mem::replace;
     use xsd_parser_types::quick_xml::{
-        filter_xmlns_attributes, BytesStart, ContentDeserializer, DeserializeReader, Deserializer,
-        DeserializerArtifact, DeserializerEvent, DeserializerOutput, DeserializerResult, Error,
-        ErrorKind, Event, WithDeserializer,
+        BytesStart, ContentDeserializer, DeserializeHelper, Deserializer, DeserializerArtifact,
+        DeserializerEvent, DeserializerOutput, DeserializerResult, Error, ErrorKind, Event,
+        WithDeserializer,
     };
     #[derive(Debug)]
     pub struct FooTypeDeserializer {
@@ -81,20 +83,20 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl FooTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
             let mut value: Option<String> = None;
-            for attrib in filter_xmlns_attributes(bytes_start) {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    reader.resolve_local_name(attrib.key, &super::NS_TNS),
+                    helper.resolve_local_name(attrib.key, &super::NS_TNS),
                     Some(b"value")
                 ) {
-                    reader.read_attrib(&mut value, b"value", &attrib.value)?;
+                    helper.read_attrib(&mut value, b"value", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib_checked(attrib)?;
+                    helper.raise_unexpected_attrib_checked(&attrib)?;
                 }
             }
             Ok(Self {
@@ -103,16 +105,13 @@ pub mod quick_xml_deserialize {
                 state__: Box::new(FooTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: FooTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             if let FooTypeDeserializerState::Content__(deserializer) = state {
-                self.store_content(deserializer.finish(reader)?)?;
+                self.store_content(deserializer.finish(helper)?)?;
             }
             Ok(())
         }
@@ -123,14 +122,11 @@ pub mod quick_xml_deserialize {
             self.content = Some(value);
             Ok(())
         }
-        fn handle_content<'de, R>(
+        fn handle_content<'de>(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::EnumType>,
-        ) -> DeserializerResult<'de, super::FooType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::FooType> {
             use FooTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
@@ -145,7 +141,7 @@ pub mod quick_xml_deserialize {
                 }),
                 DeserializerArtifact::Data(data) => {
                     self.store_content(data)?;
-                    let data = self.finish(reader)?;
+                    let data = self.finish(helper)?;
                     Ok(DeserializerOutput {
                         artifact: DeserializerArtifact::Data(data),
                         event,
@@ -164,10 +160,10 @@ pub mod quick_xml_deserialize {
         }
     }
     impl<'de> Deserializer<'de, super::FooType> for FooTypeDeserializer {
-        fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, super::FooType>
-        where
-            R: DeserializeReader,
-        {
+        fn init(
+            helper: &mut DeserializeHelper,
+            event: Event<'de>,
+        ) -> DeserializerResult<'de, super::FooType> {
             let (Event::Start(x) | Event::Empty(x)) = &event else {
                 return Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::None,
@@ -175,35 +171,29 @@ pub mod quick_xml_deserialize {
                     allow_any: false,
                 });
             };
-            Self::from_bytes_start(reader, x)?.next(reader, event)
+            Self::from_bytes_start(helper, x)?.next(helper, event)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::FooType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::FooType> {
             use FooTypeDeserializerState as S;
             match replace(&mut *self.state__, S::Unknown__) {
                 S::Unknown__ => unreachable!(),
                 S::Init__ => {
-                    let output = ContentDeserializer::init(reader, event)?;
-                    self.handle_content(reader, output)
+                    let output = ContentDeserializer::init(helper, event)?;
+                    self.handle_content(helper, output)
                 }
                 S::Content__(deserializer) => {
-                    let output = deserializer.next(reader, event)?;
-                    self.handle_content(reader, output)
+                    let output = deserializer.next(helper, event)?;
+                    self.handle_content(helper, output)
                 }
             }
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::FooType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(mut self, helper: &mut DeserializeHelper) -> Result<super::FooType, Error> {
             let state = replace(&mut *self.state__, FooTypeDeserializerState::Unknown__);
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::FooType {
                 value: self.value,
                 content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
@@ -213,7 +203,7 @@ pub mod quick_xml_deserialize {
 }
 pub mod quick_xml_serialize {
     use xsd_parser_types::quick_xml::{
-        write_attrib_opt, BytesEnd, BytesStart, Error, Event, WithSerializer,
+        BytesEnd, BytesStart, Error, Event, SerializeHelper, Serializer, WithSerializer,
     };
     #[derive(Debug)]
     pub struct FooTypeSerializer<'ser> {
@@ -231,7 +221,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> FooTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     FooTypeSerializerState::Init__ => {
@@ -239,18 +232,24 @@ pub mod quick_xml_serialize {
                             WithSerializer::serializer(&self.value.content, None, false)?,
                         );
                         let mut bytes = BytesStart::new(self.name);
+                        helper.begin_ns_scope();
                         if self.is_root {
-                            bytes.push_attribute((&b"xmlns:tns"[..], &super::NS_TNS[..]));
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_TNS),
+                                &super::NS_TNS,
+                            );
                         }
-                        write_attrib_opt(&mut bytes, "value", &self.value.value)?;
+                        helper.write_attrib_opt(&mut bytes, "value", &self.value.value)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
-                    FooTypeSerializerState::Content__(x) => match x.next().transpose()? {
+                    FooTypeSerializerState::Content__(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => *self.state = FooTypeSerializerState::End__,
                     },
                     FooTypeSerializerState::End__ => {
                         *self.state = FooTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     FooTypeSerializerState::Done__ => return Ok(None),
@@ -259,10 +258,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for FooTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for FooTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {

@@ -47,6 +47,20 @@ fn read_quick_xml() {
     assert_eq!(obj.max, 2);
 }
 
+#[tokio::test]
+#[cfg(not(feature = "update-expectations"))]
+async fn read_quick_xml_async() {
+    use quick_xml::Foo;
+
+    let obj = crate::utils::quick_xml_read_test_async::<Foo, _>(
+        "tests/feature/sequence/example/default.xml",
+    )
+    .await;
+
+    assert_eq!(obj.min, 1);
+    assert_eq!(obj.max, 2);
+}
+
 #[test]
 #[cfg(not(feature = "update-expectations"))]
 fn write_quick_xml() {

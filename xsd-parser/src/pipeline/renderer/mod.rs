@@ -41,9 +41,10 @@ pub use self::context::Context;
 pub use self::error::Error;
 pub use self::meta::MetaData;
 pub use self::steps::{
-    DefaultsRenderStep, NamespaceConstantsRenderStep, QuickXmlDeserializeRenderStep,
-    QuickXmlSerializeRenderStep, SerdeQuickXmlTypesRenderStep, SerdeXmlRsV7TypesRenderStep,
-    SerdeXmlRsV8TypesRenderStep, TypesRenderStep, WithNamespaceTraitRenderStep,
+    DefaultsRenderStep, NamespaceConstantsRenderStep, NamespaceSerialization,
+    PrefixConstantsRenderStep, QuickXmlDeserializeRenderStep, QuickXmlSerializeRenderStep,
+    SerdeQuickXmlTypesRenderStep, SerdeXmlRsV7TypesRenderStep, SerdeXmlRsV8TypesRenderStep,
+    TypesRenderStep, WithNamespaceTraitRenderStep,
 };
 
 /// The [`Renderer`] is the central orchestrator for Rust code generation from
@@ -320,19 +321,23 @@ impl RenderStepType {
 
 impl ModuleMeta {
     pub(super) fn make_ns_const(&self) -> PathData {
-        let ident = format_ident!(
-            "NS_{}",
-            self.name
-                .as_ref()
-                .or(self.prefix.as_ref())
-                .map(|name| name.as_str().to_screaming_snake_case())
-                .or_else(|| Some(format!("UNNAMED_{}", self.namespace_id.0)))
-                .unwrap_or_else(|| String::from("DEFAULT"))
+        let name = self.name().map_or_else(
+            || format!("UNNAMED_{}", self.namespace_id.0),
+            |name| name.as_str().to_screaming_snake_case(),
         );
-
+        let ident = format_ident!("NS_{name}");
         let path = IdentPath::from_parts([], ident);
 
         PathData::from_path(path)
+    }
+
+    pub(super) fn make_prefix_const(&self) -> Option<PathData> {
+        let name = self.name()?;
+        let name = name.as_str().to_screaming_snake_case();
+        let ident = format_ident!("PREFIX_{name}");
+        let path = IdentPath::from_parts([], ident);
+
+        Some(PathData::from_path(path))
     }
 }
 

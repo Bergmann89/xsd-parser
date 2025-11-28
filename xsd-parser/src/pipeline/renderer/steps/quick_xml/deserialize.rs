@@ -104,26 +104,24 @@ impl UnionData<'_> {
 
         let error = resolve_ident!(ctx, "xsd_parser_types::quick_xml::Error");
         let error_kind = resolve_ident!(ctx, "xsd_parser_types::quick_xml::ErrorKind");
-        let xml_reader = resolve_ident!(ctx, "xsd_parser_types::quick_xml::XmlReader");
         let deserialize_bytes =
             resolve_ident!(ctx, "xsd_parser_types::quick_xml::DeserializeBytes");
+        let deserialize_helper =
+            resolve_ident!(ctx, "xsd_parser_types::quick_xml::DeserializeHelper");
 
         let code = quote! {
             impl #deserialize_bytes for #type_ident {
-                fn deserialize_bytes<R>(
-                    reader: &R,
+                fn deserialize_bytes(
+                    helper: &mut #deserialize_helper,
                     bytes: &[u8],
-                ) -> #result<Self, #error>
-                where
-                    R: #xml_reader
-                {
+                ) -> #result<Self, #error> {
                     let mut errors = #vec::new();
 
                     #validation
 
                     #( #variants )*
 
-                    Err(reader.map_error(#error_kind::InvalidUnion(errors.into())))
+                    Err(#error::from(#error_kind::InvalidUnion(errors.into())))
                 }
             }
         };
@@ -146,14 +144,14 @@ impl UnionTypeVariant<'_> {
 
         if as_str {
             quote! {
-                match #target_type::deserialize_str(reader, s) {
+                match #target_type::deserialize_str(helper, s) {
                     Ok(value) => return Ok(Self::#variant_ident(value)),
                     Err(error) => errors.push(#box_::new(error)),
                 }
             }
         } else {
             quote! {
-                match #target_type::deserialize_bytes(reader, bytes) {
+                match #target_type::deserialize_bytes(helper, bytes) {
                     Ok(value) => return Ok(Self::#variant_ident(value)),
                     Err(error) => errors.push(#box_::new(error)),
                 }
@@ -242,8 +240,8 @@ impl DynamicData<'_> {
         let error = resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::Error");
         let deserializer =
             resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::Deserializer");
-        let deserialize_reader =
-            resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializeReader");
+        let deserialize_helper =
+            resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializeHelper");
         let deserializer_event =
             resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializerEvent");
         let deserializer_result =
@@ -278,20 +276,17 @@ impl DynamicData<'_> {
             ctx.add_quick_xml_deserialize_usings(true, ["::xsd_parser_types::quick_xml::Deserializer"]);
 
             quote! {
-                #boxed_deserializer_ident::#variant_ident(x) => Ok(super::#type_ident(#box_::new(x.finish(reader)?))),
+                #boxed_deserializer_ident::#variant_ident(x) => Ok(super::#type_ident(#box_::new(x.finish(helper)?))),
             }
         });
 
         let code = quote! {
             impl<'de> #deserializer<'de, super::#type_ident> for #deserializer_type {
-                fn init<R>(
-                    reader: &R,
+                fn init(
+                    helper: &mut #deserialize_helper,
                     event: #event<'de>,
-                ) -> #deserializer_result<'de, super::#type_ident>
-                where
-                    R: #deserialize_reader,
-                {
-                    let Some(type_name) = reader.get_dynamic_type_name(&event)? else {
+                ) -> #deserializer_result<'de, super::#type_ident> {
+                    let Some(type_name) = helper.get_dynamic_type_name(&event)? else {
                         return Ok(#deserializer_output {
                             artifact: #deserializer_artifact::None,
                             event: #deserializer_event::None,
@@ -309,26 +304,20 @@ impl DynamicData<'_> {
                     })
                 }
 
-                fn next<R>(
+                fn next(
                     self,
-                    reader: &R,
+                    helper: &mut #deserialize_helper,
                     event: #event<'de>
-                ) -> #deserializer_result<'de, super::#type_ident>
-                where
-                    R: #deserialize_reader
-                {
+                ) -> #deserializer_result<'de, super::#type_ident> {
                     match #deref_self self {
                         #( #variants_next )*
                     }
                 }
 
-                fn finish<R>(
+                fn finish(
                     self,
-                    reader: &R
-                ) -> #result<super::#type_ident, #error>
-                where
-                    R: #deserialize_reader
-                {
+                    helper: &mut #deserialize_helper
+                ) -> #result<super::#type_ident, #error> {
                     match #deref_self self {
                         #( #variants_finish )*
                     }
@@ -379,7 +368,7 @@ impl DerivedType {
                 artifact,
                 event,
                 allow_any,
-            } = <#target_type as #with_deserializer>::Deserializer::init(reader, event)?;
+            } = <#target_type as #with_deserializer>::Deserializer::init(helper, event)?;
 
             return Ok(#deserializer_output {
                 artifact: artifact.map(
@@ -398,7 +387,7 @@ impl DerivedType {
             let ns_name = ctx.resolve_type_for_deserialize_module(&module.make_ns_const());
 
             quote! {
-                if matches!(reader.resolve_local_name(#qname(&type_name), &#ns_name), Some(#b_name)) {
+                if matches!(helper.resolve_local_name(#qname(&type_name), &#ns_name), Some(#b_name)) {
                     #body
                 }
             }
@@ -438,7 +427,7 @@ impl DerivedType {
                     artifact,
                     event,
                     allow_any,
-                } = x.next(reader, event)?;
+                } = x.next(helper, event)?;
 
                 Ok(#deserializer_output {
                     artifact: artifact.map(
@@ -478,19 +467,19 @@ impl ReferenceData<'_> {
             Occurs::None => return,
             Occurs::Single => {
                 quote! {
-                    Ok(Self(#target_type::deserialize_bytes(reader, bytes)?))
+                    Ok(Self(#target_type::deserialize_bytes(helper, bytes)?))
                 }
             }
             Occurs::Optional => {
                 quote! {
-                    Ok(Self(Some(#target_type::deserialize_bytes(reader, bytes)?)))
+                    Ok(Self(Some(#target_type::deserialize_bytes(helper, bytes)?)))
                 }
             }
             Occurs::DynamicList => {
                 quote! {
                     Ok(Self(bytes
                         .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
-                        .map(|bytes| #target_type::deserialize_bytes(reader, bytes))
+                        .map(|bytes| #target_type::deserialize_bytes(helper, bytes))
                         .collect::<#result<#vec<_>, _>>()?
                     ))
                 }
@@ -498,6 +487,7 @@ impl ReferenceData<'_> {
             Occurs::StaticList(size) => {
                 let option = resolve_build_in!(ctx, "::core::option::Option");
 
+                let error = resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::Error");
                 let error_kind =
                     resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::ErrorKind");
 
@@ -505,12 +495,12 @@ impl ReferenceData<'_> {
                     let arr: [#option<#target_type>; #size];
                     let parts = bytes
                         .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
-                        .map(|bytes| #target_type::deserialize_bytes(reader, bytes));
+                        .map(|bytes| #target_type::deserialize_bytes(helper, bytes));
                     let mut index = 0;
 
                     for part in parts {
                         if index >= #size {
-                            return Err(reader.map_error(#error_kind::InsufficientSize {
+                            return Err(#error::from(#error_kind::InsufficientSize {
                                 min: #size,
                                 max: #size,
                                 actual: index,
@@ -523,7 +513,7 @@ impl ReferenceData<'_> {
                     }
 
                     if index < #size {
-                        return Err(reader.map_error(#error_kind::InsufficientSize {
+                        return Err(#error::from(#error_kind::InsufficientSize {
                             min: #size,
                             max: #size,
                             actual: index,
@@ -538,18 +528,15 @@ impl ReferenceData<'_> {
         let error = resolve_ident!(ctx, "::xsd_parser_types::quick_xml::Error");
         let deserialize_bytes =
             resolve_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializeBytes");
-        let deserialize_reader =
-            resolve_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializeReader");
+        let deserialize_helper =
+            resolve_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializeHelper");
 
         let code = quote! {
             impl #deserialize_bytes for #type_ident {
-                fn deserialize_bytes<R>(
-                    reader: &R,
+                fn deserialize_bytes(
+                    helper: &mut #deserialize_helper,
                     bytes: &[u8],
-                ) -> #result<Self, #error>
-                where
-                    R: #deserialize_reader
-                {
+                ) -> #result<Self, #error> {
                     #body
                 }
             }
@@ -583,13 +570,13 @@ impl EnumerationData<'_> {
         let raw_byte_str = resolve_ident!(ctx, "::xsd_parser_types::quick_xml::RawByteStr");
         let deserialize_bytes =
             resolve_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializeBytes");
-        let deserialize_reader =
-            resolve_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializeReader");
+        let deserialize_helper =
+            resolve_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializeHelper");
 
         let other = other.unwrap_or_else(|| {
             quote! {
                 x => Err(
-                    reader.map_error(
+                    #error::from(
                         #error_kind::UnknownOrInvalidValue(
                             #raw_byte_str::from_slice(x)
                         )
@@ -600,13 +587,10 @@ impl EnumerationData<'_> {
 
         let code = quote! {
             impl #deserialize_bytes for #type_ident {
-                fn deserialize_bytes<R>(
-                    reader: &R,
+                fn deserialize_bytes(
+                    helper: &mut #deserialize_helper,
                     bytes: &[u8],
-                ) -> #result<Self, #error>
-                where
-                    R: #deserialize_reader
-                {
+                ) -> #result<Self, #error> {
                     #validation
 
                     match bytes {
@@ -638,7 +622,7 @@ impl EnumerationTypeVariant<'_> {
             let target_type = ctx.resolve_type_for_module(target_type);
 
             *other = Some(
-                quote! { x => Ok(Self::#variant_ident(#target_type::deserialize_bytes(reader, x)?)), },
+                quote! { x => Ok(Self::#variant_ident(#target_type::deserialize_bytes(helper, x)?)), },
             );
 
             return None;
@@ -666,27 +650,27 @@ impl SimpleData<'_> {
         let error = resolve_ident!(ctx, "::xsd_parser_types::quick_xml::Error");
         let deserialize_bytes =
             resolve_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializeBytes");
-        let deserialize_reader =
-            resolve_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializeReader");
+        let deserialize_helper =
+            resolve_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializeHelper");
 
         let validation = self.constrains.render_validation(ctx);
 
         let body = match (validation.is_some(), occurs) {
             (true, Occurs::Single) => {
                 quote! {
-                    let inner = #target_type::deserialize_str(reader, s)?;
+                    let inner = #target_type::deserialize_str(helper, s)?;
                 }
             }
             (false, Occurs::Single) => {
                 quote! {
-                    let inner = #target_type::deserialize_bytes(reader, bytes)?;
+                    let inner = #target_type::deserialize_bytes(helper, bytes)?;
                 }
             }
             (false, Occurs::DynamicList) => {
                 quote! {
                     let inner = bytes
                         .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
-                        .map(|bytes| #target_type::deserialize_bytes(reader, bytes))
+                        .map(|bytes| #target_type::deserialize_bytes(helper, bytes))
                         .collect::<#result<Vec<_>, _>>()?;
                 }
             }
@@ -697,13 +681,10 @@ impl SimpleData<'_> {
 
         let code = quote! {
             impl #deserialize_bytes for #type_ident {
-                fn deserialize_bytes<R>(
-                    reader: &R,
+                fn deserialize_bytes(
+                    helper: &mut #deserialize_helper,
                     bytes: &[u8],
-                ) -> #result<Self, #error>
-                where
-                    R: #deserialize_reader
-                {
+                ) -> #result<Self, #error> {
                     #validation
 
                     #body
@@ -870,38 +851,29 @@ impl ComplexBase<'_> {
         let error = resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::Error");
         let deserializer =
             resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::Deserializer");
-        let deserialize_reader =
-            resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializeReader");
+        let deserialize_helper =
+            resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializeHelper");
         let deserializer_result =
             resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializerResult");
 
         let code = quote! {
             impl<'de> #deserializer<'de, super::#type_ident> for #deserializer_type {
-                fn init<R>(
-                    reader: &R,
+                fn init(
+                    helper: &mut #deserialize_helper,
                     event: #event<'de>,
-                ) -> #deserializer_result<'de, super::#type_ident>
-                where
-                    R: #deserialize_reader,
-                {
+                ) -> #deserializer_result<'de, super::#type_ident> {
                     #fn_init
                 }
 
-                fn next<R>(
+                fn next(
                     mut self,
-                    reader: &R,
+                    helper: &mut #deserialize_helper,
                     event: #event<'de>,
-                ) -> #deserializer_result<'de, super::#type_ident>
-                where
-                    R: #deserialize_reader,
-                {
+                ) -> #deserializer_result<'de, super::#type_ident> {
                     #fn_next
                 }
 
-                fn finish<R>(#mut_ self, reader: &R) -> #result<super::#type_ident, #error>
-                where
-                    R: #deserialize_reader,
-                {
+                fn finish(#mut_ self, helper: &mut #deserialize_helper) -> #result<super::#type_ident, #error> {
                     #fn_finish
                 }
             }
@@ -918,7 +890,7 @@ impl ComplexBase<'_> {
             boxed_deserializer_ident(config.boxed_deserializer, deserializer_ident);
 
         quote! {
-            reader.init_deserializer_from_start_event(event, #boxed_deserializer_ident::from_bytes_start)
+            helper.init_deserializer_from_start_event(event, #boxed_deserializer_ident::from_bytes_start)
         }
     }
 }
@@ -1016,8 +988,8 @@ impl ComplexDataEnum<'_> {
 
         let event = resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::Event");
         let error = resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::Error");
-        let deserialize_reader =
-            resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializeReader");
+        let deserialize_helper =
+            resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializeHelper");
         let element_handler_output =
             resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::ElementHandlerOutput");
 
@@ -1065,15 +1037,12 @@ impl ComplexDataEnum<'_> {
         };
 
         quote! {
-            fn find_suitable<'de, R>(
+            fn find_suitable<'de>(
                 &mut self,
-                reader: &R,
+                helper: &mut #deserialize_helper,
                 event: #event<'de>,
                 fallback: &mut #option<#deserializer_state_ident>,
-            ) -> #result<#element_handler_output<'de>, #error>
-            where
-                R: #deserialize_reader,
-            {
+            ) -> #result<#element_handler_output<'de>, #error> {
                 #event_decl
                 #allow_any_decl
 
@@ -1099,8 +1068,8 @@ impl ComplexDataEnum<'_> {
         let error = resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::Error");
         let bytes_start =
             resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::BytesStart");
-        let deserialize_reader =
-            resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializeReader");
+        let deserialize_helper =
+            resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializeHelper");
 
         let self_type = if config.boxed_deserializer {
             quote!(#box_<Self>)
@@ -1118,27 +1087,19 @@ impl ComplexDataEnum<'_> {
         );
 
         let attrib_loop = self.allow_any_attribute.not().then(|| {
-            let filter_xmlns_attributes = resolve_quick_xml_ident!(
-                ctx,
-                "::xsd_parser_types::quick_xml::filter_xmlns_attributes"
-            );
-
             quote! {
-                for attrib in #filter_xmlns_attributes(bytes_start) {
+                for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
-                    reader.raise_unexpected_attrib_checked(attrib)?;
+                    helper.raise_unexpected_attrib_checked(&attrib)?;
                 }
             }
         });
 
         quote! {
-            fn from_bytes_start<R>(
-                reader: &R,
+            fn from_bytes_start(
+                helper: &mut #deserialize_helper,
                 bytes_start: &#bytes_start<'_>
-            ) -> #result<#self_type, #error>
-            where
-                R: #deserialize_reader,
-            {
+            ) -> #result<#self_type, #error> {
                 #attrib_loop
 
                 Ok(#self_ctor)
@@ -1164,14 +1125,11 @@ impl ComplexDataEnum<'_> {
 
         let error = resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::Error");
         let error_kind = resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::ErrorKind");
-        let deserialize_reader =
-            resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializeReader");
+        let deserialize_helper =
+            resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializeHelper");
 
         quote! {
-            fn finish_state<R>(reader: &R, state: #deserializer_state_ident) -> #result<super::#type_ident, #error>
-            where
-                R: #deserialize_reader,
-            {
+            fn finish_state(helper: &mut #deserialize_helper, state: #deserializer_state_ident) -> #result<super::#type_ident, #error> {
                 use #deserializer_state_ident as S;
 
                 match state {
@@ -1226,7 +1184,7 @@ impl ComplexDataEnum<'_> {
 
         quote! {
             let deserializer = #init_deserializer;
-            let mut output = deserializer.next(reader, event)?;
+            let mut output = deserializer.next(helper, event)?;
 
             output.artifact = match output.artifact {
                 #deserializer_artifact::Deserializer(x) if matches!(&*x.state__, #deserializer_state_ident::Init__) => #deserializer_artifact::None,
@@ -1288,12 +1246,12 @@ impl ComplexDataEnum<'_> {
                     #( #handlers_continue )*
                     (state, #event_at #event::End(_)) => {
                         return Ok(#deserializer_output {
-                            artifact: #deserializer_artifact::Data(#deserializer_ident::finish_state(reader, state)?),
+                            artifact: #deserializer_artifact::Data(#deserializer_ident::finish_state(helper, state)?),
                             event: #return_end_event,
                             allow_any: false,
                         });
                     }
-                    (S::Init__, event) => match self.find_suitable(reader, event, &mut fallback)? {
+                    (S::Init__, event) => match self.find_suitable(helper, event, &mut fallback)? {
                         #element_handler_output::Break { event, allow_any } => break (event, allow_any),
                         #element_handler_output::Continue { event, .. } => event,
                     },
@@ -1312,7 +1270,7 @@ impl ComplexDataEnum<'_> {
             };
 
             let artifact = if matches!(&*self.state__, S::Done__(_)) {
-                #deserializer_artifact::Data(self.finish(reader)?)
+                #deserializer_artifact::Data(self.finish(helper)?)
             } else {
                 #deserializer_artifact::Deserializer(self)
             };
@@ -1331,7 +1289,7 @@ impl ComplexDataEnum<'_> {
             boxed_deserializer_ident(config.boxed_deserializer, &self.deserializer_ident);
 
         quote! {
-            #deserializer_ident::finish_state(reader, *self.state__)
+            #deserializer_ident::finish_state(helper, *self.state__)
         }
     }
 }
@@ -1568,21 +1526,18 @@ impl ComplexDataStruct<'_> {
 
         let event = resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::Event");
         let error = resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::Error");
-        let deserialize_reader =
-            resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializeReader");
+        let deserialize_helper =
+            resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializeHelper");
         let element_handler_output =
             resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::ElementHandlerOutput");
 
         quote! {
-            fn find_suitable<'de, R>(
+            fn find_suitable<'de>(
                 &mut self,
-                reader: &R,
+                helper: &mut #deserialize_helper,
                 event: #event<'de>,
                 fallback: &mut #option<#deserializer_state_ident>,
-            ) -> #result<#element_handler_output<'de>, #error>
-            where
-                R: #deserialize_reader,
-            {
+            ) -> #result<#element_handler_output<'de>, #error> {
                 #allow_any_decl
 
                 if let #event::Start(x) | #event::Empty(x) = &event {
@@ -1627,7 +1582,7 @@ impl ComplexDataStruct<'_> {
         let need_default_handler = !self.allow_any_attribute || any_attribute.is_some();
         let default_attrib_handler = need_default_handler.then(|| {
             let body = any_attribute
-                .unwrap_or_else(|| quote! { reader.raise_unexpected_attrib_checked(attrib)?; });
+                .unwrap_or_else(|| quote! { helper.raise_unexpected_attrib_checked(&attrib)?; });
 
             if has_normal_attributes {
                 quote! {
@@ -1642,13 +1597,8 @@ impl ComplexDataStruct<'_> {
 
         let need_attrib_loop = self.has_attributes() || default_attrib_handler.is_some();
         let attrib_loop = need_attrib_loop.then(|| {
-            let filter_xmlns_attributes = resolve_quick_xml_ident!(
-                ctx,
-                "::xsd_parser_types::quick_xml::filter_xmlns_attributes"
-            );
-
             quote! {
-                for attrib in #filter_xmlns_attributes(bytes_start) {
+                for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
 
                     #( #attrib_match )*
@@ -1681,17 +1631,14 @@ impl ComplexDataStruct<'_> {
         let error = resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::Error");
         let bytes_start =
             resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::BytesStart");
-        let deserialize_reader =
-            resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializeReader");
+        let deserialize_helper =
+            resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializeHelper");
 
         quote! {
-            fn from_bytes_start<R>(
-                reader: &R,
+            fn from_bytes_start(
+                helper: &mut #deserialize_helper,
                 bytes_start: &#bytes_start<'_>
-            ) -> #result<#self_type, #error>
-            where
-                R: #deserialize_reader,
-            {
+            ) -> #result<#self_type, #error> {
                 #( #attrib_var )*
 
                 #attrib_loop
@@ -1707,8 +1654,8 @@ impl ComplexDataStruct<'_> {
         let result = resolve_build_in!(ctx, "::core::result::Result");
 
         let error = resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::Error");
-        let deserialize_reader =
-            resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializeReader");
+        let deserialize_helper =
+            resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializeHelper");
 
         let body = match &self.mode {
             StructMode::All { elements, .. } => {
@@ -1746,7 +1693,7 @@ impl ComplexDataStruct<'_> {
             StructMode::Content { .. } => {
                 quote! {
                     if let #deserializer_state_ident::Content__(deserializer) = state {
-                        self.store_content(deserializer.finish(reader)?)?;
+                        self.store_content(deserializer.finish(helper)?)?;
                     }
 
                     Ok(())
@@ -1756,10 +1703,11 @@ impl ComplexDataStruct<'_> {
         };
 
         quote! {
-            fn finish_state<R>(&mut self, reader: &R, state: #deserializer_state_ident) -> #result<(), #error>
-            where
-                R: #deserialize_reader,
-            {
+            fn finish_state(
+                &mut self,
+                helper: &mut #deserialize_helper,
+                state: #deserializer_state_ident
+            ) -> #result<(), #error> {
                 #body
             }
         }
@@ -1807,7 +1755,7 @@ impl ComplexDataStruct<'_> {
                 });
             };
 
-            #boxed_deserializer_ident::from_bytes_start(reader, x)?.next(reader, event)
+            #boxed_deserializer_ident::from_bytes_start(helper, x)?.next(helper, event)
         }
     }
 
@@ -1843,7 +1791,7 @@ impl ComplexDataStruct<'_> {
 
         quote! {
             let deserializer = #init_deserializer;
-            let mut output = deserializer.next(reader, event)?;
+            let mut output = deserializer.next(helper, event)?;
 
             output.artifact = match output.artifact {
                 #deserializer_artifact::Deserializer(x) if matches!(&*x.state__, #deserializer_state_ident::Init__) => #deserializer_artifact::None,
@@ -1904,7 +1852,7 @@ impl ComplexDataStruct<'_> {
         quote! {
             if let #event::End(_) = &event {
                 Ok(#deserializer_output {
-                    artifact: #deserializer_artifact::Data(self.finish(reader)?),
+                    artifact: #deserializer_artifact::Data(self.finish(helper)?),
                     event: #return_end_event,
                     allow_any: false,
                 })
@@ -1935,12 +1883,12 @@ impl ComplexDataStruct<'_> {
             match #replace(&mut *self.state__, S::Unknown__) {
                 S::Unknown__ => unreachable!(),
                 S::Init__ => {
-                    let output = #content_deserializer::init(reader, event)?;
-                    self.handle_content(reader, output)
+                    let output = #content_deserializer::init(helper, event)?;
+                    self.handle_content(helper, output)
                 }
                 S::Content__(deserializer) => {
-                    let output = deserializer.next(reader, event)?;
-                    self.handle_content(reader, output)
+                    let output = deserializer.next(helper, event)?;
+                    self.handle_content(helper, output)
                 }
             }
         }
@@ -1983,7 +1931,7 @@ impl ComplexDataStruct<'_> {
         let artifact_handler = if has_done_state {
             quote! {
                 let artifact = match &*self.state__ {
-                    S::Done__ => #deserializer_artifact::Data(self.finish(reader)?),
+                    S::Done__ => #deserializer_artifact::Data(self.finish(helper)?),
                     _ => #deserializer_artifact::Deserializer(self),
                 };
             }
@@ -2005,23 +1953,23 @@ impl ComplexDataStruct<'_> {
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
                     (S::Content__(deserializer), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_content(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_content(helper, output, &mut fallback)? {
                             #element_handler_output::Break { event, allow_any } => break (event, allow_any),
                             #element_handler_output::Continue { event, .. } => event,
                         }
                     }
                     (_, #event_at #event::End(_)) => {
                         return Ok(#deserializer_output {
-                            artifact: #deserializer_artifact::Data(self.finish(reader)?),
+                            artifact: #deserializer_artifact::Data(self.finish(helper)?),
                             event: #return_end_event,
                             allow_any: false,
                         });
                     }
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
-                        let output = <#target_type as #with_deserializer>::Deserializer::init(reader, event)?;
-                        match self.handle_content(reader, output, &mut fallback)? {
+                        let output = <#target_type as #with_deserializer>::Deserializer::init(helper, event)?;
+                        match self.handle_content(helper, output, &mut fallback)? {
                             #element_handler_output::Break { event, allow_any } => break (event, allow_any),
                             #element_handler_output::Continue { event, .. } => event,
                         }
@@ -2072,14 +2020,14 @@ impl ComplexDataStruct<'_> {
                     #( #handlers )*
                     (_, #event_at #event::End(_)) => {
                         return Ok(#deserializer_output {
-                            artifact: #deserializer_artifact::Data(self.finish(reader)?),
+                            artifact: #deserializer_artifact::Data(self.finish(helper)?),
                             event: #return_end_event,
                             allow_any: false,
                         });
                     }
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
-                        match self.find_suitable(reader, event, &mut fallback)? {
+                        match self.find_suitable(helper, event, &mut fallback)? {
                             #element_handler_output::Continue { event, .. } => event,
                             #element_handler_output::Break { event, allow_any } => break (event, allow_any),
                         }
@@ -2198,11 +2146,11 @@ impl ComplexDataStruct<'_> {
                     #( #handlers_continue )*
                     (_, #event_at #event::End(_)) => {
                         if let Some(fallback) = fallback.take() {
-                            self.finish_state(reader, fallback)?;
+                            self.finish_state(helper, fallback)?;
                         }
 
                         return Ok(#deserializer_output {
-                            artifact: #deserializer_artifact::Data(self.finish(reader)?),
+                            artifact: #deserializer_artifact::Data(self.finish(helper)?),
                             event: #return_end_event,
                             allow_any: false,
                         });
@@ -2257,7 +2205,7 @@ impl ComplexDataStruct<'_> {
 
         quote! {
             let state = #replace(&mut *self.state__, #deserializer_state_ident::Unknown__);
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
 
             Ok(super::#type_ident {
                 #( #attributes )*
@@ -2415,8 +2363,8 @@ impl ComplexDataContent<'_> {
         let config = ctx.get_ref::<DeserializerConfig>();
         let self_type = config.boxed_deserializer.then(|| quote!(: #box_<Self>));
 
-        let deserialize_reader =
-            resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializeReader");
+        let deserialize_helper =
+            resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializeHelper");
         let deserializer_result =
             resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializerResult");
         let deserializer_output =
@@ -2425,14 +2373,11 @@ impl ComplexDataContent<'_> {
             resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializerArtifact");
 
         quote! {
-            fn handle_content<'de, R>(
+            fn handle_content<'de>(
                 mut self #self_type,
-                reader: &R,
+                helper: &mut #deserialize_helper,
                 output: #deserializer_output<'de, #target_type>,
-            ) -> #deserializer_result<'de, super::#type_ident>
-            where
-                R: #deserialize_reader,
-            {
+            ) -> #deserializer_result<'de, super::#type_ident> {
                 use #deserializer_state_ident as S;
 
                 let #deserializer_output { artifact, event, allow_any } = output;
@@ -2445,7 +2390,7 @@ impl ComplexDataContent<'_> {
                     }),
                     #deserializer_artifact::Data(data) => {
                         self.store_content(data)?;
-                        let data = self.finish(reader)?;
+                        let data = self.finish(helper)?;
 
                         Ok(#deserializer_output {
                             artifact: #deserializer_artifact::Data(data),
@@ -2480,8 +2425,8 @@ impl ComplexDataContent<'_> {
         let option = resolve_build_in!(ctx, "::core::option::Option");
 
         let error = resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::Error");
-        let deserialize_reader =
-            resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializeReader");
+        let deserialize_helper =
+            resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializeHelper");
         let deserializer_output =
             resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializerOutput");
         let deserializer_artifact =
@@ -2585,15 +2530,12 @@ impl ComplexDataContent<'_> {
         };
 
         quote! {
-            fn handle_content<'de, R>(
+            fn handle_content<'de>(
                 &mut self,
-                reader: &R,
+                helper: &mut #deserialize_helper,
                 output: #deserializer_output<'de, #target_type>,
                 fallback: &mut #option<#deserializer_state_ident>,
-            ) -> #result<#element_handler_output<'de>, #error>
-            where
-                R: #deserialize_reader,
-            {
+            ) -> #result<#element_handler_output<'de>, #error> {
                 let #deserializer_output {
                     artifact,
                     event,
@@ -2607,7 +2549,7 @@ impl ComplexDataContent<'_> {
                 }
 
                 if let Some(fallback) = fallback.take() {
-                    self.finish_state(reader, fallback)?;
+                    self.finish_state(helper, fallback)?;
                 }
 
                 Ok(match artifact {
@@ -2655,8 +2597,8 @@ impl ComplexDataAttribute<'_> {
             *index += 1;
 
             Some(quote! {
-                #else_ if matches!(reader.resolve_local_name(attrib.key, &#ns_name), Some(#b_name)) {
-                    reader.read_attrib(&mut #field_ident, #b_name, &attrib.value)?;
+                #else_ if matches!(helper.resolve_local_name(attrib.key, &#ns_name), Some(#b_name)) {
+                    helper.read_attrib(&mut #field_ident, #b_name, &attrib.value)?;
                 }
             })
         } else {
@@ -2664,7 +2606,7 @@ impl ComplexDataAttribute<'_> {
 
             Some(quote! {
                 #else_ if attrib.key.local_name().as_ref() == #b_name {
-                    reader.read_attrib(&mut #field_ident, #b_name, &attrib.value)?;
+                    helper.read_attrib(&mut #field_ident, #b_name, &attrib.value)?;
                 }
             })
         }
@@ -2719,9 +2661,7 @@ impl ComplexDataAttribute<'_> {
             let error_kind =
                 resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::ErrorKind");
 
-            Some(
-                quote! { .ok_or_else(|| reader.map_error(#error_kind::MissingAttribute(#name.into())))? },
-            )
+            Some(quote! { .ok_or_else(|| #error_kind::MissingAttribute(#name.into()))? })
         } else {
             None
         };
@@ -2828,7 +2768,7 @@ impl ComplexDataElement<'_> {
         ctx.add_quick_xml_deserialize_usings(true, ["::xsd_parser_types::quick_xml::Deserializer"]);
 
         let body = quote! {
-            let output = <#target_type as #with_deserializer>::Deserializer::init(reader, event)?;
+            let output = <#target_type as #with_deserializer>::Deserializer::init(helper, event)?;
 
             return #call_handler;
         };
@@ -2842,7 +2782,7 @@ impl ComplexDataElement<'_> {
             let ns_name = ctx.resolve_type_for_deserialize_module(&module.make_ns_const());
 
             Some(quote! {
-                if matches!(reader.resolve_local_name(x.name(), &#ns_name), Some(#b_name)) {
+                if matches!(helper.resolve_local_name(x.name(), &#ns_name), Some(#b_name)) {
                     #body
                 }
             })
@@ -2886,7 +2826,7 @@ impl ComplexDataElement<'_> {
 
         quote! {
             event = {
-                let output = <#target_type as #with_deserializer>::Deserializer::init(reader, event)?;
+                let output = <#target_type as #with_deserializer>::Deserializer::init(helper, event)?;
 
                 match #call_handler? {
                     #handle_continue
@@ -2928,7 +2868,7 @@ impl ComplexDataElement<'_> {
 
         let handler_ident = self.handler_ident();
         let call_handler =
-            quote!(self.#handler_ident(reader, #default::default(), output, &mut *fallback));
+            quote!(self.#handler_ident(helper, #default::default(), output, &mut *fallback));
 
         self.deserializer_init_element(ctx, &call_handler)
     }
@@ -2946,7 +2886,7 @@ impl ComplexDataElement<'_> {
 
         let handler_ident = self.handler_ident();
         let call_handler =
-            quote!(self.#handler_ident(reader, #default::default(), output, &mut *fallback));
+            quote!(self.#handler_ident(helper, #default::default(), output, &mut *fallback));
 
         Some(self.deserializer_init_group(ctx, handle_any, &call_handler))
     }
@@ -2960,7 +2900,7 @@ impl ComplexDataElement<'_> {
 
         let handler_ident = self.handler_ident();
         let call_handler =
-            quote!(self.#handler_ident(reader, #default::default(), output, &mut *fallback));
+            quote!(self.#handler_ident(helper, #default::default(), output, &mut *fallback));
 
         Some(self.deserializer_init_group(ctx, false, &call_handler))
     }
@@ -2974,7 +2914,7 @@ impl ComplexDataElement<'_> {
 
         let handler_ident = self.handler_ident();
         let call_handler =
-            quote!(self.#handler_ident(reader, #default::default(), output, &mut *fallback));
+            quote!(self.#handler_ident(helper, #default::default(), output, &mut *fallback));
 
         Some(self.deserializer_init_group(ctx, false, &call_handler))
     }
@@ -3034,7 +2974,7 @@ impl ComplexDataElement<'_> {
         quote! {
             S::#variant_ident(mut values, deserializer) => {
                 if let Some(deserializer) = deserializer {
-                    let value = deserializer.finish(reader)?;
+                    let value = deserializer.finish(helper)?;
                     #deserializer_ident::#store_ident(&mut values, value)?;
                 }
 
@@ -3109,8 +3049,8 @@ impl ComplexDataElement<'_> {
         let default = resolve_build_in!(ctx, "::core::default::Default");
 
         let error = resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::Error");
-        let deserialize_reader =
-            resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializeReader");
+        let deserialize_helper =
+            resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializeHelper");
         let deserializer_output =
             resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializerOutput");
         let deserializer_artifact =
@@ -3148,7 +3088,7 @@ impl ComplexDataElement<'_> {
             (_, Occurs::None, _) => unreachable!(),
             // Return instantly if we have received the expected value
             (false, Occurs::Single | Occurs::Optional, _) => quote! {
-                let data = #deserializer_ident::finish_state(reader, #deserializer_state_ident::#variant_ident(values, None))?;
+                let data = #deserializer_ident::finish_state(helper, #deserializer_state_ident::#variant_ident(values, None))?;
                 *self.state__ = #deserializer_state_ident::Done__(data);
 
                 #element_handler_output::Break {
@@ -3165,7 +3105,7 @@ impl ComplexDataElement<'_> {
 
                         #element_handler_output::from_event(event, allow_any)
                     } else {
-                        let data = #deserializer_ident::finish_state(reader, #deserializer_state_ident::#variant_ident(values, None))?;
+                        let data = #deserializer_ident::finish_state(helper, #deserializer_state_ident::#variant_ident(values, None))?;
                         *self.state__ = #deserializer_state_ident::Done__(data);
 
                         #element_handler_output::Break {
@@ -3241,16 +3181,13 @@ impl ComplexDataElement<'_> {
         };
 
         quote! {
-            fn #handler_ident<'de, R>(
+            fn #handler_ident<'de>(
                 &mut self,
-                reader: &R,
+                helper: &mut #deserialize_helper,
                 mut values: #values,
                 output: #deserializer_output<'de, #target_type>,
                 fallback: &mut #option<#deserializer_state_ident>,
-            ) -> #result<#element_handler_output<'de>, #error>
-            where
-                R: #deserialize_reader,
-            {
+            ) -> #result<#element_handler_output<'de>, #error> {
                 let #deserializer_output {
                     artifact,
                     event,
@@ -3271,7 +3208,7 @@ impl ComplexDataElement<'_> {
                 match fallback.take() {
                     None => (),
                     Some(#deserializer_state_ident::#variant_ident(_, Some(deserializer))) => {
-                        let data = deserializer.finish(reader)?;
+                        let data = deserializer.finish(helper)?;
                         #deserializer_ident::#store_ident(&mut values, data)?;
                     }
                     Some(_) => unreachable!(),
@@ -3295,7 +3232,7 @@ impl ComplexDataElement<'_> {
     fn deserializer_enum_variant_fn_next_continue(&self, ctx: &Context<'_, '_>) -> TokenStream {
         let deserializer_matcher = quote!(Some(deserializer));
         let event_matcher = quote!(event);
-        let output = quote!(deserializer.next(reader, event));
+        let output = quote!(deserializer.next(helper, event));
 
         self.deserializer_enum_variant_fn_next(ctx, &deserializer_matcher, &event_matcher, &output)
     }
@@ -3333,7 +3270,7 @@ impl ComplexDataElement<'_> {
                 .map_or_else(|| quote!(None), |ns_name| quote!(Some(&#ns_name)));
 
             quote! {
-                reader.init_start_tag_deserializer(event, #ns_name, #name, #allow_any)
+                helper.init_start_tag_deserializer(event, #ns_name, #name, #allow_any)
             }
         } else {
             ctx.add_quick_xml_deserialize_usings(
@@ -3342,7 +3279,7 @@ impl ComplexDataElement<'_> {
             );
 
             quote! {
-                <#target_type as #with_deserializer>::Deserializer::init(reader, event)
+                <#target_type as #with_deserializer>::Deserializer::init(helper, event)
             }
         };
 
@@ -3366,7 +3303,7 @@ impl ComplexDataElement<'_> {
             (S::#variant_ident(values, #deserializer_matcher), #event_matcher) => {
                 let output = #output?;
 
-                match self.#handler_ident(reader, values, output, &mut fallback)? {
+                match self.#handler_ident(helper, values, output, &mut fallback)? {
                     #element_handler_output::Break { event, allow_any } => break (event, allow_any),
                     #element_handler_output::Continue { event, .. } => event,
                 }
@@ -3420,7 +3357,7 @@ impl ComplexDataElement<'_> {
 
     fn deserializer_struct_field_init_element(&self, ctx: &Context<'_, '_>) -> Option<TokenStream> {
         let handler_ident = self.handler_ident();
-        let call_handler = quote!(self.#handler_ident(reader, output, &mut *fallback));
+        let call_handler = quote!(self.#handler_ident(helper, output, &mut *fallback));
 
         self.deserializer_init_element(ctx, &call_handler)
     }
@@ -3435,7 +3372,7 @@ impl ComplexDataElement<'_> {
         }
 
         let handler_ident = self.handler_ident();
-        let call_handler = quote!(self.#handler_ident(reader, output, &mut *fallback));
+        let call_handler = quote!(self.#handler_ident(helper, output, &mut *fallback));
 
         Some(self.deserializer_init_group(ctx, handle_any, &call_handler))
     }
@@ -3454,9 +3391,9 @@ impl ComplexDataElement<'_> {
         ctx.add_quick_xml_deserialize_usings(true, ["::xsd_parser_types::quick_xml::Deserializer"]);
 
         Some(quote! {
-            let output = <#target_type as #with_deserializer>::Deserializer::init(reader, event)?;
+            let output = <#target_type as #with_deserializer>::Deserializer::init(helper, event)?;
 
-            self.#handler_ident(reader, output, &mut *fallback)
+            self.#handler_ident(helper, output, &mut *fallback)
         })
     }
 
@@ -3465,7 +3402,7 @@ impl ComplexDataElement<'_> {
         let variant_ident = &self.variant_ident;
 
         quote! {
-            S::#variant_ident(deserializer) => self.#store_ident(deserializer.finish(reader)?)?,
+            S::#variant_ident(deserializer) => self.#store_ident(deserializer.finish(helper)?)?,
         }
     }
 
@@ -3474,7 +3411,7 @@ impl ComplexDataElement<'_> {
         let variant_ident = &self.variant_ident;
 
         quote! {
-            S::#variant_ident(Some(deserializer)) => self.#store_ident(deserializer.finish(reader)?)?,
+            S::#variant_ident(Some(deserializer)) => self.#store_ident(deserializer.finish(helper)?)?,
         }
     }
 
@@ -3592,8 +3529,8 @@ impl ComplexDataElement<'_> {
         let option = resolve_build_in!(ctx, "::core::option::Option");
 
         let error = resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::Error");
-        let deserialize_reader =
-            resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializeReader");
+        let deserialize_helper =
+            resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializeHelper");
         let deserializer_output =
             resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializerOutput");
         let deserializer_artifact =
@@ -3602,15 +3539,12 @@ impl ComplexDataElement<'_> {
             resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::ElementHandlerOutput");
 
         quote! {
-            fn #handler_ident<'de, R>(
+            fn #handler_ident<'de>(
                 &mut self,
-                reader: &R,
+                helper: &mut #deserialize_helper,
                 output: #deserializer_output<'de, #target_type>,
                 fallback: &mut #option<#deserializer_state_ident>,
-            ) -> #result<#element_handler_output<'de>, #error>
-            where
-                R: #deserialize_reader,
-            {
+            ) -> #result<#element_handler_output<'de>, #error> {
                 let #deserializer_output {
                     artifact,
                     event,
@@ -3629,7 +3563,7 @@ impl ComplexDataElement<'_> {
                 }
 
                 if let Some(fallback) = fallback.take() {
-                    self.finish_state(reader, fallback)?;
+                    self.finish_state(helper, fallback)?;
                 }
 
                 Ok(match artifact {
@@ -3680,8 +3614,8 @@ impl ComplexDataElement<'_> {
         let option = resolve_build_in!(ctx, "::core::option::Option");
 
         let error = resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::Error");
-        let deserialize_reader =
-            resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializeReader");
+        let deserialize_helper =
+            resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializeHelper");
         let deserializer_output =
             resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializerOutput");
         let deserializer_artifact =
@@ -3791,15 +3725,12 @@ impl ComplexDataElement<'_> {
         };
 
         quote! {
-            fn #handler_ident<'de, R>(
+            fn #handler_ident<'de>(
                 &mut self,
-                reader: &R,
+                helper: &mut #deserialize_helper,
                 output: #deserializer_output<'de, #target_type>,
                 fallback: &mut #option<#deserializer_state_ident>,
-            ) -> #result<#element_handler_output<'de>, #error>
-            where
-                R: #deserialize_reader,
-            {
+            ) -> #result<#element_handler_output<'de>, #error> {
                 let #deserializer_output {
                     artifact,
                     event,
@@ -3811,7 +3742,7 @@ impl ComplexDataElement<'_> {
                 }
 
                 if let Some(fallback) = fallback.take() {
-                    self.finish_state(reader, fallback)?;
+                    self.finish_state(helper, fallback)?;
                 }
 
                 Ok(match artifact {
@@ -3856,8 +3787,8 @@ impl ComplexDataElement<'_> {
                 S::#variant_ident(deserializer),
                 event
             ) => {
-                let output = deserializer.next(reader, event)?;
-                match self.#handler_ident(reader, output, &mut fallback)? {
+                let output = deserializer.next(helper, event)?;
+                match self.#handler_ident(helper, output, &mut fallback)? {
                     #element_handler_output::Continue { event, .. } => event,
                     #element_handler_output::Break { event, allow_any } => break (event, allow_any),
                 }
@@ -3880,8 +3811,8 @@ impl ComplexDataElement<'_> {
                 S::#variant_ident(Some(deserializer)),
                 event
             ) => {
-                let output = deserializer.next(reader, event)?;
-                match self.#handler_ident(reader, output, &mut fallback)? {
+                let output = deserializer.next(helper, event)?;
+                match self.#handler_ident(helper, output, &mut fallback)? {
                     #element_handler_output::Continue { event, allow_any } => {
                         allow_any_element = allow_any_element || allow_any;
 
@@ -3934,8 +3865,8 @@ impl ComplexDataElement<'_> {
             );
 
         let mut body = quote! {
-            let output = <#target_type as #with_deserializer>::Deserializer::init(reader, event)?;
-            match self.#handler_ident(reader, output, &mut fallback)? {
+            let output = <#target_type as #with_deserializer>::Deserializer::init(helper, event)?;
+            match self.#handler_ident(helper, output, &mut fallback)? {
                 #element_handler_output::Continue { event, allow_any } => {
                     allow_any_element = allow_any_element || allow_any;
 
@@ -3968,8 +3899,8 @@ impl ComplexDataElement<'_> {
                 .map_or_else(|| quote!(None), |ns_name| quote!(Some(&#ns_name)));
 
             body = quote! {
-                let output = reader.init_start_tag_deserializer(event, #ns_name, #name, #allow_any)?;
-                match self.#handler_ident(reader, output, &mut fallback)? {
+                let output = helper.init_start_tag_deserializer(event, #ns_name, #name, #allow_any)?;
+                match self.#handler_ident(helper, output, &mut fallback)? {
                     #element_handler_output::Continue { event, allow_any } => {
                         allow_any_element = allow_any_element || allow_any;
 

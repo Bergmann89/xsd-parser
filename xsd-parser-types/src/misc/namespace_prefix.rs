@@ -27,6 +27,15 @@ impl NamespacePrefix {
     {
         Self(value.into())
     }
+
+    /// Create a new [`NamespacePrefix`] instance from the passed `value`.
+    ///
+    /// In contrast to [`new`](Self::new) this is a const function
+    /// and can be used during compile time.
+    #[must_use]
+    pub const fn new_const(value: &'static [u8]) -> Self {
+        Self(Cow::Borrowed(value))
+    }
 }
 
 impl<X> From<X> for NamespacePrefix

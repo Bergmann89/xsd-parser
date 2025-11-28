@@ -14,7 +14,8 @@ use xsd_parser::{
     generate,
 };
 use xsd_parser_types::quick_xml::{
-    DeserializeSync, ErrorReader, Event, IoReader, WithSerializer, Writer, XmlReader,
+    DeserializeAsync, DeserializeSync, ErrorReader, Event, IoReader, Serializer, WithSerializer,
+    Writer, XmlReader,
 };
 
 pub trait ConfigEx {
@@ -179,6 +180,19 @@ where
     T::deserialize(&mut reader)
 }
 
+pub async fn quick_xml_read_test_async<T, P>(path: P) -> T
+where
+    P: AsRef<Path>,
+    T: DeserializeAsync<'static, ErrorReader<IoReader<tokio::io::BufReader<tokio::fs::File>>>>,
+    T::Error: Debug,
+{
+    let reader = tokio::fs::File::open(path).await.unwrap();
+    let reader = tokio::io::BufReader::new(reader);
+    let mut reader = IoReader::new(reader).with_error_info();
+
+    T::deserialize_async(&mut reader).await.unwrap()
+}
+
 pub fn quick_xml_write_test<T, P>(value: &T, root: &str, path: P)
 where
     P: AsRef<Path>,
@@ -191,6 +205,7 @@ where
         value
             .serializer(Some(root), true)
             .unwrap()
+            .into_iter()
             .map(|ret| ret.unwrap()),
     );
     let mut expected = FilteredIter::new(IterReader::from_file(path));

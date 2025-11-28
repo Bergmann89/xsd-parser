@@ -6,7 +6,9 @@ use bitflags::bitflags;
 use xsd_parser_types::misc::Namespace;
 
 use crate::models::code::IdentPath;
-use crate::pipeline::renderer::{RenderStep as RenderStepTrait, RenderStepType};
+use crate::pipeline::renderer::{
+    NamespaceSerialization, RenderStep as RenderStepTrait, RenderStepType,
+};
 
 /// Configuration for the actual code rendering.
 #[derive(Debug)]
@@ -154,6 +156,9 @@ pub enum RenderStep {
     /// Renderer to add constants for the namespaces to the generated code.
     NamespaceConstants,
 
+    /// Renderer to add constants for the namespace prefixes to the generated code.
+    PrefixConstants,
+
     /// Renderer that adds the [`WithNamespace`](xsd_parser_types::WithNamespace) trait to
     /// the generated types.
     WithNamespaceTrait,
@@ -162,7 +167,7 @@ pub enum RenderStep {
     /// different types.
     QuickXmlSerialize {
         /// Whether to add namespaces to the root element during serialization or not.
-        with_namespaces: bool,
+        namespaces: NamespaceSerialization,
 
         /// Default namespace to use for the serialization.
         default_namespace: Option<Namespace>,
@@ -224,6 +229,7 @@ impl RenderStepConfig for RenderStep {
             Self::TypesSerdeXmlRs { .. } => RenderStepType::Types,
             Self::TypesSerdeQuickXml => RenderStepType::Types,
             Self::Defaults => RenderStepType::ExtraImpls,
+            Self::PrefixConstants => RenderStepType::ExtraImpls,
             Self::NamespaceConstants => RenderStepType::ExtraImpls,
             Self::WithNamespaceTrait => RenderStepType::ExtraImpls,
             Self::QuickXmlSerialize { .. } => RenderStepType::ExtraImpls,
@@ -237,9 +243,10 @@ impl RenderStepConfig for RenderStep {
 
     fn into_render_step(self: Box<Self>) -> Box<dyn RenderStepTrait> {
         use crate::pipeline::renderer::{
-            DefaultsRenderStep, NamespaceConstantsRenderStep, QuickXmlDeserializeRenderStep,
-            QuickXmlSerializeRenderStep, SerdeQuickXmlTypesRenderStep, SerdeXmlRsV7TypesRenderStep,
-            SerdeXmlRsV8TypesRenderStep, TypesRenderStep, WithNamespaceTraitRenderStep,
+            DefaultsRenderStep, NamespaceConstantsRenderStep, PrefixConstantsRenderStep,
+            QuickXmlDeserializeRenderStep, QuickXmlSerializeRenderStep,
+            SerdeQuickXmlTypesRenderStep, SerdeXmlRsV7TypesRenderStep, SerdeXmlRsV8TypesRenderStep,
+            TypesRenderStep, WithNamespaceTraitRenderStep,
         };
 
         match *self {
@@ -252,13 +259,14 @@ impl RenderStepConfig for RenderStep {
             } => Box::new(SerdeXmlRsV8TypesRenderStep),
             Self::TypesSerdeQuickXml => Box::new(SerdeQuickXmlTypesRenderStep),
             Self::Defaults => Box::new(DefaultsRenderStep),
+            Self::PrefixConstants => Box::new(PrefixConstantsRenderStep::default()),
             Self::NamespaceConstants => Box::new(NamespaceConstantsRenderStep::default()),
             Self::WithNamespaceTrait => Box::new(WithNamespaceTraitRenderStep),
             Self::QuickXmlSerialize {
-                with_namespaces,
+                namespaces,
                 default_namespace,
             } => Box::new(QuickXmlSerializeRenderStep {
-                with_namespaces,
+                namespaces,
                 default_namespace,
             }),
             Self::QuickXmlDeserialize { boxed_deserializer } => {

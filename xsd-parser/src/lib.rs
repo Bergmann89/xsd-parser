@@ -135,7 +135,9 @@ pub fn exec_parser(config: ParserConfig) -> Result<Schemas, Error> {
 
     let mut parser = Parser::new()
         .with_resolver(resolver)
-        .resolve_includes(config.flags.contains(ParserFlags::RESOLVE_INCLUDES));
+        .resolve_includes(config.flags.contains(ParserFlags::RESOLVE_INCLUDES))
+        .generate_prefixes(config.flags.contains(ParserFlags::GENERATE_PREFIXES))
+        .alternative_prefixes(config.flags.contains(ParserFlags::ALTERNATIVE_PREFIXES));
 
     if config.flags.contains(ParserFlags::DEFAULT_NAMESPACES) {
         parser = parser.with_default_namespaces();

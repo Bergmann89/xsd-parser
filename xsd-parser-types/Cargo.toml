@@ -13,7 +13,7 @@ repository.workspace = true
 [features]
 default = [ ]
 # Enable support for async `quick-xml` de-/serialization
-async = [ "dep:futures", "dep:tokio" ]
+async = [ "dep:futures", "dep:tokio", "quick-xml/async-tokio" ]
 
 # Enable support for dynamic xml types
 xml = [ "dep:indexmap", "dep:encoding_rs" ]

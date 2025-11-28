@@ -1,10 +1,6 @@
-use quick_xml::{
-    events::Event,
-    name::{LocalName, QName, ResolveResult},
-};
+use quick_xml::events::Event;
 
 use crate::quick_xml::{error::ErrorInfo, Error};
-use crate::xml::NamespacesShared;
 
 use super::{XmlReader, XmlReaderSync};
 
@@ -15,7 +11,6 @@ use super::{XmlReader, XmlReaderSync};
 pub struct ErrorReader<R> {
     inner: R,
     error_info: ErrorInfo,
-    current_pos: u64,
 }
 
 impl<R> ErrorReader<R>
@@ -27,7 +22,6 @@ where
         Self {
             inner,
             error_info: ErrorInfo::default(),
-            current_pos: 0,
         }
     }
 
@@ -41,33 +35,10 @@ impl<R> XmlReader for ErrorReader<R>
 where
     R: XmlReader,
 {
-    fn resolve<'n>(&self, name: QName<'n>, attribute: bool) -> (ResolveResult<'_>, LocalName<'n>) {
-        self.inner.resolve(name, attribute)
-    }
-
-    fn namespaces(&self) -> NamespacesShared<'static> {
-        self.inner.namespaces()
-    }
-
-    fn current_position(&self) -> u64 {
-        self.inner.current_position()
-    }
-
-    fn error_position(&self) -> u64 {
-        self.inner.error_position()
-    }
-
     fn extend_error(&self, error: Error) -> Error {
-        let error = self.inner.extend_error(error);
-        let mut pos = self.error_position();
-        if pos == 0 {
-            pos = self.current_pos;
-        }
-        if pos == 0 {
-            pos = self.current_position();
-        }
-
-        error.with_pos(pos).with_error_info(&self.error_info)
+        self.inner
+            .extend_error(error)
+            .with_error_info(&self.error_info)
     }
 }
 
@@ -76,16 +47,11 @@ where
     R: XmlReaderSync<'a>,
 {
     fn read_event(&mut self) -> Result<Event<'a>, Error> {
-        self.current_pos = self.inner.current_position();
+        let event = self.inner.read_event()?;
 
-        match self.inner.read_event() {
-            Ok(event) => {
-                self.error_info.update(&event);
+        self.error_info.update(&event);
 
-                Ok(event)
-            }
-            Err(error) => Err(self.extend_error(error)),
-        }
+        Ok(event)
     }
 }
 

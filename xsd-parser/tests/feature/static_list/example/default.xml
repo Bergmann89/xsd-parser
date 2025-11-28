@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Array xmlns:tns="http://example.com">
+<Array>
   <Item>111</Item>
   <Item>222</Item>
   <Item>333</Item>

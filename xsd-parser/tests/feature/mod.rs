@@ -38,6 +38,7 @@ mod mixed_choice_with_any;
 mod mixed_content;
 mod mixed_content_groups;
 mod mixed_unexpected_text;
+mod namespaces_qualified;
 mod nillable;
 mod nillable_dynamic_types;
 mod num_big_int;

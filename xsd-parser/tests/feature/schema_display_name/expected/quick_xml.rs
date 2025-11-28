@@ -1,7 +1,10 @@
-use xsd_parser_types::misc::Namespace;
+use xsd_parser_types::misc::{Namespace, NamespacePrefix};
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
 pub const NS_EXAMPLE: Namespace = Namespace::new_const(b"http://example.com");
+pub const PREFIX_XS: NamespacePrefix = NamespacePrefix::new_const(b"xs");
+pub const PREFIX_XML: NamespacePrefix = NamespacePrefix::new_const(b"xml");
+pub const PREFIX_EXAMPLE: NamespacePrefix = NamespacePrefix::new_const(b"example");
 pub mod example {
     use xsd_parser_types::quick_xml::{Error, WithDeserializer, WithSerializer};
     pub type Foo = FooType;
@@ -22,7 +25,7 @@ pub mod example {
             Ok(quick_xml_serialize::FooTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::FooTypeSerializerState::Init__),
-                name: name.unwrap_or("FooType"),
+                name: name.unwrap_or("example:FooType"),
                 is_root,
             })
         }
@@ -33,9 +36,9 @@ pub mod example {
     pub mod quick_xml_deserialize {
         use core::mem::replace;
         use xsd_parser_types::quick_xml::{
-            filter_xmlns_attributes, BytesStart, DeserializeReader, Deserializer,
-            DeserializerArtifact, DeserializerEvent, DeserializerOutput, DeserializerResult,
-            ElementHandlerOutput, Error, ErrorKind, Event, RawByteStr, WithDeserializer,
+            BytesStart, DeserializeHelper, Deserializer, DeserializerArtifact, DeserializerEvent,
+            DeserializerOutput, DeserializerResult, ElementHandlerOutput, Error, ErrorKind, Event,
+            RawByteStr, WithDeserializer,
         };
         #[derive(Debug)]
         pub struct FooTypeDeserializer {
@@ -56,13 +59,13 @@ pub mod example {
             Unknown__,
         }
         impl FooTypeDeserializer {
-            fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-            where
-                R: DeserializeReader,
-            {
-                for attrib in filter_xmlns_attributes(bytes_start) {
+            fn from_bytes_start(
+                helper: &mut DeserializeHelper,
+                bytes_start: &BytesStart<'_>,
+            ) -> Result<Self, Error> {
+                for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
-                    reader.raise_unexpected_attrib_checked(attrib)?;
+                    helper.raise_unexpected_attrib_checked(&attrib)?;
                 }
                 Ok(Self {
                     once: None,
@@ -72,25 +75,22 @@ pub mod example {
                     state__: Box::new(FooTypeDeserializerState::Init__),
                 })
             }
-            fn finish_state<R>(
+            fn finish_state(
                 &mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 state: FooTypeDeserializerState,
-            ) -> Result<(), Error>
-            where
-                R: DeserializeReader,
-            {
+            ) -> Result<(), Error> {
                 use FooTypeDeserializerState as S;
                 match state {
-                    S::Once(Some(deserializer)) => self.store_once(deserializer.finish(reader)?)?,
+                    S::Once(Some(deserializer)) => self.store_once(deserializer.finish(helper)?)?,
                     S::Optional(Some(deserializer)) => {
-                        self.store_optional(deserializer.finish(reader)?)?
+                        self.store_optional(deserializer.finish(helper)?)?
                     }
                     S::OnceSpecify(Some(deserializer)) => {
-                        self.store_once_specify(deserializer.finish(reader)?)?
+                        self.store_once_specify(deserializer.finish(helper)?)?
                     }
                     S::TwiceOrMore(Some(deserializer)) => {
-                        self.store_twice_or_more(deserializer.finish(reader)?)?
+                        self.store_twice_or_more(deserializer.finish(helper)?)?
                     }
                     _ => (),
                 }
@@ -125,15 +125,12 @@ pub mod example {
                 self.twice_or_more.push(value);
                 Ok(())
             }
-            fn handle_once<'de, R>(
+            fn handle_once<'de>(
                 &mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, i32>,
                 fallback: &mut Option<FooTypeDeserializerState>,
-            ) -> Result<ElementHandlerOutput<'de>, Error>
-            where
-                R: DeserializeReader,
-            {
+            ) -> Result<ElementHandlerOutput<'de>, Error> {
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -150,7 +147,7 @@ pub mod example {
                     }
                 }
                 if let Some(fallback) = fallback.take() {
-                    self.finish_state(reader, fallback)?;
+                    self.finish_state(helper, fallback)?;
                 }
                 Ok(match artifact {
                     DeserializerArtifact::None => unreachable!(),
@@ -176,15 +173,12 @@ pub mod example {
                     }
                 })
             }
-            fn handle_optional<'de, R>(
+            fn handle_optional<'de>(
                 &mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, i32>,
                 fallback: &mut Option<FooTypeDeserializerState>,
-            ) -> Result<ElementHandlerOutput<'de>, Error>
-            where
-                R: DeserializeReader,
-            {
+            ) -> Result<ElementHandlerOutput<'de>, Error> {
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -196,7 +190,7 @@ pub mod example {
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
-                    self.finish_state(reader, fallback)?;
+                    self.finish_state(helper, fallback)?;
                 }
                 Ok(match artifact {
                     DeserializerArtifact::None => unreachable!(),
@@ -223,15 +217,12 @@ pub mod example {
                     }
                 })
             }
-            fn handle_once_specify<'de, R>(
+            fn handle_once_specify<'de>(
                 &mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, i32>,
                 fallback: &mut Option<FooTypeDeserializerState>,
-            ) -> Result<ElementHandlerOutput<'de>, Error>
-            where
-                R: DeserializeReader,
-            {
+            ) -> Result<ElementHandlerOutput<'de>, Error> {
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -248,7 +239,7 @@ pub mod example {
                     }
                 }
                 if let Some(fallback) = fallback.take() {
-                    self.finish_state(reader, fallback)?;
+                    self.finish_state(helper, fallback)?;
                 }
                 Ok(match artifact {
                     DeserializerArtifact::None => unreachable!(),
@@ -275,15 +266,12 @@ pub mod example {
                     }
                 })
             }
-            fn handle_twice_or_more<'de, R>(
+            fn handle_twice_or_more<'de>(
                 &mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, i32>,
                 fallback: &mut Option<FooTypeDeserializerState>,
-            ) -> Result<ElementHandlerOutput<'de>, Error>
-            where
-                R: DeserializeReader,
-            {
+            ) -> Result<ElementHandlerOutput<'de>, Error> {
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -300,7 +288,7 @@ pub mod example {
                     }
                 }
                 if let Some(fallback) = fallback.take() {
-                    self.finish_state(reader, fallback)?;
+                    self.finish_state(helper, fallback)?;
                 }
                 Ok(match artifact {
                     DeserializerArtifact::None => unreachable!(),
@@ -329,20 +317,17 @@ pub mod example {
             }
         }
         impl<'de> Deserializer<'de, super::FooType> for FooTypeDeserializer {
-            fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, super::FooType>
-            where
-                R: DeserializeReader,
-            {
-                reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
-            }
-            fn next<R>(
-                mut self,
-                reader: &R,
+            fn init(
+                helper: &mut DeserializeHelper,
                 event: Event<'de>,
-            ) -> DeserializerResult<'de, super::FooType>
-            where
-                R: DeserializeReader,
-            {
+            ) -> DeserializerResult<'de, super::FooType> {
+                helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
+            }
+            fn next(
+                mut self,
+                helper: &mut DeserializeHelper,
+                event: Event<'de>,
+            ) -> DeserializerResult<'de, super::FooType> {
                 use FooTypeDeserializerState as S;
                 let mut event = event;
                 let mut fallback = None;
@@ -352,8 +337,8 @@ pub mod example {
                     event = match (state, event) {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Once(Some(deserializer)), event) => {
-                            let output = deserializer.next(reader, event)?;
-                            match self.handle_once(reader, output, &mut fallback)? {
+                            let output = deserializer.next(helper, event)?;
+                            match self.handle_once(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -364,8 +349,8 @@ pub mod example {
                             }
                         }
                         (S::Optional(Some(deserializer)), event) => {
-                            let output = deserializer.next(reader, event)?;
-                            match self.handle_optional(reader, output, &mut fallback)? {
+                            let output = deserializer.next(helper, event)?;
+                            match self.handle_optional(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -376,8 +361,8 @@ pub mod example {
                             }
                         }
                         (S::OnceSpecify(Some(deserializer)), event) => {
-                            let output = deserializer.next(reader, event)?;
-                            match self.handle_once_specify(reader, output, &mut fallback)? {
+                            let output = deserializer.next(helper, event)?;
+                            match self.handle_once_specify(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -388,8 +373,8 @@ pub mod example {
                             }
                         }
                         (S::TwiceOrMore(Some(deserializer)), event) => {
-                            let output = deserializer.next(reader, event)?;
-                            match self.handle_twice_or_more(reader, output, &mut fallback)? {
+                            let output = deserializer.next(helper, event)?;
+                            match self.handle_twice_or_more(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -401,10 +386,10 @@ pub mod example {
                         }
                         (_, Event::End(_)) => {
                             if let Some(fallback) = fallback.take() {
-                                self.finish_state(reader, fallback)?;
+                                self.finish_state(helper, fallback)?;
                             }
                             return Ok(DeserializerOutput {
-                                artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                                artifact: DeserializerArtifact::Data(self.finish(helper)?),
                                 event: DeserializerEvent::None,
                                 allow_any: false,
                             });
@@ -415,13 +400,13 @@ pub mod example {
                             event
                         }
                         (S::Once(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            let output = reader.init_start_tag_deserializer(
+                            let output = helper.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_EXAMPLE),
                                 b"Once",
                                 false,
                             )?;
-                            match self.handle_once(reader, output, &mut fallback)? {
+                            match self.handle_once(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -432,13 +417,13 @@ pub mod example {
                             }
                         }
                         (S::Optional(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            let output = reader.init_start_tag_deserializer(
+                            let output = helper.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_EXAMPLE),
                                 b"Optional",
                                 false,
                             )?;
-                            match self.handle_optional(reader, output, &mut fallback)? {
+                            match self.handle_optional(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -449,13 +434,13 @@ pub mod example {
                             }
                         }
                         (S::OnceSpecify(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            let output = reader.init_start_tag_deserializer(
+                            let output = helper.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_EXAMPLE),
                                 b"OnceSpecify",
                                 false,
                             )?;
-                            match self.handle_once_specify(reader, output, &mut fallback)? {
+                            match self.handle_once_specify(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -466,13 +451,13 @@ pub mod example {
                             }
                         }
                         (S::TwiceOrMore(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            let output = reader.init_start_tag_deserializer(
+                            let output = helper.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_EXAMPLE),
                                 b"TwiceOrMore",
                                 false,
                             )?;
-                            match self.handle_twice_or_more(reader, output, &mut fallback)? {
+                            match self.handle_twice_or_more(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -501,12 +486,9 @@ pub mod example {
                     allow_any,
                 })
             }
-            fn finish<R>(mut self, reader: &R) -> Result<super::FooType, Error>
-            where
-                R: DeserializeReader,
-            {
+            fn finish(mut self, helper: &mut DeserializeHelper) -> Result<super::FooType, Error> {
                 let state = replace(&mut *self.state__, FooTypeDeserializerState::Unknown__);
-                self.finish_state(reader, state)?;
+                self.finish_state(helper, state)?;
                 Ok(super::FooType {
                     once: self
                         .once
@@ -522,7 +504,8 @@ pub mod example {
     }
     pub mod quick_xml_serialize {
         use xsd_parser_types::quick_xml::{
-            BytesEnd, BytesStart, Error, Event, IterSerializer, WithSerializer,
+            BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
+            WithSerializer,
         };
         #[derive(Debug)]
         pub struct FooTypeSerializer<'ser> {
@@ -543,60 +526,72 @@ pub mod example {
             Phantom__(&'ser ()),
         }
         impl<'ser> FooTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         FooTypeSerializerState::Init__ => {
                             *self.state = FooTypeSerializerState::Once(WithSerializer::serializer(
                                 &self.value.once,
-                                Some("Once"),
+                                Some("example:Once"),
                                 false,
                             )?);
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_EXAMPLE[..]));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_EXAMPLE),
+                                    &super::super::NS_EXAMPLE,
+                                );
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
-                        FooTypeSerializerState::Once(x) => match x.next().transpose()? {
+                        FooTypeSerializerState::Once(x) => match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state = FooTypeSerializerState::Optional(IterSerializer::new(
                                     self.value.optional.as_ref(),
-                                    Some("Optional"),
+                                    Some("example:Optional"),
                                     false,
                                 ))
                             }
                         },
-                        FooTypeSerializerState::Optional(x) => match x.next().transpose()? {
+                        FooTypeSerializerState::Optional(x) => match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state =
                                     FooTypeSerializerState::OnceSpecify(WithSerializer::serializer(
                                         &self.value.once_specify,
-                                        Some("OnceSpecify"),
+                                        Some("example:OnceSpecify"),
                                         false,
                                     )?)
                             }
                         },
-                        FooTypeSerializerState::OnceSpecify(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => {
-                                *self.state =
-                                    FooTypeSerializerState::TwiceOrMore(IterSerializer::new(
-                                        &self.value.twice_or_more[..],
-                                        Some("TwiceOrMore"),
-                                        false,
-                                    ))
+                        FooTypeSerializerState::OnceSpecify(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => {
+                                    *self.state =
+                                        FooTypeSerializerState::TwiceOrMore(IterSerializer::new(
+                                            &self.value.twice_or_more[..],
+                                            Some("example:TwiceOrMore"),
+                                            false,
+                                        ))
+                                }
                             }
-                        },
-                        FooTypeSerializerState::TwiceOrMore(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = FooTypeSerializerState::End__,
-                        },
+                        }
+                        FooTypeSerializerState::TwiceOrMore(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = FooTypeSerializerState::End__,
+                            }
+                        }
                         FooTypeSerializerState::End__ => {
                             *self.state = FooTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         FooTypeSerializerState::Done__ => return Ok(None),
@@ -605,10 +600,9 @@ pub mod example {
                 }
             }
         }
-        impl<'ser> Iterator for FooTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for FooTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {

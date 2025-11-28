@@ -1,15 +1,17 @@
 use std::borrow::Cow;
 use xsd_parser_types::{
-    misc::Namespace,
+    misc::{Namespace, NamespacePrefix},
     quick_xml::{
-        DeserializeBytes, DeserializeReader, Error, ErrorKind, RawByteStr, SerializeBytes,
-        WithDeserializer, WithSerializer,
+        DeserializeBytes, DeserializeHelper, Error, ErrorKind, RawByteStr, SerializeBytes,
+        SerializeHelper, WithDeserializer, WithSerializer,
     },
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
 pub const NS_UNNAMED_2: Namespace =
     Namespace::new_const(b"http://www.sitemaps.org/schemas/sitemap/0.9");
+pub const PREFIX_XS: NamespacePrefix = NamespacePrefix::new_const(b"xs");
+pub const PREFIX_XML: NamespacePrefix = NamespacePrefix::new_const(b"xml");
 pub type Urlset = UrlsetType;
 #[derive(Debug)]
 pub struct UrlsetType {
@@ -69,7 +71,7 @@ pub enum TChangeFreqType {
     Never,
 }
 impl SerializeBytes for TChangeFreqType {
-    fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+    fn serialize_bytes(&self, helper: &mut SerializeHelper) -> Result<Option<Cow<'_, str>>, Error> {
         match self {
             Self::Always => Ok(Some(Cow::Borrowed("always"))),
             Self::Hourly => Ok(Some(Cow::Borrowed("hourly"))),
@@ -82,10 +84,7 @@ impl SerializeBytes for TChangeFreqType {
     }
 }
 impl DeserializeBytes for TChangeFreqType {
-    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
-    where
-        R: DeserializeReader,
-    {
+    fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
             b"always" => Ok(Self::Always),
             b"hourly" => Ok(Self::Hourly),
@@ -94,16 +93,18 @@ impl DeserializeBytes for TChangeFreqType {
             b"monthly" => Ok(Self::Monthly),
             b"yearly" => Ok(Self::Yearly),
             b"never" => Ok(Self::Never),
-            x => Err(reader.map_error(ErrorKind::UnknownOrInvalidValue(RawByteStr::from_slice(x)))),
+            x => Err(Error::from(ErrorKind::UnknownOrInvalidValue(
+                RawByteStr::from_slice(x),
+            ))),
         }
     }
 }
 pub mod quick_xml_deserialize {
     use core::mem::replace;
     use xsd_parser_types::quick_xml::{
-        filter_xmlns_attributes, BytesStart, DeserializeReader, Deserializer, DeserializerArtifact,
-        DeserializerEvent, DeserializerOutput, DeserializerResult, ElementHandlerOutput, Error,
-        ErrorKind, Event, RawByteStr, WithDeserializer,
+        BytesStart, DeserializeHelper, Deserializer, DeserializerArtifact, DeserializerEvent,
+        DeserializerOutput, DeserializerResult, ElementHandlerOutput, Error, ErrorKind, Event,
+        RawByteStr, WithDeserializer,
     };
     #[derive(Debug)]
     pub struct UrlsetTypeDeserializer {
@@ -118,30 +119,27 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl UrlsetTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
-            for attrib in filter_xmlns_attributes(bytes_start) {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib_checked(attrib)?;
+                helper.raise_unexpected_attrib_checked(&attrib)?;
             }
             Ok(Self {
                 url: Vec::new(),
                 state__: Box::new(UrlsetTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: UrlsetTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             use UrlsetTypeDeserializerState as S;
             match state {
-                S::Url(Some(deserializer)) => self.store_url(deserializer.finish(reader)?)?,
+                S::Url(Some(deserializer)) => self.store_url(deserializer.finish(helper)?)?,
                 _ => (),
             }
             Ok(())
@@ -150,15 +148,12 @@ pub mod quick_xml_deserialize {
             self.url.push(value);
             Ok(())
         }
-        fn handle_url<'de, R>(
+        fn handle_url<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::TUrlType>,
             fallback: &mut Option<UrlsetTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -175,7 +170,7 @@ pub mod quick_xml_deserialize {
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -203,20 +198,17 @@ pub mod quick_xml_deserialize {
         }
     }
     impl<'de> Deserializer<'de, super::UrlsetType> for UrlsetTypeDeserializer {
-        fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, super::UrlsetType>
-        where
-            R: DeserializeReader,
-        {
-            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
-        }
-        fn next<R>(
-            mut self,
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::UrlsetType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::UrlsetType> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        }
+        fn next(
+            mut self,
+            helper: &mut DeserializeHelper,
+            event: Event<'de>,
+        ) -> DeserializerResult<'de, super::UrlsetType> {
             use UrlsetTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -226,8 +218,8 @@ pub mod quick_xml_deserialize {
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
                     (S::Url(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_url(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_url(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -239,10 +231,10 @@ pub mod quick_xml_deserialize {
                     }
                     (_, Event::End(_)) => {
                         if let Some(fallback) = fallback.take() {
-                            self.finish_state(reader, fallback)?;
+                            self.finish_state(helper, fallback)?;
                         }
                         return Ok(DeserializerOutput {
-                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            artifact: DeserializerArtifact::Data(self.finish(helper)?),
                             event: DeserializerEvent::None,
                             allow_any: false,
                         });
@@ -254,13 +246,13 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::Url(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"url",
                             true,
                         )?;
-                        match self.handle_url(reader, output, &mut fallback)? {
+                        match self.handle_url(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -289,12 +281,9 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::UrlsetType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(mut self, helper: &mut DeserializeHelper) -> Result<super::UrlsetType, Error> {
             let state = replace(&mut *self.state__, UrlsetTypeDeserializerState::Unknown__);
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::UrlsetType { url: self.url })
         }
     }
@@ -317,13 +306,13 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl TUrlTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
-            for attrib in filter_xmlns_attributes(bytes_start) {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib_checked(attrib)?;
+                helper.raise_unexpected_attrib_checked(&attrib)?;
             }
             Ok(Self {
                 loc: None,
@@ -333,25 +322,22 @@ pub mod quick_xml_deserialize {
                 state__: Box::new(TUrlTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: TUrlTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             use TUrlTypeDeserializerState as S;
             match state {
-                S::Loc(Some(deserializer)) => self.store_loc(deserializer.finish(reader)?)?,
+                S::Loc(Some(deserializer)) => self.store_loc(deserializer.finish(helper)?)?,
                 S::Lastmod(Some(deserializer)) => {
-                    self.store_lastmod(deserializer.finish(reader)?)?
+                    self.store_lastmod(deserializer.finish(helper)?)?
                 }
                 S::Changefreq(Some(deserializer)) => {
-                    self.store_changefreq(deserializer.finish(reader)?)?
+                    self.store_changefreq(deserializer.finish(helper)?)?
                 }
                 S::Priority(Some(deserializer)) => {
-                    self.store_priority(deserializer.finish(reader)?)?
+                    self.store_priority(deserializer.finish(helper)?)?
                 }
                 _ => (),
             }
@@ -391,15 +377,12 @@ pub mod quick_xml_deserialize {
             self.priority = Some(value);
             Ok(())
         }
-        fn handle_loc<'de, R>(
+        fn handle_loc<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<TUrlTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -416,7 +399,7 @@ pub mod quick_xml_deserialize {
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -441,15 +424,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_lastmod<'de, R>(
+        fn handle_lastmod<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<TUrlTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -461,7 +441,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -487,15 +467,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_changefreq<'de, R>(
+        fn handle_changefreq<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::TChangeFreqType>,
             fallback: &mut Option<TUrlTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -507,7 +484,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -534,15 +511,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_priority<'de, R>(
+        fn handle_priority<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, f64>,
             fallback: &mut Option<TUrlTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -554,7 +528,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -582,20 +556,17 @@ pub mod quick_xml_deserialize {
         }
     }
     impl<'de> Deserializer<'de, super::TUrlType> for TUrlTypeDeserializer {
-        fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, super::TUrlType>
-        where
-            R: DeserializeReader,
-        {
-            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
-        }
-        fn next<R>(
-            mut self,
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::TUrlType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::TUrlType> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        }
+        fn next(
+            mut self,
+            helper: &mut DeserializeHelper,
+            event: Event<'de>,
+        ) -> DeserializerResult<'de, super::TUrlType> {
             use TUrlTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -605,8 +576,8 @@ pub mod quick_xml_deserialize {
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
                     (S::Loc(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_loc(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_loc(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -617,8 +588,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Lastmod(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_lastmod(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_lastmod(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -629,8 +600,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Changefreq(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_changefreq(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_changefreq(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -641,8 +612,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Priority(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_priority(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_priority(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -654,10 +625,10 @@ pub mod quick_xml_deserialize {
                     }
                     (_, Event::End(_)) => {
                         if let Some(fallback) = fallback.take() {
-                            self.finish_state(reader, fallback)?;
+                            self.finish_state(helper, fallback)?;
                         }
                         return Ok(DeserializerOutput {
-                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            artifact: DeserializerArtifact::Data(self.finish(helper)?),
                             event: DeserializerEvent::None,
                             allow_any: false,
                         });
@@ -669,13 +640,13 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::Loc(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"loc",
                             true,
                         )?;
-                        match self.handle_loc(reader, output, &mut fallback)? {
+                        match self.handle_loc(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -686,13 +657,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Lastmod(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"lastmod",
                             true,
                         )?;
-                        match self.handle_lastmod(reader, output, &mut fallback)? {
+                        match self.handle_lastmod(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -703,13 +674,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Changefreq(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"changefreq",
                             true,
                         )?;
-                        match self.handle_changefreq(reader, output, &mut fallback)? {
+                        match self.handle_changefreq(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -720,13 +691,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Priority(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"priority",
                             true,
                         )?;
-                        match self.handle_priority(reader, output, &mut fallback)? {
+                        match self.handle_priority(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -755,12 +726,9 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::TUrlType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(mut self, helper: &mut DeserializeHelper) -> Result<super::TUrlType, Error> {
             let state = replace(&mut *self.state__, TUrlTypeDeserializerState::Unknown__);
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::TUrlType {
                 loc: self
                     .loc
@@ -774,7 +742,8 @@ pub mod quick_xml_deserialize {
 }
 pub mod quick_xml_serialize {
     use xsd_parser_types::quick_xml::{
-        BytesEnd, BytesStart, Error, Event, IterSerializer, WithSerializer,
+        BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
+        WithSerializer,
     };
     #[derive(Debug)]
     pub struct UrlsetTypeSerializer<'ser> {
@@ -792,7 +761,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> UrlsetTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     UrlsetTypeSerializerState::Init__ => {
@@ -802,17 +774,17 @@ pub mod quick_xml_serialize {
                             false,
                         ));
                         let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns"[..], &super::NS_UNNAMED_2[..]));
-                        }
+                        helper.begin_ns_scope();
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
                         return Ok(Some(Event::Start(bytes)));
                     }
-                    UrlsetTypeSerializerState::Url(x) => match x.next().transpose()? {
+                    UrlsetTypeSerializerState::Url(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => *self.state = UrlsetTypeSerializerState::End__,
                     },
                     UrlsetTypeSerializerState::End__ => {
                         *self.state = UrlsetTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     UrlsetTypeSerializerState::Done__ => return Ok(None),
@@ -821,10 +793,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for UrlsetTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for UrlsetTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -855,7 +826,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> TUrlTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     TUrlTypeSerializerState::Init__ => {
@@ -865,12 +839,11 @@ pub mod quick_xml_serialize {
                             false,
                         )?);
                         let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns"[..], &super::NS_UNNAMED_2[..]));
-                        }
+                        helper.begin_ns_scope();
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
                         return Ok(Some(Event::Start(bytes)));
                     }
-                    TUrlTypeSerializerState::Loc(x) => match x.next().transpose()? {
+                    TUrlTypeSerializerState::Loc(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => {
                             *self.state = TUrlTypeSerializerState::Lastmod(IterSerializer::new(
@@ -880,7 +853,7 @@ pub mod quick_xml_serialize {
                             ))
                         }
                     },
-                    TUrlTypeSerializerState::Lastmod(x) => match x.next().transpose()? {
+                    TUrlTypeSerializerState::Lastmod(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => {
                             *self.state = TUrlTypeSerializerState::Changefreq(IterSerializer::new(
@@ -890,7 +863,7 @@ pub mod quick_xml_serialize {
                             ))
                         }
                     },
-                    TUrlTypeSerializerState::Changefreq(x) => match x.next().transpose()? {
+                    TUrlTypeSerializerState::Changefreq(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => {
                             *self.state = TUrlTypeSerializerState::Priority(IterSerializer::new(
@@ -900,12 +873,13 @@ pub mod quick_xml_serialize {
                             ))
                         }
                     },
-                    TUrlTypeSerializerState::Priority(x) => match x.next().transpose()? {
+                    TUrlTypeSerializerState::Priority(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => *self.state = TUrlTypeSerializerState::End__,
                     },
                     TUrlTypeSerializerState::End__ => {
                         *self.state = TUrlTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     TUrlTypeSerializerState::Done__ => return Ok(None),
@@ -914,10 +888,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for TUrlTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for TUrlTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {

@@ -131,6 +131,20 @@ impl Default for MetaTypes {
     }
 }
 
+impl ModuleMeta {
+    /// Get the name or the prefix of the module.
+    #[must_use]
+    pub fn name(&self) -> Option<&Name> {
+        self.name.as_ref().or(self.prefix.as_ref())
+    }
+
+    /// Get the prefix or the name of the module.
+    #[must_use]
+    pub fn prefix(&self) -> Option<&Name> {
+        self.prefix.as_ref().or(self.name.as_ref())
+    }
+}
+
 fn get_resolved_impl<'a>(
     types: &'a MetaTypes,
     ident: &'a Ident,

@@ -7,7 +7,7 @@ use crate::models::{
 };
 
 pub use self::deserialize::QuickXmlDeserializeRenderStep;
-pub use self::serialize::QuickXmlSerializeRenderStep;
+pub use self::serialize::{NamespaceSerialization, QuickXmlSerializeRenderStep};
 
 impl ComplexDataElement<'_> {
     #[inline]
