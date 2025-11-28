@@ -100,6 +100,7 @@ impl UnionData<'_> {
             .map(|var| var.render_deserializer_variant(ctx, validation.is_some()));
 
         let vec = resolve_build_in!(ctx, "::alloc::vec::Vec");
+        let u8_ = resolve_build_in!(ctx, "::core::primitive::u8");
         let result = resolve_build_in!(ctx, "::core::result::Result");
 
         let error = resolve_ident!(ctx, "xsd_parser_types::quick_xml::Error");
@@ -113,7 +114,7 @@ impl UnionData<'_> {
             impl #deserialize_bytes for #type_ident {
                 fn deserialize_bytes(
                     helper: &mut #deserialize_helper,
-                    bytes: &[u8],
+                    bytes: &[#u8_],
                 ) -> #result<Self, #error> {
                     let mut errors = #vec::new();
 
@@ -525,6 +526,8 @@ impl ReferenceData<'_> {
             }
         };
 
+        let u8_ = resolve_build_in!(ctx, "::core::primitive::u8");
+
         let error = resolve_ident!(ctx, "::xsd_parser_types::quick_xml::Error");
         let deserialize_bytes =
             resolve_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializeBytes");
@@ -535,7 +538,7 @@ impl ReferenceData<'_> {
             impl #deserialize_bytes for #type_ident {
                 fn deserialize_bytes(
                     helper: &mut #deserialize_helper,
-                    bytes: &[u8],
+                    bytes: &[#u8_],
                 ) -> #result<Self, #error> {
                     #body
                 }
@@ -563,6 +566,7 @@ impl EnumerationData<'_> {
             .filter_map(|v| v.render_deserializer_variant(ctx, &mut other))
             .collect::<Vec<_>>();
 
+        let u8_ = resolve_build_in!(ctx, "::core::primitive::u8");
         let result = resolve_build_in!(ctx, "::core::result::Result");
 
         let error = resolve_ident!(ctx, "::xsd_parser_types::quick_xml::Error");
@@ -589,7 +593,7 @@ impl EnumerationData<'_> {
             impl #deserialize_bytes for #type_ident {
                 fn deserialize_bytes(
                     helper: &mut #deserialize_helper,
-                    bytes: &[u8],
+                    bytes: &[#u8_],
                 ) -> #result<Self, #error> {
                     #validation
 
@@ -645,6 +649,8 @@ impl SimpleData<'_> {
 
         let target_type = ctx.resolve_type_for_module(target_type);
 
+        let vec = resolve_build_in!(ctx, "::alloc::vec::Vec");
+        let u8_ = resolve_build_in!(ctx, "::core::primitive::u8");
         let result = resolve_build_in!(ctx, "::core::result::Result");
 
         let error = resolve_ident!(ctx, "::xsd_parser_types::quick_xml::Error");
@@ -671,7 +677,7 @@ impl SimpleData<'_> {
                     let inner = bytes
                         .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
                         .map(|bytes| #target_type::deserialize_bytes(helper, bytes))
-                        .collect::<#result<Vec<_>, _>>()?;
+                        .collect::<#result<#vec<_>, _>>()?;
                 }
             }
             (need_str, occurs) => {
@@ -683,7 +689,7 @@ impl SimpleData<'_> {
             impl #deserialize_bytes for #type_ident {
                 fn deserialize_bytes(
                     helper: &mut #deserialize_helper,
-                    bytes: &[u8],
+                    bytes: &[#u8_],
                 ) -> #result<Self, #error> {
                     #validation
 
