@@ -1,22 +1,12 @@
 use std::fmt::{Debug, Formatter, Result as FmtResult};
 
-use quick_xml::{
-    events::Event,
-    name::{LocalName, QName, ResolveResult},
-    NsReader,
-};
+use quick_xml::{events::Event, NsReader};
 
-use crate::xml::NamespacesShared;
-
-use super::{
-    super::{Error, XmlReader, XmlReaderSync},
-    NamespacesBuilder,
-};
+use super::super::{Error, XmlReader, XmlReaderSync};
 
 /// Implements a [`XmlReader`] for string slices.
 pub struct SliceReader<'a> {
     inner: NsReader<&'a [u8]>,
-    namespaces: NamespacesBuilder,
 }
 
 impl<'a> SliceReader<'a> {
@@ -24,42 +14,20 @@ impl<'a> SliceReader<'a> {
     #[must_use]
     pub fn new(s: &'a str) -> Self {
         let inner = NsReader::from_str(s);
-        let namespaces = NamespacesBuilder::default();
 
-        Self { inner, namespaces }
+        Self { inner }
     }
 }
 
 impl XmlReader for SliceReader<'_> {
-    fn resolve<'n>(&self, name: QName<'n>, attribute: bool) -> (ResolveResult<'_>, LocalName<'n>) {
-        self.inner.resolve(name, attribute)
-    }
-
-    fn namespaces(&self) -> NamespacesShared<'static> {
-        let prefixes = self.inner.prefixes();
-
-        self.namespaces.get_or_create(prefixes)
-    }
-
-    fn current_position(&self) -> u64 {
-        self.inner.buffer_position()
-    }
-
-    fn error_position(&self) -> u64 {
-        self.inner.error_position()
+    fn extend_error(&self, error: Error) -> Error {
+        error.with_pos(self.inner.buffer_position())
     }
 }
 
 impl<'a> XmlReaderSync<'a> for SliceReader<'a> {
     fn read_event(&mut self) -> Result<Event<'a>, Error> {
-        let event = self
-            .inner
-            .read_event()
-            .map_err(|error| self.map_error(error))?;
-
-        self.namespaces.handle_event(&event);
-
-        Ok(event)
+        self.inner.read_event().map_err(Error::from)
     }
 }
 

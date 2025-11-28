@@ -12,8 +12,8 @@ use quick_xml::{
 
 #[cfg(feature = "quick-xml")]
 use crate::quick_xml::{
-    Deserializer, DeserializerArtifact, DeserializerEvent, DeserializerOutput, DeserializerResult,
-    Error, ErrorKind, WithDeserializer, WithSerializer, XmlReader,
+    DeserializeHelper, Deserializer, DeserializerArtifact, DeserializerEvent, DeserializerOutput,
+    DeserializerResult, Error, ErrorKind, WithDeserializer, WithSerializer,
 };
 
 /// Type to represent text values inside a XML.
@@ -123,18 +123,16 @@ pub enum TextDeserializer {
 }
 
 impl<'de> Deserializer<'de, Text> for TextDeserializer {
-    fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, Text>
-    where
-        R: XmlReader,
-    {
-        Self::Init.next(reader, event)
+    fn init(helper: &mut DeserializeHelper, event: Event<'de>) -> DeserializerResult<'de, Text> {
+        Self::Init.next(helper, event)
     }
 
-    fn next<R>(self, reader: &R, event: Event<'de>) -> DeserializerResult<'de, Text>
-    where
-        R: XmlReader,
-    {
-        let _reader = reader;
+    fn next(
+        self,
+        helper: &mut DeserializeHelper,
+        event: Event<'de>,
+    ) -> DeserializerResult<'de, Text> {
+        let _reader = helper;
 
         let text: Cow<'de, str> = match event {
             Event::Text(x) => {
@@ -191,11 +189,8 @@ impl<'de> Deserializer<'de, Text> for TextDeserializer {
         })
     }
 
-    fn finish<R>(self, reader: &R) -> Result<Text, Error>
-    where
-        R: XmlReader,
-    {
-        let _reader = reader;
+    fn finish(self, helper: &mut DeserializeHelper) -> Result<Text, Error> {
+        let _reader = helper;
 
         match self {
             Self::Init => Err(ErrorKind::MissingContent.into()),

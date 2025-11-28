@@ -4,7 +4,7 @@ use std::fmt::{Debug, Formatter, Result as FmtResult};
 use std::ops::{Deref, DerefMut};
 use std::sync::Arc;
 
-use quick_xml::name::Namespace;
+use quick_xml::name::{Namespace, PrefixDeclaration};
 
 use crate::misc::format_utf8_slice;
 
@@ -56,6 +56,30 @@ where
 /// Wrapper type that is used as key for the [`Namespaces`] map.
 #[derive(Clone, Hash, Eq, PartialEq, Ord, PartialOrd)]
 pub struct Key<'a>(pub Cow<'a, [u8]>);
+
+impl Key<'_> {
+    /// Get the key value as [`PrefixDeclaration`].
+    #[must_use]
+    pub fn prefix_decl(&self) -> PrefixDeclaration<'_> {
+        if self.0.is_empty() {
+            PrefixDeclaration::Default
+        } else {
+            PrefixDeclaration::Named(&self.0)
+        }
+    }
+}
+
+impl From<Vec<u8>> for Key<'static> {
+    fn from(value: Vec<u8>) -> Self {
+        Self(Cow::Owned(value))
+    }
+}
+
+impl<'a> From<&'a [u8]> for Key<'a> {
+    fn from(value: &'a [u8]) -> Self {
+        Self(Cow::Borrowed(value))
+    }
+}
 
 impl Deref for Key<'_> {
     type Target = [u8];

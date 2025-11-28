@@ -6,8 +6,8 @@ use quick_xml::events::Event;
 
 #[cfg(feature = "quick-xml")]
 use crate::quick_xml::{
-    Deserializer, DeserializerArtifact, DeserializerEvent, DeserializerOutput, DeserializerResult,
-    Error, IterSerializer, WithDeserializer, WithSerializer, XmlReader,
+    DeserializeHelper, Deserializer, DeserializerArtifact, DeserializerEvent, DeserializerOutput,
+    DeserializerResult, Error, IterSerializer, WithDeserializer, WithSerializer,
 };
 
 use super::text::{Text, TextDeserializer};
@@ -228,24 +228,25 @@ impl<'de, T> Deserializer<'de, Mixed<T>> for MixedDeserializer<T>
 where
     T: WithDeserializer,
 {
-    fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, Mixed<T>>
-    where
-        R: XmlReader,
-    {
-        Self::Init.next(reader, event)
+    fn init(
+        helper: &mut DeserializeHelper,
+        event: Event<'de>,
+    ) -> DeserializerResult<'de, Mixed<T>> {
+        Self::Init.next(helper, event)
     }
 
     #[allow(clippy::too_many_lines)]
-    fn next<R>(mut self, reader: &R, mut event: Event<'de>) -> DeserializerResult<'de, Mixed<T>>
-    where
-        R: XmlReader,
-    {
+    fn next(
+        mut self,
+        helper: &mut DeserializeHelper,
+        mut event: Event<'de>,
+    ) -> DeserializerResult<'de, Mixed<T>> {
         loop {
             let (next_event, next_state) = match self {
                 x @ (Self::Init | Self::Inner { .. }) => {
                     let output = match x {
-                        Self::Init => T::Deserializer::init(reader, event),
-                        Self::Inner { deserializer } => deserializer.next(reader, event),
+                        Self::Init => T::Deserializer::init(helper, event),
+                        Self::Inner { deserializer } => deserializer.next(helper, event),
                         Self::TextAfter { .. } => unreachable!(),
                     }?;
 
@@ -301,9 +302,9 @@ where
                     deserializer,
                 } => {
                     let output = if let Some(deserializer) = deserializer {
-                        deserializer.next(reader, event)
+                        deserializer.next(helper, event)
                     } else {
-                        TextDeserializer::init(reader, event)
+                        TextDeserializer::init(helper, event)
                     }?;
 
                     let DeserializerOutput {
@@ -354,14 +355,11 @@ where
         }
     }
 
-    fn finish<R>(self, reader: &R) -> Result<Mixed<T>, Error>
-    where
-        R: XmlReader,
-    {
+    fn finish(self, helper: &mut DeserializeHelper) -> Result<Mixed<T>, Error> {
         match self {
             Self::Init => unreachable!(),
             Self::Inner { deserializer } => {
-                let value = deserializer.finish(reader)?;
+                let value = deserializer.finish(helper)?;
 
                 Ok(Mixed {
                     value,
@@ -373,7 +371,7 @@ where
                 allow_any: _,
                 deserializer,
             } => {
-                let text_after = deserializer.map(|x| x.finish(reader)).transpose()?;
+                let text_after = deserializer.map(|x| x.finish(helper)).transpose()?;
 
                 Ok(Mixed { value, text_after })
             }

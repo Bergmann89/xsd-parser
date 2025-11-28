@@ -1,7 +1,4 @@
-use quick_xml::events::{
-    attributes::{AttrError, Attribute},
-    BytesStart,
-};
+use quick_xml::events::BytesStart;
 
 use super::{Error, SerializeBytes};
 
@@ -37,18 +34,4 @@ where
     };
 
     write_attrib(bytes, name, attrib)
-}
-
-/// Returns an iterator that yields all attributes of the passed `bytes_start`
-/// object, except the `xmlns` attributes.
-pub fn filter_xmlns_attributes<'a>(
-    bytes_start: &'a BytesStart<'_>,
-) -> impl Iterator<Item = Result<Attribute<'a>, AttrError>> {
-    bytes_start.attributes().filter(|attrib| {
-        let Ok(attrib) = attrib else {
-            return true;
-        };
-
-        attrib.key.0 != b"xmlns" && !attrib.key.0.starts_with(b"xmlns:")
-    })
 }

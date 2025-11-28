@@ -27,10 +27,7 @@ use std::fmt::Debug;
 use std::io::BufRead;
 use std::path::Path;
 
-use quick_xml::{
-    events::Event,
-    name::{LocalName, QName, ResolveResult},
-};
+use quick_xml::events::Event;
 use resolver::{FileResolver, NoOpResolver, ResolveRequest};
 use tracing::instrument;
 use url::Url;
@@ -39,7 +36,6 @@ use xsd_parser_types::misc::{Namespace, NamespacePrefix};
 use xsd_parser_types::quick_xml::{
     DeserializeSync, Error as QuickXmlError, IoReader, SliceReader, XmlReader, XmlReaderSync,
 };
-use xsd_parser_types::xml::NamespacesShared;
 
 use crate::models::schema::{
     xs::{Import, Include, Schema, SchemaContent},
@@ -502,20 +498,8 @@ impl<R> XmlReader for SchemaReader<R>
 where
     R: XmlReader,
 {
-    fn resolve<'n>(&self, name: QName<'n>, attribute: bool) -> (ResolveResult<'_>, LocalName<'n>) {
-        self.inner.resolve(name, attribute)
-    }
-
-    fn namespaces(&self) -> NamespacesShared<'static> {
-        self.inner.namespaces()
-    }
-
-    fn current_position(&self) -> u64 {
-        self.inner.current_position()
-    }
-
-    fn error_position(&self) -> u64 {
-        self.inner.error_position()
+    fn extend_error(&self, error: QuickXmlError) -> QuickXmlError {
+        self.inner.extend_error(error)
     }
 }
 

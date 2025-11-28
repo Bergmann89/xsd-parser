@@ -82,14 +82,11 @@ impl ::xsd_parser_types::quick_xml::SerializeBytes for TestType {
     }
 }
 impl ::xsd_parser_types::quick_xml::DeserializeBytes for TestType {
-    fn deserialize_bytes<R>(
-        reader: &R,
+    fn deserialize_bytes(
+        helper: &mut ::xsd_parser_types::quick_xml::DeserializeHelper,
         bytes: &[u8],
-    ) -> ::core::result::Result<Self, ::xsd_parser_types::quick_xml::Error>
-    where
-        R: ::xsd_parser_types::quick_xml::DeserializeReader,
-    {
-        let inner = ::std::string::String::deserialize_bytes(reader, bytes)?;
+    ) -> ::core::result::Result<Self, ::xsd_parser_types::quick_xml::Error> {
+        let inner = ::std::string::String::deserialize_bytes(helper, bytes)?;
         Ok(Self::new(inner).map_err(|error| (bytes, error))?)
     }
 }
@@ -123,17 +120,14 @@ impl ::xsd_parser_types::quick_xml::SerializeBytes for EntitiesType {
     }
 }
 impl ::xsd_parser_types::quick_xml::DeserializeBytes for EntitiesType {
-    fn deserialize_bytes<R>(
-        reader: &R,
+    fn deserialize_bytes(
+        helper: &mut ::xsd_parser_types::quick_xml::DeserializeHelper,
         bytes: &[u8],
-    ) -> ::core::result::Result<Self, ::xsd_parser_types::quick_xml::Error>
-    where
-        R: ::xsd_parser_types::quick_xml::DeserializeReader,
-    {
+    ) -> ::core::result::Result<Self, ::xsd_parser_types::quick_xml::Error> {
         Ok(Self(
             bytes
                 .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
-                .map(|bytes| ::std::string::String::deserialize_bytes(reader, bytes))
+                .map(|bytes| ::std::string::String::deserialize_bytes(helper, bytes))
                 .collect::<::core::result::Result<::std::vec::Vec<_>, _>>()?,
         ))
     }
@@ -163,17 +157,14 @@ impl ::xsd_parser_types::quick_xml::SerializeBytes for EntityType {
     }
 }
 impl ::xsd_parser_types::quick_xml::DeserializeBytes for EntityType {
-    fn deserialize_bytes<R>(
-        reader: &R,
+    fn deserialize_bytes(
+        helper: &mut ::xsd_parser_types::quick_xml::DeserializeHelper,
         bytes: &[u8],
-    ) -> ::core::result::Result<Self, ::xsd_parser_types::quick_xml::Error>
-    where
-        R: ::xsd_parser_types::quick_xml::DeserializeReader,
-    {
+    ) -> ::core::result::Result<Self, ::xsd_parser_types::quick_xml::Error> {
         Ok(Self(
             bytes
                 .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
-                .map(|bytes| ::std::string::String::deserialize_bytes(reader, bytes))
+                .map(|bytes| ::std::string::String::deserialize_bytes(helper, bytes))
                 .collect::<::core::result::Result<::std::vec::Vec<_>, _>>()?,
         ))
     }
@@ -205,17 +196,14 @@ impl ::xsd_parser_types::quick_xml::SerializeBytes for IdrefsType {
     }
 }
 impl ::xsd_parser_types::quick_xml::DeserializeBytes for IdrefsType {
-    fn deserialize_bytes<R>(
-        reader: &R,
+    fn deserialize_bytes(
+        helper: &mut ::xsd_parser_types::quick_xml::DeserializeHelper,
         bytes: &[u8],
-    ) -> ::core::result::Result<Self, ::xsd_parser_types::quick_xml::Error>
-    where
-        R: ::xsd_parser_types::quick_xml::DeserializeReader,
-    {
+    ) -> ::core::result::Result<Self, ::xsd_parser_types::quick_xml::Error> {
         Ok(Self(
             bytes
                 .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
-                .map(|bytes| ::std::string::String::deserialize_bytes(reader, bytes))
+                .map(|bytes| ::std::string::String::deserialize_bytes(helper, bytes))
                 .collect::<::core::result::Result<::std::vec::Vec<_>, _>>()?,
         ))
     }
@@ -247,17 +235,14 @@ impl ::xsd_parser_types::quick_xml::SerializeBytes for NmtokensType {
     }
 }
 impl ::xsd_parser_types::quick_xml::DeserializeBytes for NmtokensType {
-    fn deserialize_bytes<R>(
-        reader: &R,
+    fn deserialize_bytes(
+        helper: &mut ::xsd_parser_types::quick_xml::DeserializeHelper,
         bytes: &[u8],
-    ) -> ::core::result::Result<Self, ::xsd_parser_types::quick_xml::Error>
-    where
-        R: ::xsd_parser_types::quick_xml::DeserializeReader,
-    {
+    ) -> ::core::result::Result<Self, ::xsd_parser_types::quick_xml::Error> {
         Ok(Self(
             bytes
                 .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
-                .map(|bytes| ::std::string::String::deserialize_bytes(reader, bytes))
+                .map(|bytes| ::std::string::String::deserialize_bytes(helper, bytes))
                 .collect::<::core::result::Result<::std::vec::Vec<_>, _>>()?,
         ))
     }
@@ -331,50 +316,38 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl AnyTypeDeserializer {
-        fn from_bytes_start<R>(
-            reader: &R,
+        fn from_bytes_start(
+            helper: &mut ::xsd_parser_types::quick_xml::DeserializeHelper,
             bytes_start: &::xsd_parser_types::quick_xml::BytesStart<'_>,
-        ) -> ::core::result::Result<Self, ::xsd_parser_types::quick_xml::Error>
-        where
-            R: ::xsd_parser_types::quick_xml::DeserializeReader,
-        {
+        ) -> ::core::result::Result<Self, ::xsd_parser_types::quick_xml::Error> {
             Ok(Self {
                 state__: ::std::boxed::Box::new(AnyTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut ::xsd_parser_types::quick_xml::DeserializeHelper,
             state: AnyTypeDeserializerState,
-        ) -> ::core::result::Result<(), ::xsd_parser_types::quick_xml::Error>
-        where
-            R: ::xsd_parser_types::quick_xml::DeserializeReader,
-        {
+        ) -> ::core::result::Result<(), ::xsd_parser_types::quick_xml::Error> {
             Ok(())
         }
     }
     impl<'de> ::xsd_parser_types::quick_xml::Deserializer<'de, super::AnyType> for AnyTypeDeserializer {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut ::xsd_parser_types::quick_xml::DeserializeHelper,
             event: ::xsd_parser_types::quick_xml::Event<'de>,
-        ) -> ::xsd_parser_types::quick_xml::DeserializerResult<'de, super::AnyType>
-        where
-            R: ::xsd_parser_types::quick_xml::DeserializeReader,
-        {
-            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        ) -> ::xsd_parser_types::quick_xml::DeserializerResult<'de, super::AnyType> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut ::xsd_parser_types::quick_xml::DeserializeHelper,
             event: ::xsd_parser_types::quick_xml::Event<'de>,
-        ) -> ::xsd_parser_types::quick_xml::DeserializerResult<'de, super::AnyType>
-        where
-            R: ::xsd_parser_types::quick_xml::DeserializeReader,
-        {
+        ) -> ::xsd_parser_types::quick_xml::DeserializerResult<'de, super::AnyType> {
             if let ::xsd_parser_types::quick_xml::Event::End(_) = &event {
                 Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                     artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Data(
-                        self.finish(reader)?,
+                        self.finish(helper)?,
                     ),
                     event: ::xsd_parser_types::quick_xml::DeserializerEvent::None,
                     allow_any: false,
@@ -401,16 +374,13 @@ pub mod quick_xml_deserialize {
                 })
             }
         }
-        fn finish<R>(
+        fn finish(
             mut self,
-            reader: &R,
-        ) -> ::core::result::Result<super::AnyType, ::xsd_parser_types::quick_xml::Error>
-        where
-            R: ::xsd_parser_types::quick_xml::DeserializeReader,
-        {
+            helper: &mut ::xsd_parser_types::quick_xml::DeserializeHelper,
+        ) -> ::core::result::Result<super::AnyType, ::xsd_parser_types::quick_xml::Error> {
             let state =
                 ::core::mem::replace(&mut *self.state__, AnyTypeDeserializerState::Unknown__);
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::AnyType {})
         }
     }

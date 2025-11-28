@@ -21,9 +21,9 @@ use regex::Regex;
 
 pub use crate::misc::RawByteStr;
 
-pub use self::attributes::{filter_xmlns_attributes, write_attrib, write_attrib_opt};
+pub use self::attributes::{write_attrib, write_attrib_opt};
 pub use self::deserialize::{
-    ContentDeserializer, DeserializeBytes, DeserializeBytesFromStr, DeserializeReader,
+    ContentDeserializer, DeserializeBytes, DeserializeBytesFromStr, DeserializeHelper,
     DeserializeStrError, DeserializeSync, Deserializer, DeserializerArtifact, DeserializerEvent,
     DeserializerOutput, DeserializerResult, ElementHandlerOutput, WithDeserializer,
 };

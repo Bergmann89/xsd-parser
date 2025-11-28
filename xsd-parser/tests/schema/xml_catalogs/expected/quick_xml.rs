@@ -5,7 +5,7 @@ pub const NS_ER: Namespace = Namespace::new_const(b"urn:oasis:names:tc:entity:xm
 pub mod er {
     use std::borrow::Cow;
     use xsd_parser_types::quick_xml::{
-        DeserializeBytes, DeserializeReader, Error, ErrorKind, RawByteStr, SerializeBytes,
+        DeserializeBytes, DeserializeHelper, Error, ErrorKind, RawByteStr, SerializeBytes,
         WithDeserializer, WithSerializer,
     };
     #[derive(Debug)]
@@ -339,17 +339,13 @@ pub mod er {
         }
     }
     impl DeserializeBytes for SystemOrPublicType {
-        fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
             match bytes {
                 b"system" => Ok(Self::System),
                 b"public" => Ok(Self::Public),
-                x => {
-                    Err(reader
-                        .map_error(ErrorKind::UnknownOrInvalidValue(RawByteStr::from_slice(x))))
-                }
+                x => Err(Error::from(ErrorKind::UnknownOrInvalidValue(
+                    RawByteStr::from_slice(x),
+                ))),
             }
         }
     }
@@ -431,9 +427,9 @@ pub mod er {
     pub mod quick_xml_deserialize {
         use core::mem::replace;
         use xsd_parser_types::quick_xml::{
-            filter_xmlns_attributes, BytesStart, DeserializeReader, Deserializer,
-            DeserializerArtifact, DeserializerEvent, DeserializerOutput, DeserializerResult,
-            ElementHandlerOutput, Error, ErrorKind, Event, RawByteStr, WithDeserializer,
+            BytesStart, DeserializeHelper, Deserializer, DeserializerArtifact, DeserializerEvent,
+            DeserializerOutput, DeserializerResult, ElementHandlerOutput, Error, ErrorKind, Event,
+            RawByteStr, WithDeserializer,
         };
         #[derive(Debug)]
         pub struct CatalogTypeDeserializer {
@@ -450,24 +446,24 @@ pub mod er {
             Unknown__,
         }
         impl CatalogTypeDeserializer {
-            fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-            where
-                R: DeserializeReader,
-            {
+            fn from_bytes_start(
+                helper: &mut DeserializeHelper,
+                bytes_start: &BytesStart<'_>,
+            ) -> Result<Self, Error> {
                 let mut id: Option<String> = None;
                 let mut prefer: Option<super::SystemOrPublicType> = None;
-                for attrib in filter_xmlns_attributes(bytes_start) {
+                for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"id")
                     ) {
-                        reader.read_attrib(&mut id, b"id", &attrib.value)?;
+                        helper.read_attrib(&mut id, b"id", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"prefer")
                     ) {
-                        reader.read_attrib(&mut prefer, b"prefer", &attrib.value)?;
+                        helper.read_attrib(&mut prefer, b"prefer", &attrib.value)?;
                     }
                 }
                 Ok(Self {
@@ -477,16 +473,13 @@ pub mod er {
                     state__: Box::new(CatalogTypeDeserializerState::Init__),
                 })
             }
-            fn finish_state<R>(
+            fn finish_state(
                 &mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 state: CatalogTypeDeserializerState,
-            ) -> Result<(), Error>
-            where
-                R: DeserializeReader,
-            {
+            ) -> Result<(), Error> {
                 if let CatalogTypeDeserializerState::Content__(deserializer) = state {
-                    self.store_content(deserializer.finish(reader)?)?;
+                    self.store_content(deserializer.finish(helper)?)?;
                 }
                 Ok(())
             }
@@ -494,15 +487,12 @@ pub mod er {
                 self.content.push(value);
                 Ok(())
             }
-            fn handle_content<'de, R>(
+            fn handle_content<'de>(
                 &mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::CatalogTypeContent>,
                 fallback: &mut Option<CatalogTypeDeserializerState>,
-            ) -> Result<ElementHandlerOutput<'de>, Error>
-            where
-                R: DeserializeReader,
-            {
+            ) -> Result<ElementHandlerOutput<'de>, Error> {
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -515,7 +505,7 @@ pub mod er {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
-                    self.finish_state(reader, fallback)?;
+                    self.finish_state(helper, fallback)?;
                 }
                 Ok(match artifact {
                     DeserializerArtifact::None => unreachable!(),
@@ -544,20 +534,17 @@ pub mod er {
             }
         }
         impl<'de> Deserializer<'de, super::CatalogType> for CatalogTypeDeserializer {
-            fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, super::CatalogType>
-            where
-                R: DeserializeReader,
-            {
-                reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
-            }
-            fn next<R>(
-                mut self,
-                reader: &R,
+            fn init(
+                helper: &mut DeserializeHelper,
                 event: Event<'de>,
-            ) -> DeserializerResult<'de, super::CatalogType>
-            where
-                R: DeserializeReader,
-            {
+            ) -> DeserializerResult<'de, super::CatalogType> {
+                helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
+            }
+            fn next(
+                mut self,
+                helper: &mut DeserializeHelper,
+                event: Event<'de>,
+            ) -> DeserializerResult<'de, super::CatalogType> {
                 use CatalogTypeDeserializerState as S;
                 let mut event = event;
                 let mut fallback = None;
@@ -566,8 +553,8 @@ pub mod er {
                     event = match (state, event) {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content__(deserializer), event) => {
-                            let output = deserializer.next(reader, event)?;
-                            match self.handle_content(reader, output, &mut fallback)? {
+                            let output = deserializer.next(helper, event)?;
+                            match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -576,15 +563,15 @@ pub mod er {
                         }
                         (_, Event::End(_)) => {
                             return Ok(DeserializerOutput {
-                                artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                                artifact: DeserializerArtifact::Data(self.finish(helper)?),
                                 event: DeserializerEvent::None,
                                 allow_any: false,
                             });
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = < super :: CatalogTypeContent as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_content(reader, output, &mut fallback)? {
+                            let output = < super :: CatalogTypeContent as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                            match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -600,12 +587,12 @@ pub mod er {
                     allow_any,
                 })
             }
-            fn finish<R>(mut self, reader: &R) -> Result<super::CatalogType, Error>
-            where
-                R: DeserializeReader,
-            {
+            fn finish(
+                mut self,
+                helper: &mut DeserializeHelper,
+            ) -> Result<super::CatalogType, Error> {
                 let state = replace(&mut *self.state__, CatalogTypeDeserializerState::Unknown__);
-                self.finish_state(reader, state)?;
+                self.finish_state(helper, state)?;
                 Ok(super::CatalogType {
                     id: self.id,
                     prefer: self.prefer,
@@ -672,182 +659,179 @@ pub mod er {
             Unknown__,
         }
         impl CatalogTypeContentDeserializer {
-            fn find_suitable<'de, R>(
+            fn find_suitable<'de>(
                 &mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 event: Event<'de>,
                 fallback: &mut Option<CatalogTypeContentDeserializerState>,
-            ) -> Result<ElementHandlerOutput<'de>, Error>
-            where
-                R: DeserializeReader,
-            {
+            ) -> Result<ElementHandlerOutput<'de>, Error> {
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_ER),
+                        helper.resolve_local_name(x.name(), &super::super::NS_ER),
                         Some(b"public")
                     ) {
                         let output = <super::PublicType as WithDeserializer>::Deserializer::init(
-                            reader, event,
+                            helper, event,
                         )?;
                         return self.handle_public(
-                            reader,
+                            helper,
                             Default::default(),
                             output,
                             &mut *fallback,
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_ER),
+                        helper.resolve_local_name(x.name(), &super::super::NS_ER),
                         Some(b"system")
                     ) {
                         let output = <super::SystemType as WithDeserializer>::Deserializer::init(
-                            reader, event,
+                            helper, event,
                         )?;
                         return self.handle_system(
-                            reader,
+                            helper,
                             Default::default(),
                             output,
                             &mut *fallback,
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_ER),
+                        helper.resolve_local_name(x.name(), &super::super::NS_ER),
                         Some(b"uri")
                     ) {
                         let output = <super::UriType as WithDeserializer>::Deserializer::init(
-                            reader, event,
+                            helper, event,
                         )?;
-                        return self.handle_uri(reader, Default::default(), output, &mut *fallback);
+                        return self.handle_uri(helper, Default::default(), output, &mut *fallback);
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_ER),
+                        helper.resolve_local_name(x.name(), &super::super::NS_ER),
                         Some(b"rewriteSystem")
                     ) {
                         let output =
                             <super::RewriteSystemType as WithDeserializer>::Deserializer::init(
-                                reader, event,
+                                helper, event,
                             )?;
                         return self.handle_rewrite_system(
-                            reader,
+                            helper,
                             Default::default(),
                             output,
                             &mut *fallback,
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_ER),
+                        helper.resolve_local_name(x.name(), &super::super::NS_ER),
                         Some(b"rewriteURI")
                     ) {
                         let output =
                             <super::RewriteUriType as WithDeserializer>::Deserializer::init(
-                                reader, event,
+                                helper, event,
                             )?;
                         return self.handle_rewrite_uri(
-                            reader,
+                            helper,
                             Default::default(),
                             output,
                             &mut *fallback,
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_ER),
+                        helper.resolve_local_name(x.name(), &super::super::NS_ER),
                         Some(b"uriSuffix")
                     ) {
                         let output =
                             <super::UriSuffixType as WithDeserializer>::Deserializer::init(
-                                reader, event,
+                                helper, event,
                             )?;
                         return self.handle_uri_suffix(
-                            reader,
+                            helper,
                             Default::default(),
                             output,
                             &mut *fallback,
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_ER),
+                        helper.resolve_local_name(x.name(), &super::super::NS_ER),
                         Some(b"systemSuffix")
                     ) {
                         let output =
                             <super::SystemSuffixType as WithDeserializer>::Deserializer::init(
-                                reader, event,
+                                helper, event,
                             )?;
                         return self.handle_system_suffix(
-                            reader,
+                            helper,
                             Default::default(),
                             output,
                             &mut *fallback,
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_ER),
+                        helper.resolve_local_name(x.name(), &super::super::NS_ER),
                         Some(b"delegatePublic")
                     ) {
                         let output =
                             <super::DelegatePublicType as WithDeserializer>::Deserializer::init(
-                                reader, event,
+                                helper, event,
                             )?;
                         return self.handle_delegate_public(
-                            reader,
+                            helper,
                             Default::default(),
                             output,
                             &mut *fallback,
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_ER),
+                        helper.resolve_local_name(x.name(), &super::super::NS_ER),
                         Some(b"delegateSystem")
                     ) {
                         let output =
                             <super::DelegateSystemType as WithDeserializer>::Deserializer::init(
-                                reader, event,
+                                helper, event,
                             )?;
                         return self.handle_delegate_system(
-                            reader,
+                            helper,
                             Default::default(),
                             output,
                             &mut *fallback,
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_ER),
+                        helper.resolve_local_name(x.name(), &super::super::NS_ER),
                         Some(b"delegateURI")
                     ) {
                         let output =
                             <super::DelegateUriType as WithDeserializer>::Deserializer::init(
-                                reader, event,
+                                helper, event,
                             )?;
                         return self.handle_delegate_uri(
-                            reader,
+                            helper,
                             Default::default(),
                             output,
                             &mut *fallback,
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_ER),
+                        helper.resolve_local_name(x.name(), &super::super::NS_ER),
                         Some(b"nextCatalog")
                     ) {
                         let output =
                             <super::NextCatalogType as WithDeserializer>::Deserializer::init(
-                                reader, event,
+                                helper, event,
                             )?;
                         return self.handle_next_catalog(
-                            reader,
+                            helper,
                             Default::default(),
                             output,
                             &mut *fallback,
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_ER),
+                        helper.resolve_local_name(x.name(), &super::super::NS_ER),
                         Some(b"group")
                     ) {
                         let output = <super::GroupType as WithDeserializer>::Deserializer::init(
-                            reader, event,
+                            helper, event,
                         )?;
                         return self.handle_group(
-                            reader,
+                            helper,
                             Default::default(),
                             output,
                             &mut *fallback,
@@ -859,20 +843,17 @@ pub mod er {
                     .unwrap_or(CatalogTypeContentDeserializerState::Init__);
                 Ok(ElementHandlerOutput::return_to_parent(event, true))
             }
-            fn finish_state<R>(
-                reader: &R,
+            fn finish_state(
+                helper: &mut DeserializeHelper,
                 state: CatalogTypeContentDeserializerState,
-            ) -> Result<super::CatalogTypeContent, Error>
-            where
-                R: DeserializeReader,
-            {
+            ) -> Result<super::CatalogTypeContent, Error> {
                 use CatalogTypeContentDeserializerState as S;
                 match state {
                     S::Unknown__ => unreachable!(),
                     S::Init__ => Err(ErrorKind::MissingContent.into()),
                     S::Public(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
-                            let value = deserializer.finish(reader)?;
+                            let value = deserializer.finish(helper)?;
                             Self::store_public(&mut values, value)?;
                         }
                         Ok(super::CatalogTypeContent::Public(values.ok_or_else(
@@ -881,7 +862,7 @@ pub mod er {
                     }
                     S::System(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
-                            let value = deserializer.finish(reader)?;
+                            let value = deserializer.finish(helper)?;
                             Self::store_system(&mut values, value)?;
                         }
                         Ok(super::CatalogTypeContent::System(values.ok_or_else(
@@ -890,7 +871,7 @@ pub mod er {
                     }
                     S::Uri(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
-                            let value = deserializer.finish(reader)?;
+                            let value = deserializer.finish(helper)?;
                             Self::store_uri(&mut values, value)?;
                         }
                         Ok(super::CatalogTypeContent::Uri(
@@ -899,7 +880,7 @@ pub mod er {
                     }
                     S::RewriteSystem(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
-                            let value = deserializer.finish(reader)?;
+                            let value = deserializer.finish(helper)?;
                             Self::store_rewrite_system(&mut values, value)?;
                         }
                         Ok(super::CatalogTypeContent::RewriteSystem(
@@ -909,7 +890,7 @@ pub mod er {
                     }
                     S::RewriteUri(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
-                            let value = deserializer.finish(reader)?;
+                            let value = deserializer.finish(helper)?;
                             Self::store_rewrite_uri(&mut values, value)?;
                         }
                         Ok(super::CatalogTypeContent::RewriteUri(values.ok_or_else(
@@ -918,7 +899,7 @@ pub mod er {
                     }
                     S::UriSuffix(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
-                            let value = deserializer.finish(reader)?;
+                            let value = deserializer.finish(helper)?;
                             Self::store_uri_suffix(&mut values, value)?;
                         }
                         Ok(super::CatalogTypeContent::UriSuffix(values.ok_or_else(
@@ -927,7 +908,7 @@ pub mod er {
                     }
                     S::SystemSuffix(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
-                            let value = deserializer.finish(reader)?;
+                            let value = deserializer.finish(helper)?;
                             Self::store_system_suffix(&mut values, value)?;
                         }
                         Ok(super::CatalogTypeContent::SystemSuffix(values.ok_or_else(
@@ -936,7 +917,7 @@ pub mod er {
                     }
                     S::DelegatePublic(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
-                            let value = deserializer.finish(reader)?;
+                            let value = deserializer.finish(helper)?;
                             Self::store_delegate_public(&mut values, value)?;
                         }
                         Ok(super::CatalogTypeContent::DelegatePublic(
@@ -947,7 +928,7 @@ pub mod er {
                     }
                     S::DelegateSystem(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
-                            let value = deserializer.finish(reader)?;
+                            let value = deserializer.finish(helper)?;
                             Self::store_delegate_system(&mut values, value)?;
                         }
                         Ok(super::CatalogTypeContent::DelegateSystem(
@@ -958,7 +939,7 @@ pub mod er {
                     }
                     S::DelegateUri(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
-                            let value = deserializer.finish(reader)?;
+                            let value = deserializer.finish(helper)?;
                             Self::store_delegate_uri(&mut values, value)?;
                         }
                         Ok(super::CatalogTypeContent::DelegateUri(values.ok_or_else(
@@ -967,7 +948,7 @@ pub mod er {
                     }
                     S::NextCatalog(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
-                            let value = deserializer.finish(reader)?;
+                            let value = deserializer.finish(helper)?;
                             Self::store_next_catalog(&mut values, value)?;
                         }
                         Ok(super::CatalogTypeContent::NextCatalog(values.ok_or_else(
@@ -976,7 +957,7 @@ pub mod er {
                     }
                     S::Group(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
-                            let value = deserializer.finish(reader)?;
+                            let value = deserializer.finish(helper)?;
                             Self::store_group(&mut values, value)?;
                         }
                         Ok(super::CatalogTypeContent::Group(values.ok_or_else(
@@ -1128,16 +1109,13 @@ pub mod er {
                 *values = Some(value);
                 Ok(())
             }
-            fn handle_public<'de, R>(
+            fn handle_public<'de>(
                 &mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 mut values: Option<super::PublicType>,
                 output: DeserializerOutput<'de, super::PublicType>,
                 fallback: &mut Option<CatalogTypeContentDeserializerState>,
-            ) -> Result<ElementHandlerOutput<'de>, Error>
-            where
-                R: DeserializeReader,
-            {
+            ) -> Result<ElementHandlerOutput<'de>, Error> {
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -1163,7 +1141,7 @@ pub mod er {
                 match fallback.take() {
                     None => (),
                     Some(CatalogTypeContentDeserializerState::Public(_, Some(deserializer))) => {
-                        let data = deserializer.finish(reader)?;
+                        let data = deserializer.finish(helper)?;
                         Self::store_public(&mut values, data)?;
                     }
                     Some(_) => unreachable!(),
@@ -1173,7 +1151,7 @@ pub mod er {
                     DeserializerArtifact::Data(data) => {
                         Self::store_public(&mut values, data)?;
                         let data = Self::finish_state(
-                            reader,
+                            helper,
                             CatalogTypeContentDeserializerState::Public(values, None),
                         )?;
                         *self.state__ = CatalogTypeContentDeserializerState::Done__(data);
@@ -1186,16 +1164,13 @@ pub mod er {
                     }
                 })
             }
-            fn handle_system<'de, R>(
+            fn handle_system<'de>(
                 &mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 mut values: Option<super::SystemType>,
                 output: DeserializerOutput<'de, super::SystemType>,
                 fallback: &mut Option<CatalogTypeContentDeserializerState>,
-            ) -> Result<ElementHandlerOutput<'de>, Error>
-            where
-                R: DeserializeReader,
-            {
+            ) -> Result<ElementHandlerOutput<'de>, Error> {
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -1221,7 +1196,7 @@ pub mod er {
                 match fallback.take() {
                     None => (),
                     Some(CatalogTypeContentDeserializerState::System(_, Some(deserializer))) => {
-                        let data = deserializer.finish(reader)?;
+                        let data = deserializer.finish(helper)?;
                         Self::store_system(&mut values, data)?;
                     }
                     Some(_) => unreachable!(),
@@ -1231,7 +1206,7 @@ pub mod er {
                     DeserializerArtifact::Data(data) => {
                         Self::store_system(&mut values, data)?;
                         let data = Self::finish_state(
-                            reader,
+                            helper,
                             CatalogTypeContentDeserializerState::System(values, None),
                         )?;
                         *self.state__ = CatalogTypeContentDeserializerState::Done__(data);
@@ -1244,16 +1219,13 @@ pub mod er {
                     }
                 })
             }
-            fn handle_uri<'de, R>(
+            fn handle_uri<'de>(
                 &mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 mut values: Option<super::UriType>,
                 output: DeserializerOutput<'de, super::UriType>,
                 fallback: &mut Option<CatalogTypeContentDeserializerState>,
-            ) -> Result<ElementHandlerOutput<'de>, Error>
-            where
-                R: DeserializeReader,
-            {
+            ) -> Result<ElementHandlerOutput<'de>, Error> {
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -1276,7 +1248,7 @@ pub mod er {
                 match fallback.take() {
                     None => (),
                     Some(CatalogTypeContentDeserializerState::Uri(_, Some(deserializer))) => {
-                        let data = deserializer.finish(reader)?;
+                        let data = deserializer.finish(helper)?;
                         Self::store_uri(&mut values, data)?;
                     }
                     Some(_) => unreachable!(),
@@ -1286,7 +1258,7 @@ pub mod er {
                     DeserializerArtifact::Data(data) => {
                         Self::store_uri(&mut values, data)?;
                         let data = Self::finish_state(
-                            reader,
+                            helper,
                             CatalogTypeContentDeserializerState::Uri(values, None),
                         )?;
                         *self.state__ = CatalogTypeContentDeserializerState::Done__(data);
@@ -1299,16 +1271,13 @@ pub mod er {
                     }
                 })
             }
-            fn handle_rewrite_system<'de, R>(
+            fn handle_rewrite_system<'de>(
                 &mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 mut values: Option<super::RewriteSystemType>,
                 output: DeserializerOutput<'de, super::RewriteSystemType>,
                 fallback: &mut Option<CatalogTypeContentDeserializerState>,
-            ) -> Result<ElementHandlerOutput<'de>, Error>
-            where
-                R: DeserializeReader,
-            {
+            ) -> Result<ElementHandlerOutput<'de>, Error> {
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -1338,7 +1307,7 @@ pub mod er {
                         _,
                         Some(deserializer),
                     )) => {
-                        let data = deserializer.finish(reader)?;
+                        let data = deserializer.finish(helper)?;
                         Self::store_rewrite_system(&mut values, data)?;
                     }
                     Some(_) => unreachable!(),
@@ -1348,7 +1317,7 @@ pub mod er {
                     DeserializerArtifact::Data(data) => {
                         Self::store_rewrite_system(&mut values, data)?;
                         let data = Self::finish_state(
-                            reader,
+                            helper,
                             CatalogTypeContentDeserializerState::RewriteSystem(values, None),
                         )?;
                         *self.state__ = CatalogTypeContentDeserializerState::Done__(data);
@@ -1363,16 +1332,13 @@ pub mod er {
                     }
                 })
             }
-            fn handle_rewrite_uri<'de, R>(
+            fn handle_rewrite_uri<'de>(
                 &mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 mut values: Option<super::RewriteUriType>,
                 output: DeserializerOutput<'de, super::RewriteUriType>,
                 fallback: &mut Option<CatalogTypeContentDeserializerState>,
-            ) -> Result<ElementHandlerOutput<'de>, Error>
-            where
-                R: DeserializeReader,
-            {
+            ) -> Result<ElementHandlerOutput<'de>, Error> {
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -1402,7 +1368,7 @@ pub mod er {
                         _,
                         Some(deserializer),
                     )) => {
-                        let data = deserializer.finish(reader)?;
+                        let data = deserializer.finish(helper)?;
                         Self::store_rewrite_uri(&mut values, data)?;
                     }
                     Some(_) => unreachable!(),
@@ -1412,7 +1378,7 @@ pub mod er {
                     DeserializerArtifact::Data(data) => {
                         Self::store_rewrite_uri(&mut values, data)?;
                         let data = Self::finish_state(
-                            reader,
+                            helper,
                             CatalogTypeContentDeserializerState::RewriteUri(values, None),
                         )?;
                         *self.state__ = CatalogTypeContentDeserializerState::Done__(data);
@@ -1427,16 +1393,13 @@ pub mod er {
                     }
                 })
             }
-            fn handle_uri_suffix<'de, R>(
+            fn handle_uri_suffix<'de>(
                 &mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 mut values: Option<super::UriSuffixType>,
                 output: DeserializerOutput<'de, super::UriSuffixType>,
                 fallback: &mut Option<CatalogTypeContentDeserializerState>,
-            ) -> Result<ElementHandlerOutput<'de>, Error>
-            where
-                R: DeserializeReader,
-            {
+            ) -> Result<ElementHandlerOutput<'de>, Error> {
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -1463,7 +1426,7 @@ pub mod er {
                 match fallback.take() {
                     None => (),
                     Some(CatalogTypeContentDeserializerState::UriSuffix(_, Some(deserializer))) => {
-                        let data = deserializer.finish(reader)?;
+                        let data = deserializer.finish(helper)?;
                         Self::store_uri_suffix(&mut values, data)?;
                     }
                     Some(_) => unreachable!(),
@@ -1473,7 +1436,7 @@ pub mod er {
                     DeserializerArtifact::Data(data) => {
                         Self::store_uri_suffix(&mut values, data)?;
                         let data = Self::finish_state(
-                            reader,
+                            helper,
                             CatalogTypeContentDeserializerState::UriSuffix(values, None),
                         )?;
                         *self.state__ = CatalogTypeContentDeserializerState::Done__(data);
@@ -1488,16 +1451,13 @@ pub mod er {
                     }
                 })
             }
-            fn handle_system_suffix<'de, R>(
+            fn handle_system_suffix<'de>(
                 &mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 mut values: Option<super::SystemSuffixType>,
                 output: DeserializerOutput<'de, super::SystemSuffixType>,
                 fallback: &mut Option<CatalogTypeContentDeserializerState>,
-            ) -> Result<ElementHandlerOutput<'de>, Error>
-            where
-                R: DeserializeReader,
-            {
+            ) -> Result<ElementHandlerOutput<'de>, Error> {
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -1527,7 +1487,7 @@ pub mod er {
                         _,
                         Some(deserializer),
                     )) => {
-                        let data = deserializer.finish(reader)?;
+                        let data = deserializer.finish(helper)?;
                         Self::store_system_suffix(&mut values, data)?;
                     }
                     Some(_) => unreachable!(),
@@ -1537,7 +1497,7 @@ pub mod er {
                     DeserializerArtifact::Data(data) => {
                         Self::store_system_suffix(&mut values, data)?;
                         let data = Self::finish_state(
-                            reader,
+                            helper,
                             CatalogTypeContentDeserializerState::SystemSuffix(values, None),
                         )?;
                         *self.state__ = CatalogTypeContentDeserializerState::Done__(data);
@@ -1552,16 +1512,13 @@ pub mod er {
                     }
                 })
             }
-            fn handle_delegate_public<'de, R>(
+            fn handle_delegate_public<'de>(
                 &mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 mut values: Option<super::DelegatePublicType>,
                 output: DeserializerOutput<'de, super::DelegatePublicType>,
                 fallback: &mut Option<CatalogTypeContentDeserializerState>,
-            ) -> Result<ElementHandlerOutput<'de>, Error>
-            where
-                R: DeserializeReader,
-            {
+            ) -> Result<ElementHandlerOutput<'de>, Error> {
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -1591,7 +1548,7 @@ pub mod er {
                         _,
                         Some(deserializer),
                     )) => {
-                        let data = deserializer.finish(reader)?;
+                        let data = deserializer.finish(helper)?;
                         Self::store_delegate_public(&mut values, data)?;
                     }
                     Some(_) => unreachable!(),
@@ -1601,7 +1558,7 @@ pub mod er {
                     DeserializerArtifact::Data(data) => {
                         Self::store_delegate_public(&mut values, data)?;
                         let data = Self::finish_state(
-                            reader,
+                            helper,
                             CatalogTypeContentDeserializerState::DelegatePublic(values, None),
                         )?;
                         *self.state__ = CatalogTypeContentDeserializerState::Done__(data);
@@ -1616,16 +1573,13 @@ pub mod er {
                     }
                 })
             }
-            fn handle_delegate_system<'de, R>(
+            fn handle_delegate_system<'de>(
                 &mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 mut values: Option<super::DelegateSystemType>,
                 output: DeserializerOutput<'de, super::DelegateSystemType>,
                 fallback: &mut Option<CatalogTypeContentDeserializerState>,
-            ) -> Result<ElementHandlerOutput<'de>, Error>
-            where
-                R: DeserializeReader,
-            {
+            ) -> Result<ElementHandlerOutput<'de>, Error> {
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -1655,7 +1609,7 @@ pub mod er {
                         _,
                         Some(deserializer),
                     )) => {
-                        let data = deserializer.finish(reader)?;
+                        let data = deserializer.finish(helper)?;
                         Self::store_delegate_system(&mut values, data)?;
                     }
                     Some(_) => unreachable!(),
@@ -1665,7 +1619,7 @@ pub mod er {
                     DeserializerArtifact::Data(data) => {
                         Self::store_delegate_system(&mut values, data)?;
                         let data = Self::finish_state(
-                            reader,
+                            helper,
                             CatalogTypeContentDeserializerState::DelegateSystem(values, None),
                         )?;
                         *self.state__ = CatalogTypeContentDeserializerState::Done__(data);
@@ -1680,16 +1634,13 @@ pub mod er {
                     }
                 })
             }
-            fn handle_delegate_uri<'de, R>(
+            fn handle_delegate_uri<'de>(
                 &mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 mut values: Option<super::DelegateUriType>,
                 output: DeserializerOutput<'de, super::DelegateUriType>,
                 fallback: &mut Option<CatalogTypeContentDeserializerState>,
-            ) -> Result<ElementHandlerOutput<'de>, Error>
-            where
-                R: DeserializeReader,
-            {
+            ) -> Result<ElementHandlerOutput<'de>, Error> {
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -1719,7 +1670,7 @@ pub mod er {
                         _,
                         Some(deserializer),
                     )) => {
-                        let data = deserializer.finish(reader)?;
+                        let data = deserializer.finish(helper)?;
                         Self::store_delegate_uri(&mut values, data)?;
                     }
                     Some(_) => unreachable!(),
@@ -1729,7 +1680,7 @@ pub mod er {
                     DeserializerArtifact::Data(data) => {
                         Self::store_delegate_uri(&mut values, data)?;
                         let data = Self::finish_state(
-                            reader,
+                            helper,
                             CatalogTypeContentDeserializerState::DelegateUri(values, None),
                         )?;
                         *self.state__ = CatalogTypeContentDeserializerState::Done__(data);
@@ -1744,16 +1695,13 @@ pub mod er {
                     }
                 })
             }
-            fn handle_next_catalog<'de, R>(
+            fn handle_next_catalog<'de>(
                 &mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 mut values: Option<super::NextCatalogType>,
                 output: DeserializerOutput<'de, super::NextCatalogType>,
                 fallback: &mut Option<CatalogTypeContentDeserializerState>,
-            ) -> Result<ElementHandlerOutput<'de>, Error>
-            where
-                R: DeserializeReader,
-            {
+            ) -> Result<ElementHandlerOutput<'de>, Error> {
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -1783,7 +1731,7 @@ pub mod er {
                         _,
                         Some(deserializer),
                     )) => {
-                        let data = deserializer.finish(reader)?;
+                        let data = deserializer.finish(helper)?;
                         Self::store_next_catalog(&mut values, data)?;
                     }
                     Some(_) => unreachable!(),
@@ -1793,7 +1741,7 @@ pub mod er {
                     DeserializerArtifact::Data(data) => {
                         Self::store_next_catalog(&mut values, data)?;
                         let data = Self::finish_state(
-                            reader,
+                            helper,
                             CatalogTypeContentDeserializerState::NextCatalog(values, None),
                         )?;
                         *self.state__ = CatalogTypeContentDeserializerState::Done__(data);
@@ -1808,16 +1756,13 @@ pub mod er {
                     }
                 })
             }
-            fn handle_group<'de, R>(
+            fn handle_group<'de>(
                 &mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 mut values: Option<super::GroupType>,
                 output: DeserializerOutput<'de, super::GroupType>,
                 fallback: &mut Option<CatalogTypeContentDeserializerState>,
-            ) -> Result<ElementHandlerOutput<'de>, Error>
-            where
-                R: DeserializeReader,
-            {
+            ) -> Result<ElementHandlerOutput<'de>, Error> {
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -1840,7 +1785,7 @@ pub mod er {
                 match fallback.take() {
                     None => (),
                     Some(CatalogTypeContentDeserializerState::Group(_, Some(deserializer))) => {
-                        let data = deserializer.finish(reader)?;
+                        let data = deserializer.finish(helper)?;
                         Self::store_group(&mut values, data)?;
                     }
                     Some(_) => unreachable!(),
@@ -1850,7 +1795,7 @@ pub mod er {
                     DeserializerArtifact::Data(data) => {
                         Self::store_group(&mut values, data)?;
                         let data = Self::finish_state(
-                            reader,
+                            helper,
                             CatalogTypeContentDeserializerState::Group(values, None),
                         )?;
                         *self.state__ = CatalogTypeContentDeserializerState::Done__(data);
@@ -1865,17 +1810,14 @@ pub mod er {
             }
         }
         impl<'de> Deserializer<'de, super::CatalogTypeContent> for CatalogTypeContentDeserializer {
-            fn init<R>(
-                reader: &R,
+            fn init(
+                helper: &mut DeserializeHelper,
                 event: Event<'de>,
-            ) -> DeserializerResult<'de, super::CatalogTypeContent>
-            where
-                R: DeserializeReader,
-            {
+            ) -> DeserializerResult<'de, super::CatalogTypeContent> {
                 let deserializer = Self {
                     state__: Box::new(CatalogTypeContentDeserializerState::Init__),
                 };
-                let mut output = deserializer.next(reader, event)?;
+                let mut output = deserializer.next(helper, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
                         if matches!(&*x.state__, CatalogTypeContentDeserializerState::Init__) =>
@@ -1886,14 +1828,11 @@ pub mod er {
                 };
                 Ok(output)
             }
-            fn next<R>(
+            fn next(
                 mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 event: Event<'de>,
-            ) -> DeserializerResult<'de, super::CatalogTypeContent>
-            where
-                R: DeserializeReader,
-            {
+            ) -> DeserializerResult<'de, super::CatalogTypeContent> {
                 use CatalogTypeContentDeserializerState as S;
                 let mut event = event;
                 let mut fallback = None;
@@ -1902,8 +1841,8 @@ pub mod er {
                     event = match (state, event) {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Public(values, Some(deserializer)), event) => {
-                            let output = deserializer.next(reader, event)?;
-                            match self.handle_public(reader, values, output, &mut fallback)? {
+                            let output = deserializer.next(helper, event)?;
+                            match self.handle_public(helper, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -1911,8 +1850,8 @@ pub mod er {
                             }
                         }
                         (S::System(values, Some(deserializer)), event) => {
-                            let output = deserializer.next(reader, event)?;
-                            match self.handle_system(reader, values, output, &mut fallback)? {
+                            let output = deserializer.next(helper, event)?;
+                            match self.handle_system(helper, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -1920,8 +1859,8 @@ pub mod er {
                             }
                         }
                         (S::Uri(values, Some(deserializer)), event) => {
-                            let output = deserializer.next(reader, event)?;
-                            match self.handle_uri(reader, values, output, &mut fallback)? {
+                            let output = deserializer.next(helper, event)?;
+                            match self.handle_uri(helper, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -1929,9 +1868,9 @@ pub mod er {
                             }
                         }
                         (S::RewriteSystem(values, Some(deserializer)), event) => {
-                            let output = deserializer.next(reader, event)?;
+                            let output = deserializer.next(helper, event)?;
                             match self.handle_rewrite_system(
-                                reader,
+                                helper,
                                 values,
                                 output,
                                 &mut fallback,
@@ -1943,8 +1882,8 @@ pub mod er {
                             }
                         }
                         (S::RewriteUri(values, Some(deserializer)), event) => {
-                            let output = deserializer.next(reader, event)?;
-                            match self.handle_rewrite_uri(reader, values, output, &mut fallback)? {
+                            let output = deserializer.next(helper, event)?;
+                            match self.handle_rewrite_uri(helper, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -1952,8 +1891,8 @@ pub mod er {
                             }
                         }
                         (S::UriSuffix(values, Some(deserializer)), event) => {
-                            let output = deserializer.next(reader, event)?;
-                            match self.handle_uri_suffix(reader, values, output, &mut fallback)? {
+                            let output = deserializer.next(helper, event)?;
+                            match self.handle_uri_suffix(helper, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -1961,9 +1900,9 @@ pub mod er {
                             }
                         }
                         (S::SystemSuffix(values, Some(deserializer)), event) => {
-                            let output = deserializer.next(reader, event)?;
+                            let output = deserializer.next(helper, event)?;
                             match self.handle_system_suffix(
-                                reader,
+                                helper,
                                 values,
                                 output,
                                 &mut fallback,
@@ -1975,9 +1914,9 @@ pub mod er {
                             }
                         }
                         (S::DelegatePublic(values, Some(deserializer)), event) => {
-                            let output = deserializer.next(reader, event)?;
+                            let output = deserializer.next(helper, event)?;
                             match self.handle_delegate_public(
-                                reader,
+                                helper,
                                 values,
                                 output,
                                 &mut fallback,
@@ -1989,9 +1928,9 @@ pub mod er {
                             }
                         }
                         (S::DelegateSystem(values, Some(deserializer)), event) => {
-                            let output = deserializer.next(reader, event)?;
+                            let output = deserializer.next(helper, event)?;
                             match self.handle_delegate_system(
-                                reader,
+                                helper,
                                 values,
                                 output,
                                 &mut fallback,
@@ -2003,8 +1942,8 @@ pub mod er {
                             }
                         }
                         (S::DelegateUri(values, Some(deserializer)), event) => {
-                            let output = deserializer.next(reader, event)?;
-                            match self.handle_delegate_uri(reader, values, output, &mut fallback)? {
+                            let output = deserializer.next(helper, event)?;
+                            match self.handle_delegate_uri(helper, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -2012,8 +1951,8 @@ pub mod er {
                             }
                         }
                         (S::NextCatalog(values, Some(deserializer)), event) => {
-                            let output = deserializer.next(reader, event)?;
-                            match self.handle_next_catalog(reader, values, output, &mut fallback)? {
+                            let output = deserializer.next(helper, event)?;
+                            match self.handle_next_catalog(helper, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -2021,8 +1960,8 @@ pub mod er {
                             }
                         }
                         (S::Group(values, Some(deserializer)), event) => {
-                            let output = deserializer.next(reader, event)?;
-                            match self.handle_group(reader, values, output, &mut fallback)? {
+                            let output = deserializer.next(helper, event)?;
+                            match self.handle_group(helper, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -2032,14 +1971,14 @@ pub mod er {
                         (state, event @ Event::End(_)) => {
                             return Ok(DeserializerOutput {
                                 artifact: DeserializerArtifact::Data(Self::finish_state(
-                                    reader, state,
+                                    helper, state,
                                 )?),
                                 event: DeserializerEvent::Continue(event),
                                 allow_any: false,
                             });
                         }
                         (S::Init__, event) => {
-                            match self.find_suitable(reader, event, &mut fallback)? {
+                            match self.find_suitable(helper, event, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -2047,13 +1986,13 @@ pub mod er {
                             }
                         }
                         (S::Public(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            let output = reader.init_start_tag_deserializer(
+                            let output = helper.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_ER),
                                 b"public",
                                 false,
                             )?;
-                            match self.handle_public(reader, values, output, &mut fallback)? {
+                            match self.handle_public(helper, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -2061,13 +2000,13 @@ pub mod er {
                             }
                         }
                         (S::System(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            let output = reader.init_start_tag_deserializer(
+                            let output = helper.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_ER),
                                 b"system",
                                 false,
                             )?;
-                            match self.handle_system(reader, values, output, &mut fallback)? {
+                            match self.handle_system(helper, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -2075,13 +2014,13 @@ pub mod er {
                             }
                         }
                         (S::Uri(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            let output = reader.init_start_tag_deserializer(
+                            let output = helper.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_ER),
                                 b"uri",
                                 false,
                             )?;
-                            match self.handle_uri(reader, values, output, &mut fallback)? {
+                            match self.handle_uri(helper, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -2092,14 +2031,14 @@ pub mod er {
                             S::RewriteSystem(values, None),
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
-                            let output = reader.init_start_tag_deserializer(
+                            let output = helper.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_ER),
                                 b"rewriteSystem",
                                 false,
                             )?;
                             match self.handle_rewrite_system(
-                                reader,
+                                helper,
                                 values,
                                 output,
                                 &mut fallback,
@@ -2114,13 +2053,13 @@ pub mod er {
                             S::RewriteUri(values, None),
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
-                            let output = reader.init_start_tag_deserializer(
+                            let output = helper.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_ER),
                                 b"rewriteURI",
                                 false,
                             )?;
-                            match self.handle_rewrite_uri(reader, values, output, &mut fallback)? {
+                            match self.handle_rewrite_uri(helper, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -2131,13 +2070,13 @@ pub mod er {
                             S::UriSuffix(values, None),
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
-                            let output = reader.init_start_tag_deserializer(
+                            let output = helper.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_ER),
                                 b"uriSuffix",
                                 false,
                             )?;
-                            match self.handle_uri_suffix(reader, values, output, &mut fallback)? {
+                            match self.handle_uri_suffix(helper, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -2148,14 +2087,14 @@ pub mod er {
                             S::SystemSuffix(values, None),
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
-                            let output = reader.init_start_tag_deserializer(
+                            let output = helper.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_ER),
                                 b"systemSuffix",
                                 false,
                             )?;
                             match self.handle_system_suffix(
-                                reader,
+                                helper,
                                 values,
                                 output,
                                 &mut fallback,
@@ -2170,14 +2109,14 @@ pub mod er {
                             S::DelegatePublic(values, None),
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
-                            let output = reader.init_start_tag_deserializer(
+                            let output = helper.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_ER),
                                 b"delegatePublic",
                                 false,
                             )?;
                             match self.handle_delegate_public(
-                                reader,
+                                helper,
                                 values,
                                 output,
                                 &mut fallback,
@@ -2192,14 +2131,14 @@ pub mod er {
                             S::DelegateSystem(values, None),
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
-                            let output = reader.init_start_tag_deserializer(
+                            let output = helper.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_ER),
                                 b"delegateSystem",
                                 false,
                             )?;
                             match self.handle_delegate_system(
-                                reader,
+                                helper,
                                 values,
                                 output,
                                 &mut fallback,
@@ -2214,13 +2153,13 @@ pub mod er {
                             S::DelegateUri(values, None),
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
-                            let output = reader.init_start_tag_deserializer(
+                            let output = helper.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_ER),
                                 b"delegateURI",
                                 false,
                             )?;
-                            match self.handle_delegate_uri(reader, values, output, &mut fallback)? {
+                            match self.handle_delegate_uri(helper, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -2231,13 +2170,13 @@ pub mod er {
                             S::NextCatalog(values, None),
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
-                            let output = reader.init_start_tag_deserializer(
+                            let output = helper.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_ER),
                                 b"nextCatalog",
                                 false,
                             )?;
-                            match self.handle_next_catalog(reader, values, output, &mut fallback)? {
+                            match self.handle_next_catalog(helper, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -2245,13 +2184,13 @@ pub mod er {
                             }
                         }
                         (S::Group(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            let output = reader.init_start_tag_deserializer(
+                            let output = helper.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_ER),
                                 b"group",
                                 true,
                             )?;
-                            match self.handle_group(reader, values, output, &mut fallback)? {
+                            match self.handle_group(helper, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -2269,7 +2208,7 @@ pub mod er {
                     }
                 };
                 let artifact = if matches!(&*self.state__, S::Done__(_)) {
-                    DeserializerArtifact::Data(self.finish(reader)?)
+                    DeserializerArtifact::Data(self.finish(helper)?)
                 } else {
                     DeserializerArtifact::Deserializer(self)
                 };
@@ -2279,11 +2218,11 @@ pub mod er {
                     allow_any,
                 })
             }
-            fn finish<R>(self, reader: &R) -> Result<super::CatalogTypeContent, Error>
-            where
-                R: DeserializeReader,
-            {
-                Self::finish_state(reader, *self.state__)
+            fn finish(
+                self,
+                helper: &mut DeserializeHelper,
+            ) -> Result<super::CatalogTypeContent, Error> {
+                Self::finish_state(helper, *self.state__)
             }
         }
         #[derive(Debug)]
@@ -2299,79 +2238,68 @@ pub mod er {
             Unknown__,
         }
         impl DelegatePublicTypeDeserializer {
-            fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-            where
-                R: DeserializeReader,
-            {
+            fn from_bytes_start(
+                helper: &mut DeserializeHelper,
+                bytes_start: &BytesStart<'_>,
+            ) -> Result<Self, Error> {
                 let mut public_id_start_string: Option<String> = None;
                 let mut catalog: Option<String> = None;
                 let mut id: Option<String> = None;
-                for attrib in filter_xmlns_attributes(bytes_start) {
+                for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"publicIdStartString")
                     ) {
-                        reader.read_attrib(
+                        helper.read_attrib(
                             &mut public_id_start_string,
                             b"publicIdStartString",
                             &attrib.value,
                         )?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"catalog")
                     ) {
-                        reader.read_attrib(&mut catalog, b"catalog", &attrib.value)?;
+                        helper.read_attrib(&mut catalog, b"catalog", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"id")
                     ) {
-                        reader.read_attrib(&mut id, b"id", &attrib.value)?;
+                        helper.read_attrib(&mut id, b"id", &attrib.value)?;
                     }
                 }
                 Ok(Self {
-                    public_id_start_string: public_id_start_string.ok_or_else(|| {
-                        reader.map_error(ErrorKind::MissingAttribute("publicIdStartString".into()))
-                    })?,
-                    catalog: catalog.ok_or_else(|| {
-                        reader.map_error(ErrorKind::MissingAttribute("catalog".into()))
-                    })?,
+                    public_id_start_string: public_id_start_string
+                        .ok_or_else(|| ErrorKind::MissingAttribute("publicIdStartString".into()))?,
+                    catalog: catalog
+                        .ok_or_else(|| ErrorKind::MissingAttribute("catalog".into()))?,
                     id: id,
                     state__: Box::new(DelegatePublicTypeDeserializerState::Init__),
                 })
             }
-            fn finish_state<R>(
+            fn finish_state(
                 &mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 state: DelegatePublicTypeDeserializerState,
-            ) -> Result<(), Error>
-            where
-                R: DeserializeReader,
-            {
+            ) -> Result<(), Error> {
                 Ok(())
             }
         }
         impl<'de> Deserializer<'de, super::DelegatePublicType> for DelegatePublicTypeDeserializer {
-            fn init<R>(
-                reader: &R,
+            fn init(
+                helper: &mut DeserializeHelper,
                 event: Event<'de>,
-            ) -> DeserializerResult<'de, super::DelegatePublicType>
-            where
-                R: DeserializeReader,
-            {
-                reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+            ) -> DeserializerResult<'de, super::DelegatePublicType> {
+                helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
             }
-            fn next<R>(
+            fn next(
                 mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 event: Event<'de>,
-            ) -> DeserializerResult<'de, super::DelegatePublicType>
-            where
-                R: DeserializeReader,
-            {
+            ) -> DeserializerResult<'de, super::DelegatePublicType> {
                 if let Event::End(_) = &event {
                     Ok(DeserializerOutput {
-                        artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                        artifact: DeserializerArtifact::Data(self.finish(helper)?),
                         event: DeserializerEvent::None,
                         allow_any: false,
                     })
@@ -2383,15 +2311,15 @@ pub mod er {
                     })
                 }
             }
-            fn finish<R>(mut self, reader: &R) -> Result<super::DelegatePublicType, Error>
-            where
-                R: DeserializeReader,
-            {
+            fn finish(
+                mut self,
+                helper: &mut DeserializeHelper,
+            ) -> Result<super::DelegatePublicType, Error> {
                 let state = replace(
                     &mut *self.state__,
                     DelegatePublicTypeDeserializerState::Unknown__,
                 );
-                self.finish_state(reader, state)?;
+                self.finish_state(helper, state)?;
                 Ok(super::DelegatePublicType {
                     public_id_start_string: self.public_id_start_string,
                     catalog: self.catalog,
@@ -2412,79 +2340,68 @@ pub mod er {
             Unknown__,
         }
         impl DelegateSystemTypeDeserializer {
-            fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-            where
-                R: DeserializeReader,
-            {
+            fn from_bytes_start(
+                helper: &mut DeserializeHelper,
+                bytes_start: &BytesStart<'_>,
+            ) -> Result<Self, Error> {
                 let mut system_id_start_string: Option<String> = None;
                 let mut catalog: Option<String> = None;
                 let mut id: Option<String> = None;
-                for attrib in filter_xmlns_attributes(bytes_start) {
+                for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"systemIdStartString")
                     ) {
-                        reader.read_attrib(
+                        helper.read_attrib(
                             &mut system_id_start_string,
                             b"systemIdStartString",
                             &attrib.value,
                         )?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"catalog")
                     ) {
-                        reader.read_attrib(&mut catalog, b"catalog", &attrib.value)?;
+                        helper.read_attrib(&mut catalog, b"catalog", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"id")
                     ) {
-                        reader.read_attrib(&mut id, b"id", &attrib.value)?;
+                        helper.read_attrib(&mut id, b"id", &attrib.value)?;
                     }
                 }
                 Ok(Self {
-                    system_id_start_string: system_id_start_string.ok_or_else(|| {
-                        reader.map_error(ErrorKind::MissingAttribute("systemIdStartString".into()))
-                    })?,
-                    catalog: catalog.ok_or_else(|| {
-                        reader.map_error(ErrorKind::MissingAttribute("catalog".into()))
-                    })?,
+                    system_id_start_string: system_id_start_string
+                        .ok_or_else(|| ErrorKind::MissingAttribute("systemIdStartString".into()))?,
+                    catalog: catalog
+                        .ok_or_else(|| ErrorKind::MissingAttribute("catalog".into()))?,
                     id: id,
                     state__: Box::new(DelegateSystemTypeDeserializerState::Init__),
                 })
             }
-            fn finish_state<R>(
+            fn finish_state(
                 &mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 state: DelegateSystemTypeDeserializerState,
-            ) -> Result<(), Error>
-            where
-                R: DeserializeReader,
-            {
+            ) -> Result<(), Error> {
                 Ok(())
             }
         }
         impl<'de> Deserializer<'de, super::DelegateSystemType> for DelegateSystemTypeDeserializer {
-            fn init<R>(
-                reader: &R,
+            fn init(
+                helper: &mut DeserializeHelper,
                 event: Event<'de>,
-            ) -> DeserializerResult<'de, super::DelegateSystemType>
-            where
-                R: DeserializeReader,
-            {
-                reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+            ) -> DeserializerResult<'de, super::DelegateSystemType> {
+                helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
             }
-            fn next<R>(
+            fn next(
                 mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 event: Event<'de>,
-            ) -> DeserializerResult<'de, super::DelegateSystemType>
-            where
-                R: DeserializeReader,
-            {
+            ) -> DeserializerResult<'de, super::DelegateSystemType> {
                 if let Event::End(_) = &event {
                     Ok(DeserializerOutput {
-                        artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                        artifact: DeserializerArtifact::Data(self.finish(helper)?),
                         event: DeserializerEvent::None,
                         allow_any: false,
                     })
@@ -2496,15 +2413,15 @@ pub mod er {
                     })
                 }
             }
-            fn finish<R>(mut self, reader: &R) -> Result<super::DelegateSystemType, Error>
-            where
-                R: DeserializeReader,
-            {
+            fn finish(
+                mut self,
+                helper: &mut DeserializeHelper,
+            ) -> Result<super::DelegateSystemType, Error> {
                 let state = replace(
                     &mut *self.state__,
                     DelegateSystemTypeDeserializerState::Unknown__,
                 );
-                self.finish_state(reader, state)?;
+                self.finish_state(helper, state)?;
                 Ok(super::DelegateSystemType {
                     system_id_start_string: self.system_id_start_string,
                     catalog: self.catalog,
@@ -2525,79 +2442,68 @@ pub mod er {
             Unknown__,
         }
         impl DelegateUriTypeDeserializer {
-            fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-            where
-                R: DeserializeReader,
-            {
+            fn from_bytes_start(
+                helper: &mut DeserializeHelper,
+                bytes_start: &BytesStart<'_>,
+            ) -> Result<Self, Error> {
                 let mut uri_start_string: Option<String> = None;
                 let mut catalog: Option<String> = None;
                 let mut id: Option<String> = None;
-                for attrib in filter_xmlns_attributes(bytes_start) {
+                for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"uriStartString")
                     ) {
-                        reader.read_attrib(
+                        helper.read_attrib(
                             &mut uri_start_string,
                             b"uriStartString",
                             &attrib.value,
                         )?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"catalog")
                     ) {
-                        reader.read_attrib(&mut catalog, b"catalog", &attrib.value)?;
+                        helper.read_attrib(&mut catalog, b"catalog", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"id")
                     ) {
-                        reader.read_attrib(&mut id, b"id", &attrib.value)?;
+                        helper.read_attrib(&mut id, b"id", &attrib.value)?;
                     }
                 }
                 Ok(Self {
-                    uri_start_string: uri_start_string.ok_or_else(|| {
-                        reader.map_error(ErrorKind::MissingAttribute("uriStartString".into()))
-                    })?,
-                    catalog: catalog.ok_or_else(|| {
-                        reader.map_error(ErrorKind::MissingAttribute("catalog".into()))
-                    })?,
+                    uri_start_string: uri_start_string
+                        .ok_or_else(|| ErrorKind::MissingAttribute("uriStartString".into()))?,
+                    catalog: catalog
+                        .ok_or_else(|| ErrorKind::MissingAttribute("catalog".into()))?,
                     id: id,
                     state__: Box::new(DelegateUriTypeDeserializerState::Init__),
                 })
             }
-            fn finish_state<R>(
+            fn finish_state(
                 &mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 state: DelegateUriTypeDeserializerState,
-            ) -> Result<(), Error>
-            where
-                R: DeserializeReader,
-            {
+            ) -> Result<(), Error> {
                 Ok(())
             }
         }
         impl<'de> Deserializer<'de, super::DelegateUriType> for DelegateUriTypeDeserializer {
-            fn init<R>(
-                reader: &R,
+            fn init(
+                helper: &mut DeserializeHelper,
                 event: Event<'de>,
-            ) -> DeserializerResult<'de, super::DelegateUriType>
-            where
-                R: DeserializeReader,
-            {
-                reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+            ) -> DeserializerResult<'de, super::DelegateUriType> {
+                helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
             }
-            fn next<R>(
+            fn next(
                 mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 event: Event<'de>,
-            ) -> DeserializerResult<'de, super::DelegateUriType>
-            where
-                R: DeserializeReader,
-            {
+            ) -> DeserializerResult<'de, super::DelegateUriType> {
                 if let Event::End(_) = &event {
                     Ok(DeserializerOutput {
-                        artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                        artifact: DeserializerArtifact::Data(self.finish(helper)?),
                         event: DeserializerEvent::None,
                         allow_any: false,
                     })
@@ -2609,15 +2515,15 @@ pub mod er {
                     })
                 }
             }
-            fn finish<R>(mut self, reader: &R) -> Result<super::DelegateUriType, Error>
-            where
-                R: DeserializeReader,
-            {
+            fn finish(
+                mut self,
+                helper: &mut DeserializeHelper,
+            ) -> Result<super::DelegateUriType, Error> {
                 let state = replace(
                     &mut *self.state__,
                     DelegateUriTypeDeserializerState::Unknown__,
                 );
-                self.finish_state(reader, state)?;
+                self.finish_state(helper, state)?;
                 Ok(super::DelegateUriType {
                     uri_start_string: self.uri_start_string,
                     catalog: self.catalog,
@@ -2640,24 +2546,24 @@ pub mod er {
             Unknown__,
         }
         impl GroupTypeDeserializer {
-            fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-            where
-                R: DeserializeReader,
-            {
+            fn from_bytes_start(
+                helper: &mut DeserializeHelper,
+                bytes_start: &BytesStart<'_>,
+            ) -> Result<Self, Error> {
                 let mut prefer: Option<super::SystemOrPublicType> = None;
                 let mut id: Option<String> = None;
-                for attrib in filter_xmlns_attributes(bytes_start) {
+                for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"prefer")
                     ) {
-                        reader.read_attrib(&mut prefer, b"prefer", &attrib.value)?;
+                        helper.read_attrib(&mut prefer, b"prefer", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"id")
                     ) {
-                        reader.read_attrib(&mut id, b"id", &attrib.value)?;
+                        helper.read_attrib(&mut id, b"id", &attrib.value)?;
                     }
                 }
                 Ok(Self {
@@ -2667,16 +2573,13 @@ pub mod er {
                     state__: Box::new(GroupTypeDeserializerState::Init__),
                 })
             }
-            fn finish_state<R>(
+            fn finish_state(
                 &mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 state: GroupTypeDeserializerState,
-            ) -> Result<(), Error>
-            where
-                R: DeserializeReader,
-            {
+            ) -> Result<(), Error> {
                 if let GroupTypeDeserializerState::Content__(deserializer) = state {
-                    self.store_content(deserializer.finish(reader)?)?;
+                    self.store_content(deserializer.finish(helper)?)?;
                 }
                 Ok(())
             }
@@ -2684,15 +2587,12 @@ pub mod er {
                 self.content.push(value);
                 Ok(())
             }
-            fn handle_content<'de, R>(
+            fn handle_content<'de>(
                 &mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::GroupTypeContent>,
                 fallback: &mut Option<GroupTypeDeserializerState>,
-            ) -> Result<ElementHandlerOutput<'de>, Error>
-            where
-                R: DeserializeReader,
-            {
+            ) -> Result<ElementHandlerOutput<'de>, Error> {
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -2705,7 +2605,7 @@ pub mod er {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
-                    self.finish_state(reader, fallback)?;
+                    self.finish_state(helper, fallback)?;
                 }
                 Ok(match artifact {
                     DeserializerArtifact::None => unreachable!(),
@@ -2733,20 +2633,17 @@ pub mod er {
             }
         }
         impl<'de> Deserializer<'de, super::GroupType> for GroupTypeDeserializer {
-            fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, super::GroupType>
-            where
-                R: DeserializeReader,
-            {
-                reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
-            }
-            fn next<R>(
-                mut self,
-                reader: &R,
+            fn init(
+                helper: &mut DeserializeHelper,
                 event: Event<'de>,
-            ) -> DeserializerResult<'de, super::GroupType>
-            where
-                R: DeserializeReader,
-            {
+            ) -> DeserializerResult<'de, super::GroupType> {
+                helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
+            }
+            fn next(
+                mut self,
+                helper: &mut DeserializeHelper,
+                event: Event<'de>,
+            ) -> DeserializerResult<'de, super::GroupType> {
                 use GroupTypeDeserializerState as S;
                 let mut event = event;
                 let mut fallback = None;
@@ -2755,8 +2652,8 @@ pub mod er {
                     event = match (state, event) {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content__(deserializer), event) => {
-                            let output = deserializer.next(reader, event)?;
-                            match self.handle_content(reader, output, &mut fallback)? {
+                            let output = deserializer.next(helper, event)?;
+                            match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -2765,7 +2662,7 @@ pub mod er {
                         }
                         (_, Event::End(_)) => {
                             return Ok(DeserializerOutput {
-                                artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                                artifact: DeserializerArtifact::Data(self.finish(helper)?),
                                 event: DeserializerEvent::None,
                                 allow_any: false,
                             });
@@ -2774,9 +2671,9 @@ pub mod er {
                             fallback.get_or_insert(state);
                             let output =
                                 <super::GroupTypeContent as WithDeserializer>::Deserializer::init(
-                                    reader, event,
+                                    helper, event,
                                 )?;
-                            match self.handle_content(reader, output, &mut fallback)? {
+                            match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -2792,12 +2689,9 @@ pub mod er {
                     allow_any,
                 })
             }
-            fn finish<R>(mut self, reader: &R) -> Result<super::GroupType, Error>
-            where
-                R: DeserializeReader,
-            {
+            fn finish(mut self, helper: &mut DeserializeHelper) -> Result<super::GroupType, Error> {
                 let state = replace(&mut *self.state__, GroupTypeDeserializerState::Unknown__);
-                self.finish_state(reader, state)?;
+                self.finish_state(helper, state)?;
                 Ok(super::GroupType {
                     prefer: self.prefer,
                     id: self.id,
@@ -2860,168 +2754,165 @@ pub mod er {
             Unknown__,
         }
         impl GroupTypeContentDeserializer {
-            fn find_suitable<'de, R>(
+            fn find_suitable<'de>(
                 &mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 event: Event<'de>,
                 fallback: &mut Option<GroupTypeContentDeserializerState>,
-            ) -> Result<ElementHandlerOutput<'de>, Error>
-            where
-                R: DeserializeReader,
-            {
+            ) -> Result<ElementHandlerOutput<'de>, Error> {
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_ER),
+                        helper.resolve_local_name(x.name(), &super::super::NS_ER),
                         Some(b"public")
                     ) {
                         let output = <super::PublicType as WithDeserializer>::Deserializer::init(
-                            reader, event,
+                            helper, event,
                         )?;
                         return self.handle_public(
-                            reader,
+                            helper,
                             Default::default(),
                             output,
                             &mut *fallback,
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_ER),
+                        helper.resolve_local_name(x.name(), &super::super::NS_ER),
                         Some(b"system")
                     ) {
                         let output = <super::SystemType as WithDeserializer>::Deserializer::init(
-                            reader, event,
+                            helper, event,
                         )?;
                         return self.handle_system(
-                            reader,
+                            helper,
                             Default::default(),
                             output,
                             &mut *fallback,
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_ER),
+                        helper.resolve_local_name(x.name(), &super::super::NS_ER),
                         Some(b"uri")
                     ) {
                         let output = <super::UriType as WithDeserializer>::Deserializer::init(
-                            reader, event,
+                            helper, event,
                         )?;
-                        return self.handle_uri(reader, Default::default(), output, &mut *fallback);
+                        return self.handle_uri(helper, Default::default(), output, &mut *fallback);
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_ER),
+                        helper.resolve_local_name(x.name(), &super::super::NS_ER),
                         Some(b"rewriteSystem")
                     ) {
                         let output =
                             <super::RewriteSystemType as WithDeserializer>::Deserializer::init(
-                                reader, event,
+                                helper, event,
                             )?;
                         return self.handle_rewrite_system(
-                            reader,
+                            helper,
                             Default::default(),
                             output,
                             &mut *fallback,
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_ER),
+                        helper.resolve_local_name(x.name(), &super::super::NS_ER),
                         Some(b"rewriteURI")
                     ) {
                         let output =
                             <super::RewriteUriType as WithDeserializer>::Deserializer::init(
-                                reader, event,
+                                helper, event,
                             )?;
                         return self.handle_rewrite_uri(
-                            reader,
+                            helper,
                             Default::default(),
                             output,
                             &mut *fallback,
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_ER),
+                        helper.resolve_local_name(x.name(), &super::super::NS_ER),
                         Some(b"uriSuffix")
                     ) {
                         let output =
                             <super::UriSuffixType as WithDeserializer>::Deserializer::init(
-                                reader, event,
+                                helper, event,
                             )?;
                         return self.handle_uri_suffix(
-                            reader,
+                            helper,
                             Default::default(),
                             output,
                             &mut *fallback,
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_ER),
+                        helper.resolve_local_name(x.name(), &super::super::NS_ER),
                         Some(b"systemSuffix")
                     ) {
                         let output =
                             <super::SystemSuffixType as WithDeserializer>::Deserializer::init(
-                                reader, event,
+                                helper, event,
                             )?;
                         return self.handle_system_suffix(
-                            reader,
+                            helper,
                             Default::default(),
                             output,
                             &mut *fallback,
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_ER),
+                        helper.resolve_local_name(x.name(), &super::super::NS_ER),
                         Some(b"delegatePublic")
                     ) {
                         let output =
                             <super::DelegatePublicType as WithDeserializer>::Deserializer::init(
-                                reader, event,
+                                helper, event,
                             )?;
                         return self.handle_delegate_public(
-                            reader,
+                            helper,
                             Default::default(),
                             output,
                             &mut *fallback,
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_ER),
+                        helper.resolve_local_name(x.name(), &super::super::NS_ER),
                         Some(b"delegateSystem")
                     ) {
                         let output =
                             <super::DelegateSystemType as WithDeserializer>::Deserializer::init(
-                                reader, event,
+                                helper, event,
                             )?;
                         return self.handle_delegate_system(
-                            reader,
+                            helper,
                             Default::default(),
                             output,
                             &mut *fallback,
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_ER),
+                        helper.resolve_local_name(x.name(), &super::super::NS_ER),
                         Some(b"delegateURI")
                     ) {
                         let output =
                             <super::DelegateUriType as WithDeserializer>::Deserializer::init(
-                                reader, event,
+                                helper, event,
                             )?;
                         return self.handle_delegate_uri(
-                            reader,
+                            helper,
                             Default::default(),
                             output,
                             &mut *fallback,
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_ER),
+                        helper.resolve_local_name(x.name(), &super::super::NS_ER),
                         Some(b"nextCatalog")
                     ) {
                         let output =
                             <super::NextCatalogType as WithDeserializer>::Deserializer::init(
-                                reader, event,
+                                helper, event,
                             )?;
                         return self.handle_next_catalog(
-                            reader,
+                            helper,
                             Default::default(),
                             output,
                             &mut *fallback,
@@ -3033,20 +2924,17 @@ pub mod er {
                     .unwrap_or(GroupTypeContentDeserializerState::Init__);
                 Ok(ElementHandlerOutput::return_to_parent(event, true))
             }
-            fn finish_state<R>(
-                reader: &R,
+            fn finish_state(
+                helper: &mut DeserializeHelper,
                 state: GroupTypeContentDeserializerState,
-            ) -> Result<super::GroupTypeContent, Error>
-            where
-                R: DeserializeReader,
-            {
+            ) -> Result<super::GroupTypeContent, Error> {
                 use GroupTypeContentDeserializerState as S;
                 match state {
                     S::Unknown__ => unreachable!(),
                     S::Init__ => Err(ErrorKind::MissingContent.into()),
                     S::Public(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
-                            let value = deserializer.finish(reader)?;
+                            let value = deserializer.finish(helper)?;
                             Self::store_public(&mut values, value)?;
                         }
                         Ok(super::GroupTypeContent::Public(values.ok_or_else(
@@ -3055,7 +2943,7 @@ pub mod er {
                     }
                     S::System(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
-                            let value = deserializer.finish(reader)?;
+                            let value = deserializer.finish(helper)?;
                             Self::store_system(&mut values, value)?;
                         }
                         Ok(super::GroupTypeContent::System(values.ok_or_else(
@@ -3064,7 +2952,7 @@ pub mod er {
                     }
                     S::Uri(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
-                            let value = deserializer.finish(reader)?;
+                            let value = deserializer.finish(helper)?;
                             Self::store_uri(&mut values, value)?;
                         }
                         Ok(super::GroupTypeContent::Uri(
@@ -3073,7 +2961,7 @@ pub mod er {
                     }
                     S::RewriteSystem(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
-                            let value = deserializer.finish(reader)?;
+                            let value = deserializer.finish(helper)?;
                             Self::store_rewrite_system(&mut values, value)?;
                         }
                         Ok(super::GroupTypeContent::RewriteSystem(values.ok_or_else(
@@ -3082,7 +2970,7 @@ pub mod er {
                     }
                     S::RewriteUri(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
-                            let value = deserializer.finish(reader)?;
+                            let value = deserializer.finish(helper)?;
                             Self::store_rewrite_uri(&mut values, value)?;
                         }
                         Ok(super::GroupTypeContent::RewriteUri(values.ok_or_else(
@@ -3091,7 +2979,7 @@ pub mod er {
                     }
                     S::UriSuffix(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
-                            let value = deserializer.finish(reader)?;
+                            let value = deserializer.finish(helper)?;
                             Self::store_uri_suffix(&mut values, value)?;
                         }
                         Ok(super::GroupTypeContent::UriSuffix(values.ok_or_else(
@@ -3100,7 +2988,7 @@ pub mod er {
                     }
                     S::SystemSuffix(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
-                            let value = deserializer.finish(reader)?;
+                            let value = deserializer.finish(helper)?;
                             Self::store_system_suffix(&mut values, value)?;
                         }
                         Ok(super::GroupTypeContent::SystemSuffix(values.ok_or_else(
@@ -3109,7 +2997,7 @@ pub mod er {
                     }
                     S::DelegatePublic(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
-                            let value = deserializer.finish(reader)?;
+                            let value = deserializer.finish(helper)?;
                             Self::store_delegate_public(&mut values, value)?;
                         }
                         Ok(super::GroupTypeContent::DelegatePublic(values.ok_or_else(
@@ -3118,7 +3006,7 @@ pub mod er {
                     }
                     S::DelegateSystem(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
-                            let value = deserializer.finish(reader)?;
+                            let value = deserializer.finish(helper)?;
                             Self::store_delegate_system(&mut values, value)?;
                         }
                         Ok(super::GroupTypeContent::DelegateSystem(values.ok_or_else(
@@ -3127,7 +3015,7 @@ pub mod er {
                     }
                     S::DelegateUri(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
-                            let value = deserializer.finish(reader)?;
+                            let value = deserializer.finish(helper)?;
                             Self::store_delegate_uri(&mut values, value)?;
                         }
                         Ok(super::GroupTypeContent::DelegateUri(values.ok_or_else(
@@ -3136,7 +3024,7 @@ pub mod er {
                     }
                     S::NextCatalog(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
-                            let value = deserializer.finish(reader)?;
+                            let value = deserializer.finish(helper)?;
                             Self::store_next_catalog(&mut values, value)?;
                         }
                         Ok(super::GroupTypeContent::NextCatalog(values.ok_or_else(
@@ -3276,16 +3164,13 @@ pub mod er {
                 *values = Some(value);
                 Ok(())
             }
-            fn handle_public<'de, R>(
+            fn handle_public<'de>(
                 &mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 mut values: Option<super::PublicType>,
                 output: DeserializerOutput<'de, super::PublicType>,
                 fallback: &mut Option<GroupTypeContentDeserializerState>,
-            ) -> Result<ElementHandlerOutput<'de>, Error>
-            where
-                R: DeserializeReader,
-            {
+            ) -> Result<ElementHandlerOutput<'de>, Error> {
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -3308,7 +3193,7 @@ pub mod er {
                 match fallback.take() {
                     None => (),
                     Some(GroupTypeContentDeserializerState::Public(_, Some(deserializer))) => {
-                        let data = deserializer.finish(reader)?;
+                        let data = deserializer.finish(helper)?;
                         Self::store_public(&mut values, data)?;
                     }
                     Some(_) => unreachable!(),
@@ -3318,7 +3203,7 @@ pub mod er {
                     DeserializerArtifact::Data(data) => {
                         Self::store_public(&mut values, data)?;
                         let data = Self::finish_state(
-                            reader,
+                            helper,
                             GroupTypeContentDeserializerState::Public(values, None),
                         )?;
                         *self.state__ = GroupTypeContentDeserializerState::Done__(data);
@@ -3331,16 +3216,13 @@ pub mod er {
                     }
                 })
             }
-            fn handle_system<'de, R>(
+            fn handle_system<'de>(
                 &mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 mut values: Option<super::SystemType>,
                 output: DeserializerOutput<'de, super::SystemType>,
                 fallback: &mut Option<GroupTypeContentDeserializerState>,
-            ) -> Result<ElementHandlerOutput<'de>, Error>
-            where
-                R: DeserializeReader,
-            {
+            ) -> Result<ElementHandlerOutput<'de>, Error> {
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -3363,7 +3245,7 @@ pub mod er {
                 match fallback.take() {
                     None => (),
                     Some(GroupTypeContentDeserializerState::System(_, Some(deserializer))) => {
-                        let data = deserializer.finish(reader)?;
+                        let data = deserializer.finish(helper)?;
                         Self::store_system(&mut values, data)?;
                     }
                     Some(_) => unreachable!(),
@@ -3373,7 +3255,7 @@ pub mod er {
                     DeserializerArtifact::Data(data) => {
                         Self::store_system(&mut values, data)?;
                         let data = Self::finish_state(
-                            reader,
+                            helper,
                             GroupTypeContentDeserializerState::System(values, None),
                         )?;
                         *self.state__ = GroupTypeContentDeserializerState::Done__(data);
@@ -3386,16 +3268,13 @@ pub mod er {
                     }
                 })
             }
-            fn handle_uri<'de, R>(
+            fn handle_uri<'de>(
                 &mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 mut values: Option<super::UriType>,
                 output: DeserializerOutput<'de, super::UriType>,
                 fallback: &mut Option<GroupTypeContentDeserializerState>,
-            ) -> Result<ElementHandlerOutput<'de>, Error>
-            where
-                R: DeserializeReader,
-            {
+            ) -> Result<ElementHandlerOutput<'de>, Error> {
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -3418,7 +3297,7 @@ pub mod er {
                 match fallback.take() {
                     None => (),
                     Some(GroupTypeContentDeserializerState::Uri(_, Some(deserializer))) => {
-                        let data = deserializer.finish(reader)?;
+                        let data = deserializer.finish(helper)?;
                         Self::store_uri(&mut values, data)?;
                     }
                     Some(_) => unreachable!(),
@@ -3428,7 +3307,7 @@ pub mod er {
                     DeserializerArtifact::Data(data) => {
                         Self::store_uri(&mut values, data)?;
                         let data = Self::finish_state(
-                            reader,
+                            helper,
                             GroupTypeContentDeserializerState::Uri(values, None),
                         )?;
                         *self.state__ = GroupTypeContentDeserializerState::Done__(data);
@@ -3441,16 +3320,13 @@ pub mod er {
                     }
                 })
             }
-            fn handle_rewrite_system<'de, R>(
+            fn handle_rewrite_system<'de>(
                 &mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 mut values: Option<super::RewriteSystemType>,
                 output: DeserializerOutput<'de, super::RewriteSystemType>,
                 fallback: &mut Option<GroupTypeContentDeserializerState>,
-            ) -> Result<ElementHandlerOutput<'de>, Error>
-            where
-                R: DeserializeReader,
-            {
+            ) -> Result<ElementHandlerOutput<'de>, Error> {
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -3480,7 +3356,7 @@ pub mod er {
                         _,
                         Some(deserializer),
                     )) => {
-                        let data = deserializer.finish(reader)?;
+                        let data = deserializer.finish(helper)?;
                         Self::store_rewrite_system(&mut values, data)?;
                     }
                     Some(_) => unreachable!(),
@@ -3490,7 +3366,7 @@ pub mod er {
                     DeserializerArtifact::Data(data) => {
                         Self::store_rewrite_system(&mut values, data)?;
                         let data = Self::finish_state(
-                            reader,
+                            helper,
                             GroupTypeContentDeserializerState::RewriteSystem(values, None),
                         )?;
                         *self.state__ = GroupTypeContentDeserializerState::Done__(data);
@@ -3505,16 +3381,13 @@ pub mod er {
                     }
                 })
             }
-            fn handle_rewrite_uri<'de, R>(
+            fn handle_rewrite_uri<'de>(
                 &mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 mut values: Option<super::RewriteUriType>,
                 output: DeserializerOutput<'de, super::RewriteUriType>,
                 fallback: &mut Option<GroupTypeContentDeserializerState>,
-            ) -> Result<ElementHandlerOutput<'de>, Error>
-            where
-                R: DeserializeReader,
-            {
+            ) -> Result<ElementHandlerOutput<'de>, Error> {
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -3541,7 +3414,7 @@ pub mod er {
                 match fallback.take() {
                     None => (),
                     Some(GroupTypeContentDeserializerState::RewriteUri(_, Some(deserializer))) => {
-                        let data = deserializer.finish(reader)?;
+                        let data = deserializer.finish(helper)?;
                         Self::store_rewrite_uri(&mut values, data)?;
                     }
                     Some(_) => unreachable!(),
@@ -3551,7 +3424,7 @@ pub mod er {
                     DeserializerArtifact::Data(data) => {
                         Self::store_rewrite_uri(&mut values, data)?;
                         let data = Self::finish_state(
-                            reader,
+                            helper,
                             GroupTypeContentDeserializerState::RewriteUri(values, None),
                         )?;
                         *self.state__ = GroupTypeContentDeserializerState::Done__(data);
@@ -3566,16 +3439,13 @@ pub mod er {
                     }
                 })
             }
-            fn handle_uri_suffix<'de, R>(
+            fn handle_uri_suffix<'de>(
                 &mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 mut values: Option<super::UriSuffixType>,
                 output: DeserializerOutput<'de, super::UriSuffixType>,
                 fallback: &mut Option<GroupTypeContentDeserializerState>,
-            ) -> Result<ElementHandlerOutput<'de>, Error>
-            where
-                R: DeserializeReader,
-            {
+            ) -> Result<ElementHandlerOutput<'de>, Error> {
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -3601,7 +3471,7 @@ pub mod er {
                 match fallback.take() {
                     None => (),
                     Some(GroupTypeContentDeserializerState::UriSuffix(_, Some(deserializer))) => {
-                        let data = deserializer.finish(reader)?;
+                        let data = deserializer.finish(helper)?;
                         Self::store_uri_suffix(&mut values, data)?;
                     }
                     Some(_) => unreachable!(),
@@ -3611,7 +3481,7 @@ pub mod er {
                     DeserializerArtifact::Data(data) => {
                         Self::store_uri_suffix(&mut values, data)?;
                         let data = Self::finish_state(
-                            reader,
+                            helper,
                             GroupTypeContentDeserializerState::UriSuffix(values, None),
                         )?;
                         *self.state__ = GroupTypeContentDeserializerState::Done__(data);
@@ -3626,16 +3496,13 @@ pub mod er {
                     }
                 })
             }
-            fn handle_system_suffix<'de, R>(
+            fn handle_system_suffix<'de>(
                 &mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 mut values: Option<super::SystemSuffixType>,
                 output: DeserializerOutput<'de, super::SystemSuffixType>,
                 fallback: &mut Option<GroupTypeContentDeserializerState>,
-            ) -> Result<ElementHandlerOutput<'de>, Error>
-            where
-                R: DeserializeReader,
-            {
+            ) -> Result<ElementHandlerOutput<'de>, Error> {
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -3665,7 +3532,7 @@ pub mod er {
                         _,
                         Some(deserializer),
                     )) => {
-                        let data = deserializer.finish(reader)?;
+                        let data = deserializer.finish(helper)?;
                         Self::store_system_suffix(&mut values, data)?;
                     }
                     Some(_) => unreachable!(),
@@ -3675,7 +3542,7 @@ pub mod er {
                     DeserializerArtifact::Data(data) => {
                         Self::store_system_suffix(&mut values, data)?;
                         let data = Self::finish_state(
-                            reader,
+                            helper,
                             GroupTypeContentDeserializerState::SystemSuffix(values, None),
                         )?;
                         *self.state__ = GroupTypeContentDeserializerState::Done__(data);
@@ -3690,16 +3557,13 @@ pub mod er {
                     }
                 })
             }
-            fn handle_delegate_public<'de, R>(
+            fn handle_delegate_public<'de>(
                 &mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 mut values: Option<super::DelegatePublicType>,
                 output: DeserializerOutput<'de, super::DelegatePublicType>,
                 fallback: &mut Option<GroupTypeContentDeserializerState>,
-            ) -> Result<ElementHandlerOutput<'de>, Error>
-            where
-                R: DeserializeReader,
-            {
+            ) -> Result<ElementHandlerOutput<'de>, Error> {
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -3729,7 +3593,7 @@ pub mod er {
                         _,
                         Some(deserializer),
                     )) => {
-                        let data = deserializer.finish(reader)?;
+                        let data = deserializer.finish(helper)?;
                         Self::store_delegate_public(&mut values, data)?;
                     }
                     Some(_) => unreachable!(),
@@ -3739,7 +3603,7 @@ pub mod er {
                     DeserializerArtifact::Data(data) => {
                         Self::store_delegate_public(&mut values, data)?;
                         let data = Self::finish_state(
-                            reader,
+                            helper,
                             GroupTypeContentDeserializerState::DelegatePublic(values, None),
                         )?;
                         *self.state__ = GroupTypeContentDeserializerState::Done__(data);
@@ -3754,16 +3618,13 @@ pub mod er {
                     }
                 })
             }
-            fn handle_delegate_system<'de, R>(
+            fn handle_delegate_system<'de>(
                 &mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 mut values: Option<super::DelegateSystemType>,
                 output: DeserializerOutput<'de, super::DelegateSystemType>,
                 fallback: &mut Option<GroupTypeContentDeserializerState>,
-            ) -> Result<ElementHandlerOutput<'de>, Error>
-            where
-                R: DeserializeReader,
-            {
+            ) -> Result<ElementHandlerOutput<'de>, Error> {
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -3793,7 +3654,7 @@ pub mod er {
                         _,
                         Some(deserializer),
                     )) => {
-                        let data = deserializer.finish(reader)?;
+                        let data = deserializer.finish(helper)?;
                         Self::store_delegate_system(&mut values, data)?;
                     }
                     Some(_) => unreachable!(),
@@ -3803,7 +3664,7 @@ pub mod er {
                     DeserializerArtifact::Data(data) => {
                         Self::store_delegate_system(&mut values, data)?;
                         let data = Self::finish_state(
-                            reader,
+                            helper,
                             GroupTypeContentDeserializerState::DelegateSystem(values, None),
                         )?;
                         *self.state__ = GroupTypeContentDeserializerState::Done__(data);
@@ -3818,16 +3679,13 @@ pub mod er {
                     }
                 })
             }
-            fn handle_delegate_uri<'de, R>(
+            fn handle_delegate_uri<'de>(
                 &mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 mut values: Option<super::DelegateUriType>,
                 output: DeserializerOutput<'de, super::DelegateUriType>,
                 fallback: &mut Option<GroupTypeContentDeserializerState>,
-            ) -> Result<ElementHandlerOutput<'de>, Error>
-            where
-                R: DeserializeReader,
-            {
+            ) -> Result<ElementHandlerOutput<'de>, Error> {
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -3854,7 +3712,7 @@ pub mod er {
                 match fallback.take() {
                     None => (),
                     Some(GroupTypeContentDeserializerState::DelegateUri(_, Some(deserializer))) => {
-                        let data = deserializer.finish(reader)?;
+                        let data = deserializer.finish(helper)?;
                         Self::store_delegate_uri(&mut values, data)?;
                     }
                     Some(_) => unreachable!(),
@@ -3864,7 +3722,7 @@ pub mod er {
                     DeserializerArtifact::Data(data) => {
                         Self::store_delegate_uri(&mut values, data)?;
                         let data = Self::finish_state(
-                            reader,
+                            helper,
                             GroupTypeContentDeserializerState::DelegateUri(values, None),
                         )?;
                         *self.state__ = GroupTypeContentDeserializerState::Done__(data);
@@ -3879,16 +3737,13 @@ pub mod er {
                     }
                 })
             }
-            fn handle_next_catalog<'de, R>(
+            fn handle_next_catalog<'de>(
                 &mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 mut values: Option<super::NextCatalogType>,
                 output: DeserializerOutput<'de, super::NextCatalogType>,
                 fallback: &mut Option<GroupTypeContentDeserializerState>,
-            ) -> Result<ElementHandlerOutput<'de>, Error>
-            where
-                R: DeserializeReader,
-            {
+            ) -> Result<ElementHandlerOutput<'de>, Error> {
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -3915,7 +3770,7 @@ pub mod er {
                 match fallback.take() {
                     None => (),
                     Some(GroupTypeContentDeserializerState::NextCatalog(_, Some(deserializer))) => {
-                        let data = deserializer.finish(reader)?;
+                        let data = deserializer.finish(helper)?;
                         Self::store_next_catalog(&mut values, data)?;
                     }
                     Some(_) => unreachable!(),
@@ -3925,7 +3780,7 @@ pub mod er {
                     DeserializerArtifact::Data(data) => {
                         Self::store_next_catalog(&mut values, data)?;
                         let data = Self::finish_state(
-                            reader,
+                            helper,
                             GroupTypeContentDeserializerState::NextCatalog(values, None),
                         )?;
                         *self.state__ = GroupTypeContentDeserializerState::Done__(data);
@@ -3942,17 +3797,14 @@ pub mod er {
             }
         }
         impl<'de> Deserializer<'de, super::GroupTypeContent> for GroupTypeContentDeserializer {
-            fn init<R>(
-                reader: &R,
+            fn init(
+                helper: &mut DeserializeHelper,
                 event: Event<'de>,
-            ) -> DeserializerResult<'de, super::GroupTypeContent>
-            where
-                R: DeserializeReader,
-            {
+            ) -> DeserializerResult<'de, super::GroupTypeContent> {
                 let deserializer = Self {
                     state__: Box::new(GroupTypeContentDeserializerState::Init__),
                 };
-                let mut output = deserializer.next(reader, event)?;
+                let mut output = deserializer.next(helper, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
                         if matches!(&*x.state__, GroupTypeContentDeserializerState::Init__) =>
@@ -3963,14 +3815,11 @@ pub mod er {
                 };
                 Ok(output)
             }
-            fn next<R>(
+            fn next(
                 mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 event: Event<'de>,
-            ) -> DeserializerResult<'de, super::GroupTypeContent>
-            where
-                R: DeserializeReader,
-            {
+            ) -> DeserializerResult<'de, super::GroupTypeContent> {
                 use GroupTypeContentDeserializerState as S;
                 let mut event = event;
                 let mut fallback = None;
@@ -3979,8 +3828,8 @@ pub mod er {
                     event = match (state, event) {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Public(values, Some(deserializer)), event) => {
-                            let output = deserializer.next(reader, event)?;
-                            match self.handle_public(reader, values, output, &mut fallback)? {
+                            let output = deserializer.next(helper, event)?;
+                            match self.handle_public(helper, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -3988,8 +3837,8 @@ pub mod er {
                             }
                         }
                         (S::System(values, Some(deserializer)), event) => {
-                            let output = deserializer.next(reader, event)?;
-                            match self.handle_system(reader, values, output, &mut fallback)? {
+                            let output = deserializer.next(helper, event)?;
+                            match self.handle_system(helper, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -3997,8 +3846,8 @@ pub mod er {
                             }
                         }
                         (S::Uri(values, Some(deserializer)), event) => {
-                            let output = deserializer.next(reader, event)?;
-                            match self.handle_uri(reader, values, output, &mut fallback)? {
+                            let output = deserializer.next(helper, event)?;
+                            match self.handle_uri(helper, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -4006,9 +3855,9 @@ pub mod er {
                             }
                         }
                         (S::RewriteSystem(values, Some(deserializer)), event) => {
-                            let output = deserializer.next(reader, event)?;
+                            let output = deserializer.next(helper, event)?;
                             match self.handle_rewrite_system(
-                                reader,
+                                helper,
                                 values,
                                 output,
                                 &mut fallback,
@@ -4020,8 +3869,8 @@ pub mod er {
                             }
                         }
                         (S::RewriteUri(values, Some(deserializer)), event) => {
-                            let output = deserializer.next(reader, event)?;
-                            match self.handle_rewrite_uri(reader, values, output, &mut fallback)? {
+                            let output = deserializer.next(helper, event)?;
+                            match self.handle_rewrite_uri(helper, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -4029,8 +3878,8 @@ pub mod er {
                             }
                         }
                         (S::UriSuffix(values, Some(deserializer)), event) => {
-                            let output = deserializer.next(reader, event)?;
-                            match self.handle_uri_suffix(reader, values, output, &mut fallback)? {
+                            let output = deserializer.next(helper, event)?;
+                            match self.handle_uri_suffix(helper, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -4038,9 +3887,9 @@ pub mod er {
                             }
                         }
                         (S::SystemSuffix(values, Some(deserializer)), event) => {
-                            let output = deserializer.next(reader, event)?;
+                            let output = deserializer.next(helper, event)?;
                             match self.handle_system_suffix(
-                                reader,
+                                helper,
                                 values,
                                 output,
                                 &mut fallback,
@@ -4052,9 +3901,9 @@ pub mod er {
                             }
                         }
                         (S::DelegatePublic(values, Some(deserializer)), event) => {
-                            let output = deserializer.next(reader, event)?;
+                            let output = deserializer.next(helper, event)?;
                             match self.handle_delegate_public(
-                                reader,
+                                helper,
                                 values,
                                 output,
                                 &mut fallback,
@@ -4066,9 +3915,9 @@ pub mod er {
                             }
                         }
                         (S::DelegateSystem(values, Some(deserializer)), event) => {
-                            let output = deserializer.next(reader, event)?;
+                            let output = deserializer.next(helper, event)?;
                             match self.handle_delegate_system(
-                                reader,
+                                helper,
                                 values,
                                 output,
                                 &mut fallback,
@@ -4080,8 +3929,8 @@ pub mod er {
                             }
                         }
                         (S::DelegateUri(values, Some(deserializer)), event) => {
-                            let output = deserializer.next(reader, event)?;
-                            match self.handle_delegate_uri(reader, values, output, &mut fallback)? {
+                            let output = deserializer.next(helper, event)?;
+                            match self.handle_delegate_uri(helper, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -4089,8 +3938,8 @@ pub mod er {
                             }
                         }
                         (S::NextCatalog(values, Some(deserializer)), event) => {
-                            let output = deserializer.next(reader, event)?;
-                            match self.handle_next_catalog(reader, values, output, &mut fallback)? {
+                            let output = deserializer.next(helper, event)?;
+                            match self.handle_next_catalog(helper, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -4100,14 +3949,14 @@ pub mod er {
                         (state, event @ Event::End(_)) => {
                             return Ok(DeserializerOutput {
                                 artifact: DeserializerArtifact::Data(Self::finish_state(
-                                    reader, state,
+                                    helper, state,
                                 )?),
                                 event: DeserializerEvent::Continue(event),
                                 allow_any: false,
                             });
                         }
                         (S::Init__, event) => {
-                            match self.find_suitable(reader, event, &mut fallback)? {
+                            match self.find_suitable(helper, event, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -4115,13 +3964,13 @@ pub mod er {
                             }
                         }
                         (S::Public(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            let output = reader.init_start_tag_deserializer(
+                            let output = helper.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_ER),
                                 b"public",
                                 false,
                             )?;
-                            match self.handle_public(reader, values, output, &mut fallback)? {
+                            match self.handle_public(helper, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -4129,13 +3978,13 @@ pub mod er {
                             }
                         }
                         (S::System(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            let output = reader.init_start_tag_deserializer(
+                            let output = helper.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_ER),
                                 b"system",
                                 false,
                             )?;
-                            match self.handle_system(reader, values, output, &mut fallback)? {
+                            match self.handle_system(helper, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -4143,13 +3992,13 @@ pub mod er {
                             }
                         }
                         (S::Uri(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            let output = reader.init_start_tag_deserializer(
+                            let output = helper.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_ER),
                                 b"uri",
                                 false,
                             )?;
-                            match self.handle_uri(reader, values, output, &mut fallback)? {
+                            match self.handle_uri(helper, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -4160,14 +4009,14 @@ pub mod er {
                             S::RewriteSystem(values, None),
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
-                            let output = reader.init_start_tag_deserializer(
+                            let output = helper.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_ER),
                                 b"rewriteSystem",
                                 false,
                             )?;
                             match self.handle_rewrite_system(
-                                reader,
+                                helper,
                                 values,
                                 output,
                                 &mut fallback,
@@ -4182,13 +4031,13 @@ pub mod er {
                             S::RewriteUri(values, None),
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
-                            let output = reader.init_start_tag_deserializer(
+                            let output = helper.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_ER),
                                 b"rewriteURI",
                                 false,
                             )?;
-                            match self.handle_rewrite_uri(reader, values, output, &mut fallback)? {
+                            match self.handle_rewrite_uri(helper, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -4199,13 +4048,13 @@ pub mod er {
                             S::UriSuffix(values, None),
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
-                            let output = reader.init_start_tag_deserializer(
+                            let output = helper.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_ER),
                                 b"uriSuffix",
                                 false,
                             )?;
-                            match self.handle_uri_suffix(reader, values, output, &mut fallback)? {
+                            match self.handle_uri_suffix(helper, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -4216,14 +4065,14 @@ pub mod er {
                             S::SystemSuffix(values, None),
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
-                            let output = reader.init_start_tag_deserializer(
+                            let output = helper.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_ER),
                                 b"systemSuffix",
                                 false,
                             )?;
                             match self.handle_system_suffix(
-                                reader,
+                                helper,
                                 values,
                                 output,
                                 &mut fallback,
@@ -4238,14 +4087,14 @@ pub mod er {
                             S::DelegatePublic(values, None),
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
-                            let output = reader.init_start_tag_deserializer(
+                            let output = helper.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_ER),
                                 b"delegatePublic",
                                 false,
                             )?;
                             match self.handle_delegate_public(
-                                reader,
+                                helper,
                                 values,
                                 output,
                                 &mut fallback,
@@ -4260,14 +4109,14 @@ pub mod er {
                             S::DelegateSystem(values, None),
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
-                            let output = reader.init_start_tag_deserializer(
+                            let output = helper.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_ER),
                                 b"delegateSystem",
                                 false,
                             )?;
                             match self.handle_delegate_system(
-                                reader,
+                                helper,
                                 values,
                                 output,
                                 &mut fallback,
@@ -4282,13 +4131,13 @@ pub mod er {
                             S::DelegateUri(values, None),
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
-                            let output = reader.init_start_tag_deserializer(
+                            let output = helper.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_ER),
                                 b"delegateURI",
                                 false,
                             )?;
-                            match self.handle_delegate_uri(reader, values, output, &mut fallback)? {
+                            match self.handle_delegate_uri(helper, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -4299,13 +4148,13 @@ pub mod er {
                             S::NextCatalog(values, None),
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
-                            let output = reader.init_start_tag_deserializer(
+                            let output = helper.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_ER),
                                 b"nextCatalog",
                                 false,
                             )?;
-                            match self.handle_next_catalog(reader, values, output, &mut fallback)? {
+                            match self.handle_next_catalog(helper, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -4323,7 +4172,7 @@ pub mod er {
                     }
                 };
                 let artifact = if matches!(&*self.state__, S::Done__(_)) {
-                    DeserializerArtifact::Data(self.finish(reader)?)
+                    DeserializerArtifact::Data(self.finish(helper)?)
                 } else {
                     DeserializerArtifact::Deserializer(self)
                 };
@@ -4333,11 +4182,11 @@ pub mod er {
                     allow_any,
                 })
             }
-            fn finish<R>(self, reader: &R) -> Result<super::GroupTypeContent, Error>
-            where
-                R: DeserializeReader,
-            {
-                Self::finish_state(reader, *self.state__)
+            fn finish(
+                self,
+                helper: &mut DeserializeHelper,
+            ) -> Result<super::GroupTypeContent, Error> {
+                Self::finish_state(helper, *self.state__)
             }
         }
         #[derive(Debug)]
@@ -4352,66 +4201,56 @@ pub mod er {
             Unknown__,
         }
         impl NextCatalogTypeDeserializer {
-            fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-            where
-                R: DeserializeReader,
-            {
+            fn from_bytes_start(
+                helper: &mut DeserializeHelper,
+                bytes_start: &BytesStart<'_>,
+            ) -> Result<Self, Error> {
                 let mut catalog: Option<String> = None;
                 let mut id: Option<String> = None;
-                for attrib in filter_xmlns_attributes(bytes_start) {
+                for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"catalog")
                     ) {
-                        reader.read_attrib(&mut catalog, b"catalog", &attrib.value)?;
+                        helper.read_attrib(&mut catalog, b"catalog", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"id")
                     ) {
-                        reader.read_attrib(&mut id, b"id", &attrib.value)?;
+                        helper.read_attrib(&mut id, b"id", &attrib.value)?;
                     }
                 }
                 Ok(Self {
-                    catalog: catalog.ok_or_else(|| {
-                        reader.map_error(ErrorKind::MissingAttribute("catalog".into()))
-                    })?,
+                    catalog: catalog
+                        .ok_or_else(|| ErrorKind::MissingAttribute("catalog".into()))?,
                     id: id,
                     state__: Box::new(NextCatalogTypeDeserializerState::Init__),
                 })
             }
-            fn finish_state<R>(
+            fn finish_state(
                 &mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 state: NextCatalogTypeDeserializerState,
-            ) -> Result<(), Error>
-            where
-                R: DeserializeReader,
-            {
+            ) -> Result<(), Error> {
                 Ok(())
             }
         }
         impl<'de> Deserializer<'de, super::NextCatalogType> for NextCatalogTypeDeserializer {
-            fn init<R>(
-                reader: &R,
+            fn init(
+                helper: &mut DeserializeHelper,
                 event: Event<'de>,
-            ) -> DeserializerResult<'de, super::NextCatalogType>
-            where
-                R: DeserializeReader,
-            {
-                reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+            ) -> DeserializerResult<'de, super::NextCatalogType> {
+                helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
             }
-            fn next<R>(
+            fn next(
                 mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 event: Event<'de>,
-            ) -> DeserializerResult<'de, super::NextCatalogType>
-            where
-                R: DeserializeReader,
-            {
+            ) -> DeserializerResult<'de, super::NextCatalogType> {
                 if let Event::End(_) = &event {
                     Ok(DeserializerOutput {
-                        artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                        artifact: DeserializerArtifact::Data(self.finish(helper)?),
                         event: DeserializerEvent::None,
                         allow_any: false,
                     })
@@ -4423,15 +4262,15 @@ pub mod er {
                     })
                 }
             }
-            fn finish<R>(mut self, reader: &R) -> Result<super::NextCatalogType, Error>
-            where
-                R: DeserializeReader,
-            {
+            fn finish(
+                mut self,
+                helper: &mut DeserializeHelper,
+            ) -> Result<super::NextCatalogType, Error> {
                 let state = replace(
                     &mut *self.state__,
                     NextCatalogTypeDeserializerState::Unknown__,
                 );
-                self.finish_state(reader, state)?;
+                self.finish_state(helper, state)?;
                 Ok(super::NextCatalogType {
                     catalog: self.catalog,
                     id: self.id,
@@ -4451,72 +4290,63 @@ pub mod er {
             Unknown__,
         }
         impl PublicTypeDeserializer {
-            fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-            where
-                R: DeserializeReader,
-            {
+            fn from_bytes_start(
+                helper: &mut DeserializeHelper,
+                bytes_start: &BytesStart<'_>,
+            ) -> Result<Self, Error> {
                 let mut public_id: Option<String> = None;
                 let mut uri: Option<String> = None;
                 let mut id: Option<String> = None;
-                for attrib in filter_xmlns_attributes(bytes_start) {
+                for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"publicId")
                     ) {
-                        reader.read_attrib(&mut public_id, b"publicId", &attrib.value)?;
+                        helper.read_attrib(&mut public_id, b"publicId", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"uri")
                     ) {
-                        reader.read_attrib(&mut uri, b"uri", &attrib.value)?;
+                        helper.read_attrib(&mut uri, b"uri", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"id")
                     ) {
-                        reader.read_attrib(&mut id, b"id", &attrib.value)?;
+                        helper.read_attrib(&mut id, b"id", &attrib.value)?;
                     }
                 }
                 Ok(Self {
-                    public_id: public_id.ok_or_else(|| {
-                        reader.map_error(ErrorKind::MissingAttribute("publicId".into()))
-                    })?,
-                    uri: uri.ok_or_else(|| {
-                        reader.map_error(ErrorKind::MissingAttribute("uri".into()))
-                    })?,
+                    public_id: public_id
+                        .ok_or_else(|| ErrorKind::MissingAttribute("publicId".into()))?,
+                    uri: uri.ok_or_else(|| ErrorKind::MissingAttribute("uri".into()))?,
                     id: id,
                     state__: Box::new(PublicTypeDeserializerState::Init__),
                 })
             }
-            fn finish_state<R>(
+            fn finish_state(
                 &mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 state: PublicTypeDeserializerState,
-            ) -> Result<(), Error>
-            where
-                R: DeserializeReader,
-            {
+            ) -> Result<(), Error> {
                 Ok(())
             }
         }
         impl<'de> Deserializer<'de, super::PublicType> for PublicTypeDeserializer {
-            fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, super::PublicType>
-            where
-                R: DeserializeReader,
-            {
-                reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
-            }
-            fn next<R>(
-                mut self,
-                reader: &R,
+            fn init(
+                helper: &mut DeserializeHelper,
                 event: Event<'de>,
-            ) -> DeserializerResult<'de, super::PublicType>
-            where
-                R: DeserializeReader,
-            {
+            ) -> DeserializerResult<'de, super::PublicType> {
+                helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
+            }
+            fn next(
+                mut self,
+                helper: &mut DeserializeHelper,
+                event: Event<'de>,
+            ) -> DeserializerResult<'de, super::PublicType> {
                 if let Event::End(_) = &event {
                     Ok(DeserializerOutput {
-                        artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                        artifact: DeserializerArtifact::Data(self.finish(helper)?),
                         event: DeserializerEvent::None,
                         allow_any: false,
                     })
@@ -4528,12 +4358,12 @@ pub mod er {
                     })
                 }
             }
-            fn finish<R>(mut self, reader: &R) -> Result<super::PublicType, Error>
-            where
-                R: DeserializeReader,
-            {
+            fn finish(
+                mut self,
+                helper: &mut DeserializeHelper,
+            ) -> Result<super::PublicType, Error> {
                 let state = replace(&mut *self.state__, PublicTypeDeserializerState::Unknown__);
-                self.finish_state(reader, state)?;
+                self.finish_state(helper, state)?;
                 Ok(super::PublicType {
                     public_id: self.public_id,
                     uri: self.uri,
@@ -4554,79 +4384,68 @@ pub mod er {
             Unknown__,
         }
         impl RewriteSystemTypeDeserializer {
-            fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-            where
-                R: DeserializeReader,
-            {
+            fn from_bytes_start(
+                helper: &mut DeserializeHelper,
+                bytes_start: &BytesStart<'_>,
+            ) -> Result<Self, Error> {
                 let mut system_id_start_string: Option<String> = None;
                 let mut rewrite_prefix: Option<String> = None;
                 let mut id: Option<String> = None;
-                for attrib in filter_xmlns_attributes(bytes_start) {
+                for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"systemIdStartString")
                     ) {
-                        reader.read_attrib(
+                        helper.read_attrib(
                             &mut system_id_start_string,
                             b"systemIdStartString",
                             &attrib.value,
                         )?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"rewritePrefix")
                     ) {
-                        reader.read_attrib(&mut rewrite_prefix, b"rewritePrefix", &attrib.value)?;
+                        helper.read_attrib(&mut rewrite_prefix, b"rewritePrefix", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"id")
                     ) {
-                        reader.read_attrib(&mut id, b"id", &attrib.value)?;
+                        helper.read_attrib(&mut id, b"id", &attrib.value)?;
                     }
                 }
                 Ok(Self {
-                    system_id_start_string: system_id_start_string.ok_or_else(|| {
-                        reader.map_error(ErrorKind::MissingAttribute("systemIdStartString".into()))
-                    })?,
-                    rewrite_prefix: rewrite_prefix.ok_or_else(|| {
-                        reader.map_error(ErrorKind::MissingAttribute("rewritePrefix".into()))
-                    })?,
+                    system_id_start_string: system_id_start_string
+                        .ok_or_else(|| ErrorKind::MissingAttribute("systemIdStartString".into()))?,
+                    rewrite_prefix: rewrite_prefix
+                        .ok_or_else(|| ErrorKind::MissingAttribute("rewritePrefix".into()))?,
                     id: id,
                     state__: Box::new(RewriteSystemTypeDeserializerState::Init__),
                 })
             }
-            fn finish_state<R>(
+            fn finish_state(
                 &mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 state: RewriteSystemTypeDeserializerState,
-            ) -> Result<(), Error>
-            where
-                R: DeserializeReader,
-            {
+            ) -> Result<(), Error> {
                 Ok(())
             }
         }
         impl<'de> Deserializer<'de, super::RewriteSystemType> for RewriteSystemTypeDeserializer {
-            fn init<R>(
-                reader: &R,
+            fn init(
+                helper: &mut DeserializeHelper,
                 event: Event<'de>,
-            ) -> DeserializerResult<'de, super::RewriteSystemType>
-            where
-                R: DeserializeReader,
-            {
-                reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+            ) -> DeserializerResult<'de, super::RewriteSystemType> {
+                helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
             }
-            fn next<R>(
+            fn next(
                 mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 event: Event<'de>,
-            ) -> DeserializerResult<'de, super::RewriteSystemType>
-            where
-                R: DeserializeReader,
-            {
+            ) -> DeserializerResult<'de, super::RewriteSystemType> {
                 if let Event::End(_) = &event {
                     Ok(DeserializerOutput {
-                        artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                        artifact: DeserializerArtifact::Data(self.finish(helper)?),
                         event: DeserializerEvent::None,
                         allow_any: false,
                     })
@@ -4638,15 +4457,15 @@ pub mod er {
                     })
                 }
             }
-            fn finish<R>(mut self, reader: &R) -> Result<super::RewriteSystemType, Error>
-            where
-                R: DeserializeReader,
-            {
+            fn finish(
+                mut self,
+                helper: &mut DeserializeHelper,
+            ) -> Result<super::RewriteSystemType, Error> {
                 let state = replace(
                     &mut *self.state__,
                     RewriteSystemTypeDeserializerState::Unknown__,
                 );
-                self.finish_state(reader, state)?;
+                self.finish_state(helper, state)?;
                 Ok(super::RewriteSystemType {
                     system_id_start_string: self.system_id_start_string,
                     rewrite_prefix: self.rewrite_prefix,
@@ -4667,79 +4486,68 @@ pub mod er {
             Unknown__,
         }
         impl RewriteUriTypeDeserializer {
-            fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-            where
-                R: DeserializeReader,
-            {
+            fn from_bytes_start(
+                helper: &mut DeserializeHelper,
+                bytes_start: &BytesStart<'_>,
+            ) -> Result<Self, Error> {
                 let mut uri_start_string: Option<String> = None;
                 let mut rewrite_prefix: Option<String> = None;
                 let mut id: Option<String> = None;
-                for attrib in filter_xmlns_attributes(bytes_start) {
+                for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"uriStartString")
                     ) {
-                        reader.read_attrib(
+                        helper.read_attrib(
                             &mut uri_start_string,
                             b"uriStartString",
                             &attrib.value,
                         )?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"rewritePrefix")
                     ) {
-                        reader.read_attrib(&mut rewrite_prefix, b"rewritePrefix", &attrib.value)?;
+                        helper.read_attrib(&mut rewrite_prefix, b"rewritePrefix", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"id")
                     ) {
-                        reader.read_attrib(&mut id, b"id", &attrib.value)?;
+                        helper.read_attrib(&mut id, b"id", &attrib.value)?;
                     }
                 }
                 Ok(Self {
-                    uri_start_string: uri_start_string.ok_or_else(|| {
-                        reader.map_error(ErrorKind::MissingAttribute("uriStartString".into()))
-                    })?,
-                    rewrite_prefix: rewrite_prefix.ok_or_else(|| {
-                        reader.map_error(ErrorKind::MissingAttribute("rewritePrefix".into()))
-                    })?,
+                    uri_start_string: uri_start_string
+                        .ok_or_else(|| ErrorKind::MissingAttribute("uriStartString".into()))?,
+                    rewrite_prefix: rewrite_prefix
+                        .ok_or_else(|| ErrorKind::MissingAttribute("rewritePrefix".into()))?,
                     id: id,
                     state__: Box::new(RewriteUriTypeDeserializerState::Init__),
                 })
             }
-            fn finish_state<R>(
+            fn finish_state(
                 &mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 state: RewriteUriTypeDeserializerState,
-            ) -> Result<(), Error>
-            where
-                R: DeserializeReader,
-            {
+            ) -> Result<(), Error> {
                 Ok(())
             }
         }
         impl<'de> Deserializer<'de, super::RewriteUriType> for RewriteUriTypeDeserializer {
-            fn init<R>(
-                reader: &R,
+            fn init(
+                helper: &mut DeserializeHelper,
                 event: Event<'de>,
-            ) -> DeserializerResult<'de, super::RewriteUriType>
-            where
-                R: DeserializeReader,
-            {
-                reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+            ) -> DeserializerResult<'de, super::RewriteUriType> {
+                helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
             }
-            fn next<R>(
+            fn next(
                 mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 event: Event<'de>,
-            ) -> DeserializerResult<'de, super::RewriteUriType>
-            where
-                R: DeserializeReader,
-            {
+            ) -> DeserializerResult<'de, super::RewriteUriType> {
                 if let Event::End(_) = &event {
                     Ok(DeserializerOutput {
-                        artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                        artifact: DeserializerArtifact::Data(self.finish(helper)?),
                         event: DeserializerEvent::None,
                         allow_any: false,
                     })
@@ -4751,15 +4559,15 @@ pub mod er {
                     })
                 }
             }
-            fn finish<R>(mut self, reader: &R) -> Result<super::RewriteUriType, Error>
-            where
-                R: DeserializeReader,
-            {
+            fn finish(
+                mut self,
+                helper: &mut DeserializeHelper,
+            ) -> Result<super::RewriteUriType, Error> {
                 let state = replace(
                     &mut *self.state__,
                     RewriteUriTypeDeserializerState::Unknown__,
                 );
-                self.finish_state(reader, state)?;
+                self.finish_state(helper, state)?;
                 Ok(super::RewriteUriType {
                     uri_start_string: self.uri_start_string,
                     rewrite_prefix: self.rewrite_prefix,
@@ -4780,72 +4588,63 @@ pub mod er {
             Unknown__,
         }
         impl SystemTypeDeserializer {
-            fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-            where
-                R: DeserializeReader,
-            {
+            fn from_bytes_start(
+                helper: &mut DeserializeHelper,
+                bytes_start: &BytesStart<'_>,
+            ) -> Result<Self, Error> {
                 let mut system_id: Option<String> = None;
                 let mut uri: Option<String> = None;
                 let mut id: Option<String> = None;
-                for attrib in filter_xmlns_attributes(bytes_start) {
+                for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"systemId")
                     ) {
-                        reader.read_attrib(&mut system_id, b"systemId", &attrib.value)?;
+                        helper.read_attrib(&mut system_id, b"systemId", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"uri")
                     ) {
-                        reader.read_attrib(&mut uri, b"uri", &attrib.value)?;
+                        helper.read_attrib(&mut uri, b"uri", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"id")
                     ) {
-                        reader.read_attrib(&mut id, b"id", &attrib.value)?;
+                        helper.read_attrib(&mut id, b"id", &attrib.value)?;
                     }
                 }
                 Ok(Self {
-                    system_id: system_id.ok_or_else(|| {
-                        reader.map_error(ErrorKind::MissingAttribute("systemId".into()))
-                    })?,
-                    uri: uri.ok_or_else(|| {
-                        reader.map_error(ErrorKind::MissingAttribute("uri".into()))
-                    })?,
+                    system_id: system_id
+                        .ok_or_else(|| ErrorKind::MissingAttribute("systemId".into()))?,
+                    uri: uri.ok_or_else(|| ErrorKind::MissingAttribute("uri".into()))?,
                     id: id,
                     state__: Box::new(SystemTypeDeserializerState::Init__),
                 })
             }
-            fn finish_state<R>(
+            fn finish_state(
                 &mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 state: SystemTypeDeserializerState,
-            ) -> Result<(), Error>
-            where
-                R: DeserializeReader,
-            {
+            ) -> Result<(), Error> {
                 Ok(())
             }
         }
         impl<'de> Deserializer<'de, super::SystemType> for SystemTypeDeserializer {
-            fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, super::SystemType>
-            where
-                R: DeserializeReader,
-            {
-                reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
-            }
-            fn next<R>(
-                mut self,
-                reader: &R,
+            fn init(
+                helper: &mut DeserializeHelper,
                 event: Event<'de>,
-            ) -> DeserializerResult<'de, super::SystemType>
-            where
-                R: DeserializeReader,
-            {
+            ) -> DeserializerResult<'de, super::SystemType> {
+                helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
+            }
+            fn next(
+                mut self,
+                helper: &mut DeserializeHelper,
+                event: Event<'de>,
+            ) -> DeserializerResult<'de, super::SystemType> {
                 if let Event::End(_) = &event {
                     Ok(DeserializerOutput {
-                        artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                        artifact: DeserializerArtifact::Data(self.finish(helper)?),
                         event: DeserializerEvent::None,
                         allow_any: false,
                     })
@@ -4857,12 +4656,12 @@ pub mod er {
                     })
                 }
             }
-            fn finish<R>(mut self, reader: &R) -> Result<super::SystemType, Error>
-            where
-                R: DeserializeReader,
-            {
+            fn finish(
+                mut self,
+                helper: &mut DeserializeHelper,
+            ) -> Result<super::SystemType, Error> {
                 let state = replace(&mut *self.state__, SystemTypeDeserializerState::Unknown__);
-                self.finish_state(reader, state)?;
+                self.finish_state(helper, state)?;
                 Ok(super::SystemType {
                     system_id: self.system_id,
                     uri: self.uri,
@@ -4883,79 +4682,67 @@ pub mod er {
             Unknown__,
         }
         impl SystemSuffixTypeDeserializer {
-            fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-            where
-                R: DeserializeReader,
-            {
+            fn from_bytes_start(
+                helper: &mut DeserializeHelper,
+                bytes_start: &BytesStart<'_>,
+            ) -> Result<Self, Error> {
                 let mut system_id_suffix: Option<String> = None;
                 let mut uri: Option<String> = None;
                 let mut id: Option<String> = None;
-                for attrib in filter_xmlns_attributes(bytes_start) {
+                for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"systemIdSuffix")
                     ) {
-                        reader.read_attrib(
+                        helper.read_attrib(
                             &mut system_id_suffix,
                             b"systemIdSuffix",
                             &attrib.value,
                         )?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"uri")
                     ) {
-                        reader.read_attrib(&mut uri, b"uri", &attrib.value)?;
+                        helper.read_attrib(&mut uri, b"uri", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"id")
                     ) {
-                        reader.read_attrib(&mut id, b"id", &attrib.value)?;
+                        helper.read_attrib(&mut id, b"id", &attrib.value)?;
                     }
                 }
                 Ok(Self {
-                    system_id_suffix: system_id_suffix.ok_or_else(|| {
-                        reader.map_error(ErrorKind::MissingAttribute("systemIdSuffix".into()))
-                    })?,
-                    uri: uri.ok_or_else(|| {
-                        reader.map_error(ErrorKind::MissingAttribute("uri".into()))
-                    })?,
+                    system_id_suffix: system_id_suffix
+                        .ok_or_else(|| ErrorKind::MissingAttribute("systemIdSuffix".into()))?,
+                    uri: uri.ok_or_else(|| ErrorKind::MissingAttribute("uri".into()))?,
                     id: id,
                     state__: Box::new(SystemSuffixTypeDeserializerState::Init__),
                 })
             }
-            fn finish_state<R>(
+            fn finish_state(
                 &mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 state: SystemSuffixTypeDeserializerState,
-            ) -> Result<(), Error>
-            where
-                R: DeserializeReader,
-            {
+            ) -> Result<(), Error> {
                 Ok(())
             }
         }
         impl<'de> Deserializer<'de, super::SystemSuffixType> for SystemSuffixTypeDeserializer {
-            fn init<R>(
-                reader: &R,
+            fn init(
+                helper: &mut DeserializeHelper,
                 event: Event<'de>,
-            ) -> DeserializerResult<'de, super::SystemSuffixType>
-            where
-                R: DeserializeReader,
-            {
-                reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+            ) -> DeserializerResult<'de, super::SystemSuffixType> {
+                helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
             }
-            fn next<R>(
+            fn next(
                 mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 event: Event<'de>,
-            ) -> DeserializerResult<'de, super::SystemSuffixType>
-            where
-                R: DeserializeReader,
-            {
+            ) -> DeserializerResult<'de, super::SystemSuffixType> {
                 if let Event::End(_) = &event {
                     Ok(DeserializerOutput {
-                        artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                        artifact: DeserializerArtifact::Data(self.finish(helper)?),
                         event: DeserializerEvent::None,
                         allow_any: false,
                     })
@@ -4967,15 +4754,15 @@ pub mod er {
                     })
                 }
             }
-            fn finish<R>(mut self, reader: &R) -> Result<super::SystemSuffixType, Error>
-            where
-                R: DeserializeReader,
-            {
+            fn finish(
+                mut self,
+                helper: &mut DeserializeHelper,
+            ) -> Result<super::SystemSuffixType, Error> {
                 let state = replace(
                     &mut *self.state__,
                     SystemSuffixTypeDeserializerState::Unknown__,
                 );
-                self.finish_state(reader, state)?;
+                self.finish_state(helper, state)?;
                 Ok(super::SystemSuffixType {
                     system_id_suffix: self.system_id_suffix,
                     uri: self.uri,
@@ -4996,72 +4783,62 @@ pub mod er {
             Unknown__,
         }
         impl UriTypeDeserializer {
-            fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-            where
-                R: DeserializeReader,
-            {
+            fn from_bytes_start(
+                helper: &mut DeserializeHelper,
+                bytes_start: &BytesStart<'_>,
+            ) -> Result<Self, Error> {
                 let mut name: Option<String> = None;
                 let mut uri: Option<String> = None;
                 let mut id: Option<String> = None;
-                for attrib in filter_xmlns_attributes(bytes_start) {
+                for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"name")
                     ) {
-                        reader.read_attrib(&mut name, b"name", &attrib.value)?;
+                        helper.read_attrib(&mut name, b"name", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"uri")
                     ) {
-                        reader.read_attrib(&mut uri, b"uri", &attrib.value)?;
+                        helper.read_attrib(&mut uri, b"uri", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"id")
                     ) {
-                        reader.read_attrib(&mut id, b"id", &attrib.value)?;
+                        helper.read_attrib(&mut id, b"id", &attrib.value)?;
                     }
                 }
                 Ok(Self {
-                    name: name.ok_or_else(|| {
-                        reader.map_error(ErrorKind::MissingAttribute("name".into()))
-                    })?,
-                    uri: uri.ok_or_else(|| {
-                        reader.map_error(ErrorKind::MissingAttribute("uri".into()))
-                    })?,
+                    name: name.ok_or_else(|| ErrorKind::MissingAttribute("name".into()))?,
+                    uri: uri.ok_or_else(|| ErrorKind::MissingAttribute("uri".into()))?,
                     id: id,
                     state__: Box::new(UriTypeDeserializerState::Init__),
                 })
             }
-            fn finish_state<R>(
+            fn finish_state(
                 &mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 state: UriTypeDeserializerState,
-            ) -> Result<(), Error>
-            where
-                R: DeserializeReader,
-            {
+            ) -> Result<(), Error> {
                 Ok(())
             }
         }
         impl<'de> Deserializer<'de, super::UriType> for UriTypeDeserializer {
-            fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, super::UriType>
-            where
-                R: DeserializeReader,
-            {
-                reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
-            }
-            fn next<R>(
-                mut self,
-                reader: &R,
+            fn init(
+                helper: &mut DeserializeHelper,
                 event: Event<'de>,
-            ) -> DeserializerResult<'de, super::UriType>
-            where
-                R: DeserializeReader,
-            {
+            ) -> DeserializerResult<'de, super::UriType> {
+                helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
+            }
+            fn next(
+                mut self,
+                helper: &mut DeserializeHelper,
+                event: Event<'de>,
+            ) -> DeserializerResult<'de, super::UriType> {
                 if let Event::End(_) = &event {
                     Ok(DeserializerOutput {
-                        artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                        artifact: DeserializerArtifact::Data(self.finish(helper)?),
                         event: DeserializerEvent::None,
                         allow_any: false,
                     })
@@ -5073,12 +4850,9 @@ pub mod er {
                     })
                 }
             }
-            fn finish<R>(mut self, reader: &R) -> Result<super::UriType, Error>
-            where
-                R: DeserializeReader,
-            {
+            fn finish(mut self, helper: &mut DeserializeHelper) -> Result<super::UriType, Error> {
                 let state = replace(&mut *self.state__, UriTypeDeserializerState::Unknown__);
-                self.finish_state(reader, state)?;
+                self.finish_state(helper, state)?;
                 Ok(super::UriType {
                     name: self.name,
                     uri: self.uri,
@@ -5099,75 +4873,63 @@ pub mod er {
             Unknown__,
         }
         impl UriSuffixTypeDeserializer {
-            fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-            where
-                R: DeserializeReader,
-            {
+            fn from_bytes_start(
+                helper: &mut DeserializeHelper,
+                bytes_start: &BytesStart<'_>,
+            ) -> Result<Self, Error> {
                 let mut uri_suffix: Option<String> = None;
                 let mut uri: Option<String> = None;
                 let mut id: Option<String> = None;
-                for attrib in filter_xmlns_attributes(bytes_start) {
+                for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"uriSuffix")
                     ) {
-                        reader.read_attrib(&mut uri_suffix, b"uriSuffix", &attrib.value)?;
+                        helper.read_attrib(&mut uri_suffix, b"uriSuffix", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"uri")
                     ) {
-                        reader.read_attrib(&mut uri, b"uri", &attrib.value)?;
+                        helper.read_attrib(&mut uri, b"uri", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"id")
                     ) {
-                        reader.read_attrib(&mut id, b"id", &attrib.value)?;
+                        helper.read_attrib(&mut id, b"id", &attrib.value)?;
                     }
                 }
                 Ok(Self {
-                    uri_suffix: uri_suffix.ok_or_else(|| {
-                        reader.map_error(ErrorKind::MissingAttribute("uriSuffix".into()))
-                    })?,
-                    uri: uri.ok_or_else(|| {
-                        reader.map_error(ErrorKind::MissingAttribute("uri".into()))
-                    })?,
+                    uri_suffix: uri_suffix
+                        .ok_or_else(|| ErrorKind::MissingAttribute("uriSuffix".into()))?,
+                    uri: uri.ok_or_else(|| ErrorKind::MissingAttribute("uri".into()))?,
                     id: id,
                     state__: Box::new(UriSuffixTypeDeserializerState::Init__),
                 })
             }
-            fn finish_state<R>(
+            fn finish_state(
                 &mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 state: UriSuffixTypeDeserializerState,
-            ) -> Result<(), Error>
-            where
-                R: DeserializeReader,
-            {
+            ) -> Result<(), Error> {
                 Ok(())
             }
         }
         impl<'de> Deserializer<'de, super::UriSuffixType> for UriSuffixTypeDeserializer {
-            fn init<R>(
-                reader: &R,
+            fn init(
+                helper: &mut DeserializeHelper,
                 event: Event<'de>,
-            ) -> DeserializerResult<'de, super::UriSuffixType>
-            where
-                R: DeserializeReader,
-            {
-                reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+            ) -> DeserializerResult<'de, super::UriSuffixType> {
+                helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
             }
-            fn next<R>(
+            fn next(
                 mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 event: Event<'de>,
-            ) -> DeserializerResult<'de, super::UriSuffixType>
-            where
-                R: DeserializeReader,
-            {
+            ) -> DeserializerResult<'de, super::UriSuffixType> {
                 if let Event::End(_) = &event {
                     Ok(DeserializerOutput {
-                        artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                        artifact: DeserializerArtifact::Data(self.finish(helper)?),
                         event: DeserializerEvent::None,
                         allow_any: false,
                     })
@@ -5179,15 +4941,15 @@ pub mod er {
                     })
                 }
             }
-            fn finish<R>(mut self, reader: &R) -> Result<super::UriSuffixType, Error>
-            where
-                R: DeserializeReader,
-            {
+            fn finish(
+                mut self,
+                helper: &mut DeserializeHelper,
+            ) -> Result<super::UriSuffixType, Error> {
                 let state = replace(
                     &mut *self.state__,
                     UriSuffixTypeDeserializerState::Unknown__,
                 );
-                self.finish_state(reader, state)?;
+                self.finish_state(helper, state)?;
                 Ok(super::UriSuffixType {
                     uri_suffix: self.uri_suffix,
                     uri: self.uri,
@@ -6227,7 +5989,7 @@ pub mod er {
 }
 pub mod xs {
     use std::borrow::Cow;
-    use xsd_parser_types::quick_xml::{DeserializeBytes, DeserializeReader, Error, SerializeBytes};
+    use xsd_parser_types::quick_xml::{DeserializeBytes, DeserializeHelper, Error, SerializeBytes};
     #[derive(Debug, Default)]
     pub struct EntitiesType(pub Vec<String>);
     impl SerializeBytes for EntitiesType {
@@ -6248,14 +6010,11 @@ pub mod xs {
         }
     }
     impl DeserializeBytes for EntitiesType {
-        fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
             Ok(Self(
                 bytes
                     .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
-                    .map(|bytes| String::deserialize_bytes(reader, bytes))
+                    .map(|bytes| String::deserialize_bytes(helper, bytes))
                     .collect::<Result<Vec<_>, _>>()?,
             ))
         }

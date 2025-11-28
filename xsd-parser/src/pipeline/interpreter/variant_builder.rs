@@ -379,7 +379,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 Some(MetaTypeVariant::Union(e)) => e.base = Base::Extension(base),
                 Some(MetaTypeVariant::Enumeration(e)) => e.base = Base::Extension(base),
                 Some(MetaTypeVariant::ComplexType(e)) => e.base = Base::Extension(base),
-                e => unreachable!("Unexpected type: {e:#?}"),
+                e => crate::unreachable!("Unexpected type: {e:#?}"),
             }
         }
 

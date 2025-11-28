@@ -2,7 +2,7 @@ use std::borrow::Cow;
 use xsd_parser_types::{
     misc::Namespace,
     quick_xml::{
-        DeserializeBytes, DeserializeReader, Error, ErrorKind, RawByteStr, SerializeBytes,
+        DeserializeBytes, DeserializeHelper, Error, ErrorKind, RawByteStr, SerializeBytes,
         WithDeserializer, WithSerializer,
     },
 };
@@ -73,14 +73,13 @@ impl SerializeBytes for TypeBmEcatVersion {
     }
 }
 impl DeserializeBytes for TypeBmEcatVersion {
-    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
-    where
-        R: DeserializeReader,
-    {
+    fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
             b"1.2" => Ok(Self::_12),
             b"2005" => Ok(Self::_2005),
-            x => Err(reader.map_error(ErrorKind::UnknownOrInvalidValue(RawByteStr::from_slice(x)))),
+            x => Err(Error::from(ErrorKind::UnknownOrInvalidValue(
+                RawByteStr::from_slice(x),
+            ))),
         }
     }
 }
@@ -785,10 +784,7 @@ impl SerializeBytes for DtCurrencies {
     }
 }
 impl DeserializeBytes for DtCurrencies {
-    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
-    where
-        R: DeserializeReader,
-    {
+    fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
             b"ADP" => Ok(Self::Adp),
             b"AED" => Ok(Self::Aed),
@@ -948,7 +944,9 @@ impl DeserializeBytes for DtCurrencies {
             b"ZMK" => Ok(Self::Zmk),
             b"ZRZ" => Ok(Self::Zrz),
             b"ZWD" => Ok(Self::Zwd),
-            x => Err(reader.map_error(ErrorKind::UnknownOrInvalidValue(RawByteStr::from_slice(x)))),
+            x => Err(Error::from(ErrorKind::UnknownOrInvalidValue(
+                RawByteStr::from_slice(x),
+            ))),
         }
     }
 }
@@ -1039,13 +1037,12 @@ impl SerializeBytes for TNewCatalogProductMode {
     }
 }
 impl DeserializeBytes for TNewCatalogProductMode {
-    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
-    where
-        R: DeserializeReader,
-    {
+    fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
             b"new" => Ok(Self::New),
-            x => Err(reader.map_error(ErrorKind::UnknownOrInvalidValue(RawByteStr::from_slice(x)))),
+            x => Err(Error::from(ErrorKind::UnknownOrInvalidValue(
+                RawByteStr::from_slice(x),
+            ))),
         }
     }
 }
@@ -1302,15 +1299,14 @@ impl SerializeBytes for TUpdateProductsProductMode {
     }
 }
 impl DeserializeBytes for TUpdateProductsProductMode {
-    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
-    where
-        R: DeserializeReader,
-    {
+    fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
             b"delete" => Ok(Self::Delete),
             b"new" => Ok(Self::New),
             b"update" => Ok(Self::Update),
-            x => Err(reader.map_error(ErrorKind::UnknownOrInvalidValue(RawByteStr::from_slice(x)))),
+            x => Err(Error::from(ErrorKind::UnknownOrInvalidValue(
+                RawByteStr::from_slice(x),
+            ))),
         }
     }
 }
@@ -1326,13 +1322,12 @@ impl SerializeBytes for TUpdatePricesProductMode {
     }
 }
 impl DeserializeBytes for TUpdatePricesProductMode {
-    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
-    where
-        R: DeserializeReader,
-    {
+    fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
             b"update" => Ok(Self::Update),
-            x => Err(reader.map_error(ErrorKind::UnknownOrInvalidValue(RawByteStr::from_slice(x)))),
+            x => Err(Error::from(ErrorKind::UnknownOrInvalidValue(
+                RawByteStr::from_slice(x),
+            ))),
         }
     }
 }
@@ -2264,10 +2259,7 @@ impl SerializeBytes for DtLang {
     }
 }
 impl DeserializeBytes for DtLang {
-    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
-    where
-        R: DeserializeReader,
-    {
+    fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
             b"aar" => Ok(Self::Aar),
             b"abk" => Ok(Self::Abk),
@@ -2728,7 +2720,9 @@ impl DeserializeBytes for DtLang {
             b"zho" => Ok(Self::Zho),
             b"znd" => Ok(Self::Znd),
             b"zul" => Ok(Self::Zul),
-            x => Err(reader.map_error(ErrorKind::UnknownOrInvalidValue(RawByteStr::from_slice(x)))),
+            x => Err(Error::from(ErrorKind::UnknownOrInvalidValue(
+                RawByteStr::from_slice(x),
+            ))),
         }
     }
 }
@@ -2744,13 +2738,12 @@ impl SerializeBytes for CatalogDatetimeType {
     }
 }
 impl DeserializeBytes for CatalogDatetimeType {
-    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
-    where
-        R: DeserializeReader,
-    {
+    fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
             b"generation_date" => Ok(Self::GenerationDate),
-            x => Err(reader.map_error(ErrorKind::UnknownOrInvalidValue(RawByteStr::from_slice(x)))),
+            x => Err(Error::from(ErrorKind::UnknownOrInvalidValue(
+                RawByteStr::from_slice(x),
+            ))),
         }
     }
 }
@@ -2766,13 +2759,12 @@ impl SerializeBytes for SupplierAddressType {
     }
 }
 impl DeserializeBytes for SupplierAddressType {
-    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
-    where
-        R: DeserializeReader,
-    {
+    fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
             b"supplier" => Ok(Self::Supplier),
-            x => Err(reader.map_error(ErrorKind::UnknownOrInvalidValue(RawByteStr::from_slice(x)))),
+            x => Err(Error::from(ErrorKind::UnknownOrInvalidValue(
+                RawByteStr::from_slice(x),
+            ))),
         }
     }
 }
@@ -3055,10 +3047,7 @@ impl SerializeBytes for DtPunit {
     }
 }
 impl DeserializeBytes for DtPunit {
-    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
-    where
-        R: DeserializeReader,
-    {
+    fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
             b"BE" => Ok(Self::Be),
             b"BG" => Ok(Self::Bg),
@@ -3096,7 +3085,9 @@ impl DeserializeBytes for DtPunit {
             b"TU" => Ok(Self::Tu),
             b"Z2" => Ok(Self::Z2),
             b"Z3" => Ok(Self::Z3),
-            x => Err(reader.map_error(ErrorKind::UnknownOrInvalidValue(RawByteStr::from_slice(x)))),
+            x => Err(Error::from(ErrorKind::UnknownOrInvalidValue(
+                RawByteStr::from_slice(x),
+            ))),
         }
     }
 }
@@ -3411,10 +3402,7 @@ impl SerializeBytes for ProductReferenceType {
     }
 }
 impl DeserializeBytes for ProductReferenceType {
-    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
-    where
-        R: DeserializeReader,
-    {
+    fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
             b"accessories" => Ok(Self::Accessories),
             b"base_product" => Ok(Self::BaseProduct),
@@ -3426,7 +3414,9 @@ impl DeserializeBytes for ProductReferenceType {
             b"select" => Ok(Self::Select),
             b"sparepart" => Ok(Self::Sparepart),
             b"others" => Ok(Self::Others),
-            x => Err(reader.map_error(ErrorKind::UnknownOrInvalidValue(RawByteStr::from_slice(x)))),
+            x => Err(Error::from(ErrorKind::UnknownOrInvalidValue(
+                RawByteStr::from_slice(x),
+            ))),
         }
     }
 }
@@ -3482,10 +3472,7 @@ impl SerializeBytes for MimePurposeElementType {
     }
 }
 impl DeserializeBytes for MimePurposeElementType {
-    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
-    where
-        R: DeserializeReader,
-    {
+    fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
             b"data_sheet" => Ok(Self::DataSheet),
             b"detail" => Ok(Self::Detail),
@@ -3495,7 +3482,9 @@ impl DeserializeBytes for MimePurposeElementType {
             b"safety_data_sheet" => Ok(Self::SafetyDataSheet),
             b"thumbnail" => Ok(Self::Thumbnail),
             b"others" => Ok(Self::Others),
-            x => Err(reader.map_error(ErrorKind::UnknownOrInvalidValue(RawByteStr::from_slice(x)))),
+            x => Err(Error::from(ErrorKind::UnknownOrInvalidValue(
+                RawByteStr::from_slice(x),
+            ))),
         }
     }
 }
@@ -3525,10 +3514,7 @@ impl SerializeBytes for ProductStatusType {
     }
 }
 impl DeserializeBytes for ProductStatusType {
-    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
-    where
-        R: DeserializeReader,
-    {
+    fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
             b"bargain" => Ok(Self::Bargain),
             b"core_product" => Ok(Self::CoreProduct),
@@ -3538,7 +3524,9 @@ impl DeserializeBytes for ProductStatusType {
             b"refurbished" => Ok(Self::Refurbished),
             b"used" => Ok(Self::Used),
             b"others" => Ok(Self::Others),
-            x => Err(reader.map_error(ErrorKind::UnknownOrInvalidValue(RawByteStr::from_slice(x)))),
+            x => Err(Error::from(ErrorKind::UnknownOrInvalidValue(
+                RawByteStr::from_slice(x),
+            ))),
         }
     }
 }
@@ -3556,14 +3544,13 @@ impl SerializeBytes for TypeClassificationGroupIdType {
     }
 }
 impl DeserializeBytes for TypeClassificationGroupIdType {
-    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
-    where
-        R: DeserializeReader,
-    {
+    fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
             b"flat" => Ok(Self::Flat),
             b"hierarchy" => Ok(Self::Hierarchy),
-            x => Err(reader.map_error(ErrorKind::UnknownOrInvalidValue(RawByteStr::from_slice(x)))),
+            x => Err(Error::from(ErrorKind::UnknownOrInvalidValue(
+                RawByteStr::from_slice(x),
+            ))),
         }
     }
 }
@@ -3581,14 +3568,13 @@ impl SerializeBytes for ProductPriceDetailsDatetimeType {
     }
 }
 impl DeserializeBytes for ProductPriceDetailsDatetimeType {
-    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
-    where
-        R: DeserializeReader,
-    {
+    fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
             b"valid_start_date" => Ok(Self::ValidStartDate),
             b"valid_end_date" => Ok(Self::ValidEndDate),
-            x => Err(reader.map_error(ErrorKind::UnknownOrInvalidValue(RawByteStr::from_slice(x)))),
+            x => Err(Error::from(ErrorKind::UnknownOrInvalidValue(
+                RawByteStr::from_slice(x),
+            ))),
         }
     }
 }
@@ -3731,9 +3717,9 @@ impl WithDeserializer for UdxEdxfSurchargeElementTypeContent {
 pub mod quick_xml_deserialize {
     use core::mem::replace;
     use xsd_parser_types::quick_xml::{
-        filter_xmlns_attributes, BytesStart, ContentDeserializer, DeserializeReader, Deserializer,
-        DeserializerArtifact, DeserializerEvent, DeserializerOutput, DeserializerResult,
-        ElementHandlerOutput, Error, ErrorKind, Event, RawByteStr, WithDeserializer,
+        BytesStart, ContentDeserializer, DeserializeHelper, Deserializer, DeserializerArtifact,
+        DeserializerEvent, DeserializerOutput, DeserializerResult, ElementHandlerOutput, Error,
+        ErrorKind, Event, RawByteStr, WithDeserializer,
     };
     #[derive(Debug)]
     pub struct BmecatElementTypeDeserializer {
@@ -3749,40 +3735,35 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl BmecatElementTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
             let mut version: Option<super::TypeBmEcatVersion> = None;
-            for attrib in filter_xmlns_attributes(bytes_start) {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    reader.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
                     Some(b"version")
                 ) {
-                    reader.read_attrib(&mut version, b"version", &attrib.value)?;
+                    helper.read_attrib(&mut version, b"version", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib_checked(attrib)?;
+                    helper.raise_unexpected_attrib_checked(&attrib)?;
                 }
             }
             Ok(Self {
-                version: version.ok_or_else(|| {
-                    reader.map_error(ErrorKind::MissingAttribute("version".into()))
-                })?,
+                version: version.ok_or_else(|| ErrorKind::MissingAttribute("version".into()))?,
                 content: Vec::new(),
                 state__: Box::new(BmecatElementTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: BmecatElementTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             if let BmecatElementTypeDeserializerState::Content__(deserializer) = state {
-                self.store_content(deserializer.finish(reader)?)?;
+                self.store_content(deserializer.finish(helper)?)?;
             }
             Ok(())
         }
@@ -3790,15 +3771,12 @@ pub mod quick_xml_deserialize {
             self.content.push(value);
             Ok(())
         }
-        fn handle_content<'de, R>(
+        fn handle_content<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::BmecatElementTypeContent>,
             fallback: &mut Option<BmecatElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -3811,7 +3789,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::break_(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -3845,23 +3823,17 @@ pub mod quick_xml_deserialize {
         }
     }
     impl<'de> Deserializer<'de, super::BmecatElementType> for BmecatElementTypeDeserializer {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::BmecatElementType>
-        where
-            R: DeserializeReader,
-        {
-            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        ) -> DeserializerResult<'de, super::BmecatElementType> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::BmecatElementType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::BmecatElementType> {
             use BmecatElementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -3870,8 +3842,8 @@ pub mod quick_xml_deserialize {
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
                     (S::Content__(deserializer), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_content(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
@@ -3880,15 +3852,15 @@ pub mod quick_xml_deserialize {
                     }
                     (_, Event::End(_)) => {
                         return Ok(DeserializerOutput {
-                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            artifact: DeserializerArtifact::Data(self.finish(helper)?),
                             event: DeserializerEvent::None,
                             allow_any: false,
                         });
                     }
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
-                        let output = < super :: BmecatElementTypeContent as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                        match self.handle_content(reader, output, &mut fallback)? {
+                        let output = < super :: BmecatElementTypeContent as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
@@ -3904,15 +3876,15 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::BmecatElementType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(
+            mut self,
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::BmecatElementType, Error> {
             let state = replace(
                 &mut *self.state__,
                 BmecatElementTypeDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::BmecatElementType {
                 version: self.version,
                 content: self.content,
@@ -3946,63 +3918,60 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl BmecatElementTypeContentDeserializer {
-        fn find_suitable<'de, R>(
+        fn find_suitable<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
             fallback: &mut Option<BmecatElementTypeContentDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if matches!(
-                    reader.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
                     Some(b"HEADER")
                 ) {
                     let output =
                         <super::HeaderElementType as WithDeserializer>::Deserializer::init(
-                            reader, event,
+                            helper, event,
                         )?;
-                    return self.handle_header(reader, Default::default(), output, &mut *fallback);
+                    return self.handle_header(helper, Default::default(), output, &mut *fallback);
                 }
                 if matches!(
-                    reader.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
                     Some(b"T_NEW_CATALOG")
                 ) {
                     let output =
                         <super::TNewCatalogElementType as WithDeserializer>::Deserializer::init(
-                            reader, event,
+                            helper, event,
                         )?;
                     return self.handle_t_new_catalog(
-                        reader,
+                        helper,
                         Default::default(),
                         output,
                         &mut *fallback,
                     );
                 }
                 if matches!(
-                    reader.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
                     Some(b"T_UPDATE_PRODUCTS")
                 ) {
-                    let output = < super :: TUpdateProductsElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                    let output = < super :: TUpdateProductsElementType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
                     return self.handle_t_update_products(
-                        reader,
+                        helper,
                         Default::default(),
                         output,
                         &mut *fallback,
                     );
                 }
                 if matches!(
-                    reader.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
                     Some(b"T_UPDATE_PRICES")
                 ) {
                     let output =
                         <super::TUpdatePricesElementType as WithDeserializer>::Deserializer::init(
-                            reader, event,
+                            helper, event,
                         )?;
                     return self.handle_t_update_prices(
-                        reader,
+                        helper,
                         Default::default(),
                         output,
                         &mut *fallback,
@@ -4014,20 +3983,17 @@ pub mod quick_xml_deserialize {
                 .unwrap_or(BmecatElementTypeContentDeserializerState::Init__);
             Ok(ElementHandlerOutput::return_to_parent(event, false))
         }
-        fn finish_state<R>(
-            reader: &R,
+        fn finish_state(
+            helper: &mut DeserializeHelper,
             state: BmecatElementTypeContentDeserializerState,
-        ) -> Result<super::BmecatElementTypeContent, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<super::BmecatElementTypeContent, Error> {
             use BmecatElementTypeContentDeserializerState as S;
             match state {
                 S::Unknown__ => unreachable!(),
                 S::Init__ => Err(ErrorKind::MissingContent.into()),
                 S::Header(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
-                        let value = deserializer.finish(reader)?;
+                        let value = deserializer.finish(helper)?;
                         Self::store_header(&mut values, value)?;
                     }
                     Ok(super::BmecatElementTypeContent::Header(values.ok_or_else(
@@ -4036,7 +4002,7 @@ pub mod quick_xml_deserialize {
                 }
                 S::TNewCatalog(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
-                        let value = deserializer.finish(reader)?;
+                        let value = deserializer.finish(helper)?;
                         Self::store_t_new_catalog(&mut values, value)?;
                     }
                     Ok(super::BmecatElementTypeContent::TNewCatalog(
@@ -4045,7 +4011,7 @@ pub mod quick_xml_deserialize {
                 }
                 S::TUpdateProducts(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
-                        let value = deserializer.finish(reader)?;
+                        let value = deserializer.finish(helper)?;
                         Self::store_t_update_products(&mut values, value)?;
                     }
                     Ok(super::BmecatElementTypeContent::TUpdateProducts(
@@ -4055,7 +4021,7 @@ pub mod quick_xml_deserialize {
                 }
                 S::TUpdatePrices(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
-                        let value = deserializer.finish(reader)?;
+                        let value = deserializer.finish(helper)?;
                         Self::store_t_update_prices(&mut values, value)?;
                     }
                     Ok(super::BmecatElementTypeContent::TUpdatePrices(
@@ -4114,16 +4080,13 @@ pub mod quick_xml_deserialize {
             *values = Some(value);
             Ok(())
         }
-        fn handle_header<'de, R>(
+        fn handle_header<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             mut values: Option<super::HeaderElementType>,
             output: DeserializerOutput<'de, super::HeaderElementType>,
             fallback: &mut Option<BmecatElementTypeContentDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -4150,7 +4113,7 @@ pub mod quick_xml_deserialize {
             match fallback.take() {
                 None => (),
                 Some(BmecatElementTypeContentDeserializerState::Header(_, Some(deserializer))) => {
-                    let data = deserializer.finish(reader)?;
+                    let data = deserializer.finish(helper)?;
                     Self::store_header(&mut values, data)?;
                 }
                 Some(_) => unreachable!(),
@@ -4160,7 +4123,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::Data(data) => {
                     Self::store_header(&mut values, data)?;
                     let data = Self::finish_state(
-                        reader,
+                        helper,
                         BmecatElementTypeContentDeserializerState::Header(values, None),
                     )?;
                     *self.state__ = BmecatElementTypeContentDeserializerState::Done__(data);
@@ -4175,16 +4138,13 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_t_new_catalog<'de, R>(
+        fn handle_t_new_catalog<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             mut values: Option<super::TNewCatalogElementType>,
             output: DeserializerOutput<'de, super::TNewCatalogElementType>,
             fallback: &mut Option<BmecatElementTypeContentDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -4214,7 +4174,7 @@ pub mod quick_xml_deserialize {
                     _,
                     Some(deserializer),
                 )) => {
-                    let data = deserializer.finish(reader)?;
+                    let data = deserializer.finish(helper)?;
                     Self::store_t_new_catalog(&mut values, data)?;
                 }
                 Some(_) => unreachable!(),
@@ -4224,7 +4184,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::Data(data) => {
                     Self::store_t_new_catalog(&mut values, data)?;
                     let data = Self::finish_state(
-                        reader,
+                        helper,
                         BmecatElementTypeContentDeserializerState::TNewCatalog(values, None),
                     )?;
                     *self.state__ = BmecatElementTypeContentDeserializerState::Done__(data);
@@ -4239,16 +4199,13 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_t_update_products<'de, R>(
+        fn handle_t_update_products<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             mut values: Option<super::TUpdateProductsElementType>,
             output: DeserializerOutput<'de, super::TUpdateProductsElementType>,
             fallback: &mut Option<BmecatElementTypeContentDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -4280,7 +4237,7 @@ pub mod quick_xml_deserialize {
                     _,
                     Some(deserializer),
                 )) => {
-                    let data = deserializer.finish(reader)?;
+                    let data = deserializer.finish(helper)?;
                     Self::store_t_update_products(&mut values, data)?;
                 }
                 Some(_) => unreachable!(),
@@ -4290,7 +4247,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::Data(data) => {
                     Self::store_t_update_products(&mut values, data)?;
                     let data = Self::finish_state(
-                        reader,
+                        helper,
                         BmecatElementTypeContentDeserializerState::TUpdateProducts(values, None),
                     )?;
                     *self.state__ = BmecatElementTypeContentDeserializerState::Done__(data);
@@ -4305,16 +4262,13 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_t_update_prices<'de, R>(
+        fn handle_t_update_prices<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             mut values: Option<super::TUpdatePricesElementType>,
             output: DeserializerOutput<'de, super::TUpdatePricesElementType>,
             fallback: &mut Option<BmecatElementTypeContentDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -4344,7 +4298,7 @@ pub mod quick_xml_deserialize {
                     _,
                     Some(deserializer),
                 )) => {
-                    let data = deserializer.finish(reader)?;
+                    let data = deserializer.finish(helper)?;
                     Self::store_t_update_prices(&mut values, data)?;
                 }
                 Some(_) => unreachable!(),
@@ -4354,7 +4308,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::Data(data) => {
                     Self::store_t_update_prices(&mut values, data)?;
                     let data = Self::finish_state(
-                        reader,
+                        helper,
                         BmecatElementTypeContentDeserializerState::TUpdatePrices(values, None),
                     )?;
                     *self.state__ = BmecatElementTypeContentDeserializerState::Done__(data);
@@ -4373,17 +4327,14 @@ pub mod quick_xml_deserialize {
     impl<'de> Deserializer<'de, super::BmecatElementTypeContent>
         for BmecatElementTypeContentDeserializer
     {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::BmecatElementTypeContent>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::BmecatElementTypeContent> {
             let deserializer = Self {
                 state__: Box::new(BmecatElementTypeContentDeserializerState::Init__),
             };
-            let mut output = deserializer.next(reader, event)?;
+            let mut output = deserializer.next(helper, event)?;
             output.artifact = match output.artifact {
                 DeserializerArtifact::Deserializer(x)
                     if matches!(
@@ -4397,14 +4348,11 @@ pub mod quick_xml_deserialize {
             };
             Ok(output)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::BmecatElementTypeContent>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::BmecatElementTypeContent> {
             use BmecatElementTypeContentDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -4413,8 +4361,8 @@ pub mod quick_xml_deserialize {
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
                     (S::Header(values, Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_header(reader, values, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_header(helper, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
@@ -4422,8 +4370,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::TNewCatalog(values, Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_t_new_catalog(reader, values, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_t_new_catalog(helper, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
@@ -4431,9 +4379,9 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::TUpdateProducts(values, Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
+                        let output = deserializer.next(helper, event)?;
                         match self.handle_t_update_products(
-                            reader,
+                            helper,
                             values,
                             output,
                             &mut fallback,
@@ -4445,8 +4393,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::TUpdatePrices(values, Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_t_update_prices(reader, values, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_t_update_prices(helper, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
@@ -4456,26 +4404,26 @@ pub mod quick_xml_deserialize {
                     (state, event @ Event::End(_)) => {
                         return Ok(DeserializerOutput {
                             artifact: DeserializerArtifact::Data(Self::finish_state(
-                                reader, state,
+                                helper, state,
                             )?),
                             event: DeserializerEvent::Continue(event),
                             allow_any: false,
                         });
                     }
-                    (S::Init__, event) => match self.find_suitable(reader, event, &mut fallback)? {
+                    (S::Init__, event) => match self.find_suitable(helper, event, &mut fallback)? {
                         ElementHandlerOutput::Break { event, allow_any } => {
                             break (event, allow_any)
                         }
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
                     (S::Header(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"HEADER",
                             false,
                         )?;
-                        match self.handle_header(reader, values, output, &mut fallback)? {
+                        match self.handle_header(helper, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
@@ -4483,13 +4431,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::TNewCatalog(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"T_NEW_CATALOG",
                             false,
                         )?;
-                        match self.handle_t_new_catalog(reader, values, output, &mut fallback)? {
+                        match self.handle_t_new_catalog(helper, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
@@ -4500,14 +4448,14 @@ pub mod quick_xml_deserialize {
                         S::TUpdateProducts(values, None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"T_UPDATE_PRODUCTS",
                             false,
                         )?;
                         match self.handle_t_update_products(
-                            reader,
+                            helper,
                             values,
                             output,
                             &mut fallback,
@@ -4522,13 +4470,13 @@ pub mod quick_xml_deserialize {
                         S::TUpdatePrices(values, None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"T_UPDATE_PRICES",
                             false,
                         )?;
-                        match self.handle_t_update_prices(reader, values, output, &mut fallback)? {
+                        match self.handle_t_update_prices(helper, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
@@ -4546,7 +4494,7 @@ pub mod quick_xml_deserialize {
                 }
             };
             let artifact = if matches!(&*self.state__, S::Done__(_)) {
-                DeserializerArtifact::Data(self.finish(reader)?)
+                DeserializerArtifact::Data(self.finish(helper)?)
             } else {
                 DeserializerArtifact::Deserializer(self)
             };
@@ -4556,11 +4504,11 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(self, reader: &R) -> Result<super::BmecatElementTypeContent, Error>
-        where
-            R: DeserializeReader,
-        {
-            Self::finish_state(reader, *self.state__)
+        fn finish(
+            self,
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::BmecatElementTypeContent, Error> {
+            Self::finish_state(helper, *self.state__)
         }
     }
     #[derive(Debug)]
@@ -4584,13 +4532,13 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl HeaderElementTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
-            for attrib in filter_xmlns_attributes(bytes_start) {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib_checked(attrib)?;
+                helper.raise_unexpected_attrib_checked(&attrib)?;
             }
             Ok(Self {
                 generator_info: None,
@@ -4601,28 +4549,25 @@ pub mod quick_xml_deserialize {
                 state__: Box::new(HeaderElementTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: HeaderElementTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             use HeaderElementTypeDeserializerState as S;
             match state {
                 S::GeneratorInfo(Some(deserializer)) => {
-                    self.store_generator_info(deserializer.finish(reader)?)?
+                    self.store_generator_info(deserializer.finish(helper)?)?
                 }
                 S::Catalog(Some(deserializer)) => {
-                    self.store_catalog(deserializer.finish(reader)?)?
+                    self.store_catalog(deserializer.finish(helper)?)?
                 }
-                S::Buyer(Some(deserializer)) => self.store_buyer(deserializer.finish(reader)?)?,
+                S::Buyer(Some(deserializer)) => self.store_buyer(deserializer.finish(helper)?)?,
                 S::Supplier(Some(deserializer)) => {
-                    self.store_supplier(deserializer.finish(reader)?)?
+                    self.store_supplier(deserializer.finish(helper)?)?
                 }
                 S::UserDefinedExtensions(Some(deserializer)) => {
-                    self.store_user_defined_extensions(deserializer.finish(reader)?)?
+                    self.store_user_defined_extensions(deserializer.finish(helper)?)?
                 }
                 _ => (),
             }
@@ -4673,15 +4618,12 @@ pub mod quick_xml_deserialize {
             self.user_defined_extensions = Some(value);
             Ok(())
         }
-        fn handle_generator_info<'de, R>(
+        fn handle_generator_info<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<HeaderElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -4693,7 +4635,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -4723,15 +4665,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_catalog<'de, R>(
+        fn handle_catalog<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::CatalogElementType>,
             fallback: &mut Option<HeaderElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -4748,7 +4687,7 @@ pub mod quick_xml_deserialize {
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -4775,15 +4714,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_buyer<'de, R>(
+        fn handle_buyer<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::BuyerElementType>,
             fallback: &mut Option<HeaderElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -4800,7 +4736,7 @@ pub mod quick_xml_deserialize {
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -4827,15 +4763,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_supplier<'de, R>(
+        fn handle_supplier<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::SupplierElementType>,
             fallback: &mut Option<HeaderElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -4852,7 +4785,7 @@ pub mod quick_xml_deserialize {
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -4880,15 +4813,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_user_defined_extensions<'de, R>(
+        fn handle_user_defined_extensions<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::UdxHeader>,
             fallback: &mut Option<HeaderElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -4907,7 +4837,7 @@ pub mod quick_xml_deserialize {
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -4940,23 +4870,17 @@ pub mod quick_xml_deserialize {
         }
     }
     impl<'de> Deserializer<'de, super::HeaderElementType> for HeaderElementTypeDeserializer {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::HeaderElementType>
-        where
-            R: DeserializeReader,
-        {
-            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        ) -> DeserializerResult<'de, super::HeaderElementType> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::HeaderElementType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::HeaderElementType> {
             use HeaderElementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -4966,8 +4890,8 @@ pub mod quick_xml_deserialize {
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
                     (S::GeneratorInfo(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_generator_info(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_generator_info(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -4978,8 +4902,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Catalog(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_catalog(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_catalog(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -4990,8 +4914,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Buyer(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_buyer(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_buyer(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -5002,8 +4926,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Supplier(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_supplier(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_supplier(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -5014,8 +4938,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UserDefinedExtensions(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_user_defined_extensions(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_user_defined_extensions(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -5027,10 +4951,10 @@ pub mod quick_xml_deserialize {
                     }
                     (_, Event::End(_)) => {
                         if let Some(fallback) = fallback.take() {
-                            self.finish_state(reader, fallback)?;
+                            self.finish_state(helper, fallback)?;
                         }
                         return Ok(DeserializerOutput {
-                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            artifact: DeserializerArtifact::Data(self.finish(helper)?),
                             event: DeserializerEvent::None,
                             allow_any: false,
                         });
@@ -5041,13 +4965,13 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::GeneratorInfo(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"GENERATOR_INFO",
                             false,
                         )?;
-                        match self.handle_generator_info(reader, output, &mut fallback)? {
+                        match self.handle_generator_info(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -5058,13 +4982,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Catalog(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"CATALOG",
                             false,
                         )?;
-                        match self.handle_catalog(reader, output, &mut fallback)? {
+                        match self.handle_catalog(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -5075,13 +4999,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Buyer(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"BUYER",
                             false,
                         )?;
-                        match self.handle_buyer(reader, output, &mut fallback)? {
+                        match self.handle_buyer(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -5092,13 +5016,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Supplier(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"SUPPLIER",
                             false,
                         )?;
-                        match self.handle_supplier(reader, output, &mut fallback)? {
+                        match self.handle_supplier(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -5112,13 +5036,13 @@ pub mod quick_xml_deserialize {
                         S::UserDefinedExtensions(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"USER_DEFINED_EXTENSIONS",
                             false,
                         )?;
-                        match self.handle_user_defined_extensions(reader, output, &mut fallback)? {
+                        match self.handle_user_defined_extensions(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -5147,15 +5071,15 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::HeaderElementType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(
+            mut self,
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::HeaderElementType, Error> {
             let state = replace(
                 &mut *self.state__,
                 HeaderElementTypeDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::HeaderElementType {
                 generator_info: self.generator_info,
                 catalog: self
@@ -5186,31 +5110,28 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl TNewCatalogElementTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
-            for attrib in filter_xmlns_attributes(bytes_start) {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib_checked(attrib)?;
+                helper.raise_unexpected_attrib_checked(&attrib)?;
             }
             Ok(Self {
                 product: Vec::new(),
                 state__: Box::new(TNewCatalogElementTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: TNewCatalogElementTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             use TNewCatalogElementTypeDeserializerState as S;
             match state {
                 S::Product(Some(deserializer)) => {
-                    self.store_product(deserializer.finish(reader)?)?
+                    self.store_product(deserializer.finish(helper)?)?
                 }
                 _ => (),
             }
@@ -5223,15 +5144,12 @@ pub mod quick_xml_deserialize {
             self.product.push(value);
             Ok(())
         }
-        fn handle_product<'de, R>(
+        fn handle_product<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::TNewCatalogProductElementType>,
             fallback: &mut Option<TNewCatalogElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -5248,7 +5166,7 @@ pub mod quick_xml_deserialize {
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -5280,23 +5198,17 @@ pub mod quick_xml_deserialize {
         }
     }
     impl<'de> Deserializer<'de, super::TNewCatalogElementType> for TNewCatalogElementTypeDeserializer {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::TNewCatalogElementType>
-        where
-            R: DeserializeReader,
-        {
-            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        ) -> DeserializerResult<'de, super::TNewCatalogElementType> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::TNewCatalogElementType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::TNewCatalogElementType> {
             use TNewCatalogElementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -5306,8 +5218,8 @@ pub mod quick_xml_deserialize {
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
                     (S::Product(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_product(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_product(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -5319,10 +5231,10 @@ pub mod quick_xml_deserialize {
                     }
                     (_, Event::End(_)) => {
                         if let Some(fallback) = fallback.take() {
-                            self.finish_state(reader, fallback)?;
+                            self.finish_state(helper, fallback)?;
                         }
                         return Ok(DeserializerOutput {
-                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            artifact: DeserializerArtifact::Data(self.finish(helper)?),
                             event: DeserializerEvent::None,
                             allow_any: false,
                         });
@@ -5333,13 +5245,13 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::Product(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"PRODUCT",
                             false,
                         )?;
-                        match self.handle_product(reader, output, &mut fallback)? {
+                        match self.handle_product(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -5368,15 +5280,15 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::TNewCatalogElementType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(
+            mut self,
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::TNewCatalogElementType, Error> {
             let state = replace(
                 &mut *self.state__,
                 TNewCatalogElementTypeDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::TNewCatalogElementType {
                 product: self.product,
             })
@@ -5398,42 +5310,38 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl TUpdateProductsElementTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
             let mut prev_version: Option<i32> = None;
-            for attrib in filter_xmlns_attributes(bytes_start) {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    reader.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
                     Some(b"prev_version")
                 ) {
-                    reader.read_attrib(&mut prev_version, b"prev_version", &attrib.value)?;
+                    helper.read_attrib(&mut prev_version, b"prev_version", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib_checked(attrib)?;
+                    helper.raise_unexpected_attrib_checked(&attrib)?;
                 }
             }
             Ok(Self {
-                prev_version: prev_version.ok_or_else(|| {
-                    reader.map_error(ErrorKind::MissingAttribute("prev_version".into()))
-                })?,
+                prev_version: prev_version
+                    .ok_or_else(|| ErrorKind::MissingAttribute("prev_version".into()))?,
                 product: Vec::new(),
                 state__: Box::new(TUpdateProductsElementTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: TUpdateProductsElementTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             use TUpdateProductsElementTypeDeserializerState as S;
             match state {
                 S::Product(Some(deserializer)) => {
-                    self.store_product(deserializer.finish(reader)?)?
+                    self.store_product(deserializer.finish(helper)?)?
                 }
                 _ => (),
             }
@@ -5446,15 +5354,12 @@ pub mod quick_xml_deserialize {
             self.product.push(value);
             Ok(())
         }
-        fn handle_product<'de, R>(
+        fn handle_product<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::TUpdateProductsProductElementType>,
             fallback: &mut Option<TUpdateProductsElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -5472,7 +5377,7 @@ pub mod quick_xml_deserialize {
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -5507,23 +5412,17 @@ pub mod quick_xml_deserialize {
     impl<'de> Deserializer<'de, super::TUpdateProductsElementType>
         for TUpdateProductsElementTypeDeserializer
     {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::TUpdateProductsElementType>
-        where
-            R: DeserializeReader,
-        {
-            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        ) -> DeserializerResult<'de, super::TUpdateProductsElementType> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::TUpdateProductsElementType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::TUpdateProductsElementType> {
             use TUpdateProductsElementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -5533,8 +5432,8 @@ pub mod quick_xml_deserialize {
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
                     (S::Product(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_product(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_product(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -5546,10 +5445,10 @@ pub mod quick_xml_deserialize {
                     }
                     (_, Event::End(_)) => {
                         if let Some(fallback) = fallback.take() {
-                            self.finish_state(reader, fallback)?;
+                            self.finish_state(helper, fallback)?;
                         }
                         return Ok(DeserializerOutput {
-                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            artifact: DeserializerArtifact::Data(self.finish(helper)?),
                             event: DeserializerEvent::None,
                             allow_any: false,
                         });
@@ -5560,13 +5459,13 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::Product(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"PRODUCT",
                             false,
                         )?;
-                        match self.handle_product(reader, output, &mut fallback)? {
+                        match self.handle_product(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -5595,15 +5494,15 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::TUpdateProductsElementType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(
+            mut self,
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::TUpdateProductsElementType, Error> {
             let state = replace(
                 &mut *self.state__,
                 TUpdateProductsElementTypeDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::TUpdateProductsElementType {
                 prev_version: self.prev_version,
                 product: self.product,
@@ -5624,42 +5523,38 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl TUpdatePricesElementTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
             let mut prev_version: Option<i32> = None;
-            for attrib in filter_xmlns_attributes(bytes_start) {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    reader.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
                     Some(b"prev_version")
                 ) {
-                    reader.read_attrib(&mut prev_version, b"prev_version", &attrib.value)?;
+                    helper.read_attrib(&mut prev_version, b"prev_version", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib_checked(attrib)?;
+                    helper.raise_unexpected_attrib_checked(&attrib)?;
                 }
             }
             Ok(Self {
-                prev_version: prev_version.ok_or_else(|| {
-                    reader.map_error(ErrorKind::MissingAttribute("prev_version".into()))
-                })?,
+                prev_version: prev_version
+                    .ok_or_else(|| ErrorKind::MissingAttribute("prev_version".into()))?,
                 product: Vec::new(),
                 state__: Box::new(TUpdatePricesElementTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: TUpdatePricesElementTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             use TUpdatePricesElementTypeDeserializerState as S;
             match state {
                 S::Product(Some(deserializer)) => {
-                    self.store_product(deserializer.finish(reader)?)?
+                    self.store_product(deserializer.finish(helper)?)?
                 }
                 _ => (),
             }
@@ -5672,15 +5567,12 @@ pub mod quick_xml_deserialize {
             self.product.push(value);
             Ok(())
         }
-        fn handle_product<'de, R>(
+        fn handle_product<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::TUpdatePricesProductElementType>,
             fallback: &mut Option<TUpdatePricesElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -5698,7 +5590,7 @@ pub mod quick_xml_deserialize {
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -5733,23 +5625,17 @@ pub mod quick_xml_deserialize {
     impl<'de> Deserializer<'de, super::TUpdatePricesElementType>
         for TUpdatePricesElementTypeDeserializer
     {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::TUpdatePricesElementType>
-        where
-            R: DeserializeReader,
-        {
-            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        ) -> DeserializerResult<'de, super::TUpdatePricesElementType> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::TUpdatePricesElementType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::TUpdatePricesElementType> {
             use TUpdatePricesElementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -5759,8 +5645,8 @@ pub mod quick_xml_deserialize {
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
                     (S::Product(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_product(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_product(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -5772,10 +5658,10 @@ pub mod quick_xml_deserialize {
                     }
                     (_, Event::End(_)) => {
                         if let Some(fallback) = fallback.take() {
-                            self.finish_state(reader, fallback)?;
+                            self.finish_state(helper, fallback)?;
                         }
                         return Ok(DeserializerOutput {
-                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            artifact: DeserializerArtifact::Data(self.finish(helper)?),
                             event: DeserializerEvent::None,
                             allow_any: false,
                         });
@@ -5786,13 +5672,13 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::Product(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"PRODUCT",
                             false,
                         )?;
-                        match self.handle_product(reader, output, &mut fallback)? {
+                        match self.handle_product(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -5821,15 +5707,15 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::TUpdatePricesElementType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(
+            mut self,
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::TUpdatePricesElementType, Error> {
             let state = replace(
                 &mut *self.state__,
                 TUpdatePricesElementTypeDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::TUpdatePricesElementType {
                 prev_version: self.prev_version,
                 product: self.product,
@@ -5863,13 +5749,13 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl CatalogElementTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
-            for attrib in filter_xmlns_attributes(bytes_start) {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib_checked(attrib)?;
+                helper.raise_unexpected_attrib_checked(&attrib)?;
             }
             Ok(Self {
                 language: Vec::new(),
@@ -5883,39 +5769,36 @@ pub mod quick_xml_deserialize {
                 state__: Box::new(CatalogElementTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: CatalogElementTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             use CatalogElementTypeDeserializerState as S;
             match state {
                 S::Language(Some(deserializer)) => {
-                    self.store_language(deserializer.finish(reader)?)?
+                    self.store_language(deserializer.finish(helper)?)?
                 }
                 S::CatalogId(Some(deserializer)) => {
-                    self.store_catalog_id(deserializer.finish(reader)?)?
+                    self.store_catalog_id(deserializer.finish(helper)?)?
                 }
                 S::CatalogVersion(Some(deserializer)) => {
-                    self.store_catalog_version(deserializer.finish(reader)?)?
+                    self.store_catalog_version(deserializer.finish(helper)?)?
                 }
                 S::CatalogName(Some(deserializer)) => {
-                    self.store_catalog_name(deserializer.finish(reader)?)?
+                    self.store_catalog_name(deserializer.finish(helper)?)?
                 }
                 S::Datetime(Some(deserializer)) => {
-                    self.store_datetime(deserializer.finish(reader)?)?
+                    self.store_datetime(deserializer.finish(helper)?)?
                 }
                 S::Territory(Some(deserializer)) => {
-                    self.store_territory(deserializer.finish(reader)?)?
+                    self.store_territory(deserializer.finish(helper)?)?
                 }
                 S::Currency(Some(deserializer)) => {
-                    self.store_currency(deserializer.finish(reader)?)?
+                    self.store_currency(deserializer.finish(helper)?)?
                 }
                 S::MimeRoot(Some(deserializer)) => {
-                    self.store_mime_root(deserializer.finish(reader)?)?
+                    self.store_mime_root(deserializer.finish(helper)?)?
                 }
                 _ => (),
             }
@@ -5976,15 +5859,12 @@ pub mod quick_xml_deserialize {
             self.mime_root.push(value);
             Ok(())
         }
-        fn handle_language<'de, R>(
+        fn handle_language<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::LanguageElementType>,
             fallback: &mut Option<CatalogElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -6001,7 +5881,7 @@ pub mod quick_xml_deserialize {
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -6028,15 +5908,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_catalog_id<'de, R>(
+        fn handle_catalog_id<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<CatalogElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -6053,7 +5930,7 @@ pub mod quick_xml_deserialize {
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -6081,15 +5958,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_catalog_version<'de, R>(
+        fn handle_catalog_version<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<CatalogElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -6107,7 +5981,7 @@ pub mod quick_xml_deserialize {
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -6137,15 +6011,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_catalog_name<'de, R>(
+        fn handle_catalog_name<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::DtMlstring>,
             fallback: &mut Option<CatalogElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -6162,7 +6033,7 @@ pub mod quick_xml_deserialize {
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -6192,15 +6063,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_datetime<'de, R>(
+        fn handle_datetime<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::CatalogDatetimeElementType>,
             fallback: &mut Option<CatalogElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -6217,7 +6085,7 @@ pub mod quick_xml_deserialize {
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -6244,15 +6112,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_territory<'de, R>(
+        fn handle_territory<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<CatalogElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -6264,7 +6129,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -6291,15 +6156,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_currency<'de, R>(
+        fn handle_currency<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::DtCurrencies>,
             fallback: &mut Option<CatalogElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -6311,7 +6173,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -6338,15 +6200,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_mime_root<'de, R>(
+        fn handle_mime_root<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::DtMlstring>,
             fallback: &mut Option<CatalogElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -6358,7 +6217,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -6387,23 +6246,17 @@ pub mod quick_xml_deserialize {
         }
     }
     impl<'de> Deserializer<'de, super::CatalogElementType> for CatalogElementTypeDeserializer {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::CatalogElementType>
-        where
-            R: DeserializeReader,
-        {
-            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        ) -> DeserializerResult<'de, super::CatalogElementType> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::CatalogElementType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::CatalogElementType> {
             use CatalogElementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -6413,8 +6266,8 @@ pub mod quick_xml_deserialize {
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
                     (S::Language(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_language(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_language(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -6425,8 +6278,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::CatalogId(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_catalog_id(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_catalog_id(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -6437,8 +6290,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::CatalogVersion(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_catalog_version(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_catalog_version(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -6449,8 +6302,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::CatalogName(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_catalog_name(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_catalog_name(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -6461,8 +6314,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Datetime(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_datetime(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_datetime(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -6473,8 +6326,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Territory(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_territory(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_territory(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -6485,8 +6338,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Currency(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_currency(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_currency(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -6497,8 +6350,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::MimeRoot(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_mime_root(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_mime_root(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -6510,10 +6363,10 @@ pub mod quick_xml_deserialize {
                     }
                     (_, Event::End(_)) => {
                         if let Some(fallback) = fallback.take() {
-                            self.finish_state(reader, fallback)?;
+                            self.finish_state(helper, fallback)?;
                         }
                         return Ok(DeserializerOutput {
-                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            artifact: DeserializerArtifact::Data(self.finish(helper)?),
                             event: DeserializerEvent::None,
                             allow_any: false,
                         });
@@ -6524,13 +6377,13 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::Language(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"LANGUAGE",
                             false,
                         )?;
-                        match self.handle_language(reader, output, &mut fallback)? {
+                        match self.handle_language(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -6541,13 +6394,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::CatalogId(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"CATALOG_ID",
                             false,
                         )?;
-                        match self.handle_catalog_id(reader, output, &mut fallback)? {
+                        match self.handle_catalog_id(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -6558,13 +6411,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::CatalogVersion(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"CATALOG_VERSION",
                             false,
                         )?;
-                        match self.handle_catalog_version(reader, output, &mut fallback)? {
+                        match self.handle_catalog_version(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -6575,13 +6428,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::CatalogName(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"CATALOG_NAME",
                             false,
                         )?;
-                        match self.handle_catalog_name(reader, output, &mut fallback)? {
+                        match self.handle_catalog_name(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -6592,13 +6445,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Datetime(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"DATETIME",
                             false,
                         )?;
-                        match self.handle_datetime(reader, output, &mut fallback)? {
+                        match self.handle_datetime(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -6609,13 +6462,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Territory(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"TERRITORY",
                             false,
                         )?;
-                        match self.handle_territory(reader, output, &mut fallback)? {
+                        match self.handle_territory(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -6626,13 +6479,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Currency(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"CURRENCY",
                             false,
                         )?;
-                        match self.handle_currency(reader, output, &mut fallback)? {
+                        match self.handle_currency(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -6643,13 +6496,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::MimeRoot(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"MIME_ROOT",
                             false,
                         )?;
-                        match self.handle_mime_root(reader, output, &mut fallback)? {
+                        match self.handle_mime_root(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -6678,15 +6531,15 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::CatalogElementType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(
+            mut self,
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::CatalogElementType, Error> {
             let state = replace(
                 &mut *self.state__,
                 CatalogElementTypeDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::CatalogElementType {
                 language: self.language,
                 catalog_id: self
@@ -6720,13 +6573,13 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl BuyerElementTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
-            for attrib in filter_xmlns_attributes(bytes_start) {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib_checked(attrib)?;
+                helper.raise_unexpected_attrib_checked(&attrib)?;
             }
             Ok(Self {
                 buyer_id: None,
@@ -6734,21 +6587,18 @@ pub mod quick_xml_deserialize {
                 state__: Box::new(BuyerElementTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: BuyerElementTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             use BuyerElementTypeDeserializerState as S;
             match state {
                 S::BuyerId(Some(deserializer)) => {
-                    self.store_buyer_id(deserializer.finish(reader)?)?
+                    self.store_buyer_id(deserializer.finish(helper)?)?
                 }
                 S::BuyerName(Some(deserializer)) => {
-                    self.store_buyer_name(deserializer.finish(reader)?)?
+                    self.store_buyer_name(deserializer.finish(helper)?)?
                 }
                 _ => (),
             }
@@ -6772,15 +6622,12 @@ pub mod quick_xml_deserialize {
             self.buyer_name = Some(value);
             Ok(())
         }
-        fn handle_buyer_id<'de, R>(
+        fn handle_buyer_id<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::TypePartyId>,
             fallback: &mut Option<BuyerElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -6792,7 +6639,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -6819,15 +6666,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_buyer_name<'de, R>(
+        fn handle_buyer_name<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<BuyerElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -6844,7 +6688,7 @@ pub mod quick_xml_deserialize {
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -6873,23 +6717,17 @@ pub mod quick_xml_deserialize {
         }
     }
     impl<'de> Deserializer<'de, super::BuyerElementType> for BuyerElementTypeDeserializer {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::BuyerElementType>
-        where
-            R: DeserializeReader,
-        {
-            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        ) -> DeserializerResult<'de, super::BuyerElementType> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::BuyerElementType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::BuyerElementType> {
             use BuyerElementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -6899,8 +6737,8 @@ pub mod quick_xml_deserialize {
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
                     (S::BuyerId(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_buyer_id(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_buyer_id(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -6911,8 +6749,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::BuyerName(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_buyer_name(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_buyer_name(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -6924,10 +6762,10 @@ pub mod quick_xml_deserialize {
                     }
                     (_, Event::End(_)) => {
                         if let Some(fallback) = fallback.take() {
-                            self.finish_state(reader, fallback)?;
+                            self.finish_state(helper, fallback)?;
                         }
                         return Ok(DeserializerOutput {
-                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            artifact: DeserializerArtifact::Data(self.finish(helper)?),
                             event: DeserializerEvent::None,
                             allow_any: false,
                         });
@@ -6938,13 +6776,13 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::BuyerId(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"BUYER_ID",
                             false,
                         )?;
-                        match self.handle_buyer_id(reader, output, &mut fallback)? {
+                        match self.handle_buyer_id(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -6955,13 +6793,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::BuyerName(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"BUYER_NAME",
                             false,
                         )?;
-                        match self.handle_buyer_name(reader, output, &mut fallback)? {
+                        match self.handle_buyer_name(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -6990,15 +6828,15 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::BuyerElementType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(
+            mut self,
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::BuyerElementType, Error> {
             let state = replace(
                 &mut *self.state__,
                 BuyerElementTypeDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::BuyerElementType {
                 buyer_id: self.buyer_id,
                 buyer_name: self
@@ -7026,13 +6864,13 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl SupplierElementTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
-            for attrib in filter_xmlns_attributes(bytes_start) {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib_checked(attrib)?;
+                helper.raise_unexpected_attrib_checked(&attrib)?;
             }
             Ok(Self {
                 supplier_id: Vec::new(),
@@ -7042,27 +6880,24 @@ pub mod quick_xml_deserialize {
                 state__: Box::new(SupplierElementTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: SupplierElementTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             use SupplierElementTypeDeserializerState as S;
             match state {
                 S::SupplierId(Some(deserializer)) => {
-                    self.store_supplier_id(deserializer.finish(reader)?)?
+                    self.store_supplier_id(deserializer.finish(helper)?)?
                 }
                 S::SupplierName(Some(deserializer)) => {
-                    self.store_supplier_name(deserializer.finish(reader)?)?
+                    self.store_supplier_name(deserializer.finish(helper)?)?
                 }
                 S::Address(Some(deserializer)) => {
-                    self.store_address(deserializer.finish(reader)?)?
+                    self.store_address(deserializer.finish(helper)?)?
                 }
                 S::MimeInfo(Some(deserializer)) => {
-                    self.store_mime_info(deserializer.finish(reader)?)?
+                    self.store_mime_info(deserializer.finish(helper)?)?
                 }
                 _ => (),
             }
@@ -7099,15 +6934,12 @@ pub mod quick_xml_deserialize {
             self.mime_info = Some(value);
             Ok(())
         }
-        fn handle_supplier_id<'de, R>(
+        fn handle_supplier_id<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::TypePartyId>,
             fallback: &mut Option<SupplierElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -7119,7 +6951,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -7160,15 +6992,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_supplier_name<'de, R>(
+        fn handle_supplier_name<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<SupplierElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -7186,7 +7015,7 @@ pub mod quick_xml_deserialize {
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -7216,15 +7045,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_address<'de, R>(
+        fn handle_address<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::SupplierAddressElementType>,
             fallback: &mut Option<SupplierElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -7236,7 +7062,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -7263,15 +7089,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_mime_info<'de, R>(
+        fn handle_mime_info<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::MimeInfoElementType>,
             fallback: &mut Option<SupplierElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -7283,7 +7106,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -7312,23 +7135,17 @@ pub mod quick_xml_deserialize {
         }
     }
     impl<'de> Deserializer<'de, super::SupplierElementType> for SupplierElementTypeDeserializer {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::SupplierElementType>
-        where
-            R: DeserializeReader,
-        {
-            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        ) -> DeserializerResult<'de, super::SupplierElementType> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::SupplierElementType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::SupplierElementType> {
             use SupplierElementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -7338,8 +7155,8 @@ pub mod quick_xml_deserialize {
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
                     (S::SupplierId(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_supplier_id(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_supplier_id(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -7350,8 +7167,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::SupplierName(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_supplier_name(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_supplier_name(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -7362,8 +7179,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Address(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_address(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_address(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -7374,8 +7191,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::MimeInfo(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_mime_info(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_mime_info(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -7387,10 +7204,10 @@ pub mod quick_xml_deserialize {
                     }
                     (_, Event::End(_)) => {
                         if let Some(fallback) = fallback.take() {
-                            self.finish_state(reader, fallback)?;
+                            self.finish_state(helper, fallback)?;
                         }
                         return Ok(DeserializerOutput {
-                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            artifact: DeserializerArtifact::Data(self.finish(helper)?),
                             event: DeserializerEvent::None,
                             allow_any: false,
                         });
@@ -7401,13 +7218,13 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::SupplierId(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"SUPPLIER_ID",
                             false,
                         )?;
-                        match self.handle_supplier_id(reader, output, &mut fallback)? {
+                        match self.handle_supplier_id(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -7418,13 +7235,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::SupplierName(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"SUPPLIER_NAME",
                             false,
                         )?;
-                        match self.handle_supplier_name(reader, output, &mut fallback)? {
+                        match self.handle_supplier_name(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -7435,13 +7252,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Address(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"ADDRESS",
                             false,
                         )?;
-                        match self.handle_address(reader, output, &mut fallback)? {
+                        match self.handle_address(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -7452,13 +7269,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::MimeInfo(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"MIME_INFO",
                             false,
                         )?;
-                        match self.handle_mime_info(reader, output, &mut fallback)? {
+                        match self.handle_mime_info(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -7487,15 +7304,15 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::SupplierElementType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(
+            mut self,
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::SupplierElementType, Error> {
             let state = replace(
                 &mut *self.state__,
                 SupplierElementTypeDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::SupplierElementType {
                 supplier_id: self.supplier_id,
                 supplier_name: self
@@ -7519,31 +7336,28 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl UdxHeaderDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
-            for attrib in filter_xmlns_attributes(bytes_start) {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib_checked(attrib)?;
+                helper.raise_unexpected_attrib_checked(&attrib)?;
             }
             Ok(Self {
                 udx_edxf_version: None,
                 state__: Box::new(UdxHeaderDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: UdxHeaderDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             use UdxHeaderDeserializerState as S;
             match state {
                 S::UdxEdxfVersion(Some(deserializer)) => {
-                    self.store_udx_edxf_version(deserializer.finish(reader)?)?
+                    self.store_udx_edxf_version(deserializer.finish(helper)?)?
                 }
                 _ => (),
             }
@@ -7558,15 +7372,12 @@ pub mod quick_xml_deserialize {
             self.udx_edxf_version = Some(value);
             Ok(())
         }
-        fn handle_udx_edxf_version<'de, R>(
+        fn handle_udx_edxf_version<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<UdxHeaderDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -7583,7 +7394,7 @@ pub mod quick_xml_deserialize {
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -7612,20 +7423,17 @@ pub mod quick_xml_deserialize {
         }
     }
     impl<'de> Deserializer<'de, super::UdxHeader> for UdxHeaderDeserializer {
-        fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, super::UdxHeader>
-        where
-            R: DeserializeReader,
-        {
-            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
-        }
-        fn next<R>(
-            mut self,
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::UdxHeader>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::UdxHeader> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        }
+        fn next(
+            mut self,
+            helper: &mut DeserializeHelper,
+            event: Event<'de>,
+        ) -> DeserializerResult<'de, super::UdxHeader> {
             use UdxHeaderDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -7635,8 +7443,8 @@ pub mod quick_xml_deserialize {
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
                     (S::UdxEdxfVersion(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_udx_edxf_version(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_udx_edxf_version(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -7648,10 +7456,10 @@ pub mod quick_xml_deserialize {
                     }
                     (_, Event::End(_)) => {
                         if let Some(fallback) = fallback.take() {
-                            self.finish_state(reader, fallback)?;
+                            self.finish_state(helper, fallback)?;
                         }
                         return Ok(DeserializerOutput {
-                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            artifact: DeserializerArtifact::Data(self.finish(helper)?),
                             event: DeserializerEvent::None,
                             allow_any: false,
                         });
@@ -7662,13 +7470,13 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::UdxEdxfVersion(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"UDX.EDXF.VERSION",
                             false,
                         )?;
-                        match self.handle_udx_edxf_version(reader, output, &mut fallback)? {
+                        match self.handle_udx_edxf_version(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -7697,12 +7505,9 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::UdxHeader, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(mut self, helper: &mut DeserializeHelper) -> Result<super::UdxHeader, Error> {
             let state = replace(&mut *self.state__, UdxHeaderDeserializerState::Unknown__);
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::UdxHeader {
                 udx_edxf_version: self
                     .udx_edxf_version
@@ -7752,20 +7557,20 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl TNewCatalogProductElementTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
             let mut mode: Option<super::TNewCatalogProductMode> = None;
-            for attrib in filter_xmlns_attributes(bytes_start) {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    reader.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
                     Some(b"mode")
                 ) {
-                    reader.read_attrib(&mut mode, b"mode", &attrib.value)?;
+                    helper.read_attrib(&mut mode, b"mode", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib_checked(attrib)?;
+                    helper.raise_unexpected_attrib_checked(&attrib)?;
                 }
             }
             Ok(Self {
@@ -7782,42 +7587,39 @@ pub mod quick_xml_deserialize {
                 state__: Box::new(TNewCatalogProductElementTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: TNewCatalogProductElementTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             use TNewCatalogProductElementTypeDeserializerState as S;
             match state {
                 S::SupplierPid(Some(deserializer)) => {
-                    self.store_supplier_pid(deserializer.finish(reader)?)?
+                    self.store_supplier_pid(deserializer.finish(helper)?)?
                 }
                 S::ProductDetails(Some(deserializer)) => {
-                    self.store_product_details(deserializer.finish(reader)?)?
+                    self.store_product_details(deserializer.finish(helper)?)?
                 }
                 S::ProductFeatures(Some(deserializer)) => {
-                    self.store_product_features(deserializer.finish(reader)?)?
+                    self.store_product_features(deserializer.finish(helper)?)?
                 }
                 S::ProductOrderDetails(Some(deserializer)) => {
-                    self.store_product_order_details(deserializer.finish(reader)?)?
+                    self.store_product_order_details(deserializer.finish(helper)?)?
                 }
                 S::ProductPriceDetails(Some(deserializer)) => {
-                    self.store_product_price_details(deserializer.finish(reader)?)?
+                    self.store_product_price_details(deserializer.finish(helper)?)?
                 }
                 S::MimeInfo(Some(deserializer)) => {
-                    self.store_mime_info(deserializer.finish(reader)?)?
+                    self.store_mime_info(deserializer.finish(helper)?)?
                 }
                 S::UserDefinedExtensions(Some(deserializer)) => {
-                    self.store_user_defined_extensions(deserializer.finish(reader)?)?
+                    self.store_user_defined_extensions(deserializer.finish(helper)?)?
                 }
                 S::ProductReference(Some(deserializer)) => {
-                    self.store_product_reference(deserializer.finish(reader)?)?
+                    self.store_product_reference(deserializer.finish(helper)?)?
                 }
                 S::ProductLogisticDetails(Some(deserializer)) => {
-                    self.store_product_logistic_details(deserializer.finish(reader)?)?
+                    self.store_product_logistic_details(deserializer.finish(helper)?)?
                 }
                 _ => (),
             }
@@ -7910,15 +7712,12 @@ pub mod quick_xml_deserialize {
             self.product_logistic_details = Some(value);
             Ok(())
         }
-        fn handle_supplier_pid<'de, R>(
+        fn handle_supplier_pid<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::SupplierPidElementType>,
             fallback: &mut Option<TNewCatalogProductElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -7939,7 +7738,7 @@ pub mod quick_xml_deserialize {
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -7974,15 +7773,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_product_details<'de, R>(
+        fn handle_product_details<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::ProductDetailsElementType>,
             fallback: &mut Option<TNewCatalogProductElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -8003,7 +7799,7 @@ pub mod quick_xml_deserialize {
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -8038,15 +7834,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_product_features<'de, R>(
+        fn handle_product_features<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::ProductFeaturesElementType>,
             fallback: &mut Option<TNewCatalogProductElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -8067,7 +7860,7 @@ pub mod quick_xml_deserialize {
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -8102,15 +7895,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_product_order_details<'de, R>(
+        fn handle_product_order_details<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::ProductOrderDetailsElementType>,
             fallback: &mut Option<TNewCatalogProductElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -8131,7 +7921,7 @@ pub mod quick_xml_deserialize {
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -8166,15 +7956,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_product_price_details<'de, R>(
+        fn handle_product_price_details<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::ProductPriceDetailsElementType>,
             fallback: &mut Option<TNewCatalogProductElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -8194,7 +7981,7 @@ pub mod quick_xml_deserialize {
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -8229,15 +8016,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_mime_info<'de, R>(
+        fn handle_mime_info<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::MimeInfoElementType>,
             fallback: &mut Option<TNewCatalogProductElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -8252,7 +8036,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -8284,15 +8068,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_user_defined_extensions<'de, R>(
+        fn handle_user_defined_extensions<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::UdxProduct>,
             fallback: &mut Option<TNewCatalogProductElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -8313,7 +8094,7 @@ pub mod quick_xml_deserialize {
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -8341,15 +8122,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_product_reference<'de, R>(
+        fn handle_product_reference<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::ProductReferenceElementType>,
             fallback: &mut Option<TNewCatalogProductElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -8364,7 +8142,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -8399,15 +8177,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_product_logistic_details<'de, R>(
+        fn handle_product_logistic_details<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::ProductLogisticDetailsElementType>,
             fallback: &mut Option<TNewCatalogProductElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -8421,7 +8196,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -8449,23 +8224,17 @@ pub mod quick_xml_deserialize {
     impl<'de> Deserializer<'de, super::TNewCatalogProductElementType>
         for TNewCatalogProductElementTypeDeserializer
     {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::TNewCatalogProductElementType>
-        where
-            R: DeserializeReader,
-        {
-            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        ) -> DeserializerResult<'de, super::TNewCatalogProductElementType> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::TNewCatalogProductElementType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::TNewCatalogProductElementType> {
             use TNewCatalogProductElementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -8475,8 +8244,8 @@ pub mod quick_xml_deserialize {
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
                     (S::SupplierPid(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_supplier_pid(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_supplier_pid(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -8487,8 +8256,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::ProductDetails(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_product_details(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_product_details(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -8499,8 +8268,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::ProductFeatures(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_product_features(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_product_features(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -8511,8 +8280,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::ProductOrderDetails(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_product_order_details(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_product_order_details(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -8523,8 +8292,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::ProductPriceDetails(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_product_price_details(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_product_price_details(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -8535,8 +8304,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::MimeInfo(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_mime_info(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_mime_info(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -8547,8 +8316,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UserDefinedExtensions(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_user_defined_extensions(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_user_defined_extensions(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -8559,8 +8328,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::ProductReference(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_product_reference(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_product_reference(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -8571,8 +8340,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::ProductLogisticDetails(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_product_logistic_details(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_product_logistic_details(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -8584,10 +8353,10 @@ pub mod quick_xml_deserialize {
                     }
                     (_, Event::End(_)) => {
                         if let Some(fallback) = fallback.take() {
-                            self.finish_state(reader, fallback)?;
+                            self.finish_state(helper, fallback)?;
                         }
                         return Ok(DeserializerOutput {
-                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            artifact: DeserializerArtifact::Data(self.finish(helper)?),
                             event: DeserializerEvent::None,
                             allow_any: false,
                         });
@@ -8599,13 +8368,13 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::SupplierPid(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"SUPPLIER_PID",
                             false,
                         )?;
-                        match self.handle_supplier_pid(reader, output, &mut fallback)? {
+                        match self.handle_supplier_pid(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -8616,13 +8385,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::ProductDetails(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"PRODUCT_DETAILS",
                             false,
                         )?;
-                        match self.handle_product_details(reader, output, &mut fallback)? {
+                        match self.handle_product_details(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -8633,13 +8402,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::ProductFeatures(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"PRODUCT_FEATURES",
                             false,
                         )?;
-                        match self.handle_product_features(reader, output, &mut fallback)? {
+                        match self.handle_product_features(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -8650,13 +8419,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::ProductOrderDetails(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"PRODUCT_ORDER_DETAILS",
                             false,
                         )?;
-                        match self.handle_product_order_details(reader, output, &mut fallback)? {
+                        match self.handle_product_order_details(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -8667,13 +8436,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::ProductPriceDetails(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"PRODUCT_PRICE_DETAILS",
                             false,
                         )?;
-                        match self.handle_product_price_details(reader, output, &mut fallback)? {
+                        match self.handle_product_price_details(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -8684,13 +8453,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::MimeInfo(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"MIME_INFO",
                             false,
                         )?;
-                        match self.handle_mime_info(reader, output, &mut fallback)? {
+                        match self.handle_mime_info(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -8704,13 +8473,13 @@ pub mod quick_xml_deserialize {
                         S::UserDefinedExtensions(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"USER_DEFINED_EXTENSIONS",
                             false,
                         )?;
-                        match self.handle_user_defined_extensions(reader, output, &mut fallback)? {
+                        match self.handle_user_defined_extensions(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -8721,13 +8490,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::ProductReference(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"PRODUCT_REFERENCE",
                             false,
                         )?;
-                        match self.handle_product_reference(reader, output, &mut fallback)? {
+                        match self.handle_product_reference(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -8741,13 +8510,13 @@ pub mod quick_xml_deserialize {
                         S::ProductLogisticDetails(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"PRODUCT_LOGISTIC_DETAILS",
                             false,
                         )?;
-                        match self.handle_product_logistic_details(reader, output, &mut fallback)? {
+                        match self.handle_product_logistic_details(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -8776,15 +8545,15 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::TNewCatalogProductElementType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(
+            mut self,
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::TNewCatalogProductElementType, Error> {
             let state = replace(
                 &mut *self.state__,
                 TNewCatalogProductElementTypeDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::TNewCatalogProductElementType {
                 mode: self.mode,
                 supplier_pid: self
@@ -8849,25 +8618,24 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl TUpdateProductsProductElementTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
             let mut mode: Option<super::TUpdateProductsProductMode> = None;
-            for attrib in filter_xmlns_attributes(bytes_start) {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    reader.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
                     Some(b"mode")
                 ) {
-                    reader.read_attrib(&mut mode, b"mode", &attrib.value)?;
+                    helper.read_attrib(&mut mode, b"mode", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib_checked(attrib)?;
+                    helper.raise_unexpected_attrib_checked(&attrib)?;
                 }
             }
             Ok(Self {
-                mode: mode
-                    .ok_or_else(|| reader.map_error(ErrorKind::MissingAttribute("mode".into())))?,
+                mode: mode.ok_or_else(|| ErrorKind::MissingAttribute("mode".into()))?,
                 supplier_pid: None,
                 product_details: None,
                 product_features: Vec::new(),
@@ -8880,42 +8648,39 @@ pub mod quick_xml_deserialize {
                 state__: Box::new(TUpdateProductsProductElementTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: TUpdateProductsProductElementTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             use TUpdateProductsProductElementTypeDeserializerState as S;
             match state {
                 S::SupplierPid(Some(deserializer)) => {
-                    self.store_supplier_pid(deserializer.finish(reader)?)?
+                    self.store_supplier_pid(deserializer.finish(helper)?)?
                 }
                 S::ProductDetails(Some(deserializer)) => {
-                    self.store_product_details(deserializer.finish(reader)?)?
+                    self.store_product_details(deserializer.finish(helper)?)?
                 }
                 S::ProductFeatures(Some(deserializer)) => {
-                    self.store_product_features(deserializer.finish(reader)?)?
+                    self.store_product_features(deserializer.finish(helper)?)?
                 }
                 S::ProductOrderDetails(Some(deserializer)) => {
-                    self.store_product_order_details(deserializer.finish(reader)?)?
+                    self.store_product_order_details(deserializer.finish(helper)?)?
                 }
                 S::ProductPriceDetails(Some(deserializer)) => {
-                    self.store_product_price_details(deserializer.finish(reader)?)?
+                    self.store_product_price_details(deserializer.finish(helper)?)?
                 }
                 S::MimeInfo(Some(deserializer)) => {
-                    self.store_mime_info(deserializer.finish(reader)?)?
+                    self.store_mime_info(deserializer.finish(helper)?)?
                 }
                 S::UserDefinedExtensions(Some(deserializer)) => {
-                    self.store_user_defined_extensions(deserializer.finish(reader)?)?
+                    self.store_user_defined_extensions(deserializer.finish(helper)?)?
                 }
                 S::ProductReference(Some(deserializer)) => {
-                    self.store_product_reference(deserializer.finish(reader)?)?
+                    self.store_product_reference(deserializer.finish(helper)?)?
                 }
                 S::ProductLogisticDetails(Some(deserializer)) => {
-                    self.store_product_logistic_details(deserializer.finish(reader)?)?
+                    self.store_product_logistic_details(deserializer.finish(helper)?)?
                 }
                 _ => (),
             }
@@ -9008,15 +8773,12 @@ pub mod quick_xml_deserialize {
             self.product_logistic_details = Some(value);
             Ok(())
         }
-        fn handle_supplier_pid<'de, R>(
+        fn handle_supplier_pid<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::SupplierPidElementType>,
             fallback: &mut Option<TUpdateProductsProductElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -9037,7 +8799,7 @@ pub mod quick_xml_deserialize {
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -9072,15 +8834,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_product_details<'de, R>(
+        fn handle_product_details<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::ProductDetailsElementType>,
             fallback: &mut Option<TUpdateProductsProductElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -9101,7 +8860,7 @@ pub mod quick_xml_deserialize {
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -9136,15 +8895,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_product_features<'de, R>(
+        fn handle_product_features<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::ProductFeaturesElementType>,
             fallback: &mut Option<TUpdateProductsProductElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -9159,7 +8915,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -9194,15 +8950,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_product_order_details<'de, R>(
+        fn handle_product_order_details<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::ProductOrderDetailsElementType>,
             fallback: &mut Option<TUpdateProductsProductElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -9229,7 +8982,7 @@ pub mod quick_xml_deserialize {
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -9256,15 +9009,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_product_price_details<'de, R>(
+        fn handle_product_price_details<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::ProductPriceDetailsElementType>,
             fallback: &mut Option<TUpdateProductsProductElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -9289,7 +9039,7 @@ pub mod quick_xml_deserialize {
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -9316,15 +9066,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_mime_info<'de, R>(
+        fn handle_mime_info<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::MimeInfoElementType>,
             fallback: &mut Option<TUpdateProductsProductElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -9339,7 +9086,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -9373,15 +9120,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_user_defined_extensions<'de, R>(
+        fn handle_user_defined_extensions<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::UdxProduct>,
             fallback: &mut Option<TUpdateProductsProductElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -9396,7 +9140,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -9421,15 +9165,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_product_reference<'de, R>(
+        fn handle_product_reference<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::ProductReferenceElementType>,
             fallback: &mut Option<TUpdateProductsProductElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -9446,7 +9187,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -9471,15 +9212,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_product_logistic_details<'de, R>(
+        fn handle_product_logistic_details<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::ProductLogisticDetailsElementType>,
             fallback: &mut Option<TUpdateProductsProductElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -9495,7 +9233,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -9524,23 +9262,17 @@ pub mod quick_xml_deserialize {
     impl<'de> Deserializer<'de, super::TUpdateProductsProductElementType>
         for TUpdateProductsProductElementTypeDeserializer
     {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::TUpdateProductsProductElementType>
-        where
-            R: DeserializeReader,
-        {
-            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        ) -> DeserializerResult<'de, super::TUpdateProductsProductElementType> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::TUpdateProductsProductElementType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::TUpdateProductsProductElementType> {
             use TUpdateProductsProductElementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -9550,8 +9282,8 @@ pub mod quick_xml_deserialize {
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
                     (S::SupplierPid(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_supplier_pid(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_supplier_pid(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -9562,8 +9294,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::ProductDetails(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_product_details(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_product_details(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -9574,8 +9306,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::ProductFeatures(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_product_features(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_product_features(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -9586,8 +9318,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::ProductOrderDetails(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_product_order_details(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_product_order_details(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -9598,8 +9330,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::ProductPriceDetails(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_product_price_details(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_product_price_details(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -9610,8 +9342,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::MimeInfo(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_mime_info(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_mime_info(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -9622,8 +9354,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UserDefinedExtensions(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_user_defined_extensions(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_user_defined_extensions(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -9634,8 +9366,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::ProductReference(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_product_reference(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_product_reference(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -9646,8 +9378,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::ProductLogisticDetails(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_product_logistic_details(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_product_logistic_details(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -9659,10 +9391,10 @@ pub mod quick_xml_deserialize {
                     }
                     (_, Event::End(_)) => {
                         if let Some(fallback) = fallback.take() {
-                            self.finish_state(reader, fallback)?;
+                            self.finish_state(helper, fallback)?;
                         }
                         return Ok(DeserializerOutput {
-                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            artifact: DeserializerArtifact::Data(self.finish(helper)?),
                             event: DeserializerEvent::None,
                             allow_any: false,
                         });
@@ -9674,13 +9406,13 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::SupplierPid(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"SUPPLIER_PID",
                             false,
                         )?;
-                        match self.handle_supplier_pid(reader, output, &mut fallback)? {
+                        match self.handle_supplier_pid(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -9691,13 +9423,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::ProductDetails(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"PRODUCT_DETAILS",
                             false,
                         )?;
-                        match self.handle_product_details(reader, output, &mut fallback)? {
+                        match self.handle_product_details(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -9708,13 +9440,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::ProductFeatures(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"PRODUCT_FEATURES",
                             false,
                         )?;
-                        match self.handle_product_features(reader, output, &mut fallback)? {
+                        match self.handle_product_features(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -9725,13 +9457,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::ProductOrderDetails(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"PRODUCT_ORDER_DETAILS",
                             false,
                         )?;
-                        match self.handle_product_order_details(reader, output, &mut fallback)? {
+                        match self.handle_product_order_details(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -9742,13 +9474,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::ProductPriceDetails(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"PRODUCT_PRICE_DETAILS",
                             false,
                         )?;
-                        match self.handle_product_price_details(reader, output, &mut fallback)? {
+                        match self.handle_product_price_details(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -9759,13 +9491,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::MimeInfo(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"MIME_INFO",
                             false,
                         )?;
-                        match self.handle_mime_info(reader, output, &mut fallback)? {
+                        match self.handle_mime_info(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -9779,13 +9511,13 @@ pub mod quick_xml_deserialize {
                         S::UserDefinedExtensions(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"USER_DEFINED_EXTENSIONS",
                             false,
                         )?;
-                        match self.handle_user_defined_extensions(reader, output, &mut fallback)? {
+                        match self.handle_user_defined_extensions(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -9796,13 +9528,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::ProductReference(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"PRODUCT_REFERENCE",
                             false,
                         )?;
-                        match self.handle_product_reference(reader, output, &mut fallback)? {
+                        match self.handle_product_reference(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -9816,13 +9548,13 @@ pub mod quick_xml_deserialize {
                         S::ProductLogisticDetails(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"PRODUCT_LOGISTIC_DETAILS",
                             false,
                         )?;
-                        match self.handle_product_logistic_details(reader, output, &mut fallback)? {
+                        match self.handle_product_logistic_details(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -9851,18 +9583,15 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(
+        fn finish(
             mut self,
-            reader: &R,
-        ) -> Result<super::TUpdateProductsProductElementType, Error>
-        where
-            R: DeserializeReader,
-        {
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::TUpdateProductsProductElementType, Error> {
             let state = replace(
                 &mut *self.state__,
                 TUpdateProductsProductElementTypeDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::TUpdateProductsProductElementType {
                 mode: self.mode,
                 supplier_pid: self
@@ -9903,20 +9632,20 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl TUpdatePricesProductElementTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
             let mut mode: Option<super::TUpdatePricesProductMode> = None;
-            for attrib in filter_xmlns_attributes(bytes_start) {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    reader.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
                     Some(b"mode")
                 ) {
-                    reader.read_attrib(&mut mode, b"mode", &attrib.value)?;
+                    helper.read_attrib(&mut mode, b"mode", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib_checked(attrib)?;
+                    helper.raise_unexpected_attrib_checked(&attrib)?;
                 }
             }
             Ok(Self {
@@ -9927,24 +9656,21 @@ pub mod quick_xml_deserialize {
                 state__: Box::new(TUpdatePricesProductElementTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: TUpdatePricesProductElementTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             use TUpdatePricesProductElementTypeDeserializerState as S;
             match state {
                 S::SupplierPid(Some(deserializer)) => {
-                    self.store_supplier_pid(deserializer.finish(reader)?)?
+                    self.store_supplier_pid(deserializer.finish(helper)?)?
                 }
                 S::ProductPriceDetails(Some(deserializer)) => {
-                    self.store_product_price_details(deserializer.finish(reader)?)?
+                    self.store_product_price_details(deserializer.finish(helper)?)?
                 }
                 S::UserDefinedExtensions(Some(deserializer)) => {
-                    self.store_user_defined_extensions(deserializer.finish(reader)?)?
+                    self.store_user_defined_extensions(deserializer.finish(helper)?)?
                 }
                 _ => (),
             }
@@ -9978,15 +9704,12 @@ pub mod quick_xml_deserialize {
             self.user_defined_extensions = Some(value);
             Ok(())
         }
-        fn handle_supplier_pid<'de, R>(
+        fn handle_supplier_pid<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::SupplierPidElementType>,
             fallback: &mut Option<TUpdatePricesProductElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -10007,7 +9730,7 @@ pub mod quick_xml_deserialize {
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -10039,15 +9762,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_product_price_details<'de, R>(
+        fn handle_product_price_details<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::ProductPriceDetailsElementType>,
             fallback: &mut Option<TUpdatePricesProductElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -10070,7 +9790,7 @@ pub mod quick_xml_deserialize {
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -10095,15 +9815,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_user_defined_extensions<'de, R>(
+        fn handle_user_defined_extensions<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::UdxProduct>,
             fallback: &mut Option<TUpdatePricesProductElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -10117,7 +9834,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -10146,23 +9863,17 @@ pub mod quick_xml_deserialize {
     impl<'de> Deserializer<'de, super::TUpdatePricesProductElementType>
         for TUpdatePricesProductElementTypeDeserializer
     {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::TUpdatePricesProductElementType>
-        where
-            R: DeserializeReader,
-        {
-            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        ) -> DeserializerResult<'de, super::TUpdatePricesProductElementType> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::TUpdatePricesProductElementType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::TUpdatePricesProductElementType> {
             use TUpdatePricesProductElementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -10172,8 +9883,8 @@ pub mod quick_xml_deserialize {
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
                     (S::SupplierPid(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_supplier_pid(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_supplier_pid(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -10184,8 +9895,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::ProductPriceDetails(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_product_price_details(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_product_price_details(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -10196,8 +9907,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UserDefinedExtensions(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_user_defined_extensions(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_user_defined_extensions(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -10209,10 +9920,10 @@ pub mod quick_xml_deserialize {
                     }
                     (_, Event::End(_)) => {
                         if let Some(fallback) = fallback.take() {
-                            self.finish_state(reader, fallback)?;
+                            self.finish_state(helper, fallback)?;
                         }
                         return Ok(DeserializerOutput {
-                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            artifact: DeserializerArtifact::Data(self.finish(helper)?),
                             event: DeserializerEvent::None,
                             allow_any: false,
                         });
@@ -10224,13 +9935,13 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::SupplierPid(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"SUPPLIER_PID",
                             false,
                         )?;
-                        match self.handle_supplier_pid(reader, output, &mut fallback)? {
+                        match self.handle_supplier_pid(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -10241,13 +9952,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::ProductPriceDetails(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"PRODUCT_PRICE_DETAILS",
                             false,
                         )?;
-                        match self.handle_product_price_details(reader, output, &mut fallback)? {
+                        match self.handle_product_price_details(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -10261,13 +9972,13 @@ pub mod quick_xml_deserialize {
                         S::UserDefinedExtensions(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"USER_DEFINED_EXTENSIONS",
                             false,
                         )?;
-                        match self.handle_user_defined_extensions(reader, output, &mut fallback)? {
+                        match self.handle_user_defined_extensions(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -10296,15 +10007,15 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::TUpdatePricesProductElementType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(
+            mut self,
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::TUpdatePricesProductElementType, Error> {
             let state = replace(
                 &mut *self.state__,
                 TUpdatePricesProductElementTypeDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::TUpdatePricesProductElementType {
                 mode: self.mode,
                 supplier_pid: self
@@ -10328,20 +10039,20 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl LanguageElementTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
             let mut default: Option<String> = None;
-            for attrib in filter_xmlns_attributes(bytes_start) {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    reader.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
                     Some(b"default")
                 ) {
-                    reader.read_attrib(&mut default, b"default", &attrib.value)?;
+                    helper.read_attrib(&mut default, b"default", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib_checked(attrib)?;
+                    helper.raise_unexpected_attrib_checked(&attrib)?;
                 }
             }
             Ok(Self {
@@ -10350,16 +10061,13 @@ pub mod quick_xml_deserialize {
                 state__: Box::new(LanguageElementTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: LanguageElementTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             if let LanguageElementTypeDeserializerState::Content__(deserializer) = state {
-                self.store_content(deserializer.finish(reader)?)?;
+                self.store_content(deserializer.finish(helper)?)?;
             }
             Ok(())
         }
@@ -10370,14 +10078,11 @@ pub mod quick_xml_deserialize {
             self.content = Some(value);
             Ok(())
         }
-        fn handle_content<'de, R>(
+        fn handle_content<'de>(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::DtLang>,
-        ) -> DeserializerResult<'de, super::LanguageElementType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::LanguageElementType> {
             use LanguageElementTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
@@ -10392,7 +10097,7 @@ pub mod quick_xml_deserialize {
                 }),
                 DeserializerArtifact::Data(data) => {
                     self.store_content(data)?;
-                    let data = self.finish(reader)?;
+                    let data = self.finish(helper)?;
                     Ok(DeserializerOutput {
                         artifact: DeserializerArtifact::Data(data),
                         event,
@@ -10411,13 +10116,10 @@ pub mod quick_xml_deserialize {
         }
     }
     impl<'de> Deserializer<'de, super::LanguageElementType> for LanguageElementTypeDeserializer {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::LanguageElementType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::LanguageElementType> {
             let (Event::Start(x) | Event::Empty(x)) = &event else {
                 return Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::None,
@@ -10425,38 +10127,35 @@ pub mod quick_xml_deserialize {
                     allow_any: false,
                 });
             };
-            Self::from_bytes_start(reader, x)?.next(reader, event)
+            Self::from_bytes_start(helper, x)?.next(helper, event)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::LanguageElementType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::LanguageElementType> {
             use LanguageElementTypeDeserializerState as S;
             match replace(&mut *self.state__, S::Unknown__) {
                 S::Unknown__ => unreachable!(),
                 S::Init__ => {
-                    let output = ContentDeserializer::init(reader, event)?;
-                    self.handle_content(reader, output)
+                    let output = ContentDeserializer::init(helper, event)?;
+                    self.handle_content(helper, output)
                 }
                 S::Content__(deserializer) => {
-                    let output = deserializer.next(reader, event)?;
-                    self.handle_content(reader, output)
+                    let output = deserializer.next(helper, event)?;
+                    self.handle_content(helper, output)
                 }
             }
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::LanguageElementType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(
+            mut self,
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::LanguageElementType, Error> {
             let state = replace(
                 &mut *self.state__,
                 LanguageElementTypeDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::LanguageElementType {
                 default: self.default,
                 content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
@@ -10476,20 +10175,20 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl DtMlstringDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
             let mut lang: Option<super::DtLang> = None;
-            for attrib in filter_xmlns_attributes(bytes_start) {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    reader.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
                     Some(b"lang")
                 ) {
-                    reader.read_attrib(&mut lang, b"lang", &attrib.value)?;
+                    helper.read_attrib(&mut lang, b"lang", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib_checked(attrib)?;
+                    helper.raise_unexpected_attrib_checked(&attrib)?;
                 }
             }
             Ok(Self {
@@ -10498,16 +10197,13 @@ pub mod quick_xml_deserialize {
                 state__: Box::new(DtMlstringDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: DtMlstringDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             if let DtMlstringDeserializerState::Content__(deserializer) = state {
-                self.store_content(deserializer.finish(reader)?)?;
+                self.store_content(deserializer.finish(helper)?)?;
             }
             Ok(())
         }
@@ -10518,14 +10214,11 @@ pub mod quick_xml_deserialize {
             self.content = Some(value);
             Ok(())
         }
-        fn handle_content<'de, R>(
+        fn handle_content<'de>(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, String>,
-        ) -> DeserializerResult<'de, super::DtMlstring>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::DtMlstring> {
             use DtMlstringDeserializerState as S;
             let DeserializerOutput {
                 artifact,
@@ -10540,7 +10233,7 @@ pub mod quick_xml_deserialize {
                 }),
                 DeserializerArtifact::Data(data) => {
                     self.store_content(data)?;
-                    let data = self.finish(reader)?;
+                    let data = self.finish(helper)?;
                     Ok(DeserializerOutput {
                         artifact: DeserializerArtifact::Data(data),
                         event,
@@ -10559,10 +10252,10 @@ pub mod quick_xml_deserialize {
         }
     }
     impl<'de> Deserializer<'de, super::DtMlstring> for DtMlstringDeserializer {
-        fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, super::DtMlstring>
-        where
-            R: DeserializeReader,
-        {
+        fn init(
+            helper: &mut DeserializeHelper,
+            event: Event<'de>,
+        ) -> DeserializerResult<'de, super::DtMlstring> {
             let (Event::Start(x) | Event::Empty(x)) = &event else {
                 return Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::None,
@@ -10570,35 +10263,29 @@ pub mod quick_xml_deserialize {
                     allow_any: false,
                 });
             };
-            Self::from_bytes_start(reader, x)?.next(reader, event)
+            Self::from_bytes_start(helper, x)?.next(helper, event)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::DtMlstring>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::DtMlstring> {
             use DtMlstringDeserializerState as S;
             match replace(&mut *self.state__, S::Unknown__) {
                 S::Unknown__ => unreachable!(),
                 S::Init__ => {
-                    let output = ContentDeserializer::init(reader, event)?;
-                    self.handle_content(reader, output)
+                    let output = ContentDeserializer::init(helper, event)?;
+                    self.handle_content(helper, output)
                 }
                 S::Content__(deserializer) => {
-                    let output = deserializer.next(reader, event)?;
-                    self.handle_content(reader, output)
+                    let output = deserializer.next(helper, event)?;
+                    self.handle_content(helper, output)
                 }
             }
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::DtMlstring, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(mut self, helper: &mut DeserializeHelper) -> Result<super::DtMlstring, Error> {
             let state = replace(&mut *self.state__, DtMlstringDeserializerState::Unknown__);
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::DtMlstring {
                 lang: self.lang,
                 content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
@@ -10623,45 +10310,41 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl CatalogDatetimeElementTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
             let mut type_: Option<super::CatalogDatetimeType> = None;
-            for attrib in filter_xmlns_attributes(bytes_start) {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    reader.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
                     Some(b"type")
                 ) {
-                    reader.read_attrib(&mut type_, b"type", &attrib.value)?;
+                    helper.read_attrib(&mut type_, b"type", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib_checked(attrib)?;
+                    helper.raise_unexpected_attrib_checked(&attrib)?;
                 }
             }
             Ok(Self {
-                type_: type_
-                    .ok_or_else(|| reader.map_error(ErrorKind::MissingAttribute("type".into())))?,
+                type_: type_.ok_or_else(|| ErrorKind::MissingAttribute("type".into()))?,
                 date: None,
                 time: None,
                 timezone: None,
                 state__: Box::new(CatalogDatetimeElementTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: CatalogDatetimeElementTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             use CatalogDatetimeElementTypeDeserializerState as S;
             match state {
-                S::Date(Some(deserializer)) => self.store_date(deserializer.finish(reader)?)?,
-                S::Time(Some(deserializer)) => self.store_time(deserializer.finish(reader)?)?,
+                S::Date(Some(deserializer)) => self.store_date(deserializer.finish(helper)?)?,
+                S::Time(Some(deserializer)) => self.store_time(deserializer.finish(helper)?)?,
                 S::Timezone(Some(deserializer)) => {
-                    self.store_timezone(deserializer.finish(reader)?)?
+                    self.store_timezone(deserializer.finish(helper)?)?
                 }
                 _ => (),
             }
@@ -10690,15 +10373,12 @@ pub mod quick_xml_deserialize {
             self.timezone = Some(value);
             Ok(())
         }
-        fn handle_date<'de, R>(
+        fn handle_date<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<CatalogDatetimeElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -10715,7 +10395,7 @@ pub mod quick_xml_deserialize {
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -10745,15 +10425,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_time<'de, R>(
+        fn handle_time<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<CatalogDatetimeElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -10765,7 +10442,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -10796,15 +10473,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_timezone<'de, R>(
+        fn handle_timezone<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<CatalogDatetimeElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -10816,7 +10490,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -10850,23 +10524,17 @@ pub mod quick_xml_deserialize {
     impl<'de> Deserializer<'de, super::CatalogDatetimeElementType>
         for CatalogDatetimeElementTypeDeserializer
     {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::CatalogDatetimeElementType>
-        where
-            R: DeserializeReader,
-        {
-            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        ) -> DeserializerResult<'de, super::CatalogDatetimeElementType> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::CatalogDatetimeElementType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::CatalogDatetimeElementType> {
             use CatalogDatetimeElementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -10876,8 +10544,8 @@ pub mod quick_xml_deserialize {
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
                     (S::Date(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_date(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_date(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -10888,8 +10556,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Time(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_time(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_time(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -10900,8 +10568,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Timezone(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_timezone(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_timezone(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -10913,10 +10581,10 @@ pub mod quick_xml_deserialize {
                     }
                     (_, Event::End(_)) => {
                         if let Some(fallback) = fallback.take() {
-                            self.finish_state(reader, fallback)?;
+                            self.finish_state(helper, fallback)?;
                         }
                         return Ok(DeserializerOutput {
-                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            artifact: DeserializerArtifact::Data(self.finish(helper)?),
                             event: DeserializerEvent::None,
                             allow_any: false,
                         });
@@ -10927,13 +10595,13 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::Date(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"DATE",
                             false,
                         )?;
-                        match self.handle_date(reader, output, &mut fallback)? {
+                        match self.handle_date(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -10944,13 +10612,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Time(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"TIME",
                             false,
                         )?;
-                        match self.handle_time(reader, output, &mut fallback)? {
+                        match self.handle_time(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -10961,13 +10629,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Timezone(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"TIMEZONE",
                             false,
                         )?;
-                        match self.handle_timezone(reader, output, &mut fallback)? {
+                        match self.handle_timezone(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -10996,15 +10664,15 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::CatalogDatetimeElementType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(
+            mut self,
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::CatalogDatetimeElementType, Error> {
             let state = replace(
                 &mut *self.state__,
                 CatalogDatetimeElementTypeDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::CatalogDatetimeElementType {
                 type_: self.type_,
                 date: self
@@ -11028,20 +10696,20 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl TypePartyIdDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
             let mut type_: Option<String> = None;
-            for attrib in filter_xmlns_attributes(bytes_start) {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    reader.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
                     Some(b"type")
                 ) {
-                    reader.read_attrib(&mut type_, b"type", &attrib.value)?;
+                    helper.read_attrib(&mut type_, b"type", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib_checked(attrib)?;
+                    helper.raise_unexpected_attrib_checked(&attrib)?;
                 }
             }
             Ok(Self {
@@ -11050,16 +10718,13 @@ pub mod quick_xml_deserialize {
                 state__: Box::new(TypePartyIdDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: TypePartyIdDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             if let TypePartyIdDeserializerState::Content__(deserializer) = state {
-                self.store_content(deserializer.finish(reader)?)?;
+                self.store_content(deserializer.finish(helper)?)?;
             }
             Ok(())
         }
@@ -11070,14 +10735,11 @@ pub mod quick_xml_deserialize {
             self.content = Some(value);
             Ok(())
         }
-        fn handle_content<'de, R>(
+        fn handle_content<'de>(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, String>,
-        ) -> DeserializerResult<'de, super::TypePartyId>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::TypePartyId> {
             use TypePartyIdDeserializerState as S;
             let DeserializerOutput {
                 artifact,
@@ -11092,7 +10754,7 @@ pub mod quick_xml_deserialize {
                 }),
                 DeserializerArtifact::Data(data) => {
                     self.store_content(data)?;
-                    let data = self.finish(reader)?;
+                    let data = self.finish(helper)?;
                     Ok(DeserializerOutput {
                         artifact: DeserializerArtifact::Data(data),
                         event,
@@ -11111,10 +10773,10 @@ pub mod quick_xml_deserialize {
         }
     }
     impl<'de> Deserializer<'de, super::TypePartyId> for TypePartyIdDeserializer {
-        fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, super::TypePartyId>
-        where
-            R: DeserializeReader,
-        {
+        fn init(
+            helper: &mut DeserializeHelper,
+            event: Event<'de>,
+        ) -> DeserializerResult<'de, super::TypePartyId> {
             let (Event::Start(x) | Event::Empty(x)) = &event else {
                 return Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::None,
@@ -11122,35 +10784,29 @@ pub mod quick_xml_deserialize {
                     allow_any: false,
                 });
             };
-            Self::from_bytes_start(reader, x)?.next(reader, event)
+            Self::from_bytes_start(helper, x)?.next(helper, event)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::TypePartyId>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::TypePartyId> {
             use TypePartyIdDeserializerState as S;
             match replace(&mut *self.state__, S::Unknown__) {
                 S::Unknown__ => unreachable!(),
                 S::Init__ => {
-                    let output = ContentDeserializer::init(reader, event)?;
-                    self.handle_content(reader, output)
+                    let output = ContentDeserializer::init(helper, event)?;
+                    self.handle_content(helper, output)
                 }
                 S::Content__(deserializer) => {
-                    let output = deserializer.next(reader, event)?;
-                    self.handle_content(reader, output)
+                    let output = deserializer.next(helper, event)?;
+                    self.handle_content(helper, output)
                 }
             }
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::TypePartyId, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(mut self, helper: &mut DeserializeHelper) -> Result<super::TypePartyId, Error> {
             let state = replace(&mut *self.state__, TypePartyIdDeserializerState::Unknown__);
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::TypePartyId {
                 type_: self.type_,
                 content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
@@ -11185,25 +10841,24 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl SupplierAddressElementTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
             let mut type_: Option<super::SupplierAddressType> = None;
-            for attrib in filter_xmlns_attributes(bytes_start) {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    reader.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
                     Some(b"type")
                 ) {
-                    reader.read_attrib(&mut type_, b"type", &attrib.value)?;
+                    helper.read_attrib(&mut type_, b"type", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib_checked(attrib)?;
+                    helper.raise_unexpected_attrib_checked(&attrib)?;
                 }
             }
             Ok(Self {
-                type_: type_
-                    .ok_or_else(|| reader.map_error(ErrorKind::MissingAttribute("type".into())))?,
+                type_: type_.ok_or_else(|| ErrorKind::MissingAttribute("type".into()))?,
                 contact: Vec::new(),
                 street: Vec::new(),
                 zip: Vec::new(),
@@ -11215,28 +10870,25 @@ pub mod quick_xml_deserialize {
                 state__: Box::new(SupplierAddressElementTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: SupplierAddressElementTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             use SupplierAddressElementTypeDeserializerState as S;
             match state {
                 S::Contact(Some(deserializer)) => {
-                    self.store_contact(deserializer.finish(reader)?)?
+                    self.store_contact(deserializer.finish(helper)?)?
                 }
-                S::Street(Some(deserializer)) => self.store_street(deserializer.finish(reader)?)?,
-                S::Zip(Some(deserializer)) => self.store_zip(deserializer.finish(reader)?)?,
-                S::City(Some(deserializer)) => self.store_city(deserializer.finish(reader)?)?,
+                S::Street(Some(deserializer)) => self.store_street(deserializer.finish(helper)?)?,
+                S::Zip(Some(deserializer)) => self.store_zip(deserializer.finish(helper)?)?,
+                S::City(Some(deserializer)) => self.store_city(deserializer.finish(helper)?)?,
                 S::Country(Some(deserializer)) => {
-                    self.store_country(deserializer.finish(reader)?)?
+                    self.store_country(deserializer.finish(helper)?)?
                 }
-                S::VatId(Some(deserializer)) => self.store_vat_id(deserializer.finish(reader)?)?,
-                S::Email(Some(deserializer)) => self.store_email(deserializer.finish(reader)?)?,
-                S::Url(Some(deserializer)) => self.store_url(deserializer.finish(reader)?)?,
+                S::VatId(Some(deserializer)) => self.store_vat_id(deserializer.finish(helper)?)?,
+                S::Email(Some(deserializer)) => self.store_email(deserializer.finish(helper)?)?,
+                S::Url(Some(deserializer)) => self.store_url(deserializer.finish(helper)?)?,
                 _ => (),
             }
             Ok(())
@@ -11286,15 +10938,12 @@ pub mod quick_xml_deserialize {
             self.url = Some(value);
             Ok(())
         }
-        fn handle_contact<'de, R>(
+        fn handle_contact<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::DtMlstring>,
             fallback: &mut Option<SupplierAddressElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -11306,7 +10955,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -11337,15 +10986,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_street<'de, R>(
+        fn handle_street<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::DtMlstring>,
             fallback: &mut Option<SupplierAddressElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -11357,7 +11003,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -11388,15 +11034,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_zip<'de, R>(
+        fn handle_zip<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::DtMlstring>,
             fallback: &mut Option<SupplierAddressElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -11408,7 +11051,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -11438,15 +11081,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_city<'de, R>(
+        fn handle_city<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::DtMlstring>,
             fallback: &mut Option<SupplierAddressElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -11458,7 +11098,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -11488,15 +11128,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_country<'de, R>(
+        fn handle_country<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::DtMlstring>,
             fallback: &mut Option<SupplierAddressElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -11508,7 +11145,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -11539,15 +11176,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_vat_id<'de, R>(
+        fn handle_vat_id<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<SupplierAddressElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -11559,7 +11193,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -11590,15 +11224,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_email<'de, R>(
+        fn handle_email<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<SupplierAddressElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -11616,7 +11247,7 @@ pub mod quick_xml_deserialize {
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -11646,15 +11277,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_url<'de, R>(
+        fn handle_url<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<SupplierAddressElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -11666,7 +11294,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -11700,23 +11328,17 @@ pub mod quick_xml_deserialize {
     impl<'de> Deserializer<'de, super::SupplierAddressElementType>
         for SupplierAddressElementTypeDeserializer
     {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::SupplierAddressElementType>
-        where
-            R: DeserializeReader,
-        {
-            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        ) -> DeserializerResult<'de, super::SupplierAddressElementType> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::SupplierAddressElementType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::SupplierAddressElementType> {
             use SupplierAddressElementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -11726,8 +11348,8 @@ pub mod quick_xml_deserialize {
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
                     (S::Contact(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_contact(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_contact(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -11738,8 +11360,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Street(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_street(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_street(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -11750,8 +11372,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Zip(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_zip(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_zip(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -11762,8 +11384,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::City(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_city(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_city(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -11774,8 +11396,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Country(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_country(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_country(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -11786,8 +11408,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::VatId(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_vat_id(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_vat_id(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -11798,8 +11420,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Email(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_email(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_email(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -11810,8 +11432,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Url(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_url(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_url(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -11823,10 +11445,10 @@ pub mod quick_xml_deserialize {
                     }
                     (_, Event::End(_)) => {
                         if let Some(fallback) = fallback.take() {
-                            self.finish_state(reader, fallback)?;
+                            self.finish_state(helper, fallback)?;
                         }
                         return Ok(DeserializerOutput {
-                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            artifact: DeserializerArtifact::Data(self.finish(helper)?),
                             event: DeserializerEvent::None,
                             allow_any: false,
                         });
@@ -11837,13 +11459,13 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::Contact(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"CONTACT",
                             false,
                         )?;
-                        match self.handle_contact(reader, output, &mut fallback)? {
+                        match self.handle_contact(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -11854,13 +11476,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Street(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"STREET",
                             false,
                         )?;
-                        match self.handle_street(reader, output, &mut fallback)? {
+                        match self.handle_street(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -11871,13 +11493,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Zip(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"ZIP",
                             false,
                         )?;
-                        match self.handle_zip(reader, output, &mut fallback)? {
+                        match self.handle_zip(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -11888,13 +11510,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::City(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"CITY",
                             false,
                         )?;
-                        match self.handle_city(reader, output, &mut fallback)? {
+                        match self.handle_city(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -11905,13 +11527,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Country(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"COUNTRY",
                             false,
                         )?;
-                        match self.handle_country(reader, output, &mut fallback)? {
+                        match self.handle_country(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -11922,13 +11544,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::VatId(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"VAT_ID",
                             false,
                         )?;
-                        match self.handle_vat_id(reader, output, &mut fallback)? {
+                        match self.handle_vat_id(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -11939,13 +11561,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Email(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"EMAIL",
                             false,
                         )?;
-                        match self.handle_email(reader, output, &mut fallback)? {
+                        match self.handle_email(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -11956,13 +11578,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Url(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"URL",
                             false,
                         )?;
-                        match self.handle_url(reader, output, &mut fallback)? {
+                        match self.handle_url(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -11991,15 +11613,15 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::SupplierAddressElementType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(
+            mut self,
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::SupplierAddressElementType, Error> {
             let state = replace(
                 &mut *self.state__,
                 SupplierAddressElementTypeDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::SupplierAddressElementType {
                 type_: self.type_,
                 contact: self.contact,
@@ -12028,30 +11650,27 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl MimeInfoElementTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
-            for attrib in filter_xmlns_attributes(bytes_start) {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib_checked(attrib)?;
+                helper.raise_unexpected_attrib_checked(&attrib)?;
             }
             Ok(Self {
                 mime: Vec::new(),
                 state__: Box::new(MimeInfoElementTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: MimeInfoElementTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             use MimeInfoElementTypeDeserializerState as S;
             match state {
-                S::Mime(Some(deserializer)) => self.store_mime(deserializer.finish(reader)?)?,
+                S::Mime(Some(deserializer)) => self.store_mime(deserializer.finish(helper)?)?,
                 _ => (),
             }
             Ok(())
@@ -12060,15 +11679,12 @@ pub mod quick_xml_deserialize {
             self.mime.push(value);
             Ok(())
         }
-        fn handle_mime<'de, R>(
+        fn handle_mime<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::MimeElementType>,
             fallback: &mut Option<MimeInfoElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -12085,7 +11701,7 @@ pub mod quick_xml_deserialize {
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -12114,23 +11730,17 @@ pub mod quick_xml_deserialize {
         }
     }
     impl<'de> Deserializer<'de, super::MimeInfoElementType> for MimeInfoElementTypeDeserializer {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::MimeInfoElementType>
-        where
-            R: DeserializeReader,
-        {
-            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        ) -> DeserializerResult<'de, super::MimeInfoElementType> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::MimeInfoElementType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::MimeInfoElementType> {
             use MimeInfoElementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -12140,8 +11750,8 @@ pub mod quick_xml_deserialize {
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
                     (S::Mime(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_mime(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_mime(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -12153,10 +11763,10 @@ pub mod quick_xml_deserialize {
                     }
                     (_, Event::End(_)) => {
                         if let Some(fallback) = fallback.take() {
-                            self.finish_state(reader, fallback)?;
+                            self.finish_state(helper, fallback)?;
                         }
                         return Ok(DeserializerOutput {
-                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            artifact: DeserializerArtifact::Data(self.finish(helper)?),
                             event: DeserializerEvent::None,
                             allow_any: false,
                         });
@@ -12167,13 +11777,13 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::Mime(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"MIME",
                             false,
                         )?;
-                        match self.handle_mime(reader, output, &mut fallback)? {
+                        match self.handle_mime(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -12202,15 +11812,15 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::MimeInfoElementType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(
+            mut self,
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::MimeInfoElementType, Error> {
             let state = replace(
                 &mut *self.state__,
                 MimeInfoElementTypeDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::MimeInfoElementType { mime: self.mime })
         }
     }
@@ -12227,20 +11837,20 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl SupplierPidElementTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
             let mut type_: Option<String> = None;
-            for attrib in filter_xmlns_attributes(bytes_start) {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    reader.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
                     Some(b"type")
                 ) {
-                    reader.read_attrib(&mut type_, b"type", &attrib.value)?;
+                    helper.read_attrib(&mut type_, b"type", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib_checked(attrib)?;
+                    helper.raise_unexpected_attrib_checked(&attrib)?;
                 }
             }
             Ok(Self {
@@ -12249,16 +11859,13 @@ pub mod quick_xml_deserialize {
                 state__: Box::new(SupplierPidElementTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: SupplierPidElementTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             if let SupplierPidElementTypeDeserializerState::Content__(deserializer) = state {
-                self.store_content(deserializer.finish(reader)?)?;
+                self.store_content(deserializer.finish(helper)?)?;
             }
             Ok(())
         }
@@ -12269,14 +11876,11 @@ pub mod quick_xml_deserialize {
             self.content = Some(value);
             Ok(())
         }
-        fn handle_content<'de, R>(
+        fn handle_content<'de>(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, String>,
-        ) -> DeserializerResult<'de, super::SupplierPidElementType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::SupplierPidElementType> {
             use SupplierPidElementTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
@@ -12291,7 +11895,7 @@ pub mod quick_xml_deserialize {
                 }),
                 DeserializerArtifact::Data(data) => {
                     self.store_content(data)?;
-                    let data = self.finish(reader)?;
+                    let data = self.finish(helper)?;
                     Ok(DeserializerOutput {
                         artifact: DeserializerArtifact::Data(data),
                         event,
@@ -12310,13 +11914,10 @@ pub mod quick_xml_deserialize {
         }
     }
     impl<'de> Deserializer<'de, super::SupplierPidElementType> for SupplierPidElementTypeDeserializer {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::SupplierPidElementType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::SupplierPidElementType> {
             let (Event::Start(x) | Event::Empty(x)) = &event else {
                 return Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::None,
@@ -12324,38 +11925,35 @@ pub mod quick_xml_deserialize {
                     allow_any: false,
                 });
             };
-            Self::from_bytes_start(reader, x)?.next(reader, event)
+            Self::from_bytes_start(helper, x)?.next(helper, event)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::SupplierPidElementType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::SupplierPidElementType> {
             use SupplierPidElementTypeDeserializerState as S;
             match replace(&mut *self.state__, S::Unknown__) {
                 S::Unknown__ => unreachable!(),
                 S::Init__ => {
-                    let output = ContentDeserializer::init(reader, event)?;
-                    self.handle_content(reader, output)
+                    let output = ContentDeserializer::init(helper, event)?;
+                    self.handle_content(helper, output)
                 }
                 S::Content__(deserializer) => {
-                    let output = deserializer.next(reader, event)?;
-                    self.handle_content(reader, output)
+                    let output = deserializer.next(helper, event)?;
+                    self.handle_content(helper, output)
                 }
             }
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::SupplierPidElementType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(
+            mut self,
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::SupplierPidElementType, Error> {
             let state = replace(
                 &mut *self.state__,
                 SupplierPidElementTypeDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::SupplierPidElementType {
                 type_: self.type_,
                 content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
@@ -12401,13 +11999,13 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl ProductDetailsElementTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
-            for attrib in filter_xmlns_attributes(bytes_start) {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib_checked(attrib)?;
+                helper.raise_unexpected_attrib_checked(&attrib)?;
             }
             Ok(Self {
                 description_short: Vec::new(),
@@ -12425,51 +12023,48 @@ pub mod quick_xml_deserialize {
                 state__: Box::new(ProductDetailsElementTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: ProductDetailsElementTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             use ProductDetailsElementTypeDeserializerState as S;
             match state {
                 S::DescriptionShort(Some(deserializer)) => {
-                    self.store_description_short(deserializer.finish(reader)?)?
+                    self.store_description_short(deserializer.finish(helper)?)?
                 }
                 S::DescriptionLong(Some(deserializer)) => {
-                    self.store_description_long(deserializer.finish(reader)?)?
+                    self.store_description_long(deserializer.finish(helper)?)?
                 }
                 S::InternationalPid(Some(deserializer)) => {
-                    self.store_international_pid(deserializer.finish(reader)?)?
+                    self.store_international_pid(deserializer.finish(helper)?)?
                 }
                 S::SupplierAltPid(Some(deserializer)) => {
-                    self.store_supplier_alt_pid(deserializer.finish(reader)?)?
+                    self.store_supplier_alt_pid(deserializer.finish(helper)?)?
                 }
                 S::BuyerPid(Some(deserializer)) => {
-                    self.store_buyer_pid(deserializer.finish(reader)?)?
+                    self.store_buyer_pid(deserializer.finish(helper)?)?
                 }
                 S::ManufacturerPid(Some(deserializer)) => {
-                    self.store_manufacturer_pid(deserializer.finish(reader)?)?
+                    self.store_manufacturer_pid(deserializer.finish(helper)?)?
                 }
                 S::ManufacturerName(Some(deserializer)) => {
-                    self.store_manufacturer_name(deserializer.finish(reader)?)?
+                    self.store_manufacturer_name(deserializer.finish(helper)?)?
                 }
                 S::ManufacturerTypeDescr(Some(deserializer)) => {
-                    self.store_manufacturer_type_descr(deserializer.finish(reader)?)?
+                    self.store_manufacturer_type_descr(deserializer.finish(helper)?)?
                 }
                 S::SpecialTreatmentClass(Some(deserializer)) => {
-                    self.store_special_treatment_class(deserializer.finish(reader)?)?
+                    self.store_special_treatment_class(deserializer.finish(helper)?)?
                 }
                 S::Keyword(Some(deserializer)) => {
-                    self.store_keyword(deserializer.finish(reader)?)?
+                    self.store_keyword(deserializer.finish(helper)?)?
                 }
                 S::Remarks(Some(deserializer)) => {
-                    self.store_remarks(deserializer.finish(reader)?)?
+                    self.store_remarks(deserializer.finish(helper)?)?
                 }
                 S::ProductStatus(Some(deserializer)) => {
-                    self.store_product_status(deserializer.finish(reader)?)?
+                    self.store_product_status(deserializer.finish(helper)?)?
                 }
                 _ => (),
             }
@@ -12547,15 +12142,12 @@ pub mod quick_xml_deserialize {
             self.product_status.push(value);
             Ok(())
         }
-        fn handle_description_short<'de, R>(
+        fn handle_description_short<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::DtMlstring>,
             fallback: &mut Option<ProductDetailsElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -12576,7 +12168,7 @@ pub mod quick_xml_deserialize {
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -12609,15 +12201,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_description_long<'de, R>(
+        fn handle_description_long<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::DtMlstring>,
             fallback: &mut Option<ProductDetailsElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -12631,7 +12220,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -12664,15 +12253,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_international_pid<'de, R>(
+        fn handle_international_pid<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::InternationalPidElementType>,
             fallback: &mut Option<ProductDetailsElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -12686,7 +12272,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -12719,15 +12305,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_supplier_alt_pid<'de, R>(
+        fn handle_supplier_alt_pid<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<ProductDetailsElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -12741,7 +12324,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -12773,15 +12356,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_buyer_pid<'de, R>(
+        fn handle_buyer_pid<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::BuyerPidElementType>,
             fallback: &mut Option<ProductDetailsElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -12793,7 +12373,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -12824,15 +12404,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_manufacturer_pid<'de, R>(
+        fn handle_manufacturer_pid<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<ProductDetailsElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -12846,7 +12423,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -12879,15 +12456,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_manufacturer_name<'de, R>(
+        fn handle_manufacturer_name<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<ProductDetailsElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -12902,7 +12476,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -12937,15 +12511,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_manufacturer_type_descr<'de, R>(
+        fn handle_manufacturer_type_descr<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::DtMlstring>,
             fallback: &mut Option<ProductDetailsElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -12960,7 +12531,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -12995,15 +12566,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_special_treatment_class<'de, R>(
+        fn handle_special_treatment_class<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::SpecialTreatmentClassElementType>,
             fallback: &mut Option<ProductDetailsElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -13017,7 +12585,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -13052,15 +12620,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_keyword<'de, R>(
+        fn handle_keyword<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::DtMlstring>,
             fallback: &mut Option<ProductDetailsElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -13072,7 +12637,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -13103,15 +12668,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_remarks<'de, R>(
+        fn handle_remarks<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::RemarksElementType>,
             fallback: &mut Option<ProductDetailsElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -13123,7 +12685,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -13154,15 +12716,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_product_status<'de, R>(
+        fn handle_product_status<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::ProductStatusElementType>,
             fallback: &mut Option<ProductDetailsElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -13176,7 +12735,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -13212,23 +12771,17 @@ pub mod quick_xml_deserialize {
     impl<'de> Deserializer<'de, super::ProductDetailsElementType>
         for ProductDetailsElementTypeDeserializer
     {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::ProductDetailsElementType>
-        where
-            R: DeserializeReader,
-        {
-            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        ) -> DeserializerResult<'de, super::ProductDetailsElementType> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::ProductDetailsElementType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::ProductDetailsElementType> {
             use ProductDetailsElementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -13238,8 +12791,8 @@ pub mod quick_xml_deserialize {
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
                     (S::DescriptionShort(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_description_short(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_description_short(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -13250,8 +12803,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::DescriptionLong(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_description_long(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_description_long(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -13262,8 +12815,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::InternationalPid(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_international_pid(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_international_pid(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -13274,8 +12827,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::SupplierAltPid(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_supplier_alt_pid(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_supplier_alt_pid(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -13286,8 +12839,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::BuyerPid(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_buyer_pid(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_buyer_pid(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -13298,8 +12851,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::ManufacturerPid(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_manufacturer_pid(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_manufacturer_pid(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -13310,8 +12863,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::ManufacturerName(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_manufacturer_name(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_manufacturer_name(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -13322,8 +12875,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::ManufacturerTypeDescr(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_manufacturer_type_descr(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_manufacturer_type_descr(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -13334,8 +12887,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::SpecialTreatmentClass(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_special_treatment_class(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_special_treatment_class(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -13346,8 +12899,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Keyword(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_keyword(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_keyword(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -13358,8 +12911,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Remarks(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_remarks(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_remarks(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -13370,8 +12923,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::ProductStatus(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_product_status(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_product_status(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -13383,10 +12936,10 @@ pub mod quick_xml_deserialize {
                     }
                     (_, Event::End(_)) => {
                         if let Some(fallback) = fallback.take() {
-                            self.finish_state(reader, fallback)?;
+                            self.finish_state(helper, fallback)?;
                         }
                         return Ok(DeserializerOutput {
-                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            artifact: DeserializerArtifact::Data(self.finish(helper)?),
                             event: DeserializerEvent::None,
                             allow_any: false,
                         });
@@ -13398,13 +12951,13 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::DescriptionShort(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"DESCRIPTION_SHORT",
                             false,
                         )?;
-                        match self.handle_description_short(reader, output, &mut fallback)? {
+                        match self.handle_description_short(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -13415,13 +12968,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::DescriptionLong(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"DESCRIPTION_LONG",
                             false,
                         )?;
-                        match self.handle_description_long(reader, output, &mut fallback)? {
+                        match self.handle_description_long(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -13432,13 +12985,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::InternationalPid(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"INTERNATIONAL_PID",
                             false,
                         )?;
-                        match self.handle_international_pid(reader, output, &mut fallback)? {
+                        match self.handle_international_pid(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -13449,13 +13002,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::SupplierAltPid(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"SUPPLIER_ALT_PID",
                             false,
                         )?;
-                        match self.handle_supplier_alt_pid(reader, output, &mut fallback)? {
+                        match self.handle_supplier_alt_pid(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -13466,13 +13019,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::BuyerPid(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"BUYER_PID",
                             false,
                         )?;
-                        match self.handle_buyer_pid(reader, output, &mut fallback)? {
+                        match self.handle_buyer_pid(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -13483,13 +13036,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::ManufacturerPid(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"MANUFACTURER_PID",
                             false,
                         )?;
-                        match self.handle_manufacturer_pid(reader, output, &mut fallback)? {
+                        match self.handle_manufacturer_pid(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -13500,13 +13053,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::ManufacturerName(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"MANUFACTURER_NAME",
                             false,
                         )?;
-                        match self.handle_manufacturer_name(reader, output, &mut fallback)? {
+                        match self.handle_manufacturer_name(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -13520,13 +13073,13 @@ pub mod quick_xml_deserialize {
                         S::ManufacturerTypeDescr(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"MANUFACTURER_TYPE_DESCR",
                             false,
                         )?;
-                        match self.handle_manufacturer_type_descr(reader, output, &mut fallback)? {
+                        match self.handle_manufacturer_type_descr(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -13540,13 +13093,13 @@ pub mod quick_xml_deserialize {
                         S::SpecialTreatmentClass(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"SPECIAL_TREATMENT_CLASS",
                             false,
                         )?;
-                        match self.handle_special_treatment_class(reader, output, &mut fallback)? {
+                        match self.handle_special_treatment_class(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -13557,13 +13110,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Keyword(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"KEYWORD",
                             false,
                         )?;
-                        match self.handle_keyword(reader, output, &mut fallback)? {
+                        match self.handle_keyword(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -13574,13 +13127,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Remarks(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"REMARKS",
                             false,
                         )?;
-                        match self.handle_remarks(reader, output, &mut fallback)? {
+                        match self.handle_remarks(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -13591,13 +13144,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::ProductStatus(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"PRODUCT_STATUS",
                             false,
                         )?;
-                        match self.handle_product_status(reader, output, &mut fallback)? {
+                        match self.handle_product_status(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -13626,15 +13179,15 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::ProductDetailsElementType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(
+            mut self,
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::ProductDetailsElementType, Error> {
             let state = replace(
                 &mut *self.state__,
                 ProductDetailsElementTypeDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::ProductDetailsElementType {
                 description_short: self.description_short,
                 description_long: self.description_long,
@@ -13670,13 +13223,13 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl ProductFeaturesElementTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
-            for attrib in filter_xmlns_attributes(bytes_start) {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib_checked(attrib)?;
+                helper.raise_unexpected_attrib_checked(&attrib)?;
             }
             Ok(Self {
                 reference_feature_system_name: None,
@@ -13685,24 +13238,21 @@ pub mod quick_xml_deserialize {
                 state__: Box::new(ProductFeaturesElementTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: ProductFeaturesElementTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             use ProductFeaturesElementTypeDeserializerState as S;
             match state {
                 S::ReferenceFeatureSystemName(Some(deserializer)) => {
-                    self.store_reference_feature_system_name(deserializer.finish(reader)?)?
+                    self.store_reference_feature_system_name(deserializer.finish(helper)?)?
                 }
                 S::ReferenceFeatureGroupId(Some(deserializer)) => {
-                    self.store_reference_feature_group_id(deserializer.finish(reader)?)?
+                    self.store_reference_feature_group_id(deserializer.finish(helper)?)?
                 }
                 S::Feature(Some(deserializer)) => {
-                    self.store_feature(deserializer.finish(reader)?)?
+                    self.store_feature(deserializer.finish(helper)?)?
                 }
                 _ => (),
             }
@@ -13733,15 +13283,12 @@ pub mod quick_xml_deserialize {
             self.feature.push(value);
             Ok(())
         }
-        fn handle_reference_feature_system_name<'de, R>(
+        fn handle_reference_feature_system_name<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<ProductFeaturesElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -13766,7 +13313,7 @@ pub mod quick_xml_deserialize {
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -13791,15 +13338,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_reference_feature_group_id<'de, R>(
+        fn handle_reference_feature_group_id<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::TypeClassificationGroupId>,
             fallback: &mut Option<ProductFeaturesElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -13819,7 +13363,7 @@ pub mod quick_xml_deserialize {
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -13844,15 +13388,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_feature<'de, R>(
+        fn handle_feature<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::FeatureElementType>,
             fallback: &mut Option<ProductFeaturesElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -13870,7 +13411,7 @@ pub mod quick_xml_deserialize {
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -13905,23 +13446,17 @@ pub mod quick_xml_deserialize {
     impl<'de> Deserializer<'de, super::ProductFeaturesElementType>
         for ProductFeaturesElementTypeDeserializer
     {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::ProductFeaturesElementType>
-        where
-            R: DeserializeReader,
-        {
-            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        ) -> DeserializerResult<'de, super::ProductFeaturesElementType> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::ProductFeaturesElementType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::ProductFeaturesElementType> {
             use ProductFeaturesElementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -13931,9 +13466,9 @@ pub mod quick_xml_deserialize {
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
                     (S::ReferenceFeatureSystemName(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
+                        let output = deserializer.next(helper, event)?;
                         match self.handle_reference_feature_system_name(
-                            reader,
+                            helper,
                             output,
                             &mut fallback,
                         )? {
@@ -13947,9 +13482,9 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::ReferenceFeatureGroupId(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
+                        let output = deserializer.next(helper, event)?;
                         match self.handle_reference_feature_group_id(
-                            reader,
+                            helper,
                             output,
                             &mut fallback,
                         )? {
@@ -13963,8 +13498,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Feature(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_feature(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_feature(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -13976,10 +13511,10 @@ pub mod quick_xml_deserialize {
                     }
                     (_, Event::End(_)) => {
                         if let Some(fallback) = fallback.take() {
-                            self.finish_state(reader, fallback)?;
+                            self.finish_state(helper, fallback)?;
                         }
                         return Ok(DeserializerOutput {
-                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            artifact: DeserializerArtifact::Data(self.finish(helper)?),
                             event: DeserializerEvent::None,
                             allow_any: false,
                         });
@@ -13996,14 +13531,14 @@ pub mod quick_xml_deserialize {
                         S::ReferenceFeatureSystemName(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"REFERENCE_FEATURE_SYSTEM_NAME",
                             false,
                         )?;
                         match self.handle_reference_feature_system_name(
-                            reader,
+                            helper,
                             output,
                             &mut fallback,
                         )? {
@@ -14020,14 +13555,14 @@ pub mod quick_xml_deserialize {
                         S::ReferenceFeatureGroupId(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"REFERENCE_FEATURE_GROUP_ID",
                             false,
                         )?;
                         match self.handle_reference_feature_group_id(
-                            reader,
+                            helper,
                             output,
                             &mut fallback,
                         )? {
@@ -14041,13 +13576,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Feature(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"FEATURE",
                             false,
                         )?;
-                        match self.handle_feature(reader, output, &mut fallback)? {
+                        match self.handle_feature(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -14076,15 +13611,15 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::ProductFeaturesElementType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(
+            mut self,
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::ProductFeaturesElementType, Error> {
             let state = replace(
                 &mut *self.state__,
                 ProductFeaturesElementTypeDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::ProductFeaturesElementType {
                 reference_feature_system_name: self.reference_feature_system_name.ok_or_else(
                     || ErrorKind::MissingElement("REFERENCE_FEATURE_SYSTEM_NAME".into()),
@@ -14119,13 +13654,13 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl ProductOrderDetailsElementTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
-            for attrib in filter_xmlns_attributes(bytes_start) {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib_checked(attrib)?;
+                helper.raise_unexpected_attrib_checked(&attrib)?;
             }
             Ok(Self {
                 order_unit: None,
@@ -14137,33 +13672,30 @@ pub mod quick_xml_deserialize {
                 state__: Box::new(ProductOrderDetailsElementTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: ProductOrderDetailsElementTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             use ProductOrderDetailsElementTypeDeserializerState as S;
             match state {
                 S::OrderUnit(Some(deserializer)) => {
-                    self.store_order_unit(deserializer.finish(reader)?)?
+                    self.store_order_unit(deserializer.finish(helper)?)?
                 }
                 S::ContentUnit(Some(deserializer)) => {
-                    self.store_content_unit(deserializer.finish(reader)?)?
+                    self.store_content_unit(deserializer.finish(helper)?)?
                 }
                 S::NoCuPerOu(Some(deserializer)) => {
-                    self.store_no_cu_per_ou(deserializer.finish(reader)?)?
+                    self.store_no_cu_per_ou(deserializer.finish(helper)?)?
                 }
                 S::PriceQuantity(Some(deserializer)) => {
-                    self.store_price_quantity(deserializer.finish(reader)?)?
+                    self.store_price_quantity(deserializer.finish(helper)?)?
                 }
                 S::QuantityMin(Some(deserializer)) => {
-                    self.store_quantity_min(deserializer.finish(reader)?)?
+                    self.store_quantity_min(deserializer.finish(helper)?)?
                 }
                 S::QuantityInterval(Some(deserializer)) => {
-                    self.store_quantity_interval(deserializer.finish(reader)?)?
+                    self.store_quantity_interval(deserializer.finish(helper)?)?
                 }
                 _ => (),
             }
@@ -14223,15 +13755,12 @@ pub mod quick_xml_deserialize {
             self.quantity_interval = Some(value);
             Ok(())
         }
-        fn handle_order_unit<'de, R>(
+        fn handle_order_unit<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::DtPunit>,
             fallback: &mut Option<ProductOrderDetailsElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -14252,7 +13781,7 @@ pub mod quick_xml_deserialize {
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -14285,15 +13814,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_content_unit<'de, R>(
+        fn handle_content_unit<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::DtPunit>,
             fallback: &mut Option<ProductOrderDetailsElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -14314,7 +13840,7 @@ pub mod quick_xml_deserialize {
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -14347,15 +13873,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_no_cu_per_ou<'de, R>(
+        fn handle_no_cu_per_ou<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, f64>,
             fallback: &mut Option<ProductOrderDetailsElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -14370,7 +13893,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -14405,15 +13928,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_price_quantity<'de, R>(
+        fn handle_price_quantity<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, f64>,
             fallback: &mut Option<ProductOrderDetailsElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -14427,7 +13947,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -14460,15 +13980,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_quantity_min<'de, R>(
+        fn handle_quantity_min<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, f32>,
             fallback: &mut Option<ProductOrderDetailsElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -14483,7 +14000,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -14518,15 +14035,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_quantity_interval<'de, R>(
+        fn handle_quantity_interval<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, f32>,
             fallback: &mut Option<ProductOrderDetailsElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -14540,7 +14054,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -14575,23 +14089,17 @@ pub mod quick_xml_deserialize {
     impl<'de> Deserializer<'de, super::ProductOrderDetailsElementType>
         for ProductOrderDetailsElementTypeDeserializer
     {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::ProductOrderDetailsElementType>
-        where
-            R: DeserializeReader,
-        {
-            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        ) -> DeserializerResult<'de, super::ProductOrderDetailsElementType> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::ProductOrderDetailsElementType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::ProductOrderDetailsElementType> {
             use ProductOrderDetailsElementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -14601,8 +14109,8 @@ pub mod quick_xml_deserialize {
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
                     (S::OrderUnit(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_order_unit(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_order_unit(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -14613,8 +14121,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::ContentUnit(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_content_unit(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_content_unit(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -14625,8 +14133,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::NoCuPerOu(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_no_cu_per_ou(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_no_cu_per_ou(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -14637,8 +14145,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::PriceQuantity(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_price_quantity(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_price_quantity(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -14649,8 +14157,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::QuantityMin(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_quantity_min(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_quantity_min(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -14661,8 +14169,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::QuantityInterval(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_quantity_interval(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_quantity_interval(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -14674,10 +14182,10 @@ pub mod quick_xml_deserialize {
                     }
                     (_, Event::End(_)) => {
                         if let Some(fallback) = fallback.take() {
-                            self.finish_state(reader, fallback)?;
+                            self.finish_state(helper, fallback)?;
                         }
                         return Ok(DeserializerOutput {
-                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            artifact: DeserializerArtifact::Data(self.finish(helper)?),
                             event: DeserializerEvent::None,
                             allow_any: false,
                         });
@@ -14689,13 +14197,13 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::OrderUnit(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"ORDER_UNIT",
                             false,
                         )?;
-                        match self.handle_order_unit(reader, output, &mut fallback)? {
+                        match self.handle_order_unit(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -14706,13 +14214,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::ContentUnit(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"CONTENT_UNIT",
                             false,
                         )?;
-                        match self.handle_content_unit(reader, output, &mut fallback)? {
+                        match self.handle_content_unit(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -14723,13 +14231,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::NoCuPerOu(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"NO_CU_PER_OU",
                             false,
                         )?;
-                        match self.handle_no_cu_per_ou(reader, output, &mut fallback)? {
+                        match self.handle_no_cu_per_ou(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -14740,13 +14248,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::PriceQuantity(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"PRICE_QUANTITY",
                             false,
                         )?;
-                        match self.handle_price_quantity(reader, output, &mut fallback)? {
+                        match self.handle_price_quantity(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -14757,13 +14265,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::QuantityMin(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"QUANTITY_MIN",
                             false,
                         )?;
-                        match self.handle_quantity_min(reader, output, &mut fallback)? {
+                        match self.handle_quantity_min(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -14774,13 +14282,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::QuantityInterval(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"QUANTITY_INTERVAL",
                             false,
                         )?;
-                        match self.handle_quantity_interval(reader, output, &mut fallback)? {
+                        match self.handle_quantity_interval(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -14809,15 +14317,15 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::ProductOrderDetailsElementType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(
+            mut self,
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::ProductOrderDetailsElementType, Error> {
             let state = replace(
                 &mut *self.state__,
                 ProductOrderDetailsElementTypeDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::ProductOrderDetailsElementType {
                 order_unit: self
                     .order_unit
@@ -14853,13 +14361,13 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl ProductPriceDetailsElementTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
-            for attrib in filter_xmlns_attributes(bytes_start) {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib_checked(attrib)?;
+                helper.raise_unexpected_attrib_checked(&attrib)?;
             }
             Ok(Self {
                 datetime: Vec::new(),
@@ -14868,24 +14376,21 @@ pub mod quick_xml_deserialize {
                 state__: Box::new(ProductPriceDetailsElementTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: ProductPriceDetailsElementTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             use ProductPriceDetailsElementTypeDeserializerState as S;
             match state {
                 S::Datetime(Some(deserializer)) => {
-                    self.store_datetime(deserializer.finish(reader)?)?
+                    self.store_datetime(deserializer.finish(helper)?)?
                 }
                 S::DailyPrice(Some(deserializer)) => {
-                    self.store_daily_price(deserializer.finish(reader)?)?
+                    self.store_daily_price(deserializer.finish(helper)?)?
                 }
                 S::ProductPrice(Some(deserializer)) => {
-                    self.store_product_price(deserializer.finish(reader)?)?
+                    self.store_product_price(deserializer.finish(helper)?)?
                 }
                 _ => (),
             }
@@ -14914,15 +14419,12 @@ pub mod quick_xml_deserialize {
             self.product_price.push(value);
             Ok(())
         }
-        fn handle_datetime<'de, R>(
+        fn handle_datetime<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::ProductPriceDetailsDatetimeElementType>,
             fallback: &mut Option<ProductPriceDetailsElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -14942,7 +14444,7 @@ pub mod quick_xml_deserialize {
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -14988,15 +14490,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_daily_price<'de, R>(
+        fn handle_daily_price<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<ProductPriceDetailsElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -15010,7 +14509,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -15043,15 +14542,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_product_price<'de, R>(
+        fn handle_product_price<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::ProductPriceElementType>,
             fallback: &mut Option<ProductPriceDetailsElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -15071,7 +14567,7 @@ pub mod quick_xml_deserialize {
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -15108,23 +14604,17 @@ pub mod quick_xml_deserialize {
     impl<'de> Deserializer<'de, super::ProductPriceDetailsElementType>
         for ProductPriceDetailsElementTypeDeserializer
     {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::ProductPriceDetailsElementType>
-        where
-            R: DeserializeReader,
-        {
-            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        ) -> DeserializerResult<'de, super::ProductPriceDetailsElementType> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::ProductPriceDetailsElementType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::ProductPriceDetailsElementType> {
             use ProductPriceDetailsElementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -15134,8 +14624,8 @@ pub mod quick_xml_deserialize {
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
                     (S::Datetime(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_datetime(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_datetime(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -15146,8 +14636,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::DailyPrice(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_daily_price(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_daily_price(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -15158,8 +14648,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::ProductPrice(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_product_price(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_product_price(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -15171,10 +14661,10 @@ pub mod quick_xml_deserialize {
                     }
                     (_, Event::End(_)) => {
                         if let Some(fallback) = fallback.take() {
-                            self.finish_state(reader, fallback)?;
+                            self.finish_state(helper, fallback)?;
                         }
                         return Ok(DeserializerOutput {
-                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            artifact: DeserializerArtifact::Data(self.finish(helper)?),
                             event: DeserializerEvent::None,
                             allow_any: false,
                         });
@@ -15186,13 +14676,13 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::Datetime(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"DATETIME",
                             false,
                         )?;
-                        match self.handle_datetime(reader, output, &mut fallback)? {
+                        match self.handle_datetime(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -15203,13 +14693,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::DailyPrice(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"DAILY_PRICE",
                             false,
                         )?;
-                        match self.handle_daily_price(reader, output, &mut fallback)? {
+                        match self.handle_daily_price(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -15220,13 +14710,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::ProductPrice(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"PRODUCT_PRICE",
                             false,
                         )?;
-                        match self.handle_product_price(reader, output, &mut fallback)? {
+                        match self.handle_product_price(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -15255,15 +14745,15 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::ProductPriceDetailsElementType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(
+            mut self,
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::ProductPriceDetailsElementType, Error> {
             let state = replace(
                 &mut *self.state__,
                 ProductPriceDetailsElementTypeDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::ProductPriceDetailsElementType {
                 datetime: self.datetime,
                 daily_price: self.daily_price,
@@ -15301,13 +14791,13 @@ pub mod quick_xml_deserialize {
     enum UdxProductDeserializerState {
         Init__ , UdxEdxfManufacturerAcronym (Option << String as WithDeserializer > :: Deserializer >) , UdxEdxfDescriptionVeryShort (Option << super :: DtMlstring as WithDeserializer > :: Deserializer >) , UdxEdxfBrandName (Option << String as WithDeserializer > :: Deserializer >) , UdxEdxfTenderText (Option << super :: DtMlstring as WithDeserializer > :: Deserializer >) , UdxEdxfValidFrom (Option << String as WithDeserializer > :: Deserializer >) , UdxEdxfExpirationDate (Option << String as WithDeserializer > :: Deserializer >) , UdxEdxfDiscountGroup (Option << super :: UdxEdxfDiscountGroupElementType as WithDeserializer > :: Deserializer >) , UdxEdxfBonusGroupSupplier (Option << String as WithDeserializer > :: Deserializer >) , UdxEdxfPkwiu (Option << String as WithDeserializer > :: Deserializer >) , UdxEdxfDeclaration (Option << super :: UdxEdxfDeclarationElementType as WithDeserializer > :: Deserializer >) , UdxEdxfAdditionalFactors (Option << super :: UdxEdxfAdditionalFactorsElementType as WithDeserializer > :: Deserializer >) , UdxEdxfProductToStock (Option << String as WithDeserializer > :: Deserializer >) , UdxEdxfProductSeries (Option << super :: DtMlstring as WithDeserializer > :: Deserializer >) , UdxEdxfProductVariation (Option << super :: DtMlstring as WithDeserializer > :: Deserializer >) , UdxEdxfAtReverseChargeInfo (Option << String as WithDeserializer > :: Deserializer >) , UdxEdxfCountryBranchNumbers (Option << super :: UdxEdxfCountryBranchNumbersElementType as WithDeserializer > :: Deserializer >) , UdxEdxfCountryBranchSupplierIds (Option << super :: UdxEdxfCountryBranchSupplierIdsElementType as WithDeserializer > :: Deserializer >) , UdxEdxfPackingUnits (Option << super :: UdxEdxfPackingUnitsElementType as WithDeserializer > :: Deserializer >) , UdxEdxfProductLogisticDetails (Option << super :: UdxEdxfProductLogisticDetailsElementType as WithDeserializer > :: Deserializer >) , UdxEdxfReach (Option << super :: UdxEdxfReachElementType as WithDeserializer > :: Deserializer >) , UdxEdxfSurchargeList (Option << super :: UdxEdxfSurchargeListElementType as WithDeserializer > :: Deserializer >) , Done__ , Unknown__ , }
     impl UdxProductDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
-            for attrib in filter_xmlns_attributes(bytes_start) {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib_checked(attrib)?;
+                helper.raise_unexpected_attrib_checked(&attrib)?;
             }
             Ok(Self {
                 udx_edxf_manufacturer_acronym: None,
@@ -15334,78 +14824,75 @@ pub mod quick_xml_deserialize {
                 state__: Box::new(UdxProductDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: UdxProductDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             use UdxProductDeserializerState as S;
             match state {
                 S::UdxEdxfManufacturerAcronym(Some(deserializer)) => {
-                    self.store_udx_edxf_manufacturer_acronym(deserializer.finish(reader)?)?
+                    self.store_udx_edxf_manufacturer_acronym(deserializer.finish(helper)?)?
                 }
                 S::UdxEdxfDescriptionVeryShort(Some(deserializer)) => {
-                    self.store_udx_edxf_description_very_short(deserializer.finish(reader)?)?
+                    self.store_udx_edxf_description_very_short(deserializer.finish(helper)?)?
                 }
                 S::UdxEdxfBrandName(Some(deserializer)) => {
-                    self.store_udx_edxf_brand_name(deserializer.finish(reader)?)?
+                    self.store_udx_edxf_brand_name(deserializer.finish(helper)?)?
                 }
                 S::UdxEdxfTenderText(Some(deserializer)) => {
-                    self.store_udx_edxf_tender_text(deserializer.finish(reader)?)?
+                    self.store_udx_edxf_tender_text(deserializer.finish(helper)?)?
                 }
                 S::UdxEdxfValidFrom(Some(deserializer)) => {
-                    self.store_udx_edxf_valid_from(deserializer.finish(reader)?)?
+                    self.store_udx_edxf_valid_from(deserializer.finish(helper)?)?
                 }
                 S::UdxEdxfExpirationDate(Some(deserializer)) => {
-                    self.store_udx_edxf_expiration_date(deserializer.finish(reader)?)?
+                    self.store_udx_edxf_expiration_date(deserializer.finish(helper)?)?
                 }
                 S::UdxEdxfDiscountGroup(Some(deserializer)) => {
-                    self.store_udx_edxf_discount_group(deserializer.finish(reader)?)?
+                    self.store_udx_edxf_discount_group(deserializer.finish(helper)?)?
                 }
                 S::UdxEdxfBonusGroupSupplier(Some(deserializer)) => {
-                    self.store_udx_edxf_bonus_group_supplier(deserializer.finish(reader)?)?
+                    self.store_udx_edxf_bonus_group_supplier(deserializer.finish(helper)?)?
                 }
                 S::UdxEdxfPkwiu(Some(deserializer)) => {
-                    self.store_udx_edxf_pkwiu(deserializer.finish(reader)?)?
+                    self.store_udx_edxf_pkwiu(deserializer.finish(helper)?)?
                 }
                 S::UdxEdxfDeclaration(Some(deserializer)) => {
-                    self.store_udx_edxf_declaration(deserializer.finish(reader)?)?
+                    self.store_udx_edxf_declaration(deserializer.finish(helper)?)?
                 }
                 S::UdxEdxfAdditionalFactors(Some(deserializer)) => {
-                    self.store_udx_edxf_additional_factors(deserializer.finish(reader)?)?
+                    self.store_udx_edxf_additional_factors(deserializer.finish(helper)?)?
                 }
                 S::UdxEdxfProductToStock(Some(deserializer)) => {
-                    self.store_udx_edxf_product_to_stock(deserializer.finish(reader)?)?
+                    self.store_udx_edxf_product_to_stock(deserializer.finish(helper)?)?
                 }
                 S::UdxEdxfProductSeries(Some(deserializer)) => {
-                    self.store_udx_edxf_product_series(deserializer.finish(reader)?)?
+                    self.store_udx_edxf_product_series(deserializer.finish(helper)?)?
                 }
                 S::UdxEdxfProductVariation(Some(deserializer)) => {
-                    self.store_udx_edxf_product_variation(deserializer.finish(reader)?)?
+                    self.store_udx_edxf_product_variation(deserializer.finish(helper)?)?
                 }
                 S::UdxEdxfAtReverseChargeInfo(Some(deserializer)) => {
-                    self.store_udx_edxf_at_reverse_charge_info(deserializer.finish(reader)?)?
+                    self.store_udx_edxf_at_reverse_charge_info(deserializer.finish(helper)?)?
                 }
                 S::UdxEdxfCountryBranchNumbers(Some(deserializer)) => {
-                    self.store_udx_edxf_country_branch_numbers(deserializer.finish(reader)?)?
+                    self.store_udx_edxf_country_branch_numbers(deserializer.finish(helper)?)?
                 }
                 S::UdxEdxfCountryBranchSupplierIds(Some(deserializer)) => {
-                    self.store_udx_edxf_country_branch_supplier_ids(deserializer.finish(reader)?)?
+                    self.store_udx_edxf_country_branch_supplier_ids(deserializer.finish(helper)?)?
                 }
                 S::UdxEdxfPackingUnits(Some(deserializer)) => {
-                    self.store_udx_edxf_packing_units(deserializer.finish(reader)?)?
+                    self.store_udx_edxf_packing_units(deserializer.finish(helper)?)?
                 }
                 S::UdxEdxfProductLogisticDetails(Some(deserializer)) => {
-                    self.store_udx_edxf_product_logistic_details(deserializer.finish(reader)?)?
+                    self.store_udx_edxf_product_logistic_details(deserializer.finish(helper)?)?
                 }
                 S::UdxEdxfReach(Some(deserializer)) => {
-                    self.store_udx_edxf_reach(deserializer.finish(reader)?)?
+                    self.store_udx_edxf_reach(deserializer.finish(helper)?)?
                 }
                 S::UdxEdxfSurchargeList(Some(deserializer)) => {
-                    self.store_udx_edxf_surcharge_list(deserializer.finish(reader)?)?
+                    self.store_udx_edxf_surcharge_list(deserializer.finish(helper)?)?
                 }
                 _ => (),
             }
@@ -15608,15 +15095,12 @@ pub mod quick_xml_deserialize {
             self.udx_edxf_surcharge_list = Some(value);
             Ok(())
         }
-        fn handle_udx_edxf_manufacturer_acronym<'de, R>(
+        fn handle_udx_edxf_manufacturer_acronym<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<UdxProductDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -15630,7 +15114,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -15661,15 +15145,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_udx_edxf_description_very_short<'de, R>(
+        fn handle_udx_edxf_description_very_short<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::DtMlstring>,
             fallback: &mut Option<UdxProductDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -15683,7 +15164,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -15715,15 +15196,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_udx_edxf_brand_name<'de, R>(
+        fn handle_udx_edxf_brand_name<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<UdxProductDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -15735,7 +15213,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -15762,15 +15240,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_udx_edxf_tender_text<'de, R>(
+        fn handle_udx_edxf_tender_text<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::DtMlstring>,
             fallback: &mut Option<UdxProductDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -15782,7 +15257,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -15809,15 +15284,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_udx_edxf_valid_from<'de, R>(
+        fn handle_udx_edxf_valid_from<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<UdxProductDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -15829,7 +15301,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -15857,15 +15329,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_udx_edxf_expiration_date<'de, R>(
+        fn handle_udx_edxf_expiration_date<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<UdxProductDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -15877,7 +15346,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -15907,15 +15376,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_udx_edxf_discount_group<'de, R>(
+        fn handle_udx_edxf_discount_group<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::UdxEdxfDiscountGroupElementType>,
             fallback: &mut Option<UdxProductDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -15927,7 +15393,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -15958,15 +15424,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_udx_edxf_bonus_group_supplier<'de, R>(
+        fn handle_udx_edxf_bonus_group_supplier<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<UdxProductDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -15979,7 +15442,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -16009,15 +15472,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_udx_edxf_pkwiu<'de, R>(
+        fn handle_udx_edxf_pkwiu<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<UdxProductDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -16029,7 +15489,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -16056,15 +15516,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_udx_edxf_declaration<'de, R>(
+        fn handle_udx_edxf_declaration<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::UdxEdxfDeclarationElementType>,
             fallback: &mut Option<UdxProductDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -16076,7 +15533,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -16103,15 +15560,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_udx_edxf_additional_factors<'de, R>(
+        fn handle_udx_edxf_additional_factors<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::UdxEdxfAdditionalFactorsElementType>,
             fallback: &mut Option<UdxProductDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -16123,7 +15577,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -16154,15 +15608,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_udx_edxf_product_to_stock<'de, R>(
+        fn handle_udx_edxf_product_to_stock<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<UdxProductDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -16174,7 +15625,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -16204,15 +15655,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_udx_edxf_product_series<'de, R>(
+        fn handle_udx_edxf_product_series<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::DtMlstring>,
             fallback: &mut Option<UdxProductDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -16224,7 +15672,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -16254,15 +15702,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_udx_edxf_product_variation<'de, R>(
+        fn handle_udx_edxf_product_variation<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::DtMlstring>,
             fallback: &mut Option<UdxProductDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -16274,7 +15719,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -16305,15 +15750,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_udx_edxf_at_reverse_charge_info<'de, R>(
+        fn handle_udx_edxf_at_reverse_charge_info<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<UdxProductDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -16327,7 +15769,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -16358,15 +15800,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_udx_edxf_country_branch_numbers<'de, R>(
+        fn handle_udx_edxf_country_branch_numbers<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::UdxEdxfCountryBranchNumbersElementType>,
             fallback: &mut Option<UdxProductDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -16380,7 +15819,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -16413,15 +15852,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_udx_edxf_country_branch_supplier_ids<'de, R>(
+        fn handle_udx_edxf_country_branch_supplier_ids<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::UdxEdxfCountryBranchSupplierIdsElementType>,
             fallback: &mut Option<UdxProductDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -16435,7 +15871,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -16466,15 +15902,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_udx_edxf_packing_units<'de, R>(
+        fn handle_udx_edxf_packing_units<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::UdxEdxfPackingUnitsElementType>,
             fallback: &mut Option<UdxProductDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -16486,7 +15919,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -16518,15 +15951,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_udx_edxf_product_logistic_details<'de, R>(
+        fn handle_udx_edxf_product_logistic_details<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::UdxEdxfProductLogisticDetailsElementType>,
             fallback: &mut Option<UdxProductDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -16540,7 +15970,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -16571,15 +16001,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_udx_edxf_reach<'de, R>(
+        fn handle_udx_edxf_reach<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::UdxEdxfReachElementType>,
             fallback: &mut Option<UdxProductDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -16591,7 +16018,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -16618,15 +16045,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_udx_edxf_surcharge_list<'de, R>(
+        fn handle_udx_edxf_surcharge_list<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::UdxEdxfSurchargeListElementType>,
             fallback: &mut Option<UdxProductDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -16638,7 +16062,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -16670,20 +16094,17 @@ pub mod quick_xml_deserialize {
         }
     }
     impl<'de> Deserializer<'de, super::UdxProduct> for UdxProductDeserializer {
-        fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, super::UdxProduct>
-        where
-            R: DeserializeReader,
-        {
-            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
-        }
-        fn next<R>(
-            mut self,
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::UdxProduct>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::UdxProduct> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        }
+        fn next(
+            mut self,
+            helper: &mut DeserializeHelper,
+            event: Event<'de>,
+        ) -> DeserializerResult<'de, super::UdxProduct> {
             use UdxProductDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -16693,9 +16114,9 @@ pub mod quick_xml_deserialize {
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
                     (S::UdxEdxfManufacturerAcronym(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
+                        let output = deserializer.next(helper, event)?;
                         match self.handle_udx_edxf_manufacturer_acronym(
-                            reader,
+                            helper,
                             output,
                             &mut fallback,
                         )? {
@@ -16709,9 +16130,9 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfDescriptionVeryShort(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
+                        let output = deserializer.next(helper, event)?;
                         match self.handle_udx_edxf_description_very_short(
-                            reader,
+                            helper,
                             output,
                             &mut fallback,
                         )? {
@@ -16725,8 +16146,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfBrandName(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_udx_edxf_brand_name(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_udx_edxf_brand_name(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -16737,8 +16158,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfTenderText(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_udx_edxf_tender_text(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_udx_edxf_tender_text(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -16749,8 +16170,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfValidFrom(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_udx_edxf_valid_from(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_udx_edxf_valid_from(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -16761,8 +16182,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfExpirationDate(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_udx_edxf_expiration_date(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_udx_edxf_expiration_date(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -16773,8 +16194,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfDiscountGroup(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_udx_edxf_discount_group(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_udx_edxf_discount_group(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -16785,9 +16206,9 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfBonusGroupSupplier(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
+                        let output = deserializer.next(helper, event)?;
                         match self.handle_udx_edxf_bonus_group_supplier(
-                            reader,
+                            helper,
                             output,
                             &mut fallback,
                         )? {
@@ -16801,8 +16222,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfPkwiu(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_udx_edxf_pkwiu(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_udx_edxf_pkwiu(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -16813,8 +16234,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfDeclaration(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_udx_edxf_declaration(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_udx_edxf_declaration(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -16825,9 +16246,9 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfAdditionalFactors(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
+                        let output = deserializer.next(helper, event)?;
                         match self.handle_udx_edxf_additional_factors(
-                            reader,
+                            helper,
                             output,
                             &mut fallback,
                         )? {
@@ -16841,9 +16262,9 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfProductToStock(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
+                        let output = deserializer.next(helper, event)?;
                         match self.handle_udx_edxf_product_to_stock(
-                            reader,
+                            helper,
                             output,
                             &mut fallback,
                         )? {
@@ -16857,8 +16278,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfProductSeries(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_udx_edxf_product_series(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_udx_edxf_product_series(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -16869,9 +16290,9 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfProductVariation(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
+                        let output = deserializer.next(helper, event)?;
                         match self.handle_udx_edxf_product_variation(
-                            reader,
+                            helper,
                             output,
                             &mut fallback,
                         )? {
@@ -16885,9 +16306,9 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfAtReverseChargeInfo(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
+                        let output = deserializer.next(helper, event)?;
                         match self.handle_udx_edxf_at_reverse_charge_info(
-                            reader,
+                            helper,
                             output,
                             &mut fallback,
                         )? {
@@ -16901,9 +16322,9 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfCountryBranchNumbers(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
+                        let output = deserializer.next(helper, event)?;
                         match self.handle_udx_edxf_country_branch_numbers(
-                            reader,
+                            helper,
                             output,
                             &mut fallback,
                         )? {
@@ -16917,9 +16338,9 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfCountryBranchSupplierIds(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
+                        let output = deserializer.next(helper, event)?;
                         match self.handle_udx_edxf_country_branch_supplier_ids(
-                            reader,
+                            helper,
                             output,
                             &mut fallback,
                         )? {
@@ -16933,8 +16354,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfPackingUnits(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_udx_edxf_packing_units(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_udx_edxf_packing_units(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -16945,9 +16366,9 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfProductLogisticDetails(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
+                        let output = deserializer.next(helper, event)?;
                         match self.handle_udx_edxf_product_logistic_details(
-                            reader,
+                            helper,
                             output,
                             &mut fallback,
                         )? {
@@ -16961,8 +16382,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfReach(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_udx_edxf_reach(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_udx_edxf_reach(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -16973,8 +16394,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfSurchargeList(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_udx_edxf_surcharge_list(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_udx_edxf_surcharge_list(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -16986,10 +16407,10 @@ pub mod quick_xml_deserialize {
                     }
                     (_, Event::End(_)) => {
                         if let Some(fallback) = fallback.take() {
-                            self.finish_state(reader, fallback)?;
+                            self.finish_state(helper, fallback)?;
                         }
                         return Ok(DeserializerOutput {
-                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            artifact: DeserializerArtifact::Data(self.finish(helper)?),
                             event: DeserializerEvent::None,
                             allow_any: false,
                         });
@@ -17004,14 +16425,14 @@ pub mod quick_xml_deserialize {
                         S::UdxEdxfManufacturerAcronym(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"UDX.EDXF.MANUFACTURER_ACRONYM",
                             false,
                         )?;
                         match self.handle_udx_edxf_manufacturer_acronym(
-                            reader,
+                            helper,
                             output,
                             &mut fallback,
                         )? {
@@ -17028,14 +16449,14 @@ pub mod quick_xml_deserialize {
                         S::UdxEdxfDescriptionVeryShort(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"UDX.EDXF.DESCRIPTION_VERY_SHORT",
                             false,
                         )?;
                         match self.handle_udx_edxf_description_very_short(
-                            reader,
+                            helper,
                             output,
                             &mut fallback,
                         )? {
@@ -17049,13 +16470,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfBrandName(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"UDX.EDXF.BRAND_NAME",
                             false,
                         )?;
-                        match self.handle_udx_edxf_brand_name(reader, output, &mut fallback)? {
+                        match self.handle_udx_edxf_brand_name(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -17066,13 +16487,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfTenderText(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"UDX.EDXF.TENDER_TEXT",
                             false,
                         )?;
-                        match self.handle_udx_edxf_tender_text(reader, output, &mut fallback)? {
+                        match self.handle_udx_edxf_tender_text(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -17083,13 +16504,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfValidFrom(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"UDX.EDXF.VALID_FROM",
                             false,
                         )?;
-                        match self.handle_udx_edxf_valid_from(reader, output, &mut fallback)? {
+                        match self.handle_udx_edxf_valid_from(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -17103,13 +16524,13 @@ pub mod quick_xml_deserialize {
                         S::UdxEdxfExpirationDate(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"UDX.EDXF.EXPIRATION_DATE",
                             false,
                         )?;
-                        match self.handle_udx_edxf_expiration_date(reader, output, &mut fallback)? {
+                        match self.handle_udx_edxf_expiration_date(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -17123,13 +16544,13 @@ pub mod quick_xml_deserialize {
                         S::UdxEdxfDiscountGroup(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"UDX.EDXF.DISCOUNT_GROUP",
                             false,
                         )?;
-                        match self.handle_udx_edxf_discount_group(reader, output, &mut fallback)? {
+                        match self.handle_udx_edxf_discount_group(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -17143,14 +16564,14 @@ pub mod quick_xml_deserialize {
                         S::UdxEdxfBonusGroupSupplier(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"UDX.EDXF.BONUS_GROUP_SUPPLIER",
                             false,
                         )?;
                         match self.handle_udx_edxf_bonus_group_supplier(
-                            reader,
+                            helper,
                             output,
                             &mut fallback,
                         )? {
@@ -17164,13 +16585,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfPkwiu(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"UDX.EDXF.PKWIU",
                             false,
                         )?;
-                        match self.handle_udx_edxf_pkwiu(reader, output, &mut fallback)? {
+                        match self.handle_udx_edxf_pkwiu(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -17181,13 +16602,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfDeclaration(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"UDX.EDXF.DECLARATION",
                             false,
                         )?;
-                        match self.handle_udx_edxf_declaration(reader, output, &mut fallback)? {
+                        match self.handle_udx_edxf_declaration(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -17201,14 +16622,14 @@ pub mod quick_xml_deserialize {
                         S::UdxEdxfAdditionalFactors(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"UDX.EDXF.ADDITIONAL_FACTORS",
                             false,
                         )?;
                         match self.handle_udx_edxf_additional_factors(
-                            reader,
+                            helper,
                             output,
                             &mut fallback,
                         )? {
@@ -17225,14 +16646,14 @@ pub mod quick_xml_deserialize {
                         S::UdxEdxfProductToStock(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"UDX.EDXF.PRODUCT_TO_STOCK",
                             false,
                         )?;
                         match self.handle_udx_edxf_product_to_stock(
-                            reader,
+                            helper,
                             output,
                             &mut fallback,
                         )? {
@@ -17249,13 +16670,13 @@ pub mod quick_xml_deserialize {
                         S::UdxEdxfProductSeries(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"UDX.EDXF.PRODUCT_SERIES",
                             false,
                         )?;
-                        match self.handle_udx_edxf_product_series(reader, output, &mut fallback)? {
+                        match self.handle_udx_edxf_product_series(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -17269,14 +16690,14 @@ pub mod quick_xml_deserialize {
                         S::UdxEdxfProductVariation(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"UDX.EDXF.PRODUCT_VARIATION",
                             false,
                         )?;
                         match self.handle_udx_edxf_product_variation(
-                            reader,
+                            helper,
                             output,
                             &mut fallback,
                         )? {
@@ -17293,14 +16714,14 @@ pub mod quick_xml_deserialize {
                         S::UdxEdxfAtReverseChargeInfo(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"UDX.EDXF.AT.REVERSE_CHARGE_INFO",
                             false,
                         )?;
                         match self.handle_udx_edxf_at_reverse_charge_info(
-                            reader,
+                            helper,
                             output,
                             &mut fallback,
                         )? {
@@ -17317,14 +16738,14 @@ pub mod quick_xml_deserialize {
                         S::UdxEdxfCountryBranchNumbers(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"UDX.EDXF.COUNTRY_BRANCH_NUMBERS",
                             false,
                         )?;
                         match self.handle_udx_edxf_country_branch_numbers(
-                            reader,
+                            helper,
                             output,
                             &mut fallback,
                         )? {
@@ -17341,14 +16762,14 @@ pub mod quick_xml_deserialize {
                         S::UdxEdxfCountryBranchSupplierIds(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"UDX.EDXF.COUNTRY_BRANCH_SUPPLIER_IDS",
                             false,
                         )?;
                         match self.handle_udx_edxf_country_branch_supplier_ids(
-                            reader,
+                            helper,
                             output,
                             &mut fallback,
                         )? {
@@ -17362,13 +16783,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfPackingUnits(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"UDX.EDXF.PACKING_UNITS",
                             false,
                         )?;
-                        match self.handle_udx_edxf_packing_units(reader, output, &mut fallback)? {
+                        match self.handle_udx_edxf_packing_units(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -17382,14 +16803,14 @@ pub mod quick_xml_deserialize {
                         S::UdxEdxfProductLogisticDetails(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"UDX.EDXF.PRODUCT_LOGISTIC_DETAILS",
                             false,
                         )?;
                         match self.handle_udx_edxf_product_logistic_details(
-                            reader,
+                            helper,
                             output,
                             &mut fallback,
                         )? {
@@ -17403,13 +16824,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfReach(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"UDX.EDXF.REACH",
                             false,
                         )?;
-                        match self.handle_udx_edxf_reach(reader, output, &mut fallback)? {
+                        match self.handle_udx_edxf_reach(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -17423,13 +16844,13 @@ pub mod quick_xml_deserialize {
                         S::UdxEdxfSurchargeList(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"UDX.EDXF.SURCHARGE_LIST",
                             false,
                         )?;
-                        match self.handle_udx_edxf_surcharge_list(reader, output, &mut fallback)? {
+                        match self.handle_udx_edxf_surcharge_list(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -17458,12 +16879,9 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::UdxProduct, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(mut self, helper: &mut DeserializeHelper) -> Result<super::UdxProduct, Error> {
             let state = replace(&mut *self.state__, UdxProductDeserializerState::Unknown__);
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::UdxProduct {
                 udx_edxf_manufacturer_acronym: self.udx_edxf_manufacturer_acronym,
                 udx_edxf_description_very_short: self.udx_edxf_description_very_short,
@@ -17508,31 +16926,30 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl ProductReferenceElementTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
             let mut type_: Option<super::ProductReferenceType> = None;
             let mut quantity: Option<i32> = None;
-            for attrib in filter_xmlns_attributes(bytes_start) {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    reader.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
                     Some(b"type")
                 ) {
-                    reader.read_attrib(&mut type_, b"type", &attrib.value)?;
+                    helper.read_attrib(&mut type_, b"type", &attrib.value)?;
                 } else if matches!(
-                    reader.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
                     Some(b"quantity")
                 ) {
-                    reader.read_attrib(&mut quantity, b"quantity", &attrib.value)?;
+                    helper.read_attrib(&mut quantity, b"quantity", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib_checked(attrib)?;
+                    helper.raise_unexpected_attrib_checked(&attrib)?;
                 }
             }
             Ok(Self {
-                type_: type_
-                    .ok_or_else(|| reader.map_error(ErrorKind::MissingAttribute("type".into())))?,
+                type_: type_.ok_or_else(|| ErrorKind::MissingAttribute("type".into()))?,
                 quantity: quantity,
                 prod_id_to: None,
                 catalog_id: None,
@@ -17540,24 +16957,21 @@ pub mod quick_xml_deserialize {
                 state__: Box::new(ProductReferenceElementTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: ProductReferenceElementTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             use ProductReferenceElementTypeDeserializerState as S;
             match state {
                 S::ProdIdTo(Some(deserializer)) => {
-                    self.store_prod_id_to(deserializer.finish(reader)?)?
+                    self.store_prod_id_to(deserializer.finish(helper)?)?
                 }
                 S::CatalogId(Some(deserializer)) => {
-                    self.store_catalog_id(deserializer.finish(reader)?)?
+                    self.store_catalog_id(deserializer.finish(helper)?)?
                 }
                 S::CatalogVersion(Some(deserializer)) => {
-                    self.store_catalog_version(deserializer.finish(reader)?)?
+                    self.store_catalog_version(deserializer.finish(helper)?)?
                 }
                 _ => (),
             }
@@ -17590,15 +17004,12 @@ pub mod quick_xml_deserialize {
             self.catalog_version = Some(value);
             Ok(())
         }
-        fn handle_prod_id_to<'de, R>(
+        fn handle_prod_id_to<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<ProductReferenceElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -17617,7 +17028,7 @@ pub mod quick_xml_deserialize {
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -17648,15 +17059,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_catalog_id<'de, R>(
+        fn handle_catalog_id<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<ProductReferenceElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -17670,7 +17078,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -17702,15 +17110,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_catalog_version<'de, R>(
+        fn handle_catalog_version<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<ProductReferenceElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -17724,7 +17129,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -17759,23 +17164,17 @@ pub mod quick_xml_deserialize {
     impl<'de> Deserializer<'de, super::ProductReferenceElementType>
         for ProductReferenceElementTypeDeserializer
     {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::ProductReferenceElementType>
-        where
-            R: DeserializeReader,
-        {
-            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        ) -> DeserializerResult<'de, super::ProductReferenceElementType> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::ProductReferenceElementType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::ProductReferenceElementType> {
             use ProductReferenceElementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -17785,8 +17184,8 @@ pub mod quick_xml_deserialize {
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
                     (S::ProdIdTo(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_prod_id_to(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_prod_id_to(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -17797,8 +17196,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::CatalogId(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_catalog_id(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_catalog_id(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -17809,8 +17208,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::CatalogVersion(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_catalog_version(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_catalog_version(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -17822,10 +17221,10 @@ pub mod quick_xml_deserialize {
                     }
                     (_, Event::End(_)) => {
                         if let Some(fallback) = fallback.take() {
-                            self.finish_state(reader, fallback)?;
+                            self.finish_state(helper, fallback)?;
                         }
                         return Ok(DeserializerOutput {
-                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            artifact: DeserializerArtifact::Data(self.finish(helper)?),
                             event: DeserializerEvent::None,
                             allow_any: false,
                         });
@@ -17837,13 +17236,13 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::ProdIdTo(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"PROD_ID_TO",
                             false,
                         )?;
-                        match self.handle_prod_id_to(reader, output, &mut fallback)? {
+                        match self.handle_prod_id_to(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -17854,13 +17253,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::CatalogId(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"CATALOG_ID",
                             false,
                         )?;
-                        match self.handle_catalog_id(reader, output, &mut fallback)? {
+                        match self.handle_catalog_id(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -17871,13 +17270,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::CatalogVersion(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"CATALOG_VERSION",
                             false,
                         )?;
-                        match self.handle_catalog_version(reader, output, &mut fallback)? {
+                        match self.handle_catalog_version(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -17906,15 +17305,15 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::ProductReferenceElementType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(
+            mut self,
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::ProductReferenceElementType, Error> {
             let state = replace(
                 &mut *self.state__,
                 ProductReferenceElementTypeDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::ProductReferenceElementType {
                 type_: self.type_,
                 quantity: self.quantity,
@@ -17945,13 +17344,13 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl ProductLogisticDetailsElementTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
-            for attrib in filter_xmlns_attributes(bytes_start) {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib_checked(attrib)?;
+                helper.raise_unexpected_attrib_checked(&attrib)?;
             }
             Ok(Self {
                 customs_tariff_number: Vec::new(),
@@ -17960,24 +17359,21 @@ pub mod quick_xml_deserialize {
                 state__: Box::new(ProductLogisticDetailsElementTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: ProductLogisticDetailsElementTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             use ProductLogisticDetailsElementTypeDeserializerState as S;
             match state {
                 S::CustomsTariffNumber(Some(deserializer)) => {
-                    self.store_customs_tariff_number(deserializer.finish(reader)?)?
+                    self.store_customs_tariff_number(deserializer.finish(helper)?)?
                 }
                 S::StatisticsFactor(Some(deserializer)) => {
-                    self.store_statistics_factor(deserializer.finish(reader)?)?
+                    self.store_statistics_factor(deserializer.finish(helper)?)?
                 }
                 S::CountryOfOrigin(Some(deserializer)) => {
-                    self.store_country_of_origin(deserializer.finish(reader)?)?
+                    self.store_country_of_origin(deserializer.finish(helper)?)?
                 }
                 _ => (),
             }
@@ -18003,15 +17399,12 @@ pub mod quick_xml_deserialize {
             self.country_of_origin.push(value);
             Ok(())
         }
-        fn handle_customs_tariff_number<'de, R>(
+        fn handle_customs_tariff_number<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::CustomsTariffNumberElementType>,
             fallback: &mut Option<ProductLogisticDetailsElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -18026,7 +17419,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -18053,15 +17446,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_statistics_factor<'de, R>(
+        fn handle_statistics_factor<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, f64>,
             fallback: &mut Option<ProductLogisticDetailsElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -18076,7 +17466,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -18104,15 +17494,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_country_of_origin<'de, R>(
+        fn handle_country_of_origin<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<ProductLogisticDetailsElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -18126,7 +17513,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -18165,23 +17552,17 @@ pub mod quick_xml_deserialize {
     impl<'de> Deserializer<'de, super::ProductLogisticDetailsElementType>
         for ProductLogisticDetailsElementTypeDeserializer
     {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::ProductLogisticDetailsElementType>
-        where
-            R: DeserializeReader,
-        {
-            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        ) -> DeserializerResult<'de, super::ProductLogisticDetailsElementType> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::ProductLogisticDetailsElementType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::ProductLogisticDetailsElementType> {
             use ProductLogisticDetailsElementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -18191,8 +17572,8 @@ pub mod quick_xml_deserialize {
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
                     (S::CustomsTariffNumber(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_customs_tariff_number(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_customs_tariff_number(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -18203,8 +17584,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::StatisticsFactor(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_statistics_factor(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_statistics_factor(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -18215,8 +17596,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::CountryOfOrigin(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_country_of_origin(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_country_of_origin(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -18228,10 +17609,10 @@ pub mod quick_xml_deserialize {
                     }
                     (_, Event::End(_)) => {
                         if let Some(fallback) = fallback.take() {
-                            self.finish_state(reader, fallback)?;
+                            self.finish_state(helper, fallback)?;
                         }
                         return Ok(DeserializerOutput {
-                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            artifact: DeserializerArtifact::Data(self.finish(helper)?),
                             event: DeserializerEvent::None,
                             allow_any: false,
                         });
@@ -18245,13 +17626,13 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::CustomsTariffNumber(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"CUSTOMS_TARIFF_NUMBER",
                             false,
                         )?;
-                        match self.handle_customs_tariff_number(reader, output, &mut fallback)? {
+                        match self.handle_customs_tariff_number(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -18262,13 +17643,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::StatisticsFactor(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"STATISTICS_FACTOR",
                             false,
                         )?;
-                        match self.handle_statistics_factor(reader, output, &mut fallback)? {
+                        match self.handle_statistics_factor(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -18279,13 +17660,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::CountryOfOrigin(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"COUNTRY_OF_ORIGIN",
                             false,
                         )?;
-                        match self.handle_country_of_origin(reader, output, &mut fallback)? {
+                        match self.handle_country_of_origin(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -18314,18 +17695,15 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(
+        fn finish(
             mut self,
-            reader: &R,
-        ) -> Result<super::ProductLogisticDetailsElementType, Error>
-        where
-            R: DeserializeReader,
-        {
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::ProductLogisticDetailsElementType, Error> {
             let state = replace(
                 &mut *self.state__,
                 ProductLogisticDetailsElementTypeDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::ProductLogisticDetailsElementType {
                 customs_tariff_number: self.customs_tariff_number,
                 statistics_factor: self.statistics_factor,
@@ -18354,13 +17732,13 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl MimeElementTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
-            for attrib in filter_xmlns_attributes(bytes_start) {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib_checked(attrib)?;
+                helper.raise_unexpected_attrib_checked(&attrib)?;
             }
             Ok(Self {
                 mime_type: None,
@@ -18371,30 +17749,27 @@ pub mod quick_xml_deserialize {
                 state__: Box::new(MimeElementTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: MimeElementTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             use MimeElementTypeDeserializerState as S;
             match state {
                 S::MimeType(Some(deserializer)) => {
-                    self.store_mime_type(deserializer.finish(reader)?)?
+                    self.store_mime_type(deserializer.finish(helper)?)?
                 }
                 S::MimeSource(Some(deserializer)) => {
-                    self.store_mime_source(deserializer.finish(reader)?)?
+                    self.store_mime_source(deserializer.finish(helper)?)?
                 }
                 S::MimeDescr(Some(deserializer)) => {
-                    self.store_mime_descr(deserializer.finish(reader)?)?
+                    self.store_mime_descr(deserializer.finish(helper)?)?
                 }
                 S::MimeAlt(Some(deserializer)) => {
-                    self.store_mime_alt(deserializer.finish(reader)?)?
+                    self.store_mime_alt(deserializer.finish(helper)?)?
                 }
                 S::MimePurpose(Some(deserializer)) => {
-                    self.store_mime_purpose(deserializer.finish(reader)?)?
+                    self.store_mime_purpose(deserializer.finish(helper)?)?
                 }
                 _ => (),
             }
@@ -18433,15 +17808,12 @@ pub mod quick_xml_deserialize {
             self.mime_purpose = Some(value);
             Ok(())
         }
-        fn handle_mime_type<'de, R>(
+        fn handle_mime_type<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<MimeElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -18458,7 +17830,7 @@ pub mod quick_xml_deserialize {
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -18485,15 +17857,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_mime_source<'de, R>(
+        fn handle_mime_source<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::DtMlstring>,
             fallback: &mut Option<MimeElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -18510,7 +17879,7 @@ pub mod quick_xml_deserialize {
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -18537,15 +17906,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_mime_descr<'de, R>(
+        fn handle_mime_descr<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::DtMlstring>,
             fallback: &mut Option<MimeElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -18557,7 +17923,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -18584,15 +17950,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_mime_alt<'de, R>(
+        fn handle_mime_alt<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::DtMlstring>,
             fallback: &mut Option<MimeElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -18604,7 +17967,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -18631,15 +17994,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_mime_purpose<'de, R>(
+        fn handle_mime_purpose<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::MimePurposeElementType>,
             fallback: &mut Option<MimeElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -18656,7 +18016,7 @@ pub mod quick_xml_deserialize {
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -18685,20 +18045,17 @@ pub mod quick_xml_deserialize {
         }
     }
     impl<'de> Deserializer<'de, super::MimeElementType> for MimeElementTypeDeserializer {
-        fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, super::MimeElementType>
-        where
-            R: DeserializeReader,
-        {
-            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
-        }
-        fn next<R>(
-            mut self,
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::MimeElementType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::MimeElementType> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        }
+        fn next(
+            mut self,
+            helper: &mut DeserializeHelper,
+            event: Event<'de>,
+        ) -> DeserializerResult<'de, super::MimeElementType> {
             use MimeElementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -18708,8 +18065,8 @@ pub mod quick_xml_deserialize {
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
                     (S::MimeType(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_mime_type(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_mime_type(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -18720,8 +18077,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::MimeSource(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_mime_source(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_mime_source(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -18732,8 +18089,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::MimeDescr(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_mime_descr(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_mime_descr(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -18744,8 +18101,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::MimeAlt(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_mime_alt(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_mime_alt(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -18756,8 +18113,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::MimePurpose(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_mime_purpose(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_mime_purpose(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -18769,10 +18126,10 @@ pub mod quick_xml_deserialize {
                     }
                     (_, Event::End(_)) => {
                         if let Some(fallback) = fallback.take() {
-                            self.finish_state(reader, fallback)?;
+                            self.finish_state(helper, fallback)?;
                         }
                         return Ok(DeserializerOutput {
-                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            artifact: DeserializerArtifact::Data(self.finish(helper)?),
                             event: DeserializerEvent::None,
                             allow_any: false,
                         });
@@ -18783,13 +18140,13 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::MimeType(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"MIME_TYPE",
                             false,
                         )?;
-                        match self.handle_mime_type(reader, output, &mut fallback)? {
+                        match self.handle_mime_type(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -18800,13 +18157,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::MimeSource(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"MIME_SOURCE",
                             false,
                         )?;
-                        match self.handle_mime_source(reader, output, &mut fallback)? {
+                        match self.handle_mime_source(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -18817,13 +18174,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::MimeDescr(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"MIME_DESCR",
                             false,
                         )?;
-                        match self.handle_mime_descr(reader, output, &mut fallback)? {
+                        match self.handle_mime_descr(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -18834,13 +18191,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::MimeAlt(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"MIME_ALT",
                             false,
                         )?;
-                        match self.handle_mime_alt(reader, output, &mut fallback)? {
+                        match self.handle_mime_alt(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -18851,13 +18208,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::MimePurpose(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"MIME_PURPOSE",
                             false,
                         )?;
-                        match self.handle_mime_purpose(reader, output, &mut fallback)? {
+                        match self.handle_mime_purpose(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -18886,15 +18243,15 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::MimeElementType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(
+            mut self,
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::MimeElementType, Error> {
             let state = replace(
                 &mut *self.state__,
                 MimeElementTypeDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::MimeElementType {
                 mime_type: self
                     .mime_type
@@ -18921,20 +18278,20 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl InternationalPidElementTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
             let mut type_: Option<String> = None;
-            for attrib in filter_xmlns_attributes(bytes_start) {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    reader.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
                     Some(b"type")
                 ) {
-                    reader.read_attrib(&mut type_, b"type", &attrib.value)?;
+                    helper.read_attrib(&mut type_, b"type", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib_checked(attrib)?;
+                    helper.raise_unexpected_attrib_checked(&attrib)?;
                 }
             }
             Ok(Self {
@@ -18943,16 +18300,13 @@ pub mod quick_xml_deserialize {
                 state__: Box::new(InternationalPidElementTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: InternationalPidElementTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             if let InternationalPidElementTypeDeserializerState::Content__(deserializer) = state {
-                self.store_content(deserializer.finish(reader)?)?;
+                self.store_content(deserializer.finish(helper)?)?;
             }
             Ok(())
         }
@@ -18963,14 +18317,11 @@ pub mod quick_xml_deserialize {
             self.content = Some(value);
             Ok(())
         }
-        fn handle_content<'de, R>(
+        fn handle_content<'de>(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, String>,
-        ) -> DeserializerResult<'de, super::InternationalPidElementType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::InternationalPidElementType> {
             use InternationalPidElementTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
@@ -18985,7 +18336,7 @@ pub mod quick_xml_deserialize {
                 }),
                 DeserializerArtifact::Data(data) => {
                     self.store_content(data)?;
-                    let data = self.finish(reader)?;
+                    let data = self.finish(helper)?;
                     Ok(DeserializerOutput {
                         artifact: DeserializerArtifact::Data(data),
                         event,
@@ -19006,13 +18357,10 @@ pub mod quick_xml_deserialize {
     impl<'de> Deserializer<'de, super::InternationalPidElementType>
         for InternationalPidElementTypeDeserializer
     {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::InternationalPidElementType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::InternationalPidElementType> {
             let (Event::Start(x) | Event::Empty(x)) = &event else {
                 return Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::None,
@@ -19020,38 +18368,35 @@ pub mod quick_xml_deserialize {
                     allow_any: false,
                 });
             };
-            Self::from_bytes_start(reader, x)?.next(reader, event)
+            Self::from_bytes_start(helper, x)?.next(helper, event)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::InternationalPidElementType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::InternationalPidElementType> {
             use InternationalPidElementTypeDeserializerState as S;
             match replace(&mut *self.state__, S::Unknown__) {
                 S::Unknown__ => unreachable!(),
                 S::Init__ => {
-                    let output = ContentDeserializer::init(reader, event)?;
-                    self.handle_content(reader, output)
+                    let output = ContentDeserializer::init(helper, event)?;
+                    self.handle_content(helper, output)
                 }
                 S::Content__(deserializer) => {
-                    let output = deserializer.next(reader, event)?;
-                    self.handle_content(reader, output)
+                    let output = deserializer.next(helper, event)?;
+                    self.handle_content(helper, output)
                 }
             }
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::InternationalPidElementType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(
+            mut self,
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::InternationalPidElementType, Error> {
             let state = replace(
                 &mut *self.state__,
                 InternationalPidElementTypeDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::InternationalPidElementType {
                 type_: self.type_,
                 content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
@@ -19071,20 +18416,20 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl BuyerPidElementTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
             let mut type_: Option<String> = None;
-            for attrib in filter_xmlns_attributes(bytes_start) {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    reader.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
                     Some(b"type")
                 ) {
-                    reader.read_attrib(&mut type_, b"type", &attrib.value)?;
+                    helper.read_attrib(&mut type_, b"type", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib_checked(attrib)?;
+                    helper.raise_unexpected_attrib_checked(&attrib)?;
                 }
             }
             Ok(Self {
@@ -19093,16 +18438,13 @@ pub mod quick_xml_deserialize {
                 state__: Box::new(BuyerPidElementTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: BuyerPidElementTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             if let BuyerPidElementTypeDeserializerState::Content__(deserializer) = state {
-                self.store_content(deserializer.finish(reader)?)?;
+                self.store_content(deserializer.finish(helper)?)?;
             }
             Ok(())
         }
@@ -19113,14 +18455,11 @@ pub mod quick_xml_deserialize {
             self.content = Some(value);
             Ok(())
         }
-        fn handle_content<'de, R>(
+        fn handle_content<'de>(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, String>,
-        ) -> DeserializerResult<'de, super::BuyerPidElementType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::BuyerPidElementType> {
             use BuyerPidElementTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
@@ -19135,7 +18474,7 @@ pub mod quick_xml_deserialize {
                 }),
                 DeserializerArtifact::Data(data) => {
                     self.store_content(data)?;
-                    let data = self.finish(reader)?;
+                    let data = self.finish(helper)?;
                     Ok(DeserializerOutput {
                         artifact: DeserializerArtifact::Data(data),
                         event,
@@ -19154,13 +18493,10 @@ pub mod quick_xml_deserialize {
         }
     }
     impl<'de> Deserializer<'de, super::BuyerPidElementType> for BuyerPidElementTypeDeserializer {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::BuyerPidElementType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::BuyerPidElementType> {
             let (Event::Start(x) | Event::Empty(x)) = &event else {
                 return Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::None,
@@ -19168,38 +18504,35 @@ pub mod quick_xml_deserialize {
                     allow_any: false,
                 });
             };
-            Self::from_bytes_start(reader, x)?.next(reader, event)
+            Self::from_bytes_start(helper, x)?.next(helper, event)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::BuyerPidElementType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::BuyerPidElementType> {
             use BuyerPidElementTypeDeserializerState as S;
             match replace(&mut *self.state__, S::Unknown__) {
                 S::Unknown__ => unreachable!(),
                 S::Init__ => {
-                    let output = ContentDeserializer::init(reader, event)?;
-                    self.handle_content(reader, output)
+                    let output = ContentDeserializer::init(helper, event)?;
+                    self.handle_content(helper, output)
                 }
                 S::Content__(deserializer) => {
-                    let output = deserializer.next(reader, event)?;
-                    self.handle_content(reader, output)
+                    let output = deserializer.next(helper, event)?;
+                    self.handle_content(helper, output)
                 }
             }
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::BuyerPidElementType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(
+            mut self,
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::BuyerPidElementType, Error> {
             let state = replace(
                 &mut *self.state__,
                 BuyerPidElementTypeDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::BuyerPidElementType {
                 type_: self.type_,
                 content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
@@ -19219,41 +18552,37 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl SpecialTreatmentClassElementTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
             let mut type_: Option<String> = None;
-            for attrib in filter_xmlns_attributes(bytes_start) {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    reader.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
                     Some(b"type")
                 ) {
-                    reader.read_attrib(&mut type_, b"type", &attrib.value)?;
+                    helper.read_attrib(&mut type_, b"type", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib_checked(attrib)?;
+                    helper.raise_unexpected_attrib_checked(&attrib)?;
                 }
             }
             Ok(Self {
-                type_: type_
-                    .ok_or_else(|| reader.map_error(ErrorKind::MissingAttribute("type".into())))?,
+                type_: type_.ok_or_else(|| ErrorKind::MissingAttribute("type".into()))?,
                 content: None,
                 state__: Box::new(SpecialTreatmentClassElementTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: SpecialTreatmentClassElementTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             if let SpecialTreatmentClassElementTypeDeserializerState::Content__(deserializer) =
                 state
             {
-                self.store_content(deserializer.finish(reader)?)?;
+                self.store_content(deserializer.finish(helper)?)?;
             }
             Ok(())
         }
@@ -19264,14 +18593,11 @@ pub mod quick_xml_deserialize {
             self.content = Some(value);
             Ok(())
         }
-        fn handle_content<'de, R>(
+        fn handle_content<'de>(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, String>,
-        ) -> DeserializerResult<'de, super::SpecialTreatmentClassElementType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::SpecialTreatmentClassElementType> {
             use SpecialTreatmentClassElementTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
@@ -19286,7 +18612,7 @@ pub mod quick_xml_deserialize {
                 }),
                 DeserializerArtifact::Data(data) => {
                     self.store_content(data)?;
-                    let data = self.finish(reader)?;
+                    let data = self.finish(helper)?;
                     Ok(DeserializerOutput {
                         artifact: DeserializerArtifact::Data(data),
                         event,
@@ -19307,13 +18633,10 @@ pub mod quick_xml_deserialize {
     impl<'de> Deserializer<'de, super::SpecialTreatmentClassElementType>
         for SpecialTreatmentClassElementTypeDeserializer
     {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::SpecialTreatmentClassElementType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::SpecialTreatmentClassElementType> {
             let (Event::Start(x) | Event::Empty(x)) = &event else {
                 return Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::None,
@@ -19321,38 +18644,35 @@ pub mod quick_xml_deserialize {
                     allow_any: false,
                 });
             };
-            Self::from_bytes_start(reader, x)?.next(reader, event)
+            Self::from_bytes_start(helper, x)?.next(helper, event)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::SpecialTreatmentClassElementType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::SpecialTreatmentClassElementType> {
             use SpecialTreatmentClassElementTypeDeserializerState as S;
             match replace(&mut *self.state__, S::Unknown__) {
                 S::Unknown__ => unreachable!(),
                 S::Init__ => {
-                    let output = ContentDeserializer::init(reader, event)?;
-                    self.handle_content(reader, output)
+                    let output = ContentDeserializer::init(helper, event)?;
+                    self.handle_content(helper, output)
                 }
                 S::Content__(deserializer) => {
-                    let output = deserializer.next(reader, event)?;
-                    self.handle_content(reader, output)
+                    let output = deserializer.next(helper, event)?;
+                    self.handle_content(helper, output)
                 }
             }
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::SpecialTreatmentClassElementType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(
+            mut self,
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::SpecialTreatmentClassElementType, Error> {
             let state = replace(
                 &mut *self.state__,
                 SpecialTreatmentClassElementTypeDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::SpecialTreatmentClassElementType {
                 type_: self.type_,
                 content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
@@ -19373,26 +18693,26 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl RemarksElementTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
             let mut lang: Option<super::DtLang> = None;
             let mut type_: Option<String> = None;
-            for attrib in filter_xmlns_attributes(bytes_start) {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    reader.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
                     Some(b"lang")
                 ) {
-                    reader.read_attrib(&mut lang, b"lang", &attrib.value)?;
+                    helper.read_attrib(&mut lang, b"lang", &attrib.value)?;
                 } else if matches!(
-                    reader.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
                     Some(b"type")
                 ) {
-                    reader.read_attrib(&mut type_, b"type", &attrib.value)?;
+                    helper.read_attrib(&mut type_, b"type", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib_checked(attrib)?;
+                    helper.raise_unexpected_attrib_checked(&attrib)?;
                 }
             }
             Ok(Self {
@@ -19402,16 +18722,13 @@ pub mod quick_xml_deserialize {
                 state__: Box::new(RemarksElementTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: RemarksElementTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             if let RemarksElementTypeDeserializerState::Content__(deserializer) = state {
-                self.store_content(deserializer.finish(reader)?)?;
+                self.store_content(deserializer.finish(helper)?)?;
             }
             Ok(())
         }
@@ -19422,14 +18739,11 @@ pub mod quick_xml_deserialize {
             self.content = Some(value);
             Ok(())
         }
-        fn handle_content<'de, R>(
+        fn handle_content<'de>(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, String>,
-        ) -> DeserializerResult<'de, super::RemarksElementType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::RemarksElementType> {
             use RemarksElementTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
@@ -19444,7 +18758,7 @@ pub mod quick_xml_deserialize {
                 }),
                 DeserializerArtifact::Data(data) => {
                     self.store_content(data)?;
-                    let data = self.finish(reader)?;
+                    let data = self.finish(helper)?;
                     Ok(DeserializerOutput {
                         artifact: DeserializerArtifact::Data(data),
                         event,
@@ -19463,13 +18777,10 @@ pub mod quick_xml_deserialize {
         }
     }
     impl<'de> Deserializer<'de, super::RemarksElementType> for RemarksElementTypeDeserializer {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::RemarksElementType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::RemarksElementType> {
             let (Event::Start(x) | Event::Empty(x)) = &event else {
                 return Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::None,
@@ -19477,38 +18788,35 @@ pub mod quick_xml_deserialize {
                     allow_any: false,
                 });
             };
-            Self::from_bytes_start(reader, x)?.next(reader, event)
+            Self::from_bytes_start(helper, x)?.next(helper, event)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::RemarksElementType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::RemarksElementType> {
             use RemarksElementTypeDeserializerState as S;
             match replace(&mut *self.state__, S::Unknown__) {
                 S::Unknown__ => unreachable!(),
                 S::Init__ => {
-                    let output = ContentDeserializer::init(reader, event)?;
-                    self.handle_content(reader, output)
+                    let output = ContentDeserializer::init(helper, event)?;
+                    self.handle_content(helper, output)
                 }
                 S::Content__(deserializer) => {
-                    let output = deserializer.next(reader, event)?;
-                    self.handle_content(reader, output)
+                    let output = deserializer.next(helper, event)?;
+                    self.handle_content(helper, output)
                 }
             }
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::RemarksElementType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(
+            mut self,
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::RemarksElementType, Error> {
             let state = replace(
                 &mut *self.state__,
                 RemarksElementTypeDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::RemarksElementType {
                 lang: self.lang,
                 type_: self.type_,
@@ -19530,46 +18838,42 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl ProductStatusElementTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
             let mut lang: Option<super::DtLang> = None;
             let mut type_: Option<super::ProductStatusType> = None;
-            for attrib in filter_xmlns_attributes(bytes_start) {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    reader.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
                     Some(b"lang")
                 ) {
-                    reader.read_attrib(&mut lang, b"lang", &attrib.value)?;
+                    helper.read_attrib(&mut lang, b"lang", &attrib.value)?;
                 } else if matches!(
-                    reader.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
                     Some(b"type")
                 ) {
-                    reader.read_attrib(&mut type_, b"type", &attrib.value)?;
+                    helper.read_attrib(&mut type_, b"type", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib_checked(attrib)?;
+                    helper.raise_unexpected_attrib_checked(&attrib)?;
                 }
             }
             Ok(Self {
                 lang: lang,
-                type_: type_
-                    .ok_or_else(|| reader.map_error(ErrorKind::MissingAttribute("type".into())))?,
+                type_: type_.ok_or_else(|| ErrorKind::MissingAttribute("type".into()))?,
                 content: None,
                 state__: Box::new(ProductStatusElementTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: ProductStatusElementTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             if let ProductStatusElementTypeDeserializerState::Content__(deserializer) = state {
-                self.store_content(deserializer.finish(reader)?)?;
+                self.store_content(deserializer.finish(helper)?)?;
             }
             Ok(())
         }
@@ -19580,14 +18884,11 @@ pub mod quick_xml_deserialize {
             self.content = Some(value);
             Ok(())
         }
-        fn handle_content<'de, R>(
+        fn handle_content<'de>(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, String>,
-        ) -> DeserializerResult<'de, super::ProductStatusElementType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::ProductStatusElementType> {
             use ProductStatusElementTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
@@ -19602,7 +18903,7 @@ pub mod quick_xml_deserialize {
                 }),
                 DeserializerArtifact::Data(data) => {
                     self.store_content(data)?;
-                    let data = self.finish(reader)?;
+                    let data = self.finish(helper)?;
                     Ok(DeserializerOutput {
                         artifact: DeserializerArtifact::Data(data),
                         event,
@@ -19623,13 +18924,10 @@ pub mod quick_xml_deserialize {
     impl<'de> Deserializer<'de, super::ProductStatusElementType>
         for ProductStatusElementTypeDeserializer
     {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::ProductStatusElementType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::ProductStatusElementType> {
             let (Event::Start(x) | Event::Empty(x)) = &event else {
                 return Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::None,
@@ -19637,38 +18935,35 @@ pub mod quick_xml_deserialize {
                     allow_any: false,
                 });
             };
-            Self::from_bytes_start(reader, x)?.next(reader, event)
+            Self::from_bytes_start(helper, x)?.next(helper, event)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::ProductStatusElementType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::ProductStatusElementType> {
             use ProductStatusElementTypeDeserializerState as S;
             match replace(&mut *self.state__, S::Unknown__) {
                 S::Unknown__ => unreachable!(),
                 S::Init__ => {
-                    let output = ContentDeserializer::init(reader, event)?;
-                    self.handle_content(reader, output)
+                    let output = ContentDeserializer::init(helper, event)?;
+                    self.handle_content(helper, output)
                 }
                 S::Content__(deserializer) => {
-                    let output = deserializer.next(reader, event)?;
-                    self.handle_content(reader, output)
+                    let output = deserializer.next(helper, event)?;
+                    self.handle_content(helper, output)
                 }
             }
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::ProductStatusElementType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(
+            mut self,
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::ProductStatusElementType, Error> {
             let state = replace(
                 &mut *self.state__,
                 ProductStatusElementTypeDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::ProductStatusElementType {
                 lang: self.lang,
                 type_: self.type_,
@@ -19689,20 +18984,20 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl TypeClassificationGroupIdDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
             let mut type_: Option<super::TypeClassificationGroupIdType> = None;
-            for attrib in filter_xmlns_attributes(bytes_start) {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    reader.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
                     Some(b"type")
                 ) {
-                    reader.read_attrib(&mut type_, b"type", &attrib.value)?;
+                    helper.read_attrib(&mut type_, b"type", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib_checked(attrib)?;
+                    helper.raise_unexpected_attrib_checked(&attrib)?;
                 }
             }
             Ok(Self {
@@ -19711,16 +19006,13 @@ pub mod quick_xml_deserialize {
                 state__: Box::new(TypeClassificationGroupIdDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: TypeClassificationGroupIdDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             if let TypeClassificationGroupIdDeserializerState::Content__(deserializer) = state {
-                self.store_content(deserializer.finish(reader)?)?;
+                self.store_content(deserializer.finish(helper)?)?;
             }
             Ok(())
         }
@@ -19731,14 +19023,11 @@ pub mod quick_xml_deserialize {
             self.content = Some(value);
             Ok(())
         }
-        fn handle_content<'de, R>(
+        fn handle_content<'de>(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, String>,
-        ) -> DeserializerResult<'de, super::TypeClassificationGroupId>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::TypeClassificationGroupId> {
             use TypeClassificationGroupIdDeserializerState as S;
             let DeserializerOutput {
                 artifact,
@@ -19753,7 +19042,7 @@ pub mod quick_xml_deserialize {
                 }),
                 DeserializerArtifact::Data(data) => {
                     self.store_content(data)?;
-                    let data = self.finish(reader)?;
+                    let data = self.finish(helper)?;
                     Ok(DeserializerOutput {
                         artifact: DeserializerArtifact::Data(data),
                         event,
@@ -19774,13 +19063,10 @@ pub mod quick_xml_deserialize {
     impl<'de> Deserializer<'de, super::TypeClassificationGroupId>
         for TypeClassificationGroupIdDeserializer
     {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::TypeClassificationGroupId>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::TypeClassificationGroupId> {
             let (Event::Start(x) | Event::Empty(x)) = &event else {
                 return Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::None,
@@ -19788,38 +19074,35 @@ pub mod quick_xml_deserialize {
                     allow_any: false,
                 });
             };
-            Self::from_bytes_start(reader, x)?.next(reader, event)
+            Self::from_bytes_start(helper, x)?.next(helper, event)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::TypeClassificationGroupId>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::TypeClassificationGroupId> {
             use TypeClassificationGroupIdDeserializerState as S;
             match replace(&mut *self.state__, S::Unknown__) {
                 S::Unknown__ => unreachable!(),
                 S::Init__ => {
-                    let output = ContentDeserializer::init(reader, event)?;
-                    self.handle_content(reader, output)
+                    let output = ContentDeserializer::init(helper, event)?;
+                    self.handle_content(helper, output)
                 }
                 S::Content__(deserializer) => {
-                    let output = deserializer.next(reader, event)?;
-                    self.handle_content(reader, output)
+                    let output = deserializer.next(helper, event)?;
+                    self.handle_content(helper, output)
                 }
             }
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::TypeClassificationGroupId, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(
+            mut self,
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::TypeClassificationGroupId, Error> {
             let state = replace(
                 &mut *self.state__,
                 TypeClassificationGroupIdDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::TypeClassificationGroupId {
                 type_: self.type_,
                 content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
@@ -19845,13 +19128,13 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl FeatureElementTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
-            for attrib in filter_xmlns_attributes(bytes_start) {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib_checked(attrib)?;
+                helper.raise_unexpected_attrib_checked(&attrib)?;
             }
             Ok(Self {
                 fname: Vec::new(),
@@ -19861,21 +19144,18 @@ pub mod quick_xml_deserialize {
                 state__: Box::new(FeatureElementTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: FeatureElementTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             use FeatureElementTypeDeserializerState as S;
             match state {
-                S::Fname(Some(deserializer)) => self.store_fname(deserializer.finish(reader)?)?,
-                S::Fvalue(Some(deserializer)) => self.store_fvalue(deserializer.finish(reader)?)?,
-                S::Funit(Some(deserializer)) => self.store_funit(deserializer.finish(reader)?)?,
+                S::Fname(Some(deserializer)) => self.store_fname(deserializer.finish(helper)?)?,
+                S::Fvalue(Some(deserializer)) => self.store_fvalue(deserializer.finish(helper)?)?,
+                S::Funit(Some(deserializer)) => self.store_funit(deserializer.finish(helper)?)?,
                 S::FvalueDetails(Some(deserializer)) => {
-                    self.store_fvalue_details(deserializer.finish(reader)?)?
+                    self.store_fvalue_details(deserializer.finish(helper)?)?
                 }
                 _ => (),
             }
@@ -19902,15 +19182,12 @@ pub mod quick_xml_deserialize {
             self.fvalue_details.push(value);
             Ok(())
         }
-        fn handle_fname<'de, R>(
+        fn handle_fname<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::DtMlstring>,
             fallback: &mut Option<FeatureElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -19927,7 +19204,7 @@ pub mod quick_xml_deserialize {
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -19954,15 +19231,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_fvalue<'de, R>(
+        fn handle_fvalue<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::DtMlstring>,
             fallback: &mut Option<FeatureElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -19979,7 +19253,7 @@ pub mod quick_xml_deserialize {
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -20006,15 +19280,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_funit<'de, R>(
+        fn handle_funit<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<FeatureElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -20026,7 +19297,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -20054,15 +19325,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_fvalue_details<'de, R>(
+        fn handle_fvalue_details<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::DtMlstring>,
             fallback: &mut Option<FeatureElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -20074,7 +19342,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -20107,23 +19375,17 @@ pub mod quick_xml_deserialize {
         }
     }
     impl<'de> Deserializer<'de, super::FeatureElementType> for FeatureElementTypeDeserializer {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::FeatureElementType>
-        where
-            R: DeserializeReader,
-        {
-            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        ) -> DeserializerResult<'de, super::FeatureElementType> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::FeatureElementType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::FeatureElementType> {
             use FeatureElementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -20133,8 +19395,8 @@ pub mod quick_xml_deserialize {
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
                     (S::Fname(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_fname(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_fname(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -20145,8 +19407,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Fvalue(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_fvalue(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_fvalue(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -20157,8 +19419,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Funit(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_funit(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_funit(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -20169,8 +19431,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::FvalueDetails(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_fvalue_details(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_fvalue_details(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -20182,10 +19444,10 @@ pub mod quick_xml_deserialize {
                     }
                     (_, Event::End(_)) => {
                         if let Some(fallback) = fallback.take() {
-                            self.finish_state(reader, fallback)?;
+                            self.finish_state(helper, fallback)?;
                         }
                         return Ok(DeserializerOutput {
-                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            artifact: DeserializerArtifact::Data(self.finish(helper)?),
                             event: DeserializerEvent::None,
                             allow_any: false,
                         });
@@ -20196,13 +19458,13 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::Fname(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"FNAME",
                             false,
                         )?;
-                        match self.handle_fname(reader, output, &mut fallback)? {
+                        match self.handle_fname(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -20213,13 +19475,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Fvalue(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"FVALUE",
                             false,
                         )?;
-                        match self.handle_fvalue(reader, output, &mut fallback)? {
+                        match self.handle_fvalue(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -20230,13 +19492,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Funit(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"FUNIT",
                             false,
                         )?;
-                        match self.handle_funit(reader, output, &mut fallback)? {
+                        match self.handle_funit(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -20247,13 +19509,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::FvalueDetails(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"FVALUE_DETAILS",
                             false,
                         )?;
-                        match self.handle_fvalue_details(reader, output, &mut fallback)? {
+                        match self.handle_fvalue_details(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -20282,15 +19544,15 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::FeatureElementType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(
+            mut self,
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::FeatureElementType, Error> {
             let state = replace(
                 &mut *self.state__,
                 FeatureElementTypeDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::FeatureElementType {
                 fname: self.fname,
                 fvalue: self.fvalue,
@@ -20317,45 +19579,41 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl ProductPriceDetailsDatetimeElementTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
             let mut type_: Option<super::ProductPriceDetailsDatetimeType> = None;
-            for attrib in filter_xmlns_attributes(bytes_start) {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    reader.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
                     Some(b"type")
                 ) {
-                    reader.read_attrib(&mut type_, b"type", &attrib.value)?;
+                    helper.read_attrib(&mut type_, b"type", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib_checked(attrib)?;
+                    helper.raise_unexpected_attrib_checked(&attrib)?;
                 }
             }
             Ok(Self {
-                type_: type_
-                    .ok_or_else(|| reader.map_error(ErrorKind::MissingAttribute("type".into())))?,
+                type_: type_.ok_or_else(|| ErrorKind::MissingAttribute("type".into()))?,
                 date: None,
                 time: None,
                 timezone: None,
                 state__: Box::new(ProductPriceDetailsDatetimeElementTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: ProductPriceDetailsDatetimeElementTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             use ProductPriceDetailsDatetimeElementTypeDeserializerState as S;
             match state {
-                S::Date(Some(deserializer)) => self.store_date(deserializer.finish(reader)?)?,
-                S::Time(Some(deserializer)) => self.store_time(deserializer.finish(reader)?)?,
+                S::Date(Some(deserializer)) => self.store_date(deserializer.finish(helper)?)?,
+                S::Time(Some(deserializer)) => self.store_time(deserializer.finish(helper)?)?,
                 S::Timezone(Some(deserializer)) => {
-                    self.store_timezone(deserializer.finish(reader)?)?
+                    self.store_timezone(deserializer.finish(helper)?)?
                 }
                 _ => (),
             }
@@ -20384,15 +19642,12 @@ pub mod quick_xml_deserialize {
             self.timezone = Some(value);
             Ok(())
         }
-        fn handle_date<'de, R>(
+        fn handle_date<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<ProductPriceDetailsDatetimeElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -20413,7 +19668,7 @@ pub mod quick_xml_deserialize {
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -20446,15 +19701,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_time<'de, R>(
+        fn handle_time<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<ProductPriceDetailsDatetimeElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -20469,7 +19721,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -20504,15 +19756,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_timezone<'de, R>(
+        fn handle_timezone<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<ProductPriceDetailsDatetimeElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -20526,7 +19775,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -20562,23 +19811,17 @@ pub mod quick_xml_deserialize {
     impl<'de> Deserializer<'de, super::ProductPriceDetailsDatetimeElementType>
         for ProductPriceDetailsDatetimeElementTypeDeserializer
     {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::ProductPriceDetailsDatetimeElementType>
-        where
-            R: DeserializeReader,
-        {
-            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        ) -> DeserializerResult<'de, super::ProductPriceDetailsDatetimeElementType> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::ProductPriceDetailsDatetimeElementType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::ProductPriceDetailsDatetimeElementType> {
             use ProductPriceDetailsDatetimeElementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -20588,8 +19831,8 @@ pub mod quick_xml_deserialize {
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
                     (S::Date(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_date(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_date(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -20600,8 +19843,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Time(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_time(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_time(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -20612,8 +19855,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Timezone(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_timezone(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_timezone(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -20625,10 +19868,10 @@ pub mod quick_xml_deserialize {
                     }
                     (_, Event::End(_)) => {
                         if let Some(fallback) = fallback.take() {
-                            self.finish_state(reader, fallback)?;
+                            self.finish_state(helper, fallback)?;
                         }
                         return Ok(DeserializerOutput {
-                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            artifact: DeserializerArtifact::Data(self.finish(helper)?),
                             event: DeserializerEvent::None,
                             allow_any: false,
                         });
@@ -20640,13 +19883,13 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::Date(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"DATE",
                             false,
                         )?;
-                        match self.handle_date(reader, output, &mut fallback)? {
+                        match self.handle_date(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -20657,13 +19900,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Time(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"TIME",
                             false,
                         )?;
-                        match self.handle_time(reader, output, &mut fallback)? {
+                        match self.handle_time(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -20674,13 +19917,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Timezone(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"TIMEZONE",
                             false,
                         )?;
-                        match self.handle_timezone(reader, output, &mut fallback)? {
+                        match self.handle_timezone(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -20709,18 +19952,15 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(
+        fn finish(
             mut self,
-            reader: &R,
-        ) -> Result<super::ProductPriceDetailsDatetimeElementType, Error>
-        where
-            R: DeserializeReader,
-        {
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::ProductPriceDetailsDatetimeElementType, Error> {
             let state = replace(
                 &mut *self.state__,
                 ProductPriceDetailsDatetimeElementTypeDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::ProductPriceDetailsDatetimeElementType {
                 type_: self.type_,
                 date: self
@@ -20755,26 +19995,25 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl ProductPriceElementTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
             let mut price_type: Option<String> = None;
-            for attrib in filter_xmlns_attributes(bytes_start) {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    reader.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
                     Some(b"price_type")
                 ) {
-                    reader.read_attrib(&mut price_type, b"price_type", &attrib.value)?;
+                    helper.read_attrib(&mut price_type, b"price_type", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib_checked(attrib)?;
+                    helper.raise_unexpected_attrib_checked(&attrib)?;
                 }
             }
             Ok(Self {
-                price_type: price_type.ok_or_else(|| {
-                    reader.map_error(ErrorKind::MissingAttribute("price_type".into()))
-                })?,
+                price_type: price_type
+                    .ok_or_else(|| ErrorKind::MissingAttribute("price_type".into()))?,
                 price_amount: None,
                 price_currency: None,
                 tax: None,
@@ -20784,31 +20023,28 @@ pub mod quick_xml_deserialize {
                 state__: Box::new(ProductPriceElementTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: ProductPriceElementTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             use ProductPriceElementTypeDeserializerState as S;
             match state {
                 S::PriceAmount(Some(deserializer)) => {
-                    self.store_price_amount(deserializer.finish(reader)?)?
+                    self.store_price_amount(deserializer.finish(helper)?)?
                 }
                 S::PriceCurrency(Some(deserializer)) => {
-                    self.store_price_currency(deserializer.finish(reader)?)?
+                    self.store_price_currency(deserializer.finish(helper)?)?
                 }
-                S::Tax(Some(deserializer)) => self.store_tax(deserializer.finish(reader)?)?,
+                S::Tax(Some(deserializer)) => self.store_tax(deserializer.finish(helper)?)?,
                 S::PriceFactor(Some(deserializer)) => {
-                    self.store_price_factor(deserializer.finish(reader)?)?
+                    self.store_price_factor(deserializer.finish(helper)?)?
                 }
                 S::LowerBound(Some(deserializer)) => {
-                    self.store_lower_bound(deserializer.finish(reader)?)?
+                    self.store_lower_bound(deserializer.finish(helper)?)?
                 }
                 S::Territory(Some(deserializer)) => {
-                    self.store_territory(deserializer.finish(reader)?)?
+                    self.store_territory(deserializer.finish(helper)?)?
                 }
                 _ => (),
             }
@@ -20861,15 +20097,12 @@ pub mod quick_xml_deserialize {
             self.territory.push(value);
             Ok(())
         }
-        fn handle_price_amount<'de, R>(
+        fn handle_price_amount<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, f64>,
             fallback: &mut Option<ProductPriceElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -20887,7 +20120,7 @@ pub mod quick_xml_deserialize {
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -20918,15 +20151,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_price_currency<'de, R>(
+        fn handle_price_currency<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::DtCurrencies>,
             fallback: &mut Option<ProductPriceElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -20940,7 +20170,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -20970,15 +20200,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_tax<'de, R>(
+        fn handle_tax<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, f64>,
             fallback: &mut Option<ProductPriceElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -20990,7 +20217,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -21018,15 +20245,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_price_factor<'de, R>(
+        fn handle_price_factor<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, f64>,
             fallback: &mut Option<ProductPriceElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -21038,7 +20262,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -21069,15 +20293,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_lower_bound<'de, R>(
+        fn handle_lower_bound<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, f64>,
             fallback: &mut Option<ProductPriceElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -21089,7 +20310,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -21120,15 +20341,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_territory<'de, R>(
+        fn handle_territory<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<ProductPriceElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -21140,7 +20358,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -21175,23 +20393,17 @@ pub mod quick_xml_deserialize {
     impl<'de> Deserializer<'de, super::ProductPriceElementType>
         for ProductPriceElementTypeDeserializer
     {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::ProductPriceElementType>
-        where
-            R: DeserializeReader,
-        {
-            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        ) -> DeserializerResult<'de, super::ProductPriceElementType> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::ProductPriceElementType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::ProductPriceElementType> {
             use ProductPriceElementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -21201,8 +20413,8 @@ pub mod quick_xml_deserialize {
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
                     (S::PriceAmount(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_price_amount(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_price_amount(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -21213,8 +20425,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::PriceCurrency(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_price_currency(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_price_currency(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -21225,8 +20437,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Tax(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_tax(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_tax(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -21237,8 +20449,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::PriceFactor(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_price_factor(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_price_factor(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -21249,8 +20461,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::LowerBound(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_lower_bound(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_lower_bound(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -21261,8 +20473,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Territory(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_territory(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_territory(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -21274,10 +20486,10 @@ pub mod quick_xml_deserialize {
                     }
                     (_, Event::End(_)) => {
                         if let Some(fallback) = fallback.take() {
-                            self.finish_state(reader, fallback)?;
+                            self.finish_state(helper, fallback)?;
                         }
                         return Ok(DeserializerOutput {
-                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            artifact: DeserializerArtifact::Data(self.finish(helper)?),
                             event: DeserializerEvent::None,
                             allow_any: false,
                         });
@@ -21288,13 +20500,13 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::PriceAmount(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"PRICE_AMOUNT",
                             false,
                         )?;
-                        match self.handle_price_amount(reader, output, &mut fallback)? {
+                        match self.handle_price_amount(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -21305,13 +20517,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::PriceCurrency(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"PRICE_CURRENCY",
                             false,
                         )?;
-                        match self.handle_price_currency(reader, output, &mut fallback)? {
+                        match self.handle_price_currency(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -21322,13 +20534,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Tax(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"TAX",
                             false,
                         )?;
-                        match self.handle_tax(reader, output, &mut fallback)? {
+                        match self.handle_tax(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -21339,13 +20551,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::PriceFactor(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"PRICE_FACTOR",
                             false,
                         )?;
-                        match self.handle_price_factor(reader, output, &mut fallback)? {
+                        match self.handle_price_factor(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -21356,13 +20568,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::LowerBound(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"LOWER_BOUND",
                             false,
                         )?;
-                        match self.handle_lower_bound(reader, output, &mut fallback)? {
+                        match self.handle_lower_bound(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -21373,13 +20585,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Territory(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"TERRITORY",
                             false,
                         )?;
-                        match self.handle_territory(reader, output, &mut fallback)? {
+                        match self.handle_territory(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -21408,15 +20620,15 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::ProductPriceElementType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(
+            mut self,
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::ProductPriceElementType, Error> {
             let state = replace(
                 &mut *self.state__,
                 ProductPriceElementTypeDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::ProductPriceElementType {
                 price_type: self.price_type,
                 price_amount: self
@@ -21445,30 +20657,27 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl UdxEdxfDiscountGroupElementTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
-            for attrib in filter_xmlns_attributes(bytes_start) {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib_checked(attrib)?;
+                helper.raise_unexpected_attrib_checked(&attrib)?;
             }
             Ok(Self {
                 content: Vec::new(),
                 state__: Box::new(UdxEdxfDiscountGroupElementTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: UdxEdxfDiscountGroupElementTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             if let UdxEdxfDiscountGroupElementTypeDeserializerState::Content__(deserializer) = state
             {
-                self.store_content(deserializer.finish(reader)?)?;
+                self.store_content(deserializer.finish(helper)?)?;
             }
             Ok(())
         }
@@ -21479,15 +20688,12 @@ pub mod quick_xml_deserialize {
             self.content.push(value);
             Ok(())
         }
-        fn handle_content<'de, R>(
+        fn handle_content<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::UdxEdxfDiscountGroupElementTypeContent>,
             fallback: &mut Option<UdxEdxfDiscountGroupElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -21500,7 +20706,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::break_(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -21541,23 +20747,17 @@ pub mod quick_xml_deserialize {
     impl<'de> Deserializer<'de, super::UdxEdxfDiscountGroupElementType>
         for UdxEdxfDiscountGroupElementTypeDeserializer
     {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::UdxEdxfDiscountGroupElementType>
-        where
-            R: DeserializeReader,
-        {
-            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        ) -> DeserializerResult<'de, super::UdxEdxfDiscountGroupElementType> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::UdxEdxfDiscountGroupElementType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::UdxEdxfDiscountGroupElementType> {
             use UdxEdxfDiscountGroupElementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -21566,8 +20766,8 @@ pub mod quick_xml_deserialize {
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
                     (S::Content__(deserializer), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_content(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
@@ -21576,15 +20776,15 @@ pub mod quick_xml_deserialize {
                     }
                     (_, Event::End(_)) => {
                         return Ok(DeserializerOutput {
-                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            artifact: DeserializerArtifact::Data(self.finish(helper)?),
                             event: DeserializerEvent::None,
                             allow_any: false,
                         });
                     }
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
-                        let output = < super :: UdxEdxfDiscountGroupElementTypeContent as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                        match self.handle_content(reader, output, &mut fallback)? {
+                        let output = < super :: UdxEdxfDiscountGroupElementTypeContent as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
@@ -21600,15 +20800,15 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::UdxEdxfDiscountGroupElementType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(
+            mut self,
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::UdxEdxfDiscountGroupElementType, Error> {
             let state = replace(
                 &mut *self.state__,
                 UdxEdxfDiscountGroupElementTypeDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::UdxEdxfDiscountGroupElementType {
                 content: self.content,
             })
@@ -21633,35 +20833,32 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl UdxEdxfDiscountGroupElementTypeContentDeserializer {
-        fn find_suitable<'de, R>(
+        fn find_suitable<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
             fallback: &mut Option<UdxEdxfDiscountGroupElementTypeContentDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if matches!(
-                    reader.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
                     Some(b"UDX.EDXF.DISCOUNT_GROUP_MANUFACTURER")
                 ) {
-                    let output = <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                    let output = <String as WithDeserializer>::Deserializer::init(helper, event)?;
                     return self.handle_udx_edxf_discount_group_manufacturer(
-                        reader,
+                        helper,
                         Default::default(),
                         output,
                         &mut *fallback,
                     );
                 }
                 if matches!(
-                    reader.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
                     Some(b"UDX.EDXF.DISCOUNT_GROUP_SUPPLIER")
                 ) {
-                    let output = <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                    let output = <String as WithDeserializer>::Deserializer::init(helper, event)?;
                     return self.handle_udx_edxf_discount_group_supplier(
-                        reader,
+                        helper,
                         Default::default(),
                         output,
                         &mut *fallback,
@@ -21673,27 +20870,24 @@ pub mod quick_xml_deserialize {
                 .unwrap_or(UdxEdxfDiscountGroupElementTypeContentDeserializerState::Init__);
             Ok(ElementHandlerOutput::return_to_parent(event, false))
         }
-        fn finish_state<R>(
-            reader: &R,
+        fn finish_state(
+            helper: &mut DeserializeHelper,
             state: UdxEdxfDiscountGroupElementTypeContentDeserializerState,
-        ) -> Result<super::UdxEdxfDiscountGroupElementTypeContent, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<super::UdxEdxfDiscountGroupElementTypeContent, Error> {
             use UdxEdxfDiscountGroupElementTypeContentDeserializerState as S;
             match state {
                 S::Unknown__ => unreachable!(),
                 S::Init__ => Err(ErrorKind::MissingContent.into()),
                 S::UdxEdxfDiscountGroupManufacturer(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
-                        let value = deserializer.finish(reader)?;
+                        let value = deserializer.finish(helper)?;
                         Self::store_udx_edxf_discount_group_manufacturer(&mut values, value)?;
                     }
                     Ok (super :: UdxEdxfDiscountGroupElementTypeContent :: UdxEdxfDiscountGroupManufacturer (values . ok_or_else (|| ErrorKind :: MissingElement ("UDX.EDXF.DISCOUNT_GROUP_MANUFACTURER" . into ())) ?))
                 }
                 S::UdxEdxfDiscountGroupSupplier(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
-                        let value = deserializer.finish(reader)?;
+                        let value = deserializer.finish(helper)?;
                         Self::store_udx_edxf_discount_group_supplier(&mut values, value)?;
                     }
                     Ok(
@@ -21731,16 +20925,13 @@ pub mod quick_xml_deserialize {
             *values = Some(value);
             Ok(())
         }
-        fn handle_udx_edxf_discount_group_manufacturer<'de, R>(
+        fn handle_udx_edxf_discount_group_manufacturer<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             mut values: Option<String>,
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<UdxEdxfDiscountGroupElementTypeContentDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -21750,12 +20941,12 @@ pub mod quick_xml_deserialize {
                 * self . state__ = match fallback . take () { None if values . is_none () => { * self . state__ = UdxEdxfDiscountGroupElementTypeContentDeserializerState :: Init__ ; return Ok (ElementHandlerOutput :: from_event (event , allow_any)) ; } , None => UdxEdxfDiscountGroupElementTypeContentDeserializerState :: UdxEdxfDiscountGroupManufacturer (values , None) , Some (UdxEdxfDiscountGroupElementTypeContentDeserializerState :: UdxEdxfDiscountGroupManufacturer (_ , Some (deserializer))) => UdxEdxfDiscountGroupElementTypeContentDeserializerState :: UdxEdxfDiscountGroupManufacturer (values , Some (deserializer)) , _ => unreachable ! () , } ;
                 return Ok(ElementHandlerOutput::break_(event, allow_any));
             }
-            match fallback . take () { None => () , Some (UdxEdxfDiscountGroupElementTypeContentDeserializerState :: UdxEdxfDiscountGroupManufacturer (_ , Some (deserializer))) => { let data = deserializer . finish (reader) ? ; Self :: store_udx_edxf_discount_group_manufacturer (& mut values , data) ? ; } Some (_) => unreachable ! () , }
+            match fallback . take () { None => () , Some (UdxEdxfDiscountGroupElementTypeContentDeserializerState :: UdxEdxfDiscountGroupManufacturer (_ , Some (deserializer))) => { let data = deserializer . finish (helper) ? ; Self :: store_udx_edxf_discount_group_manufacturer (& mut values , data) ? ; } Some (_) => unreachable ! () , }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_udx_edxf_discount_group_manufacturer(&mut values, data)?;
-                    let data = Self :: finish_state (reader , UdxEdxfDiscountGroupElementTypeContentDeserializerState :: UdxEdxfDiscountGroupManufacturer (values , None)) ? ;
+                    let data = Self :: finish_state (helper , UdxEdxfDiscountGroupElementTypeContentDeserializerState :: UdxEdxfDiscountGroupManufacturer (values , None)) ? ;
                     *self.state__ =
                         UdxEdxfDiscountGroupElementTypeContentDeserializerState::Done__(data);
                     ElementHandlerOutput::Break { event, allow_any }
@@ -21766,16 +20957,13 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_udx_edxf_discount_group_supplier<'de, R>(
+        fn handle_udx_edxf_discount_group_supplier<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             mut values: Option<String>,
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<UdxEdxfDiscountGroupElementTypeContentDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -21785,12 +20973,12 @@ pub mod quick_xml_deserialize {
                 * self . state__ = match fallback . take () { None if values . is_none () => { * self . state__ = UdxEdxfDiscountGroupElementTypeContentDeserializerState :: Init__ ; return Ok (ElementHandlerOutput :: from_event (event , allow_any)) ; } , None => UdxEdxfDiscountGroupElementTypeContentDeserializerState :: UdxEdxfDiscountGroupSupplier (values , None) , Some (UdxEdxfDiscountGroupElementTypeContentDeserializerState :: UdxEdxfDiscountGroupSupplier (_ , Some (deserializer))) => UdxEdxfDiscountGroupElementTypeContentDeserializerState :: UdxEdxfDiscountGroupSupplier (values , Some (deserializer)) , _ => unreachable ! () , } ;
                 return Ok(ElementHandlerOutput::break_(event, allow_any));
             }
-            match fallback . take () { None => () , Some (UdxEdxfDiscountGroupElementTypeContentDeserializerState :: UdxEdxfDiscountGroupSupplier (_ , Some (deserializer))) => { let data = deserializer . finish (reader) ? ; Self :: store_udx_edxf_discount_group_supplier (& mut values , data) ? ; } Some (_) => unreachable ! () , }
+            match fallback . take () { None => () , Some (UdxEdxfDiscountGroupElementTypeContentDeserializerState :: UdxEdxfDiscountGroupSupplier (_ , Some (deserializer))) => { let data = deserializer . finish (helper) ? ; Self :: store_udx_edxf_discount_group_supplier (& mut values , data) ? ; } Some (_) => unreachable ! () , }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_udx_edxf_discount_group_supplier(&mut values, data)?;
-                    let data = Self :: finish_state (reader , UdxEdxfDiscountGroupElementTypeContentDeserializerState :: UdxEdxfDiscountGroupSupplier (values , None)) ? ;
+                    let data = Self :: finish_state (helper , UdxEdxfDiscountGroupElementTypeContentDeserializerState :: UdxEdxfDiscountGroupSupplier (values , None)) ? ;
                     *self.state__ =
                         UdxEdxfDiscountGroupElementTypeContentDeserializerState::Done__(data);
                     ElementHandlerOutput::Break { event, allow_any }
@@ -21805,17 +20993,14 @@ pub mod quick_xml_deserialize {
     impl<'de> Deserializer<'de, super::UdxEdxfDiscountGroupElementTypeContent>
         for UdxEdxfDiscountGroupElementTypeContentDeserializer
     {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::UdxEdxfDiscountGroupElementTypeContent>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::UdxEdxfDiscountGroupElementTypeContent> {
             let deserializer = Self {
                 state__: Box::new(UdxEdxfDiscountGroupElementTypeContentDeserializerState::Init__),
             };
-            let mut output = deserializer.next(reader, event)?;
+            let mut output = deserializer.next(helper, event)?;
             output.artifact = match output.artifact {
                 DeserializerArtifact::Deserializer(x)
                     if matches!(
@@ -21829,14 +21014,11 @@ pub mod quick_xml_deserialize {
             };
             Ok(output)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::UdxEdxfDiscountGroupElementTypeContent>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::UdxEdxfDiscountGroupElementTypeContent> {
             use UdxEdxfDiscountGroupElementTypeContentDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -21845,9 +21027,9 @@ pub mod quick_xml_deserialize {
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
                     (S::UdxEdxfDiscountGroupManufacturer(values, Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
+                        let output = deserializer.next(helper, event)?;
                         match self.handle_udx_edxf_discount_group_manufacturer(
-                            reader,
+                            helper,
                             values,
                             output,
                             &mut fallback,
@@ -21859,9 +21041,9 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfDiscountGroupSupplier(values, Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
+                        let output = deserializer.next(helper, event)?;
                         match self.handle_udx_edxf_discount_group_supplier(
-                            reader,
+                            helper,
                             values,
                             output,
                             &mut fallback,
@@ -21875,13 +21057,13 @@ pub mod quick_xml_deserialize {
                     (state, event @ Event::End(_)) => {
                         return Ok(DeserializerOutput {
                             artifact: DeserializerArtifact::Data(Self::finish_state(
-                                reader, state,
+                                helper, state,
                             )?),
                             event: DeserializerEvent::Continue(event),
                             allow_any: false,
                         });
                     }
-                    (S::Init__, event) => match self.find_suitable(reader, event, &mut fallback)? {
+                    (S::Init__, event) => match self.find_suitable(helper, event, &mut fallback)? {
                         ElementHandlerOutput::Break { event, allow_any } => {
                             break (event, allow_any)
                         }
@@ -21891,14 +21073,14 @@ pub mod quick_xml_deserialize {
                         S::UdxEdxfDiscountGroupManufacturer(values, None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"UDX.EDXF.DISCOUNT_GROUP_MANUFACTURER",
                             false,
                         )?;
                         match self.handle_udx_edxf_discount_group_manufacturer(
-                            reader,
+                            helper,
                             values,
                             output,
                             &mut fallback,
@@ -21913,14 +21095,14 @@ pub mod quick_xml_deserialize {
                         S::UdxEdxfDiscountGroupSupplier(values, None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"UDX.EDXF.DISCOUNT_GROUP_SUPPLIER",
                             false,
                         )?;
                         match self.handle_udx_edxf_discount_group_supplier(
-                            reader,
+                            helper,
                             values,
                             output,
                             &mut fallback,
@@ -21942,7 +21124,7 @@ pub mod quick_xml_deserialize {
                 }
             };
             let artifact = if matches!(&*self.state__, S::Done__(_)) {
-                DeserializerArtifact::Data(self.finish(reader)?)
+                DeserializerArtifact::Data(self.finish(helper)?)
             } else {
                 DeserializerArtifact::Deserializer(self)
             };
@@ -21952,14 +21134,11 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(
+        fn finish(
             self,
-            reader: &R,
-        ) -> Result<super::UdxEdxfDiscountGroupElementTypeContent, Error>
-        where
-            R: DeserializeReader,
-        {
-            Self::finish_state(reader, *self.state__)
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::UdxEdxfDiscountGroupElementTypeContent, Error> {
+            Self::finish_state(helper, *self.state__)
         }
     }
     #[derive(Debug)]
@@ -21976,46 +21155,42 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl UdxEdxfDeclarationElementTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
             let mut type_: Option<String> = None;
             let mut date: Option<String> = None;
-            for attrib in filter_xmlns_attributes(bytes_start) {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    reader.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
                     Some(b"type")
                 ) {
-                    reader.read_attrib(&mut type_, b"type", &attrib.value)?;
+                    helper.read_attrib(&mut type_, b"type", &attrib.value)?;
                 } else if matches!(
-                    reader.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
                     Some(b"date")
                 ) {
-                    reader.read_attrib(&mut date, b"date", &attrib.value)?;
+                    helper.read_attrib(&mut date, b"date", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib_checked(attrib)?;
+                    helper.raise_unexpected_attrib_checked(&attrib)?;
                 }
             }
             Ok(Self {
-                type_: type_
-                    .ok_or_else(|| reader.map_error(ErrorKind::MissingAttribute("type".into())))?,
+                type_: type_.ok_or_else(|| ErrorKind::MissingAttribute("type".into()))?,
                 date: date,
                 content: None,
                 state__: Box::new(UdxEdxfDeclarationElementTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: UdxEdxfDeclarationElementTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             if let UdxEdxfDeclarationElementTypeDeserializerState::Content__(deserializer) = state {
-                self.store_content(deserializer.finish(reader)?)?;
+                self.store_content(deserializer.finish(helper)?)?;
             }
             Ok(())
         }
@@ -22026,14 +21201,11 @@ pub mod quick_xml_deserialize {
             self.content = Some(value);
             Ok(())
         }
-        fn handle_content<'de, R>(
+        fn handle_content<'de>(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, String>,
-        ) -> DeserializerResult<'de, super::UdxEdxfDeclarationElementType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::UdxEdxfDeclarationElementType> {
             use UdxEdxfDeclarationElementTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
@@ -22048,7 +21220,7 @@ pub mod quick_xml_deserialize {
                 }),
                 DeserializerArtifact::Data(data) => {
                     self.store_content(data)?;
-                    let data = self.finish(reader)?;
+                    let data = self.finish(helper)?;
                     Ok(DeserializerOutput {
                         artifact: DeserializerArtifact::Data(data),
                         event,
@@ -22069,13 +21241,10 @@ pub mod quick_xml_deserialize {
     impl<'de> Deserializer<'de, super::UdxEdxfDeclarationElementType>
         for UdxEdxfDeclarationElementTypeDeserializer
     {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::UdxEdxfDeclarationElementType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::UdxEdxfDeclarationElementType> {
             let (Event::Start(x) | Event::Empty(x)) = &event else {
                 return Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::None,
@@ -22083,38 +21252,35 @@ pub mod quick_xml_deserialize {
                     allow_any: false,
                 });
             };
-            Self::from_bytes_start(reader, x)?.next(reader, event)
+            Self::from_bytes_start(helper, x)?.next(helper, event)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::UdxEdxfDeclarationElementType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::UdxEdxfDeclarationElementType> {
             use UdxEdxfDeclarationElementTypeDeserializerState as S;
             match replace(&mut *self.state__, S::Unknown__) {
                 S::Unknown__ => unreachable!(),
                 S::Init__ => {
-                    let output = ContentDeserializer::init(reader, event)?;
-                    self.handle_content(reader, output)
+                    let output = ContentDeserializer::init(helper, event)?;
+                    self.handle_content(helper, output)
                 }
                 S::Content__(deserializer) => {
-                    let output = deserializer.next(reader, event)?;
-                    self.handle_content(reader, output)
+                    let output = deserializer.next(helper, event)?;
+                    self.handle_content(helper, output)
                 }
             }
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::UdxEdxfDeclarationElementType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(
+            mut self,
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::UdxEdxfDeclarationElementType, Error> {
             let state = replace(
                 &mut *self.state__,
                 UdxEdxfDeclarationElementTypeDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::UdxEdxfDeclarationElementType {
                 type_: self.type_,
                 date: self.date,
@@ -22137,13 +21303,13 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl UdxEdxfAdditionalFactorsElementTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
-            for attrib in filter_xmlns_attributes(bytes_start) {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib_checked(attrib)?;
+                helper.raise_unexpected_attrib_checked(&attrib)?;
             }
             Ok(Self {
                 udx_edxf_additional_price_factor: None,
@@ -22151,21 +21317,18 @@ pub mod quick_xml_deserialize {
                 state__: Box::new(UdxEdxfAdditionalFactorsElementTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: UdxEdxfAdditionalFactorsElementTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             use UdxEdxfAdditionalFactorsElementTypeDeserializerState as S;
             match state {
                 S::UdxEdxfAdditionalPriceFactor(Some(deserializer)) => {
-                    self.store_udx_edxf_additional_price_factor(deserializer.finish(reader)?)?
+                    self.store_udx_edxf_additional_price_factor(deserializer.finish(helper)?)?
                 }
                 S::UdxEdxfAdditionalFactorInfo(Some(deserializer)) => {
-                    self.store_udx_edxf_additional_factor_info(deserializer.finish(reader)?)?
+                    self.store_udx_edxf_additional_factor_info(deserializer.finish(helper)?)?
                 }
                 _ => (),
             }
@@ -22192,15 +21355,12 @@ pub mod quick_xml_deserialize {
             self.udx_edxf_additional_factor_info = Some(value);
             Ok(())
         }
-        fn handle_udx_edxf_additional_price_factor<'de, R>(
+        fn handle_udx_edxf_additional_price_factor<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, f64>,
             fallback: &mut Option<UdxEdxfAdditionalFactorsElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -22217,7 +21377,7 @@ pub mod quick_xml_deserialize {
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -22241,15 +21401,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_udx_edxf_additional_factor_info<'de, R>(
+        fn handle_udx_edxf_additional_factor_info<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::DtMlstring>,
             fallback: &mut Option<UdxEdxfAdditionalFactorsElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -22266,7 +21423,7 @@ pub mod quick_xml_deserialize {
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -22295,23 +21452,17 @@ pub mod quick_xml_deserialize {
     impl<'de> Deserializer<'de, super::UdxEdxfAdditionalFactorsElementType>
         for UdxEdxfAdditionalFactorsElementTypeDeserializer
     {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::UdxEdxfAdditionalFactorsElementType>
-        where
-            R: DeserializeReader,
-        {
-            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        ) -> DeserializerResult<'de, super::UdxEdxfAdditionalFactorsElementType> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::UdxEdxfAdditionalFactorsElementType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::UdxEdxfAdditionalFactorsElementType> {
             use UdxEdxfAdditionalFactorsElementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -22321,9 +21472,9 @@ pub mod quick_xml_deserialize {
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
                     (S::UdxEdxfAdditionalPriceFactor(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
+                        let output = deserializer.next(helper, event)?;
                         match self.handle_udx_edxf_additional_price_factor(
-                            reader,
+                            helper,
                             output,
                             &mut fallback,
                         )? {
@@ -22337,9 +21488,9 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfAdditionalFactorInfo(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
+                        let output = deserializer.next(helper, event)?;
                         match self.handle_udx_edxf_additional_factor_info(
-                            reader,
+                            helper,
                             output,
                             &mut fallback,
                         )? {
@@ -22354,10 +21505,10 @@ pub mod quick_xml_deserialize {
                     }
                     (_, Event::End(_)) => {
                         if let Some(fallback) = fallback.take() {
-                            self.finish_state(reader, fallback)?;
+                            self.finish_state(helper, fallback)?;
                         }
                         return Ok(DeserializerOutput {
-                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            artifact: DeserializerArtifact::Data(self.finish(helper)?),
                             event: DeserializerEvent::None,
                             allow_any: false,
                         });
@@ -22371,14 +21522,14 @@ pub mod quick_xml_deserialize {
                         S::UdxEdxfAdditionalPriceFactor(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"UDX.EDXF.ADDITIONAL_PRICE_FACTOR",
                             false,
                         )?;
                         match self.handle_udx_edxf_additional_price_factor(
-                            reader,
+                            helper,
                             output,
                             &mut fallback,
                         )? {
@@ -22395,14 +21546,14 @@ pub mod quick_xml_deserialize {
                         S::UdxEdxfAdditionalFactorInfo(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"UDX.EDXF.ADDITIONAL_FACTOR_INFO",
                             false,
                         )?;
                         match self.handle_udx_edxf_additional_factor_info(
-                            reader,
+                            helper,
                             output,
                             &mut fallback,
                         )? {
@@ -22434,18 +21585,15 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(
+        fn finish(
             mut self,
-            reader: &R,
-        ) -> Result<super::UdxEdxfAdditionalFactorsElementType, Error>
-        where
-            R: DeserializeReader,
-        {
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::UdxEdxfAdditionalFactorsElementType, Error> {
             let state = replace(
                 &mut *self.state__,
                 UdxEdxfAdditionalFactorsElementTypeDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::UdxEdxfAdditionalFactorsElementType {
                 udx_edxf_additional_price_factor: self
                     .udx_edxf_additional_price_factor
@@ -22468,31 +21616,28 @@ pub mod quick_xml_deserialize {
     enum UdxEdxfCountryBranchNumbersElementTypeDeserializerState {
         Init__ , UdxEdxfCountryBranchNumber (Option << super :: UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementType as WithDeserializer > :: Deserializer >) , Done__ , Unknown__ , }
     impl UdxEdxfCountryBranchNumbersElementTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
-            for attrib in filter_xmlns_attributes(bytes_start) {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib_checked(attrib)?;
+                helper.raise_unexpected_attrib_checked(&attrib)?;
             }
             Ok(Self {
                 udx_edxf_country_branch_number: Vec::new(),
                 state__: Box::new(UdxEdxfCountryBranchNumbersElementTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: UdxEdxfCountryBranchNumbersElementTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             use UdxEdxfCountryBranchNumbersElementTypeDeserializerState as S;
             match state {
                 S::UdxEdxfCountryBranchNumber(Some(deserializer)) => {
-                    self.store_udx_edxf_country_branch_number(deserializer.finish(reader)?)?
+                    self.store_udx_edxf_country_branch_number(deserializer.finish(helper)?)?
                 }
                 _ => (),
             }
@@ -22505,18 +21650,15 @@ pub mod quick_xml_deserialize {
             self.udx_edxf_country_branch_number.push(value);
             Ok(())
         }
-        fn handle_udx_edxf_country_branch_number<'de, R>(
+        fn handle_udx_edxf_country_branch_number<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<
                 'de,
                 super::UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementType,
             >,
             fallback: &mut Option<UdxEdxfCountryBranchNumbersElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -22533,7 +21675,7 @@ pub mod quick_xml_deserialize {
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -22561,23 +21703,17 @@ pub mod quick_xml_deserialize {
     impl<'de> Deserializer<'de, super::UdxEdxfCountryBranchNumbersElementType>
         for UdxEdxfCountryBranchNumbersElementTypeDeserializer
     {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::UdxEdxfCountryBranchNumbersElementType>
-        where
-            R: DeserializeReader,
-        {
-            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        ) -> DeserializerResult<'de, super::UdxEdxfCountryBranchNumbersElementType> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::UdxEdxfCountryBranchNumbersElementType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::UdxEdxfCountryBranchNumbersElementType> {
             use UdxEdxfCountryBranchNumbersElementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -22587,9 +21723,9 @@ pub mod quick_xml_deserialize {
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
                     (S::UdxEdxfCountryBranchNumber(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
+                        let output = deserializer.next(helper, event)?;
                         match self.handle_udx_edxf_country_branch_number(
-                            reader,
+                            helper,
                             output,
                             &mut fallback,
                         )? {
@@ -22604,10 +21740,10 @@ pub mod quick_xml_deserialize {
                     }
                     (_, Event::End(_)) => {
                         if let Some(fallback) = fallback.take() {
-                            self.finish_state(reader, fallback)?;
+                            self.finish_state(helper, fallback)?;
                         }
                         return Ok(DeserializerOutput {
-                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            artifact: DeserializerArtifact::Data(self.finish(helper)?),
                             event: DeserializerEvent::None,
                             allow_any: false,
                         });
@@ -22621,14 +21757,14 @@ pub mod quick_xml_deserialize {
                         S::UdxEdxfCountryBranchNumber(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"UDX.EDXF.COUNTRY_BRANCH_NUMBER",
                             false,
                         )?;
                         match self.handle_udx_edxf_country_branch_number(
-                            reader,
+                            helper,
                             output,
                             &mut fallback,
                         )? {
@@ -22660,18 +21796,15 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(
+        fn finish(
             mut self,
-            reader: &R,
-        ) -> Result<super::UdxEdxfCountryBranchNumbersElementType, Error>
-        where
-            R: DeserializeReader,
-        {
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::UdxEdxfCountryBranchNumbersElementType, Error> {
             let state = replace(
                 &mut *self.state__,
                 UdxEdxfCountryBranchNumbersElementTypeDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::UdxEdxfCountryBranchNumbersElementType {
                 udx_edxf_country_branch_number: self.udx_edxf_country_branch_number,
             })
@@ -22687,13 +21820,13 @@ pub mod quick_xml_deserialize {
     enum UdxEdxfCountryBranchSupplierIdsElementTypeDeserializerState {
         Init__ , UdxEdxfCountryBranchSupplierId (Option << super :: UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementType as WithDeserializer > :: Deserializer >) , Done__ , Unknown__ , }
     impl UdxEdxfCountryBranchSupplierIdsElementTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
-            for attrib in filter_xmlns_attributes(bytes_start) {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib_checked(attrib)?;
+                helper.raise_unexpected_attrib_checked(&attrib)?;
             }
             Ok(Self {
                 udx_edxf_country_branch_supplier_id: Vec::new(),
@@ -22702,18 +21835,15 @@ pub mod quick_xml_deserialize {
                 ),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: UdxEdxfCountryBranchSupplierIdsElementTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             use UdxEdxfCountryBranchSupplierIdsElementTypeDeserializerState as S;
             match state {
                 S::UdxEdxfCountryBranchSupplierId(Some(deserializer)) => {
-                    self.store_udx_edxf_country_branch_supplier_id(deserializer.finish(reader)?)?
+                    self.store_udx_edxf_country_branch_supplier_id(deserializer.finish(helper)?)?
                 }
                 _ => (),
             }
@@ -22726,18 +21856,15 @@ pub mod quick_xml_deserialize {
             self.udx_edxf_country_branch_supplier_id.push(value);
             Ok(())
         }
-        fn handle_udx_edxf_country_branch_supplier_id<'de, R>(
+        fn handle_udx_edxf_country_branch_supplier_id<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<
                 'de,
                 super::UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementType,
             >,
             fallback: &mut Option<UdxEdxfCountryBranchSupplierIdsElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -22755,7 +21882,7 @@ pub mod quick_xml_deserialize {
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -22783,23 +21910,17 @@ pub mod quick_xml_deserialize {
     impl<'de> Deserializer<'de, super::UdxEdxfCountryBranchSupplierIdsElementType>
         for UdxEdxfCountryBranchSupplierIdsElementTypeDeserializer
     {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::UdxEdxfCountryBranchSupplierIdsElementType>
-        where
-            R: DeserializeReader,
-        {
-            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        ) -> DeserializerResult<'de, super::UdxEdxfCountryBranchSupplierIdsElementType> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::UdxEdxfCountryBranchSupplierIdsElementType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::UdxEdxfCountryBranchSupplierIdsElementType> {
             use UdxEdxfCountryBranchSupplierIdsElementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -22809,9 +21930,9 @@ pub mod quick_xml_deserialize {
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
                     (S::UdxEdxfCountryBranchSupplierId(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
+                        let output = deserializer.next(helper, event)?;
                         match self.handle_udx_edxf_country_branch_supplier_id(
-                            reader,
+                            helper,
                             output,
                             &mut fallback,
                         )? {
@@ -22826,10 +21947,10 @@ pub mod quick_xml_deserialize {
                     }
                     (_, Event::End(_)) => {
                         if let Some(fallback) = fallback.take() {
-                            self.finish_state(reader, fallback)?;
+                            self.finish_state(helper, fallback)?;
                         }
                         return Ok(DeserializerOutput {
-                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            artifact: DeserializerArtifact::Data(self.finish(helper)?),
                             event: DeserializerEvent::None,
                             allow_any: false,
                         });
@@ -22843,14 +21964,14 @@ pub mod quick_xml_deserialize {
                         S::UdxEdxfCountryBranchSupplierId(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"UDX.EDXF.COUNTRY_BRANCH_SUPPLIER_ID",
                             false,
                         )?;
                         match self.handle_udx_edxf_country_branch_supplier_id(
-                            reader,
+                            helper,
                             output,
                             &mut fallback,
                         )? {
@@ -22882,18 +22003,15 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(
+        fn finish(
             mut self,
-            reader: &R,
-        ) -> Result<super::UdxEdxfCountryBranchSupplierIdsElementType, Error>
-        where
-            R: DeserializeReader,
-        {
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::UdxEdxfCountryBranchSupplierIdsElementType, Error> {
             let state = replace(
                 &mut *self.state__,
                 UdxEdxfCountryBranchSupplierIdsElementTypeDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::UdxEdxfCountryBranchSupplierIdsElementType {
                 udx_edxf_country_branch_supplier_id: self.udx_edxf_country_branch_supplier_id,
             })
@@ -22914,31 +22032,28 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl UdxEdxfPackingUnitsElementTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
-            for attrib in filter_xmlns_attributes(bytes_start) {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib_checked(attrib)?;
+                helper.raise_unexpected_attrib_checked(&attrib)?;
             }
             Ok(Self {
                 udx_edxf_packing_unit: Vec::new(),
                 state__: Box::new(UdxEdxfPackingUnitsElementTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: UdxEdxfPackingUnitsElementTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             use UdxEdxfPackingUnitsElementTypeDeserializerState as S;
             match state {
                 S::UdxEdxfPackingUnit(Some(deserializer)) => {
-                    self.store_udx_edxf_packing_unit(deserializer.finish(reader)?)?
+                    self.store_udx_edxf_packing_unit(deserializer.finish(helper)?)?
                 }
                 _ => (),
             }
@@ -22951,15 +22066,12 @@ pub mod quick_xml_deserialize {
             self.udx_edxf_packing_unit.push(value);
             Ok(())
         }
-        fn handle_udx_edxf_packing_unit<'de, R>(
+        fn handle_udx_edxf_packing_unit<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::UdxEdxfPackingUnitElementType>,
             fallback: &mut Option<UdxEdxfPackingUnitsElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -22979,7 +22091,7 @@ pub mod quick_xml_deserialize {
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -23018,23 +22130,17 @@ pub mod quick_xml_deserialize {
     impl<'de> Deserializer<'de, super::UdxEdxfPackingUnitsElementType>
         for UdxEdxfPackingUnitsElementTypeDeserializer
     {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::UdxEdxfPackingUnitsElementType>
-        where
-            R: DeserializeReader,
-        {
-            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        ) -> DeserializerResult<'de, super::UdxEdxfPackingUnitsElementType> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::UdxEdxfPackingUnitsElementType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::UdxEdxfPackingUnitsElementType> {
             use UdxEdxfPackingUnitsElementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -23044,8 +22150,8 @@ pub mod quick_xml_deserialize {
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
                     (S::UdxEdxfPackingUnit(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_udx_edxf_packing_unit(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_udx_edxf_packing_unit(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -23057,10 +22163,10 @@ pub mod quick_xml_deserialize {
                     }
                     (_, Event::End(_)) => {
                         if let Some(fallback) = fallback.take() {
-                            self.finish_state(reader, fallback)?;
+                            self.finish_state(helper, fallback)?;
                         }
                         return Ok(DeserializerOutput {
-                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            artifact: DeserializerArtifact::Data(self.finish(helper)?),
                             event: DeserializerEvent::None,
                             allow_any: false,
                         });
@@ -23074,13 +22180,13 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::UdxEdxfPackingUnit(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"UDX.EDXF.PACKING_UNIT",
                             false,
                         )?;
-                        match self.handle_udx_edxf_packing_unit(reader, output, &mut fallback)? {
+                        match self.handle_udx_edxf_packing_unit(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -23109,15 +22215,15 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::UdxEdxfPackingUnitsElementType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(
+            mut self,
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::UdxEdxfPackingUnitsElementType, Error> {
             let state = replace(
                 &mut *self.state__,
                 UdxEdxfPackingUnitsElementTypeDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::UdxEdxfPackingUnitsElementType {
                 udx_edxf_packing_unit: self.udx_edxf_packing_unit,
             })
@@ -23138,13 +22244,13 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl UdxEdxfProductLogisticDetailsElementTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
-            for attrib in filter_xmlns_attributes(bytes_start) {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib_checked(attrib)?;
+                helper.raise_unexpected_attrib_checked(&attrib)?;
             }
             Ok(Self {
                 udx_edxf_netweight: None,
@@ -23154,21 +22260,18 @@ pub mod quick_xml_deserialize {
                 ),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: UdxEdxfProductLogisticDetailsElementTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             use UdxEdxfProductLogisticDetailsElementTypeDeserializerState as S;
             match state {
                 S::UdxEdxfNetweight(Some(deserializer)) => {
-                    self.store_udx_edxf_netweight(deserializer.finish(reader)?)?
+                    self.store_udx_edxf_netweight(deserializer.finish(helper)?)?
                 }
                 S::UdxEdxfRegionOfOrigin(Some(deserializer)) => {
-                    self.store_udx_edxf_region_of_origin(deserializer.finish(reader)?)?
+                    self.store_udx_edxf_region_of_origin(deserializer.finish(helper)?)?
                 }
                 _ => (),
             }
@@ -23192,15 +22295,12 @@ pub mod quick_xml_deserialize {
             self.udx_edxf_region_of_origin = Some(value);
             Ok(())
         }
-        fn handle_udx_edxf_netweight<'de, R>(
+        fn handle_udx_edxf_netweight<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, f64>,
             fallback: &mut Option<UdxEdxfProductLogisticDetailsElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -23216,7 +22316,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -23240,15 +22340,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_udx_edxf_region_of_origin<'de, R>(
+        fn handle_udx_edxf_region_of_origin<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<UdxEdxfProductLogisticDetailsElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -23260,7 +22357,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -23290,23 +22387,17 @@ pub mod quick_xml_deserialize {
     impl<'de> Deserializer<'de, super::UdxEdxfProductLogisticDetailsElementType>
         for UdxEdxfProductLogisticDetailsElementTypeDeserializer
     {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::UdxEdxfProductLogisticDetailsElementType>
-        where
-            R: DeserializeReader,
-        {
-            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        ) -> DeserializerResult<'de, super::UdxEdxfProductLogisticDetailsElementType> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::UdxEdxfProductLogisticDetailsElementType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::UdxEdxfProductLogisticDetailsElementType> {
             use UdxEdxfProductLogisticDetailsElementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -23316,8 +22407,8 @@ pub mod quick_xml_deserialize {
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
                     (S::UdxEdxfNetweight(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_udx_edxf_netweight(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_udx_edxf_netweight(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -23328,9 +22419,9 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfRegionOfOrigin(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
+                        let output = deserializer.next(helper, event)?;
                         match self.handle_udx_edxf_region_of_origin(
-                            reader,
+                            helper,
                             output,
                             &mut fallback,
                         )? {
@@ -23345,10 +22436,10 @@ pub mod quick_xml_deserialize {
                     }
                     (_, Event::End(_)) => {
                         if let Some(fallback) = fallback.take() {
-                            self.finish_state(reader, fallback)?;
+                            self.finish_state(helper, fallback)?;
                         }
                         return Ok(DeserializerOutput {
-                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            artifact: DeserializerArtifact::Data(self.finish(helper)?),
                             event: DeserializerEvent::None,
                             allow_any: false,
                         });
@@ -23359,13 +22450,13 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::UdxEdxfNetweight(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"UDX.EDXF.NETWEIGHT",
                             false,
                         )?;
-                        match self.handle_udx_edxf_netweight(reader, output, &mut fallback)? {
+                        match self.handle_udx_edxf_netweight(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -23379,14 +22470,14 @@ pub mod quick_xml_deserialize {
                         S::UdxEdxfRegionOfOrigin(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"UDX.EDXF.REGION_OF_ORIGIN",
                             false,
                         )?;
                         match self.handle_udx_edxf_region_of_origin(
-                            reader,
+                            helper,
                             output,
                             &mut fallback,
                         )? {
@@ -23418,18 +22509,15 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(
+        fn finish(
             mut self,
-            reader: &R,
-        ) -> Result<super::UdxEdxfProductLogisticDetailsElementType, Error>
-        where
-            R: DeserializeReader,
-        {
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::UdxEdxfProductLogisticDetailsElementType, Error> {
             let state = replace(
                 &mut *self.state__,
                 UdxEdxfProductLogisticDetailsElementTypeDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::UdxEdxfProductLogisticDetailsElementType {
                 udx_edxf_netweight: self.udx_edxf_netweight,
                 udx_edxf_region_of_origin: self.udx_edxf_region_of_origin,
@@ -23451,13 +22539,13 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl UdxEdxfReachElementTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
-            for attrib in filter_xmlns_attributes(bytes_start) {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib_checked(attrib)?;
+                helper.raise_unexpected_attrib_checked(&attrib)?;
             }
             Ok(Self {
                 udx_edxf_reach_listdate: None,
@@ -23465,21 +22553,18 @@ pub mod quick_xml_deserialize {
                 state__: Box::new(UdxEdxfReachElementTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: UdxEdxfReachElementTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             use UdxEdxfReachElementTypeDeserializerState as S;
             match state {
                 S::UdxEdxfReachListdate(Some(deserializer)) => {
-                    self.store_udx_edxf_reach_listdate(deserializer.finish(reader)?)?
+                    self.store_udx_edxf_reach_listdate(deserializer.finish(helper)?)?
                 }
                 S::UdxEdxfReachInfo(Some(deserializer)) => {
-                    self.store_udx_edxf_reach_info(deserializer.finish(reader)?)?
+                    self.store_udx_edxf_reach_info(deserializer.finish(helper)?)?
                 }
                 _ => (),
             }
@@ -23503,15 +22588,12 @@ pub mod quick_xml_deserialize {
             self.udx_edxf_reach_info = Some(value);
             Ok(())
         }
-        fn handle_udx_edxf_reach_listdate<'de, R>(
+        fn handle_udx_edxf_reach_listdate<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<UdxEdxfReachElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -23525,7 +22607,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -23558,15 +22640,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_udx_edxf_reach_info<'de, R>(
+        fn handle_udx_edxf_reach_info<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<UdxEdxfReachElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -23586,7 +22665,7 @@ pub mod quick_xml_deserialize {
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -23621,23 +22700,17 @@ pub mod quick_xml_deserialize {
     impl<'de> Deserializer<'de, super::UdxEdxfReachElementType>
         for UdxEdxfReachElementTypeDeserializer
     {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::UdxEdxfReachElementType>
-        where
-            R: DeserializeReader,
-        {
-            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        ) -> DeserializerResult<'de, super::UdxEdxfReachElementType> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::UdxEdxfReachElementType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::UdxEdxfReachElementType> {
             use UdxEdxfReachElementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -23647,8 +22720,8 @@ pub mod quick_xml_deserialize {
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
                     (S::UdxEdxfReachListdate(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_udx_edxf_reach_listdate(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_udx_edxf_reach_listdate(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -23659,8 +22732,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfReachInfo(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_udx_edxf_reach_info(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_udx_edxf_reach_info(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -23672,10 +22745,10 @@ pub mod quick_xml_deserialize {
                     }
                     (_, Event::End(_)) => {
                         if let Some(fallback) = fallback.take() {
-                            self.finish_state(reader, fallback)?;
+                            self.finish_state(helper, fallback)?;
                         }
                         return Ok(DeserializerOutput {
-                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            artifact: DeserializerArtifact::Data(self.finish(helper)?),
                             event: DeserializerEvent::None,
                             allow_any: false,
                         });
@@ -23690,13 +22763,13 @@ pub mod quick_xml_deserialize {
                         S::UdxEdxfReachListdate(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"UDX.EDXF.REACH.LISTDATE",
                             false,
                         )?;
-                        match self.handle_udx_edxf_reach_listdate(reader, output, &mut fallback)? {
+                        match self.handle_udx_edxf_reach_listdate(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -23707,13 +22780,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfReachInfo(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"UDX.EDXF.REACH.INFO",
                             false,
                         )?;
-                        match self.handle_udx_edxf_reach_info(reader, output, &mut fallback)? {
+                        match self.handle_udx_edxf_reach_info(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -23742,15 +22815,15 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::UdxEdxfReachElementType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(
+            mut self,
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::UdxEdxfReachElementType, Error> {
             let state = replace(
                 &mut *self.state__,
                 UdxEdxfReachElementTypeDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::UdxEdxfReachElementType {
                 udx_edxf_reach_listdate: self.udx_edxf_reach_listdate,
                 udx_edxf_reach_info: self
@@ -23774,31 +22847,28 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl UdxEdxfSurchargeListElementTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
-            for attrib in filter_xmlns_attributes(bytes_start) {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib_checked(attrib)?;
+                helper.raise_unexpected_attrib_checked(&attrib)?;
             }
             Ok(Self {
                 udx_edxf_surcharge: Vec::new(),
                 state__: Box::new(UdxEdxfSurchargeListElementTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: UdxEdxfSurchargeListElementTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             use UdxEdxfSurchargeListElementTypeDeserializerState as S;
             match state {
                 S::UdxEdxfSurcharge(Some(deserializer)) => {
-                    self.store_udx_edxf_surcharge(deserializer.finish(reader)?)?
+                    self.store_udx_edxf_surcharge(deserializer.finish(helper)?)?
                 }
                 _ => (),
             }
@@ -23811,15 +22881,12 @@ pub mod quick_xml_deserialize {
             self.udx_edxf_surcharge.push(value);
             Ok(())
         }
-        fn handle_udx_edxf_surcharge<'de, R>(
+        fn handle_udx_edxf_surcharge<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::UdxEdxfSurchargeElementType>,
             fallback: &mut Option<UdxEdxfSurchargeListElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -23839,7 +22906,7 @@ pub mod quick_xml_deserialize {
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -23878,23 +22945,17 @@ pub mod quick_xml_deserialize {
     impl<'de> Deserializer<'de, super::UdxEdxfSurchargeListElementType>
         for UdxEdxfSurchargeListElementTypeDeserializer
     {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::UdxEdxfSurchargeListElementType>
-        where
-            R: DeserializeReader,
-        {
-            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        ) -> DeserializerResult<'de, super::UdxEdxfSurchargeListElementType> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::UdxEdxfSurchargeListElementType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::UdxEdxfSurchargeListElementType> {
             use UdxEdxfSurchargeListElementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -23904,8 +22965,8 @@ pub mod quick_xml_deserialize {
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
                     (S::UdxEdxfSurcharge(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_udx_edxf_surcharge(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_udx_edxf_surcharge(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -23917,10 +22978,10 @@ pub mod quick_xml_deserialize {
                     }
                     (_, Event::End(_)) => {
                         if let Some(fallback) = fallback.take() {
-                            self.finish_state(reader, fallback)?;
+                            self.finish_state(helper, fallback)?;
                         }
                         return Ok(DeserializerOutput {
-                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            artifact: DeserializerArtifact::Data(self.finish(helper)?),
                             event: DeserializerEvent::None,
                             allow_any: false,
                         });
@@ -23934,13 +22995,13 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::UdxEdxfSurcharge(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"UDX.EDXF.SURCHARGE",
                             false,
                         )?;
-                        match self.handle_udx_edxf_surcharge(reader, output, &mut fallback)? {
+                        match self.handle_udx_edxf_surcharge(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -23969,15 +23030,15 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::UdxEdxfSurchargeListElementType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(
+            mut self,
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::UdxEdxfSurchargeListElementType, Error> {
             let state = replace(
                 &mut *self.state__,
                 UdxEdxfSurchargeListElementTypeDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::UdxEdxfSurchargeListElementType {
                 udx_edxf_surcharge: self.udx_edxf_surcharge,
             })
@@ -23996,31 +23057,28 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl CustomsTariffNumberElementTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
-            for attrib in filter_xmlns_attributes(bytes_start) {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib_checked(attrib)?;
+                helper.raise_unexpected_attrib_checked(&attrib)?;
             }
             Ok(Self {
                 customs_number: None,
                 state__: Box::new(CustomsTariffNumberElementTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: CustomsTariffNumberElementTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             use CustomsTariffNumberElementTypeDeserializerState as S;
             match state {
                 S::CustomsNumber(Some(deserializer)) => {
-                    self.store_customs_number(deserializer.finish(reader)?)?
+                    self.store_customs_number(deserializer.finish(helper)?)?
                 }
                 _ => (),
             }
@@ -24035,15 +23093,12 @@ pub mod quick_xml_deserialize {
             self.customs_number = Some(value);
             Ok(())
         }
-        fn handle_customs_number<'de, R>(
+        fn handle_customs_number<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<CustomsTariffNumberElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -24063,7 +23118,7 @@ pub mod quick_xml_deserialize {
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -24098,23 +23153,17 @@ pub mod quick_xml_deserialize {
     impl<'de> Deserializer<'de, super::CustomsTariffNumberElementType>
         for CustomsTariffNumberElementTypeDeserializer
     {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::CustomsTariffNumberElementType>
-        where
-            R: DeserializeReader,
-        {
-            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        ) -> DeserializerResult<'de, super::CustomsTariffNumberElementType> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::CustomsTariffNumberElementType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::CustomsTariffNumberElementType> {
             use CustomsTariffNumberElementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -24124,8 +23173,8 @@ pub mod quick_xml_deserialize {
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
                     (S::CustomsNumber(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_customs_number(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_customs_number(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -24137,10 +23186,10 @@ pub mod quick_xml_deserialize {
                     }
                     (_, Event::End(_)) => {
                         if let Some(fallback) = fallback.take() {
-                            self.finish_state(reader, fallback)?;
+                            self.finish_state(helper, fallback)?;
                         }
                         return Ok(DeserializerOutput {
-                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            artifact: DeserializerArtifact::Data(self.finish(helper)?),
                             event: DeserializerEvent::None,
                             allow_any: false,
                         });
@@ -24152,13 +23201,13 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::CustomsNumber(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"CUSTOMS_NUMBER",
                             false,
                         )?;
-                        match self.handle_customs_number(reader, output, &mut fallback)? {
+                        match self.handle_customs_number(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -24187,15 +23236,15 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::CustomsTariffNumberElementType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(
+            mut self,
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::CustomsTariffNumberElementType, Error> {
             let state = replace(
                 &mut *self.state__,
                 CustomsTariffNumberElementTypeDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::CustomsTariffNumberElementType {
                 customs_number: self
                     .customs_number
@@ -24218,39 +23267,36 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
             let mut type_: Option<String> = None;
             let mut country: Option<String> = None;
-            for attrib in filter_xmlns_attributes(bytes_start) {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    reader.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
                     Some(b"type")
                 ) {
-                    reader.read_attrib(&mut type_, b"type", &attrib.value)?;
+                    helper.read_attrib(&mut type_, b"type", &attrib.value)?;
                 } else if matches!(
-                    reader.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
                     Some(b"country")
                 ) {
-                    reader.read_attrib(&mut country, b"country", &attrib.value)?;
+                    helper.read_attrib(&mut country, b"country", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib_checked(attrib)?;
+                    helper.raise_unexpected_attrib_checked(&attrib)?;
                 }
             }
-            Ok (Self { type_ : type_ . ok_or_else (|| reader . map_error (ErrorKind :: MissingAttribute ("type" . into ()))) ? , country : country . ok_or_else (|| reader . map_error (ErrorKind :: MissingAttribute ("country" . into ()))) ? , content : None , state__ : Box :: new (UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeDeserializerState :: Init__) , })
+            Ok (Self { type_ : type_ . ok_or_else (|| ErrorKind :: MissingAttribute ("type" . into ())) ? , country : country . ok_or_else (|| ErrorKind :: MissingAttribute ("country" . into ())) ? , content : None , state__ : Box :: new (UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeDeserializerState :: Init__) , })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state : UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
-            if let UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeDeserializerState :: Content__ (deserializer) = state { self . store_content (deserializer . finish (reader) ?) ? ; }
+        ) -> Result<(), Error> {
+            if let UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeDeserializerState :: Content__ (deserializer) = state { self . store_content (deserializer . finish (helper) ?) ? ; }
             Ok(())
         }
         fn store_content(&mut self, value: f64) -> Result<(), Error> {
@@ -24260,17 +23306,14 @@ pub mod quick_xml_deserialize {
             self.content = Some(value);
             Ok(())
         }
-        fn handle_content<'de, R>(
+        fn handle_content<'de>(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, f64>,
         ) -> DeserializerResult<
             'de,
             super::UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementType,
-        >
-        where
-            R: DeserializeReader,
-        {
+        > {
             use UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
@@ -24285,7 +23328,7 @@ pub mod quick_xml_deserialize {
                 }),
                 DeserializerArtifact::Data(data) => {
                     self.store_content(data)?;
-                    let data = self.finish(reader)?;
+                    let data = self.finish(helper)?;
                     Ok(DeserializerOutput {
                         artifact: DeserializerArtifact::Data(data),
                         event,
@@ -24307,16 +23350,13 @@ pub mod quick_xml_deserialize {
         Deserializer<'de, super::UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementType>
         for UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeDeserializer
     {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
         ) -> DeserializerResult<
             'de,
             super::UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementType,
-        >
-        where
-            R: DeserializeReader,
-        {
+        > {
             let (Event::Start(x) | Event::Empty(x)) = &event else {
                 return Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::None,
@@ -24324,41 +23364,36 @@ pub mod quick_xml_deserialize {
                     allow_any: false,
                 });
             };
-            Self::from_bytes_start(reader, x)?.next(reader, event)
+            Self::from_bytes_start(helper, x)?.next(helper, event)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
         ) -> DeserializerResult<
             'de,
             super::UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementType,
-        >
-        where
-            R: DeserializeReader,
-        {
+        > {
             use UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeDeserializerState as S;
             match replace(&mut *self.state__, S::Unknown__) {
                 S::Unknown__ => unreachable!(),
                 S::Init__ => {
-                    let output = ContentDeserializer::init(reader, event)?;
-                    self.handle_content(reader, output)
+                    let output = ContentDeserializer::init(helper, event)?;
+                    self.handle_content(helper, output)
                 }
                 S::Content__(deserializer) => {
-                    let output = deserializer.next(reader, event)?;
-                    self.handle_content(reader, output)
+                    let output = deserializer.next(helper, event)?;
+                    self.handle_content(helper, output)
                 }
             }
         }
-        fn finish<R>(
+        fn finish(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
         ) -> Result<super::UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementType, Error>
-        where
-            R: DeserializeReader,
         {
             let state = replace (& mut * self . state__ , UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeDeserializerState :: Unknown__) ;
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(
                 super::UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementType {
                     type_: self.type_,
@@ -24377,39 +23412,36 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
             let mut type_: Option<String> = None;
             let mut country: Option<String> = None;
-            for attrib in filter_xmlns_attributes(bytes_start) {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    reader.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
                     Some(b"type")
                 ) {
-                    reader.read_attrib(&mut type_, b"type", &attrib.value)?;
+                    helper.read_attrib(&mut type_, b"type", &attrib.value)?;
                 } else if matches!(
-                    reader.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
                     Some(b"country")
                 ) {
-                    reader.read_attrib(&mut country, b"country", &attrib.value)?;
+                    helper.read_attrib(&mut country, b"country", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib_checked(attrib)?;
+                    helper.raise_unexpected_attrib_checked(&attrib)?;
                 }
             }
-            Ok (Self { type_ : type_ . ok_or_else (|| reader . map_error (ErrorKind :: MissingAttribute ("type" . into ()))) ? , country : country . ok_or_else (|| reader . map_error (ErrorKind :: MissingAttribute ("country" . into ()))) ? , content : None , state__ : Box :: new (UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeDeserializerState :: Init__) , })
+            Ok (Self { type_ : type_ . ok_or_else (|| ErrorKind :: MissingAttribute ("type" . into ())) ? , country : country . ok_or_else (|| ErrorKind :: MissingAttribute ("country" . into ())) ? , content : None , state__ : Box :: new (UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeDeserializerState :: Init__) , })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state : UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
-            if let UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeDeserializerState :: Content__ (deserializer) = state { self . store_content (deserializer . finish (reader) ?) ? ; }
+        ) -> Result<(), Error> {
+            if let UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeDeserializerState :: Content__ (deserializer) = state { self . store_content (deserializer . finish (helper) ?) ? ; }
             Ok(())
         }
         fn store_content(&mut self, value: f64) -> Result<(), Error> {
@@ -24419,17 +23451,14 @@ pub mod quick_xml_deserialize {
             self.content = Some(value);
             Ok(())
         }
-        fn handle_content<'de, R>(
+        fn handle_content<'de>(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, f64>,
         ) -> DeserializerResult<
             'de,
             super::UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementType,
-        >
-        where
-            R: DeserializeReader,
-        {
+        > {
             use UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
@@ -24444,7 +23473,7 @@ pub mod quick_xml_deserialize {
                 }),
                 DeserializerArtifact::Data(data) => {
                     self.store_content(data)?;
-                    let data = self.finish(reader)?;
+                    let data = self.finish(helper)?;
                     Ok(DeserializerOutput {
                         artifact: DeserializerArtifact::Data(data),
                         event,
@@ -24468,16 +23497,13 @@ pub mod quick_xml_deserialize {
             super::UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementType,
         > for UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeDeserializer
     {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
         ) -> DeserializerResult<
             'de,
             super::UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementType,
-        >
-        where
-            R: DeserializeReader,
-        {
+        > {
             let (Event::Start(x) | Event::Empty(x)) = &event else {
                 return Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::None,
@@ -24485,44 +23511,38 @@ pub mod quick_xml_deserialize {
                     allow_any: false,
                 });
             };
-            Self::from_bytes_start(reader, x)?.next(reader, event)
+            Self::from_bytes_start(helper, x)?.next(helper, event)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
         ) -> DeserializerResult<
             'de,
             super::UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementType,
-        >
-        where
-            R: DeserializeReader,
-        {
+        > {
             use UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeDeserializerState as S;
             match replace(&mut *self.state__, S::Unknown__) {
                 S::Unknown__ => unreachable!(),
                 S::Init__ => {
-                    let output = ContentDeserializer::init(reader, event)?;
-                    self.handle_content(reader, output)
+                    let output = ContentDeserializer::init(helper, event)?;
+                    self.handle_content(helper, output)
                 }
                 S::Content__(deserializer) => {
-                    let output = deserializer.next(reader, event)?;
-                    self.handle_content(reader, output)
+                    let output = deserializer.next(helper, event)?;
+                    self.handle_content(helper, output)
                 }
             }
         }
-        fn finish<R>(
+        fn finish(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
         ) -> Result<
             super::UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementType,
             Error,
-        >
-        where
-            R: DeserializeReader,
-        {
+        > {
             let state = replace (& mut * self . state__ , UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeDeserializerState :: Unknown__) ;
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(
                 super::UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementType {
                     type_: self.type_,
@@ -24569,13 +23589,13 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl UdxEdxfPackingUnitElementTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
-            for attrib in filter_xmlns_attributes(bytes_start) {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib_checked(attrib)?;
+                helper.raise_unexpected_attrib_checked(&attrib)?;
             }
             Ok(Self {
                 udx_edxf_quantity_min: None,
@@ -24594,54 +23614,51 @@ pub mod quick_xml_deserialize {
                 state__: Box::new(UdxEdxfPackingUnitElementTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: UdxEdxfPackingUnitElementTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             use UdxEdxfPackingUnitElementTypeDeserializerState as S;
             match state {
                 S::UdxEdxfQuantityMin(Some(deserializer)) => {
-                    self.store_udx_edxf_quantity_min(deserializer.finish(reader)?)?
+                    self.store_udx_edxf_quantity_min(deserializer.finish(helper)?)?
                 }
                 S::UdxEdxfQuantityMax(Some(deserializer)) => {
-                    self.store_udx_edxf_quantity_max(deserializer.finish(reader)?)?
+                    self.store_udx_edxf_quantity_max(deserializer.finish(helper)?)?
                 }
                 S::UdxEdxfPackingUnitCode(Some(deserializer)) => {
-                    self.store_udx_edxf_packing_unit_code(deserializer.finish(reader)?)?
+                    self.store_udx_edxf_packing_unit_code(deserializer.finish(helper)?)?
                 }
                 S::UdxEdxfPackingUnitName(Some(deserializer)) => {
-                    self.store_udx_edxf_packing_unit_name(deserializer.finish(reader)?)?
+                    self.store_udx_edxf_packing_unit_name(deserializer.finish(helper)?)?
                 }
                 S::UdxEdxfPackageBreak(Some(deserializer)) => {
-                    self.store_udx_edxf_package_break(deserializer.finish(reader)?)?
+                    self.store_udx_edxf_package_break(deserializer.finish(helper)?)?
                 }
                 S::UdxEdxfVolume(Some(deserializer)) => {
-                    self.store_udx_edxf_volume(deserializer.finish(reader)?)?
+                    self.store_udx_edxf_volume(deserializer.finish(helper)?)?
                 }
                 S::UdxEdxfWeight(Some(deserializer)) => {
-                    self.store_udx_edxf_weight(deserializer.finish(reader)?)?
+                    self.store_udx_edxf_weight(deserializer.finish(helper)?)?
                 }
                 S::UdxEdxfLength(Some(deserializer)) => {
-                    self.store_udx_edxf_length(deserializer.finish(reader)?)?
+                    self.store_udx_edxf_length(deserializer.finish(helper)?)?
                 }
                 S::UdxEdxfWidth(Some(deserializer)) => {
-                    self.store_udx_edxf_width(deserializer.finish(reader)?)?
+                    self.store_udx_edxf_width(deserializer.finish(helper)?)?
                 }
                 S::UdxEdxfDepth(Some(deserializer)) => {
-                    self.store_udx_edxf_depth(deserializer.finish(reader)?)?
+                    self.store_udx_edxf_depth(deserializer.finish(helper)?)?
                 }
                 S::UdxEdxfDiameter(Some(deserializer)) => {
-                    self.store_udx_edxf_diameter(deserializer.finish(reader)?)?
+                    self.store_udx_edxf_diameter(deserializer.finish(helper)?)?
                 }
                 S::UdxEdxfGtin(Some(deserializer)) => {
-                    self.store_udx_edxf_gtin(deserializer.finish(reader)?)?
+                    self.store_udx_edxf_gtin(deserializer.finish(helper)?)?
                 }
                 S::UdxEdxfGs1128(Some(deserializer)) => {
-                    self.store_udx_edxf_gs_1128(deserializer.finish(reader)?)?
+                    self.store_udx_edxf_gs_1128(deserializer.finish(helper)?)?
                 }
                 _ => (),
             }
@@ -24762,15 +23779,12 @@ pub mod quick_xml_deserialize {
             self.udx_edxf_gs_1128 = Some(value);
             Ok(())
         }
-        fn handle_udx_edxf_quantity_min<'de, R>(
+        fn handle_udx_edxf_quantity_min<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, f32>,
             fallback: &mut Option<UdxEdxfPackingUnitElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -24791,7 +23805,7 @@ pub mod quick_xml_deserialize {
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -24826,15 +23840,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_udx_edxf_quantity_max<'de, R>(
+        fn handle_udx_edxf_quantity_max<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, f32>,
             fallback: &mut Option<UdxEdxfPackingUnitElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -24849,7 +23860,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -24883,15 +23894,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_udx_edxf_packing_unit_code<'de, R>(
+        fn handle_udx_edxf_packing_unit_code<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::DtPunit>,
             fallback: &mut Option<UdxEdxfPackingUnitElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -24918,7 +23926,7 @@ pub mod quick_xml_deserialize {
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -24945,15 +23953,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_udx_edxf_packing_unit_name<'de, R>(
+        fn handle_udx_edxf_packing_unit_name<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::DtMlstring>,
             fallback: &mut Option<UdxEdxfPackingUnitElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -24968,7 +23973,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -24995,15 +24000,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_udx_edxf_package_break<'de, R>(
+        fn handle_udx_edxf_package_break<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<UdxEdxfPackingUnitElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -25017,7 +24019,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -25050,15 +24052,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_udx_edxf_volume<'de, R>(
+        fn handle_udx_edxf_volume<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, f64>,
             fallback: &mut Option<UdxEdxfPackingUnitElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -25072,7 +24071,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -25105,15 +24104,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_udx_edxf_weight<'de, R>(
+        fn handle_udx_edxf_weight<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, f64>,
             fallback: &mut Option<UdxEdxfPackingUnitElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -25127,7 +24123,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -25160,15 +24156,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_udx_edxf_length<'de, R>(
+        fn handle_udx_edxf_length<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, f64>,
             fallback: &mut Option<UdxEdxfPackingUnitElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -25182,7 +24175,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -25215,15 +24208,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_udx_edxf_width<'de, R>(
+        fn handle_udx_edxf_width<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, f64>,
             fallback: &mut Option<UdxEdxfPackingUnitElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -25237,7 +24227,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -25270,15 +24260,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_udx_edxf_depth<'de, R>(
+        fn handle_udx_edxf_depth<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, f64>,
             fallback: &mut Option<UdxEdxfPackingUnitElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -25293,7 +24280,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -25328,15 +24315,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_udx_edxf_diameter<'de, R>(
+        fn handle_udx_edxf_diameter<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, f64>,
             fallback: &mut Option<UdxEdxfPackingUnitElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -25350,7 +24334,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -25383,15 +24367,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_udx_edxf_gtin<'de, R>(
+        fn handle_udx_edxf_gtin<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<UdxEdxfPackingUnitElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -25405,7 +24386,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -25438,15 +24419,12 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_udx_edxf_gs_1128<'de, R>(
+        fn handle_udx_edxf_gs_1128<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<UdxEdxfPackingUnitElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -25460,7 +24438,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -25495,23 +24473,17 @@ pub mod quick_xml_deserialize {
     impl<'de> Deserializer<'de, super::UdxEdxfPackingUnitElementType>
         for UdxEdxfPackingUnitElementTypeDeserializer
     {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::UdxEdxfPackingUnitElementType>
-        where
-            R: DeserializeReader,
-        {
-            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        ) -> DeserializerResult<'de, super::UdxEdxfPackingUnitElementType> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::UdxEdxfPackingUnitElementType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::UdxEdxfPackingUnitElementType> {
             use UdxEdxfPackingUnitElementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -25521,8 +24493,8 @@ pub mod quick_xml_deserialize {
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
                     (S::UdxEdxfQuantityMin(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_udx_edxf_quantity_min(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_udx_edxf_quantity_min(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -25533,8 +24505,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfQuantityMax(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_udx_edxf_quantity_max(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_udx_edxf_quantity_max(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -25545,9 +24517,9 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfPackingUnitCode(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
+                        let output = deserializer.next(helper, event)?;
                         match self.handle_udx_edxf_packing_unit_code(
-                            reader,
+                            helper,
                             output,
                             &mut fallback,
                         )? {
@@ -25561,9 +24533,9 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfPackingUnitName(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
+                        let output = deserializer.next(helper, event)?;
                         match self.handle_udx_edxf_packing_unit_name(
-                            reader,
+                            helper,
                             output,
                             &mut fallback,
                         )? {
@@ -25577,8 +24549,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfPackageBreak(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_udx_edxf_package_break(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_udx_edxf_package_break(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -25589,8 +24561,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfVolume(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_udx_edxf_volume(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_udx_edxf_volume(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -25601,8 +24573,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfWeight(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_udx_edxf_weight(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_udx_edxf_weight(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -25613,8 +24585,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfLength(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_udx_edxf_length(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_udx_edxf_length(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -25625,8 +24597,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfWidth(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_udx_edxf_width(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_udx_edxf_width(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -25637,8 +24609,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfDepth(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_udx_edxf_depth(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_udx_edxf_depth(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -25649,8 +24621,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfDiameter(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_udx_edxf_diameter(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_udx_edxf_diameter(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -25661,8 +24633,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfGtin(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_udx_edxf_gtin(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_udx_edxf_gtin(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -25673,8 +24645,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfGs1128(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_udx_edxf_gs_1128(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_udx_edxf_gs_1128(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -25686,10 +24658,10 @@ pub mod quick_xml_deserialize {
                     }
                     (_, Event::End(_)) => {
                         if let Some(fallback) = fallback.take() {
-                            self.finish_state(reader, fallback)?;
+                            self.finish_state(helper, fallback)?;
                         }
                         return Ok(DeserializerOutput {
-                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            artifact: DeserializerArtifact::Data(self.finish(helper)?),
                             event: DeserializerEvent::None,
                             allow_any: false,
                         });
@@ -25703,13 +24675,13 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::UdxEdxfQuantityMin(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"UDX.EDXF.QUANTITY_MIN",
                             false,
                         )?;
-                        match self.handle_udx_edxf_quantity_min(reader, output, &mut fallback)? {
+                        match self.handle_udx_edxf_quantity_min(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -25720,13 +24692,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfQuantityMax(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"UDX.EDXF.QUANTITY_MAX",
                             false,
                         )?;
-                        match self.handle_udx_edxf_quantity_max(reader, output, &mut fallback)? {
+                        match self.handle_udx_edxf_quantity_max(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -25740,14 +24712,14 @@ pub mod quick_xml_deserialize {
                         S::UdxEdxfPackingUnitCode(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"UDX.EDXF.PACKING_UNIT_CODE",
                             false,
                         )?;
                         match self.handle_udx_edxf_packing_unit_code(
-                            reader,
+                            helper,
                             output,
                             &mut fallback,
                         )? {
@@ -25764,14 +24736,14 @@ pub mod quick_xml_deserialize {
                         S::UdxEdxfPackingUnitName(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"UDX.EDXF.PACKING_UNIT_NAME",
                             false,
                         )?;
                         match self.handle_udx_edxf_packing_unit_name(
-                            reader,
+                            helper,
                             output,
                             &mut fallback,
                         )? {
@@ -25785,13 +24757,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfPackageBreak(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"UDX.EDXF.PACKAGE_BREAK",
                             false,
                         )?;
-                        match self.handle_udx_edxf_package_break(reader, output, &mut fallback)? {
+                        match self.handle_udx_edxf_package_break(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -25802,13 +24774,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfVolume(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"UDX.EDXF.VOLUME",
                             false,
                         )?;
-                        match self.handle_udx_edxf_volume(reader, output, &mut fallback)? {
+                        match self.handle_udx_edxf_volume(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -25819,13 +24791,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfWeight(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"UDX.EDXF.WEIGHT",
                             false,
                         )?;
-                        match self.handle_udx_edxf_weight(reader, output, &mut fallback)? {
+                        match self.handle_udx_edxf_weight(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -25836,13 +24808,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfLength(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"UDX.EDXF.LENGTH",
                             false,
                         )?;
-                        match self.handle_udx_edxf_length(reader, output, &mut fallback)? {
+                        match self.handle_udx_edxf_length(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -25853,13 +24825,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfWidth(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"UDX.EDXF.WIDTH",
                             false,
                         )?;
-                        match self.handle_udx_edxf_width(reader, output, &mut fallback)? {
+                        match self.handle_udx_edxf_width(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -25870,13 +24842,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfDepth(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"UDX.EDXF.DEPTH",
                             false,
                         )?;
-                        match self.handle_udx_edxf_depth(reader, output, &mut fallback)? {
+                        match self.handle_udx_edxf_depth(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -25887,13 +24859,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfDiameter(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"UDX.EDXF.DIAMETER",
                             false,
                         )?;
-                        match self.handle_udx_edxf_diameter(reader, output, &mut fallback)? {
+                        match self.handle_udx_edxf_diameter(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -25904,13 +24876,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfGtin(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"UDX.EDXF.GTIN",
                             false,
                         )?;
-                        match self.handle_udx_edxf_gtin(reader, output, &mut fallback)? {
+                        match self.handle_udx_edxf_gtin(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -25921,13 +24893,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfGs1128(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"UDX.EDXF.GS1_128",
                             false,
                         )?;
-                        match self.handle_udx_edxf_gs_1128(reader, output, &mut fallback)? {
+                        match self.handle_udx_edxf_gs_1128(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -25956,15 +24928,15 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::UdxEdxfPackingUnitElementType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(
+            mut self,
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::UdxEdxfPackingUnitElementType, Error> {
             let state = replace(
                 &mut *self.state__,
                 UdxEdxfPackingUnitElementTypeDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::UdxEdxfPackingUnitElementType {
                 udx_edxf_quantity_min: self
                     .udx_edxf_quantity_min
@@ -25999,29 +24971,26 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl UdxEdxfSurchargeElementTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
-            for attrib in filter_xmlns_attributes(bytes_start) {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib_checked(attrib)?;
+                helper.raise_unexpected_attrib_checked(&attrib)?;
             }
             Ok(Self {
                 content: Vec::new(),
                 state__: Box::new(UdxEdxfSurchargeElementTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: UdxEdxfSurchargeElementTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             if let UdxEdxfSurchargeElementTypeDeserializerState::Content__(deserializer) = state {
-                self.store_content(deserializer.finish(reader)?)?;
+                self.store_content(deserializer.finish(helper)?)?;
             }
             Ok(())
         }
@@ -26032,15 +25001,12 @@ pub mod quick_xml_deserialize {
             self.content.push(value);
             Ok(())
         }
-        fn handle_content<'de, R>(
+        fn handle_content<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::UdxEdxfSurchargeElementTypeContent>,
             fallback: &mut Option<UdxEdxfSurchargeElementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -26053,7 +25019,7 @@ pub mod quick_xml_deserialize {
                 return Ok(ElementHandlerOutput::break_(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
@@ -26087,23 +25053,17 @@ pub mod quick_xml_deserialize {
     impl<'de> Deserializer<'de, super::UdxEdxfSurchargeElementType>
         for UdxEdxfSurchargeElementTypeDeserializer
     {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::UdxEdxfSurchargeElementType>
-        where
-            R: DeserializeReader,
-        {
-            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        ) -> DeserializerResult<'de, super::UdxEdxfSurchargeElementType> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::UdxEdxfSurchargeElementType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::UdxEdxfSurchargeElementType> {
             use UdxEdxfSurchargeElementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -26112,8 +25072,8 @@ pub mod quick_xml_deserialize {
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
                     (S::Content__(deserializer), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_content(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
@@ -26122,15 +25082,15 @@ pub mod quick_xml_deserialize {
                     }
                     (_, Event::End(_)) => {
                         return Ok(DeserializerOutput {
-                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            artifact: DeserializerArtifact::Data(self.finish(helper)?),
                             event: DeserializerEvent::None,
                             allow_any: false,
                         });
                     }
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
-                        let output = < super :: UdxEdxfSurchargeElementTypeContent as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                        match self.handle_content(reader, output, &mut fallback)? {
+                        let output = < super :: UdxEdxfSurchargeElementTypeContent as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
@@ -26146,15 +25106,15 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::UdxEdxfSurchargeElementType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(
+            mut self,
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::UdxEdxfSurchargeElementType, Error> {
             let state = replace(
                 &mut *self.state__,
                 UdxEdxfSurchargeElementTypeDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::UdxEdxfSurchargeElementType {
                 content: self.content,
             })
@@ -26200,144 +25160,141 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl UdxEdxfSurchargeElementTypeContentDeserializer {
-        fn find_suitable<'de, R>(
+        fn find_suitable<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
             fallback: &mut Option<UdxEdxfSurchargeElementTypeContentDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if matches!(
-                    reader.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
                     Some(b"UDX.EDXF.SURCHARGE_TYPE")
                 ) {
-                    let output = <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                    let output = <String as WithDeserializer>::Deserializer::init(helper, event)?;
                     return self.handle_udx_edxf_surcharge_type(
-                        reader,
+                        helper,
                         Default::default(),
                         output,
                         &mut *fallback,
                     );
                 }
                 if matches!(
-                    reader.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
                     Some(b"UDX.EDXF.SURCHARGE_MANNER")
                 ) {
-                    let output = <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                    let output = <String as WithDeserializer>::Deserializer::init(helper, event)?;
                     return self.handle_udx_edxf_surcharge_manner(
-                        reader,
+                        helper,
                         Default::default(),
                         output,
                         &mut *fallback,
                     );
                 }
                 if matches!(
-                    reader.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
                     Some(b"UDX.EDXF.SURCHARGE_PERCENTAGE")
                 ) {
-                    let output = <f64 as WithDeserializer>::Deserializer::init(reader, event)?;
+                    let output = <f64 as WithDeserializer>::Deserializer::init(helper, event)?;
                     return self.handle_udx_edxf_surcharge_percentage(
-                        reader,
+                        helper,
                         Default::default(),
                         output,
                         &mut *fallback,
                     );
                 }
                 if matches!(
-                    reader.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
                     Some(b"UDX.EDXF.SURCHARGE_PRICE_AMOUNT")
                 ) {
-                    let output = <f64 as WithDeserializer>::Deserializer::init(reader, event)?;
+                    let output = <f64 as WithDeserializer>::Deserializer::init(helper, event)?;
                     return self.handle_udx_edxf_surcharge_price_amount(
-                        reader,
+                        helper,
                         Default::default(),
                         output,
                         &mut *fallback,
                     );
                 }
                 if matches!(
-                    reader.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
                     Some(b"UDX.EDXF.SURCHARGE_CALCULATION")
                 ) {
-                    let output = <f64 as WithDeserializer>::Deserializer::init(reader, event)?;
+                    let output = <f64 as WithDeserializer>::Deserializer::init(helper, event)?;
                     return self.handle_udx_edxf_surcharge_calculation(
-                        reader,
+                        helper,
                         Default::default(),
                         output,
                         &mut *fallback,
                     );
                 }
                 if matches!(
-                    reader.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
                     Some(b"UDX.EDXF.MATERIAL_BASIS")
                 ) {
-                    let output = <f64 as WithDeserializer>::Deserializer::init(reader, event)?;
+                    let output = <f64 as WithDeserializer>::Deserializer::init(helper, event)?;
                     return self.handle_udx_edxf_material_basis(
-                        reader,
+                        helper,
                         Default::default(),
                         output,
                         &mut *fallback,
                     );
                 }
                 if matches!(
-                    reader.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
                     Some(b"UDX.EDXF.MATERIAL_BASIS_WEIGHT")
                 ) {
-                    let output = <f64 as WithDeserializer>::Deserializer::init(reader, event)?;
+                    let output = <f64 as WithDeserializer>::Deserializer::init(helper, event)?;
                     return self.handle_udx_edxf_material_basis_weight(
-                        reader,
+                        helper,
                         Default::default(),
                         output,
                         &mut *fallback,
                     );
                 }
                 if matches!(
-                    reader.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
                     Some(b"UDX.EDXF.MATERIAL_BASIS_SURCHARGE_THRESHOLD")
                 ) {
-                    let output = <f64 as WithDeserializer>::Deserializer::init(reader, event)?;
+                    let output = <f64 as WithDeserializer>::Deserializer::init(helper, event)?;
                     return self.handle_udx_edxf_material_basis_surcharge_threshold(
-                        reader,
+                        helper,
                         Default::default(),
                         output,
                         &mut *fallback,
                     );
                 }
                 if matches!(
-                    reader.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
                     Some(b"UDX.EDXF.MATERIAL_BASIS_SURCHARGE_SHUTTER")
                 ) {
-                    let output = <i32 as WithDeserializer>::Deserializer::init(reader, event)?;
+                    let output = <i32 as WithDeserializer>::Deserializer::init(helper, event)?;
                     return self.handle_udx_edxf_material_basis_surcharge_shutter(
-                        reader,
+                        helper,
                         Default::default(),
                         output,
                         &mut *fallback,
                     );
                 }
                 if matches!(
-                    reader.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
                     Some(b"UDX.EDXF.MATERIAL_BASIS_SURCHARGE_CREDIT")
                 ) {
-                    let output = <i32 as WithDeserializer>::Deserializer::init(reader, event)?;
+                    let output = <i32 as WithDeserializer>::Deserializer::init(helper, event)?;
                     return self.handle_udx_edxf_material_basis_surcharge_credit(
-                        reader,
+                        helper,
                         Default::default(),
                         output,
                         &mut *fallback,
                     );
                 }
                 if matches!(
-                    reader.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
                     Some(b"UDX.EDXF.MATERIAL_BASIS_SURCHARGE_TABLE")
                 ) {
                     let output =
-                        <super::DtMlstring as WithDeserializer>::Deserializer::init(reader, event)?;
+                        <super::DtMlstring as WithDeserializer>::Deserializer::init(helper, event)?;
                     return self.handle_udx_edxf_material_basis_surcharge_table(
-                        reader,
+                        helper,
                         Default::default(),
                         output,
                         &mut *fallback,
@@ -26349,20 +25306,17 @@ pub mod quick_xml_deserialize {
                 .unwrap_or(UdxEdxfSurchargeElementTypeContentDeserializerState::Init__);
             Ok(ElementHandlerOutput::return_to_parent(event, false))
         }
-        fn finish_state<R>(
-            reader: &R,
+        fn finish_state(
+            helper: &mut DeserializeHelper,
             state: UdxEdxfSurchargeElementTypeContentDeserializerState,
-        ) -> Result<super::UdxEdxfSurchargeElementTypeContent, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<super::UdxEdxfSurchargeElementTypeContent, Error> {
             use UdxEdxfSurchargeElementTypeContentDeserializerState as S;
             match state {
                 S::Unknown__ => unreachable!(),
                 S::Init__ => Err(ErrorKind::MissingContent.into()),
                 S::UdxEdxfSurchargeType(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
-                        let value = deserializer.finish(reader)?;
+                        let value = deserializer.finish(helper)?;
                         Self::store_udx_edxf_surcharge_type(&mut values, value)?;
                     }
                     Ok(
@@ -26375,7 +25329,7 @@ pub mod quick_xml_deserialize {
                 }
                 S::UdxEdxfSurchargeManner(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
-                        let value = deserializer.finish(reader)?;
+                        let value = deserializer.finish(helper)?;
                         Self::store_udx_edxf_surcharge_manner(&mut values, value)?;
                     }
                     Ok(
@@ -26388,7 +25342,7 @@ pub mod quick_xml_deserialize {
                 }
                 S::UdxEdxfSurchargePercentage(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
-                        let value = deserializer.finish(reader)?;
+                        let value = deserializer.finish(helper)?;
                         Self::store_udx_edxf_surcharge_percentage(&mut values, value)?;
                     }
                     Ok(
@@ -26401,7 +25355,7 @@ pub mod quick_xml_deserialize {
                 }
                 S::UdxEdxfSurchargePriceAmount(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
-                        let value = deserializer.finish(reader)?;
+                        let value = deserializer.finish(helper)?;
                         Self::store_udx_edxf_surcharge_price_amount(&mut values, value)?;
                     }
                     Ok(
@@ -26414,7 +25368,7 @@ pub mod quick_xml_deserialize {
                 }
                 S::UdxEdxfSurchargeCalculation(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
-                        let value = deserializer.finish(reader)?;
+                        let value = deserializer.finish(helper)?;
                         Self::store_udx_edxf_surcharge_calculation(&mut values, value)?;
                     }
                     Ok(
@@ -26427,7 +25381,7 @@ pub mod quick_xml_deserialize {
                 }
                 S::UdxEdxfMaterialBasis(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
-                        let value = deserializer.finish(reader)?;
+                        let value = deserializer.finish(helper)?;
                         Self::store_udx_edxf_material_basis(&mut values, value)?;
                     }
                     Ok(
@@ -26440,7 +25394,7 @@ pub mod quick_xml_deserialize {
                 }
                 S::UdxEdxfMaterialBasisWeight(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
-                        let value = deserializer.finish(reader)?;
+                        let value = deserializer.finish(helper)?;
                         Self::store_udx_edxf_material_basis_weight(&mut values, value)?;
                     }
                     Ok(
@@ -26453,7 +25407,7 @@ pub mod quick_xml_deserialize {
                 }
                 S::UdxEdxfMaterialBasisSurchargeThreshold(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
-                        let value = deserializer.finish(reader)?;
+                        let value = deserializer.finish(helper)?;
                         Self::store_udx_edxf_material_basis_surcharge_threshold(
                             &mut values,
                             value,
@@ -26463,21 +25417,21 @@ pub mod quick_xml_deserialize {
                 }
                 S::UdxEdxfMaterialBasisSurchargeShutter(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
-                        let value = deserializer.finish(reader)?;
+                        let value = deserializer.finish(helper)?;
                         Self::store_udx_edxf_material_basis_surcharge_shutter(&mut values, value)?;
                     }
                     Ok (super :: UdxEdxfSurchargeElementTypeContent :: UdxEdxfMaterialBasisSurchargeShutter (values . ok_or_else (|| ErrorKind :: MissingElement ("UDX.EDXF.MATERIAL_BASIS_SURCHARGE_SHUTTER" . into ())) ?))
                 }
                 S::UdxEdxfMaterialBasisSurchargeCredit(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
-                        let value = deserializer.finish(reader)?;
+                        let value = deserializer.finish(helper)?;
                         Self::store_udx_edxf_material_basis_surcharge_credit(&mut values, value)?;
                     }
                     Ok (super :: UdxEdxfSurchargeElementTypeContent :: UdxEdxfMaterialBasisSurchargeCredit (values . ok_or_else (|| ErrorKind :: MissingElement ("UDX.EDXF.MATERIAL_BASIS_SURCHARGE_CREDIT" . into ())) ?))
                 }
                 S::UdxEdxfMaterialBasisSurchargeTable(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
-                        let value = deserializer.finish(reader)?;
+                        let value = deserializer.finish(helper)?;
                         Self::store_udx_edxf_material_basis_surcharge_table(&mut values, value)?;
                     }
                     Ok (super :: UdxEdxfSurchargeElementTypeContent :: UdxEdxfMaterialBasisSurchargeTable (values . ok_or_else (|| ErrorKind :: MissingElement ("UDX.EDXF.MATERIAL_BASIS_SURCHARGE_TABLE" . into ())) ?))
@@ -26617,16 +25571,13 @@ pub mod quick_xml_deserialize {
             *values = Some(value);
             Ok(())
         }
-        fn handle_udx_edxf_surcharge_type<'de, R>(
+        fn handle_udx_edxf_surcharge_type<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             mut values: Option<String>,
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<UdxEdxfSurchargeElementTypeContentDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -26664,7 +25615,7 @@ pub mod quick_xml_deserialize {
                         Some(deserializer),
                     ),
                 ) => {
-                    let data = deserializer.finish(reader)?;
+                    let data = deserializer.finish(helper)?;
                     Self::store_udx_edxf_surcharge_type(&mut values, data)?;
                 }
                 Some(_) => unreachable!(),
@@ -26674,7 +25625,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::Data(data) => {
                     Self::store_udx_edxf_surcharge_type(&mut values, data)?;
                     let data = Self::finish_state(
-                        reader,
+                        helper,
                         UdxEdxfSurchargeElementTypeContentDeserializerState::UdxEdxfSurchargeType(
                             values, None,
                         ),
@@ -26693,16 +25644,13 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_udx_edxf_surcharge_manner<'de, R>(
+        fn handle_udx_edxf_surcharge_manner<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             mut values: Option<String>,
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<UdxEdxfSurchargeElementTypeContentDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -26742,7 +25690,7 @@ pub mod quick_xml_deserialize {
                         Some(deserializer),
                     ),
                 ) => {
-                    let data = deserializer.finish(reader)?;
+                    let data = deserializer.finish(helper)?;
                     Self::store_udx_edxf_surcharge_manner(&mut values, data)?;
                 }
                 Some(_) => unreachable!(),
@@ -26752,7 +25700,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::Data(data) => {
                     Self::store_udx_edxf_surcharge_manner(&mut values, data)?;
                     let data = Self::finish_state(
-                        reader,
+                        helper,
                         UdxEdxfSurchargeElementTypeContentDeserializerState::UdxEdxfSurchargeManner(
                             values, None,
                         ),
@@ -26771,16 +25719,13 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_udx_edxf_surcharge_percentage<'de, R>(
+        fn handle_udx_edxf_surcharge_percentage<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             mut values: Option<f64>,
             output: DeserializerOutput<'de, f64>,
             fallback: &mut Option<UdxEdxfSurchargeElementTypeContentDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -26798,7 +25743,7 @@ pub mod quick_xml_deserialize {
                         Some(deserializer),
                     ),
                 ) => {
-                    let data = deserializer.finish(reader)?;
+                    let data = deserializer.finish(helper)?;
                     Self::store_udx_edxf_surcharge_percentage(&mut values, data)?;
                 }
                 Some(_) => unreachable!(),
@@ -26807,7 +25752,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_udx_edxf_surcharge_percentage(&mut values, data)?;
-                    let data = Self :: finish_state (reader , UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfSurchargePercentage (values , None)) ? ;
+                    let data = Self :: finish_state (helper , UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfSurchargePercentage (values , None)) ? ;
                     *self.state__ =
                         UdxEdxfSurchargeElementTypeContentDeserializerState::Done__(data);
                     ElementHandlerOutput::Break { event, allow_any }
@@ -26818,16 +25763,13 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_udx_edxf_surcharge_price_amount<'de, R>(
+        fn handle_udx_edxf_surcharge_price_amount<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             mut values: Option<f64>,
             output: DeserializerOutput<'de, f64>,
             fallback: &mut Option<UdxEdxfSurchargeElementTypeContentDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -26837,12 +25779,12 @@ pub mod quick_xml_deserialize {
                 * self . state__ = match fallback . take () { None if values . is_none () => { * self . state__ = UdxEdxfSurchargeElementTypeContentDeserializerState :: Init__ ; return Ok (ElementHandlerOutput :: from_event (event , allow_any)) ; } , None => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfSurchargePriceAmount (values , None) , Some (UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfSurchargePriceAmount (_ , Some (deserializer))) => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfSurchargePriceAmount (values , Some (deserializer)) , _ => unreachable ! () , } ;
                 return Ok(ElementHandlerOutput::break_(event, allow_any));
             }
-            match fallback . take () { None => () , Some (UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfSurchargePriceAmount (_ , Some (deserializer))) => { let data = deserializer . finish (reader) ? ; Self :: store_udx_edxf_surcharge_price_amount (& mut values , data) ? ; } Some (_) => unreachable ! () , }
+            match fallback . take () { None => () , Some (UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfSurchargePriceAmount (_ , Some (deserializer))) => { let data = deserializer . finish (helper) ? ; Self :: store_udx_edxf_surcharge_price_amount (& mut values , data) ? ; } Some (_) => unreachable ! () , }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_udx_edxf_surcharge_price_amount(&mut values, data)?;
-                    let data = Self :: finish_state (reader , UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfSurchargePriceAmount (values , None)) ? ;
+                    let data = Self :: finish_state (helper , UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfSurchargePriceAmount (values , None)) ? ;
                     *self.state__ =
                         UdxEdxfSurchargeElementTypeContentDeserializerState::Done__(data);
                     ElementHandlerOutput::Break { event, allow_any }
@@ -26853,16 +25795,13 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_udx_edxf_surcharge_calculation<'de, R>(
+        fn handle_udx_edxf_surcharge_calculation<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             mut values: Option<f64>,
             output: DeserializerOutput<'de, f64>,
             fallback: &mut Option<UdxEdxfSurchargeElementTypeContentDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -26872,12 +25811,12 @@ pub mod quick_xml_deserialize {
                 * self . state__ = match fallback . take () { None if values . is_none () => { * self . state__ = UdxEdxfSurchargeElementTypeContentDeserializerState :: Init__ ; return Ok (ElementHandlerOutput :: from_event (event , allow_any)) ; } , None => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfSurchargeCalculation (values , None) , Some (UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfSurchargeCalculation (_ , Some (deserializer))) => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfSurchargeCalculation (values , Some (deserializer)) , _ => unreachable ! () , } ;
                 return Ok(ElementHandlerOutput::break_(event, allow_any));
             }
-            match fallback . take () { None => () , Some (UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfSurchargeCalculation (_ , Some (deserializer))) => { let data = deserializer . finish (reader) ? ; Self :: store_udx_edxf_surcharge_calculation (& mut values , data) ? ; } Some (_) => unreachable ! () , }
+            match fallback . take () { None => () , Some (UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfSurchargeCalculation (_ , Some (deserializer))) => { let data = deserializer . finish (helper) ? ; Self :: store_udx_edxf_surcharge_calculation (& mut values , data) ? ; } Some (_) => unreachable ! () , }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_udx_edxf_surcharge_calculation(&mut values, data)?;
-                    let data = Self :: finish_state (reader , UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfSurchargeCalculation (values , None)) ? ;
+                    let data = Self :: finish_state (helper , UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfSurchargeCalculation (values , None)) ? ;
                     *self.state__ =
                         UdxEdxfSurchargeElementTypeContentDeserializerState::Done__(data);
                     ElementHandlerOutput::Break { event, allow_any }
@@ -26888,16 +25827,13 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_udx_edxf_material_basis<'de, R>(
+        fn handle_udx_edxf_material_basis<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             mut values: Option<f64>,
             output: DeserializerOutput<'de, f64>,
             fallback: &mut Option<UdxEdxfSurchargeElementTypeContentDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -26935,7 +25871,7 @@ pub mod quick_xml_deserialize {
                         Some(deserializer),
                     ),
                 ) => {
-                    let data = deserializer.finish(reader)?;
+                    let data = deserializer.finish(helper)?;
                     Self::store_udx_edxf_material_basis(&mut values, data)?;
                 }
                 Some(_) => unreachable!(),
@@ -26945,7 +25881,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::Data(data) => {
                     Self::store_udx_edxf_material_basis(&mut values, data)?;
                     let data = Self::finish_state(
-                        reader,
+                        helper,
                         UdxEdxfSurchargeElementTypeContentDeserializerState::UdxEdxfMaterialBasis(
                             values, None,
                         ),
@@ -26964,16 +25900,13 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_udx_edxf_material_basis_weight<'de, R>(
+        fn handle_udx_edxf_material_basis_weight<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             mut values: Option<f64>,
             output: DeserializerOutput<'de, f64>,
             fallback: &mut Option<UdxEdxfSurchargeElementTypeContentDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -26991,7 +25924,7 @@ pub mod quick_xml_deserialize {
                         Some(deserializer),
                     ),
                 ) => {
-                    let data = deserializer.finish(reader)?;
+                    let data = deserializer.finish(helper)?;
                     Self::store_udx_edxf_material_basis_weight(&mut values, data)?;
                 }
                 Some(_) => unreachable!(),
@@ -27000,7 +25933,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_udx_edxf_material_basis_weight(&mut values, data)?;
-                    let data = Self :: finish_state (reader , UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisWeight (values , None)) ? ;
+                    let data = Self :: finish_state (helper , UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisWeight (values , None)) ? ;
                     *self.state__ =
                         UdxEdxfSurchargeElementTypeContentDeserializerState::Done__(data);
                     ElementHandlerOutput::Break { event, allow_any }
@@ -27011,16 +25944,13 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_udx_edxf_material_basis_surcharge_threshold<'de, R>(
+        fn handle_udx_edxf_material_basis_surcharge_threshold<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             mut values: Option<f64>,
             output: DeserializerOutput<'de, f64>,
             fallback: &mut Option<UdxEdxfSurchargeElementTypeContentDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -27030,12 +25960,12 @@ pub mod quick_xml_deserialize {
                 * self . state__ = match fallback . take () { None if values . is_none () => { * self . state__ = UdxEdxfSurchargeElementTypeContentDeserializerState :: Init__ ; return Ok (ElementHandlerOutput :: from_event (event , allow_any)) ; } , None => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeThreshold (values , None) , Some (UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeThreshold (_ , Some (deserializer))) => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeThreshold (values , Some (deserializer)) , _ => unreachable ! () , } ;
                 return Ok(ElementHandlerOutput::break_(event, allow_any));
             }
-            match fallback . take () { None => () , Some (UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeThreshold (_ , Some (deserializer))) => { let data = deserializer . finish (reader) ? ; Self :: store_udx_edxf_material_basis_surcharge_threshold (& mut values , data) ? ; } Some (_) => unreachable ! () , }
+            match fallback . take () { None => () , Some (UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeThreshold (_ , Some (deserializer))) => { let data = deserializer . finish (helper) ? ; Self :: store_udx_edxf_material_basis_surcharge_threshold (& mut values , data) ? ; } Some (_) => unreachable ! () , }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_udx_edxf_material_basis_surcharge_threshold(&mut values, data)?;
-                    let data = Self :: finish_state (reader , UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeThreshold (values , None)) ? ;
+                    let data = Self :: finish_state (helper , UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeThreshold (values , None)) ? ;
                     *self.state__ =
                         UdxEdxfSurchargeElementTypeContentDeserializerState::Done__(data);
                     ElementHandlerOutput::Break { event, allow_any }
@@ -27046,16 +25976,13 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_udx_edxf_material_basis_surcharge_shutter<'de, R>(
+        fn handle_udx_edxf_material_basis_surcharge_shutter<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             mut values: Option<i32>,
             output: DeserializerOutput<'de, i32>,
             fallback: &mut Option<UdxEdxfSurchargeElementTypeContentDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -27065,12 +25992,12 @@ pub mod quick_xml_deserialize {
                 * self . state__ = match fallback . take () { None if values . is_none () => { * self . state__ = UdxEdxfSurchargeElementTypeContentDeserializerState :: Init__ ; return Ok (ElementHandlerOutput :: from_event (event , allow_any)) ; } , None => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeShutter (values , None) , Some (UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeShutter (_ , Some (deserializer))) => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeShutter (values , Some (deserializer)) , _ => unreachable ! () , } ;
                 return Ok(ElementHandlerOutput::break_(event, allow_any));
             }
-            match fallback . take () { None => () , Some (UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeShutter (_ , Some (deserializer))) => { let data = deserializer . finish (reader) ? ; Self :: store_udx_edxf_material_basis_surcharge_shutter (& mut values , data) ? ; } Some (_) => unreachable ! () , }
+            match fallback . take () { None => () , Some (UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeShutter (_ , Some (deserializer))) => { let data = deserializer . finish (helper) ? ; Self :: store_udx_edxf_material_basis_surcharge_shutter (& mut values , data) ? ; } Some (_) => unreachable ! () , }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_udx_edxf_material_basis_surcharge_shutter(&mut values, data)?;
-                    let data = Self :: finish_state (reader , UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeShutter (values , None)) ? ;
+                    let data = Self :: finish_state (helper , UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeShutter (values , None)) ? ;
                     *self.state__ =
                         UdxEdxfSurchargeElementTypeContentDeserializerState::Done__(data);
                     ElementHandlerOutput::Break { event, allow_any }
@@ -27081,16 +26008,13 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_udx_edxf_material_basis_surcharge_credit<'de, R>(
+        fn handle_udx_edxf_material_basis_surcharge_credit<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             mut values: Option<i32>,
             output: DeserializerOutput<'de, i32>,
             fallback: &mut Option<UdxEdxfSurchargeElementTypeContentDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -27100,12 +26024,12 @@ pub mod quick_xml_deserialize {
                 * self . state__ = match fallback . take () { None if values . is_none () => { * self . state__ = UdxEdxfSurchargeElementTypeContentDeserializerState :: Init__ ; return Ok (ElementHandlerOutput :: from_event (event , allow_any)) ; } , None => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeCredit (values , None) , Some (UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeCredit (_ , Some (deserializer))) => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeCredit (values , Some (deserializer)) , _ => unreachable ! () , } ;
                 return Ok(ElementHandlerOutput::break_(event, allow_any));
             }
-            match fallback . take () { None => () , Some (UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeCredit (_ , Some (deserializer))) => { let data = deserializer . finish (reader) ? ; Self :: store_udx_edxf_material_basis_surcharge_credit (& mut values , data) ? ; } Some (_) => unreachable ! () , }
+            match fallback . take () { None => () , Some (UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeCredit (_ , Some (deserializer))) => { let data = deserializer . finish (helper) ? ; Self :: store_udx_edxf_material_basis_surcharge_credit (& mut values , data) ? ; } Some (_) => unreachable ! () , }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_udx_edxf_material_basis_surcharge_credit(&mut values, data)?;
-                    let data = Self :: finish_state (reader , UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeCredit (values , None)) ? ;
+                    let data = Self :: finish_state (helper , UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeCredit (values , None)) ? ;
                     *self.state__ =
                         UdxEdxfSurchargeElementTypeContentDeserializerState::Done__(data);
                     ElementHandlerOutput::Break { event, allow_any }
@@ -27116,16 +26040,13 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_udx_edxf_material_basis_surcharge_table<'de, R>(
+        fn handle_udx_edxf_material_basis_surcharge_table<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             mut values: Option<super::DtMlstring>,
             output: DeserializerOutput<'de, super::DtMlstring>,
             fallback: &mut Option<UdxEdxfSurchargeElementTypeContentDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             let DeserializerOutput {
                 artifact,
                 event,
@@ -27135,12 +26056,12 @@ pub mod quick_xml_deserialize {
                 * self . state__ = match fallback . take () { None if values . is_none () => { * self . state__ = UdxEdxfSurchargeElementTypeContentDeserializerState :: Init__ ; return Ok (ElementHandlerOutput :: from_event (event , allow_any)) ; } , None => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeTable (values , None) , Some (UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeTable (_ , Some (deserializer))) => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeTable (values , Some (deserializer)) , _ => unreachable ! () , } ;
                 return Ok(ElementHandlerOutput::break_(event, allow_any));
             }
-            match fallback . take () { None => () , Some (UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeTable (_ , Some (deserializer))) => { let data = deserializer . finish (reader) ? ; Self :: store_udx_edxf_material_basis_surcharge_table (& mut values , data) ? ; } Some (_) => unreachable ! () , }
+            match fallback . take () { None => () , Some (UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeTable (_ , Some (deserializer))) => { let data = deserializer . finish (helper) ? ; Self :: store_udx_edxf_material_basis_surcharge_table (& mut values , data) ? ; } Some (_) => unreachable ! () , }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_udx_edxf_material_basis_surcharge_table(&mut values, data)?;
-                    let data = Self :: finish_state (reader , UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeTable (values , None)) ? ;
+                    let data = Self :: finish_state (helper , UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeTable (values , None)) ? ;
                     *self.state__ =
                         UdxEdxfSurchargeElementTypeContentDeserializerState::Done__(data);
                     ElementHandlerOutput::Break { event, allow_any }
@@ -27155,17 +26076,14 @@ pub mod quick_xml_deserialize {
     impl<'de> Deserializer<'de, super::UdxEdxfSurchargeElementTypeContent>
         for UdxEdxfSurchargeElementTypeContentDeserializer
     {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::UdxEdxfSurchargeElementTypeContent>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::UdxEdxfSurchargeElementTypeContent> {
             let deserializer = Self {
                 state__: Box::new(UdxEdxfSurchargeElementTypeContentDeserializerState::Init__),
             };
-            let mut output = deserializer.next(reader, event)?;
+            let mut output = deserializer.next(helper, event)?;
             output.artifact = match output.artifact {
                 DeserializerArtifact::Deserializer(x)
                     if matches!(
@@ -27179,14 +26097,11 @@ pub mod quick_xml_deserialize {
             };
             Ok(output)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::UdxEdxfSurchargeElementTypeContent>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::UdxEdxfSurchargeElementTypeContent> {
             use UdxEdxfSurchargeElementTypeContentDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -27195,9 +26110,9 @@ pub mod quick_xml_deserialize {
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
                     (S::UdxEdxfSurchargeType(values, Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
+                        let output = deserializer.next(helper, event)?;
                         match self.handle_udx_edxf_surcharge_type(
-                            reader,
+                            helper,
                             values,
                             output,
                             &mut fallback,
@@ -27209,9 +26124,9 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfSurchargeManner(values, Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
+                        let output = deserializer.next(helper, event)?;
                         match self.handle_udx_edxf_surcharge_manner(
-                            reader,
+                            helper,
                             values,
                             output,
                             &mut fallback,
@@ -27223,9 +26138,9 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfSurchargePercentage(values, Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
+                        let output = deserializer.next(helper, event)?;
                         match self.handle_udx_edxf_surcharge_percentage(
-                            reader,
+                            helper,
                             values,
                             output,
                             &mut fallback,
@@ -27237,9 +26152,9 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfSurchargePriceAmount(values, Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
+                        let output = deserializer.next(helper, event)?;
                         match self.handle_udx_edxf_surcharge_price_amount(
-                            reader,
+                            helper,
                             values,
                             output,
                             &mut fallback,
@@ -27251,9 +26166,9 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfSurchargeCalculation(values, Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
+                        let output = deserializer.next(helper, event)?;
                         match self.handle_udx_edxf_surcharge_calculation(
-                            reader,
+                            helper,
                             values,
                             output,
                             &mut fallback,
@@ -27265,9 +26180,9 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfMaterialBasis(values, Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
+                        let output = deserializer.next(helper, event)?;
                         match self.handle_udx_edxf_material_basis(
-                            reader,
+                            helper,
                             values,
                             output,
                             &mut fallback,
@@ -27279,9 +26194,9 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfMaterialBasisWeight(values, Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
+                        let output = deserializer.next(helper, event)?;
                         match self.handle_udx_edxf_material_basis_weight(
-                            reader,
+                            helper,
                             values,
                             output,
                             &mut fallback,
@@ -27296,9 +26211,9 @@ pub mod quick_xml_deserialize {
                         S::UdxEdxfMaterialBasisSurchargeThreshold(values, Some(deserializer)),
                         event,
                     ) => {
-                        let output = deserializer.next(reader, event)?;
+                        let output = deserializer.next(helper, event)?;
                         match self.handle_udx_edxf_material_basis_surcharge_threshold(
-                            reader,
+                            helper,
                             values,
                             output,
                             &mut fallback,
@@ -27313,9 +26228,9 @@ pub mod quick_xml_deserialize {
                         S::UdxEdxfMaterialBasisSurchargeShutter(values, Some(deserializer)),
                         event,
                     ) => {
-                        let output = deserializer.next(reader, event)?;
+                        let output = deserializer.next(helper, event)?;
                         match self.handle_udx_edxf_material_basis_surcharge_shutter(
-                            reader,
+                            helper,
                             values,
                             output,
                             &mut fallback,
@@ -27327,9 +26242,9 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfMaterialBasisSurchargeCredit(values, Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
+                        let output = deserializer.next(helper, event)?;
                         match self.handle_udx_edxf_material_basis_surcharge_credit(
-                            reader,
+                            helper,
                             values,
                             output,
                             &mut fallback,
@@ -27341,9 +26256,9 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfMaterialBasisSurchargeTable(values, Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
+                        let output = deserializer.next(helper, event)?;
                         match self.handle_udx_edxf_material_basis_surcharge_table(
-                            reader,
+                            helper,
                             values,
                             output,
                             &mut fallback,
@@ -27357,13 +26272,13 @@ pub mod quick_xml_deserialize {
                     (state, event @ Event::End(_)) => {
                         return Ok(DeserializerOutput {
                             artifact: DeserializerArtifact::Data(Self::finish_state(
-                                reader, state,
+                                helper, state,
                             )?),
                             event: DeserializerEvent::Continue(event),
                             allow_any: false,
                         });
                     }
-                    (S::Init__, event) => match self.find_suitable(reader, event, &mut fallback)? {
+                    (S::Init__, event) => match self.find_suitable(helper, event, &mut fallback)? {
                         ElementHandlerOutput::Break { event, allow_any } => {
                             break (event, allow_any)
                         }
@@ -27373,14 +26288,14 @@ pub mod quick_xml_deserialize {
                         S::UdxEdxfSurchargeType(values, None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"UDX.EDXF.SURCHARGE_TYPE",
                             false,
                         )?;
                         match self.handle_udx_edxf_surcharge_type(
-                            reader,
+                            helper,
                             values,
                             output,
                             &mut fallback,
@@ -27395,14 +26310,14 @@ pub mod quick_xml_deserialize {
                         S::UdxEdxfSurchargeManner(values, None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"UDX.EDXF.SURCHARGE_MANNER",
                             false,
                         )?;
                         match self.handle_udx_edxf_surcharge_manner(
-                            reader,
+                            helper,
                             values,
                             output,
                             &mut fallback,
@@ -27417,14 +26332,14 @@ pub mod quick_xml_deserialize {
                         S::UdxEdxfSurchargePercentage(values, None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"UDX.EDXF.SURCHARGE_PERCENTAGE",
                             false,
                         )?;
                         match self.handle_udx_edxf_surcharge_percentage(
-                            reader,
+                            helper,
                             values,
                             output,
                             &mut fallback,
@@ -27439,14 +26354,14 @@ pub mod quick_xml_deserialize {
                         S::UdxEdxfSurchargePriceAmount(values, None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"UDX.EDXF.SURCHARGE_PRICE_AMOUNT",
                             false,
                         )?;
                         match self.handle_udx_edxf_surcharge_price_amount(
-                            reader,
+                            helper,
                             values,
                             output,
                             &mut fallback,
@@ -27461,14 +26376,14 @@ pub mod quick_xml_deserialize {
                         S::UdxEdxfSurchargeCalculation(values, None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"UDX.EDXF.SURCHARGE_CALCULATION",
                             false,
                         )?;
                         match self.handle_udx_edxf_surcharge_calculation(
-                            reader,
+                            helper,
                             values,
                             output,
                             &mut fallback,
@@ -27483,14 +26398,14 @@ pub mod quick_xml_deserialize {
                         S::UdxEdxfMaterialBasis(values, None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"UDX.EDXF.MATERIAL_BASIS",
                             false,
                         )?;
                         match self.handle_udx_edxf_material_basis(
-                            reader,
+                            helper,
                             values,
                             output,
                             &mut fallback,
@@ -27505,14 +26420,14 @@ pub mod quick_xml_deserialize {
                         S::UdxEdxfMaterialBasisWeight(values, None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"UDX.EDXF.MATERIAL_BASIS_WEIGHT",
                             false,
                         )?;
                         match self.handle_udx_edxf_material_basis_weight(
-                            reader,
+                            helper,
                             values,
                             output,
                             &mut fallback,
@@ -27527,14 +26442,14 @@ pub mod quick_xml_deserialize {
                         S::UdxEdxfMaterialBasisSurchargeThreshold(values, None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"UDX.EDXF.MATERIAL_BASIS_SURCHARGE_THRESHOLD",
                             false,
                         )?;
                         match self.handle_udx_edxf_material_basis_surcharge_threshold(
-                            reader,
+                            helper,
                             values,
                             output,
                             &mut fallback,
@@ -27549,14 +26464,14 @@ pub mod quick_xml_deserialize {
                         S::UdxEdxfMaterialBasisSurchargeShutter(values, None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"UDX.EDXF.MATERIAL_BASIS_SURCHARGE_SHUTTER",
                             false,
                         )?;
                         match self.handle_udx_edxf_material_basis_surcharge_shutter(
-                            reader,
+                            helper,
                             values,
                             output,
                             &mut fallback,
@@ -27571,14 +26486,14 @@ pub mod quick_xml_deserialize {
                         S::UdxEdxfMaterialBasisSurchargeCredit(values, None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"UDX.EDXF.MATERIAL_BASIS_SURCHARGE_CREDIT",
                             false,
                         )?;
                         match self.handle_udx_edxf_material_basis_surcharge_credit(
-                            reader,
+                            helper,
                             values,
                             output,
                             &mut fallback,
@@ -27593,14 +26508,14 @@ pub mod quick_xml_deserialize {
                         S::UdxEdxfMaterialBasisSurchargeTable(values, None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_2),
                             b"UDX.EDXF.MATERIAL_BASIS_SURCHARGE_TABLE",
                             false,
                         )?;
                         match self.handle_udx_edxf_material_basis_surcharge_table(
-                            reader,
+                            helper,
                             values,
                             output,
                             &mut fallback,
@@ -27622,7 +26537,7 @@ pub mod quick_xml_deserialize {
                 }
             };
             let artifact = if matches!(&*self.state__, S::Done__(_)) {
-                DeserializerArtifact::Data(self.finish(reader)?)
+                DeserializerArtifact::Data(self.finish(helper)?)
             } else {
                 DeserializerArtifact::Deserializer(self)
             };
@@ -27632,11 +26547,11 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(self, reader: &R) -> Result<super::UdxEdxfSurchargeElementTypeContent, Error>
-        where
-            R: DeserializeReader,
-        {
-            Self::finish_state(reader, *self.state__)
+        fn finish(
+            self,
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::UdxEdxfSurchargeElementTypeContent, Error> {
+            Self::finish_state(helper, *self.state__)
         }
     }
 }

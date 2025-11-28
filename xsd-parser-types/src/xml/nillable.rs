@@ -8,8 +8,8 @@ use crate::misc::Namespace;
 
 #[cfg(feature = "quick-xml")]
 use crate::quick_xml::{
-    DeserializeReader, Deserializer, DeserializerArtifact, DeserializerEvent, DeserializerOutput,
-    DeserializerResult, Error, ErrorKind, WithDeserializer, WithSerializer, XmlReader,
+    DeserializeHelper, Deserializer, DeserializerArtifact, DeserializerEvent, DeserializerOutput,
+    DeserializerResult, Error, ErrorKind, WithDeserializer, WithSerializer,
 };
 use crate::traits::WithNamespace;
 
@@ -256,10 +256,10 @@ impl<'de, T> Deserializer<'de, Nillable<T>> for NillableDeserializer<T>
 where
     T: WithDeserializer,
 {
-    fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, Nillable<T>>
-    where
-        R: XmlReader,
-    {
+    fn init(
+        helper: &mut DeserializeHelper,
+        event: Event<'de>,
+    ) -> DeserializerResult<'de, Nillable<T>> {
         let (Event::Start(bytes) | Event::Empty(bytes)) = &event else {
             return Ok(DeserializerOutput {
                 event: DeserializerEvent::Continue(event),
@@ -271,7 +271,7 @@ where
         for attrib in bytes.attributes() {
             let attrib = attrib?;
             if matches!(
-                reader.resolve_local_name(attrib.key, &Namespace::XSI),
+                helper.resolve_local_name(attrib.key, &Namespace::XSI),
                 Some(b"nil")
             ) && matches!(
                 &*attrib.value,
@@ -295,7 +295,7 @@ where
             artifact,
             event,
             allow_any,
-        } = T::Deserializer::init(reader, event)?;
+        } = T::Deserializer::init(helper, event)?;
 
         let artifact = match artifact {
             DeserializerArtifact::Deserializer(inner) => {
@@ -312,17 +312,18 @@ where
         })
     }
 
-    fn next<R>(self, reader: &R, event: Event<'de>) -> DeserializerResult<'de, Nillable<T>>
-    where
-        R: XmlReader,
-    {
+    fn next(
+        self,
+        helper: &mut DeserializeHelper,
+        event: Event<'de>,
+    ) -> DeserializerResult<'de, Nillable<T>> {
         match self {
             Self::Inner { inner } => {
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
-                } = inner.next(reader, event)?;
+                } = inner.next(helper, event)?;
 
                 let artifact = match artifact {
                     DeserializerArtifact::Deserializer(inner) => {
@@ -356,13 +357,10 @@ where
         }
     }
 
-    fn finish<R>(self, reader: &R) -> Result<Nillable<T>, Error>
-    where
-        R: XmlReader,
-    {
+    fn finish(self, helper: &mut DeserializeHelper) -> Result<Nillable<T>, Error> {
         match self {
             Self::Inner { inner } => {
-                let value = inner.finish(reader)?;
+                let value = inner.finish(helper)?;
 
                 Ok(Nillable(Some(value)))
             }

@@ -4,8 +4,8 @@ use std::{borrow::Cow, sync::LazyLock};
 use xsd_parser_types::{
     misc::Namespace,
     quick_xml::{
-        DeserializeBytes, Error, ErrorKind, SerializeBytes, ValidateError, WithDeserializer,
-        WithSerializer, XmlReader,
+        DeserializeBytes, DeserializeHelper, Error, ErrorKind, SerializeBytes, ValidateError,
+        WithDeserializer, WithSerializer,
     },
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
@@ -60,29 +60,26 @@ impl SerializeBytes for UnionType {
     }
 }
 impl DeserializeBytes for UnionType {
-    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
-    where
-        R: XmlReader,
-    {
+    fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         let mut errors = Vec::new();
         let s = from_utf8(bytes).map_err(Error::from)?;
         Self::validate_str(s).map_err(|error| (bytes, error))?;
-        match i32::deserialize_str(reader, s) {
+        match i32::deserialize_str(helper, s) {
             Ok(value) => return Ok(Self::I32(value)),
             Err(error) => errors.push(Box::new(error)),
         }
-        match String::deserialize_str(reader, s) {
+        match String::deserialize_str(helper, s) {
             Ok(value) => return Ok(Self::String(value)),
             Err(error) => errors.push(Box::new(error)),
         }
-        Err(reader.map_error(ErrorKind::InvalidUnion(errors.into())))
+        Err(Error::from(ErrorKind::InvalidUnion(errors.into())))
     }
 }
 pub mod quick_xml_deserialize {
     use core::mem::replace;
     use xsd_parser_types::quick_xml::{
-        filter_xmlns_attributes, BytesStart, DeserializeReader, Deserializer, DeserializerArtifact,
-        DeserializerEvent, DeserializerOutput, DeserializerResult, Error, ErrorKind, Event,
+        BytesStart, DeserializeHelper, Deserializer, DeserializerArtifact, DeserializerEvent,
+        DeserializerOutput, DeserializerResult, Error, ErrorKind, Event,
     };
     #[derive(Debug)]
     pub struct FooTypeDeserializer {
@@ -95,57 +92,50 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl FooTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
             let mut union_: Option<super::UnionType> = None;
-            for attrib in filter_xmlns_attributes(bytes_start) {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    reader.resolve_local_name(attrib.key, &super::NS_TNS),
+                    helper.resolve_local_name(attrib.key, &super::NS_TNS),
                     Some(b"union")
                 ) {
-                    reader.read_attrib(&mut union_, b"union", &attrib.value)?;
+                    helper.read_attrib(&mut union_, b"union", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib_checked(attrib)?;
+                    helper.raise_unexpected_attrib_checked(&attrib)?;
                 }
             }
             Ok(Self {
-                union_: union_
-                    .ok_or_else(|| reader.map_error(ErrorKind::MissingAttribute("union".into())))?,
+                union_: union_.ok_or_else(|| ErrorKind::MissingAttribute("union".into()))?,
                 state__: Box::new(FooTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: FooTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             Ok(())
         }
     }
     impl<'de> Deserializer<'de, super::FooType> for FooTypeDeserializer {
-        fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, super::FooType>
-        where
-            R: DeserializeReader,
-        {
-            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
-        }
-        fn next<R>(
-            mut self,
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::FooType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::FooType> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        }
+        fn next(
+            mut self,
+            helper: &mut DeserializeHelper,
+            event: Event<'de>,
+        ) -> DeserializerResult<'de, super::FooType> {
             if let Event::End(_) = &event {
                 Ok(DeserializerOutput {
-                    artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                    artifact: DeserializerArtifact::Data(self.finish(helper)?),
                     event: DeserializerEvent::None,
                     allow_any: false,
                 })
@@ -157,12 +147,9 @@ pub mod quick_xml_deserialize {
                 })
             }
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::FooType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(mut self, helper: &mut DeserializeHelper) -> Result<super::FooType, Error> {
             let state = replace(&mut *self.state__, FooTypeDeserializerState::Unknown__);
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::FooType {
                 union_: self.union_,
             })
