@@ -235,6 +235,8 @@ impl EnumerationData<'_> {
             .collect::<Vec<_>>();
 
         let from = ctx.resolve_build_in("::core::convert::From");
+        let deref = ctx.resolve_build_in("::core::ops::Deref");
+        let deref_mut = ctx.resolve_build_in("::core::ops::DerefMut");
 
         ctx.add_usings(["::core::ops::Deref", "::core::ops::DerefMut"]);
 
@@ -258,7 +260,7 @@ impl EnumerationData<'_> {
                 }
             }
 
-            impl Deref for #type_ident {
+            impl #deref for #type_ident {
                 type Target = #values_ident;
 
                 fn deref(&self) -> &Self::Target {
@@ -266,7 +268,7 @@ impl EnumerationData<'_> {
                 }
             }
 
-            impl DerefMut for #type_ident {
+            impl #deref_mut for #type_ident {
                 fn deref_mut(&mut self) -> &mut Self::Target {
                     &mut self.value
                 }

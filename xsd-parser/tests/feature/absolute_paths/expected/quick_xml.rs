@@ -80,7 +80,7 @@ impl ::xsd_parser_types::quick_xml::SerializeBytes for TestType {
         &self,
         helper: &mut ::xsd_parser_types::quick_xml::SerializeHelper,
     ) -> ::core::result::Result<
-        ::core::option::Option<::std::borrow::Cow<'_, str>>,
+        ::core::option::Option<::std::borrow::Cow<'_, ::core::primitive::str>>,
         ::xsd_parser_types::quick_xml::Error,
     > {
         self.0.serialize_bytes(helper)
@@ -89,7 +89,7 @@ impl ::xsd_parser_types::quick_xml::SerializeBytes for TestType {
 impl ::xsd_parser_types::quick_xml::DeserializeBytes for TestType {
     fn deserialize_bytes(
         helper: &mut ::xsd_parser_types::quick_xml::DeserializeHelper,
-        bytes: &[u8],
+        bytes: &[::core::primitive::u8],
     ) -> ::core::result::Result<Self, ::xsd_parser_types::quick_xml::Error> {
         let inner = ::std::string::String::deserialize_bytes(helper, bytes)?;
         Ok(Self::new(inner).map_err(|error| (bytes, error))?)
@@ -107,7 +107,7 @@ impl ::xsd_parser_types::quick_xml::SerializeBytes for EntitiesType {
         &self,
         helper: &mut ::xsd_parser_types::quick_xml::SerializeHelper,
     ) -> ::core::result::Result<
-        ::core::option::Option<::std::borrow::Cow<'_, str>>,
+        ::core::option::Option<::std::borrow::Cow<'_, ::core::primitive::str>>,
         ::xsd_parser_types::quick_xml::Error,
     > {
         if self.0.is_empty() {
@@ -128,7 +128,7 @@ impl ::xsd_parser_types::quick_xml::SerializeBytes for EntitiesType {
 impl ::xsd_parser_types::quick_xml::DeserializeBytes for EntitiesType {
     fn deserialize_bytes(
         helper: &mut ::xsd_parser_types::quick_xml::DeserializeHelper,
-        bytes: &[u8],
+        bytes: &[::core::primitive::u8],
     ) -> ::core::result::Result<Self, ::xsd_parser_types::quick_xml::Error> {
         Ok(Self(
             bytes
@@ -145,7 +145,7 @@ impl ::xsd_parser_types::quick_xml::SerializeBytes for EntityType {
         &self,
         helper: &mut ::xsd_parser_types::quick_xml::SerializeHelper,
     ) -> ::core::result::Result<
-        ::core::option::Option<::std::borrow::Cow<'_, str>>,
+        ::core::option::Option<::std::borrow::Cow<'_, ::core::primitive::str>>,
         ::xsd_parser_types::quick_xml::Error,
     > {
         if self.0.is_empty() {
@@ -166,7 +166,7 @@ impl ::xsd_parser_types::quick_xml::SerializeBytes for EntityType {
 impl ::xsd_parser_types::quick_xml::DeserializeBytes for EntityType {
     fn deserialize_bytes(
         helper: &mut ::xsd_parser_types::quick_xml::DeserializeHelper,
-        bytes: &[u8],
+        bytes: &[::core::primitive::u8],
     ) -> ::core::result::Result<Self, ::xsd_parser_types::quick_xml::Error> {
         Ok(Self(
             bytes
@@ -185,7 +185,7 @@ impl ::xsd_parser_types::quick_xml::SerializeBytes for IdrefsType {
         &self,
         helper: &mut ::xsd_parser_types::quick_xml::SerializeHelper,
     ) -> ::core::result::Result<
-        ::core::option::Option<::std::borrow::Cow<'_, str>>,
+        ::core::option::Option<::std::borrow::Cow<'_, ::core::primitive::str>>,
         ::xsd_parser_types::quick_xml::Error,
     > {
         if self.0.is_empty() {
@@ -206,7 +206,7 @@ impl ::xsd_parser_types::quick_xml::SerializeBytes for IdrefsType {
 impl ::xsd_parser_types::quick_xml::DeserializeBytes for IdrefsType {
     fn deserialize_bytes(
         helper: &mut ::xsd_parser_types::quick_xml::DeserializeHelper,
-        bytes: &[u8],
+        bytes: &[::core::primitive::u8],
     ) -> ::core::result::Result<Self, ::xsd_parser_types::quick_xml::Error> {
         Ok(Self(
             bytes
@@ -225,7 +225,7 @@ impl ::xsd_parser_types::quick_xml::SerializeBytes for NmtokensType {
         &self,
         helper: &mut ::xsd_parser_types::quick_xml::SerializeHelper,
     ) -> ::core::result::Result<
-        ::core::option::Option<::std::borrow::Cow<'_, str>>,
+        ::core::option::Option<::std::borrow::Cow<'_, ::core::primitive::str>>,
         ::xsd_parser_types::quick_xml::Error,
     > {
         if self.0.is_empty() {
@@ -246,7 +246,7 @@ impl ::xsd_parser_types::quick_xml::SerializeBytes for NmtokensType {
 impl ::xsd_parser_types::quick_xml::DeserializeBytes for NmtokensType {
     fn deserialize_bytes(
         helper: &mut ::xsd_parser_types::quick_xml::DeserializeHelper,
-        bytes: &[u8],
+        bytes: &[::core::primitive::u8],
     ) -> ::core::result::Result<Self, ::xsd_parser_types::quick_xml::Error> {
         Ok(Self(
             bytes
@@ -266,8 +266,8 @@ impl ::xsd_parser_types::quick_xml::WithSerializer for AnyType {
     type Serializer<'x> = quick_xml_serialize::AnyTypeSerializer<'x>;
     fn serializer<'ser>(
         &'ser self,
-        name: ::core::option::Option<&'ser str>,
-        is_root: bool,
+        name: ::core::option::Option<&'ser ::core::primitive::str>,
+        is_root: ::core::primitive::bool,
     ) -> ::core::result::Result<Self::Serializer<'ser>, ::xsd_parser_types::quick_xml::Error> {
         Ok(quick_xml_serialize::AnyTypeSerializer {
             value: self,
@@ -400,8 +400,8 @@ pub mod quick_xml_serialize {
     pub struct AnyTypeSerializer<'ser> {
         pub(super) value: &'ser super::AnyType,
         pub(super) state: ::std::boxed::Box<AnyTypeSerializerState<'ser>>,
-        pub(super) name: &'ser str,
-        pub(super) is_root: bool,
+        pub(super) name: &'ser ::core::primitive::str,
+        pub(super) is_root: ::core::primitive::bool,
     }
     #[derive(Debug)]
     pub(super) enum AnyTypeSerializerState<'ser> {

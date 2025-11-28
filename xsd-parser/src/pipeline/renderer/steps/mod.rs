@@ -173,8 +173,11 @@ impl ConstrainsData<'_> {
 
             let result = ctx.resolve_build_in("::core::result::Result");
 
+            let validate_error =
+                ctx.resolve_ident_path("::xsd_parser_types::quick_xml::ValidateError");
+
             quote! {
-                pub fn validate_str(s: &str) -> #result<(), ValidateError> {
+                pub fn validate_str(s: &str) -> #result<(), #validate_error> {
                     #validate_pattern
                     #validate_total_digits
                     #validate_fraction_digits

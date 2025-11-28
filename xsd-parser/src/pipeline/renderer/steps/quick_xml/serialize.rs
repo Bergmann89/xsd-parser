@@ -159,6 +159,7 @@ impl UnionData<'_> {
             .map(UnionTypeVariant::render_serializer_variant)
             .collect::<Vec<_>>();
 
+        let str_ = resolve_build_in!(ctx, "::core::primitive::str");
         let result = resolve_build_in!(ctx, "::core::result::Result");
         let option = resolve_build_in!(ctx, "::core::option::Option");
 
@@ -170,7 +171,7 @@ impl UnionData<'_> {
 
         let code = quote! {
             impl #serialize_bytes for #type_ident {
-                fn serialize_bytes(&self, helper: &mut #serialize_helper) -> #result<#option<#cow<'_, str>>, #error> {
+                fn serialize_bytes(&self, helper: &mut #serialize_helper) -> #result<#option<#cow<'_, #str_>>, #error> {
                     match self {
                         #( #variants )*
                     }
@@ -198,6 +199,8 @@ impl DynamicData<'_> {
     pub(crate) fn render_serializer(&self, ctx: &mut Context<'_, '_>) {
         let Self { type_ident, .. } = self;
 
+        let str_ = resolve_build_in!(ctx, "::core::primitive::str");
+        let bool_ = resolve_build_in!(ctx, "::core::primitive::bool");
         let result = resolve_build_in!(ctx, "::core::result::Result");
         let option = resolve_build_in!(ctx, "::core::option::Option");
 
@@ -212,8 +215,8 @@ impl DynamicData<'_> {
 
                 fn serializer<'ser>(
                     &'ser self,
-                    name: #option<&'ser str>,
-                    is_root: bool
+                    name: #option<&'ser #str_>,
+                    is_root: #bool_
                 ) -> #result<Self::Serializer<'ser>, #error> {
                     let _name = name;
 
@@ -283,6 +286,7 @@ impl ReferenceData<'_> {
             }
         };
 
+        let str_ = resolve_build_in!(ctx, "::core::primitive::str");
         let result = resolve_build_in!(ctx, "::core::result::Result");
         let option = resolve_build_in!(ctx, "::core::option::Option");
 
@@ -294,7 +298,7 @@ impl ReferenceData<'_> {
 
         let code = quote! {
             impl #serialize_bytes for #type_ident {
-                fn serialize_bytes(&self, helper: &mut #serialize_helper) -> #result<#option<#cow<'_, str>>, #error> {
+                fn serialize_bytes(&self, helper: &mut #serialize_helper) -> #result<#option<#cow<'_, #str_>>, #error> {
                     #body
                 }
             }
@@ -316,6 +320,7 @@ impl EnumerationData<'_> {
 
         let variants = variants.iter().map(|x| x.render_serializer_variant(ctx));
 
+        let str_ = resolve_build_in!(ctx, "::core::primitive::str");
         let result = resolve_build_in!(ctx, "::core::result::Result");
         let option = resolve_build_in!(ctx, "::core::option::Option");
 
@@ -327,7 +332,7 @@ impl EnumerationData<'_> {
 
         let code = quote! {
             impl #serialize_bytes for #type_ident {
-                fn serialize_bytes(&self, helper: &mut #serialize_helper) -> #result<#option<#cow<'_, str>>, #error> {
+                fn serialize_bytes(&self, helper: &mut #serialize_helper) -> #result<#option<#cow<'_, #str_>>, #error> {
                     match self {
                         #( #variants )*
                     }
@@ -368,6 +373,7 @@ impl SimpleData<'_> {
     pub(crate) fn render_serializer(&self, ctx: &mut Context<'_, '_>) {
         let Self { type_ident, .. } = self;
 
+        let str_ = resolve_build_in!(ctx, "::core::primitive::str");
         let result = resolve_build_in!(ctx, "::core::result::Result");
         let option = resolve_build_in!(ctx, "::core::option::Option");
 
@@ -414,7 +420,7 @@ impl SimpleData<'_> {
 
         let code = quote! {
             impl #serialize_bytes for #type_ident {
-                fn serialize_bytes(&self, helper: &mut #serialize_helper) -> #result<#option<#cow<'_, str>>, #error> {
+                fn serialize_bytes(&self, helper: &mut #serialize_helper) -> #result<#option<#cow<'_, #str_>>, #error> {
                     #body
                 }
             }
@@ -470,6 +476,8 @@ impl ComplexBase<'_> {
             self.render_with_serializer_for_content(ctx, forward_root)
         };
 
+        let str_ = resolve_build_in!(ctx, "::core::primitive::str");
+        let bool_ = resolve_build_in!(ctx, "::core::primitive::bool");
         let result = resolve_build_in!(ctx, "::core::result::Result");
         let option = resolve_build_in!(ctx, "::core::option::Option");
 
@@ -482,8 +490,8 @@ impl ComplexBase<'_> {
 
                 fn serializer<'ser>(
                     &'ser self,
-                    name: #option<&'ser str>,
-                    is_root: bool
+                    name: #option<&'ser #str_>,
+                    is_root: #bool_,
                 ) -> #result<Self::Serializer<'ser>, #error> {
                     #body
                 }
@@ -552,18 +560,20 @@ impl ComplexBase<'_> {
             ..
         } = self;
 
+        let box_ = resolve_build_in!(ctx, "::alloc::boxed::Box");
+        let str_ = resolve_build_in!(ctx, "::core::primitive::str");
+        let bool_ = resolve_build_in!(ctx, "::core::primitive::bool");
+
         let name = self.represents_element().then(|| {
             quote! {
-                pub(super) name: &'ser str,
+                pub(super) name: &'ser #str_,
             }
         });
         let is_root = forward_root.then(|| {
             quote! {
-                pub(super) is_root: bool,
+                pub(super) is_root: #bool_,
             }
         });
-
-        let box_ = resolve_build_in!(ctx, "::alloc::boxed::Box");
 
         let code = quote! {
             #[derive(Debug)]
