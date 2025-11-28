@@ -3,11 +3,24 @@
 use std::hash::{Hash, Hasher};
 
 use crate::models::{
+    meta::{ElementMetaVariant, ElementMode},
     schema::{MaxOccurs, MinOccurs},
     Ident,
 };
 
 use super::{AttributesMeta, Base, ElementsMeta, MetaType, MetaTypeVariant, MetaTypes, TypeEq};
+
+/// Represents a group of elements.
+///
+/// This is usually a `xs:all`, `xs:choice` or `xs:sequence`.
+#[derive(Default, Debug, Clone)]
+pub struct GroupMeta {
+    /// Wether the content of this type is mixed (contains also text) or not.
+    pub is_mixed: bool,
+
+    /// List of elements defined in this group.
+    pub elements: ElementsMeta,
+}
 
 /// Type information that contains data about a complex type.
 #[derive(Debug, Clone)]
@@ -35,19 +48,39 @@ pub struct ComplexMeta {
     pub attributes: AttributesMeta,
 }
 
-/// Represents a group of elements.
-///
-/// This is usually a `xs:all`, `xs:choice` or `xs:sequence`.
-#[derive(Default, Debug, Clone)]
-pub struct GroupMeta {
-    /// Wether the content of this type is mixed (contains also text) or not.
-    pub is_mixed: bool,
-
-    /// List of elements defined in this group.
-    pub elements: ElementsMeta,
-}
-
 /* GroupMeta */
+
+impl GroupMeta {
+    /// Returns `true` if this type is emptiable, `false` otherwise.
+    ///
+    /// Emptiable means that the type may not have any element.
+    #[must_use]
+    pub fn is_emptiable(&self, types: &MetaTypes) -> bool {
+        for element in &*self.elements {
+            if element.min_occurs == 0 {
+                continue;
+            }
+
+            match &element.variant {
+                ElementMetaVariant::Text => (),
+                ElementMetaVariant::Any { .. } => (),
+                ElementMetaVariant::Type {
+                    mode: ElementMode::Element,
+                    ..
+                } => (),
+                ElementMetaVariant::Type { type_, .. } => {
+                    if let Some(ty) = types.items.get(type_) {
+                        if !ty.is_emptiable(types) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+
+        true
+    }
+}
 
 impl TypeEq for GroupMeta {
     fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &MetaTypes) {
@@ -132,6 +165,21 @@ impl ComplexMeta {
                     | MetaTypeVariant::Enumeration(_)
             )
         )
+    }
+
+    /// Returns `true` if this type is emptiable, `false` otherwise.
+    ///
+    /// Emptiable means that the type may not have any element.
+    #[must_use]
+    pub fn is_emptiable(&self, types: &MetaTypes) -> bool {
+        if self.min_occurs == 0 {
+            return true;
+        }
+
+        self.content
+            .as_ref()
+            .and_then(|ident| types.items.get(ident))
+            .is_none_or(|ty| ty.is_emptiable(types))
     }
 }
 

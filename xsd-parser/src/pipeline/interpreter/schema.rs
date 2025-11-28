@@ -1,3 +1,4 @@
+use std::borrow::Cow;
 use std::collections::{HashMap, VecDeque};
 use std::str::from_utf8;
 
@@ -5,6 +6,7 @@ use tracing::instrument;
 
 use xsd_parser_types::misc::{Namespace, RawByteStr};
 
+use crate::models::meta::BuildInMeta;
 use crate::models::{
     meta::{MetaType, MetaTypeVariant},
     schema::{
@@ -124,7 +126,7 @@ impl SchemaInterpreter<'_, '_> {
     pub(super) fn get_simple_type_variant(
         &mut self,
         ident: &Ident,
-    ) -> Result<&MetaTypeVariant, Error> {
+    ) -> Result<Cow<'_, MetaTypeVariant>, Error> {
         if !self.state.types.items.contains_key(ident) {
             let ty = self
                 .find_simple_type(ident.clone())
@@ -135,6 +137,9 @@ impl SchemaInterpreter<'_, '_> {
         }
 
         match self.state.types.get_variant(ident) {
+            Some(ty) if ty.is_mixed(&self.state.types) && ty.is_emptiable(&self.state.types) => {
+                Ok(Cow::Owned(MetaTypeVariant::BuildIn(BuildInMeta::String)))
+            }
             None
             | Some(
                 MetaTypeVariant::ComplexType(_)
@@ -150,7 +155,7 @@ impl SchemaInterpreter<'_, '_> {
                 | MetaTypeVariant::Union(_)
                 | MetaTypeVariant::Reference(_)
                 | MetaTypeVariant::SimpleType(_)),
-            ) => Ok(ty),
+            ) => Ok(Cow::Borrowed(ty)),
         }
     }
 

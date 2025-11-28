@@ -1,3 +1,4 @@
+use std::borrow::Cow;
 use std::collections::btree_map::Entry;
 use std::mem::swap;
 use std::ops::{Bound, Deref, DerefMut};
@@ -1261,18 +1262,18 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                     Err(Error::UnknownType(_)) => {
                         self.fixed = true;
 
-                        self.owner.get_complex_type_variant(base)?
+                        Cow::Borrowed(self.owner.get_complex_type_variant(base)?)
                     }
                     Err(error) => Err(error)?,
                 }
             }
             (TypeMode::Complex, ContentMode::Complex) => {
-                self.owner.get_complex_type_variant(base)?
+                Cow::Borrowed(self.owner.get_complex_type_variant(base)?)
             }
             (_, _) => crate::unreachable!("Unset or invalid combination!"),
         };
 
-        let mut base = base.clone();
+        let mut base = base.into_owned();
 
         match (self.content_mode, &mut base) {
             (ContentMode::Simple, MetaTypeVariant::Enumeration(ei)) => ei.variants.clear(),
@@ -1373,7 +1374,10 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                     );
                 };
 
-                let content = self.owner.get_simple_type_variant(&content_ident)?.clone();
+                let content = self
+                    .owner
+                    .get_simple_type_variant(&content_ident)?
+                    .into_owned();
                 if !self.is_simple_content_unique {
                     self.is_simple_content_unique = true;
                     let content_name = self.owner.state.make_content_name();
