@@ -1,4 +1,4 @@
-<List xmlns:tns="http://example.com">
+<List>
     <intermediate baseValue="10" intermediateValue="11" />
     <final baseValue="20" intermediateValue="21" finalValue="22" />
 </List>

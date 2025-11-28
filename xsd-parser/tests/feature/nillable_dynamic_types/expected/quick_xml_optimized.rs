@@ -1,11 +1,14 @@
 use xsd_parser_types::{
-    misc::Namespace,
+    misc::{Namespace, NamespacePrefix},
     quick_xml::{Error, WithDeserializer, WithSerializer},
     xml::Nillable,
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
 pub const NS_TNS: Namespace = Namespace::new_const(b"http://example.com");
+pub const PREFIX_XS: NamespacePrefix = NamespacePrefix::new_const(b"xs");
+pub const PREFIX_XML: NamespacePrefix = NamespacePrefix::new_const(b"xml");
+pub const PREFIX_TNS: NamespacePrefix = NamespacePrefix::new_const(b"tns");
 pub type List = ListType;
 #[derive(Debug)]
 pub struct ListType {
@@ -796,9 +799,10 @@ pub mod quick_xml_deserialize {
 }
 pub mod quick_xml_serialize {
     use xsd_parser_types::{
-        misc::Namespace,
+        misc::{Namespace, NamespacePrefix},
         quick_xml::{
-            write_attrib_opt, BytesEnd, BytesStart, Error, Event, IterSerializer, WithSerializer,
+            BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
+            WithSerializer,
         },
     };
     #[derive(Debug)]
@@ -817,7 +821,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> ListTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     ListTypeSerializerState::Init__ => {
@@ -827,18 +834,23 @@ pub mod quick_xml_serialize {
                             false,
                         ));
                         let mut bytes = BytesStart::new(self.name);
+                        helper.begin_ns_scope();
                         if self.is_root {
-                            bytes.push_attribute((&b"xmlns:tns"[..], &super::NS_TNS[..]));
-                            bytes.push_attribute((&b"xmlns:xsi"[..], &Namespace::XSI[..]));
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&NamespacePrefix::XSI),
+                                &Namespace::XSI,
+                            );
                         }
                         return Ok(Some(Event::Start(bytes)));
                     }
-                    ListTypeSerializerState::Base(x) => match x.next().transpose()? {
+                    ListTypeSerializerState::Base(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => *self.state = ListTypeSerializerState::End__,
                     },
                     ListTypeSerializerState::End__ => {
                         *self.state = ListTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     ListTypeSerializerState::Done__ => return Ok(None),
@@ -847,10 +859,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for ListTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for ListTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -875,7 +886,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> BaseSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     BaseSerializerState::Init__ => match self.value {
@@ -892,11 +906,11 @@ pub mod quick_xml_serialize {
                             )?)
                         }
                     },
-                    BaseSerializerState::Intermediate(x) => match x.next().transpose()? {
+                    BaseSerializerState::Intermediate(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => *self.state = BaseSerializerState::Done__,
                     },
-                    BaseSerializerState::Final(x) => match x.next().transpose()? {
+                    BaseSerializerState::Final(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => *self.state = BaseSerializerState::Done__,
                     },
@@ -906,10 +920,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for BaseSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for BaseSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -933,22 +946,30 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> IntermediateTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     IntermediateTypeSerializerState::Init__ => {
                         *self.state = IntermediateTypeSerializerState::Done__;
                         let mut bytes = BytesStart::new(self.name);
+                        helper.begin_ns_scope();
                         if self.is_root {
-                            bytes.push_attribute((&b"xmlns:tns"[..], &super::NS_TNS[..]));
-                            bytes.push_attribute((&b"xmlns:xsi"[..], &Namespace::XSI[..]));
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&NamespacePrefix::XSI),
+                                &Namespace::XSI,
+                            );
                         }
-                        write_attrib_opt(&mut bytes, "baseValue", &self.value.base_value)?;
-                        write_attrib_opt(
+                        helper.write_attrib_opt(&mut bytes, "baseValue", &self.value.base_value)?;
+                        helper.write_attrib_opt(
                             &mut bytes,
                             "intermediateValue",
                             &self.value.intermediate_value,
                         )?;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::Empty(bytes)));
                     }
                     IntermediateTypeSerializerState::Done__ => return Ok(None),
@@ -957,10 +978,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for IntermediateTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for IntermediateTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -984,23 +1004,35 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> FinalTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     FinalTypeSerializerState::Init__ => {
                         *self.state = FinalTypeSerializerState::Done__;
                         let mut bytes = BytesStart::new(self.name);
+                        helper.begin_ns_scope();
                         if self.is_root {
-                            bytes.push_attribute((&b"xmlns:tns"[..], &super::NS_TNS[..]));
-                            bytes.push_attribute((&b"xmlns:xsi"[..], &Namespace::XSI[..]));
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&NamespacePrefix::XSI),
+                                &Namespace::XSI,
+                            );
                         }
-                        write_attrib_opt(&mut bytes, "baseValue", &self.value.base_value)?;
-                        write_attrib_opt(
+                        helper.write_attrib_opt(&mut bytes, "baseValue", &self.value.base_value)?;
+                        helper.write_attrib_opt(
                             &mut bytes,
                             "intermediateValue",
                             &self.value.intermediate_value,
                         )?;
-                        write_attrib_opt(&mut bytes, "finalValue", &self.value.final_value)?;
+                        helper.write_attrib_opt(
+                            &mut bytes,
+                            "finalValue",
+                            &self.value.final_value,
+                        )?;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::Empty(bytes)));
                     }
                     FinalTypeSerializerState::Done__ => return Ok(None),
@@ -1009,10 +1041,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for FinalTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for FinalTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {

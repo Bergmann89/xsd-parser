@@ -4,6 +4,7 @@ use xsd_parser::{
     config::{GeneratorFlags, IdentTriple, OptimizerFlags, RendererFlags, Schema},
     exec_generator, exec_interpreter, exec_optimizer, exec_parser, exec_render,
     models::meta::{ElementMetaVariant, ElementMode, MetaTypeVariant},
+    pipeline::renderer::NamespaceSerialization,
     Config, IdentType, MetaTypes, Schemas,
 };
 use xsd_parser_types::misc::Namespace;
@@ -49,7 +50,7 @@ fn generate_quick_xml() {
         "tests/schema/onix/schema/ONIX_BookProduct_3.1_reference.xsd",
         "tests/schema/onix/expected/quick_xml.rs",
         config().with_quick_xml_config(
-            true,
+            NamespaceSerialization::Global,
             Some(Namespace::new_const(
                 b"http://ns.editeur.org/onix/3.1/reference",
             )),

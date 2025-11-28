@@ -1,15 +1,17 @@
 use std::borrow::Cow;
 use xsd_parser_types::{
-    misc::Namespace,
+    misc::{Namespace, NamespacePrefix},
     quick_xml::{
         DeserializeBytes, DeserializeHelper, Error, ErrorKind, RawByteStr, SerializeBytes,
-        WithDeserializer, WithSerializer,
+        SerializeHelper, WithDeserializer, WithSerializer,
     },
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
 pub const NS_UNNAMED_2: Namespace =
     Namespace::new_const(b"http://www.sitemaps.org/schemas/sitemap/0.9");
+pub const PREFIX_XS: NamespacePrefix = NamespacePrefix::new_const(b"xs");
+pub const PREFIX_XML: NamespacePrefix = NamespacePrefix::new_const(b"xml");
 pub type Urlset = UrlsetType;
 #[derive(Debug)]
 pub struct UrlsetType {
@@ -69,7 +71,7 @@ pub enum TChangeFreqType {
     Never,
 }
 impl SerializeBytes for TChangeFreqType {
-    fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+    fn serialize_bytes(&self, helper: &mut SerializeHelper) -> Result<Option<Cow<'_, str>>, Error> {
         match self {
             Self::Always => Ok(Some(Cow::Borrowed("always"))),
             Self::Hourly => Ok(Some(Cow::Borrowed("hourly"))),
@@ -740,7 +742,8 @@ pub mod quick_xml_deserialize {
 }
 pub mod quick_xml_serialize {
     use xsd_parser_types::quick_xml::{
-        BytesEnd, BytesStart, Error, Event, IterSerializer, WithSerializer,
+        BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
+        WithSerializer,
     };
     #[derive(Debug)]
     pub struct UrlsetTypeSerializer<'ser> {
@@ -758,7 +761,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> UrlsetTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     UrlsetTypeSerializerState::Init__ => {
@@ -768,17 +774,17 @@ pub mod quick_xml_serialize {
                             false,
                         ));
                         let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns"[..], &super::NS_UNNAMED_2[..]));
-                        }
+                        helper.begin_ns_scope();
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
                         return Ok(Some(Event::Start(bytes)));
                     }
-                    UrlsetTypeSerializerState::Url(x) => match x.next().transpose()? {
+                    UrlsetTypeSerializerState::Url(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => *self.state = UrlsetTypeSerializerState::End__,
                     },
                     UrlsetTypeSerializerState::End__ => {
                         *self.state = UrlsetTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     UrlsetTypeSerializerState::Done__ => return Ok(None),
@@ -787,10 +793,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for UrlsetTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for UrlsetTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -821,7 +826,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> TUrlTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     TUrlTypeSerializerState::Init__ => {
@@ -831,12 +839,11 @@ pub mod quick_xml_serialize {
                             false,
                         )?);
                         let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns"[..], &super::NS_UNNAMED_2[..]));
-                        }
+                        helper.begin_ns_scope();
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
                         return Ok(Some(Event::Start(bytes)));
                     }
-                    TUrlTypeSerializerState::Loc(x) => match x.next().transpose()? {
+                    TUrlTypeSerializerState::Loc(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => {
                             *self.state = TUrlTypeSerializerState::Lastmod(IterSerializer::new(
@@ -846,7 +853,7 @@ pub mod quick_xml_serialize {
                             ))
                         }
                     },
-                    TUrlTypeSerializerState::Lastmod(x) => match x.next().transpose()? {
+                    TUrlTypeSerializerState::Lastmod(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => {
                             *self.state = TUrlTypeSerializerState::Changefreq(IterSerializer::new(
@@ -856,7 +863,7 @@ pub mod quick_xml_serialize {
                             ))
                         }
                     },
-                    TUrlTypeSerializerState::Changefreq(x) => match x.next().transpose()? {
+                    TUrlTypeSerializerState::Changefreq(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => {
                             *self.state = TUrlTypeSerializerState::Priority(IterSerializer::new(
@@ -866,12 +873,13 @@ pub mod quick_xml_serialize {
                             ))
                         }
                     },
-                    TUrlTypeSerializerState::Priority(x) => match x.next().transpose()? {
+                    TUrlTypeSerializerState::Priority(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => *self.state = TUrlTypeSerializerState::End__,
                     },
                     TUrlTypeSerializerState::End__ => {
                         *self.state = TUrlTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     TUrlTypeSerializerState::Done__ => return Ok(None),
@@ -880,10 +888,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for TUrlTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for TUrlTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {

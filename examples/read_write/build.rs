@@ -2,6 +2,7 @@ use std::fs::File;
 use std::io::Write;
 use std::process::{Command, Output, Stdio};
 
+use xsd_parser::pipeline::renderer::NamespaceSerialization;
 use xsd_parser::{
     config::{GeneratorFlags, InterpreterFlags, OptimizerFlags, RenderStep, Schema},
     generate, Config, Error,
@@ -25,7 +26,7 @@ fn main() -> Result<(), Error> {
             boxed_deserializer: false,
         },
         RenderStep::QuickXmlSerialize {
-            with_namespaces: true,
+            namespaces: NamespaceSerialization::Global,
             default_namespace: None,
         },
     ]);

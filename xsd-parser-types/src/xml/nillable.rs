@@ -9,7 +9,8 @@ use crate::misc::Namespace;
 #[cfg(feature = "quick-xml")]
 use crate::quick_xml::{
     DeserializeHelper, Deserializer, DeserializerArtifact, DeserializerEvent, DeserializerOutput,
-    DeserializerResult, Error, ErrorKind, WithDeserializer, WithSerializer,
+    DeserializerResult, Error, ErrorKind, SerializeHelper, Serializer, WithDeserializer,
+    WithSerializer,
 };
 use crate::traits::WithNamespace;
 
@@ -129,7 +130,6 @@ where
         } else {
             Ok(NillableSerializer::Nil {
                 name: name.unwrap_or("Nillable"),
-                is_root,
             })
         }
     }
@@ -159,9 +159,6 @@ where
     Nil {
         /// Name of the emitted XML tag.
         name: &'ser str,
-
-        /// Is set to `true` if this is the root element, `false` otherwise.
-        is_root: bool,
     },
 
     /// Serialization is done.
@@ -176,27 +173,21 @@ where
     fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
         match self {
             Self::Some { inner } => f.debug_struct("Some").field("inner", inner).finish(),
-            Self::Nil { name, is_root } => f
-                .debug_struct("Nil")
-                .field("name", name)
-                .field("is_root", is_root)
-                .finish(),
+            Self::Nil { name } => f.debug_struct("Nil").field("name", name).finish(),
             Self::Done => write!(f, "Done"),
         }
     }
 }
 
 #[cfg(feature = "quick-xml")]
-impl<'ser, T> Iterator for NillableSerializer<'ser, T>
+impl<'ser, T> Serializer<'ser> for NillableSerializer<'ser, T>
 where
     T: WithSerializer + 'ser,
 {
-    type Item = Result<Event<'ser>, Error>;
-
-    fn next(&mut self) -> Option<Self::Item> {
+    fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
         match self {
             Self::Some { inner } => {
-                let item = inner.next();
+                let item = inner.next(helper);
 
                 if item.is_none() {
                     *self = Self::Done;
@@ -204,13 +195,12 @@ where
 
                 item
             }
-            Self::Nil { name, is_root } => {
+            Self::Nil { name } => {
+                use crate::misc::NamespacePrefix;
+
                 let mut bytes = BytesStart::new(*name);
 
-                if *is_root {
-                    bytes.push_attribute((&b"xmlns:xsi"[..], &Namespace::XSI[..]));
-                }
-
+                helper.write_xmlns(&mut bytes, Some(&NamespacePrefix::XSI), &Namespace::XSI);
                 bytes.push_attribute(("xsi:nil", "true"));
 
                 *self = Self::Done;

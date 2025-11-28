@@ -33,9 +33,9 @@ impl Default for ParserConfig {
             schemas: vec![],
             namespaces: vec![],
             flags: ParserFlags::RESOLVE_INCLUDES
+                | ParserFlags::GENERATE_PREFIXES
                 | ParserFlags::DEFAULT_NAMESPACES
-                | ParserFlags::ALTERNATE_PREFIXES
-                | ParserFlags::GENERATE_PREFIXES,
+                | ParserFlags::ALTERNATIVE_PREFIXES,
             debug_output: None,
         }
     }
@@ -127,8 +127,8 @@ bitflags! {
         /// Allow the parser to assign prefixes known from other schemas to a certain
         /// namespace if the actual prefix is unknown or already in use.
         ///
-        /// See [`alternate_prefixes`](crate::Parser::alternate_prefixes) for details.
-        const ALTERNATE_PREFIXES = 1 << 2;
+        /// See [`alternative_prefixes`](crate::Parser::alternative_prefixes) for details.
+        const ALTERNATIVE_PREFIXES = 1 << 2;
 
         /// Allow the parser to generate suitable prefixes for a certain namespace,
         /// if the actual prefix is already used.

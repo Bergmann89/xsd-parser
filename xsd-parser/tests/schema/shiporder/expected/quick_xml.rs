@@ -1,9 +1,11 @@
 use xsd_parser_types::{
-    misc::Namespace,
+    misc::{Namespace, NamespacePrefix},
     quick_xml::{Error, WithDeserializer, WithSerializer},
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
+pub const PREFIX_XS: NamespacePrefix = NamespacePrefix::new_const(b"xs");
+pub const PREFIX_XML: NamespacePrefix = NamespacePrefix::new_const(b"xml");
 pub type Shiporder = ShiporderType;
 #[derive(Debug)]
 pub struct ShiporderType {
@@ -1383,7 +1385,8 @@ pub mod quick_xml_deserialize {
 }
 pub mod quick_xml_serialize {
     use xsd_parser_types::quick_xml::{
-        write_attrib, BytesEnd, BytesStart, Error, Event, IterSerializer, WithSerializer,
+        BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
+        WithSerializer,
     };
     #[derive(Debug)]
     pub struct ShiporderTypeSerializer<'ser> {
@@ -1403,7 +1406,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> ShiporderTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     ShiporderTypeSerializerState::Init__ => {
@@ -1414,22 +1420,25 @@ pub mod quick_xml_serialize {
                                 false,
                             )?);
                         let mut bytes = BytesStart::new(self.name);
-                        write_attrib(&mut bytes, "orderid", &self.value.orderid)?;
+                        helper.write_attrib(&mut bytes, "orderid", &self.value.orderid)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
-                    ShiporderTypeSerializerState::Orderperson(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => {
-                            *self.state =
-                                ShiporderTypeSerializerState::Shipto(WithSerializer::serializer(
-                                    &self.value.shipto,
-                                    Some("shipto"),
-                                    false,
-                                )?)
+                    ShiporderTypeSerializerState::Orderperson(x) => {
+                        match x.next(helper).transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => {
+                                *self.state = ShiporderTypeSerializerState::Shipto(
+                                    WithSerializer::serializer(
+                                        &self.value.shipto,
+                                        Some("shipto"),
+                                        false,
+                                    )?,
+                                )
+                            }
                         }
-                    },
+                    }
                     ShiporderTypeSerializerState::Shipto(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state = ShiporderTypeSerializerState::Item(
@@ -1438,7 +1447,7 @@ pub mod quick_xml_serialize {
                             }
                         }
                     }
-                    ShiporderTypeSerializerState::Item(x) => match x.next().transpose()? {
+                    ShiporderTypeSerializerState::Item(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => *self.state = ShiporderTypeSerializerState::End__,
                     },
@@ -1452,10 +1461,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for ShiporderTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for ShiporderTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -1484,7 +1492,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> ShiporderShiptoTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     ShiporderShiptoTypeSerializerState::Init__ => {
@@ -1494,19 +1505,24 @@ pub mod quick_xml_serialize {
                         let bytes = BytesStart::new(self.name);
                         return Ok(Some(Event::Start(bytes)));
                     }
-                    ShiporderShiptoTypeSerializerState::Name(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => {
-                            *self.state = ShiporderShiptoTypeSerializerState::Address(
-                                WithSerializer::serializer(
-                                    &self.value.address,
-                                    Some("address"),
-                                    false,
-                                )?,
-                            )
+                    ShiporderShiptoTypeSerializerState::Name(x) => {
+                        match x.next(helper).transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => {
+                                *self.state = ShiporderShiptoTypeSerializerState::Address(
+                                    WithSerializer::serializer(
+                                        &self.value.address,
+                                        Some("address"),
+                                        false,
+                                    )?,
+                                )
+                            }
                         }
-                    },
-                    ShiporderShiptoTypeSerializerState::Address(x) => match x.next().transpose()? {
+                    }
+                    ShiporderShiptoTypeSerializerState::Address(x) => match x
+                        .next(helper)
+                        .transpose()?
+                    {
                         Some(event) => return Ok(Some(event)),
                         None => {
                             *self.state = ShiporderShiptoTypeSerializerState::City(
@@ -1514,22 +1530,26 @@ pub mod quick_xml_serialize {
                             )
                         }
                     },
-                    ShiporderShiptoTypeSerializerState::City(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => {
-                            *self.state = ShiporderShiptoTypeSerializerState::Country(
-                                WithSerializer::serializer(
-                                    &self.value.country,
-                                    Some("country"),
-                                    false,
-                                )?,
-                            )
+                    ShiporderShiptoTypeSerializerState::City(x) => {
+                        match x.next(helper).transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => {
+                                *self.state = ShiporderShiptoTypeSerializerState::Country(
+                                    WithSerializer::serializer(
+                                        &self.value.country,
+                                        Some("country"),
+                                        false,
+                                    )?,
+                                )
+                            }
                         }
-                    },
-                    ShiporderShiptoTypeSerializerState::Country(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => *self.state = ShiporderShiptoTypeSerializerState::End__,
-                    },
+                    }
+                    ShiporderShiptoTypeSerializerState::Country(x) => {
+                        match x.next(helper).transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => *self.state = ShiporderShiptoTypeSerializerState::End__,
+                        }
+                    }
                     ShiporderShiptoTypeSerializerState::End__ => {
                         *self.state = ShiporderShiptoTypeSerializerState::Done__;
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
@@ -1540,10 +1560,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for ShiporderShiptoTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for ShiporderShiptoTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -1572,7 +1591,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> ShiporderItemTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     ShiporderItemTypeSerializerState::Init__ => {
@@ -1582,7 +1604,10 @@ pub mod quick_xml_serialize {
                         let bytes = BytesStart::new(self.name);
                         return Ok(Some(Event::Start(bytes)));
                     }
-                    ShiporderItemTypeSerializerState::Title(x) => match x.next().transpose()? {
+                    ShiporderItemTypeSerializerState::Title(x) => match x
+                        .next(helper)
+                        .transpose()?
+                    {
                         Some(event) => return Ok(Some(event)),
                         None => {
                             *self.state = ShiporderItemTypeSerializerState::Note(
@@ -1590,33 +1615,40 @@ pub mod quick_xml_serialize {
                             )
                         }
                     },
-                    ShiporderItemTypeSerializerState::Note(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => {
-                            *self.state = ShiporderItemTypeSerializerState::Quantity(
-                                WithSerializer::serializer(
-                                    &self.value.quantity,
-                                    Some("quantity"),
-                                    false,
-                                )?,
-                            )
+                    ShiporderItemTypeSerializerState::Note(x) => {
+                        match x.next(helper).transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => {
+                                *self.state = ShiporderItemTypeSerializerState::Quantity(
+                                    WithSerializer::serializer(
+                                        &self.value.quantity,
+                                        Some("quantity"),
+                                        false,
+                                    )?,
+                                )
+                            }
                         }
-                    },
-                    ShiporderItemTypeSerializerState::Quantity(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => {
-                            *self.state =
-                                ShiporderItemTypeSerializerState::Price(WithSerializer::serializer(
-                                    &self.value.price,
-                                    Some("price"),
-                                    false,
-                                )?)
+                    }
+                    ShiporderItemTypeSerializerState::Quantity(x) => {
+                        match x.next(helper).transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => {
+                                *self.state = ShiporderItemTypeSerializerState::Price(
+                                    WithSerializer::serializer(
+                                        &self.value.price,
+                                        Some("price"),
+                                        false,
+                                    )?,
+                                )
+                            }
                         }
-                    },
-                    ShiporderItemTypeSerializerState::Price(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => *self.state = ShiporderItemTypeSerializerState::End__,
-                    },
+                    }
+                    ShiporderItemTypeSerializerState::Price(x) => {
+                        match x.next(helper).transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => *self.state = ShiporderItemTypeSerializerState::End__,
+                        }
+                    }
                     ShiporderItemTypeSerializerState::End__ => {
                         *self.state = ShiporderItemTypeSerializerState::Done__;
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
@@ -1627,10 +1659,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for ShiporderItemTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for ShiporderItemTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {

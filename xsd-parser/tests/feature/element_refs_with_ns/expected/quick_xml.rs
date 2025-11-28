@@ -1,5 +1,5 @@
 use xsd_parser_types::{
-    misc::Namespace,
+    misc::{Namespace, NamespacePrefix},
     quick_xml::{Error, WithDeserializer, WithSerializer},
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
@@ -8,6 +8,11 @@ pub const NS_UNNAMED_2: Namespace = Namespace::new_const(b"Foo");
 pub const NS_BAR: Namespace = Namespace::new_const(b"Bar");
 pub const NS_BAZ: Namespace = Namespace::new_const(b"Baz");
 pub const NS_BIZ: Namespace = Namespace::new_const(b"Biz");
+pub const PREFIX_XS: NamespacePrefix = NamespacePrefix::new_const(b"xs");
+pub const PREFIX_XML: NamespacePrefix = NamespacePrefix::new_const(b"xml");
+pub const PREFIX_BAR: NamespacePrefix = NamespacePrefix::new_const(b"bar");
+pub const PREFIX_BAZ: NamespacePrefix = NamespacePrefix::new_const(b"baz");
+pub const PREFIX_BIZ: NamespacePrefix = NamespacePrefix::new_const(b"biz");
 pub type Outer = OuterType;
 #[derive(Debug)]
 pub struct OuterType {
@@ -253,7 +258,9 @@ pub mod bar {
         }
     }
     pub mod quick_xml_serialize {
-        use xsd_parser_types::quick_xml::{BytesEnd, BytesStart, Error, Event, WithSerializer};
+        use xsd_parser_types::quick_xml::{
+            BytesEnd, BytesStart, Error, Event, SerializeHelper, Serializer, WithSerializer,
+        };
         #[derive(Debug)]
         pub struct InnerTypeSerializer<'ser> {
             pub(super) value: &'ser super::InnerType,
@@ -270,7 +277,10 @@ pub mod bar {
             Phantom__(&'ser ()),
         }
         impl<'ser> InnerTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         InnerTypeSerializerState::Init__ => {
@@ -279,22 +289,10 @@ pub mod bar {
                                 Some("A"),
                                 false,
                             )?);
-                            let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                                bytes
-                                    .push_attribute((&b"xmlns:bar"[..], &super::super::NS_BAR[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:baz"[..], &super::super::NS_BAZ[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:biz"[..], &super::super::NS_BIZ[..]));
-                            }
+                            let bytes = BytesStart::new(self.name);
                             return Ok(Some(Event::Start(bytes)));
                         }
-                        InnerTypeSerializerState::A(x) => match x.next().transpose()? {
+                        InnerTypeSerializerState::A(x) => match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = InnerTypeSerializerState::End__,
                         },
@@ -308,10 +306,9 @@ pub mod bar {
                 }
             }
         }
-        impl<'ser> Iterator for InnerTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for InnerTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -543,7 +540,9 @@ pub mod baz {
         }
     }
     pub mod quick_xml_serialize {
-        use xsd_parser_types::quick_xml::{BytesEnd, BytesStart, Error, Event, WithSerializer};
+        use xsd_parser_types::quick_xml::{
+            BytesEnd, BytesStart, Error, Event, SerializeHelper, Serializer, WithSerializer,
+        };
         #[derive(Debug)]
         pub struct InnerTypeSerializer<'ser> {
             pub(super) value: &'ser super::InnerType,
@@ -560,7 +559,10 @@ pub mod baz {
             Phantom__(&'ser ()),
         }
         impl<'ser> InnerTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         InnerTypeSerializerState::Init__ => {
@@ -569,22 +571,10 @@ pub mod baz {
                                 Some("B"),
                                 false,
                             )?);
-                            let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                                bytes
-                                    .push_attribute((&b"xmlns:bar"[..], &super::super::NS_BAR[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:baz"[..], &super::super::NS_BAZ[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:biz"[..], &super::super::NS_BIZ[..]));
-                            }
+                            let bytes = BytesStart::new(self.name);
                             return Ok(Some(Event::Start(bytes)));
                         }
-                        InnerTypeSerializerState::B(x) => match x.next().transpose()? {
+                        InnerTypeSerializerState::B(x) => match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = InnerTypeSerializerState::End__,
                         },
@@ -598,10 +588,9 @@ pub mod baz {
                 }
             }
         }
-        impl<'ser> Iterator for InnerTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for InnerTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -833,7 +822,9 @@ pub mod biz {
         }
     }
     pub mod quick_xml_serialize {
-        use xsd_parser_types::quick_xml::{BytesEnd, BytesStart, Error, Event, WithSerializer};
+        use xsd_parser_types::quick_xml::{
+            BytesEnd, BytesStart, Error, Event, SerializeHelper, Serializer, WithSerializer,
+        };
         #[derive(Debug)]
         pub struct InnerTypeSerializer<'ser> {
             pub(super) value: &'ser super::InnerType,
@@ -850,7 +841,10 @@ pub mod biz {
             Phantom__(&'ser ()),
         }
         impl<'ser> InnerTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         InnerTypeSerializerState::Init__ => {
@@ -859,22 +853,10 @@ pub mod biz {
                                 Some("C"),
                                 false,
                             )?);
-                            let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                                bytes
-                                    .push_attribute((&b"xmlns:bar"[..], &super::super::NS_BAR[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:baz"[..], &super::super::NS_BAZ[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:biz"[..], &super::super::NS_BIZ[..]));
-                            }
+                            let bytes = BytesStart::new(self.name);
                             return Ok(Some(Event::Start(bytes)));
                         }
-                        InnerTypeSerializerState::C(x) => match x.next().transpose()? {
+                        InnerTypeSerializerState::C(x) => match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = InnerTypeSerializerState::End__,
                         },
@@ -888,10 +870,9 @@ pub mod biz {
                 }
             }
         }
-        impl<'ser> Iterator for InnerTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for InnerTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -1296,7 +1277,9 @@ pub mod quick_xml_deserialize {
     }
 }
 pub mod quick_xml_serialize {
-    use xsd_parser_types::quick_xml::{BytesEnd, BytesStart, Error, Event, WithSerializer};
+    use xsd_parser_types::quick_xml::{
+        BytesEnd, BytesStart, Error, Event, SerializeHelper, Serializer, WithSerializer,
+    };
     #[derive(Debug)]
     pub struct OuterTypeSerializer<'ser> {
         pub(super) value: &'ser super::OuterType,
@@ -1315,7 +1298,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> OuterTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     OuterTypeSerializerState::Init__ => {
@@ -1325,16 +1311,10 @@ pub mod quick_xml_serialize {
                                 Some("Inner"),
                                 false,
                             )?);
-                        let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns"[..], &super::NS_UNNAMED_2[..]));
-                            bytes.push_attribute((&b"xmlns:bar"[..], &super::NS_BAR[..]));
-                            bytes.push_attribute((&b"xmlns:baz"[..], &super::NS_BAZ[..]));
-                            bytes.push_attribute((&b"xmlns:biz"[..], &super::NS_BIZ[..]));
-                        }
+                        let bytes = BytesStart::new(self.name);
                         return Ok(Some(Event::Start(bytes)));
                     }
-                    OuterTypeSerializerState::BarInner(x) => match x.next().transpose()? {
+                    OuterTypeSerializerState::BarInner(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => {
                             *self.state =
@@ -1345,7 +1325,7 @@ pub mod quick_xml_serialize {
                                 )?)
                         }
                     },
-                    OuterTypeSerializerState::BazInner(x) => match x.next().transpose()? {
+                    OuterTypeSerializerState::BazInner(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => {
                             *self.state =
@@ -1356,7 +1336,7 @@ pub mod quick_xml_serialize {
                                 )?)
                         }
                     },
-                    OuterTypeSerializerState::BizInner(x) => match x.next().transpose()? {
+                    OuterTypeSerializerState::BizInner(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => *self.state = OuterTypeSerializerState::End__,
                     },
@@ -1370,10 +1350,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for OuterTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for OuterTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {

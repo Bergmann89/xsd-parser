@@ -70,8 +70,8 @@ pub struct Parser<TResolver = NoOpResolver> {
 
     resolver: TResolver,
     resolve_includes: bool,
-    alternate_prefixes: bool,
     generate_prefixes: bool,
+    alternative_prefixes: bool,
 }
 
 #[derive(Debug)]
@@ -96,7 +96,7 @@ struct SchemasBuilder {
     prefix_cache: HashMap<Option<Namespace>, PrefixEntry>,
 
     generate_prefixes: bool,
-    alternate_prefixes: bool,
+    alternative_prefixes: bool,
 }
 
 #[derive(Default, Debug)]
@@ -137,23 +137,14 @@ impl<TResolver> Parser<TResolver> {
 
             resolver,
             resolve_includes: true,
-            alternate_prefixes: true,
             generate_prefixes: true,
+            alternative_prefixes: true,
         }
     }
 
     /// Enable or disable resolving includes of parsed XML schemas.
     pub fn resolve_includes(mut self, value: bool) -> Self {
         self.resolve_includes = value;
-
-        self
-    }
-
-    /// Instructs the parser to use alternate prefixes known from other
-    /// schemas for a certain namespace if its actual prefix is unknown or
-    /// already used.
-    pub fn alternate_prefixes(mut self, value: bool) -> Self {
-        self.alternate_prefixes = value;
 
         self
     }
@@ -166,6 +157,15 @@ impl<TResolver> Parser<TResolver> {
         self
     }
 
+    /// Instructs the parser to use alternate prefixes known from other
+    /// schemas for a certain namespace if its actual prefix is unknown or
+    /// already used.
+    pub fn alternative_prefixes(mut self, value: bool) -> Self {
+        self.alternative_prefixes = value;
+
+        self
+    }
+
     /// Finish the parsing process by returning the generated [`Schemas`] instance
     /// containing all parsed schemas.
     pub fn finish(self) -> Schemas {
@@ -174,7 +174,7 @@ impl<TResolver> Parser<TResolver> {
             prefix_cache: HashMap::new(),
 
             generate_prefixes: self.generate_prefixes,
-            alternate_prefixes: self.alternate_prefixes,
+            alternative_prefixes: self.alternative_prefixes,
         };
 
         builder.build(self.entries)
@@ -664,7 +664,7 @@ impl SchemasBuilder {
         }
 
         // Fallback to alternate prefixes
-        if self.alternate_prefixes {
+        if self.alternative_prefixes {
             for (id, info) in &mut self.schemas.namespace_infos {
                 if info.prefix.is_some() {
                     continue;

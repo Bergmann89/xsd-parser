@@ -1,15 +1,20 @@
-use xsd_parser_types::misc::Namespace;
+use xsd_parser_types::misc::{Namespace, NamespacePrefix};
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
 pub const NS_CDF: Namespace = Namespace::new_const(b"http://checklists.nist.gov/xccdf/1.2");
 pub const NS_CPE: Namespace = Namespace::new_const(b"http://cpe.mitre.org/language/2.0");
 pub const NS_CPE_NAME: Namespace = Namespace::new_const(b"http://cpe.mitre.org/naming/2.0");
+pub const PREFIX_XS: NamespacePrefix = NamespacePrefix::new_const(b"xs");
+pub const PREFIX_XML: NamespacePrefix = NamespacePrefix::new_const(b"xml");
+pub const PREFIX_CDF: NamespacePrefix = NamespacePrefix::new_const(b"cdf");
+pub const PREFIX_CPE: NamespacePrefix = NamespacePrefix::new_const(b"cpe");
+pub const PREFIX_CPE_NAME: NamespacePrefix = NamespacePrefix::new_const(b"cpe-name");
 pub mod cdf {
     use std::borrow::Cow;
     use xsd_parser_types::{
         quick_xml::{
             DeserializeBytes, DeserializeHelper, Error, ErrorKind, RawByteStr, SerializeBytes,
-            WithDeserializer, WithSerializer,
+            SerializeHelper, WithDeserializer, WithSerializer,
         },
         xml::{AnyAttributes, AnyElement, Mixed, Text},
     };
@@ -1592,7 +1597,10 @@ pub mod cdf {
         Interim,
     }
     impl SerializeBytes for StatusType {
-        fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+        fn serialize_bytes(
+            &self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Cow<'_, str>>, Error> {
             match self {
                 Self::Accepted => Ok(Some(Cow::Borrowed("accepted"))),
                 Self::Deprecated => Ok(Some(Cow::Borrowed("deprecated"))),
@@ -1996,7 +2004,10 @@ pub mod cdf {
         Boolean,
     }
     impl SerializeBytes for ValueTypeType {
-        fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+        fn serialize_bytes(
+            &self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Cow<'_, str>>, Error> {
             match self {
                 Self::Number => Ok(Some(Cow::Borrowed("number"))),
                 Self::String => Ok(Some(Cow::Borrowed("string"))),
@@ -2030,7 +2041,10 @@ pub mod cdf {
         PatternMatch,
     }
     impl SerializeBytes for ValueOperatorType {
-        fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+        fn serialize_bytes(
+            &self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Cow<'_, str>>, Error> {
             match self {
                 Self::Equals => Ok(Some(Cow::Borrowed("equals"))),
                 Self::NotEqual => Ok(Some(Cow::Borrowed("not equal"))),
@@ -2076,7 +2090,10 @@ pub mod cdf {
         Datetime,
     }
     impl SerializeBytes for InterfaceHintType {
-        fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+        fn serialize_bytes(
+            &self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Cow<'_, str>>, Error> {
             match self {
                 Self::Choice => Ok(Some(Cow::Borrowed("choice"))),
                 Self::Textline => Ok(Some(Cow::Borrowed("textline"))),
@@ -2478,7 +2495,10 @@ pub mod cdf {
         Unchecked,
     }
     impl SerializeBytes for RoleEnumType {
-        fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+        fn serialize_bytes(
+            &self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Cow<'_, str>>, Error> {
             match self {
                 Self::Full => Ok(Some(Cow::Borrowed("full"))),
                 Self::Unscored => Ok(Some(Cow::Borrowed("unscored"))),
@@ -2517,7 +2537,10 @@ pub mod cdf {
         High,
     }
     impl SerializeBytes for SeverityEnumType {
-        fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+        fn serialize_bytes(
+            &self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Cow<'_, str>>, Error> {
             match self {
                 Self::Unknown => Ok(Some(Cow::Borrowed("unknown"))),
                 Self::Info => Ok(Some(Cow::Borrowed("info"))),
@@ -3354,7 +3377,10 @@ pub mod cdf {
         Legacy,
     }
     impl SerializeBytes for SubUseEnumType {
-        fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+        fn serialize_bytes(
+            &self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Cow<'_, str>>, Error> {
             match self {
                 Self::Value => Ok(Some(Cow::Borrowed("value"))),
                 Self::Title => Ok(Some(Cow::Borrowed("title"))),
@@ -3408,7 +3434,10 @@ pub mod cdf {
         Dependency,
     }
     impl SerializeBytes for WarningCategoryEnumType {
-        fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+        fn serialize_bytes(
+            &self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Cow<'_, str>>, Error> {
             match self {
                 Self::General => Ok(Some(Cow::Borrowed("general"))),
                 Self::Functionality => Ok(Some(Cow::Borrowed("functionality"))),
@@ -3501,7 +3530,10 @@ pub mod cdf {
         Update,
     }
     impl SerializeBytes for FixStrategyEnumType {
-        fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+        fn serialize_bytes(
+            &self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Cow<'_, str>>, Error> {
             match self {
                 Self::Unknown => Ok(Some(Cow::Borrowed("unknown"))),
                 Self::Configure => Ok(Some(Cow::Borrowed("configure"))),
@@ -3552,7 +3584,10 @@ pub mod cdf {
         High,
     }
     impl SerializeBytes for RatingEnumType {
-        fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+        fn serialize_bytes(
+            &self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Cow<'_, str>>, Error> {
             match self {
                 Self::Unknown => Ok(Some(Cow::Borrowed("unknown"))),
                 Self::Low => Ok(Some(Cow::Borrowed("low"))),
@@ -3788,7 +3823,10 @@ pub mod cdf {
         And,
     }
     impl SerializeBytes for CcOperatorEnumType {
-        fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+        fn serialize_bytes(
+            &self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Cow<'_, str>>, Error> {
             match self {
                 Self::Or => Ok(Some(Cow::Borrowed("OR"))),
                 Self::And => Ok(Some(Cow::Borrowed("AND"))),
@@ -3891,7 +3929,10 @@ pub mod cdf {
         Fixed,
     }
     impl SerializeBytes for ResultEnumType {
-        fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+        fn serialize_bytes(
+            &self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Cow<'_, str>>, Error> {
             match self {
                 Self::Pass => Ok(Some(Cow::Borrowed("pass"))),
                 Self::Fail => Ok(Some(Cow::Borrowed("fail"))),
@@ -4051,7 +4092,10 @@ pub mod cdf {
         Info,
     }
     impl SerializeBytes for MsgSevEnumType {
-        fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+        fn serialize_bytes(
+            &self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Cow<'_, str>>, Error> {
             match self {
                 Self::Error => Ok(Some(Cow::Borrowed("error"))),
                 Self::Warning => Ok(Some(Cow::Borrowed("warning"))),
@@ -33135,7 +33179,7 @@ pub mod cdf {
     pub mod quick_xml_serialize {
         use xsd_parser_types::{
             quick_xml::{
-                write_attrib, write_attrib_opt, BytesEnd, BytesStart, Error, Event, IterSerializer,
+                BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
                 WithSerializer,
             },
             xml::{AnyElement, Mixed, Text},
@@ -33162,7 +33206,10 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> BenchmarkElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         BenchmarkElementTypeSerializerState::Init__ => {
@@ -33170,32 +33217,40 @@ pub mod cdf {
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CDF),
+                                    &super::super::NS_CDF,
+                                );
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CPE),
+                                    &super::super::NS_CPE,
+                                );
                             }
-                            write_attrib(&mut bytes, "id", &self.value.id)?;
-                            write_attrib_opt(&mut bytes, "Id", &self.value.xml_id)?;
-                            write_attrib(&mut bytes, "resolved", &self.value.resolved)?;
-                            write_attrib_opt(&mut bytes, "style", &self.value.style)?;
-                            write_attrib_opt(&mut bytes, "style-href", &self.value.style_href)?;
-                            write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
+                            helper.write_attrib(&mut bytes, "id", &self.value.id)?;
+                            helper.write_attrib_opt(&mut bytes, "Id", &self.value.xml_id)?;
+                            helper.write_attrib(&mut bytes, "resolved", &self.value.resolved)?;
+                            helper.write_attrib_opt(&mut bytes, "style", &self.value.style)?;
+                            helper.write_attrib_opt(
+                                &mut bytes,
+                                "style-href",
+                                &self.value.style_href,
+                            )?;
+                            helper.write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         BenchmarkElementTypeSerializerState::Content__(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = BenchmarkElementTypeSerializerState::End__,
                             }
                         }
                         BenchmarkElementTypeSerializerState::End__ => {
                             *self.state = BenchmarkElementTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         BenchmarkElementTypeSerializerState::Done__ => return Ok(None),
@@ -33204,10 +33259,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for BenchmarkElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for BenchmarkElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -33251,7 +33305,10 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> BenchmarkElementTypeContentSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         BenchmarkElementTypeContentSerializerState::Init__ => match self.value {
@@ -33371,7 +33428,7 @@ pub mod cdf {
                             }
                         },
                         BenchmarkElementTypeContentSerializerState::Status(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = BenchmarkElementTypeContentSerializerState::Done__
@@ -33379,7 +33436,7 @@ pub mod cdf {
                             }
                         }
                         BenchmarkElementTypeContentSerializerState::DcStatus(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = BenchmarkElementTypeContentSerializerState::Done__
@@ -33387,7 +33444,7 @@ pub mod cdf {
                             }
                         }
                         BenchmarkElementTypeContentSerializerState::Title(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = BenchmarkElementTypeContentSerializerState::Done__
@@ -33395,7 +33452,7 @@ pub mod cdf {
                             }
                         }
                         BenchmarkElementTypeContentSerializerState::Description(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = BenchmarkElementTypeContentSerializerState::Done__
@@ -33403,7 +33460,7 @@ pub mod cdf {
                             }
                         }
                         BenchmarkElementTypeContentSerializerState::Notice(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = BenchmarkElementTypeContentSerializerState::Done__
@@ -33411,7 +33468,7 @@ pub mod cdf {
                             }
                         }
                         BenchmarkElementTypeContentSerializerState::FrontMatter(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = BenchmarkElementTypeContentSerializerState::Done__
@@ -33419,7 +33476,7 @@ pub mod cdf {
                             }
                         }
                         BenchmarkElementTypeContentSerializerState::RearMatter(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = BenchmarkElementTypeContentSerializerState::Done__
@@ -33427,7 +33484,7 @@ pub mod cdf {
                             }
                         }
                         BenchmarkElementTypeContentSerializerState::Reference(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = BenchmarkElementTypeContentSerializerState::Done__
@@ -33435,7 +33492,7 @@ pub mod cdf {
                             }
                         }
                         BenchmarkElementTypeContentSerializerState::PlainText(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = BenchmarkElementTypeContentSerializerState::Done__
@@ -33443,7 +33500,7 @@ pub mod cdf {
                             }
                         }
                         BenchmarkElementTypeContentSerializerState::PlatformSpecification(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = BenchmarkElementTypeContentSerializerState::Done__
@@ -33451,7 +33508,7 @@ pub mod cdf {
                             }
                         }
                         BenchmarkElementTypeContentSerializerState::Platform(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = BenchmarkElementTypeContentSerializerState::Done__
@@ -33459,7 +33516,7 @@ pub mod cdf {
                             }
                         }
                         BenchmarkElementTypeContentSerializerState::Version(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = BenchmarkElementTypeContentSerializerState::Done__
@@ -33467,7 +33524,7 @@ pub mod cdf {
                             }
                         }
                         BenchmarkElementTypeContentSerializerState::Metadata(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = BenchmarkElementTypeContentSerializerState::Done__
@@ -33475,7 +33532,7 @@ pub mod cdf {
                             }
                         }
                         BenchmarkElementTypeContentSerializerState::Model(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = BenchmarkElementTypeContentSerializerState::Done__
@@ -33483,7 +33540,7 @@ pub mod cdf {
                             }
                         }
                         BenchmarkElementTypeContentSerializerState::Profile(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = BenchmarkElementTypeContentSerializerState::Done__
@@ -33491,7 +33548,7 @@ pub mod cdf {
                             }
                         }
                         BenchmarkElementTypeContentSerializerState::Value(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = BenchmarkElementTypeContentSerializerState::Done__
@@ -33499,7 +33556,7 @@ pub mod cdf {
                             }
                         }
                         BenchmarkElementTypeContentSerializerState::Group(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = BenchmarkElementTypeContentSerializerState::Done__
@@ -33507,7 +33564,7 @@ pub mod cdf {
                             }
                         }
                         BenchmarkElementTypeContentSerializerState::Rule(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = BenchmarkElementTypeContentSerializerState::Done__
@@ -33515,7 +33572,7 @@ pub mod cdf {
                             }
                         }
                         BenchmarkElementTypeContentSerializerState::TestResult(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = BenchmarkElementTypeContentSerializerState::Done__
@@ -33523,7 +33580,7 @@ pub mod cdf {
                             }
                         }
                         BenchmarkElementTypeContentSerializerState::Signature(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = BenchmarkElementTypeContentSerializerState::Done__
@@ -33536,10 +33593,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for BenchmarkElementTypeContentSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for BenchmarkElementTypeContentSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -33565,7 +33621,10 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> StatusElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         StatusElementTypeSerializerState::Init__ => {
@@ -33573,27 +33632,26 @@ pub mod cdf {
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CDF),
+                                    &super::super::NS_CDF,
+                                );
                             }
-                            write_attrib_opt(&mut bytes, "date", &self.value.date)?;
+                            helper.write_attrib_opt(&mut bytes, "date", &self.value.date)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         StatusElementTypeSerializerState::Content__(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = StatusElementTypeSerializerState::End__,
                             }
                         }
                         StatusElementTypeSerializerState::End__ => {
                             *self.state = StatusElementTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         StatusElementTypeSerializerState::Done__ => return Ok(None),
@@ -33602,10 +33660,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for StatusElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for StatusElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -33631,7 +33688,10 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> DcStatusTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         DcStatusTypeSerializerState::Init__ => {
@@ -33641,24 +33701,23 @@ pub mod cdf {
                                 false,
                             ));
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CDF),
+                                    &super::super::NS_CDF,
+                                );
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
-                        DcStatusTypeSerializerState::Any(x) => match x.next().transpose()? {
+                        DcStatusTypeSerializerState::Any(x) => match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = DcStatusTypeSerializerState::End__,
                         },
                         DcStatusTypeSerializerState::End__ => {
                             *self.state = DcStatusTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         DcStatusTypeSerializerState::Done__ => return Ok(None),
@@ -33667,10 +33726,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for DcStatusTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for DcStatusTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -33696,7 +33754,10 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> TextTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         TextTypeSerializerState::Init__ => {
@@ -33704,26 +33765,27 @@ pub mod cdf {
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CDF),
+                                    &super::super::NS_CDF,
+                                );
                             }
-                            write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
-                            write_attrib(&mut bytes, "override", &self.value.override_)?;
+                            helper.write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
+                            helper.write_attrib(&mut bytes, "override", &self.value.override_)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
-                        TextTypeSerializerState::Content__(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = TextTypeSerializerState::End__,
-                        },
+                        TextTypeSerializerState::Content__(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = TextTypeSerializerState::End__,
+                            }
+                        }
                         TextTypeSerializerState::End__ => {
                             *self.state = TextTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         TextTypeSerializerState::Done__ => return Ok(None),
@@ -33732,10 +33794,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for TextTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for TextTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -33767,7 +33828,10 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> HtmlTextWithSubTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         HtmlTextWithSubTypeSerializerState::Init__ => {
@@ -33775,28 +33839,27 @@ pub mod cdf {
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CDF),
+                                    &super::super::NS_CDF,
+                                );
                             }
-                            write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
-                            write_attrib(&mut bytes, "override", &self.value.override_)?;
+                            helper.write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
+                            helper.write_attrib(&mut bytes, "override", &self.value.override_)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         HtmlTextWithSubTypeSerializerState::Content__(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = HtmlTextWithSubTypeSerializerState::End__,
                             }
                         }
                         HtmlTextWithSubTypeSerializerState::End__ => {
                             *self.state = HtmlTextWithSubTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         HtmlTextWithSubTypeSerializerState::Done__ => return Ok(None),
@@ -33805,10 +33868,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for HtmlTextWithSubTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for HtmlTextWithSubTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -33833,7 +33895,10 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> HtmlTextWithSubTypeContentSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         HtmlTextWithSubTypeContentSerializerState::Init__ => match self.value {
@@ -33854,7 +33919,7 @@ pub mod cdf {
                             }
                         },
                         HtmlTextWithSubTypeContentSerializerState::Sub(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = HtmlTextWithSubTypeContentSerializerState::Done__
@@ -33862,7 +33927,7 @@ pub mod cdf {
                             }
                         }
                         HtmlTextWithSubTypeContentSerializerState::Any(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = HtmlTextWithSubTypeContentSerializerState::Done__
@@ -33870,7 +33935,7 @@ pub mod cdf {
                             }
                         }
                         HtmlTextWithSubTypeContentSerializerState::Text(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = HtmlTextWithSubTypeContentSerializerState::Done__
@@ -33883,10 +33948,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for HtmlTextWithSubTypeContentSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for HtmlTextWithSubTypeContentSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -33913,7 +33977,10 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> NoticeTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         NoticeTypeSerializerState::Init__ => {
@@ -33924,23 +33991,21 @@ pub mod cdf {
                                     false,
                                 ));
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CDF),
+                                    &super::super::NS_CDF,
+                                );
                             }
-                            write_attrib_opt(&mut bytes, "id", &self.value.id)?;
-                            write_attrib_opt(&mut bytes, "base", &self.value.base)?;
-                            write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
+                            helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
+                            helper.write_attrib_opt(&mut bytes, "base", &self.value.base)?;
+                            helper.write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         NoticeTypeSerializerState::TextBefore(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = NoticeTypeSerializerState::Any(
@@ -33949,12 +34014,13 @@ pub mod cdf {
                                 }
                             }
                         }
-                        NoticeTypeSerializerState::Any(x) => match x.next().transpose()? {
+                        NoticeTypeSerializerState::Any(x) => match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = NoticeTypeSerializerState::End__,
                         },
                         NoticeTypeSerializerState::End__ => {
                             *self.state = NoticeTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         NoticeTypeSerializerState::Done__ => return Ok(None),
@@ -33963,10 +34029,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for NoticeTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for NoticeTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -33993,7 +34058,10 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> ReferenceTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         ReferenceTypeSerializerState::Init__ => {
@@ -34004,22 +34072,24 @@ pub mod cdf {
                                     false,
                                 ));
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CDF),
+                                    &super::super::NS_CDF,
+                                );
                             }
-                            write_attrib_opt(&mut bytes, "href", &self.value.href)?;
-                            write_attrib_opt(&mut bytes, "override", &self.value.override_)?;
+                            helper.write_attrib_opt(&mut bytes, "href", &self.value.href)?;
+                            helper.write_attrib_opt(
+                                &mut bytes,
+                                "override",
+                                &self.value.override_,
+                            )?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         ReferenceTypeSerializerState::TextBefore(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = ReferenceTypeSerializerState::Any(
@@ -34028,12 +34098,13 @@ pub mod cdf {
                                 }
                             }
                         }
-                        ReferenceTypeSerializerState::Any(x) => match x.next().transpose()? {
+                        ReferenceTypeSerializerState::Any(x) => match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = ReferenceTypeSerializerState::End__,
                         },
                         ReferenceTypeSerializerState::End__ => {
                             *self.state = ReferenceTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         ReferenceTypeSerializerState::Done__ => return Ok(None),
@@ -34042,10 +34113,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for ReferenceTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for ReferenceTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -34071,7 +34141,10 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> PlainTextTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         PlainTextTypeSerializerState::Init__ => {
@@ -34079,25 +34152,26 @@ pub mod cdf {
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CDF),
+                                    &super::super::NS_CDF,
+                                );
                             }
-                            write_attrib(&mut bytes, "id", &self.value.id)?;
+                            helper.write_attrib(&mut bytes, "id", &self.value.id)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
-                        PlainTextTypeSerializerState::Content__(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = PlainTextTypeSerializerState::End__,
-                        },
+                        PlainTextTypeSerializerState::Content__(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = PlainTextTypeSerializerState::End__,
+                            }
+                        }
                         PlainTextTypeSerializerState::End__ => {
                             *self.state = PlainTextTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         PlainTextTypeSerializerState::Done__ => return Ok(None),
@@ -34106,10 +34180,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for PlainTextTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for PlainTextTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -34133,23 +34206,25 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> Cpe2IdrefTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         Cpe2IdrefTypeSerializerState::Init__ => {
                             *self.state = Cpe2IdrefTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CDF),
+                                    &super::super::NS_CDF,
+                                );
                             }
-                            write_attrib(&mut bytes, "idref", &self.value.idref)?;
+                            helper.write_attrib(&mut bytes, "idref", &self.value.idref)?;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         Cpe2IdrefTypeSerializerState::Done__ => return Ok(None),
@@ -34158,10 +34233,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for Cpe2IdrefTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for Cpe2IdrefTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -34187,7 +34261,10 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> VersionTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         VersionTypeSerializerState::Init__ => {
@@ -34195,26 +34272,27 @@ pub mod cdf {
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CDF),
+                                    &super::super::NS_CDF,
+                                );
                             }
-                            write_attrib_opt(&mut bytes, "time", &self.value.time)?;
-                            write_attrib_opt(&mut bytes, "update", &self.value.update)?;
+                            helper.write_attrib_opt(&mut bytes, "time", &self.value.time)?;
+                            helper.write_attrib_opt(&mut bytes, "update", &self.value.update)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
-                        VersionTypeSerializerState::Content__(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = VersionTypeSerializerState::End__,
-                        },
+                        VersionTypeSerializerState::Content__(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = VersionTypeSerializerState::End__,
+                            }
+                        }
                         VersionTypeSerializerState::End__ => {
                             *self.state = VersionTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         VersionTypeSerializerState::Done__ => return Ok(None),
@@ -34223,10 +34301,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for VersionTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for VersionTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -34252,7 +34329,10 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> MetadataTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         MetadataTypeSerializerState::Init__ => {
@@ -34262,24 +34342,23 @@ pub mod cdf {
                                 false,
                             ));
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CDF),
+                                    &super::super::NS_CDF,
+                                );
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
-                        MetadataTypeSerializerState::Any(x) => match x.next().transpose()? {
+                        MetadataTypeSerializerState::Any(x) => match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = MetadataTypeSerializerState::End__,
                         },
                         MetadataTypeSerializerState::End__ => {
                             *self.state = MetadataTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         MetadataTypeSerializerState::Done__ => return Ok(None),
@@ -34288,10 +34367,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for MetadataTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for MetadataTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -34317,7 +34395,10 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> ModelElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         ModelElementTypeSerializerState::Init__ => {
@@ -34328,25 +34409,26 @@ pub mod cdf {
                                     false,
                                 ));
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CDF),
+                                    &super::super::NS_CDF,
+                                );
                             }
-                            write_attrib(&mut bytes, "system", &self.value.system)?;
+                            helper.write_attrib(&mut bytes, "system", &self.value.system)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
-                        ModelElementTypeSerializerState::Param(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = ModelElementTypeSerializerState::End__,
-                        },
+                        ModelElementTypeSerializerState::Param(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = ModelElementTypeSerializerState::End__,
+                            }
+                        }
                         ModelElementTypeSerializerState::End__ => {
                             *self.state = ModelElementTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         ModelElementTypeSerializerState::Done__ => return Ok(None),
@@ -34355,10 +34437,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for ModelElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for ModelElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -34386,7 +34467,10 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> ProfileTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         ProfileTypeSerializerState::Init__ => {
@@ -34394,35 +34478,40 @@ pub mod cdf {
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CDF),
+                                    &super::super::NS_CDF,
+                                );
                             }
-                            write_attrib(&mut bytes, "id", &self.value.id)?;
-                            write_attrib(
+                            helper.write_attrib(&mut bytes, "id", &self.value.id)?;
+                            helper.write_attrib(
                                 &mut bytes,
                                 "prohibitChanges",
                                 &self.value.prohibit_changes,
                             )?;
-                            write_attrib(&mut bytes, "abstract", &self.value.abstract_)?;
-                            write_attrib_opt(&mut bytes, "note-tag", &self.value.note_tag)?;
-                            write_attrib_opt(&mut bytes, "extends", &self.value.extends)?;
-                            write_attrib_opt(&mut bytes, "base", &self.value.base)?;
-                            write_attrib_opt(&mut bytes, "Id", &self.value.xml_id)?;
+                            helper.write_attrib(&mut bytes, "abstract", &self.value.abstract_)?;
+                            helper.write_attrib_opt(
+                                &mut bytes,
+                                "note-tag",
+                                &self.value.note_tag,
+                            )?;
+                            helper.write_attrib_opt(&mut bytes, "extends", &self.value.extends)?;
+                            helper.write_attrib_opt(&mut bytes, "base", &self.value.base)?;
+                            helper.write_attrib_opt(&mut bytes, "Id", &self.value.xml_id)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
-                        ProfileTypeSerializerState::Content__(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = ProfileTypeSerializerState::End__,
-                        },
+                        ProfileTypeSerializerState::Content__(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = ProfileTypeSerializerState::End__,
+                            }
+                        }
                         ProfileTypeSerializerState::End__ => {
                             *self.state = ProfileTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         ProfileTypeSerializerState::Done__ => return Ok(None),
@@ -34431,10 +34520,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for ProfileTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for ProfileTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -34472,7 +34560,10 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> ProfileTypeContentSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         ProfileTypeContentSerializerState::Init__ => match self.value {
@@ -34552,85 +34643,85 @@ pub mod cdf {
                             }
                         },
                         ProfileTypeContentSerializerState::Status(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = ProfileTypeContentSerializerState::Done__,
                             }
                         }
                         ProfileTypeContentSerializerState::DcStatus(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = ProfileTypeContentSerializerState::Done__,
                             }
                         }
                         ProfileTypeContentSerializerState::Version(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = ProfileTypeContentSerializerState::Done__,
                             }
                         }
                         ProfileTypeContentSerializerState::Title(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = ProfileTypeContentSerializerState::Done__,
                             }
                         }
                         ProfileTypeContentSerializerState::Description(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = ProfileTypeContentSerializerState::Done__,
                             }
                         }
                         ProfileTypeContentSerializerState::Reference(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = ProfileTypeContentSerializerState::Done__,
                             }
                         }
                         ProfileTypeContentSerializerState::Platform(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = ProfileTypeContentSerializerState::Done__,
                             }
                         }
                         ProfileTypeContentSerializerState::Select(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = ProfileTypeContentSerializerState::Done__,
                             }
                         }
                         ProfileTypeContentSerializerState::SetComplexValue(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = ProfileTypeContentSerializerState::Done__,
                             }
                         }
                         ProfileTypeContentSerializerState::SetValue(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = ProfileTypeContentSerializerState::Done__,
                             }
                         }
                         ProfileTypeContentSerializerState::RefineValue(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = ProfileTypeContentSerializerState::Done__,
                             }
                         }
                         ProfileTypeContentSerializerState::RefineRule(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = ProfileTypeContentSerializerState::Done__,
                             }
                         }
                         ProfileTypeContentSerializerState::Metadata(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = ProfileTypeContentSerializerState::Done__,
                             }
                         }
                         ProfileTypeContentSerializerState::Signature(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = ProfileTypeContentSerializerState::Done__,
                             }
@@ -34641,10 +34732,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for ProfileTypeContentSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for ProfileTypeContentSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -34672,7 +34762,10 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> ValueTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         ValueTypeSerializerState::Init__ => {
@@ -34682,45 +34775,54 @@ pub mod cdf {
                                 false,
                             ));
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CDF),
+                                    &super::super::NS_CDF,
+                                );
                             }
-                            write_attrib(&mut bytes, "abstract", &self.value.abstract_)?;
-                            write_attrib_opt(&mut bytes, "cluster-id", &self.value.cluster_id)?;
-                            write_attrib_opt(&mut bytes, "extends", &self.value.extends)?;
-                            write_attrib(&mut bytes, "hidden", &self.value.hidden)?;
-                            write_attrib(
+                            helper.write_attrib(&mut bytes, "abstract", &self.value.abstract_)?;
+                            helper.write_attrib_opt(
+                                &mut bytes,
+                                "cluster-id",
+                                &self.value.cluster_id,
+                            )?;
+                            helper.write_attrib_opt(&mut bytes, "extends", &self.value.extends)?;
+                            helper.write_attrib(&mut bytes, "hidden", &self.value.hidden)?;
+                            helper.write_attrib(
                                 &mut bytes,
                                 "prohibitChanges",
                                 &self.value.prohibit_changes,
                             )?;
-                            write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
-                            write_attrib_opt(&mut bytes, "base", &self.value.base)?;
-                            write_attrib_opt(&mut bytes, "Id", &self.value.xml_id)?;
-                            write_attrib(&mut bytes, "id", &self.value.id)?;
-                            write_attrib(&mut bytes, "type", &self.value.type_)?;
-                            write_attrib(&mut bytes, "operator", &self.value.operator)?;
-                            write_attrib(&mut bytes, "interactive", &self.value.interactive)?;
-                            write_attrib_opt(
+                            helper.write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
+                            helper.write_attrib_opt(&mut bytes, "base", &self.value.base)?;
+                            helper.write_attrib_opt(&mut bytes, "Id", &self.value.xml_id)?;
+                            helper.write_attrib(&mut bytes, "id", &self.value.id)?;
+                            helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
+                            helper.write_attrib(&mut bytes, "operator", &self.value.operator)?;
+                            helper.write_attrib(
+                                &mut bytes,
+                                "interactive",
+                                &self.value.interactive,
+                            )?;
+                            helper.write_attrib_opt(
                                 &mut bytes,
                                 "interfaceHint",
                                 &self.value.interface_hint,
                             )?;
                             return Ok(Some(Event::Start(bytes)));
                         }
-                        ValueTypeSerializerState::Content__(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = ValueTypeSerializerState::End__,
-                        },
+                        ValueTypeSerializerState::Content__(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = ValueTypeSerializerState::End__,
+                            }
+                        }
                         ValueTypeSerializerState::End__ => {
                             *self.state = ValueTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         ValueTypeSerializerState::Done__ => return Ok(None),
@@ -34729,10 +34831,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for ValueTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for ValueTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -34773,7 +34874,10 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> ValueTypeContentSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         ValueTypeContentSerializerState::Init__ => match self.value {
@@ -34882,109 +34986,115 @@ pub mod cdf {
                             }
                         },
                         ValueTypeContentSerializerState::Status(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = ValueTypeContentSerializerState::Done__,
                             }
                         }
                         ValueTypeContentSerializerState::DcStatus(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = ValueTypeContentSerializerState::Done__,
                             }
                         }
                         ValueTypeContentSerializerState::Version(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = ValueTypeContentSerializerState::Done__,
                             }
                         }
-                        ValueTypeContentSerializerState::Title(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = ValueTypeContentSerializerState::Done__,
-                        },
+                        ValueTypeContentSerializerState::Title(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = ValueTypeContentSerializerState::Done__,
+                            }
+                        }
                         ValueTypeContentSerializerState::Description(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = ValueTypeContentSerializerState::Done__,
                             }
                         }
                         ValueTypeContentSerializerState::Warning(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = ValueTypeContentSerializerState::Done__,
                             }
                         }
                         ValueTypeContentSerializerState::Question(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = ValueTypeContentSerializerState::Done__,
                             }
                         }
                         ValueTypeContentSerializerState::Reference(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = ValueTypeContentSerializerState::Done__,
                             }
                         }
                         ValueTypeContentSerializerState::Metadata(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = ValueTypeContentSerializerState::Done__,
                             }
                         }
-                        ValueTypeContentSerializerState::Value(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = ValueTypeContentSerializerState::Done__,
-                        },
+                        ValueTypeContentSerializerState::Value(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = ValueTypeContentSerializerState::Done__,
+                            }
+                        }
                         ValueTypeContentSerializerState::ComplexValue(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = ValueTypeContentSerializerState::Done__,
                             }
                         }
                         ValueTypeContentSerializerState::Default(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = ValueTypeContentSerializerState::Done__,
                             }
                         }
                         ValueTypeContentSerializerState::ComplexDefault(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = ValueTypeContentSerializerState::Done__,
                             }
                         }
-                        ValueTypeContentSerializerState::Match(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = ValueTypeContentSerializerState::Done__,
-                        },
+                        ValueTypeContentSerializerState::Match(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = ValueTypeContentSerializerState::Done__,
+                            }
+                        }
                         ValueTypeContentSerializerState::LowerBound(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = ValueTypeContentSerializerState::Done__,
                             }
                         }
                         ValueTypeContentSerializerState::UpperBound(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = ValueTypeContentSerializerState::Done__,
                             }
                         }
                         ValueTypeContentSerializerState::Choices(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = ValueTypeContentSerializerState::Done__,
                             }
                         }
                         ValueTypeContentSerializerState::Source(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = ValueTypeContentSerializerState::Done__,
                             }
                         }
                         ValueTypeContentSerializerState::Signature(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = ValueTypeContentSerializerState::Done__,
                             }
@@ -34995,10 +35105,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for ValueTypeContentSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for ValueTypeContentSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -35026,7 +35135,10 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> GroupTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         GroupTypeSerializerState::Init__ => {
@@ -35036,39 +35148,44 @@ pub mod cdf {
                                 false,
                             ));
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CDF),
+                                    &super::super::NS_CDF,
+                                );
                             }
-                            write_attrib(&mut bytes, "abstract", &self.value.abstract_)?;
-                            write_attrib_opt(&mut bytes, "cluster-id", &self.value.cluster_id)?;
-                            write_attrib_opt(&mut bytes, "extends", &self.value.extends)?;
-                            write_attrib(&mut bytes, "hidden", &self.value.hidden)?;
-                            write_attrib(
+                            helper.write_attrib(&mut bytes, "abstract", &self.value.abstract_)?;
+                            helper.write_attrib_opt(
+                                &mut bytes,
+                                "cluster-id",
+                                &self.value.cluster_id,
+                            )?;
+                            helper.write_attrib_opt(&mut bytes, "extends", &self.value.extends)?;
+                            helper.write_attrib(&mut bytes, "hidden", &self.value.hidden)?;
+                            helper.write_attrib(
                                 &mut bytes,
                                 "prohibitChanges",
                                 &self.value.prohibit_changes,
                             )?;
-                            write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
-                            write_attrib_opt(&mut bytes, "base", &self.value.base)?;
-                            write_attrib_opt(&mut bytes, "Id", &self.value.xml_id)?;
-                            write_attrib(&mut bytes, "selected", &self.value.selected)?;
-                            write_attrib(&mut bytes, "weight", &self.value.weight)?;
-                            write_attrib(&mut bytes, "id", &self.value.id)?;
+                            helper.write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
+                            helper.write_attrib_opt(&mut bytes, "base", &self.value.base)?;
+                            helper.write_attrib_opt(&mut bytes, "Id", &self.value.xml_id)?;
+                            helper.write_attrib(&mut bytes, "selected", &self.value.selected)?;
+                            helper.write_attrib(&mut bytes, "weight", &self.value.weight)?;
+                            helper.write_attrib(&mut bytes, "id", &self.value.id)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
-                        GroupTypeSerializerState::Content__(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = GroupTypeSerializerState::End__,
-                        },
+                        GroupTypeSerializerState::Content__(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = GroupTypeSerializerState::End__,
+                            }
+                        }
                         GroupTypeSerializerState::End__ => {
                             *self.state = GroupTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         GroupTypeSerializerState::Done__ => return Ok(None),
@@ -35077,10 +35194,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for GroupTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for GroupTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -35119,7 +35235,10 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> GroupTypeContentSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         GroupTypeContentSerializerState::Init__ => match self.value {
@@ -35210,95 +35329,103 @@ pub mod cdf {
                             }
                         },
                         GroupTypeContentSerializerState::Status(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = GroupTypeContentSerializerState::Done__,
                             }
                         }
                         GroupTypeContentSerializerState::DcStatus(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = GroupTypeContentSerializerState::Done__,
                             }
                         }
                         GroupTypeContentSerializerState::Version(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = GroupTypeContentSerializerState::Done__,
                             }
                         }
-                        GroupTypeContentSerializerState::Title(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = GroupTypeContentSerializerState::Done__,
-                        },
+                        GroupTypeContentSerializerState::Title(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = GroupTypeContentSerializerState::Done__,
+                            }
+                        }
                         GroupTypeContentSerializerState::Description(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = GroupTypeContentSerializerState::Done__,
                             }
                         }
                         GroupTypeContentSerializerState::Warning(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = GroupTypeContentSerializerState::Done__,
                             }
                         }
                         GroupTypeContentSerializerState::Question(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = GroupTypeContentSerializerState::Done__,
                             }
                         }
                         GroupTypeContentSerializerState::Reference(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = GroupTypeContentSerializerState::Done__,
                             }
                         }
                         GroupTypeContentSerializerState::Metadata(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = GroupTypeContentSerializerState::Done__,
                             }
                         }
                         GroupTypeContentSerializerState::Rationale(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = GroupTypeContentSerializerState::Done__,
                             }
                         }
                         GroupTypeContentSerializerState::Platform(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = GroupTypeContentSerializerState::Done__,
                             }
                         }
                         GroupTypeContentSerializerState::Requires(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = GroupTypeContentSerializerState::Done__,
                             }
                         }
                         GroupTypeContentSerializerState::Conflicts(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = GroupTypeContentSerializerState::Done__,
                             }
                         }
-                        GroupTypeContentSerializerState::Value(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = GroupTypeContentSerializerState::Done__,
-                        },
-                        GroupTypeContentSerializerState::Group(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = GroupTypeContentSerializerState::Done__,
-                        },
-                        GroupTypeContentSerializerState::Rule(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = GroupTypeContentSerializerState::Done__,
-                        },
+                        GroupTypeContentSerializerState::Value(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = GroupTypeContentSerializerState::Done__,
+                            }
+                        }
+                        GroupTypeContentSerializerState::Group(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = GroupTypeContentSerializerState::Done__,
+                            }
+                        }
+                        GroupTypeContentSerializerState::Rule(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = GroupTypeContentSerializerState::Done__,
+                            }
+                        }
                         GroupTypeContentSerializerState::Signature(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = GroupTypeContentSerializerState::Done__,
                             }
@@ -35309,10 +35436,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for GroupTypeContentSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for GroupTypeContentSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -35338,7 +35464,10 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> RuleTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         RuleTypeSerializerState::Init__ => {
@@ -35348,42 +35477,47 @@ pub mod cdf {
                                 false,
                             ));
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CDF),
+                                    &super::super::NS_CDF,
+                                );
                             }
-                            write_attrib(&mut bytes, "abstract", &self.value.abstract_)?;
-                            write_attrib_opt(&mut bytes, "cluster-id", &self.value.cluster_id)?;
-                            write_attrib_opt(&mut bytes, "extends", &self.value.extends)?;
-                            write_attrib(&mut bytes, "hidden", &self.value.hidden)?;
-                            write_attrib(
+                            helper.write_attrib(&mut bytes, "abstract", &self.value.abstract_)?;
+                            helper.write_attrib_opt(
+                                &mut bytes,
+                                "cluster-id",
+                                &self.value.cluster_id,
+                            )?;
+                            helper.write_attrib_opt(&mut bytes, "extends", &self.value.extends)?;
+                            helper.write_attrib(&mut bytes, "hidden", &self.value.hidden)?;
+                            helper.write_attrib(
                                 &mut bytes,
                                 "prohibitChanges",
                                 &self.value.prohibit_changes,
                             )?;
-                            write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
-                            write_attrib_opt(&mut bytes, "base", &self.value.base)?;
-                            write_attrib_opt(&mut bytes, "Id", &self.value.xml_id)?;
-                            write_attrib(&mut bytes, "selected", &self.value.selected)?;
-                            write_attrib(&mut bytes, "weight", &self.value.weight)?;
-                            write_attrib(&mut bytes, "id", &self.value.id)?;
-                            write_attrib(&mut bytes, "role", &self.value.role)?;
-                            write_attrib(&mut bytes, "severity", &self.value.severity)?;
-                            write_attrib(&mut bytes, "multiple", &self.value.multiple)?;
+                            helper.write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
+                            helper.write_attrib_opt(&mut bytes, "base", &self.value.base)?;
+                            helper.write_attrib_opt(&mut bytes, "Id", &self.value.xml_id)?;
+                            helper.write_attrib(&mut bytes, "selected", &self.value.selected)?;
+                            helper.write_attrib(&mut bytes, "weight", &self.value.weight)?;
+                            helper.write_attrib(&mut bytes, "id", &self.value.id)?;
+                            helper.write_attrib(&mut bytes, "role", &self.value.role)?;
+                            helper.write_attrib(&mut bytes, "severity", &self.value.severity)?;
+                            helper.write_attrib(&mut bytes, "multiple", &self.value.multiple)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
-                        RuleTypeSerializerState::Content__(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = RuleTypeSerializerState::End__,
-                        },
+                        RuleTypeSerializerState::Content__(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = RuleTypeSerializerState::End__,
+                            }
+                        }
                         RuleTypeSerializerState::End__ => {
                             *self.state = RuleTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         RuleTypeSerializerState::Done__ => return Ok(None),
@@ -35392,10 +35526,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for RuleTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for RuleTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -35438,7 +35571,10 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> RuleTypeContentSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         RuleTypeContentSerializerState::Init__ => match self.value {
@@ -35556,118 +35692,128 @@ pub mod cdf {
                                 )
                             }
                         },
-                        RuleTypeContentSerializerState::Status(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = RuleTypeContentSerializerState::Done__,
-                        },
+                        RuleTypeContentSerializerState::Status(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = RuleTypeContentSerializerState::Done__,
+                            }
+                        }
                         RuleTypeContentSerializerState::DcStatus(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = RuleTypeContentSerializerState::Done__,
                             }
                         }
                         RuleTypeContentSerializerState::Version(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = RuleTypeContentSerializerState::Done__,
                             }
                         }
-                        RuleTypeContentSerializerState::Title(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = RuleTypeContentSerializerState::Done__,
-                        },
+                        RuleTypeContentSerializerState::Title(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = RuleTypeContentSerializerState::Done__,
+                            }
+                        }
                         RuleTypeContentSerializerState::Description(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = RuleTypeContentSerializerState::Done__,
                             }
                         }
                         RuleTypeContentSerializerState::Warning(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = RuleTypeContentSerializerState::Done__,
                             }
                         }
                         RuleTypeContentSerializerState::Question(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = RuleTypeContentSerializerState::Done__,
                             }
                         }
                         RuleTypeContentSerializerState::Reference(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = RuleTypeContentSerializerState::Done__,
                             }
                         }
                         RuleTypeContentSerializerState::Metadata(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = RuleTypeContentSerializerState::Done__,
                             }
                         }
                         RuleTypeContentSerializerState::Rationale(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = RuleTypeContentSerializerState::Done__,
                             }
                         }
                         RuleTypeContentSerializerState::Platform(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = RuleTypeContentSerializerState::Done__,
                             }
                         }
                         RuleTypeContentSerializerState::Requires(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = RuleTypeContentSerializerState::Done__,
                             }
                         }
                         RuleTypeContentSerializerState::Conflicts(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = RuleTypeContentSerializerState::Done__,
                             }
                         }
-                        RuleTypeContentSerializerState::Ident(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = RuleTypeContentSerializerState::Done__,
-                        },
+                        RuleTypeContentSerializerState::Ident(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = RuleTypeContentSerializerState::Done__,
+                            }
+                        }
                         RuleTypeContentSerializerState::ImpactMetric(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = RuleTypeContentSerializerState::Done__,
                             }
                         }
                         RuleTypeContentSerializerState::ProfileNote(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = RuleTypeContentSerializerState::Done__,
                             }
                         }
                         RuleTypeContentSerializerState::Fixtext(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = RuleTypeContentSerializerState::Done__,
                             }
                         }
-                        RuleTypeContentSerializerState::Fix(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = RuleTypeContentSerializerState::Done__,
-                        },
-                        RuleTypeContentSerializerState::Check(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = RuleTypeContentSerializerState::Done__,
-                        },
+                        RuleTypeContentSerializerState::Fix(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = RuleTypeContentSerializerState::Done__,
+                            }
+                        }
+                        RuleTypeContentSerializerState::Check(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = RuleTypeContentSerializerState::Done__,
+                            }
+                        }
                         RuleTypeContentSerializerState::ComplexCheck(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = RuleTypeContentSerializerState::Done__,
                             }
                         }
                         RuleTypeContentSerializerState::Signature(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = RuleTypeContentSerializerState::Done__,
                             }
@@ -35678,10 +35824,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for RuleTypeContentSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for RuleTypeContentSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -35713,7 +35858,10 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> TestResultTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         TestResultTypeSerializerState::Init__ => {
@@ -35721,32 +35869,39 @@ pub mod cdf {
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CDF),
+                                    &super::super::NS_CDF,
+                                );
                             }
-                            write_attrib(&mut bytes, "id", &self.value.id)?;
-                            write_attrib_opt(&mut bytes, "start-time", &self.value.start_time)?;
-                            write_attrib(&mut bytes, "end-time", &self.value.end_time)?;
-                            write_attrib_opt(&mut bytes, "test-system", &self.value.test_system)?;
-                            write_attrib_opt(&mut bytes, "version", &self.value.version)?;
-                            write_attrib_opt(&mut bytes, "Id", &self.value.xml_id)?;
+                            helper.write_attrib(&mut bytes, "id", &self.value.id)?;
+                            helper.write_attrib_opt(
+                                &mut bytes,
+                                "start-time",
+                                &self.value.start_time,
+                            )?;
+                            helper.write_attrib(&mut bytes, "end-time", &self.value.end_time)?;
+                            helper.write_attrib_opt(
+                                &mut bytes,
+                                "test-system",
+                                &self.value.test_system,
+                            )?;
+                            helper.write_attrib_opt(&mut bytes, "version", &self.value.version)?;
+                            helper.write_attrib_opt(&mut bytes, "Id", &self.value.xml_id)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         TestResultTypeSerializerState::Content__(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = TestResultTypeSerializerState::End__,
                             }
                         }
                         TestResultTypeSerializerState::End__ => {
                             *self.state = TestResultTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         TestResultTypeSerializerState::Done__ => return Ok(None),
@@ -35755,10 +35910,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for TestResultTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for TestResultTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -35801,7 +35955,10 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> TestResultTypeContentSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         TestResultTypeContentSerializerState::Init__ => match self.value {
@@ -35918,115 +36075,115 @@ pub mod cdf {
                             }
                         },
                         TestResultTypeContentSerializerState::Benchmark(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = TestResultTypeContentSerializerState::Done__,
                             }
                         }
                         TestResultTypeContentSerializerState::TailoringFile(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = TestResultTypeContentSerializerState::Done__,
                             }
                         }
                         TestResultTypeContentSerializerState::Title(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = TestResultTypeContentSerializerState::Done__,
                             }
                         }
                         TestResultTypeContentSerializerState::Remark(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = TestResultTypeContentSerializerState::Done__,
                             }
                         }
                         TestResultTypeContentSerializerState::Organization(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = TestResultTypeContentSerializerState::Done__,
                             }
                         }
                         TestResultTypeContentSerializerState::Identity(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = TestResultTypeContentSerializerState::Done__,
                             }
                         }
                         TestResultTypeContentSerializerState::Profile(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = TestResultTypeContentSerializerState::Done__,
                             }
                         }
                         TestResultTypeContentSerializerState::Target(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = TestResultTypeContentSerializerState::Done__,
                             }
                         }
                         TestResultTypeContentSerializerState::TargetAddress(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = TestResultTypeContentSerializerState::Done__,
                             }
                         }
                         TestResultTypeContentSerializerState::TargetFacts(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = TestResultTypeContentSerializerState::Done__,
                             }
                         }
                         TestResultTypeContentSerializerState::TargetIdRef(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = TestResultTypeContentSerializerState::Done__,
                             }
                         }
                         TestResultTypeContentSerializerState::Any(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = TestResultTypeContentSerializerState::Done__,
                             }
                         }
                         TestResultTypeContentSerializerState::Platform(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = TestResultTypeContentSerializerState::Done__,
                             }
                         }
                         TestResultTypeContentSerializerState::SetValue(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = TestResultTypeContentSerializerState::Done__,
                             }
                         }
                         TestResultTypeContentSerializerState::SetComplexValue(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = TestResultTypeContentSerializerState::Done__,
                             }
                         }
                         TestResultTypeContentSerializerState::RuleResult(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = TestResultTypeContentSerializerState::Done__,
                             }
                         }
                         TestResultTypeContentSerializerState::Score(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = TestResultTypeContentSerializerState::Done__,
                             }
                         }
                         TestResultTypeContentSerializerState::Metadata(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = TestResultTypeContentSerializerState::Done__,
                             }
                         }
                         TestResultTypeContentSerializerState::Signature(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = TestResultTypeContentSerializerState::Done__,
                             }
@@ -36037,10 +36194,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for TestResultTypeContentSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for TestResultTypeContentSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -36066,7 +36222,10 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> SignatureTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         SignatureTypeSerializerState::Init__ => {
@@ -36074,24 +36233,23 @@ pub mod cdf {
                                 WithSerializer::serializer(&self.value.any, None, false)?,
                             );
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CDF),
+                                    &super::super::NS_CDF,
+                                );
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
-                        SignatureTypeSerializerState::Any(x) => match x.next().transpose()? {
+                        SignatureTypeSerializerState::Any(x) => match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = SignatureTypeSerializerState::End__,
                         },
                         SignatureTypeSerializerState::End__ => {
                             *self.state = SignatureTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         SignatureTypeSerializerState::Done__ => return Ok(None),
@@ -36100,10 +36258,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for SignatureTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for SignatureTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -36127,24 +36284,26 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> SubTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         SubTypeSerializerState::Init__ => {
                             *self.state = SubTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CDF),
+                                    &super::super::NS_CDF,
+                                );
                             }
-                            write_attrib(&mut bytes, "idref", &self.value.idref)?;
-                            write_attrib(&mut bytes, "use", &self.value.use_)?;
+                            helper.write_attrib(&mut bytes, "idref", &self.value.idref)?;
+                            helper.write_attrib(&mut bytes, "use", &self.value.use_)?;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         SubTypeSerializerState::Done__ => return Ok(None),
@@ -36153,10 +36312,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for SubTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for SubTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -36182,7 +36340,10 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> ParamTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         ParamTypeSerializerState::Init__ => {
@@ -36190,25 +36351,26 @@ pub mod cdf {
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CDF),
+                                    &super::super::NS_CDF,
+                                );
                             }
-                            write_attrib(&mut bytes, "name", &self.value.name)?;
+                            helper.write_attrib(&mut bytes, "name", &self.value.name)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
-                        ParamTypeSerializerState::Content__(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = ParamTypeSerializerState::End__,
-                        },
+                        ParamTypeSerializerState::Content__(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = ParamTypeSerializerState::End__,
+                            }
+                        }
                         ParamTypeSerializerState::End__ => {
                             *self.state = ParamTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         ParamTypeSerializerState::Done__ => return Ok(None),
@@ -36217,10 +36379,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for ParamTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for ParamTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -36247,7 +36408,10 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> TextWithSubTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         TextWithSubTypeSerializerState::Init__ => {
@@ -36258,22 +36422,20 @@ pub mod cdf {
                                     false,
                                 ));
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CDF),
+                                    &super::super::NS_CDF,
+                                );
                             }
-                            write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
-                            write_attrib(&mut bytes, "override", &self.value.override_)?;
+                            helper.write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
+                            helper.write_attrib(&mut bytes, "override", &self.value.override_)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         TextWithSubTypeSerializerState::TextBefore(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state =
@@ -36285,12 +36447,15 @@ pub mod cdf {
                                 }
                             }
                         }
-                        TextWithSubTypeSerializerState::Sub(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = TextWithSubTypeSerializerState::End__,
-                        },
+                        TextWithSubTypeSerializerState::Sub(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = TextWithSubTypeSerializerState::End__,
+                            }
+                        }
                         TextWithSubTypeSerializerState::End__ => {
                             *self.state = TextWithSubTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         TextWithSubTypeSerializerState::Done__ => return Ok(None),
@@ -36299,10 +36464,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for TextWithSubTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for TextWithSubTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -36326,24 +36490,26 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> OverrideableCpe2IdrefTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         OverrideableCpe2IdrefTypeSerializerState::Init__ => {
                             *self.state = OverrideableCpe2IdrefTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CDF),
+                                    &super::super::NS_CDF,
+                                );
                             }
-                            write_attrib(&mut bytes, "idref", &self.value.idref)?;
-                            write_attrib(&mut bytes, "override", &self.value.override_)?;
+                            helper.write_attrib(&mut bytes, "idref", &self.value.idref)?;
+                            helper.write_attrib(&mut bytes, "override", &self.value.override_)?;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         OverrideableCpe2IdrefTypeSerializerState::Done__ => return Ok(None),
@@ -36352,10 +36518,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for OverrideableCpe2IdrefTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for OverrideableCpe2IdrefTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -36381,7 +36546,10 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> ProfileSelectTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         ProfileSelectTypeSerializerState::Init__ => {
@@ -36392,28 +36560,27 @@ pub mod cdf {
                                     false,
                                 ));
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CDF),
+                                    &super::super::NS_CDF,
+                                );
                             }
-                            write_attrib(&mut bytes, "idref", &self.value.idref)?;
-                            write_attrib(&mut bytes, "selected", &self.value.selected)?;
+                            helper.write_attrib(&mut bytes, "idref", &self.value.idref)?;
+                            helper.write_attrib(&mut bytes, "selected", &self.value.selected)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         ProfileSelectTypeSerializerState::Remark(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = ProfileSelectTypeSerializerState::End__,
                             }
                         }
                         ProfileSelectTypeSerializerState::End__ => {
                             *self.state = ProfileSelectTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         ProfileSelectTypeSerializerState::Done__ => return Ok(None),
@@ -36422,10 +36589,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for ProfileSelectTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for ProfileSelectTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -36451,7 +36617,10 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> ProfileSetComplexValueTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         ProfileSetComplexValueTypeSerializerState::Init__ => {
@@ -36459,21 +36628,19 @@ pub mod cdf {
                                 IterSerializer::new(&self.value.item[..], Some("cdf:item"), false),
                             );
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CDF),
+                                    &super::super::NS_CDF,
+                                );
                             }
-                            write_attrib(&mut bytes, "idref", &self.value.idref)?;
+                            helper.write_attrib(&mut bytes, "idref", &self.value.idref)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         ProfileSetComplexValueTypeSerializerState::Item(x) => match x
-                            .next()
+                            .next(helper)
                             .transpose()?
                         {
                             Some(event) => return Ok(Some(event)),
@@ -36481,6 +36648,7 @@ pub mod cdf {
                         },
                         ProfileSetComplexValueTypeSerializerState::End__ => {
                             *self.state = ProfileSetComplexValueTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         ProfileSetComplexValueTypeSerializerState::Done__ => return Ok(None),
@@ -36489,10 +36657,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for ProfileSetComplexValueTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for ProfileSetComplexValueTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -36518,7 +36685,10 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> ProfileSetValueTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         ProfileSetValueTypeSerializerState::Init__ => {
@@ -36526,27 +36696,26 @@ pub mod cdf {
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CDF),
+                                    &super::super::NS_CDF,
+                                );
                             }
-                            write_attrib(&mut bytes, "idref", &self.value.idref)?;
+                            helper.write_attrib(&mut bytes, "idref", &self.value.idref)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         ProfileSetValueTypeSerializerState::Content__(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = ProfileSetValueTypeSerializerState::End__,
                             }
                         }
                         ProfileSetValueTypeSerializerState::End__ => {
                             *self.state = ProfileSetValueTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         ProfileSetValueTypeSerializerState::Done__ => return Ok(None),
@@ -36555,10 +36724,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for ProfileSetValueTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for ProfileSetValueTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -36584,7 +36752,10 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> ProfileRefineValueTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         ProfileRefineValueTypeSerializerState::Init__ => {
@@ -36595,29 +36766,36 @@ pub mod cdf {
                                     false,
                                 ));
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CDF),
+                                    &super::super::NS_CDF,
+                                );
                             }
-                            write_attrib(&mut bytes, "idref", &self.value.idref)?;
-                            write_attrib_opt(&mut bytes, "selector", &self.value.selector)?;
-                            write_attrib_opt(&mut bytes, "operator", &self.value.operator)?;
+                            helper.write_attrib(&mut bytes, "idref", &self.value.idref)?;
+                            helper.write_attrib_opt(
+                                &mut bytes,
+                                "selector",
+                                &self.value.selector,
+                            )?;
+                            helper.write_attrib_opt(
+                                &mut bytes,
+                                "operator",
+                                &self.value.operator,
+                            )?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         ProfileRefineValueTypeSerializerState::Remark(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = ProfileRefineValueTypeSerializerState::End__,
                             }
                         }
                         ProfileRefineValueTypeSerializerState::End__ => {
                             *self.state = ProfileRefineValueTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         ProfileRefineValueTypeSerializerState::Done__ => return Ok(None),
@@ -36626,10 +36804,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for ProfileRefineValueTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for ProfileRefineValueTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -36655,7 +36832,10 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> ProfileRefineRuleTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         ProfileRefineRuleTypeSerializerState::Init__ => {
@@ -36666,31 +36846,38 @@ pub mod cdf {
                                     false,
                                 ));
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CDF),
+                                    &super::super::NS_CDF,
+                                );
                             }
-                            write_attrib(&mut bytes, "idref", &self.value.idref)?;
-                            write_attrib_opt(&mut bytes, "weight", &self.value.weight)?;
-                            write_attrib_opt(&mut bytes, "selector", &self.value.selector)?;
-                            write_attrib_opt(&mut bytes, "severity", &self.value.severity)?;
-                            write_attrib_opt(&mut bytes, "role", &self.value.role)?;
+                            helper.write_attrib(&mut bytes, "idref", &self.value.idref)?;
+                            helper.write_attrib_opt(&mut bytes, "weight", &self.value.weight)?;
+                            helper.write_attrib_opt(
+                                &mut bytes,
+                                "selector",
+                                &self.value.selector,
+                            )?;
+                            helper.write_attrib_opt(
+                                &mut bytes,
+                                "severity",
+                                &self.value.severity,
+                            )?;
+                            helper.write_attrib_opt(&mut bytes, "role", &self.value.role)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         ProfileRefineRuleTypeSerializerState::Remark(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = ProfileRefineRuleTypeSerializerState::End__,
                             }
                         }
                         ProfileRefineRuleTypeSerializerState::End__ => {
                             *self.state = ProfileRefineRuleTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         ProfileRefineRuleTypeSerializerState::Done__ => return Ok(None),
@@ -36699,10 +36886,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for ProfileRefineRuleTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for ProfileRefineRuleTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -36730,7 +36916,10 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> WarningTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         WarningTypeSerializerState::Init__ => {
@@ -36738,27 +36927,28 @@ pub mod cdf {
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CDF),
+                                    &super::super::NS_CDF,
+                                );
                             }
-                            write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
-                            write_attrib(&mut bytes, "override", &self.value.override_)?;
-                            write_attrib(&mut bytes, "category", &self.value.category)?;
+                            helper.write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
+                            helper.write_attrib(&mut bytes, "override", &self.value.override_)?;
+                            helper.write_attrib(&mut bytes, "category", &self.value.category)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
-                        WarningTypeSerializerState::Content__(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = WarningTypeSerializerState::End__,
-                        },
+                        WarningTypeSerializerState::Content__(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = WarningTypeSerializerState::End__,
+                            }
+                        }
                         WarningTypeSerializerState::End__ => {
                             *self.state = WarningTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         WarningTypeSerializerState::Done__ => return Ok(None),
@@ -36767,10 +36957,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for WarningTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for WarningTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -36795,7 +36984,10 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> WarningTypeContentSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         WarningTypeContentSerializerState::Init__ => match self.value {
@@ -36815,16 +37007,20 @@ pub mod cdf {
                                 )
                             }
                         },
-                        WarningTypeContentSerializerState::Sub(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = WarningTypeContentSerializerState::Done__,
-                        },
-                        WarningTypeContentSerializerState::Any(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = WarningTypeContentSerializerState::Done__,
-                        },
+                        WarningTypeContentSerializerState::Sub(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = WarningTypeContentSerializerState::Done__,
+                            }
+                        }
+                        WarningTypeContentSerializerState::Any(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = WarningTypeContentSerializerState::Done__,
+                            }
+                        }
                         WarningTypeContentSerializerState::Text(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = WarningTypeContentSerializerState::Done__,
                             }
@@ -36835,10 +37031,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for WarningTypeContentSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for WarningTypeContentSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -36864,7 +37059,10 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> SelStringTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         SelStringTypeSerializerState::Init__ => {
@@ -36872,25 +37070,26 @@ pub mod cdf {
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CDF),
+                                    &super::super::NS_CDF,
+                                );
                             }
-                            write_attrib(&mut bytes, "selector", &self.value.selector)?;
+                            helper.write_attrib(&mut bytes, "selector", &self.value.selector)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
-                        SelStringTypeSerializerState::Content__(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = SelStringTypeSerializerState::End__,
-                        },
+                        SelStringTypeSerializerState::Content__(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = SelStringTypeSerializerState::End__,
+                            }
+                        }
                         SelStringTypeSerializerState::End__ => {
                             *self.state = SelStringTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         SelStringTypeSerializerState::Done__ => return Ok(None),
@@ -36899,10 +37098,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for SelStringTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for SelStringTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -36928,7 +37126,10 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> SelComplexValueTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         SelComplexValueTypeSerializerState::Init__ => {
@@ -36936,27 +37137,26 @@ pub mod cdf {
                                 IterSerializer::new(&self.value.item[..], Some("cdf:item"), false),
                             );
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CDF),
+                                    &super::super::NS_CDF,
+                                );
                             }
-                            write_attrib(&mut bytes, "selector", &self.value.selector)?;
+                            helper.write_attrib(&mut bytes, "selector", &self.value.selector)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         SelComplexValueTypeSerializerState::Item(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = SelComplexValueTypeSerializerState::End__,
                             }
                         }
                         SelComplexValueTypeSerializerState::End__ => {
                             *self.state = SelComplexValueTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         SelComplexValueTypeSerializerState::Done__ => return Ok(None),
@@ -36965,10 +37165,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for SelComplexValueTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for SelComplexValueTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -36994,7 +37193,10 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> SelNumTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         SelNumTypeSerializerState::Init__ => {
@@ -37002,25 +37204,26 @@ pub mod cdf {
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CDF),
+                                    &super::super::NS_CDF,
+                                );
                             }
-                            write_attrib(&mut bytes, "selector", &self.value.selector)?;
+                            helper.write_attrib(&mut bytes, "selector", &self.value.selector)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
-                        SelNumTypeSerializerState::Content__(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = SelNumTypeSerializerState::End__,
-                        },
+                        SelNumTypeSerializerState::Content__(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = SelNumTypeSerializerState::End__,
+                            }
+                        }
                         SelNumTypeSerializerState::End__ => {
                             *self.state = SelNumTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         SelNumTypeSerializerState::Done__ => return Ok(None),
@@ -37029,10 +37232,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for SelNumTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for SelNumTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -37064,7 +37266,10 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> SelChoicesTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         SelChoicesTypeSerializerState::Init__ => {
@@ -37072,28 +37277,31 @@ pub mod cdf {
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CDF),
+                                    &super::super::NS_CDF,
+                                );
                             }
-                            write_attrib_opt(&mut bytes, "mustMatch", &self.value.must_match)?;
-                            write_attrib(&mut bytes, "selector", &self.value.selector)?;
+                            helper.write_attrib_opt(
+                                &mut bytes,
+                                "mustMatch",
+                                &self.value.must_match,
+                            )?;
+                            helper.write_attrib(&mut bytes, "selector", &self.value.selector)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         SelChoicesTypeSerializerState::Content__(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = SelChoicesTypeSerializerState::End__,
                             }
                         }
                         SelChoicesTypeSerializerState::End__ => {
                             *self.state = SelChoicesTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         SelChoicesTypeSerializerState::Done__ => return Ok(None),
@@ -37102,10 +37310,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for SelChoicesTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for SelChoicesTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -37129,7 +37336,10 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> SelChoicesTypeContentSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         SelChoicesTypeContentSerializerState::Init__ => match self.value {
@@ -37149,13 +37359,13 @@ pub mod cdf {
                             }
                         },
                         SelChoicesTypeContentSerializerState::Choice(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = SelChoicesTypeContentSerializerState::Done__,
                             }
                         }
                         SelChoicesTypeContentSerializerState::ComplexChoice(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = SelChoicesTypeContentSerializerState::Done__,
                             }
@@ -37166,10 +37376,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for SelChoicesTypeContentSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for SelChoicesTypeContentSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -37193,23 +37402,25 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> UriRefTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         UriRefTypeSerializerState::Init__ => {
                             *self.state = UriRefTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CDF),
+                                    &super::super::NS_CDF,
+                                );
                             }
-                            write_attrib(&mut bytes, "uri", &self.value.uri)?;
+                            helper.write_attrib(&mut bytes, "uri", &self.value.uri)?;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         UriRefTypeSerializerState::Done__ => return Ok(None),
@@ -37218,10 +37429,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for UriRefTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for UriRefTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -37245,23 +37455,25 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> IdrefListTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         IdrefListTypeSerializerState::Init__ => {
                             *self.state = IdrefListTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CDF),
+                                    &super::super::NS_CDF,
+                                );
                             }
-                            write_attrib(&mut bytes, "idref", &self.value.idref)?;
+                            helper.write_attrib(&mut bytes, "idref", &self.value.idref)?;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         IdrefListTypeSerializerState::Done__ => return Ok(None),
@@ -37270,10 +37482,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for IdrefListTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for IdrefListTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -37297,23 +37508,25 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> IdrefTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         IdrefTypeSerializerState::Init__ => {
                             *self.state = IdrefTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CDF),
+                                    &super::super::NS_CDF,
+                                );
                             }
-                            write_attrib(&mut bytes, "idref", &self.value.idref)?;
+                            helper.write_attrib(&mut bytes, "idref", &self.value.idref)?;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         IdrefTypeSerializerState::Done__ => return Ok(None),
@@ -37322,10 +37535,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for IdrefTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for IdrefTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -37351,7 +37563,10 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> IdentTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         IdentTypeSerializerState::Init__ => {
@@ -37359,26 +37574,27 @@ pub mod cdf {
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CDF),
+                                    &super::super::NS_CDF,
+                                );
                             }
-                            write_attrib(&mut bytes, "system", &self.value.system)?;
+                            helper.write_attrib(&mut bytes, "system", &self.value.system)?;
                             bytes.extend_attributes(self.value.any_attribute.attributes());
                             return Ok(Some(Event::Start(bytes)));
                         }
-                        IdentTypeSerializerState::Content__(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = IdentTypeSerializerState::End__,
-                        },
+                        IdentTypeSerializerState::Content__(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = IdentTypeSerializerState::End__,
+                            }
+                        }
                         IdentTypeSerializerState::End__ => {
                             *self.state = IdentTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         IdentTypeSerializerState::Done__ => return Ok(None),
@@ -37387,10 +37603,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for IdentTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for IdentTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -37422,7 +37637,10 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> ProfileNoteTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         ProfileNoteTypeSerializerState::Init__ => {
@@ -37430,28 +37648,27 @@ pub mod cdf {
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CDF),
+                                    &super::super::NS_CDF,
+                                );
                             }
-                            write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
-                            write_attrib(&mut bytes, "tag", &self.value.tag)?;
+                            helper.write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
+                            helper.write_attrib(&mut bytes, "tag", &self.value.tag)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         ProfileNoteTypeSerializerState::Content__(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = ProfileNoteTypeSerializerState::End__,
                             }
                         }
                         ProfileNoteTypeSerializerState::End__ => {
                             *self.state = ProfileNoteTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         ProfileNoteTypeSerializerState::Done__ => return Ok(None),
@@ -37460,10 +37677,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for ProfileNoteTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for ProfileNoteTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -37488,7 +37704,10 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> ProfileNoteTypeContentSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         ProfileNoteTypeContentSerializerState::Init__ => match self.value {
@@ -37509,19 +37728,19 @@ pub mod cdf {
                             }
                         },
                         ProfileNoteTypeContentSerializerState::Sub(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = ProfileNoteTypeContentSerializerState::Done__,
                             }
                         }
                         ProfileNoteTypeContentSerializerState::Any(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = ProfileNoteTypeContentSerializerState::Done__,
                             }
                         }
                         ProfileNoteTypeContentSerializerState::Text(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = ProfileNoteTypeContentSerializerState::Done__,
                             }
@@ -37532,10 +37751,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for ProfileNoteTypeContentSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for ProfileNoteTypeContentSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -37563,7 +37781,10 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> FixTextTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         FixTextTypeSerializerState::Init__ => {
@@ -37571,31 +37792,40 @@ pub mod cdf {
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CDF),
+                                    &super::super::NS_CDF,
+                                );
                             }
-                            write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
-                            write_attrib(&mut bytes, "override", &self.value.override_)?;
-                            write_attrib_opt(&mut bytes, "fixref", &self.value.fixref)?;
-                            write_attrib(&mut bytes, "reboot", &self.value.reboot)?;
-                            write_attrib(&mut bytes, "strategy", &self.value.strategy)?;
-                            write_attrib(&mut bytes, "disruption", &self.value.disruption)?;
-                            write_attrib(&mut bytes, "complexity", &self.value.complexity)?;
+                            helper.write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
+                            helper.write_attrib(&mut bytes, "override", &self.value.override_)?;
+                            helper.write_attrib_opt(&mut bytes, "fixref", &self.value.fixref)?;
+                            helper.write_attrib(&mut bytes, "reboot", &self.value.reboot)?;
+                            helper.write_attrib(&mut bytes, "strategy", &self.value.strategy)?;
+                            helper.write_attrib(
+                                &mut bytes,
+                                "disruption",
+                                &self.value.disruption,
+                            )?;
+                            helper.write_attrib(
+                                &mut bytes,
+                                "complexity",
+                                &self.value.complexity,
+                            )?;
                             return Ok(Some(Event::Start(bytes)));
                         }
-                        FixTextTypeSerializerState::Content__(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = FixTextTypeSerializerState::End__,
-                        },
+                        FixTextTypeSerializerState::Content__(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = FixTextTypeSerializerState::End__,
+                            }
+                        }
                         FixTextTypeSerializerState::End__ => {
                             *self.state = FixTextTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         FixTextTypeSerializerState::Done__ => return Ok(None),
@@ -37604,10 +37834,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for FixTextTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for FixTextTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -37632,7 +37861,10 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> FixTextTypeContentSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         FixTextTypeContentSerializerState::Init__ => match self.value {
@@ -37652,16 +37884,20 @@ pub mod cdf {
                                 )
                             }
                         },
-                        FixTextTypeContentSerializerState::Sub(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = FixTextTypeContentSerializerState::Done__,
-                        },
-                        FixTextTypeContentSerializerState::Any(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = FixTextTypeContentSerializerState::Done__,
-                        },
+                        FixTextTypeContentSerializerState::Sub(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = FixTextTypeContentSerializerState::Done__,
+                            }
+                        }
+                        FixTextTypeContentSerializerState::Any(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = FixTextTypeContentSerializerState::Done__,
+                            }
+                        }
                         FixTextTypeContentSerializerState::Text(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = FixTextTypeContentSerializerState::Done__,
                             }
@@ -37672,10 +37908,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for FixTextTypeContentSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for FixTextTypeContentSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -37701,7 +37936,10 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> FixTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         FixTypeSerializerState::Init__ => {
@@ -37711,31 +37949,42 @@ pub mod cdf {
                                 false,
                             ));
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CDF),
+                                    &super::super::NS_CDF,
+                                );
                             }
-                            write_attrib_opt(&mut bytes, "id", &self.value.id)?;
-                            write_attrib(&mut bytes, "reboot", &self.value.reboot)?;
-                            write_attrib(&mut bytes, "strategy", &self.value.strategy)?;
-                            write_attrib(&mut bytes, "disruption", &self.value.disruption)?;
-                            write_attrib(&mut bytes, "complexity", &self.value.complexity)?;
-                            write_attrib_opt(&mut bytes, "system", &self.value.system)?;
-                            write_attrib_opt(&mut bytes, "platform", &self.value.platform)?;
+                            helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
+                            helper.write_attrib(&mut bytes, "reboot", &self.value.reboot)?;
+                            helper.write_attrib(&mut bytes, "strategy", &self.value.strategy)?;
+                            helper.write_attrib(
+                                &mut bytes,
+                                "disruption",
+                                &self.value.disruption,
+                            )?;
+                            helper.write_attrib(
+                                &mut bytes,
+                                "complexity",
+                                &self.value.complexity,
+                            )?;
+                            helper.write_attrib_opt(&mut bytes, "system", &self.value.system)?;
+                            helper.write_attrib_opt(
+                                &mut bytes,
+                                "platform",
+                                &self.value.platform,
+                            )?;
                             return Ok(Some(Event::Start(bytes)));
                         }
-                        FixTypeSerializerState::Content__(x) => match x.next().transpose()? {
+                        FixTypeSerializerState::Content__(x) => match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = FixTypeSerializerState::End__,
                         },
                         FixTypeSerializerState::End__ => {
                             *self.state = FixTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         FixTypeSerializerState::Done__ => return Ok(None),
@@ -37744,10 +37993,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for FixTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for FixTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -37772,7 +38020,10 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> FixTypeContentSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         FixTypeContentSerializerState::Init__ => match self.value {
@@ -37792,30 +38043,33 @@ pub mod cdf {
                                 )
                             }
                         },
-                        FixTypeContentSerializerState::Sub(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = FixTypeContentSerializerState::Done__,
-                        },
-                        FixTypeContentSerializerState::Instance(x) => {
-                            match x.next().transpose()? {
+                        FixTypeContentSerializerState::Sub(x) => {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = FixTypeContentSerializerState::Done__,
                             }
                         }
-                        FixTypeContentSerializerState::Text(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = FixTypeContentSerializerState::Done__,
-                        },
+                        FixTypeContentSerializerState::Instance(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = FixTypeContentSerializerState::Done__,
+                            }
+                        }
+                        FixTypeContentSerializerState::Text(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = FixTypeContentSerializerState::Done__,
+                            }
+                        }
                         FixTypeContentSerializerState::Done__ => return Ok(None),
                         FixTypeContentSerializerState::Phantom__(_) => unreachable!(),
                     }
                 }
             }
         }
-        impl<'ser> Iterator for FixTypeContentSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for FixTypeContentSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -37860,7 +38114,10 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> CheckTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CheckTypeSerializerState::Init__ => {
@@ -37871,48 +38128,55 @@ pub mod cdf {
                                     false,
                                 ));
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CDF),
+                                    &super::super::NS_CDF,
+                                );
                             }
-                            write_attrib(&mut bytes, "system", &self.value.system)?;
-                            write_attrib(&mut bytes, "negate", &self.value.negate)?;
-                            write_attrib_opt(&mut bytes, "id", &self.value.id)?;
-                            write_attrib(&mut bytes, "selector", &self.value.selector)?;
-                            write_attrib(&mut bytes, "multi-check", &self.value.multi_check)?;
-                            write_attrib_opt(&mut bytes, "base", &self.value.base)?;
+                            helper.write_attrib(&mut bytes, "system", &self.value.system)?;
+                            helper.write_attrib(&mut bytes, "negate", &self.value.negate)?;
+                            helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
+                            helper.write_attrib(&mut bytes, "selector", &self.value.selector)?;
+                            helper.write_attrib(
+                                &mut bytes,
+                                "multi-check",
+                                &self.value.multi_check,
+                            )?;
+                            helper.write_attrib_opt(&mut bytes, "base", &self.value.base)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
-                        CheckTypeSerializerState::CheckImport(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => {
-                                *self.state =
-                                    CheckTypeSerializerState::CheckExport(IterSerializer::new(
-                                        &self.value.check_export[..],
-                                        Some("cdf:check-export"),
-                                        false,
-                                    ))
+                        CheckTypeSerializerState::CheckImport(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => {
+                                    *self.state =
+                                        CheckTypeSerializerState::CheckExport(IterSerializer::new(
+                                            &self.value.check_export[..],
+                                            Some("cdf:check-export"),
+                                            false,
+                                        ))
+                                }
                             }
-                        },
-                        CheckTypeSerializerState::CheckExport(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => {
-                                *self.state =
-                                    CheckTypeSerializerState::CheckContentRef(IterSerializer::new(
-                                        &self.value.check_content_ref[..],
-                                        Some("cdf:check-content-ref"),
-                                        false,
-                                    ))
+                        }
+                        CheckTypeSerializerState::CheckExport(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => {
+                                    *self.state = CheckTypeSerializerState::CheckContentRef(
+                                        IterSerializer::new(
+                                            &self.value.check_content_ref[..],
+                                            Some("cdf:check-content-ref"),
+                                            false,
+                                        ),
+                                    )
+                                }
                             }
-                        },
+                        }
                         CheckTypeSerializerState::CheckContentRef(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state =
@@ -37924,12 +38188,15 @@ pub mod cdf {
                                 }
                             }
                         }
-                        CheckTypeSerializerState::CheckContent(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = CheckTypeSerializerState::End__,
-                        },
+                        CheckTypeSerializerState::CheckContent(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = CheckTypeSerializerState::End__,
+                            }
+                        }
                         CheckTypeSerializerState::End__ => {
                             *self.state = CheckTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         CheckTypeSerializerState::Done__ => return Ok(None),
@@ -37938,10 +38205,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for CheckTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CheckTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -37973,7 +38239,10 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> ComplexCheckTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         ComplexCheckTypeSerializerState::Init__ => {
@@ -37981,28 +38250,27 @@ pub mod cdf {
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CDF),
+                                    &super::super::NS_CDF,
+                                );
                             }
-                            write_attrib(&mut bytes, "operator", &self.value.operator)?;
-                            write_attrib(&mut bytes, "negate", &self.value.negate)?;
+                            helper.write_attrib(&mut bytes, "operator", &self.value.operator)?;
+                            helper.write_attrib(&mut bytes, "negate", &self.value.negate)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         ComplexCheckTypeSerializerState::Content__(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = ComplexCheckTypeSerializerState::End__,
                             }
                         }
                         ComplexCheckTypeSerializerState::End__ => {
                             *self.state = ComplexCheckTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         ComplexCheckTypeSerializerState::Done__ => return Ok(None),
@@ -38011,10 +38279,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for ComplexCheckTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for ComplexCheckTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -38038,7 +38305,10 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> ComplexCheckTypeContentSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         ComplexCheckTypeContentSerializerState::Init__ => match self.value {
@@ -38058,7 +38328,7 @@ pub mod cdf {
                             }
                         },
                         ComplexCheckTypeContentSerializerState::Check(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = ComplexCheckTypeContentSerializerState::Done__
@@ -38066,7 +38336,7 @@ pub mod cdf {
                             }
                         }
                         ComplexCheckTypeContentSerializerState::ComplexCheck(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = ComplexCheckTypeContentSerializerState::Done__
@@ -38079,10 +38349,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for ComplexCheckTypeContentSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for ComplexCheckTypeContentSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -38106,24 +38375,26 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> BenchmarkReferenceTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         BenchmarkReferenceTypeSerializerState::Init__ => {
                             *self.state = BenchmarkReferenceTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CDF),
+                                    &super::super::NS_CDF,
+                                );
                             }
-                            write_attrib(&mut bytes, "href", &self.value.href)?;
-                            write_attrib_opt(&mut bytes, "id", &self.value.id)?;
+                            helper.write_attrib(&mut bytes, "href", &self.value.href)?;
+                            helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         BenchmarkReferenceTypeSerializerState::Done__ => return Ok(None),
@@ -38132,10 +38403,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for BenchmarkReferenceTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for BenchmarkReferenceTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -38159,26 +38429,28 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> TailoringReferenceTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         TailoringReferenceTypeSerializerState::Init__ => {
                             *self.state = TailoringReferenceTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CDF),
+                                    &super::super::NS_CDF,
+                                );
                             }
-                            write_attrib(&mut bytes, "href", &self.value.href)?;
-                            write_attrib(&mut bytes, "id", &self.value.id)?;
-                            write_attrib(&mut bytes, "version", &self.value.version)?;
-                            write_attrib(&mut bytes, "time", &self.value.time)?;
+                            helper.write_attrib(&mut bytes, "href", &self.value.href)?;
+                            helper.write_attrib(&mut bytes, "id", &self.value.id)?;
+                            helper.write_attrib(&mut bytes, "version", &self.value.version)?;
+                            helper.write_attrib(&mut bytes, "time", &self.value.time)?;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         TailoringReferenceTypeSerializerState::Done__ => return Ok(None),
@@ -38187,10 +38459,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for TailoringReferenceTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for TailoringReferenceTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -38216,7 +38487,10 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> IdentityTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         IdentityTypeSerializerState::Init__ => {
@@ -38224,26 +38498,35 @@ pub mod cdf {
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CDF),
+                                    &super::super::NS_CDF,
+                                );
                             }
-                            write_attrib(&mut bytes, "authenticated", &self.value.authenticated)?;
-                            write_attrib(&mut bytes, "privileged", &self.value.privileged)?;
+                            helper.write_attrib(
+                                &mut bytes,
+                                "authenticated",
+                                &self.value.authenticated,
+                            )?;
+                            helper.write_attrib(
+                                &mut bytes,
+                                "privileged",
+                                &self.value.privileged,
+                            )?;
                             return Ok(Some(Event::Start(bytes)));
                         }
-                        IdentityTypeSerializerState::Content__(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = IdentityTypeSerializerState::End__,
-                        },
+                        IdentityTypeSerializerState::Content__(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = IdentityTypeSerializerState::End__,
+                            }
+                        }
                         IdentityTypeSerializerState::End__ => {
                             *self.state = IdentityTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         IdentityTypeSerializerState::Done__ => return Ok(None),
@@ -38252,10 +38535,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for IdentityTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for IdentityTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -38281,7 +38563,10 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> TargetFactsTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         TargetFactsTypeSerializerState::Init__ => {
@@ -38289,24 +38574,25 @@ pub mod cdf {
                                 IterSerializer::new(&self.value.fact[..], Some("cdf:fact"), false),
                             );
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CDF),
+                                    &super::super::NS_CDF,
+                                );
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
-                        TargetFactsTypeSerializerState::Fact(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = TargetFactsTypeSerializerState::End__,
-                        },
+                        TargetFactsTypeSerializerState::Fact(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = TargetFactsTypeSerializerState::End__,
+                            }
+                        }
                         TargetFactsTypeSerializerState::End__ => {
                             *self.state = TargetFactsTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         TargetFactsTypeSerializerState::Done__ => return Ok(None),
@@ -38315,10 +38601,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for TargetFactsTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for TargetFactsTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -38342,25 +38627,27 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> TargetIdRefTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         TargetIdRefTypeSerializerState::Init__ => {
                             *self.state = TargetIdRefTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CDF),
+                                    &super::super::NS_CDF,
+                                );
                             }
-                            write_attrib(&mut bytes, "system", &self.value.system)?;
-                            write_attrib(&mut bytes, "href", &self.value.href)?;
-                            write_attrib_opt(&mut bytes, "name", &self.value.name)?;
+                            helper.write_attrib(&mut bytes, "system", &self.value.system)?;
+                            helper.write_attrib(&mut bytes, "href", &self.value.href)?;
+                            helper.write_attrib_opt(&mut bytes, "name", &self.value.name)?;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         TargetIdRefTypeSerializerState::Done__ => return Ok(None),
@@ -38369,10 +38656,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for TargetIdRefTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for TargetIdRefTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -38404,7 +38690,10 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> RuleResultTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         RuleResultTypeSerializerState::Init__ => {
@@ -38412,32 +38701,35 @@ pub mod cdf {
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CDF),
+                                    &super::super::NS_CDF,
+                                );
                             }
-                            write_attrib(&mut bytes, "idref", &self.value.idref)?;
-                            write_attrib_opt(&mut bytes, "role", &self.value.role)?;
-                            write_attrib_opt(&mut bytes, "severity", &self.value.severity)?;
-                            write_attrib_opt(&mut bytes, "time", &self.value.time)?;
-                            write_attrib_opt(&mut bytes, "version", &self.value.version)?;
-                            write_attrib_opt(&mut bytes, "weight", &self.value.weight)?;
+                            helper.write_attrib(&mut bytes, "idref", &self.value.idref)?;
+                            helper.write_attrib_opt(&mut bytes, "role", &self.value.role)?;
+                            helper.write_attrib_opt(
+                                &mut bytes,
+                                "severity",
+                                &self.value.severity,
+                            )?;
+                            helper.write_attrib_opt(&mut bytes, "time", &self.value.time)?;
+                            helper.write_attrib_opt(&mut bytes, "version", &self.value.version)?;
+                            helper.write_attrib_opt(&mut bytes, "weight", &self.value.weight)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         RuleResultTypeSerializerState::Content__(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = RuleResultTypeSerializerState::End__,
                             }
                         }
                         RuleResultTypeSerializerState::End__ => {
                             *self.state = RuleResultTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         RuleResultTypeSerializerState::Done__ => return Ok(None),
@@ -38446,10 +38738,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for RuleResultTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for RuleResultTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -38480,7 +38771,10 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> RuleResultTypeContentSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         RuleResultTypeContentSerializerState::Init__ => match self.value {
@@ -38535,55 +38829,55 @@ pub mod cdf {
                             }
                         },
                         RuleResultTypeContentSerializerState::Result(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = RuleResultTypeContentSerializerState::Done__,
                             }
                         }
                         RuleResultTypeContentSerializerState::Override(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = RuleResultTypeContentSerializerState::Done__,
                             }
                         }
                         RuleResultTypeContentSerializerState::Ident(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = RuleResultTypeContentSerializerState::Done__,
                             }
                         }
                         RuleResultTypeContentSerializerState::Metadata(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = RuleResultTypeContentSerializerState::Done__,
                             }
                         }
                         RuleResultTypeContentSerializerState::Message(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = RuleResultTypeContentSerializerState::Done__,
                             }
                         }
                         RuleResultTypeContentSerializerState::Instance(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = RuleResultTypeContentSerializerState::Done__,
                             }
                         }
                         RuleResultTypeContentSerializerState::Fix(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = RuleResultTypeContentSerializerState::Done__,
                             }
                         }
                         RuleResultTypeContentSerializerState::Check(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = RuleResultTypeContentSerializerState::Done__,
                             }
                         }
                         RuleResultTypeContentSerializerState::ComplexCheck(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = RuleResultTypeContentSerializerState::Done__,
                             }
@@ -38594,10 +38888,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for RuleResultTypeContentSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for RuleResultTypeContentSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -38623,7 +38916,10 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> ScoreTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         ScoreTypeSerializerState::Init__ => {
@@ -38631,26 +38927,27 @@ pub mod cdf {
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CDF),
+                                    &super::super::NS_CDF,
+                                );
                             }
-                            write_attrib_opt(&mut bytes, "system", &self.value.system)?;
-                            write_attrib_opt(&mut bytes, "maximum", &self.value.maximum)?;
+                            helper.write_attrib_opt(&mut bytes, "system", &self.value.system)?;
+                            helper.write_attrib_opt(&mut bytes, "maximum", &self.value.maximum)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
-                        ScoreTypeSerializerState::Content__(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = ScoreTypeSerializerState::End__,
-                        },
+                        ScoreTypeSerializerState::Content__(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = ScoreTypeSerializerState::End__,
+                            }
+                        }
                         ScoreTypeSerializerState::End__ => {
                             *self.state = ScoreTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         ScoreTypeSerializerState::Done__ => return Ok(None),
@@ -38659,10 +38956,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for ScoreTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for ScoreTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -38688,7 +38984,10 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> ComplexValueTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         ComplexValueTypeSerializerState::Init__ => {
@@ -38696,24 +38995,25 @@ pub mod cdf {
                                 IterSerializer::new(&self.value.item[..], Some("cdf:item"), false),
                             );
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CDF),
+                                    &super::super::NS_CDF,
+                                );
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
-                        ComplexValueTypeSerializerState::Item(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = ComplexValueTypeSerializerState::End__,
-                        },
+                        ComplexValueTypeSerializerState::Item(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = ComplexValueTypeSerializerState::End__,
+                            }
+                        }
                         ComplexValueTypeSerializerState::End__ => {
                             *self.state = ComplexValueTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         ComplexValueTypeSerializerState::Done__ => return Ok(None),
@@ -38722,10 +39022,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for ComplexValueTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for ComplexValueTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -38749,23 +39048,25 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> InstanceFixTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         InstanceFixTypeSerializerState::Init__ => {
                             *self.state = InstanceFixTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CDF),
+                                    &super::super::NS_CDF,
+                                );
                             }
-                            write_attrib(&mut bytes, "context", &self.value.context)?;
+                            helper.write_attrib(&mut bytes, "context", &self.value.context)?;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         InstanceFixTypeSerializerState::Done__ => return Ok(None),
@@ -38774,10 +39075,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for InstanceFixTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for InstanceFixTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -38805,7 +39105,10 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> CheckImportTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CheckImportTypeSerializerState::Init__ => {
@@ -38816,22 +39119,28 @@ pub mod cdf {
                                     false,
                                 ));
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CDF),
+                                    &super::super::NS_CDF,
+                                );
                             }
-                            write_attrib(&mut bytes, "import-name", &self.value.import_name)?;
-                            write_attrib_opt(&mut bytes, "import-xpath", &self.value.import_xpath)?;
+                            helper.write_attrib(
+                                &mut bytes,
+                                "import-name",
+                                &self.value.import_name,
+                            )?;
+                            helper.write_attrib_opt(
+                                &mut bytes,
+                                "import-xpath",
+                                &self.value.import_xpath,
+                            )?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CheckImportTypeSerializerState::TextBefore(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = CheckImportTypeSerializerState::Any(
@@ -38840,26 +39149,29 @@ pub mod cdf {
                                 }
                             }
                         }
-                        CheckImportTypeSerializerState::Any(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => {
-                                *self.state = CheckImportTypeSerializerState::TextAfterAny36(
-                                    IterSerializer::new(
-                                        self.value.text_after_any_36.as_ref(),
-                                        Some("text_after_any36"),
-                                        false,
-                                    ),
-                                )
+                        CheckImportTypeSerializerState::Any(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => {
+                                    *self.state = CheckImportTypeSerializerState::TextAfterAny36(
+                                        IterSerializer::new(
+                                            self.value.text_after_any_36.as_ref(),
+                                            Some("text_after_any36"),
+                                            false,
+                                        ),
+                                    )
+                                }
                             }
-                        },
+                        }
                         CheckImportTypeSerializerState::TextAfterAny36(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = CheckImportTypeSerializerState::End__,
                             }
                         }
                         CheckImportTypeSerializerState::End__ => {
                             *self.state = CheckImportTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         CheckImportTypeSerializerState::Done__ => return Ok(None),
@@ -38868,10 +39180,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for CheckImportTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CheckImportTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -38895,24 +39206,30 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> CheckExportTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CheckExportTypeSerializerState::Init__ => {
                             *self.state = CheckExportTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CDF),
+                                    &super::super::NS_CDF,
+                                );
                             }
-                            write_attrib(&mut bytes, "value-id", &self.value.value_id)?;
-                            write_attrib(&mut bytes, "export-name", &self.value.export_name)?;
+                            helper.write_attrib(&mut bytes, "value-id", &self.value.value_id)?;
+                            helper.write_attrib(
+                                &mut bytes,
+                                "export-name",
+                                &self.value.export_name,
+                            )?;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         CheckExportTypeSerializerState::Done__ => return Ok(None),
@@ -38921,10 +39238,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for CheckExportTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CheckExportTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -38948,24 +39264,26 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> CheckContentRefTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CheckContentRefTypeSerializerState::Init__ => {
                             *self.state = CheckContentRefTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CDF),
+                                    &super::super::NS_CDF,
+                                );
                             }
-                            write_attrib(&mut bytes, "href", &self.value.href)?;
-                            write_attrib_opt(&mut bytes, "name", &self.value.name)?;
+                            helper.write_attrib(&mut bytes, "href", &self.value.href)?;
+                            helper.write_attrib_opt(&mut bytes, "name", &self.value.name)?;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         CheckContentRefTypeSerializerState::Done__ => return Ok(None),
@@ -38974,10 +39292,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for CheckContentRefTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CheckContentRefTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -39009,7 +39326,10 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> CheckContentTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CheckContentTypeSerializerState::Init__ => {
@@ -39017,26 +39337,25 @@ pub mod cdf {
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CDF),
+                                    &super::super::NS_CDF,
+                                );
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CheckContentTypeSerializerState::Content__(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = CheckContentTypeSerializerState::End__,
                             }
                         }
                         CheckContentTypeSerializerState::End__ => {
                             *self.state = CheckContentTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         CheckContentTypeSerializerState::Done__ => return Ok(None),
@@ -39045,10 +39364,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for CheckContentTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CheckContentTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -39072,7 +39390,10 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> CheckContentTypeContentSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CheckContentTypeContentSerializerState::Init__ => match self.value {
@@ -39088,7 +39409,7 @@ pub mod cdf {
                             }
                         },
                         CheckContentTypeContentSerializerState::Any(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = CheckContentTypeContentSerializerState::Done__
@@ -39096,7 +39417,7 @@ pub mod cdf {
                             }
                         }
                         CheckContentTypeContentSerializerState::Text(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = CheckContentTypeContentSerializerState::Done__
@@ -39109,10 +39430,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for CheckContentTypeContentSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CheckContentTypeContentSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -39138,7 +39458,10 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> FactTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         FactTypeSerializerState::Init__ => {
@@ -39146,26 +39469,27 @@ pub mod cdf {
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CDF),
+                                    &super::super::NS_CDF,
+                                );
                             }
-                            write_attrib(&mut bytes, "name", &self.value.name)?;
-                            write_attrib(&mut bytes, "type", &self.value.type_)?;
+                            helper.write_attrib(&mut bytes, "name", &self.value.name)?;
+                            helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
-                        FactTypeSerializerState::Content__(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = FactTypeSerializerState::End__,
-                        },
+                        FactTypeSerializerState::Content__(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = FactTypeSerializerState::End__,
+                            }
+                        }
                         FactTypeSerializerState::End__ => {
                             *self.state = FactTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         FactTypeSerializerState::Done__ => return Ok(None),
@@ -39174,10 +39498,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for FactTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for FactTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -39205,7 +39528,10 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> OverrideTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         OverrideTypeSerializerState::Init__ => {
@@ -39216,49 +39542,55 @@ pub mod cdf {
                                     false,
                                 )?);
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CDF),
+                                    &super::super::NS_CDF,
+                                );
                             }
-                            write_attrib(&mut bytes, "time", &self.value.time)?;
-                            write_attrib(&mut bytes, "authority", &self.value.authority)?;
+                            helper.write_attrib(&mut bytes, "time", &self.value.time)?;
+                            helper.write_attrib(&mut bytes, "authority", &self.value.authority)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
-                        OverrideTypeSerializerState::OldResult(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => {
-                                *self.state = OverrideTypeSerializerState::NewResult(
-                                    WithSerializer::serializer(
-                                        &self.value.new_result,
-                                        Some("cdf:new-result"),
-                                        false,
-                                    )?,
-                                )
+                        OverrideTypeSerializerState::OldResult(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => {
+                                    *self.state = OverrideTypeSerializerState::NewResult(
+                                        WithSerializer::serializer(
+                                            &self.value.new_result,
+                                            Some("cdf:new-result"),
+                                            false,
+                                        )?,
+                                    )
+                                }
                             }
-                        },
-                        OverrideTypeSerializerState::NewResult(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => {
-                                *self.state =
-                                    OverrideTypeSerializerState::Remark(WithSerializer::serializer(
-                                        &self.value.remark,
-                                        Some("cdf:remark"),
-                                        false,
-                                    )?)
+                        }
+                        OverrideTypeSerializerState::NewResult(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => {
+                                    *self.state = OverrideTypeSerializerState::Remark(
+                                        WithSerializer::serializer(
+                                            &self.value.remark,
+                                            Some("cdf:remark"),
+                                            false,
+                                        )?,
+                                    )
+                                }
                             }
-                        },
-                        OverrideTypeSerializerState::Remark(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = OverrideTypeSerializerState::End__,
-                        },
+                        }
+                        OverrideTypeSerializerState::Remark(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = OverrideTypeSerializerState::End__,
+                            }
+                        }
                         OverrideTypeSerializerState::End__ => {
                             *self.state = OverrideTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         OverrideTypeSerializerState::Done__ => return Ok(None),
@@ -39267,10 +39599,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for OverrideTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for OverrideTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -39296,7 +39627,10 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> MessageTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         MessageTypeSerializerState::Init__ => {
@@ -39304,25 +39638,26 @@ pub mod cdf {
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CDF),
+                                    &super::super::NS_CDF,
+                                );
                             }
-                            write_attrib(&mut bytes, "severity", &self.value.severity)?;
+                            helper.write_attrib(&mut bytes, "severity", &self.value.severity)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
-                        MessageTypeSerializerState::Content__(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = MessageTypeSerializerState::End__,
-                        },
+                        MessageTypeSerializerState::Content__(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = MessageTypeSerializerState::End__,
+                            }
+                        }
                         MessageTypeSerializerState::End__ => {
                             *self.state = MessageTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         MessageTypeSerializerState::Done__ => return Ok(None),
@@ -39331,10 +39666,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for MessageTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for MessageTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -39360,7 +39694,10 @@ pub mod cdf {
             Phantom__(&'ser ()),
         }
         impl<'ser> InstanceResultTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         InstanceResultTypeSerializerState::Init__ => {
@@ -39368,18 +39705,16 @@ pub mod cdf {
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CDF),
+                                    &super::super::NS_CDF,
+                                );
                             }
-                            write_attrib(&mut bytes, "context", &self.value.context)?;
-                            write_attrib_opt(
+                            helper.write_attrib(&mut bytes, "context", &self.value.context)?;
+                            helper.write_attrib_opt(
                                 &mut bytes,
                                 "parentContext",
                                 &self.value.parent_context,
@@ -39387,13 +39722,14 @@ pub mod cdf {
                             return Ok(Some(Event::Start(bytes)));
                         }
                         InstanceResultTypeSerializerState::Content__(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = InstanceResultTypeSerializerState::End__,
                             }
                         }
                         InstanceResultTypeSerializerState::End__ => {
                             *self.state = InstanceResultTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         InstanceResultTypeSerializerState::Done__ => return Ok(None),
@@ -39402,10 +39738,9 @@ pub mod cdf {
                 }
             }
         }
-        impl<'ser> Iterator for InstanceResultTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for InstanceResultTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -39421,7 +39756,7 @@ pub mod cpe {
     use std::borrow::Cow;
     use xsd_parser_types::quick_xml::{
         DeserializeBytes, DeserializeHelper, Error, ErrorKind, RawByteStr, SerializeBytes,
-        WithDeserializer, WithSerializer,
+        SerializeHelper, WithDeserializer, WithSerializer,
     };
     #[derive(Debug)]
     pub struct PlatformSpecificationType {
@@ -39560,7 +39895,10 @@ pub mod cpe {
         Or,
     }
     impl SerializeBytes for OperatorEnumerationType {
-        fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+        fn serialize_bytes(
+            &self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Cow<'_, str>>, Error> {
             match self {
                 Self::And => Ok(Some(Cow::Borrowed("AND"))),
                 Self::Or => Ok(Some(Cow::Borrowed("OR"))),
@@ -40932,7 +41270,7 @@ pub mod cpe {
     }
     pub mod quick_xml_serialize {
         use xsd_parser_types::quick_xml::{
-            write_attrib, write_attrib_opt, BytesEnd, BytesStart, Error, Event, IterSerializer,
+            BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
             WithSerializer,
         };
         #[derive(Debug)]
@@ -40951,7 +41289,10 @@ pub mod cpe {
             Phantom__(&'ser ()),
         }
         impl<'ser> PlatformSpecificationTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         PlatformSpecificationTypeSerializerState::Init__ => {
@@ -40963,20 +41304,18 @@ pub mod cpe {
                                 ),
                             );
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CPE),
+                                    &super::super::NS_CPE,
+                                );
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
                         PlatformSpecificationTypeSerializerState::Platform(x) => match x
-                            .next()
+                            .next(helper)
                             .transpose()?
                         {
                             Some(event) => return Ok(Some(event)),
@@ -40984,6 +41323,7 @@ pub mod cpe {
                         },
                         PlatformSpecificationTypeSerializerState::End__ => {
                             *self.state = PlatformSpecificationTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         PlatformSpecificationTypeSerializerState::Done__ => return Ok(None),
@@ -40992,10 +41332,9 @@ pub mod cpe {
                 }
             }
         }
-        impl<'ser> Iterator for PlatformSpecificationTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for PlatformSpecificationTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -41023,7 +41362,10 @@ pub mod cpe {
             Phantom__(&'ser ()),
         }
         impl<'ser> PlatformTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         PlatformTypeSerializerState::Init__ => {
@@ -41033,50 +41375,53 @@ pub mod cpe {
                                 false,
                             ));
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CPE),
+                                    &super::super::NS_CPE,
+                                );
                             }
-                            write_attrib(&mut bytes, "id", &self.value.id)?;
+                            helper.write_attrib(&mut bytes, "id", &self.value.id)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
-                        PlatformTypeSerializerState::Title(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => {
-                                *self.state =
-                                    PlatformTypeSerializerState::Remark(IterSerializer::new(
-                                        &self.value.remark[..],
-                                        Some("cpe:remark"),
-                                        false,
-                                    ))
+                        PlatformTypeSerializerState::Title(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => {
+                                    *self.state =
+                                        PlatformTypeSerializerState::Remark(IterSerializer::new(
+                                            &self.value.remark[..],
+                                            Some("cpe:remark"),
+                                            false,
+                                        ))
+                                }
                             }
-                        },
-                        PlatformTypeSerializerState::Remark(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => {
-                                *self.state = PlatformTypeSerializerState::LogicalTest(
-                                    WithSerializer::serializer(
-                                        &self.value.logical_test,
-                                        Some("cpe:logical-test"),
-                                        false,
-                                    )?,
-                                )
+                        }
+                        PlatformTypeSerializerState::Remark(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => {
+                                    *self.state = PlatformTypeSerializerState::LogicalTest(
+                                        WithSerializer::serializer(
+                                            &self.value.logical_test,
+                                            Some("cpe:logical-test"),
+                                            false,
+                                        )?,
+                                    )
+                                }
                             }
-                        },
+                        }
                         PlatformTypeSerializerState::LogicalTest(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = PlatformTypeSerializerState::End__,
                             }
                         }
                         PlatformTypeSerializerState::End__ => {
                             *self.state = PlatformTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         PlatformTypeSerializerState::Done__ => return Ok(None),
@@ -41085,10 +41430,9 @@ pub mod cpe {
                 }
             }
         }
-        impl<'ser> Iterator for PlatformTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for PlatformTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -41114,7 +41458,10 @@ pub mod cpe {
             Phantom__(&'ser ()),
         }
         impl<'ser> TextTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         TextTypeSerializerState::Init__ => {
@@ -41122,25 +41469,26 @@ pub mod cpe {
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CPE),
+                                    &super::super::NS_CPE,
+                                );
                             }
-                            write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
+                            helper.write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
-                        TextTypeSerializerState::Content__(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = TextTypeSerializerState::End__,
-                        },
+                        TextTypeSerializerState::Content__(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = TextTypeSerializerState::End__,
+                            }
+                        }
                         TextTypeSerializerState::End__ => {
                             *self.state = TextTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         TextTypeSerializerState::Done__ => return Ok(None),
@@ -41149,10 +41497,9 @@ pub mod cpe {
                 }
             }
         }
-        impl<'ser> Iterator for TextTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for TextTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -41184,7 +41531,10 @@ pub mod cpe {
             Phantom__(&'ser ()),
         }
         impl<'ser> LogicalTestTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         LogicalTestTypeSerializerState::Init__ => {
@@ -41195,22 +41545,20 @@ pub mod cpe {
                                     false,
                                 ));
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CPE),
+                                    &super::super::NS_CPE,
+                                );
                             }
-                            write_attrib(&mut bytes, "operator", &self.value.operator)?;
-                            write_attrib(&mut bytes, "negate", &self.value.negate)?;
+                            helper.write_attrib(&mut bytes, "operator", &self.value.operator)?;
+                            helper.write_attrib(&mut bytes, "negate", &self.value.negate)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         LogicalTestTypeSerializerState::LogicalTest(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = LogicalTestTypeSerializerState::FactRef(
@@ -41223,26 +41571,29 @@ pub mod cpe {
                                 }
                             }
                         }
-                        LogicalTestTypeSerializerState::FactRef(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => {
-                                *self.state = LogicalTestTypeSerializerState::CheckFactRef(
-                                    IterSerializer::new(
-                                        &self.value.check_fact_ref[..],
-                                        Some("cpe:check-fact-ref"),
-                                        false,
-                                    ),
-                                )
+                        LogicalTestTypeSerializerState::FactRef(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => {
+                                    *self.state = LogicalTestTypeSerializerState::CheckFactRef(
+                                        IterSerializer::new(
+                                            &self.value.check_fact_ref[..],
+                                            Some("cpe:check-fact-ref"),
+                                            false,
+                                        ),
+                                    )
+                                }
                             }
-                        },
+                        }
                         LogicalTestTypeSerializerState::CheckFactRef(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = LogicalTestTypeSerializerState::End__,
                             }
                         }
                         LogicalTestTypeSerializerState::End__ => {
                             *self.state = LogicalTestTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         LogicalTestTypeSerializerState::Done__ => return Ok(None),
@@ -41251,10 +41602,9 @@ pub mod cpe {
                 }
             }
         }
-        impl<'ser> Iterator for LogicalTestTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for LogicalTestTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -41278,24 +41628,30 @@ pub mod cpe {
             Phantom__(&'ser ()),
         }
         impl<'ser> CpeFactRefTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CpeFactRefTypeSerializerState::Init__ => {
                             *self.state = CpeFactRefTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CPE),
+                                    &super::super::NS_CPE,
+                                );
                             }
-                            write_attrib_opt(&mut bytes, "description", &self.value.description)?;
-                            write_attrib(&mut bytes, "name", &self.value.name)?;
+                            helper.write_attrib_opt(
+                                &mut bytes,
+                                "description",
+                                &self.value.description,
+                            )?;
+                            helper.write_attrib(&mut bytes, "name", &self.value.name)?;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         CpeFactRefTypeSerializerState::Done__ => return Ok(None),
@@ -41304,10 +41660,9 @@ pub mod cpe {
                 }
             }
         }
-        impl<'ser> Iterator for CpeFactRefTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CpeFactRefTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -41331,26 +41686,32 @@ pub mod cpe {
             Phantom__(&'ser ()),
         }
         impl<'ser> CheckFactRefTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CheckFactRefTypeSerializerState::Init__ => {
                             *self.state = CheckFactRefTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:cdf"[..], &super::super::NS_CDF[..]));
-                                bytes
-                                    .push_attribute((&b"xmlns:cpe"[..], &super::super::NS_CPE[..]));
-                                bytes.push_attribute((
-                                    &b"xmlns:cpe-name"[..],
-                                    &super::super::NS_CPE_NAME[..],
-                                ));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_CPE),
+                                    &super::super::NS_CPE,
+                                );
                             }
-                            write_attrib_opt(&mut bytes, "description", &self.value.description)?;
-                            write_attrib(&mut bytes, "system", &self.value.system)?;
-                            write_attrib(&mut bytes, "href", &self.value.href)?;
-                            write_attrib(&mut bytes, "id-ref", &self.value.id_ref)?;
+                            helper.write_attrib_opt(
+                                &mut bytes,
+                                "description",
+                                &self.value.description,
+                            )?;
+                            helper.write_attrib(&mut bytes, "system", &self.value.system)?;
+                            helper.write_attrib(&mut bytes, "href", &self.value.href)?;
+                            helper.write_attrib(&mut bytes, "id-ref", &self.value.id_ref)?;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         CheckFactRefTypeSerializerState::Done__ => return Ok(None),
@@ -41359,10 +41720,9 @@ pub mod cpe {
                 }
             }
         }
-        impl<'ser> Iterator for CheckFactRefTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CheckFactRefTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -41376,17 +41736,22 @@ pub mod cpe {
 }
 pub mod xs {
     use std::borrow::Cow;
-    use xsd_parser_types::quick_xml::{DeserializeBytes, DeserializeHelper, Error, SerializeBytes};
+    use xsd_parser_types::quick_xml::{
+        DeserializeBytes, DeserializeHelper, Error, SerializeBytes, SerializeHelper,
+    };
     #[derive(Debug, Default)]
     pub struct EntitiesType(pub Vec<String>);
     impl SerializeBytes for EntitiesType {
-        fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+        fn serialize_bytes(
+            &self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Cow<'_, str>>, Error> {
             if self.0.is_empty() {
                 return Ok(None);
             }
             let mut data = String::new();
             for item in &self.0 {
-                if let Some(bytes) = item.serialize_bytes()? {
+                if let Some(bytes) = item.serialize_bytes(helper)? {
                     if !data.is_empty() {
                         data.push(' ');
                     }

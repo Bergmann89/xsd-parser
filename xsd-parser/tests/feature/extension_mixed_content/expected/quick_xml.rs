@@ -1,11 +1,14 @@
 use xsd_parser_types::{
-    misc::Namespace,
+    misc::{Namespace, NamespacePrefix},
     quick_xml::{Error, WithDeserializer, WithSerializer},
     xml::{AnyAttributes, AnyElement, Mixed, Text},
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
 pub const NS_TNS: Namespace = Namespace::new_const(b"http://example.com");
+pub const PREFIX_XS: NamespacePrefix = NamespacePrefix::new_const(b"xs");
+pub const PREFIX_XML: NamespacePrefix = NamespacePrefix::new_const(b"xml");
+pub const PREFIX_TNS: NamespacePrefix = NamespacePrefix::new_const(b"tns");
 pub type AttributeValue = AttributeValueType;
 #[derive(Debug)]
 pub struct AttributeValueType {
@@ -457,7 +460,8 @@ pub mod quick_xml_deserialize {
 pub mod quick_xml_serialize {
     use xsd_parser_types::{
         quick_xml::{
-            write_attrib, BytesEnd, BytesStart, Error, Event, IterSerializer, WithSerializer,
+            BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
+            WithSerializer,
         },
         xml::{AnyElement, Mixed, Text},
     };
@@ -479,7 +483,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> AttributeValueTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     AttributeValueTypeSerializerState::Init__ => {
@@ -487,16 +494,21 @@ pub mod quick_xml_serialize {
                             IterSerializer::new(self.value.text_before.as_ref(), Some(""), false),
                         );
                         let mut bytes = BytesStart::new(self.name);
+                        helper.begin_ns_scope();
                         if self.is_root {
-                            bytes.push_attribute((&b"xmlns:tns"[..], &super::NS_TNS[..]));
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_TNS),
+                                &super::NS_TNS,
+                            );
                         }
-                        write_attrib(&mut bytes, "BaseAttrib", &self.value.base_attrib)?;
-                        write_attrib(&mut bytes, "DataType", &self.value.data_type)?;
+                        helper.write_attrib(&mut bytes, "BaseAttrib", &self.value.base_attrib)?;
+                        helper.write_attrib(&mut bytes, "DataType", &self.value.data_type)?;
                         bytes.extend_attributes(self.value.any_attribute.attributes());
                         return Ok(Some(Event::Start(bytes)));
                     }
                     AttributeValueTypeSerializerState::TextBefore(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state = AttributeValueTypeSerializerState::BaseElement(
@@ -510,7 +522,7 @@ pub mod quick_xml_serialize {
                         }
                     }
                     AttributeValueTypeSerializerState::BaseElement(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state = AttributeValueTypeSerializerState::Any(
@@ -519,12 +531,15 @@ pub mod quick_xml_serialize {
                             }
                         }
                     }
-                    AttributeValueTypeSerializerState::Any(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => *self.state = AttributeValueTypeSerializerState::End__,
-                    },
+                    AttributeValueTypeSerializerState::Any(x) => {
+                        match x.next(helper).transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => *self.state = AttributeValueTypeSerializerState::End__,
+                        }
+                    }
                     AttributeValueTypeSerializerState::End__ => {
                         *self.state = AttributeValueTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     AttributeValueTypeSerializerState::Done__ => return Ok(None),
@@ -533,10 +548,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for AttributeValueTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for AttributeValueTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {

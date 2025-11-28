@@ -1,15 +1,17 @@
 use std::borrow::Cow;
 use xsd_parser_types::{
-    misc::Namespace,
+    misc::{Namespace, NamespacePrefix},
     quick_xml::{
         DeserializeBytes, DeserializeHelper, Error, ErrorKind, RawByteStr, SerializeBytes,
-        WithDeserializer, WithSerializer,
+        SerializeHelper, WithDeserializer, WithSerializer,
     },
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
 pub const NS_UNNAMED_2: Namespace =
     Namespace::new_const(b"http://www.etim-international.com/bmecat/31");
+pub const PREFIX_XS: NamespacePrefix = NamespacePrefix::new_const(b"xs");
+pub const PREFIX_XML: NamespacePrefix = NamespacePrefix::new_const(b"xml");
 pub type BmecatElement = BmecatElementType;
 #[derive(Debug)]
 pub struct BmecatElementType {
@@ -65,7 +67,7 @@ pub enum TypeBmEcatVersion {
     _2005,
 }
 impl SerializeBytes for TypeBmEcatVersion {
-    fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+    fn serialize_bytes(&self, helper: &mut SerializeHelper) -> Result<Option<Cow<'_, str>>, Error> {
         match self {
             Self::_12 => Ok(Some(Cow::Borrowed("1.2"))),
             Self::_2005 => Ok(Some(Cow::Borrowed("2005"))),
@@ -620,7 +622,7 @@ pub enum DtCurrencies {
     Zwd,
 }
 impl SerializeBytes for DtCurrencies {
-    fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+    fn serialize_bytes(&self, helper: &mut SerializeHelper) -> Result<Option<Cow<'_, str>>, Error> {
         match self {
             Self::Adp => Ok(Some(Cow::Borrowed("ADP"))),
             Self::Aed => Ok(Some(Cow::Borrowed("AED"))),
@@ -1030,7 +1032,7 @@ pub enum TNewCatalogProductMode {
     New,
 }
 impl SerializeBytes for TNewCatalogProductMode {
-    fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+    fn serialize_bytes(&self, helper: &mut SerializeHelper) -> Result<Option<Cow<'_, str>>, Error> {
         match self {
             Self::New => Ok(Some(Cow::Borrowed("new"))),
         }
@@ -1290,7 +1292,7 @@ pub enum TUpdateProductsProductMode {
     Update,
 }
 impl SerializeBytes for TUpdateProductsProductMode {
-    fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+    fn serialize_bytes(&self, helper: &mut SerializeHelper) -> Result<Option<Cow<'_, str>>, Error> {
         match self {
             Self::Delete => Ok(Some(Cow::Borrowed("delete"))),
             Self::New => Ok(Some(Cow::Borrowed("new"))),
@@ -1315,7 +1317,7 @@ pub enum TUpdatePricesProductMode {
     Update,
 }
 impl SerializeBytes for TUpdatePricesProductMode {
-    fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+    fn serialize_bytes(&self, helper: &mut SerializeHelper) -> Result<Option<Cow<'_, str>>, Error> {
         match self {
             Self::Update => Ok(Some(Cow::Borrowed("update"))),
         }
@@ -1794,7 +1796,7 @@ pub enum DtLang {
     Zul,
 }
 impl SerializeBytes for DtLang {
-    fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+    fn serialize_bytes(&self, helper: &mut SerializeHelper) -> Result<Option<Cow<'_, str>>, Error> {
         match self {
             Self::Aar => Ok(Some(Cow::Borrowed("aar"))),
             Self::Abk => Ok(Some(Cow::Borrowed("abk"))),
@@ -2731,7 +2733,7 @@ pub enum CatalogDatetimeType {
     GenerationDate,
 }
 impl SerializeBytes for CatalogDatetimeType {
-    fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+    fn serialize_bytes(&self, helper: &mut SerializeHelper) -> Result<Option<Cow<'_, str>>, Error> {
         match self {
             Self::GenerationDate => Ok(Some(Cow::Borrowed("generation_date"))),
         }
@@ -2752,7 +2754,7 @@ pub enum SupplierAddressType {
     Supplier,
 }
 impl SerializeBytes for SupplierAddressType {
-    fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+    fn serialize_bytes(&self, helper: &mut SerializeHelper) -> Result<Option<Cow<'_, str>>, Error> {
         match self {
             Self::Supplier => Ok(Some(Cow::Borrowed("supplier"))),
         }
@@ -3005,7 +3007,7 @@ pub enum DtPunit {
     Z3,
 }
 impl SerializeBytes for DtPunit {
-    fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+    fn serialize_bytes(&self, helper: &mut SerializeHelper) -> Result<Option<Cow<'_, str>>, Error> {
         match self {
             Self::Be => Ok(Some(Cow::Borrowed("BE"))),
             Self::Bg => Ok(Some(Cow::Borrowed("BG"))),
@@ -3386,7 +3388,7 @@ pub enum ProductReferenceType {
     Others,
 }
 impl SerializeBytes for ProductReferenceType {
-    fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+    fn serialize_bytes(&self, helper: &mut SerializeHelper) -> Result<Option<Cow<'_, str>>, Error> {
         match self {
             Self::Accessories => Ok(Some(Cow::Borrowed("accessories"))),
             Self::BaseProduct => Ok(Some(Cow::Borrowed("base_product"))),
@@ -3458,7 +3460,7 @@ pub enum MimePurposeElementType {
     Others,
 }
 impl SerializeBytes for MimePurposeElementType {
-    fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+    fn serialize_bytes(&self, helper: &mut SerializeHelper) -> Result<Option<Cow<'_, str>>, Error> {
         match self {
             Self::DataSheet => Ok(Some(Cow::Borrowed("data_sheet"))),
             Self::Detail => Ok(Some(Cow::Borrowed("detail"))),
@@ -3500,7 +3502,7 @@ pub enum ProductStatusType {
     Others,
 }
 impl SerializeBytes for ProductStatusType {
-    fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+    fn serialize_bytes(&self, helper: &mut SerializeHelper) -> Result<Option<Cow<'_, str>>, Error> {
         match self {
             Self::Bargain => Ok(Some(Cow::Borrowed("bargain"))),
             Self::CoreProduct => Ok(Some(Cow::Borrowed("core_product"))),
@@ -3536,7 +3538,7 @@ pub enum TypeClassificationGroupIdType {
     Hierarchy,
 }
 impl SerializeBytes for TypeClassificationGroupIdType {
-    fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+    fn serialize_bytes(&self, helper: &mut SerializeHelper) -> Result<Option<Cow<'_, str>>, Error> {
         match self {
             Self::Flat => Ok(Some(Cow::Borrowed("flat"))),
             Self::Hierarchy => Ok(Some(Cow::Borrowed("hierarchy"))),
@@ -3560,7 +3562,7 @@ pub enum ProductPriceDetailsDatetimeType {
     ValidEndDate,
 }
 impl SerializeBytes for ProductPriceDetailsDatetimeType {
-    fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+    fn serialize_bytes(&self, helper: &mut SerializeHelper) -> Result<Option<Cow<'_, str>>, Error> {
         match self {
             Self::ValidStartDate => Ok(Some(Cow::Borrowed("valid_start_date"))),
             Self::ValidEndDate => Ok(Some(Cow::Borrowed("valid_end_date"))),
@@ -26557,7 +26559,7 @@ pub mod quick_xml_deserialize {
 }
 pub mod quick_xml_serialize {
     use xsd_parser_types::quick_xml::{
-        write_attrib, write_attrib_opt, BytesEnd, BytesStart, Error, Event, IterSerializer,
+        BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
         WithSerializer,
     };
     #[derive(Debug)]
@@ -26582,7 +26584,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> BmecatElementTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     BmecatElementTypeSerializerState::Init__ => {
@@ -26590,18 +26595,20 @@ pub mod quick_xml_serialize {
                             IterSerializer::new(&self.value.content[..], None, false),
                         );
                         let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns"[..], &super::NS_UNNAMED_2[..]));
-                        }
-                        write_attrib(&mut bytes, "version", &self.value.version)?;
+                        helper.begin_ns_scope();
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_attrib(&mut bytes, "version", &self.value.version)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
-                    BmecatElementTypeSerializerState::Content__(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => *self.state = BmecatElementTypeSerializerState::End__,
-                    },
+                    BmecatElementTypeSerializerState::Content__(x) => {
+                        match x.next(helper).transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => *self.state = BmecatElementTypeSerializerState::End__,
+                        }
+                    }
                     BmecatElementTypeSerializerState::End__ => {
                         *self.state = BmecatElementTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     BmecatElementTypeSerializerState::Done__ => return Ok(None),
@@ -26610,10 +26617,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for BmecatElementTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for BmecatElementTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -26639,7 +26645,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> BmecatElementTypeContentSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     BmecatElementTypeContentSerializerState::Init__ => match self.value {
@@ -26665,25 +26674,25 @@ pub mod quick_xml_serialize {
                         }
                     },
                     BmecatElementTypeContentSerializerState::Header(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = BmecatElementTypeContentSerializerState::Done__,
                         }
                     }
                     BmecatElementTypeContentSerializerState::TNewCatalog(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = BmecatElementTypeContentSerializerState::Done__,
                         }
                     }
                     BmecatElementTypeContentSerializerState::TUpdateProducts(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = BmecatElementTypeContentSerializerState::Done__,
                         }
                     }
                     BmecatElementTypeContentSerializerState::TUpdatePrices(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = BmecatElementTypeContentSerializerState::Done__,
                         }
@@ -26694,10 +26703,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for BmecatElementTypeContentSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for BmecatElementTypeContentSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -26727,7 +26735,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> HeaderElementTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     HeaderElementTypeSerializerState::Init__ => {
@@ -26738,13 +26749,12 @@ pub mod quick_xml_serialize {
                                 false,
                             ));
                         let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns"[..], &super::NS_UNNAMED_2[..]));
-                        }
+                        helper.begin_ns_scope();
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
                         return Ok(Some(Event::Start(bytes)));
                     }
                     HeaderElementTypeSerializerState::GeneratorInfo(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state = HeaderElementTypeSerializerState::Catalog(
@@ -26757,49 +26767,58 @@ pub mod quick_xml_serialize {
                             }
                         }
                     }
-                    HeaderElementTypeSerializerState::Catalog(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => {
-                            *self.state =
-                                HeaderElementTypeSerializerState::Buyer(WithSerializer::serializer(
-                                    &self.value.buyer,
-                                    Some("BUYER"),
-                                    false,
-                                )?)
+                    HeaderElementTypeSerializerState::Catalog(x) => {
+                        match x.next(helper).transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => {
+                                *self.state = HeaderElementTypeSerializerState::Buyer(
+                                    WithSerializer::serializer(
+                                        &self.value.buyer,
+                                        Some("BUYER"),
+                                        false,
+                                    )?,
+                                )
+                            }
                         }
-                    },
-                    HeaderElementTypeSerializerState::Buyer(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => {
-                            *self.state = HeaderElementTypeSerializerState::Supplier(
-                                WithSerializer::serializer(
-                                    &self.value.supplier,
-                                    Some("SUPPLIER"),
-                                    false,
-                                )?,
-                            )
+                    }
+                    HeaderElementTypeSerializerState::Buyer(x) => {
+                        match x.next(helper).transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => {
+                                *self.state = HeaderElementTypeSerializerState::Supplier(
+                                    WithSerializer::serializer(
+                                        &self.value.supplier,
+                                        Some("SUPPLIER"),
+                                        false,
+                                    )?,
+                                )
+                            }
                         }
-                    },
-                    HeaderElementTypeSerializerState::Supplier(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => {
-                            *self.state = HeaderElementTypeSerializerState::UserDefinedExtensions(
-                                WithSerializer::serializer(
-                                    &self.value.user_defined_extensions,
-                                    Some("USER_DEFINED_EXTENSIONS"),
-                                    false,
-                                )?,
-                            )
+                    }
+                    HeaderElementTypeSerializerState::Supplier(x) => {
+                        match x.next(helper).transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => {
+                                *self.state =
+                                    HeaderElementTypeSerializerState::UserDefinedExtensions(
+                                        WithSerializer::serializer(
+                                            &self.value.user_defined_extensions,
+                                            Some("USER_DEFINED_EXTENSIONS"),
+                                            false,
+                                        )?,
+                                    )
+                            }
                         }
-                    },
+                    }
                     HeaderElementTypeSerializerState::UserDefinedExtensions(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = HeaderElementTypeSerializerState::End__,
                         }
                     }
                     HeaderElementTypeSerializerState::End__ => {
                         *self.state = HeaderElementTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     HeaderElementTypeSerializerState::Done__ => return Ok(None),
@@ -26808,10 +26827,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for HeaderElementTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for HeaderElementTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -26843,7 +26861,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> TNewCatalogElementTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     TNewCatalogElementTypeSerializerState::Init__ => {
@@ -26851,19 +26872,19 @@ pub mod quick_xml_serialize {
                             IterSerializer::new(&self.value.product[..], Some("PRODUCT"), false),
                         );
                         let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns"[..], &super::NS_UNNAMED_2[..]));
-                        }
+                        helper.begin_ns_scope();
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
                         return Ok(Some(Event::Start(bytes)));
                     }
                     TNewCatalogElementTypeSerializerState::Product(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = TNewCatalogElementTypeSerializerState::End__,
                         }
                     }
                     TNewCatalogElementTypeSerializerState::End__ => {
                         *self.state = TNewCatalogElementTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     TNewCatalogElementTypeSerializerState::Done__ => return Ok(None),
@@ -26872,10 +26893,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for TNewCatalogElementTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for TNewCatalogElementTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -26907,7 +26927,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> TUpdateProductsElementTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     TUpdateProductsElementTypeSerializerState::Init__ => {
@@ -26915,20 +26938,24 @@ pub mod quick_xml_serialize {
                             IterSerializer::new(&self.value.product[..], Some("PRODUCT"), false),
                         );
                         let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns"[..], &super::NS_UNNAMED_2[..]));
-                        }
-                        write_attrib(&mut bytes, "prev_version", &self.value.prev_version)?;
+                        helper.begin_ns_scope();
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_attrib(
+                            &mut bytes,
+                            "prev_version",
+                            &self.value.prev_version,
+                        )?;
                         return Ok(Some(Event::Start(bytes)));
                     }
                     TUpdateProductsElementTypeSerializerState::Product(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = TUpdateProductsElementTypeSerializerState::End__,
                         }
                     }
                     TUpdateProductsElementTypeSerializerState::End__ => {
                         *self.state = TUpdateProductsElementTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     TUpdateProductsElementTypeSerializerState::Done__ => return Ok(None),
@@ -26937,10 +26964,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for TUpdateProductsElementTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for TUpdateProductsElementTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -26972,7 +26998,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> TUpdatePricesElementTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     TUpdatePricesElementTypeSerializerState::Init__ => {
@@ -26980,20 +27009,24 @@ pub mod quick_xml_serialize {
                             IterSerializer::new(&self.value.product[..], Some("PRODUCT"), false),
                         );
                         let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns"[..], &super::NS_UNNAMED_2[..]));
-                        }
-                        write_attrib(&mut bytes, "prev_version", &self.value.prev_version)?;
+                        helper.begin_ns_scope();
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_attrib(
+                            &mut bytes,
+                            "prev_version",
+                            &self.value.prev_version,
+                        )?;
                         return Ok(Some(Event::Start(bytes)));
                     }
                     TUpdatePricesElementTypeSerializerState::Product(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = TUpdatePricesElementTypeSerializerState::End__,
                         }
                     }
                     TUpdatePricesElementTypeSerializerState::End__ => {
                         *self.state = TUpdatePricesElementTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     TUpdatePricesElementTypeSerializerState::Done__ => return Ok(None),
@@ -27002,10 +27035,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for TUpdatePricesElementTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for TUpdatePricesElementTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -27040,7 +27072,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> CatalogElementTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     CatalogElementTypeSerializerState::Init__ => {
@@ -27048,25 +27083,26 @@ pub mod quick_xml_serialize {
                             IterSerializer::new(&self.value.language[..], Some("LANGUAGE"), false),
                         );
                         let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns"[..], &super::NS_UNNAMED_2[..]));
-                        }
+                        helper.begin_ns_scope();
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
                         return Ok(Some(Event::Start(bytes)));
                     }
-                    CatalogElementTypeSerializerState::Language(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => {
-                            *self.state = CatalogElementTypeSerializerState::CatalogId(
-                                WithSerializer::serializer(
-                                    &self.value.catalog_id,
-                                    Some("CATALOG_ID"),
-                                    false,
-                                )?,
-                            )
+                    CatalogElementTypeSerializerState::Language(x) => {
+                        match x.next(helper).transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => {
+                                *self.state = CatalogElementTypeSerializerState::CatalogId(
+                                    WithSerializer::serializer(
+                                        &self.value.catalog_id,
+                                        Some("CATALOG_ID"),
+                                        false,
+                                    )?,
+                                )
+                            }
                         }
-                    },
+                    }
                     CatalogElementTypeSerializerState::CatalogId(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state = CatalogElementTypeSerializerState::CatalogVersion(
@@ -27080,7 +27116,7 @@ pub mod quick_xml_serialize {
                         }
                     }
                     CatalogElementTypeSerializerState::CatalogVersion(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state = CatalogElementTypeSerializerState::CatalogName(
@@ -27094,7 +27130,7 @@ pub mod quick_xml_serialize {
                         }
                     }
                     CatalogElementTypeSerializerState::CatalogName(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state = CatalogElementTypeSerializerState::Datetime(
@@ -27107,19 +27143,22 @@ pub mod quick_xml_serialize {
                             }
                         }
                     }
-                    CatalogElementTypeSerializerState::Datetime(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => {
-                            *self.state =
-                                CatalogElementTypeSerializerState::Territory(IterSerializer::new(
-                                    &self.value.territory[..],
-                                    Some("TERRITORY"),
-                                    false,
-                                ))
+                    CatalogElementTypeSerializerState::Datetime(x) => {
+                        match x.next(helper).transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => {
+                                *self.state = CatalogElementTypeSerializerState::Territory(
+                                    IterSerializer::new(
+                                        &self.value.territory[..],
+                                        Some("TERRITORY"),
+                                        false,
+                                    ),
+                                )
+                            }
                         }
-                    },
+                    }
                     CatalogElementTypeSerializerState::Territory(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state = CatalogElementTypeSerializerState::Currency(
@@ -27132,23 +27171,29 @@ pub mod quick_xml_serialize {
                             }
                         }
                     }
-                    CatalogElementTypeSerializerState::Currency(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => {
-                            *self.state =
-                                CatalogElementTypeSerializerState::MimeRoot(IterSerializer::new(
-                                    &self.value.mime_root[..],
-                                    Some("MIME_ROOT"),
-                                    false,
-                                ))
+                    CatalogElementTypeSerializerState::Currency(x) => {
+                        match x.next(helper).transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => {
+                                *self.state = CatalogElementTypeSerializerState::MimeRoot(
+                                    IterSerializer::new(
+                                        &self.value.mime_root[..],
+                                        Some("MIME_ROOT"),
+                                        false,
+                                    ),
+                                )
+                            }
                         }
-                    },
-                    CatalogElementTypeSerializerState::MimeRoot(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => *self.state = CatalogElementTypeSerializerState::End__,
-                    },
+                    }
+                    CatalogElementTypeSerializerState::MimeRoot(x) => {
+                        match x.next(helper).transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => *self.state = CatalogElementTypeSerializerState::End__,
+                        }
+                    }
                     CatalogElementTypeSerializerState::End__ => {
                         *self.state = CatalogElementTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     CatalogElementTypeSerializerState::Done__ => return Ok(None),
@@ -27157,10 +27202,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for CatalogElementTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for CatalogElementTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -27187,7 +27231,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> BuyerElementTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     BuyerElementTypeSerializerState::Init__ => {
@@ -27198,29 +27245,33 @@ pub mod quick_xml_serialize {
                                 false,
                             ));
                         let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns"[..], &super::NS_UNNAMED_2[..]));
-                        }
+                        helper.begin_ns_scope();
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
                         return Ok(Some(Event::Start(bytes)));
                     }
-                    BuyerElementTypeSerializerState::BuyerId(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => {
-                            *self.state = BuyerElementTypeSerializerState::BuyerName(
-                                WithSerializer::serializer(
-                                    &self.value.buyer_name,
-                                    Some("BUYER_NAME"),
-                                    false,
-                                )?,
-                            )
+                    BuyerElementTypeSerializerState::BuyerId(x) => {
+                        match x.next(helper).transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => {
+                                *self.state = BuyerElementTypeSerializerState::BuyerName(
+                                    WithSerializer::serializer(
+                                        &self.value.buyer_name,
+                                        Some("BUYER_NAME"),
+                                        false,
+                                    )?,
+                                )
+                            }
                         }
-                    },
-                    BuyerElementTypeSerializerState::BuyerName(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => *self.state = BuyerElementTypeSerializerState::End__,
-                    },
+                    }
+                    BuyerElementTypeSerializerState::BuyerName(x) => {
+                        match x.next(helper).transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => *self.state = BuyerElementTypeSerializerState::End__,
+                        }
+                    }
                     BuyerElementTypeSerializerState::End__ => {
                         *self.state = BuyerElementTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     BuyerElementTypeSerializerState::Done__ => return Ok(None),
@@ -27229,10 +27280,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for BuyerElementTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for BuyerElementTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -27273,7 +27323,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> SupplierElementTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     SupplierElementTypeSerializerState::Init__ => {
@@ -27284,13 +27337,12 @@ pub mod quick_xml_serialize {
                                 false,
                             ));
                         let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns"[..], &super::NS_UNNAMED_2[..]));
-                        }
+                        helper.begin_ns_scope();
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
                         return Ok(Some(Event::Start(bytes)));
                     }
                     SupplierElementTypeSerializerState::SupplierId(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state = SupplierElementTypeSerializerState::SupplierName(
@@ -27304,7 +27356,7 @@ pub mod quick_xml_serialize {
                         }
                     }
                     SupplierElementTypeSerializerState::SupplierName(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state = SupplierElementTypeSerializerState::Address(
@@ -27317,25 +27369,29 @@ pub mod quick_xml_serialize {
                             }
                         }
                     }
-                    SupplierElementTypeSerializerState::Address(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => {
-                            *self.state =
-                                SupplierElementTypeSerializerState::MimeInfo(IterSerializer::new(
-                                    self.value.mime_info.as_ref(),
-                                    Some("MIME_INFO"),
-                                    false,
-                                ))
+                    SupplierElementTypeSerializerState::Address(x) => {
+                        match x.next(helper).transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => {
+                                *self.state = SupplierElementTypeSerializerState::MimeInfo(
+                                    IterSerializer::new(
+                                        self.value.mime_info.as_ref(),
+                                        Some("MIME_INFO"),
+                                        false,
+                                    ),
+                                )
+                            }
                         }
-                    },
+                    }
                     SupplierElementTypeSerializerState::MimeInfo(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = SupplierElementTypeSerializerState::End__,
                         }
                     }
                     SupplierElementTypeSerializerState::End__ => {
                         *self.state = SupplierElementTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     SupplierElementTypeSerializerState::Done__ => return Ok(None),
@@ -27344,10 +27400,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for SupplierElementTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for SupplierElementTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -27373,7 +27428,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> UdxHeaderSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     UdxHeaderSerializerState::Init__ => {
@@ -27384,17 +27442,19 @@ pub mod quick_xml_serialize {
                                 false,
                             )?);
                         let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns"[..], &super::NS_UNNAMED_2[..]));
-                        }
+                        helper.begin_ns_scope();
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
                         return Ok(Some(Event::Start(bytes)));
                     }
-                    UdxHeaderSerializerState::UdxEdxfVersion(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => *self.state = UdxHeaderSerializerState::End__,
-                    },
+                    UdxHeaderSerializerState::UdxEdxfVersion(x) => {
+                        match x.next(helper).transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => *self.state = UdxHeaderSerializerState::End__,
+                        }
+                    }
                     UdxHeaderSerializerState::End__ => {
                         *self.state = UdxHeaderSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     UdxHeaderSerializerState::Done__ => return Ok(None),
@@ -27403,10 +27463,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for UdxHeaderSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for UdxHeaderSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -27472,7 +27531,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> TNewCatalogProductElementTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     TNewCatalogProductElementTypeSerializerState::Init__ => {
@@ -27484,14 +27546,13 @@ pub mod quick_xml_serialize {
                             )?,
                         );
                         let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns"[..], &super::NS_UNNAMED_2[..]));
-                        }
-                        write_attrib(&mut bytes, "mode", &self.value.mode)?;
+                        helper.begin_ns_scope();
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_attrib(&mut bytes, "mode", &self.value.mode)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
                     TNewCatalogProductElementTypeSerializerState::SupplierPid(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state =
@@ -27506,7 +27567,7 @@ pub mod quick_xml_serialize {
                         }
                     }
                     TNewCatalogProductElementTypeSerializerState::ProductDetails(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state =
@@ -27521,7 +27582,7 @@ pub mod quick_xml_serialize {
                         }
                     }
                     TNewCatalogProductElementTypeSerializerState::ProductFeatures(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state =
                                 TNewCatalogProductElementTypeSerializerState::ProductOrderDetails(
@@ -27534,7 +27595,7 @@ pub mod quick_xml_serialize {
                         }
                     }
                     TNewCatalogProductElementTypeSerializerState::ProductOrderDetails(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state =
                                 TNewCatalogProductElementTypeSerializerState::ProductPriceDetails(
@@ -27547,7 +27608,7 @@ pub mod quick_xml_serialize {
                         }
                     }
                     TNewCatalogProductElementTypeSerializerState::ProductPriceDetails(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state = TNewCatalogProductElementTypeSerializerState::MimeInfo(
@@ -27561,7 +27622,7 @@ pub mod quick_xml_serialize {
                         }
                     }
                     TNewCatalogProductElementTypeSerializerState::MimeInfo(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state =
                                 TNewCatalogProductElementTypeSerializerState::UserDefinedExtensions(
@@ -27574,7 +27635,7 @@ pub mod quick_xml_serialize {
                         }
                     }
                     TNewCatalogProductElementTypeSerializerState::UserDefinedExtensions(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state =
@@ -27589,7 +27650,7 @@ pub mod quick_xml_serialize {
                         }
                     }
                     TNewCatalogProductElementTypeSerializerState::ProductReference(x) => match x
-                        .next()
+                        .next(helper)
                         .transpose()?
                     {
                         Some(event) => return Ok(Some(event)),
@@ -27605,7 +27666,7 @@ pub mod quick_xml_serialize {
                         }
                     },
                     TNewCatalogProductElementTypeSerializerState::ProductLogisticDetails(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state = TNewCatalogProductElementTypeSerializerState::End__
@@ -27614,6 +27675,7 @@ pub mod quick_xml_serialize {
                     }
                     TNewCatalogProductElementTypeSerializerState::End__ => {
                         *self.state = TNewCatalogProductElementTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     TNewCatalogProductElementTypeSerializerState::Done__ => return Ok(None),
@@ -27622,10 +27684,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for TNewCatalogProductElementTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for TNewCatalogProductElementTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -27693,16 +27754,18 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> TUpdateProductsProductElementTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match & mut * self . state { TUpdateProductsProductElementTypeSerializerState :: Init__ => { * self . state = TUpdateProductsProductElementTypeSerializerState :: SupplierPid (WithSerializer :: serializer (& self . value . supplier_pid , Some ("SUPPLIER_PID") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; if self . is_root { bytes . push_attribute ((& b"xmlns" [..] , & super :: NS_UNNAMED_2 [..])) ; } write_attrib (& mut bytes , "mode" , & self . value . mode) ? ; return Ok (Some (Event :: Start (bytes))) } TUpdateProductsProductElementTypeSerializerState :: SupplierPid (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdateProductsProductElementTypeSerializerState :: ProductDetails (WithSerializer :: serializer (& self . value . product_details , Some ("PRODUCT_DETAILS") , false) ?) , } TUpdateProductsProductElementTypeSerializerState :: ProductDetails (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdateProductsProductElementTypeSerializerState :: ProductFeatures (IterSerializer :: new (& self . value . product_features [..] , Some ("PRODUCT_FEATURES") , false)) , } TUpdateProductsProductElementTypeSerializerState :: ProductFeatures (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdateProductsProductElementTypeSerializerState :: ProductOrderDetails (WithSerializer :: serializer (& self . value . product_order_details , Some ("PRODUCT_ORDER_DETAILS") , false) ?) , } TUpdateProductsProductElementTypeSerializerState :: ProductOrderDetails (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdateProductsProductElementTypeSerializerState :: ProductPriceDetails (IterSerializer :: new (& self . value . product_price_details [..] , Some ("PRODUCT_PRICE_DETAILS") , false)) , } TUpdateProductsProductElementTypeSerializerState :: ProductPriceDetails (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdateProductsProductElementTypeSerializerState :: MimeInfo (IterSerializer :: new (self . value . mime_info . as_ref () , Some ("MIME_INFO") , false)) , } TUpdateProductsProductElementTypeSerializerState :: MimeInfo (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdateProductsProductElementTypeSerializerState :: UserDefinedExtensions (IterSerializer :: new (self . value . user_defined_extensions . as_ref () , Some ("USER_DEFINED_EXTENSIONS") , false)) , } TUpdateProductsProductElementTypeSerializerState :: UserDefinedExtensions (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdateProductsProductElementTypeSerializerState :: ProductReference (IterSerializer :: new (& self . value . product_reference [..] , Some ("PRODUCT_REFERENCE") , false)) , } TUpdateProductsProductElementTypeSerializerState :: ProductReference (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdateProductsProductElementTypeSerializerState :: ProductLogisticDetails (IterSerializer :: new (self . value . product_logistic_details . as_ref () , Some ("PRODUCT_LOGISTIC_DETAILS") , false)) , } TUpdateProductsProductElementTypeSerializerState :: ProductLogisticDetails (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdateProductsProductElementTypeSerializerState :: End__ , } TUpdateProductsProductElementTypeSerializerState :: End__ => { * self . state = TUpdateProductsProductElementTypeSerializerState :: Done__ ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } TUpdateProductsProductElementTypeSerializerState :: Done__ => return Ok (None) , TUpdateProductsProductElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                match & mut * self . state { TUpdateProductsProductElementTypeSerializerState :: Init__ => { * self . state = TUpdateProductsProductElementTypeSerializerState :: SupplierPid (WithSerializer :: serializer (& self . value . supplier_pid , Some ("SUPPLIER_PID") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns (& mut bytes , None , & super :: NS_UNNAMED_2) ; helper . write_attrib (& mut bytes , "mode" , & self . value . mode) ? ; return Ok (Some (Event :: Start (bytes))) } TUpdateProductsProductElementTypeSerializerState :: SupplierPid (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdateProductsProductElementTypeSerializerState :: ProductDetails (WithSerializer :: serializer (& self . value . product_details , Some ("PRODUCT_DETAILS") , false) ?) , } TUpdateProductsProductElementTypeSerializerState :: ProductDetails (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdateProductsProductElementTypeSerializerState :: ProductFeatures (IterSerializer :: new (& self . value . product_features [..] , Some ("PRODUCT_FEATURES") , false)) , } TUpdateProductsProductElementTypeSerializerState :: ProductFeatures (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdateProductsProductElementTypeSerializerState :: ProductOrderDetails (WithSerializer :: serializer (& self . value . product_order_details , Some ("PRODUCT_ORDER_DETAILS") , false) ?) , } TUpdateProductsProductElementTypeSerializerState :: ProductOrderDetails (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdateProductsProductElementTypeSerializerState :: ProductPriceDetails (IterSerializer :: new (& self . value . product_price_details [..] , Some ("PRODUCT_PRICE_DETAILS") , false)) , } TUpdateProductsProductElementTypeSerializerState :: ProductPriceDetails (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdateProductsProductElementTypeSerializerState :: MimeInfo (IterSerializer :: new (self . value . mime_info . as_ref () , Some ("MIME_INFO") , false)) , } TUpdateProductsProductElementTypeSerializerState :: MimeInfo (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdateProductsProductElementTypeSerializerState :: UserDefinedExtensions (IterSerializer :: new (self . value . user_defined_extensions . as_ref () , Some ("USER_DEFINED_EXTENSIONS") , false)) , } TUpdateProductsProductElementTypeSerializerState :: UserDefinedExtensions (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdateProductsProductElementTypeSerializerState :: ProductReference (IterSerializer :: new (& self . value . product_reference [..] , Some ("PRODUCT_REFERENCE") , false)) , } TUpdateProductsProductElementTypeSerializerState :: ProductReference (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdateProductsProductElementTypeSerializerState :: ProductLogisticDetails (IterSerializer :: new (self . value . product_logistic_details . as_ref () , Some ("PRODUCT_LOGISTIC_DETAILS") , false)) , } TUpdateProductsProductElementTypeSerializerState :: ProductLogisticDetails (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdateProductsProductElementTypeSerializerState :: End__ , } TUpdateProductsProductElementTypeSerializerState :: End__ => { * self . state = TUpdateProductsProductElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } TUpdateProductsProductElementTypeSerializerState :: Done__ => return Ok (None) , TUpdateProductsProductElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
             }
         }
     }
-    impl<'ser> Iterator for TUpdateProductsProductElementTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for TUpdateProductsProductElementTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -27738,16 +27801,18 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> TUpdatePricesProductElementTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match & mut * self . state { TUpdatePricesProductElementTypeSerializerState :: Init__ => { * self . state = TUpdatePricesProductElementTypeSerializerState :: SupplierPid (WithSerializer :: serializer (& self . value . supplier_pid , Some ("SUPPLIER_PID") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; if self . is_root { bytes . push_attribute ((& b"xmlns" [..] , & super :: NS_UNNAMED_2 [..])) ; } write_attrib (& mut bytes , "mode" , & self . value . mode) ? ; return Ok (Some (Event :: Start (bytes))) } TUpdatePricesProductElementTypeSerializerState :: SupplierPid (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdatePricesProductElementTypeSerializerState :: ProductPriceDetails (IterSerializer :: new (& self . value . product_price_details [..] , Some ("PRODUCT_PRICE_DETAILS") , false)) , } TUpdatePricesProductElementTypeSerializerState :: ProductPriceDetails (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdatePricesProductElementTypeSerializerState :: UserDefinedExtensions (IterSerializer :: new (self . value . user_defined_extensions . as_ref () , Some ("USER_DEFINED_EXTENSIONS") , false)) , } TUpdatePricesProductElementTypeSerializerState :: UserDefinedExtensions (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdatePricesProductElementTypeSerializerState :: End__ , } TUpdatePricesProductElementTypeSerializerState :: End__ => { * self . state = TUpdatePricesProductElementTypeSerializerState :: Done__ ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } TUpdatePricesProductElementTypeSerializerState :: Done__ => return Ok (None) , TUpdatePricesProductElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                match & mut * self . state { TUpdatePricesProductElementTypeSerializerState :: Init__ => { * self . state = TUpdatePricesProductElementTypeSerializerState :: SupplierPid (WithSerializer :: serializer (& self . value . supplier_pid , Some ("SUPPLIER_PID") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns (& mut bytes , None , & super :: NS_UNNAMED_2) ; helper . write_attrib (& mut bytes , "mode" , & self . value . mode) ? ; return Ok (Some (Event :: Start (bytes))) } TUpdatePricesProductElementTypeSerializerState :: SupplierPid (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdatePricesProductElementTypeSerializerState :: ProductPriceDetails (IterSerializer :: new (& self . value . product_price_details [..] , Some ("PRODUCT_PRICE_DETAILS") , false)) , } TUpdatePricesProductElementTypeSerializerState :: ProductPriceDetails (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdatePricesProductElementTypeSerializerState :: UserDefinedExtensions (IterSerializer :: new (self . value . user_defined_extensions . as_ref () , Some ("USER_DEFINED_EXTENSIONS") , false)) , } TUpdatePricesProductElementTypeSerializerState :: UserDefinedExtensions (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdatePricesProductElementTypeSerializerState :: End__ , } TUpdatePricesProductElementTypeSerializerState :: End__ => { * self . state = TUpdatePricesProductElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } TUpdatePricesProductElementTypeSerializerState :: Done__ => return Ok (None) , TUpdatePricesProductElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
             }
         }
     }
-    impl<'ser> Iterator for TUpdatePricesProductElementTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for TUpdatePricesProductElementTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -27773,7 +27838,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> LanguageElementTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     LanguageElementTypeSerializerState::Init__ => {
@@ -27781,20 +27849,20 @@ pub mod quick_xml_serialize {
                             WithSerializer::serializer(&self.value.content, None, false)?,
                         );
                         let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns"[..], &super::NS_UNNAMED_2[..]));
-                        }
-                        write_attrib_opt(&mut bytes, "default", &self.value.default)?;
+                        helper.begin_ns_scope();
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_attrib_opt(&mut bytes, "default", &self.value.default)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
                     LanguageElementTypeSerializerState::Content__(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = LanguageElementTypeSerializerState::End__,
                         }
                     }
                     LanguageElementTypeSerializerState::End__ => {
                         *self.state = LanguageElementTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     LanguageElementTypeSerializerState::Done__ => return Ok(None),
@@ -27803,10 +27871,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for LanguageElementTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for LanguageElementTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -27832,7 +27899,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> DtMlstringSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     DtMlstringSerializerState::Init__ => {
@@ -27840,18 +27910,18 @@ pub mod quick_xml_serialize {
                             WithSerializer::serializer(&self.value.content, None, false)?,
                         );
                         let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns"[..], &super::NS_UNNAMED_2[..]));
-                        }
-                        write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
+                        helper.begin_ns_scope();
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
-                    DtMlstringSerializerState::Content__(x) => match x.next().transpose()? {
+                    DtMlstringSerializerState::Content__(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => *self.state = DtMlstringSerializerState::End__,
                     },
                     DtMlstringSerializerState::End__ => {
                         *self.state = DtMlstringSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     DtMlstringSerializerState::Done__ => return Ok(None),
@@ -27860,10 +27930,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for DtMlstringSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for DtMlstringSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -27891,7 +27960,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> CatalogDatetimeElementTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     CatalogDatetimeElementTypeSerializerState::Init__ => {
@@ -27899,14 +27971,13 @@ pub mod quick_xml_serialize {
                             WithSerializer::serializer(&self.value.date, Some("DATE"), false)?,
                         );
                         let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns"[..], &super::NS_UNNAMED_2[..]));
-                        }
-                        write_attrib(&mut bytes, "type", &self.value.type_)?;
+                        helper.begin_ns_scope();
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
                     CatalogDatetimeElementTypeSerializerState::Date(x) => match x
-                        .next()
+                        .next(helper)
                         .transpose()?
                     {
                         Some(event) => return Ok(Some(event)),
@@ -27917,7 +27988,7 @@ pub mod quick_xml_serialize {
                         }
                     },
                     CatalogDatetimeElementTypeSerializerState::Time(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state = CatalogDatetimeElementTypeSerializerState::Timezone(
@@ -27931,13 +28002,14 @@ pub mod quick_xml_serialize {
                         }
                     }
                     CatalogDatetimeElementTypeSerializerState::Timezone(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = CatalogDatetimeElementTypeSerializerState::End__,
                         }
                     }
                     CatalogDatetimeElementTypeSerializerState::End__ => {
                         *self.state = CatalogDatetimeElementTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     CatalogDatetimeElementTypeSerializerState::Done__ => return Ok(None),
@@ -27946,10 +28018,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for CatalogDatetimeElementTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for CatalogDatetimeElementTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -27975,7 +28046,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> TypePartyIdSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     TypePartyIdSerializerState::Init__ => {
@@ -27983,18 +28057,18 @@ pub mod quick_xml_serialize {
                             WithSerializer::serializer(&self.value.content, None, false)?,
                         );
                         let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns"[..], &super::NS_UNNAMED_2[..]));
-                        }
-                        write_attrib_opt(&mut bytes, "type", &self.value.type_)?;
+                        helper.begin_ns_scope();
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_attrib_opt(&mut bytes, "type", &self.value.type_)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
-                    TypePartyIdSerializerState::Content__(x) => match x.next().transpose()? {
+                    TypePartyIdSerializerState::Content__(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => *self.state = TypePartyIdSerializerState::End__,
                     },
                     TypePartyIdSerializerState::End__ => {
                         *self.state = TypePartyIdSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     TypePartyIdSerializerState::Done__ => return Ok(None),
@@ -28003,10 +28077,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for TypePartyIdSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for TypePartyIdSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -28039,7 +28112,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> SupplierAddressElementTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     SupplierAddressElementTypeSerializerState::Init__ => {
@@ -28047,14 +28123,13 @@ pub mod quick_xml_serialize {
                             IterSerializer::new(&self.value.contact[..], Some("CONTACT"), false),
                         );
                         let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns"[..], &super::NS_UNNAMED_2[..]));
-                        }
-                        write_attrib(&mut bytes, "type", &self.value.type_)?;
+                        helper.begin_ns_scope();
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
                     SupplierAddressElementTypeSerializerState::Contact(x) => match x
-                        .next()
+                        .next(helper)
                         .transpose()?
                     {
                         Some(event) => return Ok(Some(event)),
@@ -28065,7 +28140,7 @@ pub mod quick_xml_serialize {
                         }
                     },
                     SupplierAddressElementTypeSerializerState::Street(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state = SupplierAddressElementTypeSerializerState::Zip(
@@ -28075,7 +28150,7 @@ pub mod quick_xml_serialize {
                         }
                     }
                     SupplierAddressElementTypeSerializerState::Zip(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state = SupplierAddressElementTypeSerializerState::City(
@@ -28085,7 +28160,7 @@ pub mod quick_xml_serialize {
                         }
                     }
                     SupplierAddressElementTypeSerializerState::City(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state = SupplierAddressElementTypeSerializerState::Country(
@@ -28099,7 +28174,7 @@ pub mod quick_xml_serialize {
                         }
                     }
                     SupplierAddressElementTypeSerializerState::Country(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state = SupplierAddressElementTypeSerializerState::VatId(
@@ -28113,7 +28188,7 @@ pub mod quick_xml_serialize {
                         }
                     }
                     SupplierAddressElementTypeSerializerState::VatId(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state = SupplierAddressElementTypeSerializerState::Email(
@@ -28127,7 +28202,7 @@ pub mod quick_xml_serialize {
                         }
                     }
                     SupplierAddressElementTypeSerializerState::Email(x) => match x
-                        .next()
+                        .next(helper)
                         .transpose()?
                     {
                         Some(event) => return Ok(Some(event)),
@@ -28138,13 +28213,14 @@ pub mod quick_xml_serialize {
                         }
                     },
                     SupplierAddressElementTypeSerializerState::Url(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = SupplierAddressElementTypeSerializerState::End__,
                         }
                     }
                     SupplierAddressElementTypeSerializerState::End__ => {
                         *self.state = SupplierAddressElementTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     SupplierAddressElementTypeSerializerState::Done__ => return Ok(None),
@@ -28153,10 +28229,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for SupplierAddressElementTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for SupplierAddressElementTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -28182,7 +28257,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> MimeInfoElementTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     MimeInfoElementTypeSerializerState::Init__ => {
@@ -28190,17 +28268,19 @@ pub mod quick_xml_serialize {
                             IterSerializer::new(&self.value.mime[..], Some("MIME"), false),
                         );
                         let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns"[..], &super::NS_UNNAMED_2[..]));
-                        }
+                        helper.begin_ns_scope();
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
                         return Ok(Some(Event::Start(bytes)));
                     }
-                    MimeInfoElementTypeSerializerState::Mime(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => *self.state = MimeInfoElementTypeSerializerState::End__,
-                    },
+                    MimeInfoElementTypeSerializerState::Mime(x) => {
+                        match x.next(helper).transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => *self.state = MimeInfoElementTypeSerializerState::End__,
+                        }
+                    }
                     MimeInfoElementTypeSerializerState::End__ => {
                         *self.state = MimeInfoElementTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     MimeInfoElementTypeSerializerState::Done__ => return Ok(None),
@@ -28209,10 +28289,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for MimeInfoElementTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for MimeInfoElementTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -28238,7 +28317,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> SupplierPidElementTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     SupplierPidElementTypeSerializerState::Init__ => {
@@ -28246,20 +28328,20 @@ pub mod quick_xml_serialize {
                             WithSerializer::serializer(&self.value.content, None, false)?,
                         );
                         let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns"[..], &super::NS_UNNAMED_2[..]));
-                        }
-                        write_attrib_opt(&mut bytes, "type", &self.value.type_)?;
+                        helper.begin_ns_scope();
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_attrib_opt(&mut bytes, "type", &self.value.type_)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
                     SupplierPidElementTypeSerializerState::Content__(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = SupplierPidElementTypeSerializerState::End__,
                         }
                     }
                     SupplierPidElementTypeSerializerState::End__ => {
                         *self.state = SupplierPidElementTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     SupplierPidElementTypeSerializerState::Done__ => return Ok(None),
@@ -28268,10 +28350,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for SupplierPidElementTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for SupplierPidElementTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -28328,7 +28409,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> ProductDetailsElementTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     ProductDetailsElementTypeSerializerState::Init__ => {
@@ -28340,13 +28424,12 @@ pub mod quick_xml_serialize {
                             ),
                         );
                         let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns"[..], &super::NS_UNNAMED_2[..]));
-                        }
+                        helper.begin_ns_scope();
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
                         return Ok(Some(Event::Start(bytes)));
                     }
                     ProductDetailsElementTypeSerializerState::DescriptionShort(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state =
@@ -28361,7 +28444,7 @@ pub mod quick_xml_serialize {
                         }
                     }
                     ProductDetailsElementTypeSerializerState::DescriptionLong(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state =
@@ -28376,7 +28459,7 @@ pub mod quick_xml_serialize {
                         }
                     }
                     ProductDetailsElementTypeSerializerState::InternationalPid(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state =
@@ -28391,7 +28474,7 @@ pub mod quick_xml_serialize {
                         }
                     }
                     ProductDetailsElementTypeSerializerState::SupplierAltPid(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state = ProductDetailsElementTypeSerializerState::BuyerPid(
@@ -28405,7 +28488,7 @@ pub mod quick_xml_serialize {
                         }
                     }
                     ProductDetailsElementTypeSerializerState::BuyerPid(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state =
@@ -28420,7 +28503,7 @@ pub mod quick_xml_serialize {
                         }
                     }
                     ProductDetailsElementTypeSerializerState::ManufacturerPid(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state =
@@ -28435,7 +28518,7 @@ pub mod quick_xml_serialize {
                         }
                     }
                     ProductDetailsElementTypeSerializerState::ManufacturerName(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state =
@@ -28450,7 +28533,7 @@ pub mod quick_xml_serialize {
                         }
                     }
                     ProductDetailsElementTypeSerializerState::ManufacturerTypeDescr(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state =
@@ -28465,7 +28548,7 @@ pub mod quick_xml_serialize {
                         }
                     }
                     ProductDetailsElementTypeSerializerState::SpecialTreatmentClass(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state = ProductDetailsElementTypeSerializerState::Keyword(
@@ -28479,7 +28562,7 @@ pub mod quick_xml_serialize {
                         }
                     }
                     ProductDetailsElementTypeSerializerState::Keyword(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state = ProductDetailsElementTypeSerializerState::Remarks(
@@ -28493,7 +28576,7 @@ pub mod quick_xml_serialize {
                         }
                     }
                     ProductDetailsElementTypeSerializerState::Remarks(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state =
@@ -28508,13 +28591,14 @@ pub mod quick_xml_serialize {
                         }
                     }
                     ProductDetailsElementTypeSerializerState::ProductStatus(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = ProductDetailsElementTypeSerializerState::End__,
                         }
                     }
                     ProductDetailsElementTypeSerializerState::End__ => {
                         *self.state = ProductDetailsElementTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     ProductDetailsElementTypeSerializerState::Done__ => return Ok(None),
@@ -28523,10 +28607,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for ProductDetailsElementTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for ProductDetailsElementTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -28556,7 +28639,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> ProductFeaturesElementTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     ProductFeaturesElementTypeSerializerState::Init__ => {
@@ -28569,13 +28655,12 @@ pub mod quick_xml_serialize {
                                 )?,
                             );
                         let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns"[..], &super::NS_UNNAMED_2[..]));
-                        }
+                        helper.begin_ns_scope();
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
                         return Ok(Some(Event::Start(bytes)));
                     }
                     ProductFeaturesElementTypeSerializerState::ReferenceFeatureSystemName(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state =
                                 ProductFeaturesElementTypeSerializerState::ReferenceFeatureGroupId(
@@ -28588,7 +28673,7 @@ pub mod quick_xml_serialize {
                         }
                     }
                     ProductFeaturesElementTypeSerializerState::ReferenceFeatureGroupId(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state = ProductFeaturesElementTypeSerializerState::Feature(
@@ -28602,13 +28687,14 @@ pub mod quick_xml_serialize {
                         }
                     }
                     ProductFeaturesElementTypeSerializerState::Feature(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = ProductFeaturesElementTypeSerializerState::End__,
                         }
                     }
                     ProductFeaturesElementTypeSerializerState::End__ => {
                         *self.state = ProductFeaturesElementTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     ProductFeaturesElementTypeSerializerState::Done__ => return Ok(None),
@@ -28617,10 +28703,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for ProductFeaturesElementTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for ProductFeaturesElementTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -28651,7 +28736,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> ProductOrderDetailsElementTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     ProductOrderDetailsElementTypeSerializerState::Init__ => {
@@ -28663,13 +28751,12 @@ pub mod quick_xml_serialize {
                             )?,
                         );
                         let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns"[..], &super::NS_UNNAMED_2[..]));
-                        }
+                        helper.begin_ns_scope();
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
                         return Ok(Some(Event::Start(bytes)));
                     }
                     ProductOrderDetailsElementTypeSerializerState::OrderUnit(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state =
@@ -28684,7 +28771,7 @@ pub mod quick_xml_serialize {
                         }
                     }
                     ProductOrderDetailsElementTypeSerializerState::ContentUnit(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state =
@@ -28699,7 +28786,7 @@ pub mod quick_xml_serialize {
                         }
                     }
                     ProductOrderDetailsElementTypeSerializerState::NoCuPerOu(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state =
@@ -28714,7 +28801,7 @@ pub mod quick_xml_serialize {
                         }
                     }
                     ProductOrderDetailsElementTypeSerializerState::PriceQuantity(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state =
@@ -28729,7 +28816,7 @@ pub mod quick_xml_serialize {
                         }
                     }
                     ProductOrderDetailsElementTypeSerializerState::QuantityMin(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state =
@@ -28744,7 +28831,7 @@ pub mod quick_xml_serialize {
                         }
                     }
                     ProductOrderDetailsElementTypeSerializerState::QuantityInterval(x) => match x
-                        .next()
+                        .next(helper)
                         .transpose()?
                     {
                         Some(event) => return Ok(Some(event)),
@@ -28752,6 +28839,7 @@ pub mod quick_xml_serialize {
                     },
                     ProductOrderDetailsElementTypeSerializerState::End__ => {
                         *self.state = ProductOrderDetailsElementTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     ProductOrderDetailsElementTypeSerializerState::Done__ => return Ok(None),
@@ -28760,10 +28848,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for ProductOrderDetailsElementTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for ProductOrderDetailsElementTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -28803,7 +28890,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> ProductPriceDetailsElementTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     ProductPriceDetailsElementTypeSerializerState::Init__ => {
@@ -28811,13 +28901,12 @@ pub mod quick_xml_serialize {
                             IterSerializer::new(&self.value.datetime[..], Some("DATETIME"), false),
                         );
                         let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns"[..], &super::NS_UNNAMED_2[..]));
-                        }
+                        helper.begin_ns_scope();
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
                         return Ok(Some(Event::Start(bytes)));
                     }
                     ProductPriceDetailsElementTypeSerializerState::Datetime(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state =
@@ -28832,7 +28921,7 @@ pub mod quick_xml_serialize {
                         }
                     }
                     ProductPriceDetailsElementTypeSerializerState::DailyPrice(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state =
@@ -28847,7 +28936,7 @@ pub mod quick_xml_serialize {
                         }
                     }
                     ProductPriceDetailsElementTypeSerializerState::ProductPrice(x) => match x
-                        .next()
+                        .next(helper)
                         .transpose()?
                     {
                         Some(event) => return Ok(Some(event)),
@@ -28855,6 +28944,7 @@ pub mod quick_xml_serialize {
                     },
                     ProductPriceDetailsElementTypeSerializerState::End__ => {
                         *self.state = ProductPriceDetailsElementTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     ProductPriceDetailsElementTypeSerializerState::Done__ => return Ok(None),
@@ -28863,10 +28953,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for ProductPriceDetailsElementTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for ProductPriceDetailsElementTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -28968,7 +29057,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> UdxProductSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     UdxProductSerializerState::Init__ => {
@@ -28980,13 +29072,12 @@ pub mod quick_xml_serialize {
                             ),
                         );
                         let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns"[..], &super::NS_UNNAMED_2[..]));
-                        }
+                        helper.begin_ns_scope();
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
                         return Ok(Some(Event::Start(bytes)));
                     }
                     UdxProductSerializerState::UdxEdxfManufacturerAcronym(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state = UdxProductSerializerState::UdxEdxfDescriptionVeryShort(
@@ -29000,7 +29091,7 @@ pub mod quick_xml_serialize {
                         }
                     }
                     UdxProductSerializerState::UdxEdxfDescriptionVeryShort(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state = UdxProductSerializerState::UdxEdxfBrandName(
@@ -29013,19 +29104,22 @@ pub mod quick_xml_serialize {
                             }
                         }
                     }
-                    UdxProductSerializerState::UdxEdxfBrandName(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => {
-                            *self.state =
-                                UdxProductSerializerState::UdxEdxfTenderText(IterSerializer::new(
-                                    &self.value.udx_edxf_tender_text[..],
-                                    Some("UDX.EDXF.TENDER_TEXT"),
-                                    false,
-                                ))
+                    UdxProductSerializerState::UdxEdxfBrandName(x) => {
+                        match x.next(helper).transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => {
+                                *self.state = UdxProductSerializerState::UdxEdxfTenderText(
+                                    IterSerializer::new(
+                                        &self.value.udx_edxf_tender_text[..],
+                                        Some("UDX.EDXF.TENDER_TEXT"),
+                                        false,
+                                    ),
+                                )
+                            }
                         }
-                    },
+                    }
                     UdxProductSerializerState::UdxEdxfTenderText(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state = UdxProductSerializerState::UdxEdxfValidFrom(
@@ -29038,20 +29132,22 @@ pub mod quick_xml_serialize {
                             }
                         }
                     }
-                    UdxProductSerializerState::UdxEdxfValidFrom(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => {
-                            *self.state = UdxProductSerializerState::UdxEdxfExpirationDate(
-                                IterSerializer::new(
-                                    self.value.udx_edxf_expiration_date.as_ref(),
-                                    Some("UDX.EDXF.EXPIRATION_DATE"),
-                                    false,
-                                ),
-                            )
+                    UdxProductSerializerState::UdxEdxfValidFrom(x) => {
+                        match x.next(helper).transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => {
+                                *self.state = UdxProductSerializerState::UdxEdxfExpirationDate(
+                                    IterSerializer::new(
+                                        self.value.udx_edxf_expiration_date.as_ref(),
+                                        Some("UDX.EDXF.EXPIRATION_DATE"),
+                                        false,
+                                    ),
+                                )
+                            }
                         }
-                    },
+                    }
                     UdxProductSerializerState::UdxEdxfExpirationDate(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state = UdxProductSerializerState::UdxEdxfDiscountGroup(
@@ -29065,7 +29161,7 @@ pub mod quick_xml_serialize {
                         }
                     }
                     UdxProductSerializerState::UdxEdxfDiscountGroup(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state = UdxProductSerializerState::UdxEdxfBonusGroupSupplier(
@@ -29079,7 +29175,7 @@ pub mod quick_xml_serialize {
                         }
                     }
                     UdxProductSerializerState::UdxEdxfBonusGroupSupplier(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state =
@@ -29091,19 +29187,22 @@ pub mod quick_xml_serialize {
                             }
                         }
                     }
-                    UdxProductSerializerState::UdxEdxfPkwiu(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => {
-                            *self.state =
-                                UdxProductSerializerState::UdxEdxfDeclaration(IterSerializer::new(
-                                    &self.value.udx_edxf_declaration[..],
-                                    Some("UDX.EDXF.DECLARATION"),
-                                    false,
-                                ))
+                    UdxProductSerializerState::UdxEdxfPkwiu(x) => {
+                        match x.next(helper).transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => {
+                                *self.state = UdxProductSerializerState::UdxEdxfDeclaration(
+                                    IterSerializer::new(
+                                        &self.value.udx_edxf_declaration[..],
+                                        Some("UDX.EDXF.DECLARATION"),
+                                        false,
+                                    ),
+                                )
+                            }
                         }
-                    },
+                    }
                     UdxProductSerializerState::UdxEdxfDeclaration(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state = UdxProductSerializerState::UdxEdxfAdditionalFactors(
@@ -29117,7 +29216,7 @@ pub mod quick_xml_serialize {
                         }
                     }
                     UdxProductSerializerState::UdxEdxfAdditionalFactors(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state = UdxProductSerializerState::UdxEdxfProductToStock(
@@ -29131,7 +29230,7 @@ pub mod quick_xml_serialize {
                         }
                     }
                     UdxProductSerializerState::UdxEdxfProductToStock(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state = UdxProductSerializerState::UdxEdxfProductSeries(
@@ -29145,7 +29244,7 @@ pub mod quick_xml_serialize {
                         }
                     }
                     UdxProductSerializerState::UdxEdxfProductSeries(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state = UdxProductSerializerState::UdxEdxfProductVariation(
@@ -29159,7 +29258,7 @@ pub mod quick_xml_serialize {
                         }
                     }
                     UdxProductSerializerState::UdxEdxfProductVariation(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state = UdxProductSerializerState::UdxEdxfAtReverseChargeInfo(
@@ -29173,7 +29272,7 @@ pub mod quick_xml_serialize {
                         }
                     }
                     UdxProductSerializerState::UdxEdxfAtReverseChargeInfo(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state = UdxProductSerializerState::UdxEdxfCountryBranchNumbers(
@@ -29187,7 +29286,7 @@ pub mod quick_xml_serialize {
                         }
                     }
                     UdxProductSerializerState::UdxEdxfCountryBranchNumbers(x) => match x
-                        .next()
+                        .next(helper)
                         .transpose()?
                     {
                         Some(event) => return Ok(Some(event)),
@@ -29202,7 +29301,7 @@ pub mod quick_xml_serialize {
                         }
                     },
                     UdxProductSerializerState::UdxEdxfCountryBranchSupplierIds(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state = UdxProductSerializerState::UdxEdxfPackingUnits(
@@ -29216,7 +29315,7 @@ pub mod quick_xml_serialize {
                         }
                     }
                     UdxProductSerializerState::UdxEdxfPackingUnits(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state =
@@ -29231,7 +29330,7 @@ pub mod quick_xml_serialize {
                         }
                     }
                     UdxProductSerializerState::UdxEdxfProductLogisticDetails(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state =
@@ -29243,26 +29342,29 @@ pub mod quick_xml_serialize {
                             }
                         }
                     }
-                    UdxProductSerializerState::UdxEdxfReach(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => {
-                            *self.state = UdxProductSerializerState::UdxEdxfSurchargeList(
-                                IterSerializer::new(
-                                    self.value.udx_edxf_surcharge_list.as_ref(),
-                                    Some("UDX.EDXF.SURCHARGE_LIST"),
-                                    false,
-                                ),
-                            )
+                    UdxProductSerializerState::UdxEdxfReach(x) => {
+                        match x.next(helper).transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => {
+                                *self.state = UdxProductSerializerState::UdxEdxfSurchargeList(
+                                    IterSerializer::new(
+                                        self.value.udx_edxf_surcharge_list.as_ref(),
+                                        Some("UDX.EDXF.SURCHARGE_LIST"),
+                                        false,
+                                    ),
+                                )
+                            }
                         }
-                    },
+                    }
                     UdxProductSerializerState::UdxEdxfSurchargeList(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = UdxProductSerializerState::End__,
                         }
                     }
                     UdxProductSerializerState::End__ => {
                         *self.state = UdxProductSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     UdxProductSerializerState::Done__ => return Ok(None),
@@ -29271,10 +29373,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for UdxProductSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for UdxProductSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -29302,7 +29403,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> ProductReferenceElementTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     ProductReferenceElementTypeSerializerState::Init__ => {
@@ -29314,15 +29418,14 @@ pub mod quick_xml_serialize {
                             )?,
                         );
                         let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns"[..], &super::NS_UNNAMED_2[..]));
-                        }
-                        write_attrib(&mut bytes, "type", &self.value.type_)?;
-                        write_attrib_opt(&mut bytes, "quantity", &self.value.quantity)?;
+                        helper.begin_ns_scope();
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
+                        helper.write_attrib_opt(&mut bytes, "quantity", &self.value.quantity)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
                     ProductReferenceElementTypeSerializerState::ProdIdTo(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state = ProductReferenceElementTypeSerializerState::CatalogId(
@@ -29336,7 +29439,7 @@ pub mod quick_xml_serialize {
                         }
                     }
                     ProductReferenceElementTypeSerializerState::CatalogId(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state =
@@ -29351,13 +29454,14 @@ pub mod quick_xml_serialize {
                         }
                     }
                     ProductReferenceElementTypeSerializerState::CatalogVersion(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = ProductReferenceElementTypeSerializerState::End__,
                         }
                     }
                     ProductReferenceElementTypeSerializerState::End__ => {
                         *self.state = ProductReferenceElementTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     ProductReferenceElementTypeSerializerState::Done__ => return Ok(None),
@@ -29366,10 +29470,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for ProductReferenceElementTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for ProductReferenceElementTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -29403,7 +29506,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> ProductLogisticDetailsElementTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     ProductLogisticDetailsElementTypeSerializerState::Init__ => {
@@ -29416,13 +29522,12 @@ pub mod quick_xml_serialize {
                                 ),
                             );
                         let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns"[..], &super::NS_UNNAMED_2[..]));
-                        }
+                        helper.begin_ns_scope();
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
                         return Ok(Some(Event::Start(bytes)));
                     }
                     ProductLogisticDetailsElementTypeSerializerState::CustomsTariffNumber(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state =
                                 ProductLogisticDetailsElementTypeSerializerState::StatisticsFactor(
@@ -29435,7 +29540,7 @@ pub mod quick_xml_serialize {
                         }
                     }
                     ProductLogisticDetailsElementTypeSerializerState::StatisticsFactor(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state =
                                 ProductLogisticDetailsElementTypeSerializerState::CountryOfOrigin(
@@ -29448,7 +29553,7 @@ pub mod quick_xml_serialize {
                         }
                     }
                     ProductLogisticDetailsElementTypeSerializerState::CountryOfOrigin(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state =
@@ -29458,6 +29563,7 @@ pub mod quick_xml_serialize {
                     }
                     ProductLogisticDetailsElementTypeSerializerState::End__ => {
                         *self.state = ProductLogisticDetailsElementTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     ProductLogisticDetailsElementTypeSerializerState::Done__ => return Ok(None),
@@ -29468,10 +29574,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for ProductLogisticDetailsElementTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for ProductLogisticDetailsElementTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -29501,7 +29606,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> MimeElementTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     MimeElementTypeSerializerState::Init__ => {
@@ -29512,62 +29620,72 @@ pub mod quick_xml_serialize {
                                 false,
                             )?);
                         let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns"[..], &super::NS_UNNAMED_2[..]));
-                        }
+                        helper.begin_ns_scope();
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
                         return Ok(Some(Event::Start(bytes)));
                     }
-                    MimeElementTypeSerializerState::MimeType(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => {
-                            *self.state =
-                                MimeElementTypeSerializerState::MimeSource(IterSerializer::new(
-                                    &self.value.mime_source[..],
-                                    Some("MIME_SOURCE"),
-                                    false,
-                                ))
+                    MimeElementTypeSerializerState::MimeType(x) => {
+                        match x.next(helper).transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => {
+                                *self.state =
+                                    MimeElementTypeSerializerState::MimeSource(IterSerializer::new(
+                                        &self.value.mime_source[..],
+                                        Some("MIME_SOURCE"),
+                                        false,
+                                    ))
+                            }
                         }
-                    },
-                    MimeElementTypeSerializerState::MimeSource(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => {
-                            *self.state =
-                                MimeElementTypeSerializerState::MimeDescr(IterSerializer::new(
-                                    &self.value.mime_descr[..],
-                                    Some("MIME_DESCR"),
-                                    false,
-                                ))
+                    }
+                    MimeElementTypeSerializerState::MimeSource(x) => {
+                        match x.next(helper).transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => {
+                                *self.state =
+                                    MimeElementTypeSerializerState::MimeDescr(IterSerializer::new(
+                                        &self.value.mime_descr[..],
+                                        Some("MIME_DESCR"),
+                                        false,
+                                    ))
+                            }
                         }
-                    },
-                    MimeElementTypeSerializerState::MimeDescr(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => {
-                            *self.state =
-                                MimeElementTypeSerializerState::MimeAlt(IterSerializer::new(
-                                    &self.value.mime_alt[..],
-                                    Some("MIME_ALT"),
-                                    false,
-                                ))
+                    }
+                    MimeElementTypeSerializerState::MimeDescr(x) => {
+                        match x.next(helper).transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => {
+                                *self.state =
+                                    MimeElementTypeSerializerState::MimeAlt(IterSerializer::new(
+                                        &self.value.mime_alt[..],
+                                        Some("MIME_ALT"),
+                                        false,
+                                    ))
+                            }
                         }
-                    },
-                    MimeElementTypeSerializerState::MimeAlt(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => {
-                            *self.state = MimeElementTypeSerializerState::MimePurpose(
-                                WithSerializer::serializer(
-                                    &self.value.mime_purpose,
-                                    Some("MIME_PURPOSE"),
-                                    false,
-                                )?,
-                            )
+                    }
+                    MimeElementTypeSerializerState::MimeAlt(x) => {
+                        match x.next(helper).transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => {
+                                *self.state = MimeElementTypeSerializerState::MimePurpose(
+                                    WithSerializer::serializer(
+                                        &self.value.mime_purpose,
+                                        Some("MIME_PURPOSE"),
+                                        false,
+                                    )?,
+                                )
+                            }
                         }
-                    },
-                    MimeElementTypeSerializerState::MimePurpose(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => *self.state = MimeElementTypeSerializerState::End__,
-                    },
+                    }
+                    MimeElementTypeSerializerState::MimePurpose(x) => {
+                        match x.next(helper).transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => *self.state = MimeElementTypeSerializerState::End__,
+                        }
+                    }
                     MimeElementTypeSerializerState::End__ => {
                         *self.state = MimeElementTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     MimeElementTypeSerializerState::Done__ => return Ok(None),
@@ -29576,10 +29694,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for MimeElementTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for MimeElementTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -29605,7 +29722,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> InternationalPidElementTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     InternationalPidElementTypeSerializerState::Init__ => {
@@ -29613,20 +29733,20 @@ pub mod quick_xml_serialize {
                             WithSerializer::serializer(&self.value.content, None, false)?,
                         );
                         let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns"[..], &super::NS_UNNAMED_2[..]));
-                        }
-                        write_attrib_opt(&mut bytes, "type", &self.value.type_)?;
+                        helper.begin_ns_scope();
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_attrib_opt(&mut bytes, "type", &self.value.type_)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
                     InternationalPidElementTypeSerializerState::Content__(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = InternationalPidElementTypeSerializerState::End__,
                         }
                     }
                     InternationalPidElementTypeSerializerState::End__ => {
                         *self.state = InternationalPidElementTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     InternationalPidElementTypeSerializerState::Done__ => return Ok(None),
@@ -29635,10 +29755,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for InternationalPidElementTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for InternationalPidElementTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -29664,7 +29783,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> BuyerPidElementTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     BuyerPidElementTypeSerializerState::Init__ => {
@@ -29672,20 +29794,20 @@ pub mod quick_xml_serialize {
                             WithSerializer::serializer(&self.value.content, None, false)?,
                         );
                         let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns"[..], &super::NS_UNNAMED_2[..]));
-                        }
-                        write_attrib_opt(&mut bytes, "type", &self.value.type_)?;
+                        helper.begin_ns_scope();
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_attrib_opt(&mut bytes, "type", &self.value.type_)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
                     BuyerPidElementTypeSerializerState::Content__(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = BuyerPidElementTypeSerializerState::End__,
                         }
                     }
                     BuyerPidElementTypeSerializerState::End__ => {
                         *self.state = BuyerPidElementTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     BuyerPidElementTypeSerializerState::Done__ => return Ok(None),
@@ -29694,10 +29816,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for BuyerPidElementTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for BuyerPidElementTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -29723,7 +29844,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> SpecialTreatmentClassElementTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     SpecialTreatmentClassElementTypeSerializerState::Init__ => {
@@ -29731,14 +29855,13 @@ pub mod quick_xml_serialize {
                             WithSerializer::serializer(&self.value.content, None, false)?,
                         );
                         let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns"[..], &super::NS_UNNAMED_2[..]));
-                        }
-                        write_attrib(&mut bytes, "type", &self.value.type_)?;
+                        helper.begin_ns_scope();
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
                     SpecialTreatmentClassElementTypeSerializerState::Content__(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state = SpecialTreatmentClassElementTypeSerializerState::End__
@@ -29747,6 +29870,7 @@ pub mod quick_xml_serialize {
                     }
                     SpecialTreatmentClassElementTypeSerializerState::End__ => {
                         *self.state = SpecialTreatmentClassElementTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     SpecialTreatmentClassElementTypeSerializerState::Done__ => return Ok(None),
@@ -29755,10 +29879,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for SpecialTreatmentClassElementTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for SpecialTreatmentClassElementTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -29784,7 +29907,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> RemarksElementTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     RemarksElementTypeSerializerState::Init__ => {
@@ -29792,21 +29918,21 @@ pub mod quick_xml_serialize {
                             WithSerializer::serializer(&self.value.content, None, false)?,
                         );
                         let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns"[..], &super::NS_UNNAMED_2[..]));
-                        }
-                        write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
-                        write_attrib_opt(&mut bytes, "type", &self.value.type_)?;
+                        helper.begin_ns_scope();
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
+                        helper.write_attrib_opt(&mut bytes, "type", &self.value.type_)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
                     RemarksElementTypeSerializerState::Content__(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = RemarksElementTypeSerializerState::End__,
                         }
                     }
                     RemarksElementTypeSerializerState::End__ => {
                         *self.state = RemarksElementTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     RemarksElementTypeSerializerState::Done__ => return Ok(None),
@@ -29815,10 +29941,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for RemarksElementTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for RemarksElementTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -29844,7 +29969,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> ProductStatusElementTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     ProductStatusElementTypeSerializerState::Init__ => {
@@ -29852,21 +29980,21 @@ pub mod quick_xml_serialize {
                             WithSerializer::serializer(&self.value.content, None, false)?,
                         );
                         let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns"[..], &super::NS_UNNAMED_2[..]));
-                        }
-                        write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
-                        write_attrib(&mut bytes, "type", &self.value.type_)?;
+                        helper.begin_ns_scope();
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
+                        helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
                     ProductStatusElementTypeSerializerState::Content__(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = ProductStatusElementTypeSerializerState::End__,
                         }
                     }
                     ProductStatusElementTypeSerializerState::End__ => {
                         *self.state = ProductStatusElementTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     ProductStatusElementTypeSerializerState::Done__ => return Ok(None),
@@ -29875,10 +30003,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for ProductStatusElementTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for ProductStatusElementTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -29904,7 +30031,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> TypeClassificationGroupIdSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     TypeClassificationGroupIdSerializerState::Init__ => {
@@ -29912,20 +30042,20 @@ pub mod quick_xml_serialize {
                             WithSerializer::serializer(&self.value.content, None, false)?,
                         );
                         let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns"[..], &super::NS_UNNAMED_2[..]));
-                        }
-                        write_attrib_opt(&mut bytes, "type", &self.value.type_)?;
+                        helper.begin_ns_scope();
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_attrib_opt(&mut bytes, "type", &self.value.type_)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
                     TypeClassificationGroupIdSerializerState::Content__(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = TypeClassificationGroupIdSerializerState::End__,
                         }
                     }
                     TypeClassificationGroupIdSerializerState::End__ => {
                         *self.state = TypeClassificationGroupIdSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     TypeClassificationGroupIdSerializerState::Done__ => return Ok(None),
@@ -29934,10 +30064,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for TypeClassificationGroupIdSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for TypeClassificationGroupIdSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -29966,7 +30095,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> FeatureElementTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     FeatureElementTypeSerializerState::Init__ => {
@@ -29974,12 +30106,14 @@ pub mod quick_xml_serialize {
                             IterSerializer::new(&self.value.fname[..], Some("FNAME"), false),
                         );
                         let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns"[..], &super::NS_UNNAMED_2[..]));
-                        }
+                        helper.begin_ns_scope();
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
                         return Ok(Some(Event::Start(bytes)));
                     }
-                    FeatureElementTypeSerializerState::Fname(x) => match x.next().transpose()? {
+                    FeatureElementTypeSerializerState::Fname(x) => match x
+                        .next(helper)
+                        .transpose()?
+                    {
                         Some(event) => return Ok(Some(event)),
                         None => {
                             *self.state = FeatureElementTypeSerializerState::Fvalue(
@@ -29987,37 +30121,42 @@ pub mod quick_xml_serialize {
                             )
                         }
                     },
-                    FeatureElementTypeSerializerState::Fvalue(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => {
-                            *self.state =
-                                FeatureElementTypeSerializerState::Funit(IterSerializer::new(
-                                    self.value.funit.as_ref(),
-                                    Some("FUNIT"),
-                                    false,
-                                ))
+                    FeatureElementTypeSerializerState::Fvalue(x) => {
+                        match x.next(helper).transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => {
+                                *self.state =
+                                    FeatureElementTypeSerializerState::Funit(IterSerializer::new(
+                                        self.value.funit.as_ref(),
+                                        Some("FUNIT"),
+                                        false,
+                                    ))
+                            }
                         }
-                    },
-                    FeatureElementTypeSerializerState::Funit(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => {
-                            *self.state = FeatureElementTypeSerializerState::FvalueDetails(
-                                IterSerializer::new(
-                                    &self.value.fvalue_details[..],
-                                    Some("FVALUE_DETAILS"),
-                                    false,
-                                ),
-                            )
+                    }
+                    FeatureElementTypeSerializerState::Funit(x) => {
+                        match x.next(helper).transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => {
+                                *self.state = FeatureElementTypeSerializerState::FvalueDetails(
+                                    IterSerializer::new(
+                                        &self.value.fvalue_details[..],
+                                        Some("FVALUE_DETAILS"),
+                                        false,
+                                    ),
+                                )
+                            }
                         }
-                    },
+                    }
                     FeatureElementTypeSerializerState::FvalueDetails(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = FeatureElementTypeSerializerState::End__,
                         }
                     }
                     FeatureElementTypeSerializerState::End__ => {
                         *self.state = FeatureElementTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     FeatureElementTypeSerializerState::Done__ => return Ok(None),
@@ -30026,10 +30165,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for FeatureElementTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for FeatureElementTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -30057,7 +30195,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> ProductPriceDetailsDatetimeElementTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     ProductPriceDetailsDatetimeElementTypeSerializerState::Init__ => {
@@ -30065,14 +30206,13 @@ pub mod quick_xml_serialize {
                             WithSerializer::serializer(&self.value.date, Some("DATE"), false)?,
                         );
                         let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns"[..], &super::NS_UNNAMED_2[..]));
-                        }
-                        write_attrib(&mut bytes, "type", &self.value.type_)?;
+                        helper.begin_ns_scope();
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
                     ProductPriceDetailsDatetimeElementTypeSerializerState::Date(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state =
@@ -30087,7 +30227,7 @@ pub mod quick_xml_serialize {
                         }
                     }
                     ProductPriceDetailsDatetimeElementTypeSerializerState::Time(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state =
@@ -30102,7 +30242,7 @@ pub mod quick_xml_serialize {
                         }
                     }
                     ProductPriceDetailsDatetimeElementTypeSerializerState::Timezone(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state =
@@ -30112,6 +30252,7 @@ pub mod quick_xml_serialize {
                     }
                     ProductPriceDetailsDatetimeElementTypeSerializerState::End__ => {
                         *self.state = ProductPriceDetailsDatetimeElementTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     ProductPriceDetailsDatetimeElementTypeSerializerState::Done__ => {
@@ -30124,10 +30265,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for ProductPriceDetailsDatetimeElementTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for ProductPriceDetailsDatetimeElementTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -30158,7 +30298,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> ProductPriceElementTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     ProductPriceElementTypeSerializerState::Init__ => {
@@ -30170,14 +30313,13 @@ pub mod quick_xml_serialize {
                             )?,
                         );
                         let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns"[..], &super::NS_UNNAMED_2[..]));
-                        }
-                        write_attrib(&mut bytes, "price_type", &self.value.price_type)?;
+                        helper.begin_ns_scope();
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_attrib(&mut bytes, "price_type", &self.value.price_type)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
                     ProductPriceElementTypeSerializerState::PriceAmount(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state = ProductPriceElementTypeSerializerState::PriceCurrency(
@@ -30191,7 +30333,7 @@ pub mod quick_xml_serialize {
                         }
                     }
                     ProductPriceElementTypeSerializerState::PriceCurrency(x) => match x
-                        .next()
+                        .next(helper)
                         .transpose()?
                     {
                         Some(event) => return Ok(Some(event)),
@@ -30201,20 +30343,22 @@ pub mod quick_xml_serialize {
                             )
                         }
                     },
-                    ProductPriceElementTypeSerializerState::Tax(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => {
-                            *self.state = ProductPriceElementTypeSerializerState::PriceFactor(
-                                IterSerializer::new(
-                                    self.value.price_factor.as_ref(),
-                                    Some("PRICE_FACTOR"),
-                                    false,
-                                ),
-                            )
+                    ProductPriceElementTypeSerializerState::Tax(x) => {
+                        match x.next(helper).transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => {
+                                *self.state = ProductPriceElementTypeSerializerState::PriceFactor(
+                                    IterSerializer::new(
+                                        self.value.price_factor.as_ref(),
+                                        Some("PRICE_FACTOR"),
+                                        false,
+                                    ),
+                                )
+                            }
                         }
-                    },
+                    }
                     ProductPriceElementTypeSerializerState::PriceFactor(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state = ProductPriceElementTypeSerializerState::LowerBound(
@@ -30228,7 +30372,7 @@ pub mod quick_xml_serialize {
                         }
                     }
                     ProductPriceElementTypeSerializerState::LowerBound(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state = ProductPriceElementTypeSerializerState::Territory(
@@ -30242,13 +30386,14 @@ pub mod quick_xml_serialize {
                         }
                     }
                     ProductPriceElementTypeSerializerState::Territory(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = ProductPriceElementTypeSerializerState::End__,
                         }
                     }
                     ProductPriceElementTypeSerializerState::End__ => {
                         *self.state = ProductPriceElementTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     ProductPriceElementTypeSerializerState::Done__ => return Ok(None),
@@ -30257,10 +30402,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for ProductPriceElementTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for ProductPriceElementTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -30292,7 +30436,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> UdxEdxfDiscountGroupElementTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     UdxEdxfDiscountGroupElementTypeSerializerState::Init__ => {
@@ -30300,20 +30447,20 @@ pub mod quick_xml_serialize {
                             IterSerializer::new(&self.value.content[..], None, false),
                         );
                         let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns"[..], &super::NS_UNNAMED_2[..]));
-                        }
+                        helper.begin_ns_scope();
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
                         return Ok(Some(Event::Start(bytes)));
                     }
                     UdxEdxfDiscountGroupElementTypeSerializerState::Content__(x) => match x
-                        .next()
-                        .transpose(
-                    )? {
+                        .next(helper)
+                        .transpose()?
+                    {
                         Some(event) => return Ok(Some(event)),
                         None => *self.state = UdxEdxfDiscountGroupElementTypeSerializerState::End__,
                     },
                     UdxEdxfDiscountGroupElementTypeSerializerState::End__ => {
                         *self.state = UdxEdxfDiscountGroupElementTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     UdxEdxfDiscountGroupElementTypeSerializerState::Done__ => return Ok(None),
@@ -30322,10 +30469,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for UdxEdxfDiscountGroupElementTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for UdxEdxfDiscountGroupElementTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -30349,16 +30495,18 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> UdxEdxfDiscountGroupElementTypeContentSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match & mut * self . state { UdxEdxfDiscountGroupElementTypeContentSerializerState :: Init__ => { match self . value { super :: UdxEdxfDiscountGroupElementTypeContent :: UdxEdxfDiscountGroupManufacturer (x) => * self . state = UdxEdxfDiscountGroupElementTypeContentSerializerState :: UdxEdxfDiscountGroupManufacturer (WithSerializer :: serializer (x , Some ("UDX.EDXF.DISCOUNT_GROUP_MANUFACTURER") , false) ?) , super :: UdxEdxfDiscountGroupElementTypeContent :: UdxEdxfDiscountGroupSupplier (x) => * self . state = UdxEdxfDiscountGroupElementTypeContentSerializerState :: UdxEdxfDiscountGroupSupplier (WithSerializer :: serializer (x , Some ("UDX.EDXF.DISCOUNT_GROUP_SUPPLIER") , false) ?) , } } UdxEdxfDiscountGroupElementTypeContentSerializerState :: UdxEdxfDiscountGroupManufacturer (x) => { match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfDiscountGroupElementTypeContentSerializerState :: Done__ , } } UdxEdxfDiscountGroupElementTypeContentSerializerState :: UdxEdxfDiscountGroupSupplier (x) => { match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfDiscountGroupElementTypeContentSerializerState :: Done__ , } } UdxEdxfDiscountGroupElementTypeContentSerializerState :: Done__ => return Ok (None) , UdxEdxfDiscountGroupElementTypeContentSerializerState :: Phantom__ (_) => unreachable ! () , }
+                match & mut * self . state { UdxEdxfDiscountGroupElementTypeContentSerializerState :: Init__ => { match self . value { super :: UdxEdxfDiscountGroupElementTypeContent :: UdxEdxfDiscountGroupManufacturer (x) => * self . state = UdxEdxfDiscountGroupElementTypeContentSerializerState :: UdxEdxfDiscountGroupManufacturer (WithSerializer :: serializer (x , Some ("UDX.EDXF.DISCOUNT_GROUP_MANUFACTURER") , false) ?) , super :: UdxEdxfDiscountGroupElementTypeContent :: UdxEdxfDiscountGroupSupplier (x) => * self . state = UdxEdxfDiscountGroupElementTypeContentSerializerState :: UdxEdxfDiscountGroupSupplier (WithSerializer :: serializer (x , Some ("UDX.EDXF.DISCOUNT_GROUP_SUPPLIER") , false) ?) , } } UdxEdxfDiscountGroupElementTypeContentSerializerState :: UdxEdxfDiscountGroupManufacturer (x) => { match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfDiscountGroupElementTypeContentSerializerState :: Done__ , } } UdxEdxfDiscountGroupElementTypeContentSerializerState :: UdxEdxfDiscountGroupSupplier (x) => { match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfDiscountGroupElementTypeContentSerializerState :: Done__ , } } UdxEdxfDiscountGroupElementTypeContentSerializerState :: Done__ => return Ok (None) , UdxEdxfDiscountGroupElementTypeContentSerializerState :: Phantom__ (_) => unreachable ! () , }
             }
         }
     }
-    impl<'ser> Iterator for UdxEdxfDiscountGroupElementTypeContentSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for UdxEdxfDiscountGroupElementTypeContentSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -30384,7 +30532,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> UdxEdxfDeclarationElementTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     UdxEdxfDeclarationElementTypeSerializerState::Init__ => {
@@ -30392,15 +30543,14 @@ pub mod quick_xml_serialize {
                             WithSerializer::serializer(&self.value.content, None, false)?,
                         );
                         let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns"[..], &super::NS_UNNAMED_2[..]));
-                        }
-                        write_attrib(&mut bytes, "type", &self.value.type_)?;
-                        write_attrib_opt(&mut bytes, "date", &self.value.date)?;
+                        helper.begin_ns_scope();
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
+                        helper.write_attrib_opt(&mut bytes, "date", &self.value.date)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
                     UdxEdxfDeclarationElementTypeSerializerState::Content__(x) => match x
-                        .next()
+                        .next(helper)
                         .transpose()?
                     {
                         Some(event) => return Ok(Some(event)),
@@ -30408,6 +30558,7 @@ pub mod quick_xml_serialize {
                     },
                     UdxEdxfDeclarationElementTypeSerializerState::End__ => {
                         *self.state = UdxEdxfDeclarationElementTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     UdxEdxfDeclarationElementTypeSerializerState::Done__ => return Ok(None),
@@ -30416,10 +30567,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for UdxEdxfDeclarationElementTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for UdxEdxfDeclarationElementTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -30446,16 +30596,18 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> UdxEdxfAdditionalFactorsElementTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match & mut * self . state { UdxEdxfAdditionalFactorsElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfAdditionalFactorsElementTypeSerializerState :: UdxEdxfAdditionalPriceFactor (WithSerializer :: serializer (& self . value . udx_edxf_additional_price_factor , Some ("UDX.EDXF.ADDITIONAL_PRICE_FACTOR") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; if self . is_root { bytes . push_attribute ((& b"xmlns" [..] , & super :: NS_UNNAMED_2 [..])) ; } return Ok (Some (Event :: Start (bytes))) } UdxEdxfAdditionalFactorsElementTypeSerializerState :: UdxEdxfAdditionalPriceFactor (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfAdditionalFactorsElementTypeSerializerState :: UdxEdxfAdditionalFactorInfo (WithSerializer :: serializer (& self . value . udx_edxf_additional_factor_info , Some ("UDX.EDXF.ADDITIONAL_FACTOR_INFO") , false) ?) , } UdxEdxfAdditionalFactorsElementTypeSerializerState :: UdxEdxfAdditionalFactorInfo (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfAdditionalFactorsElementTypeSerializerState :: End__ , } UdxEdxfAdditionalFactorsElementTypeSerializerState :: End__ => { * self . state = UdxEdxfAdditionalFactorsElementTypeSerializerState :: Done__ ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfAdditionalFactorsElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfAdditionalFactorsElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                match & mut * self . state { UdxEdxfAdditionalFactorsElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfAdditionalFactorsElementTypeSerializerState :: UdxEdxfAdditionalPriceFactor (WithSerializer :: serializer (& self . value . udx_edxf_additional_price_factor , Some ("UDX.EDXF.ADDITIONAL_PRICE_FACTOR") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns (& mut bytes , None , & super :: NS_UNNAMED_2) ; return Ok (Some (Event :: Start (bytes))) } UdxEdxfAdditionalFactorsElementTypeSerializerState :: UdxEdxfAdditionalPriceFactor (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfAdditionalFactorsElementTypeSerializerState :: UdxEdxfAdditionalFactorInfo (WithSerializer :: serializer (& self . value . udx_edxf_additional_factor_info , Some ("UDX.EDXF.ADDITIONAL_FACTOR_INFO") , false) ?) , } UdxEdxfAdditionalFactorsElementTypeSerializerState :: UdxEdxfAdditionalFactorInfo (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfAdditionalFactorsElementTypeSerializerState :: End__ , } UdxEdxfAdditionalFactorsElementTypeSerializerState :: End__ => { * self . state = UdxEdxfAdditionalFactorsElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfAdditionalFactorsElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfAdditionalFactorsElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
             }
         }
     }
-    impl<'ser> Iterator for UdxEdxfAdditionalFactorsElementTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for UdxEdxfAdditionalFactorsElementTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -30487,16 +30639,18 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> UdxEdxfCountryBranchNumbersElementTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match & mut * self . state { UdxEdxfCountryBranchNumbersElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfCountryBranchNumbersElementTypeSerializerState :: UdxEdxfCountryBranchNumber (IterSerializer :: new (& self . value . udx_edxf_country_branch_number [..] , Some ("UDX.EDXF.COUNTRY_BRANCH_NUMBER") , false)) ; let mut bytes = BytesStart :: new (self . name) ; if self . is_root { bytes . push_attribute ((& b"xmlns" [..] , & super :: NS_UNNAMED_2 [..])) ; } return Ok (Some (Event :: Start (bytes))) } UdxEdxfCountryBranchNumbersElementTypeSerializerState :: UdxEdxfCountryBranchNumber (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfCountryBranchNumbersElementTypeSerializerState :: End__ , } UdxEdxfCountryBranchNumbersElementTypeSerializerState :: End__ => { * self . state = UdxEdxfCountryBranchNumbersElementTypeSerializerState :: Done__ ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfCountryBranchNumbersElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfCountryBranchNumbersElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                match & mut * self . state { UdxEdxfCountryBranchNumbersElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfCountryBranchNumbersElementTypeSerializerState :: UdxEdxfCountryBranchNumber (IterSerializer :: new (& self . value . udx_edxf_country_branch_number [..] , Some ("UDX.EDXF.COUNTRY_BRANCH_NUMBER") , false)) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns (& mut bytes , None , & super :: NS_UNNAMED_2) ; return Ok (Some (Event :: Start (bytes))) } UdxEdxfCountryBranchNumbersElementTypeSerializerState :: UdxEdxfCountryBranchNumber (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfCountryBranchNumbersElementTypeSerializerState :: End__ , } UdxEdxfCountryBranchNumbersElementTypeSerializerState :: End__ => { * self . state = UdxEdxfCountryBranchNumbersElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfCountryBranchNumbersElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfCountryBranchNumbersElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
             }
         }
     }
-    impl<'ser> Iterator for UdxEdxfCountryBranchNumbersElementTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for UdxEdxfCountryBranchNumbersElementTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -30517,16 +30671,18 @@ pub mod quick_xml_serialize {
     pub(super) enum UdxEdxfCountryBranchSupplierIdsElementTypeSerializerState<'ser> {
         Init__ , UdxEdxfCountryBranchSupplierId (IterSerializer < 'ser , & 'ser [super :: UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementType] , super :: UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementType >) , End__ , Done__ , Phantom__ (& 'ser ()) , }
     impl<'ser> UdxEdxfCountryBranchSupplierIdsElementTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match & mut * self . state { UdxEdxfCountryBranchSupplierIdsElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfCountryBranchSupplierIdsElementTypeSerializerState :: UdxEdxfCountryBranchSupplierId (IterSerializer :: new (& self . value . udx_edxf_country_branch_supplier_id [..] , Some ("UDX.EDXF.COUNTRY_BRANCH_SUPPLIER_ID") , false)) ; let mut bytes = BytesStart :: new (self . name) ; if self . is_root { bytes . push_attribute ((& b"xmlns" [..] , & super :: NS_UNNAMED_2 [..])) ; } return Ok (Some (Event :: Start (bytes))) } UdxEdxfCountryBranchSupplierIdsElementTypeSerializerState :: UdxEdxfCountryBranchSupplierId (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfCountryBranchSupplierIdsElementTypeSerializerState :: End__ , } UdxEdxfCountryBranchSupplierIdsElementTypeSerializerState :: End__ => { * self . state = UdxEdxfCountryBranchSupplierIdsElementTypeSerializerState :: Done__ ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfCountryBranchSupplierIdsElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfCountryBranchSupplierIdsElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                match & mut * self . state { UdxEdxfCountryBranchSupplierIdsElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfCountryBranchSupplierIdsElementTypeSerializerState :: UdxEdxfCountryBranchSupplierId (IterSerializer :: new (& self . value . udx_edxf_country_branch_supplier_id [..] , Some ("UDX.EDXF.COUNTRY_BRANCH_SUPPLIER_ID") , false)) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns (& mut bytes , None , & super :: NS_UNNAMED_2) ; return Ok (Some (Event :: Start (bytes))) } UdxEdxfCountryBranchSupplierIdsElementTypeSerializerState :: UdxEdxfCountryBranchSupplierId (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfCountryBranchSupplierIdsElementTypeSerializerState :: End__ , } UdxEdxfCountryBranchSupplierIdsElementTypeSerializerState :: End__ => { * self . state = UdxEdxfCountryBranchSupplierIdsElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfCountryBranchSupplierIdsElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfCountryBranchSupplierIdsElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
             }
         }
     }
-    impl<'ser> Iterator for UdxEdxfCountryBranchSupplierIdsElementTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for UdxEdxfCountryBranchSupplierIdsElementTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -30558,7 +30714,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> UdxEdxfPackingUnitsElementTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     UdxEdxfPackingUnitsElementTypeSerializerState::Init__ => {
@@ -30571,13 +30730,12 @@ pub mod quick_xml_serialize {
                                 ),
                             );
                         let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns"[..], &super::NS_UNNAMED_2[..]));
-                        }
+                        helper.begin_ns_scope();
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
                         return Ok(Some(Event::Start(bytes)));
                     }
                     UdxEdxfPackingUnitsElementTypeSerializerState::UdxEdxfPackingUnit(x) => match x
-                        .next()
+                        .next(helper)
                         .transpose()?
                     {
                         Some(event) => return Ok(Some(event)),
@@ -30585,6 +30743,7 @@ pub mod quick_xml_serialize {
                     },
                     UdxEdxfPackingUnitsElementTypeSerializerState::End__ => {
                         *self.state = UdxEdxfPackingUnitsElementTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     UdxEdxfPackingUnitsElementTypeSerializerState::Done__ => return Ok(None),
@@ -30593,10 +30752,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for UdxEdxfPackingUnitsElementTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for UdxEdxfPackingUnitsElementTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -30623,16 +30781,18 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> UdxEdxfProductLogisticDetailsElementTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match & mut * self . state { UdxEdxfProductLogisticDetailsElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfNetweight (IterSerializer :: new (self . value . udx_edxf_netweight . as_ref () , Some ("UDX.EDXF.NETWEIGHT") , false)) ; let mut bytes = BytesStart :: new (self . name) ; if self . is_root { bytes . push_attribute ((& b"xmlns" [..] , & super :: NS_UNNAMED_2 [..])) ; } return Ok (Some (Event :: Start (bytes))) } UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfNetweight (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfRegionOfOrigin (IterSerializer :: new (self . value . udx_edxf_region_of_origin . as_ref () , Some ("UDX.EDXF.REGION_OF_ORIGIN") , false)) , } UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfRegionOfOrigin (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfProductLogisticDetailsElementTypeSerializerState :: End__ , } UdxEdxfProductLogisticDetailsElementTypeSerializerState :: End__ => { * self . state = UdxEdxfProductLogisticDetailsElementTypeSerializerState :: Done__ ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfProductLogisticDetailsElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfProductLogisticDetailsElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                match & mut * self . state { UdxEdxfProductLogisticDetailsElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfNetweight (IterSerializer :: new (self . value . udx_edxf_netweight . as_ref () , Some ("UDX.EDXF.NETWEIGHT") , false)) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns (& mut bytes , None , & super :: NS_UNNAMED_2) ; return Ok (Some (Event :: Start (bytes))) } UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfNetweight (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfRegionOfOrigin (IterSerializer :: new (self . value . udx_edxf_region_of_origin . as_ref () , Some ("UDX.EDXF.REGION_OF_ORIGIN") , false)) , } UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfRegionOfOrigin (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfProductLogisticDetailsElementTypeSerializerState :: End__ , } UdxEdxfProductLogisticDetailsElementTypeSerializerState :: End__ => { * self . state = UdxEdxfProductLogisticDetailsElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfProductLogisticDetailsElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfProductLogisticDetailsElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
             }
         }
     }
-    impl<'ser> Iterator for UdxEdxfProductLogisticDetailsElementTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for UdxEdxfProductLogisticDetailsElementTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -30659,7 +30819,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> UdxEdxfReachElementTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     UdxEdxfReachElementTypeSerializerState::Init__ => {
@@ -30671,13 +30834,12 @@ pub mod quick_xml_serialize {
                             ),
                         );
                         let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns"[..], &super::NS_UNNAMED_2[..]));
-                        }
+                        helper.begin_ns_scope();
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
                         return Ok(Some(Event::Start(bytes)));
                     }
                     UdxEdxfReachElementTypeSerializerState::UdxEdxfReachListdate(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state =
@@ -30692,13 +30854,14 @@ pub mod quick_xml_serialize {
                         }
                     }
                     UdxEdxfReachElementTypeSerializerState::UdxEdxfReachInfo(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = UdxEdxfReachElementTypeSerializerState::End__,
                         }
                     }
                     UdxEdxfReachElementTypeSerializerState::End__ => {
                         *self.state = UdxEdxfReachElementTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     UdxEdxfReachElementTypeSerializerState::Done__ => return Ok(None),
@@ -30707,10 +30870,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for UdxEdxfReachElementTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for UdxEdxfReachElementTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -30742,7 +30904,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> UdxEdxfSurchargeListElementTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     UdxEdxfSurchargeListElementTypeSerializerState::Init__ => {
@@ -30755,13 +30920,12 @@ pub mod quick_xml_serialize {
                                 ),
                             );
                         let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns"[..], &super::NS_UNNAMED_2[..]));
-                        }
+                        helper.begin_ns_scope();
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
                         return Ok(Some(Event::Start(bytes)));
                     }
                     UdxEdxfSurchargeListElementTypeSerializerState::UdxEdxfSurcharge(x) => match x
-                        .next()
+                        .next(helper)
                         .transpose()?
                     {
                         Some(event) => return Ok(Some(event)),
@@ -30769,6 +30933,7 @@ pub mod quick_xml_serialize {
                     },
                     UdxEdxfSurchargeListElementTypeSerializerState::End__ => {
                         *self.state = UdxEdxfSurchargeListElementTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     UdxEdxfSurchargeListElementTypeSerializerState::Done__ => return Ok(None),
@@ -30777,10 +30942,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for UdxEdxfSurchargeListElementTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for UdxEdxfSurchargeListElementTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -30806,7 +30970,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> CustomsTariffNumberElementTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     CustomsTariffNumberElementTypeSerializerState::Init__ => {
@@ -30818,13 +30985,12 @@ pub mod quick_xml_serialize {
                             )?,
                         );
                         let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns"[..], &super::NS_UNNAMED_2[..]));
-                        }
+                        helper.begin_ns_scope();
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
                         return Ok(Some(Event::Start(bytes)));
                     }
                     CustomsTariffNumberElementTypeSerializerState::CustomsNumber(x) => match x
-                        .next()
+                        .next(helper)
                         .transpose()?
                     {
                         Some(event) => return Ok(Some(event)),
@@ -30832,6 +30998,7 @@ pub mod quick_xml_serialize {
                     },
                     CustomsTariffNumberElementTypeSerializerState::End__ => {
                         *self.state = CustomsTariffNumberElementTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     CustomsTariffNumberElementTypeSerializerState::Done__ => return Ok(None),
@@ -30840,10 +31007,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for CustomsTariffNumberElementTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for CustomsTariffNumberElementTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -30874,18 +31040,20 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match & mut * self . state { UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeSerializerState :: Content__ (WithSerializer :: serializer (& self . value . content , None , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; if self . is_root { bytes . push_attribute ((& b"xmlns" [..] , & super :: NS_UNNAMED_2 [..])) ; } write_attrib (& mut bytes , "type" , & self . value . type_) ? ; write_attrib (& mut bytes , "country" , & self . value . country) ? ; return Ok (Some (Event :: Start (bytes))) } UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeSerializerState :: Content__ (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeSerializerState :: End__ , } UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeSerializerState :: End__ => { * self . state = UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeSerializerState :: Done__ ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                match & mut * self . state { UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeSerializerState :: Content__ (WithSerializer :: serializer (& self . value . content , None , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns (& mut bytes , None , & super :: NS_UNNAMED_2) ; helper . write_attrib (& mut bytes , "type" , & self . value . type_) ? ; helper . write_attrib (& mut bytes , "country" , & self . value . country) ? ; return Ok (Some (Event :: Start (bytes))) } UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeSerializerState :: Content__ (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeSerializerState :: End__ , } UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeSerializerState :: End__ => { * self . state = UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
             }
         }
     }
-    impl<'ser> Iterator
+    impl<'ser> Serializer<'ser>
         for UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeSerializer<'ser>
     {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -30922,18 +31090,20 @@ pub mod quick_xml_serialize {
     impl<'ser>
         UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeSerializer<'ser>
     {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match & mut * self . state { UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeSerializerState :: Content__ (WithSerializer :: serializer (& self . value . content , None , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; if self . is_root { bytes . push_attribute ((& b"xmlns" [..] , & super :: NS_UNNAMED_2 [..])) ; } write_attrib (& mut bytes , "type" , & self . value . type_) ? ; write_attrib (& mut bytes , "country" , & self . value . country) ? ; return Ok (Some (Event :: Start (bytes))) } UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeSerializerState :: Content__ (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeSerializerState :: End__ , } UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeSerializerState :: End__ => { * self . state = UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeSerializerState :: Done__ ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                match & mut * self . state { UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeSerializerState :: Content__ (WithSerializer :: serializer (& self . value . content , None , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns (& mut bytes , None , & super :: NS_UNNAMED_2) ; helper . write_attrib (& mut bytes , "type" , & self . value . type_) ? ; helper . write_attrib (& mut bytes , "country" , & self . value . country) ? ; return Ok (Some (Event :: Start (bytes))) } UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeSerializerState :: Content__ (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeSerializerState :: End__ , } UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeSerializerState :: End__ => { * self . state = UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
             }
         }
     }
-    impl<'ser> Iterator
+    impl<'ser> Serializer<'ser>
         for UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeSerializer<'ser>
     {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -30971,16 +31141,18 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> UdxEdxfPackingUnitElementTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match & mut * self . state { UdxEdxfPackingUnitElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfQuantityMin (WithSerializer :: serializer (& self . value . udx_edxf_quantity_min , Some ("UDX.EDXF.QUANTITY_MIN") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; if self . is_root { bytes . push_attribute ((& b"xmlns" [..] , & super :: NS_UNNAMED_2 [..])) ; } return Ok (Some (Event :: Start (bytes))) } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfQuantityMin (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfQuantityMax (IterSerializer :: new (self . value . udx_edxf_quantity_max . as_ref () , Some ("UDX.EDXF.QUANTITY_MAX") , false)) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfQuantityMax (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfPackingUnitCode (WithSerializer :: serializer (& self . value . udx_edxf_packing_unit_code , Some ("UDX.EDXF.PACKING_UNIT_CODE") , false) ?) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfPackingUnitCode (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfPackingUnitName (IterSerializer :: new (& self . value . udx_edxf_packing_unit_name [..] , Some ("UDX.EDXF.PACKING_UNIT_NAME") , false)) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfPackingUnitName (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfPackageBreak (IterSerializer :: new (self . value . udx_edxf_package_break . as_ref () , Some ("UDX.EDXF.PACKAGE_BREAK") , false)) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfPackageBreak (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfVolume (IterSerializer :: new (self . value . udx_edxf_volume . as_ref () , Some ("UDX.EDXF.VOLUME") , false)) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfVolume (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfWeight (IterSerializer :: new (self . value . udx_edxf_weight . as_ref () , Some ("UDX.EDXF.WEIGHT") , false)) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfWeight (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfLength (IterSerializer :: new (self . value . udx_edxf_length . as_ref () , Some ("UDX.EDXF.LENGTH") , false)) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfLength (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfWidth (IterSerializer :: new (self . value . udx_edxf_width . as_ref () , Some ("UDX.EDXF.WIDTH") , false)) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfWidth (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfDepth (IterSerializer :: new (self . value . udx_edxf_depth . as_ref () , Some ("UDX.EDXF.DEPTH") , false)) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfDepth (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfDiameter (IterSerializer :: new (self . value . udx_edxf_diameter . as_ref () , Some ("UDX.EDXF.DIAMETER") , false)) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfDiameter (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfGtin (IterSerializer :: new (self . value . udx_edxf_gtin . as_ref () , Some ("UDX.EDXF.GTIN") , false)) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfGtin (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfGs1128 (IterSerializer :: new (self . value . udx_edxf_gs_1128 . as_ref () , Some ("UDX.EDXF.GS1_128") , false)) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfGs1128 (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: End__ , } UdxEdxfPackingUnitElementTypeSerializerState :: End__ => { * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: Done__ ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfPackingUnitElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfPackingUnitElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                match & mut * self . state { UdxEdxfPackingUnitElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfQuantityMin (WithSerializer :: serializer (& self . value . udx_edxf_quantity_min , Some ("UDX.EDXF.QUANTITY_MIN") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns (& mut bytes , None , & super :: NS_UNNAMED_2) ; return Ok (Some (Event :: Start (bytes))) } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfQuantityMin (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfQuantityMax (IterSerializer :: new (self . value . udx_edxf_quantity_max . as_ref () , Some ("UDX.EDXF.QUANTITY_MAX") , false)) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfQuantityMax (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfPackingUnitCode (WithSerializer :: serializer (& self . value . udx_edxf_packing_unit_code , Some ("UDX.EDXF.PACKING_UNIT_CODE") , false) ?) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfPackingUnitCode (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfPackingUnitName (IterSerializer :: new (& self . value . udx_edxf_packing_unit_name [..] , Some ("UDX.EDXF.PACKING_UNIT_NAME") , false)) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfPackingUnitName (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfPackageBreak (IterSerializer :: new (self . value . udx_edxf_package_break . as_ref () , Some ("UDX.EDXF.PACKAGE_BREAK") , false)) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfPackageBreak (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfVolume (IterSerializer :: new (self . value . udx_edxf_volume . as_ref () , Some ("UDX.EDXF.VOLUME") , false)) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfVolume (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfWeight (IterSerializer :: new (self . value . udx_edxf_weight . as_ref () , Some ("UDX.EDXF.WEIGHT") , false)) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfWeight (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfLength (IterSerializer :: new (self . value . udx_edxf_length . as_ref () , Some ("UDX.EDXF.LENGTH") , false)) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfLength (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfWidth (IterSerializer :: new (self . value . udx_edxf_width . as_ref () , Some ("UDX.EDXF.WIDTH") , false)) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfWidth (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfDepth (IterSerializer :: new (self . value . udx_edxf_depth . as_ref () , Some ("UDX.EDXF.DEPTH") , false)) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfDepth (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfDiameter (IterSerializer :: new (self . value . udx_edxf_diameter . as_ref () , Some ("UDX.EDXF.DIAMETER") , false)) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfDiameter (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfGtin (IterSerializer :: new (self . value . udx_edxf_gtin . as_ref () , Some ("UDX.EDXF.GTIN") , false)) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfGtin (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfGs1128 (IterSerializer :: new (self . value . udx_edxf_gs_1128 . as_ref () , Some ("UDX.EDXF.GS1_128") , false)) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfGs1128 (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: End__ , } UdxEdxfPackingUnitElementTypeSerializerState :: End__ => { * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfPackingUnitElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfPackingUnitElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
             }
         }
     }
-    impl<'ser> Iterator for UdxEdxfPackingUnitElementTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for UdxEdxfPackingUnitElementTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -31012,7 +31184,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> UdxEdxfSurchargeElementTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     UdxEdxfSurchargeElementTypeSerializerState::Init__ => {
@@ -31020,19 +31195,19 @@ pub mod quick_xml_serialize {
                             IterSerializer::new(&self.value.content[..], None, false),
                         );
                         let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns"[..], &super::NS_UNNAMED_2[..]));
-                        }
+                        helper.begin_ns_scope();
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
                         return Ok(Some(Event::Start(bytes)));
                     }
                     UdxEdxfSurchargeElementTypeSerializerState::Content__(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = UdxEdxfSurchargeElementTypeSerializerState::End__,
                         }
                     }
                     UdxEdxfSurchargeElementTypeSerializerState::End__ => {
                         *self.state = UdxEdxfSurchargeElementTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     UdxEdxfSurchargeElementTypeSerializerState::Done__ => return Ok(None),
@@ -31041,10 +31216,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for UdxEdxfSurchargeElementTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for UdxEdxfSurchargeElementTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -31077,16 +31251,18 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> UdxEdxfSurchargeElementTypeContentSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match & mut * self . state { UdxEdxfSurchargeElementTypeContentSerializerState :: Init__ => { match self . value { super :: UdxEdxfSurchargeElementTypeContent :: UdxEdxfSurchargeType (x) => * self . state = UdxEdxfSurchargeElementTypeContentSerializerState :: UdxEdxfSurchargeType (WithSerializer :: serializer (x , Some ("UDX.EDXF.SURCHARGE_TYPE") , false) ?) , super :: UdxEdxfSurchargeElementTypeContent :: UdxEdxfSurchargeManner (x) => * self . state = UdxEdxfSurchargeElementTypeContentSerializerState :: UdxEdxfSurchargeManner (WithSerializer :: serializer (x , Some ("UDX.EDXF.SURCHARGE_MANNER") , false) ?) , super :: UdxEdxfSurchargeElementTypeContent :: UdxEdxfSurchargePercentage (x) => * self . state = UdxEdxfSurchargeElementTypeContentSerializerState :: UdxEdxfSurchargePercentage (WithSerializer :: serializer (x , Some ("UDX.EDXF.SURCHARGE_PERCENTAGE") , false) ?) , super :: UdxEdxfSurchargeElementTypeContent :: UdxEdxfSurchargePriceAmount (x) => * self . state = UdxEdxfSurchargeElementTypeContentSerializerState :: UdxEdxfSurchargePriceAmount (WithSerializer :: serializer (x , Some ("UDX.EDXF.SURCHARGE_PRICE_AMOUNT") , false) ?) , super :: UdxEdxfSurchargeElementTypeContent :: UdxEdxfSurchargeCalculation (x) => * self . state = UdxEdxfSurchargeElementTypeContentSerializerState :: UdxEdxfSurchargeCalculation (WithSerializer :: serializer (x , Some ("UDX.EDXF.SURCHARGE_CALCULATION") , false) ?) , super :: UdxEdxfSurchargeElementTypeContent :: UdxEdxfMaterialBasis (x) => * self . state = UdxEdxfSurchargeElementTypeContentSerializerState :: UdxEdxfMaterialBasis (WithSerializer :: serializer (x , Some ("UDX.EDXF.MATERIAL_BASIS") , false) ?) , super :: UdxEdxfSurchargeElementTypeContent :: UdxEdxfMaterialBasisWeight (x) => * self . state = UdxEdxfSurchargeElementTypeContentSerializerState :: UdxEdxfMaterialBasisWeight (WithSerializer :: serializer (x , Some ("UDX.EDXF.MATERIAL_BASIS_WEIGHT") , false) ?) , super :: UdxEdxfSurchargeElementTypeContent :: UdxEdxfMaterialBasisSurchargeThreshold (x) => * self . state = UdxEdxfSurchargeElementTypeContentSerializerState :: UdxEdxfMaterialBasisSurchargeThreshold (WithSerializer :: serializer (x , Some ("UDX.EDXF.MATERIAL_BASIS_SURCHARGE_THRESHOLD") , false) ?) , super :: UdxEdxfSurchargeElementTypeContent :: UdxEdxfMaterialBasisSurchargeShutter (x) => * self . state = UdxEdxfSurchargeElementTypeContentSerializerState :: UdxEdxfMaterialBasisSurchargeShutter (WithSerializer :: serializer (x , Some ("UDX.EDXF.MATERIAL_BASIS_SURCHARGE_SHUTTER") , false) ?) , super :: UdxEdxfSurchargeElementTypeContent :: UdxEdxfMaterialBasisSurchargeCredit (x) => * self . state = UdxEdxfSurchargeElementTypeContentSerializerState :: UdxEdxfMaterialBasisSurchargeCredit (WithSerializer :: serializer (x , Some ("UDX.EDXF.MATERIAL_BASIS_SURCHARGE_CREDIT") , false) ?) , super :: UdxEdxfSurchargeElementTypeContent :: UdxEdxfMaterialBasisSurchargeTable (x) => * self . state = UdxEdxfSurchargeElementTypeContentSerializerState :: UdxEdxfMaterialBasisSurchargeTable (WithSerializer :: serializer (x , Some ("UDX.EDXF.MATERIAL_BASIS_SURCHARGE_TABLE") , false) ?) , } } UdxEdxfSurchargeElementTypeContentSerializerState :: UdxEdxfSurchargeType (x) => { match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSurchargeElementTypeContentSerializerState :: Done__ , } } UdxEdxfSurchargeElementTypeContentSerializerState :: UdxEdxfSurchargeManner (x) => { match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSurchargeElementTypeContentSerializerState :: Done__ , } } UdxEdxfSurchargeElementTypeContentSerializerState :: UdxEdxfSurchargePercentage (x) => { match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSurchargeElementTypeContentSerializerState :: Done__ , } } UdxEdxfSurchargeElementTypeContentSerializerState :: UdxEdxfSurchargePriceAmount (x) => { match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSurchargeElementTypeContentSerializerState :: Done__ , } } UdxEdxfSurchargeElementTypeContentSerializerState :: UdxEdxfSurchargeCalculation (x) => { match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSurchargeElementTypeContentSerializerState :: Done__ , } } UdxEdxfSurchargeElementTypeContentSerializerState :: UdxEdxfMaterialBasis (x) => { match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSurchargeElementTypeContentSerializerState :: Done__ , } } UdxEdxfSurchargeElementTypeContentSerializerState :: UdxEdxfMaterialBasisWeight (x) => { match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSurchargeElementTypeContentSerializerState :: Done__ , } } UdxEdxfSurchargeElementTypeContentSerializerState :: UdxEdxfMaterialBasisSurchargeThreshold (x) => { match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSurchargeElementTypeContentSerializerState :: Done__ , } } UdxEdxfSurchargeElementTypeContentSerializerState :: UdxEdxfMaterialBasisSurchargeShutter (x) => { match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSurchargeElementTypeContentSerializerState :: Done__ , } } UdxEdxfSurchargeElementTypeContentSerializerState :: UdxEdxfMaterialBasisSurchargeCredit (x) => { match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSurchargeElementTypeContentSerializerState :: Done__ , } } UdxEdxfSurchargeElementTypeContentSerializerState :: UdxEdxfMaterialBasisSurchargeTable (x) => { match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSurchargeElementTypeContentSerializerState :: Done__ , } } UdxEdxfSurchargeElementTypeContentSerializerState :: Done__ => return Ok (None) , UdxEdxfSurchargeElementTypeContentSerializerState :: Phantom__ (_) => unreachable ! () , }
+                match & mut * self . state { UdxEdxfSurchargeElementTypeContentSerializerState :: Init__ => { match self . value { super :: UdxEdxfSurchargeElementTypeContent :: UdxEdxfSurchargeType (x) => * self . state = UdxEdxfSurchargeElementTypeContentSerializerState :: UdxEdxfSurchargeType (WithSerializer :: serializer (x , Some ("UDX.EDXF.SURCHARGE_TYPE") , false) ?) , super :: UdxEdxfSurchargeElementTypeContent :: UdxEdxfSurchargeManner (x) => * self . state = UdxEdxfSurchargeElementTypeContentSerializerState :: UdxEdxfSurchargeManner (WithSerializer :: serializer (x , Some ("UDX.EDXF.SURCHARGE_MANNER") , false) ?) , super :: UdxEdxfSurchargeElementTypeContent :: UdxEdxfSurchargePercentage (x) => * self . state = UdxEdxfSurchargeElementTypeContentSerializerState :: UdxEdxfSurchargePercentage (WithSerializer :: serializer (x , Some ("UDX.EDXF.SURCHARGE_PERCENTAGE") , false) ?) , super :: UdxEdxfSurchargeElementTypeContent :: UdxEdxfSurchargePriceAmount (x) => * self . state = UdxEdxfSurchargeElementTypeContentSerializerState :: UdxEdxfSurchargePriceAmount (WithSerializer :: serializer (x , Some ("UDX.EDXF.SURCHARGE_PRICE_AMOUNT") , false) ?) , super :: UdxEdxfSurchargeElementTypeContent :: UdxEdxfSurchargeCalculation (x) => * self . state = UdxEdxfSurchargeElementTypeContentSerializerState :: UdxEdxfSurchargeCalculation (WithSerializer :: serializer (x , Some ("UDX.EDXF.SURCHARGE_CALCULATION") , false) ?) , super :: UdxEdxfSurchargeElementTypeContent :: UdxEdxfMaterialBasis (x) => * self . state = UdxEdxfSurchargeElementTypeContentSerializerState :: UdxEdxfMaterialBasis (WithSerializer :: serializer (x , Some ("UDX.EDXF.MATERIAL_BASIS") , false) ?) , super :: UdxEdxfSurchargeElementTypeContent :: UdxEdxfMaterialBasisWeight (x) => * self . state = UdxEdxfSurchargeElementTypeContentSerializerState :: UdxEdxfMaterialBasisWeight (WithSerializer :: serializer (x , Some ("UDX.EDXF.MATERIAL_BASIS_WEIGHT") , false) ?) , super :: UdxEdxfSurchargeElementTypeContent :: UdxEdxfMaterialBasisSurchargeThreshold (x) => * self . state = UdxEdxfSurchargeElementTypeContentSerializerState :: UdxEdxfMaterialBasisSurchargeThreshold (WithSerializer :: serializer (x , Some ("UDX.EDXF.MATERIAL_BASIS_SURCHARGE_THRESHOLD") , false) ?) , super :: UdxEdxfSurchargeElementTypeContent :: UdxEdxfMaterialBasisSurchargeShutter (x) => * self . state = UdxEdxfSurchargeElementTypeContentSerializerState :: UdxEdxfMaterialBasisSurchargeShutter (WithSerializer :: serializer (x , Some ("UDX.EDXF.MATERIAL_BASIS_SURCHARGE_SHUTTER") , false) ?) , super :: UdxEdxfSurchargeElementTypeContent :: UdxEdxfMaterialBasisSurchargeCredit (x) => * self . state = UdxEdxfSurchargeElementTypeContentSerializerState :: UdxEdxfMaterialBasisSurchargeCredit (WithSerializer :: serializer (x , Some ("UDX.EDXF.MATERIAL_BASIS_SURCHARGE_CREDIT") , false) ?) , super :: UdxEdxfSurchargeElementTypeContent :: UdxEdxfMaterialBasisSurchargeTable (x) => * self . state = UdxEdxfSurchargeElementTypeContentSerializerState :: UdxEdxfMaterialBasisSurchargeTable (WithSerializer :: serializer (x , Some ("UDX.EDXF.MATERIAL_BASIS_SURCHARGE_TABLE") , false) ?) , } } UdxEdxfSurchargeElementTypeContentSerializerState :: UdxEdxfSurchargeType (x) => { match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSurchargeElementTypeContentSerializerState :: Done__ , } } UdxEdxfSurchargeElementTypeContentSerializerState :: UdxEdxfSurchargeManner (x) => { match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSurchargeElementTypeContentSerializerState :: Done__ , } } UdxEdxfSurchargeElementTypeContentSerializerState :: UdxEdxfSurchargePercentage (x) => { match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSurchargeElementTypeContentSerializerState :: Done__ , } } UdxEdxfSurchargeElementTypeContentSerializerState :: UdxEdxfSurchargePriceAmount (x) => { match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSurchargeElementTypeContentSerializerState :: Done__ , } } UdxEdxfSurchargeElementTypeContentSerializerState :: UdxEdxfSurchargeCalculation (x) => { match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSurchargeElementTypeContentSerializerState :: Done__ , } } UdxEdxfSurchargeElementTypeContentSerializerState :: UdxEdxfMaterialBasis (x) => { match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSurchargeElementTypeContentSerializerState :: Done__ , } } UdxEdxfSurchargeElementTypeContentSerializerState :: UdxEdxfMaterialBasisWeight (x) => { match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSurchargeElementTypeContentSerializerState :: Done__ , } } UdxEdxfSurchargeElementTypeContentSerializerState :: UdxEdxfMaterialBasisSurchargeThreshold (x) => { match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSurchargeElementTypeContentSerializerState :: Done__ , } } UdxEdxfSurchargeElementTypeContentSerializerState :: UdxEdxfMaterialBasisSurchargeShutter (x) => { match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSurchargeElementTypeContentSerializerState :: Done__ , } } UdxEdxfSurchargeElementTypeContentSerializerState :: UdxEdxfMaterialBasisSurchargeCredit (x) => { match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSurchargeElementTypeContentSerializerState :: Done__ , } } UdxEdxfSurchargeElementTypeContentSerializerState :: UdxEdxfMaterialBasisSurchargeTable (x) => { match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSurchargeElementTypeContentSerializerState :: Done__ , } } UdxEdxfSurchargeElementTypeContentSerializerState :: Done__ => return Ok (None) , UdxEdxfSurchargeElementTypeContentSerializerState :: Phantom__ (_) => unreachable ! () , }
             }
         }
     }
-    impl<'ser> Iterator for UdxEdxfSurchargeElementTypeContentSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for UdxEdxfSurchargeElementTypeContentSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {

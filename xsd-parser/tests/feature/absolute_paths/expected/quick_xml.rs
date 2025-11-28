@@ -2,6 +2,10 @@ pub const NS_XS: xsd_parser_types::misc::Namespace =
     xsd_parser_types::misc::Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: xsd_parser_types::misc::Namespace =
     xsd_parser_types::misc::Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
+pub const PREFIX_XS: xsd_parser_types::misc::NamespacePrefix =
+    xsd_parser_types::misc::NamespacePrefix::new_const(b"xs");
+pub const PREFIX_XML: xsd_parser_types::misc::NamespacePrefix =
+    xsd_parser_types::misc::NamespacePrefix::new_const(b"xml");
 pub type AsMut = TestType;
 pub type AsRef = TestType;
 pub type Box = TestType;
@@ -74,11 +78,12 @@ impl ::core::ops::Deref for TestType {
 impl ::xsd_parser_types::quick_xml::SerializeBytes for TestType {
     fn serialize_bytes(
         &self,
+        helper: &mut ::xsd_parser_types::quick_xml::SerializeHelper,
     ) -> ::core::result::Result<
         ::core::option::Option<::std::borrow::Cow<'_, str>>,
         ::xsd_parser_types::quick_xml::Error,
     > {
-        self.0.serialize_bytes()
+        self.0.serialize_bytes(helper)
     }
 }
 impl ::xsd_parser_types::quick_xml::DeserializeBytes for TestType {
@@ -100,6 +105,7 @@ pub struct EntitiesType(pub ::std::vec::Vec<::std::string::String>);
 impl ::xsd_parser_types::quick_xml::SerializeBytes for EntitiesType {
     fn serialize_bytes(
         &self,
+        helper: &mut ::xsd_parser_types::quick_xml::SerializeHelper,
     ) -> ::core::result::Result<
         ::core::option::Option<::std::borrow::Cow<'_, str>>,
         ::xsd_parser_types::quick_xml::Error,
@@ -109,7 +115,7 @@ impl ::xsd_parser_types::quick_xml::SerializeBytes for EntitiesType {
         }
         let mut data = ::std::string::String::new();
         for item in &self.0 {
-            if let Some(bytes) = item.serialize_bytes()? {
+            if let Some(bytes) = item.serialize_bytes(helper)? {
                 if !data.is_empty() {
                     data.push(' ');
                 }
@@ -137,6 +143,7 @@ pub struct EntityType(pub ::std::vec::Vec<::std::string::String>);
 impl ::xsd_parser_types::quick_xml::SerializeBytes for EntityType {
     fn serialize_bytes(
         &self,
+        helper: &mut ::xsd_parser_types::quick_xml::SerializeHelper,
     ) -> ::core::result::Result<
         ::core::option::Option<::std::borrow::Cow<'_, str>>,
         ::xsd_parser_types::quick_xml::Error,
@@ -146,7 +153,7 @@ impl ::xsd_parser_types::quick_xml::SerializeBytes for EntityType {
         }
         let mut data = ::std::string::String::new();
         for item in &self.0 {
-            if let Some(bytes) = item.serialize_bytes()? {
+            if let Some(bytes) = item.serialize_bytes(helper)? {
                 if !data.is_empty() {
                     data.push(' ');
                 }
@@ -176,6 +183,7 @@ pub struct IdrefsType(pub ::std::vec::Vec<::std::string::String>);
 impl ::xsd_parser_types::quick_xml::SerializeBytes for IdrefsType {
     fn serialize_bytes(
         &self,
+        helper: &mut ::xsd_parser_types::quick_xml::SerializeHelper,
     ) -> ::core::result::Result<
         ::core::option::Option<::std::borrow::Cow<'_, str>>,
         ::xsd_parser_types::quick_xml::Error,
@@ -185,7 +193,7 @@ impl ::xsd_parser_types::quick_xml::SerializeBytes for IdrefsType {
         }
         let mut data = ::std::string::String::new();
         for item in &self.0 {
-            if let Some(bytes) = item.serialize_bytes()? {
+            if let Some(bytes) = item.serialize_bytes(helper)? {
                 if !data.is_empty() {
                     data.push(' ');
                 }
@@ -215,6 +223,7 @@ pub struct NmtokensType(pub ::std::vec::Vec<::std::string::String>);
 impl ::xsd_parser_types::quick_xml::SerializeBytes for NmtokensType {
     fn serialize_bytes(
         &self,
+        helper: &mut ::xsd_parser_types::quick_xml::SerializeHelper,
     ) -> ::core::result::Result<
         ::core::option::Option<::std::borrow::Cow<'_, str>>,
         ::xsd_parser_types::quick_xml::Error,
@@ -224,7 +233,7 @@ impl ::xsd_parser_types::quick_xml::SerializeBytes for NmtokensType {
         }
         let mut data = ::std::string::String::new();
         for item in &self.0 {
-            if let Some(bytes) = item.serialize_bytes()? {
+            if let Some(bytes) = item.serialize_bytes(helper)? {
                 if !data.is_empty() {
                     data.push(' ');
                 }
@@ -386,6 +395,7 @@ pub mod quick_xml_deserialize {
     }
 }
 pub mod quick_xml_serialize {
+    use xsd_parser_types::quick_xml::Serializer as _;
     #[derive(Debug)]
     pub struct AnyTypeSerializer<'ser> {
         pub(super) value: &'ser super::AnyType,
@@ -402,6 +412,7 @@ pub mod quick_xml_serialize {
     impl<'ser> AnyTypeSerializer<'ser> {
         fn next_event(
             &mut self,
+            helper: &mut ::xsd_parser_types::quick_xml::SerializeHelper,
         ) -> ::core::result::Result<
             ::core::option::Option<::xsd_parser_types::quick_xml::Event<'ser>>,
             ::xsd_parser_types::quick_xml::Error,
@@ -419,13 +430,17 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> ::core::iter::Iterator for AnyTypeSerializer<'ser> {
-        type Item = ::core::result::Result<
-            ::xsd_parser_types::quick_xml::Event<'ser>,
-            ::xsd_parser_types::quick_xml::Error,
-        >;
-        fn next(&mut self) -> ::core::option::Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> ::xsd_parser_types::quick_xml::Serializer<'ser> for AnyTypeSerializer<'ser> {
+        fn next(
+            &mut self,
+            helper: &mut ::xsd_parser_types::quick_xml::SerializeHelper,
+        ) -> ::core::option::Option<
+            ::core::result::Result<
+                ::xsd_parser_types::quick_xml::Event<'ser>,
+                ::xsd_parser_types::quick_xml::Error,
+            >,
+        > {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {

@@ -3,7 +3,6 @@
 
 pub mod reader;
 
-mod attributes;
 mod deserialize;
 mod error;
 mod serialize;
@@ -21,7 +20,6 @@ use regex::Regex;
 
 pub use crate::misc::RawByteStr;
 
-pub use self::attributes::{write_attrib, write_attrib_opt};
 pub use self::deserialize::{
     ContentDeserializer, DeserializeBytes, DeserializeBytesFromStr, DeserializeHelper,
     DeserializeStrError, DeserializeSync, Deserializer, DeserializerArtifact, DeserializerEvent,
@@ -31,7 +29,8 @@ pub use self::error::{Error, Kind as ErrorKind, UnionError, ValidateError};
 pub use self::reader::{ErrorReader, IoReader, SliceReader, XmlReader, XmlReaderSync};
 pub use self::serialize::{
     BoxedSerializer, ContentSerializer, DerefIter, IterSerializer, SerializeBytes,
-    SerializeBytesToString, SerializeSync, Serializer, WithBoxedSerializer, WithSerializer,
+    SerializeBytesToString, SerializeHelper, SerializeSync, Serializer, WithBoxedSerializer,
+    WithSerializer,
 };
 
 #[cfg(feature = "async")]

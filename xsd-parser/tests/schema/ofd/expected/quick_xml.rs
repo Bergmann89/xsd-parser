@@ -1,7 +1,9 @@
-use xsd_parser_types::misc::Namespace;
+use xsd_parser_types::misc::{Namespace, NamespacePrefix};
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
 pub const NS_UNNAMED_2: Namespace = Namespace::new_const(b"http://www.ofdspec.org/2016");
+pub const PREFIX_XS: NamespacePrefix = NamespacePrefix::new_const(b"xs");
+pub const PREFIX_XML: NamespacePrefix = NamespacePrefix::new_const(b"xml");
 pub mod annotations {
     use xsd_parser_types::quick_xml::{Error, WithDeserializer, WithSerializer};
     pub type Annotations = AnnotationsXElementType;
@@ -474,7 +476,8 @@ pub mod annotations {
     }
     pub mod quick_xml_serialize {
         use xsd_parser_types::quick_xml::{
-            write_attrib, BytesEnd, BytesStart, Error, Event, IterSerializer, WithSerializer,
+            BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
+            WithSerializer,
         };
         #[derive(Debug)]
         pub struct AnnotationsXElementTypeSerializer<'ser> {
@@ -498,7 +501,10 @@ pub mod annotations {
             Phantom__(&'ser ()),
         }
         impl<'ser> AnnotationsXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         AnnotationsXElementTypeSerializerState::Init__ => {
@@ -506,22 +512,19 @@ pub mod annotations {
                                 IterSerializer::new(&self.value.page[..], Some("Page"), false),
                             );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         AnnotationsXElementTypeSerializerState::Page(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = AnnotationsXElementTypeSerializerState::End__,
                             }
                         }
                         AnnotationsXElementTypeSerializerState::End__ => {
                             *self.state = AnnotationsXElementTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         AnnotationsXElementTypeSerializerState::Done__ => return Ok(None),
@@ -530,10 +533,9 @@ pub mod annotations {
                 }
             }
         }
-        impl<'ser> Iterator for AnnotationsXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for AnnotationsXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -559,7 +561,10 @@ pub mod annotations {
             Phantom__(&'ser ()),
         }
         impl<'ser> AnnotationsPageXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         AnnotationsPageXElementTypeSerializerState::Init__ => {
@@ -571,17 +576,13 @@ pub mod annotations {
                                 )?,
                             );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib(&mut bytes, "PageID", &self.value.page_id)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib(&mut bytes, "PageID", &self.value.page_id)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         AnnotationsPageXElementTypeSerializerState::FileLoc(x) => match x
-                            .next()
+                            .next(helper)
                             .transpose()?
                         {
                             Some(event) => return Ok(Some(event)),
@@ -589,6 +590,7 @@ pub mod annotations {
                         },
                         AnnotationsPageXElementTypeSerializerState::End__ => {
                             *self.state = AnnotationsPageXElementTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         AnnotationsPageXElementTypeSerializerState::Done__ => return Ok(None),
@@ -597,10 +599,9 @@ pub mod annotations {
                 }
             }
         }
-        impl<'ser> Iterator for AnnotationsPageXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for AnnotationsPageXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -616,7 +617,7 @@ pub mod annotion {
     use std::borrow::Cow;
     use xsd_parser_types::quick_xml::{
         DeserializeBytes, DeserializeHelper, Error, ErrorKind, RawByteStr, SerializeBytes,
-        WithDeserializer, WithSerializer,
+        SerializeHelper, WithDeserializer, WithSerializer,
     };
     pub type PageAnnot = PageAnnotXElementType;
     #[derive(Debug)]
@@ -708,7 +709,10 @@ pub mod annotion {
         Watermark,
     }
     impl SerializeBytes for PageAnnotAnnotTypeXType {
-        fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+        fn serialize_bytes(
+            &self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Cow<'_, str>>, Error> {
             match self {
                 Self::Link => Ok(Some(Cow::Borrowed("Link"))),
                 Self::Path => Ok(Some(Cow::Borrowed("Path"))),
@@ -2589,7 +2593,7 @@ pub mod annotion {
     }
     pub mod quick_xml_serialize {
         use xsd_parser_types::quick_xml::{
-            write_attrib, write_attrib_opt, BytesEnd, BytesStart, Error, Event, IterSerializer,
+            BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
             WithSerializer,
         };
         #[derive(Debug)]
@@ -2614,7 +2618,10 @@ pub mod annotion {
             Phantom__(&'ser ()),
         }
         impl<'ser> PageAnnotXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         PageAnnotXElementTypeSerializerState::Init__ => {
@@ -2622,22 +2629,19 @@ pub mod annotion {
                                 IterSerializer::new(&self.value.annot[..], Some("Annot"), false),
                             );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         PageAnnotXElementTypeSerializerState::Annot(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = PageAnnotXElementTypeSerializerState::End__,
                             }
                         }
                         PageAnnotXElementTypeSerializerState::End__ => {
                             *self.state = PageAnnotXElementTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         PageAnnotXElementTypeSerializerState::Done__ => return Ok(None),
@@ -2646,10 +2650,9 @@ pub mod annotion {
                 }
             }
         }
-        impl<'ser> Iterator for PageAnnotXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for PageAnnotXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -2685,7 +2688,10 @@ pub mod annotion {
             Phantom__(&'ser ()),
         }
         impl<'ser> PageAnnotAnnotXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         PageAnnotAnnotXElementTypeSerializerState::Init__ => {
@@ -2697,26 +2703,26 @@ pub mod annotion {
                                 ),
                             );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib(&mut bytes, "ID", &self.value.id)?;
-                            write_attrib(&mut bytes, "Type", &self.value.type_)?;
-                            write_attrib(&mut bytes, "Creator", &self.value.creator)?;
-                            write_attrib(&mut bytes, "LastModDate", &self.value.last_mod_date)?;
-                            write_attrib(&mut bytes, "Visible", &self.value.visible)?;
-                            write_attrib_opt(&mut bytes, "Subtype", &self.value.subtype)?;
-                            write_attrib(&mut bytes, "Print", &self.value.print)?;
-                            write_attrib(&mut bytes, "NoZoom", &self.value.no_zoom)?;
-                            write_attrib(&mut bytes, "NoRotate", &self.value.no_rotate)?;
-                            write_attrib(&mut bytes, "ReadOnly", &self.value.read_only)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib(&mut bytes, "ID", &self.value.id)?;
+                            helper.write_attrib(&mut bytes, "Type", &self.value.type_)?;
+                            helper.write_attrib(&mut bytes, "Creator", &self.value.creator)?;
+                            helper.write_attrib(
+                                &mut bytes,
+                                "LastModDate",
+                                &self.value.last_mod_date,
+                            )?;
+                            helper.write_attrib(&mut bytes, "Visible", &self.value.visible)?;
+                            helper.write_attrib_opt(&mut bytes, "Subtype", &self.value.subtype)?;
+                            helper.write_attrib(&mut bytes, "Print", &self.value.print)?;
+                            helper.write_attrib(&mut bytes, "NoZoom", &self.value.no_zoom)?;
+                            helper.write_attrib(&mut bytes, "NoRotate", &self.value.no_rotate)?;
+                            helper.write_attrib(&mut bytes, "ReadOnly", &self.value.read_only)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         PageAnnotAnnotXElementTypeSerializerState::Remark(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state =
@@ -2731,7 +2737,7 @@ pub mod annotion {
                             }
                         }
                         PageAnnotAnnotXElementTypeSerializerState::Parameters(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state =
@@ -2746,14 +2752,15 @@ pub mod annotion {
                             }
                         }
                         PageAnnotAnnotXElementTypeSerializerState::Appearance(x) => match x
-                            .next()
-                            .transpose(
-                        )? {
+                            .next(helper)
+                            .transpose()?
+                        {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = PageAnnotAnnotXElementTypeSerializerState::End__,
                         },
                         PageAnnotAnnotXElementTypeSerializerState::End__ => {
                             *self.state = PageAnnotAnnotXElementTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         PageAnnotAnnotXElementTypeSerializerState::Done__ => return Ok(None),
@@ -2762,10 +2769,9 @@ pub mod annotion {
                 }
             }
         }
-        impl<'ser> Iterator for PageAnnotAnnotXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for PageAnnotAnnotXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -2797,7 +2803,10 @@ pub mod annotion {
             Phantom__(&'ser ()),
         }
         impl<'ser> PageAnnotAnnotParametersXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         PageAnnotAnnotParametersXElementTypeSerializerState::Init__ => {
@@ -2810,16 +2819,12 @@ pub mod annotion {
                                     ),
                                 );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         PageAnnotAnnotParametersXElementTypeSerializerState::Parameter(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state =
@@ -2830,6 +2835,7 @@ pub mod annotion {
                         PageAnnotAnnotParametersXElementTypeSerializerState::End__ => {
                             *self.state =
                                 PageAnnotAnnotParametersXElementTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         PageAnnotAnnotParametersXElementTypeSerializerState::Done__ => {
@@ -2842,10 +2848,9 @@ pub mod annotion {
                 }
             }
         }
-        impl<'ser> Iterator for PageAnnotAnnotParametersXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for PageAnnotAnnotParametersXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -2877,7 +2882,10 @@ pub mod annotion {
             Phantom__(&'ser ()),
         }
         impl<'ser> PageAnnotAnnotAppearanceXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         PageAnnotAnnotAppearanceXElementTypeSerializerState::Init__ => {
@@ -2886,17 +2894,17 @@ pub mod annotion {
                                     IterSerializer::new(&self.value.content[..], None, false),
                                 );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib_opt(&mut bytes, "Boundary", &self.value.boundary)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib_opt(
+                                &mut bytes,
+                                "Boundary",
+                                &self.value.boundary,
+                            )?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         PageAnnotAnnotAppearanceXElementTypeSerializerState::Content__(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state =
@@ -2907,6 +2915,7 @@ pub mod annotion {
                         PageAnnotAnnotAppearanceXElementTypeSerializerState::End__ => {
                             *self.state =
                                 PageAnnotAnnotAppearanceXElementTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         PageAnnotAnnotAppearanceXElementTypeSerializerState::Done__ => {
@@ -2919,10 +2928,9 @@ pub mod annotion {
                 }
             }
         }
-        impl<'ser> Iterator for PageAnnotAnnotAppearanceXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for PageAnnotAnnotAppearanceXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -2941,16 +2949,18 @@ pub mod annotion {
         pub(super) enum PageAnnotAnnotAppearanceXElementTypeContentSerializerState<'ser> {
             Init__ , TextObject (< super :: super :: page :: CtPageBlockTextObjectXElementType as WithSerializer > :: Serializer < 'ser >) , PathObject (< super :: super :: page :: CtPageBlockPathObjectXElementType as WithSerializer > :: Serializer < 'ser >) , ImageObject (< super :: super :: page :: CtPageBlockImageObjectXElementType as WithSerializer > :: Serializer < 'ser >) , CompositeObject (< super :: super :: page :: CtPageBlockCompositeObjectXElementType as WithSerializer > :: Serializer < 'ser >) , PageBlock (< super :: super :: page :: CtPageBlockPageBlockXElementType as WithSerializer > :: Serializer < 'ser >) , Done__ , Phantom__ (& 'ser ()) , }
         impl<'ser> PageAnnotAnnotAppearanceXElementTypeContentSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { PageAnnotAnnotAppearanceXElementTypeContentSerializerState :: Init__ => { match self . value { super :: PageAnnotAnnotAppearanceXElementTypeContent :: TextObject (x) => * self . state = PageAnnotAnnotAppearanceXElementTypeContentSerializerState :: TextObject (WithSerializer :: serializer (x , Some ("TextObject") , false) ?) , super :: PageAnnotAnnotAppearanceXElementTypeContent :: PathObject (x) => * self . state = PageAnnotAnnotAppearanceXElementTypeContentSerializerState :: PathObject (WithSerializer :: serializer (x , Some ("PathObject") , false) ?) , super :: PageAnnotAnnotAppearanceXElementTypeContent :: ImageObject (x) => * self . state = PageAnnotAnnotAppearanceXElementTypeContentSerializerState :: ImageObject (WithSerializer :: serializer (x , Some ("ImageObject") , false) ?) , super :: PageAnnotAnnotAppearanceXElementTypeContent :: CompositeObject (x) => * self . state = PageAnnotAnnotAppearanceXElementTypeContentSerializerState :: CompositeObject (WithSerializer :: serializer (x , Some ("CompositeObject") , false) ?) , super :: PageAnnotAnnotAppearanceXElementTypeContent :: PageBlock (x) => * self . state = PageAnnotAnnotAppearanceXElementTypeContentSerializerState :: PageBlock (WithSerializer :: serializer (x , Some ("PageBlock") , false) ?) , } } PageAnnotAnnotAppearanceXElementTypeContentSerializerState :: TextObject (x) => { match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PageAnnotAnnotAppearanceXElementTypeContentSerializerState :: Done__ , } } PageAnnotAnnotAppearanceXElementTypeContentSerializerState :: PathObject (x) => { match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PageAnnotAnnotAppearanceXElementTypeContentSerializerState :: Done__ , } } PageAnnotAnnotAppearanceXElementTypeContentSerializerState :: ImageObject (x) => { match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PageAnnotAnnotAppearanceXElementTypeContentSerializerState :: Done__ , } } PageAnnotAnnotAppearanceXElementTypeContentSerializerState :: CompositeObject (x) => { match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PageAnnotAnnotAppearanceXElementTypeContentSerializerState :: Done__ , } } PageAnnotAnnotAppearanceXElementTypeContentSerializerState :: PageBlock (x) => { match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PageAnnotAnnotAppearanceXElementTypeContentSerializerState :: Done__ , } } PageAnnotAnnotAppearanceXElementTypeContentSerializerState :: Done__ => return Ok (None) , PageAnnotAnnotAppearanceXElementTypeContentSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { PageAnnotAnnotAppearanceXElementTypeContentSerializerState :: Init__ => { match self . value { super :: PageAnnotAnnotAppearanceXElementTypeContent :: TextObject (x) => * self . state = PageAnnotAnnotAppearanceXElementTypeContentSerializerState :: TextObject (WithSerializer :: serializer (x , Some ("TextObject") , false) ?) , super :: PageAnnotAnnotAppearanceXElementTypeContent :: PathObject (x) => * self . state = PageAnnotAnnotAppearanceXElementTypeContentSerializerState :: PathObject (WithSerializer :: serializer (x , Some ("PathObject") , false) ?) , super :: PageAnnotAnnotAppearanceXElementTypeContent :: ImageObject (x) => * self . state = PageAnnotAnnotAppearanceXElementTypeContentSerializerState :: ImageObject (WithSerializer :: serializer (x , Some ("ImageObject") , false) ?) , super :: PageAnnotAnnotAppearanceXElementTypeContent :: CompositeObject (x) => * self . state = PageAnnotAnnotAppearanceXElementTypeContentSerializerState :: CompositeObject (WithSerializer :: serializer (x , Some ("CompositeObject") , false) ?) , super :: PageAnnotAnnotAppearanceXElementTypeContent :: PageBlock (x) => * self . state = PageAnnotAnnotAppearanceXElementTypeContentSerializerState :: PageBlock (WithSerializer :: serializer (x , Some ("PageBlock") , false) ?) , } } PageAnnotAnnotAppearanceXElementTypeContentSerializerState :: TextObject (x) => { match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PageAnnotAnnotAppearanceXElementTypeContentSerializerState :: Done__ , } } PageAnnotAnnotAppearanceXElementTypeContentSerializerState :: PathObject (x) => { match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PageAnnotAnnotAppearanceXElementTypeContentSerializerState :: Done__ , } } PageAnnotAnnotAppearanceXElementTypeContentSerializerState :: ImageObject (x) => { match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PageAnnotAnnotAppearanceXElementTypeContentSerializerState :: Done__ , } } PageAnnotAnnotAppearanceXElementTypeContentSerializerState :: CompositeObject (x) => { match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PageAnnotAnnotAppearanceXElementTypeContentSerializerState :: Done__ , } } PageAnnotAnnotAppearanceXElementTypeContentSerializerState :: PageBlock (x) => { match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PageAnnotAnnotAppearanceXElementTypeContentSerializerState :: Done__ , } } PageAnnotAnnotAppearanceXElementTypeContentSerializerState :: Done__ => return Ok (None) , PageAnnotAnnotAppearanceXElementTypeContentSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
-        impl<'ser> Iterator for PageAnnotAnnotAppearanceXElementTypeContentSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for PageAnnotAnnotAppearanceXElementTypeContentSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -3507,7 +3517,7 @@ pub mod attachments {
     }
     pub mod quick_xml_serialize {
         use xsd_parser_types::quick_xml::{
-            write_attrib, write_attrib_opt, BytesEnd, BytesStart, Error, Event, IterSerializer,
+            BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
             WithSerializer,
         };
         #[derive(Debug)]
@@ -3528,7 +3538,10 @@ pub mod attachments {
             Phantom__(&'ser ()),
         }
         impl<'ser> AttachmentsXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         AttachmentsXElementTypeSerializerState::Init__ => {
@@ -3540,22 +3553,19 @@ pub mod attachments {
                                 ),
                             );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         AttachmentsXElementTypeSerializerState::Attachment(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = AttachmentsXElementTypeSerializerState::End__,
                             }
                         }
                         AttachmentsXElementTypeSerializerState::End__ => {
                             *self.state = AttachmentsXElementTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         AttachmentsXElementTypeSerializerState::Done__ => return Ok(None),
@@ -3564,10 +3574,9 @@ pub mod attachments {
                 }
             }
         }
-        impl<'ser> Iterator for AttachmentsXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for AttachmentsXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -3593,7 +3602,10 @@ pub mod attachments {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtAttachmentXTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtAttachmentXTypeSerializerState::Init__ => {
@@ -3605,34 +3617,31 @@ pub mod attachments {
                                 )?,
                             );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib(&mut bytes, "ID", &self.value.id)?;
-                            write_attrib(&mut bytes, "Name", &self.value.name)?;
-                            write_attrib_opt(&mut bytes, "Format", &self.value.format)?;
-                            write_attrib_opt(
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib(&mut bytes, "ID", &self.value.id)?;
+                            helper.write_attrib(&mut bytes, "Name", &self.value.name)?;
+                            helper.write_attrib_opt(&mut bytes, "Format", &self.value.format)?;
+                            helper.write_attrib_opt(
                                 &mut bytes,
                                 "CreationDate",
                                 &self.value.creation_date,
                             )?;
-                            write_attrib_opt(&mut bytes, "ModDate", &self.value.mod_date)?;
-                            write_attrib_opt(&mut bytes, "Size", &self.value.size)?;
-                            write_attrib(&mut bytes, "Visible", &self.value.visible)?;
-                            write_attrib(&mut bytes, "Usage", &self.value.usage)?;
+                            helper.write_attrib_opt(&mut bytes, "ModDate", &self.value.mod_date)?;
+                            helper.write_attrib_opt(&mut bytes, "Size", &self.value.size)?;
+                            helper.write_attrib(&mut bytes, "Visible", &self.value.visible)?;
+                            helper.write_attrib(&mut bytes, "Usage", &self.value.usage)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtAttachmentXTypeSerializerState::FileLoc(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = CtAttachmentXTypeSerializerState::End__,
                             }
                         }
                         CtAttachmentXTypeSerializerState::End__ => {
                             *self.state = CtAttachmentXTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         CtAttachmentXTypeSerializerState::Done__ => return Ok(None),
@@ -3641,10 +3650,9 @@ pub mod attachments {
                 }
             }
         }
-        impl<'ser> Iterator for CtAttachmentXTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtAttachmentXTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -4234,7 +4242,8 @@ pub mod custom_tags {
     }
     pub mod quick_xml_serialize {
         use xsd_parser_types::quick_xml::{
-            write_attrib, BytesEnd, BytesStart, Error, Event, IterSerializer, WithSerializer,
+            BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
+            WithSerializer,
         };
         #[derive(Debug)]
         pub struct CustomTagsXElementTypeSerializer<'ser> {
@@ -4258,7 +4267,10 @@ pub mod custom_tags {
             Phantom__(&'ser ()),
         }
         impl<'ser> CustomTagsXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CustomTagsXElementTypeSerializerState::Init__ => {
@@ -4270,22 +4282,19 @@ pub mod custom_tags {
                                 ),
                             );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CustomTagsXElementTypeSerializerState::CustomTag(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = CustomTagsXElementTypeSerializerState::End__,
                             }
                         }
                         CustomTagsXElementTypeSerializerState::End__ => {
                             *self.state = CustomTagsXElementTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         CustomTagsXElementTypeSerializerState::Done__ => return Ok(None),
@@ -4294,10 +4303,9 @@ pub mod custom_tags {
                 }
             }
         }
-        impl<'ser> Iterator for CustomTagsXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CustomTagsXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -4324,7 +4332,10 @@ pub mod custom_tags {
             Phantom__(&'ser ()),
         }
         impl<'ser> CustomTagsCustomTagXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CustomTagsCustomTagXElementTypeSerializerState::Init__ => {
@@ -4336,17 +4347,13 @@ pub mod custom_tags {
                                 ),
                             );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib(&mut bytes, "NameSpace", &self.value.name_space)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib(&mut bytes, "NameSpace", &self.value.name_space)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CustomTagsCustomTagXElementTypeSerializerState::SchemaLoc(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state =
@@ -4361,7 +4368,7 @@ pub mod custom_tags {
                             }
                         }
                         CustomTagsCustomTagXElementTypeSerializerState::FileLoc(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state =
@@ -4371,6 +4378,7 @@ pub mod custom_tags {
                         }
                         CustomTagsCustomTagXElementTypeSerializerState::End__ => {
                             *self.state = CustomTagsCustomTagXElementTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         CustomTagsCustomTagXElementTypeSerializerState::Done__ => return Ok(None),
@@ -4381,10 +4389,9 @@ pub mod custom_tags {
                 }
             }
         }
-        impl<'ser> Iterator for CustomTagsCustomTagXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CustomTagsCustomTagXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -4401,7 +4408,7 @@ pub mod definition {
     use xsd_parser_types::{
         quick_xml::{
             DeserializeBytes, DeserializeHelper, Error, ErrorKind, RawByteStr, SerializeBytes,
-            WithDeserializer, WithSerializer,
+            SerializeHelper, WithDeserializer, WithSerializer,
         },
         xml::AnyElement,
     };
@@ -4543,7 +4550,10 @@ pub mod definition {
         Click,
     }
     impl SerializeBytes for CtActionEventXType {
-        fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+        fn serialize_bytes(
+            &self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Cow<'_, str>>, Error> {
             match self {
                 Self::Do => Ok(Some(Cow::Borrowed("DO"))),
                 Self::Po => Ok(Some(Cow::Borrowed("PO"))),
@@ -4712,7 +4722,10 @@ pub mod definition {
         FitR,
     }
     impl SerializeBytes for CtDestTypeXType {
-        fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+        fn serialize_bytes(
+            &self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Cow<'_, str>>, Error> {
             match self {
                 Self::Xyz => Ok(Some(Cow::Borrowed("XYZ"))),
                 Self::Fit => Ok(Some(Cow::Borrowed("Fit"))),
@@ -4817,7 +4830,10 @@ pub mod definition {
         Resume,
     }
     impl SerializeBytes for CtActionMovieOperatorXType {
-        fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+        fn serialize_bytes(
+            &self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Cow<'_, str>>, Error> {
             match self {
                 Self::Play => Ok(Some(Cow::Borrowed("Play"))),
                 Self::Stop => Ok(Some(Cow::Borrowed("Stop"))),
@@ -8978,7 +8994,7 @@ pub mod definition {
     pub mod quick_xml_serialize {
         use xsd_parser_types::{
             quick_xml::{
-                write_attrib, write_attrib_opt, BytesEnd, BytesStart, Error, Event, IterSerializer,
+                BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
                 WithSerializer,
             },
             xml::AnyElement,
@@ -9005,7 +9021,10 @@ pub mod definition {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtActionXTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtActionXTypeSerializerState::Init__ => {
@@ -9013,21 +9032,20 @@ pub mod definition {
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib(&mut bytes, "Event", &self.value.event)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib(&mut bytes, "Event", &self.value.event)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
-                        CtActionXTypeSerializerState::Content__(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = CtActionXTypeSerializerState::End__,
-                        },
+                        CtActionXTypeSerializerState::Content__(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = CtActionXTypeSerializerState::End__,
+                            }
+                        }
                         CtActionXTypeSerializerState::End__ => {
                             *self.state = CtActionXTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         CtActionXTypeSerializerState::Done__ => return Ok(None),
@@ -9036,10 +9054,9 @@ pub mod definition {
                 }
             }
         }
-        impl<'ser> Iterator for CtActionXTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtActionXTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -9067,7 +9084,10 @@ pub mod definition {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtActionXTypeContentSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtActionXTypeContentSerializerState::Init__ => match self.value {
@@ -9103,37 +9123,37 @@ pub mod definition {
                             }
                         },
                         CtActionXTypeContentSerializerState::Region(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = CtActionXTypeContentSerializerState::Done__,
                             }
                         }
                         CtActionXTypeContentSerializerState::Goto(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = CtActionXTypeContentSerializerState::Done__,
                             }
                         }
                         CtActionXTypeContentSerializerState::Uri(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = CtActionXTypeContentSerializerState::Done__,
                             }
                         }
                         CtActionXTypeContentSerializerState::GotoA(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = CtActionXTypeContentSerializerState::Done__,
                             }
                         }
                         CtActionXTypeContentSerializerState::Sound(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = CtActionXTypeContentSerializerState::Done__,
                             }
                         }
                         CtActionXTypeContentSerializerState::Movie(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = CtActionXTypeContentSerializerState::Done__,
                             }
@@ -9144,10 +9164,9 @@ pub mod definition {
                 }
             }
         }
-        impl<'ser> Iterator for CtActionXTypeContentSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtActionXTypeContentSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -9171,25 +9190,25 @@ pub mod definition {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtDestXTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtDestXTypeSerializerState::Init__ => {
                             *self.state = CtDestXTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib(&mut bytes, "Type", &self.value.type_)?;
-                            write_attrib(&mut bytes, "PageID", &self.value.page_id)?;
-                            write_attrib_opt(&mut bytes, "Left", &self.value.left)?;
-                            write_attrib_opt(&mut bytes, "Top", &self.value.top)?;
-                            write_attrib_opt(&mut bytes, "Right", &self.value.right)?;
-                            write_attrib_opt(&mut bytes, "Bottom", &self.value.bottom)?;
-                            write_attrib_opt(&mut bytes, "Zoom", &self.value.zoom)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib(&mut bytes, "Type", &self.value.type_)?;
+                            helper.write_attrib(&mut bytes, "PageID", &self.value.page_id)?;
+                            helper.write_attrib_opt(&mut bytes, "Left", &self.value.left)?;
+                            helper.write_attrib_opt(&mut bytes, "Top", &self.value.top)?;
+                            helper.write_attrib_opt(&mut bytes, "Right", &self.value.right)?;
+                            helper.write_attrib_opt(&mut bytes, "Bottom", &self.value.bottom)?;
+                            helper.write_attrib_opt(&mut bytes, "Zoom", &self.value.zoom)?;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         CtDestXTypeSerializerState::Done__ => return Ok(None),
@@ -9198,10 +9217,9 @@ pub mod definition {
                 }
             }
         }
-        impl<'ser> Iterator for CtDestXTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtDestXTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -9230,7 +9248,10 @@ pub mod definition {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtPageAreaXTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtPageAreaXTypeSerializerState::Init__ => {
@@ -9242,16 +9263,12 @@ pub mod definition {
                                 )?,
                             );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtPageAreaXTypeSerializerState::PhysicalBox(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = CtPageAreaXTypeSerializerState::ApplicationBox(
@@ -9265,7 +9282,7 @@ pub mod definition {
                             }
                         }
                         CtPageAreaXTypeSerializerState::ApplicationBox(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = CtPageAreaXTypeSerializerState::ContentBox(
@@ -9279,7 +9296,7 @@ pub mod definition {
                             }
                         }
                         CtPageAreaXTypeSerializerState::ContentBox(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = CtPageAreaXTypeSerializerState::BleedBox(
@@ -9293,13 +9310,14 @@ pub mod definition {
                             }
                         }
                         CtPageAreaXTypeSerializerState::BleedBox(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = CtPageAreaXTypeSerializerState::End__,
                             }
                         }
                         CtPageAreaXTypeSerializerState::End__ => {
                             *self.state = CtPageAreaXTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         CtPageAreaXTypeSerializerState::Done__ => return Ok(None),
@@ -9308,10 +9326,9 @@ pub mod definition {
                 }
             }
         }
-        impl<'ser> Iterator for CtPageAreaXTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtPageAreaXTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -9343,7 +9360,10 @@ pub mod definition {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtRegionXTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtRegionXTypeSerializerState::Init__ => {
@@ -9353,20 +9373,19 @@ pub mod definition {
                                 false,
                             ));
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
                             return Ok(Some(Event::Start(bytes)));
                         }
-                        CtRegionXTypeSerializerState::Area(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = CtRegionXTypeSerializerState::End__,
-                        },
+                        CtRegionXTypeSerializerState::Area(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = CtRegionXTypeSerializerState::End__,
+                            }
+                        }
                         CtRegionXTypeSerializerState::End__ => {
                             *self.state = CtRegionXTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         CtRegionXTypeSerializerState::Done__ => return Ok(None),
@@ -9375,10 +9394,9 @@ pub mod definition {
                 }
             }
         }
-        impl<'ser> Iterator for CtRegionXTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtRegionXTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -9405,7 +9423,10 @@ pub mod definition {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtActionGotoXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtActionGotoXElementTypeSerializerState::Init__ => {
@@ -9426,16 +9447,12 @@ pub mod definition {
                                 }
                             }
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtActionGotoXElementTypeSerializerState::Dest(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = CtActionGotoXElementTypeSerializerState::End__
@@ -9443,7 +9460,7 @@ pub mod definition {
                             }
                         }
                         CtActionGotoXElementTypeSerializerState::Bookmark(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = CtActionGotoXElementTypeSerializerState::End__
@@ -9452,6 +9469,7 @@ pub mod definition {
                         }
                         CtActionGotoXElementTypeSerializerState::End__ => {
                             *self.state = CtActionGotoXElementTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         CtActionGotoXElementTypeSerializerState::Done__ => return Ok(None),
@@ -9460,10 +9478,9 @@ pub mod definition {
                 }
             }
         }
-        impl<'ser> Iterator for CtActionGotoXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtActionGotoXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -9487,21 +9504,21 @@ pub mod definition {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtActionUriXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtActionUriXElementTypeSerializerState::Init__ => {
                             *self.state = CtActionUriXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib(&mut bytes, "URI", &self.value.uri)?;
-                            write_attrib_opt(&mut bytes, "Base", &self.value.base)?;
-                            write_attrib_opt(&mut bytes, "Target", &self.value.target)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib(&mut bytes, "URI", &self.value.uri)?;
+                            helper.write_attrib_opt(&mut bytes, "Base", &self.value.base)?;
+                            helper.write_attrib_opt(&mut bytes, "Target", &self.value.target)?;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         CtActionUriXElementTypeSerializerState::Done__ => return Ok(None),
@@ -9510,10 +9527,9 @@ pub mod definition {
                 }
             }
         }
-        impl<'ser> Iterator for CtActionUriXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtActionUriXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -9537,20 +9553,20 @@ pub mod definition {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtActionGotoAxElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtActionGotoAxElementTypeSerializerState::Init__ => {
                             *self.state = CtActionGotoAxElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib(&mut bytes, "AttachID", &self.value.attach_id)?;
-                            write_attrib(&mut bytes, "NewWindow", &self.value.new_window)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib(&mut bytes, "AttachID", &self.value.attach_id)?;
+                            helper.write_attrib(&mut bytes, "NewWindow", &self.value.new_window)?;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         CtActionGotoAxElementTypeSerializerState::Done__ => return Ok(None),
@@ -9559,10 +9575,9 @@ pub mod definition {
                 }
             }
         }
-        impl<'ser> Iterator for CtActionGotoAxElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtActionGotoAxElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -9586,22 +9601,30 @@ pub mod definition {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtActionSoundXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtActionSoundXElementTypeSerializerState::Init__ => {
                             *self.state = CtActionSoundXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib(&mut bytes, "ResourceID", &self.value.resource_id)?;
-                            write_attrib_opt(&mut bytes, "Volume", &self.value.volume)?;
-                            write_attrib_opt(&mut bytes, "Repeat", &self.value.repeat)?;
-                            write_attrib_opt(&mut bytes, "Synchronous", &self.value.synchronous)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib(
+                                &mut bytes,
+                                "ResourceID",
+                                &self.value.resource_id,
+                            )?;
+                            helper.write_attrib_opt(&mut bytes, "Volume", &self.value.volume)?;
+                            helper.write_attrib_opt(&mut bytes, "Repeat", &self.value.repeat)?;
+                            helper.write_attrib_opt(
+                                &mut bytes,
+                                "Synchronous",
+                                &self.value.synchronous,
+                            )?;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         CtActionSoundXElementTypeSerializerState::Done__ => return Ok(None),
@@ -9610,10 +9633,9 @@ pub mod definition {
                 }
             }
         }
-        impl<'ser> Iterator for CtActionSoundXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtActionSoundXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -9637,20 +9659,24 @@ pub mod definition {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtActionMovieXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtActionMovieXElementTypeSerializerState::Init__ => {
                             *self.state = CtActionMovieXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib(&mut bytes, "ResourceID", &self.value.resource_id)?;
-                            write_attrib(&mut bytes, "Operator", &self.value.operator)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib(
+                                &mut bytes,
+                                "ResourceID",
+                                &self.value.resource_id,
+                            )?;
+                            helper.write_attrib(&mut bytes, "Operator", &self.value.operator)?;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         CtActionMovieXElementTypeSerializerState::Done__ => return Ok(None),
@@ -9659,10 +9685,9 @@ pub mod definition {
                 }
             }
         }
-        impl<'ser> Iterator for CtActionMovieXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtActionMovieXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -9694,7 +9719,10 @@ pub mod definition {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtRegionAreaXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtRegionAreaXElementTypeSerializerState::Init__ => {
@@ -9702,17 +9730,13 @@ pub mod definition {
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib(&mut bytes, "Start", &self.value.start)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib(&mut bytes, "Start", &self.value.start)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtRegionAreaXElementTypeSerializerState::Content__(x) => match x
-                            .next()
+                            .next(helper)
                             .transpose()?
                         {
                             Some(event) => return Ok(Some(event)),
@@ -9720,6 +9744,7 @@ pub mod definition {
                         },
                         CtRegionAreaXElementTypeSerializerState::End__ => {
                             *self.state = CtRegionAreaXElementTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         CtRegionAreaXElementTypeSerializerState::Done__ => return Ok(None),
@@ -9728,10 +9753,9 @@ pub mod definition {
                 }
             }
         }
-        impl<'ser> Iterator for CtRegionAreaXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtRegionAreaXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -9765,7 +9789,10 @@ pub mod definition {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtRegionAreaXElementTypeContentSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtRegionAreaXElementTypeContentSerializerState::Init__ => match self.value {
@@ -9807,7 +9834,7 @@ pub mod definition {
                             }
                         },
                         CtRegionAreaXElementTypeContentSerializerState::Move(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state =
@@ -9816,7 +9843,7 @@ pub mod definition {
                             }
                         }
                         CtRegionAreaXElementTypeContentSerializerState::Line(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state =
@@ -9825,7 +9852,7 @@ pub mod definition {
                             }
                         }
                         CtRegionAreaXElementTypeContentSerializerState::OuadraticBezier(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state =
@@ -9834,7 +9861,7 @@ pub mod definition {
                             }
                         }
                         CtRegionAreaXElementTypeContentSerializerState::CubicBezier(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state =
@@ -9843,7 +9870,7 @@ pub mod definition {
                             }
                         }
                         CtRegionAreaXElementTypeContentSerializerState::Arc(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state =
@@ -9852,7 +9879,7 @@ pub mod definition {
                             }
                         }
                         CtRegionAreaXElementTypeContentSerializerState::Close(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state =
@@ -9868,10 +9895,9 @@ pub mod definition {
                 }
             }
         }
-        impl<'ser> Iterator for CtRegionAreaXElementTypeContentSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtRegionAreaXElementTypeContentSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -9895,19 +9921,19 @@ pub mod definition {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtActionGotoBookmarkXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtActionGotoBookmarkXElementTypeSerializerState::Init__ => {
                             *self.state = CtActionGotoBookmarkXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib(&mut bytes, "Name", &self.value.name)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib(&mut bytes, "Name", &self.value.name)?;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         CtActionGotoBookmarkXElementTypeSerializerState::Done__ => return Ok(None),
@@ -9918,10 +9944,9 @@ pub mod definition {
                 }
             }
         }
-        impl<'ser> Iterator for CtActionGotoBookmarkXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtActionGotoBookmarkXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -9945,19 +9970,19 @@ pub mod definition {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtRegionAreaLineXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtRegionAreaLineXElementTypeSerializerState::Init__ => {
                             *self.state = CtRegionAreaLineXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib(&mut bytes, "Point1", &self.value.point_1)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib(&mut bytes, "Point1", &self.value.point_1)?;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         CtRegionAreaLineXElementTypeSerializerState::Done__ => return Ok(None),
@@ -9966,10 +9991,9 @@ pub mod definition {
                 }
             }
         }
-        impl<'ser> Iterator for CtRegionAreaLineXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtRegionAreaLineXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -9993,21 +10017,21 @@ pub mod definition {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtRegionAreaOuadraticBezierXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtRegionAreaOuadraticBezierXElementTypeSerializerState::Init__ => {
                             *self.state =
                                 CtRegionAreaOuadraticBezierXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib(&mut bytes, "Pointl", &self.value.pointl)?;
-                            write_attrib(&mut bytes, "Point2", &self.value.point_2)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib(&mut bytes, "Pointl", &self.value.pointl)?;
+                            helper.write_attrib(&mut bytes, "Point2", &self.value.point_2)?;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         CtRegionAreaOuadraticBezierXElementTypeSerializerState::Done__ => {
@@ -10020,10 +10044,9 @@ pub mod definition {
                 }
             }
         }
-        impl<'ser> Iterator for CtRegionAreaOuadraticBezierXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtRegionAreaOuadraticBezierXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -10048,22 +10071,22 @@ pub mod definition {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtRegionAreaCubicBezierXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtRegionAreaCubicBezierXElementTypeSerializerState::Init__ => {
                             *self.state =
                                 CtRegionAreaCubicBezierXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib_opt(&mut bytes, "Point1", &self.value.point_1)?;
-                            write_attrib_opt(&mut bytes, "Point2", &self.value.point_2)?;
-                            write_attrib(&mut bytes, "Point3", &self.value.point_3)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib_opt(&mut bytes, "Point1", &self.value.point_1)?;
+                            helper.write_attrib_opt(&mut bytes, "Point2", &self.value.point_2)?;
+                            helper.write_attrib(&mut bytes, "Point3", &self.value.point_3)?;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         CtRegionAreaCubicBezierXElementTypeSerializerState::Done__ => {
@@ -10076,10 +10099,9 @@ pub mod definition {
                 }
             }
         }
-        impl<'ser> Iterator for CtRegionAreaCubicBezierXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtRegionAreaCubicBezierXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -10103,31 +10125,35 @@ pub mod definition {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtRegionAreaArcXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtRegionAreaArcXElementTypeSerializerState::Init__ => {
                             *self.state = CtRegionAreaArcXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib(
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib(
                                 &mut bytes,
                                 "SweepDirection",
                                 &self.value.sweep_direction,
                             )?;
-                            write_attrib(&mut bytes, "LargeArc", &self.value.large_arc)?;
-                            write_attrib(
+                            helper.write_attrib(&mut bytes, "LargeArc", &self.value.large_arc)?;
+                            helper.write_attrib(
                                 &mut bytes,
                                 "RotationAnglet",
                                 &self.value.rotation_anglet,
                             )?;
-                            write_attrib(&mut bytes, "EllipseSize", &self.value.ellipse_size)?;
-                            write_attrib(&mut bytes, "EndPoint", &self.value.end_point)?;
+                            helper.write_attrib(
+                                &mut bytes,
+                                "EllipseSize",
+                                &self.value.ellipse_size,
+                            )?;
+                            helper.write_attrib(&mut bytes, "EndPoint", &self.value.end_point)?;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         CtRegionAreaArcXElementTypeSerializerState::Done__ => return Ok(None),
@@ -10136,10 +10162,9 @@ pub mod definition {
                 }
             }
         }
-        impl<'ser> Iterator for CtRegionAreaArcXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtRegionAreaArcXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -10155,7 +10180,7 @@ pub mod document {
     use std::borrow::Cow;
     use xsd_parser_types::quick_xml::{
         DeserializeBytes, DeserializeHelper, Error, ErrorKind, RawByteStr, SerializeBytes,
-        WithDeserializer, WithSerializer,
+        SerializeHelper, WithDeserializer, WithSerializer,
     };
     #[derive(Debug)]
     pub struct CtBookmarkXType {
@@ -10391,7 +10416,10 @@ pub mod document {
         UseBookmarks,
     }
     impl SerializeBytes for CtVPreferencesPageModeXElementType {
-        fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+        fn serialize_bytes(
+            &self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Cow<'_, str>>, Error> {
             match self {
                 Self::None => Ok(Some(Cow::Borrowed("None"))),
                 Self::FullScreen => Ok(Some(Cow::Borrowed("FullScreen"))),
@@ -10431,7 +10459,10 @@ pub mod document {
         TwoColumnR,
     }
     impl SerializeBytes for CtVPreferencesPageLayoutXElementType {
-        fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+        fn serialize_bytes(
+            &self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Cow<'_, str>>, Error> {
             match self {
                 Self::OnePage => Ok(Some(Cow::Borrowed("OnePage"))),
                 Self::OneColumn => Ok(Some(Cow::Borrowed("OneColumn"))),
@@ -10463,7 +10494,10 @@ pub mod document {
         FileName,
     }
     impl SerializeBytes for CtVPreferencesTabDisplayXElementType {
-        fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+        fn serialize_bytes(
+            &self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Cow<'_, str>>, Error> {
             match self {
                 Self::DocTitle => Ok(Some(Cow::Borrowed("DocTitle"))),
                 Self::FileName => Ok(Some(Cow::Borrowed("FileName"))),
@@ -10489,7 +10523,10 @@ pub mod document {
         FitRect,
     }
     impl SerializeBytes for CtVPreferencesZoomModeXElementType {
-        fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+        fn serialize_bytes(
+            &self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Cow<'_, str>>, Error> {
             match self {
                 Self::Default => Ok(Some(Cow::Borrowed("Default"))),
                 Self::FitHeight => Ok(Some(Cow::Borrowed("FitHeight"))),
@@ -10673,7 +10710,10 @@ pub mod document {
         Foreground,
     }
     impl SerializeBytes for DocumentCommonDataTemplatePageZOrderXType {
-        fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+        fn serialize_bytes(
+            &self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Cow<'_, str>>, Error> {
             match self {
                 Self::Background => Ok(Some(Cow::Borrowed("Background"))),
                 Self::Foreground => Ok(Some(Cow::Borrowed("Foreground"))),
@@ -16185,7 +16225,7 @@ pub mod document {
     }
     pub mod quick_xml_serialize {
         use xsd_parser_types::quick_xml::{
-            write_attrib, write_attrib_opt, BytesEnd, BytesStart, Error, Event, IterSerializer,
+            BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
             WithSerializer,
         };
         #[derive(Debug)]
@@ -16204,7 +16244,10 @@ pub mod document {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtBookmarkXTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtBookmarkXTypeSerializerState::Init__ => {
@@ -16212,21 +16255,20 @@ pub mod document {
                                 WithSerializer::serializer(&self.value.dest, Some("Dest"), false)?,
                             );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib(&mut bytes, "Name", &self.value.name)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib(&mut bytes, "Name", &self.value.name)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
-                        CtBookmarkXTypeSerializerState::Dest(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = CtBookmarkXTypeSerializerState::End__,
-                        },
+                        CtBookmarkXTypeSerializerState::Dest(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = CtBookmarkXTypeSerializerState::End__,
+                            }
+                        }
                         CtBookmarkXTypeSerializerState::End__ => {
                             *self.state = CtBookmarkXTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         CtBookmarkXTypeSerializerState::Done__ => return Ok(None),
@@ -16235,10 +16277,9 @@ pub mod document {
                 }
             }
         }
-        impl<'ser> Iterator for CtBookmarkXTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtBookmarkXTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -16273,7 +16314,10 @@ pub mod document {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtOutlineElemXTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtOutlineElemXTypeSerializerState::Init__ => {
@@ -16284,19 +16328,15 @@ pub mod document {
                                     false,
                                 ));
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib(&mut bytes, "Title", &self.value.title)?;
-                            write_attrib_opt(&mut bytes, "Count", &self.value.count)?;
-                            write_attrib(&mut bytes, "Expanded", &self.value.expanded)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib(&mut bytes, "Title", &self.value.title)?;
+                            helper.write_attrib_opt(&mut bytes, "Count", &self.value.count)?;
+                            helper.write_attrib(&mut bytes, "Expanded", &self.value.expanded)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtOutlineElemXTypeSerializerState::Actions(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = CtOutlineElemXTypeSerializerState::OutlineElem(
@@ -16310,13 +16350,14 @@ pub mod document {
                             }
                         }
                         CtOutlineElemXTypeSerializerState::OutlineElem(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = CtOutlineElemXTypeSerializerState::End__,
                             }
                         }
                         CtOutlineElemXTypeSerializerState::End__ => {
                             *self.state = CtOutlineElemXTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         CtOutlineElemXTypeSerializerState::Done__ => return Ok(None),
@@ -16325,10 +16366,9 @@ pub mod document {
                 }
             }
         }
-        impl<'ser> Iterator for CtOutlineElemXTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtOutlineElemXTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -16373,7 +16413,10 @@ pub mod document {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtPermissionXTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtPermissionXTypeSerializerState::Init__ => {
@@ -16381,38 +16424,40 @@ pub mod document {
                                 IterSerializer::new(self.value.edit.as_ref(), Some("Edit"), false),
                             );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
                             return Ok(Some(Event::Start(bytes)));
                         }
-                        CtPermissionXTypeSerializerState::Edit(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => {
-                                *self.state =
-                                    CtPermissionXTypeSerializerState::Annot(IterSerializer::new(
-                                        self.value.annot.as_ref(),
-                                        Some("Annot"),
-                                        false,
-                                    ))
+                        CtPermissionXTypeSerializerState::Edit(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => {
+                                    *self.state = CtPermissionXTypeSerializerState::Annot(
+                                        IterSerializer::new(
+                                            self.value.annot.as_ref(),
+                                            Some("Annot"),
+                                            false,
+                                        ),
+                                    )
+                                }
                             }
-                        },
-                        CtPermissionXTypeSerializerState::Annot(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => {
-                                *self.state =
-                                    CtPermissionXTypeSerializerState::Export(IterSerializer::new(
-                                        self.value.export.as_ref(),
-                                        Some("Export"),
-                                        false,
-                                    ))
+                        }
+                        CtPermissionXTypeSerializerState::Annot(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => {
+                                    *self.state = CtPermissionXTypeSerializerState::Export(
+                                        IterSerializer::new(
+                                            self.value.export.as_ref(),
+                                            Some("Export"),
+                                            false,
+                                        ),
+                                    )
+                                }
                             }
-                        },
+                        }
                         CtPermissionXTypeSerializerState::Export(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = CtPermissionXTypeSerializerState::Signature(
@@ -16426,7 +16471,7 @@ pub mod document {
                             }
                         }
                         CtPermissionXTypeSerializerState::Signature(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = CtPermissionXTypeSerializerState::Watermark(
@@ -16440,7 +16485,7 @@ pub mod document {
                             }
                         }
                         CtPermissionXTypeSerializerState::Watermark(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = CtPermissionXTypeSerializerState::PrintScreen(
@@ -16454,7 +16499,7 @@ pub mod document {
                             }
                         }
                         CtPermissionXTypeSerializerState::PrintScreen(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = CtPermissionXTypeSerializerState::Print(
@@ -16467,26 +16512,29 @@ pub mod document {
                                 }
                             }
                         }
-                        CtPermissionXTypeSerializerState::Print(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => {
-                                *self.state = CtPermissionXTypeSerializerState::ValidPeriod(
-                                    IterSerializer::new(
-                                        self.value.valid_period.as_ref(),
-                                        Some("ValidPeriod"),
-                                        false,
-                                    ),
-                                )
+                        CtPermissionXTypeSerializerState::Print(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => {
+                                    *self.state = CtPermissionXTypeSerializerState::ValidPeriod(
+                                        IterSerializer::new(
+                                            self.value.valid_period.as_ref(),
+                                            Some("ValidPeriod"),
+                                            false,
+                                        ),
+                                    )
+                                }
                             }
-                        },
+                        }
                         CtPermissionXTypeSerializerState::ValidPeriod(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = CtPermissionXTypeSerializerState::End__,
                             }
                         }
                         CtPermissionXTypeSerializerState::End__ => {
                             *self.state = CtPermissionXTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         CtPermissionXTypeSerializerState::Done__ => return Ok(None),
@@ -16495,10 +16543,9 @@ pub mod document {
                 }
             }
         }
-        impl<'ser> Iterator for CtPermissionXTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtPermissionXTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -16530,7 +16577,10 @@ pub mod document {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtVPreferencesXTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtVPreferencesXTypeSerializerState::Init__ => {
@@ -16538,22 +16588,19 @@ pub mod document {
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtVPreferencesXTypeSerializerState::Content__(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = CtVPreferencesXTypeSerializerState::End__,
                             }
                         }
                         CtVPreferencesXTypeSerializerState::End__ => {
                             *self.state = CtVPreferencesXTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         CtVPreferencesXTypeSerializerState::Done__ => return Ok(None),
@@ -16562,10 +16609,9 @@ pub mod document {
                 }
             }
         }
-        impl<'ser> Iterator for CtVPreferencesXTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtVPreferencesXTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -16603,7 +16649,10 @@ pub mod document {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtVPreferencesXTypeContentSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtVPreferencesXTypeContentSerializerState::Init__ => match self.value {
@@ -16650,7 +16699,7 @@ pub mod document {
                             }
                         },
                         CtVPreferencesXTypeContentSerializerState::PageMode(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = CtVPreferencesXTypeContentSerializerState::Done__
@@ -16658,7 +16707,7 @@ pub mod document {
                             }
                         }
                         CtVPreferencesXTypeContentSerializerState::PageLayout(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = CtVPreferencesXTypeContentSerializerState::Done__
@@ -16666,7 +16715,7 @@ pub mod document {
                             }
                         }
                         CtVPreferencesXTypeContentSerializerState::TabDisplay(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = CtVPreferencesXTypeContentSerializerState::Done__
@@ -16674,7 +16723,7 @@ pub mod document {
                             }
                         }
                         CtVPreferencesXTypeContentSerializerState::HideToolbar(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = CtVPreferencesXTypeContentSerializerState::Done__
@@ -16682,7 +16731,7 @@ pub mod document {
                             }
                         }
                         CtVPreferencesXTypeContentSerializerState::HideMenubar(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = CtVPreferencesXTypeContentSerializerState::Done__
@@ -16690,7 +16739,7 @@ pub mod document {
                             }
                         }
                         CtVPreferencesXTypeContentSerializerState::HideWindowUi(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = CtVPreferencesXTypeContentSerializerState::Done__
@@ -16698,7 +16747,7 @@ pub mod document {
                             }
                         }
                         CtVPreferencesXTypeContentSerializerState::ZoomMode(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = CtVPreferencesXTypeContentSerializerState::Done__
@@ -16706,7 +16755,7 @@ pub mod document {
                             }
                         }
                         CtVPreferencesXTypeContentSerializerState::Zoom(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = CtVPreferencesXTypeContentSerializerState::Done__
@@ -16719,10 +16768,9 @@ pub mod document {
                 }
             }
         }
-        impl<'ser> Iterator for CtVPreferencesXTypeContentSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtVPreferencesXTypeContentSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -16788,7 +16836,10 @@ pub mod document {
             Phantom__(&'ser ()),
         }
         impl<'ser> DocumentXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         DocumentXElementTypeSerializerState::Init__ => {
@@ -16800,16 +16851,12 @@ pub mod document {
                                 )?,
                             );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         DocumentXElementTypeSerializerState::CommonData(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = DocumentXElementTypeSerializerState::Pages(
@@ -16823,7 +16870,7 @@ pub mod document {
                             }
                         }
                         DocumentXElementTypeSerializerState::Pages(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = DocumentXElementTypeSerializerState::Outlines(
@@ -16837,7 +16884,7 @@ pub mod document {
                             }
                         }
                         DocumentXElementTypeSerializerState::Outlines(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = DocumentXElementTypeSerializerState::Permissions(
@@ -16851,7 +16898,7 @@ pub mod document {
                             }
                         }
                         DocumentXElementTypeSerializerState::Permissions(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = DocumentXElementTypeSerializerState::Actions(
@@ -16865,7 +16912,7 @@ pub mod document {
                             }
                         }
                         DocumentXElementTypeSerializerState::Actions(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = DocumentXElementTypeSerializerState::VPreferences(
@@ -16879,7 +16926,7 @@ pub mod document {
                             }
                         }
                         DocumentXElementTypeSerializerState::VPreferences(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = DocumentXElementTypeSerializerState::Bookmarks(
@@ -16893,7 +16940,7 @@ pub mod document {
                             }
                         }
                         DocumentXElementTypeSerializerState::Bookmarks(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = DocumentXElementTypeSerializerState::Annotations(
@@ -16907,7 +16954,7 @@ pub mod document {
                             }
                         }
                         DocumentXElementTypeSerializerState::Annotations(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = DocumentXElementTypeSerializerState::CustomTags(
@@ -16921,7 +16968,7 @@ pub mod document {
                             }
                         }
                         DocumentXElementTypeSerializerState::CustomTags(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = DocumentXElementTypeSerializerState::Attachments(
@@ -16935,7 +16982,7 @@ pub mod document {
                             }
                         }
                         DocumentXElementTypeSerializerState::Attachments(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = DocumentXElementTypeSerializerState::Extensions(
@@ -16949,13 +16996,14 @@ pub mod document {
                             }
                         }
                         DocumentXElementTypeSerializerState::Extensions(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = DocumentXElementTypeSerializerState::End__,
                             }
                         }
                         DocumentXElementTypeSerializerState::End__ => {
                             *self.state = DocumentXElementTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         DocumentXElementTypeSerializerState::Done__ => return Ok(None),
@@ -16964,10 +17012,9 @@ pub mod document {
                 }
             }
         }
-        impl<'ser> Iterator for DocumentXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for DocumentXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -16991,20 +17038,20 @@ pub mod document {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtPermissionPrintXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtPermissionPrintXElementTypeSerializerState::Init__ => {
                             *self.state = CtPermissionPrintXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib(&mut bytes, "Printable", &self.value.printable)?;
-                            write_attrib(&mut bytes, "Copies", &self.value.copies)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib(&mut bytes, "Printable", &self.value.printable)?;
+                            helper.write_attrib(&mut bytes, "Copies", &self.value.copies)?;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         CtPermissionPrintXElementTypeSerializerState::Done__ => return Ok(None),
@@ -17015,10 +17062,9 @@ pub mod document {
                 }
             }
         }
-        impl<'ser> Iterator for CtPermissionPrintXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtPermissionPrintXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -17042,21 +17088,25 @@ pub mod document {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtPermissionValidPeriodXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtPermissionValidPeriodXElementTypeSerializerState::Init__ => {
                             *self.state =
                                 CtPermissionValidPeriodXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib_opt(&mut bytes, "StartDate", &self.value.start_date)?;
-                            write_attrib_opt(&mut bytes, "EndDate", &self.value.end_date)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib_opt(
+                                &mut bytes,
+                                "StartDate",
+                                &self.value.start_date,
+                            )?;
+                            helper.write_attrib_opt(&mut bytes, "EndDate", &self.value.end_date)?;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         CtPermissionValidPeriodXElementTypeSerializerState::Done__ => {
@@ -17069,10 +17119,9 @@ pub mod document {
                 }
             }
         }
-        impl<'ser> Iterator for CtPermissionValidPeriodXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtPermissionValidPeriodXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -17111,7 +17160,10 @@ pub mod document {
             Phantom__(&'ser ()),
         }
         impl<'ser> DocumentCommonDataXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         DocumentCommonDataXElementTypeSerializerState::Init__ => {
@@ -17123,16 +17175,12 @@ pub mod document {
                                 )?,
                             );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         DocumentCommonDataXElementTypeSerializerState::MaxUnitId(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state =
@@ -17147,7 +17195,7 @@ pub mod document {
                             }
                         }
                         DocumentCommonDataXElementTypeSerializerState::PageArea(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state =
@@ -17162,7 +17210,7 @@ pub mod document {
                             }
                         }
                         DocumentCommonDataXElementTypeSerializerState::PublicRes(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state =
@@ -17177,7 +17225,7 @@ pub mod document {
                             }
                         }
                         DocumentCommonDataXElementTypeSerializerState::DocumentRes(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state =
@@ -17192,7 +17240,7 @@ pub mod document {
                             }
                         }
                         DocumentCommonDataXElementTypeSerializerState::TemplatePage(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state =
@@ -17207,7 +17255,7 @@ pub mod document {
                             }
                         }
                         DocumentCommonDataXElementTypeSerializerState::DefaultCs(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state =
@@ -17217,6 +17265,7 @@ pub mod document {
                         }
                         DocumentCommonDataXElementTypeSerializerState::End__ => {
                             *self.state = DocumentCommonDataXElementTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         DocumentCommonDataXElementTypeSerializerState::Done__ => return Ok(None),
@@ -17227,10 +17276,9 @@ pub mod document {
                 }
             }
         }
-        impl<'ser> Iterator for DocumentCommonDataXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for DocumentCommonDataXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -17262,7 +17310,10 @@ pub mod document {
             Phantom__(&'ser ()),
         }
         impl<'ser> DocumentPagesXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         DocumentPagesXElementTypeSerializerState::Init__ => {
@@ -17270,16 +17321,12 @@ pub mod document {
                                 IterSerializer::new(&self.value.page[..], Some("Page"), false),
                             );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         DocumentPagesXElementTypeSerializerState::Page(x) => match x
-                            .next()
+                            .next(helper)
                             .transpose()?
                         {
                             Some(event) => return Ok(Some(event)),
@@ -17287,6 +17334,7 @@ pub mod document {
                         },
                         DocumentPagesXElementTypeSerializerState::End__ => {
                             *self.state = DocumentPagesXElementTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         DocumentPagesXElementTypeSerializerState::Done__ => return Ok(None),
@@ -17295,10 +17343,9 @@ pub mod document {
                 }
             }
         }
-        impl<'ser> Iterator for DocumentPagesXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for DocumentPagesXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -17326,7 +17373,10 @@ pub mod document {
             Phantom__(&'ser ()),
         }
         impl<'ser> DocumentOutlinesXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         DocumentOutlinesXElementTypeSerializerState::Init__ => {
@@ -17338,16 +17388,12 @@ pub mod document {
                                 ),
                             );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         DocumentOutlinesXElementTypeSerializerState::OutlineElem(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = DocumentOutlinesXElementTypeSerializerState::End__
@@ -17356,6 +17402,7 @@ pub mod document {
                         }
                         DocumentOutlinesXElementTypeSerializerState::End__ => {
                             *self.state = DocumentOutlinesXElementTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         DocumentOutlinesXElementTypeSerializerState::Done__ => return Ok(None),
@@ -17364,10 +17411,9 @@ pub mod document {
                 }
             }
         }
-        impl<'ser> Iterator for DocumentOutlinesXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for DocumentOutlinesXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -17393,7 +17439,10 @@ pub mod document {
             Phantom__(&'ser ()),
         }
         impl<'ser> DocumentBookmarksXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         DocumentBookmarksXElementTypeSerializerState::Init__ => {
@@ -17405,16 +17454,12 @@ pub mod document {
                                 ),
                             );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         DocumentBookmarksXElementTypeSerializerState::Bookmark(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state =
@@ -17424,6 +17469,7 @@ pub mod document {
                         }
                         DocumentBookmarksXElementTypeSerializerState::End__ => {
                             *self.state = DocumentBookmarksXElementTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         DocumentBookmarksXElementTypeSerializerState::Done__ => return Ok(None),
@@ -17434,10 +17480,9 @@ pub mod document {
                 }
             }
         }
-        impl<'ser> Iterator for DocumentBookmarksXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for DocumentBookmarksXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -17461,23 +17506,23 @@ pub mod document {
             Phantom__(&'ser ()),
         }
         impl<'ser> DocumentCommonDataTemplatePageXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         DocumentCommonDataTemplatePageXElementTypeSerializerState::Init__ => {
                             *self.state =
                                 DocumentCommonDataTemplatePageXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib(&mut bytes, "ID", &self.value.id)?;
-                            write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
-                            write_attrib_opt(&mut bytes, "ZOrder", &self.value.z_order)?;
-                            write_attrib(&mut bytes, "BaseLoc", &self.value.base_loc)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib(&mut bytes, "ID", &self.value.id)?;
+                            helper.write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
+                            helper.write_attrib_opt(&mut bytes, "ZOrder", &self.value.z_order)?;
+                            helper.write_attrib(&mut bytes, "BaseLoc", &self.value.base_loc)?;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         DocumentCommonDataTemplatePageXElementTypeSerializerState::Done__ => {
@@ -17490,10 +17535,9 @@ pub mod document {
                 }
             }
         }
-        impl<'ser> Iterator for DocumentCommonDataTemplatePageXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for DocumentCommonDataTemplatePageXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -17518,20 +17562,20 @@ pub mod document {
             Phantom__(&'ser ()),
         }
         impl<'ser> DocumentPagesPageXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         DocumentPagesPageXElementTypeSerializerState::Init__ => {
                             *self.state = DocumentPagesPageXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib(&mut bytes, "ID", &self.value.id)?;
-                            write_attrib(&mut bytes, "BaseLoc", &self.value.base_loc)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib(&mut bytes, "ID", &self.value.id)?;
+                            helper.write_attrib(&mut bytes, "BaseLoc", &self.value.base_loc)?;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         DocumentPagesPageXElementTypeSerializerState::Done__ => return Ok(None),
@@ -17542,10 +17586,9 @@ pub mod document {
                 }
             }
         }
-        impl<'ser> Iterator for DocumentPagesPageXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for DocumentPagesPageXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -18709,7 +18752,7 @@ pub mod extensions {
     pub mod quick_xml_serialize {
         use xsd_parser_types::{
             quick_xml::{
-                write_attrib, write_attrib_opt, BytesEnd, BytesStart, Error, Event, IterSerializer,
+                BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
                 WithSerializer,
             },
             xml::AnyElement,
@@ -18736,7 +18779,10 @@ pub mod extensions {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtExtensionXTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtExtensionXTypeSerializerState::Init__ => {
@@ -18744,27 +18790,28 @@ pub mod extensions {
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib(&mut bytes, "AppName", &self.value.app_name)?;
-                            write_attrib_opt(&mut bytes, "Company", &self.value.company)?;
-                            write_attrib_opt(&mut bytes, "AppVersion", &self.value.app_version)?;
-                            write_attrib_opt(&mut bytes, "Date", &self.value.date)?;
-                            write_attrib(&mut bytes, "RefId", &self.value.ref_id)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib(&mut bytes, "AppName", &self.value.app_name)?;
+                            helper.write_attrib_opt(&mut bytes, "Company", &self.value.company)?;
+                            helper.write_attrib_opt(
+                                &mut bytes,
+                                "AppVersion",
+                                &self.value.app_version,
+                            )?;
+                            helper.write_attrib_opt(&mut bytes, "Date", &self.value.date)?;
+                            helper.write_attrib(&mut bytes, "RefId", &self.value.ref_id)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtExtensionXTypeSerializerState::Content__(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = CtExtensionXTypeSerializerState::End__,
                             }
                         }
                         CtExtensionXTypeSerializerState::End__ => {
                             *self.state = CtExtensionXTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         CtExtensionXTypeSerializerState::Done__ => return Ok(None),
@@ -18773,10 +18820,9 @@ pub mod extensions {
                 }
             }
         }
-        impl<'ser> Iterator for CtExtensionXTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtExtensionXTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -18801,7 +18847,10 @@ pub mod extensions {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtExtensionXTypeContentSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtExtensionXTypeContentSerializerState::Init__ => match self.value {
@@ -18822,7 +18871,7 @@ pub mod extensions {
                             }
                         },
                         CtExtensionXTypeContentSerializerState::Property(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = CtExtensionXTypeContentSerializerState::Done__
@@ -18830,7 +18879,7 @@ pub mod extensions {
                             }
                         }
                         CtExtensionXTypeContentSerializerState::Data(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = CtExtensionXTypeContentSerializerState::Done__
@@ -18838,7 +18887,7 @@ pub mod extensions {
                             }
                         }
                         CtExtensionXTypeContentSerializerState::ExtendData(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = CtExtensionXTypeContentSerializerState::Done__
@@ -18851,10 +18900,9 @@ pub mod extensions {
                 }
             }
         }
-        impl<'ser> Iterator for CtExtensionXTypeContentSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtExtensionXTypeContentSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -18882,7 +18930,10 @@ pub mod extensions {
             Phantom__(&'ser ()),
         }
         impl<'ser> ExtensionsXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         ExtensionsXElementTypeSerializerState::Init__ => {
@@ -18894,22 +18945,19 @@ pub mod extensions {
                                 ),
                             );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         ExtensionsXElementTypeSerializerState::Extension(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = ExtensionsXElementTypeSerializerState::End__,
                             }
                         }
                         ExtensionsXElementTypeSerializerState::End__ => {
                             *self.state = ExtensionsXElementTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         ExtensionsXElementTypeSerializerState::Done__ => return Ok(None),
@@ -18918,10 +18966,9 @@ pub mod extensions {
                 }
             }
         }
-        impl<'ser> Iterator for ExtensionsXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for ExtensionsXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -18947,7 +18994,10 @@ pub mod extensions {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtExtensionPropertyXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtExtensionPropertyXElementTypeSerializerState::Init__ => {
@@ -18955,18 +19005,14 @@ pub mod extensions {
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib(&mut bytes, "Name", &self.value.name)?;
-                            write_attrib_opt(&mut bytes, "Type", &self.value.type_)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib(&mut bytes, "Name", &self.value.name)?;
+                            helper.write_attrib_opt(&mut bytes, "Type", &self.value.type_)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtExtensionPropertyXElementTypeSerializerState::Content__(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state =
@@ -18976,6 +19022,7 @@ pub mod extensions {
                         }
                         CtExtensionPropertyXElementTypeSerializerState::End__ => {
                             *self.state = CtExtensionPropertyXElementTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         CtExtensionPropertyXElementTypeSerializerState::Done__ => return Ok(None),
@@ -18986,10 +19033,9 @@ pub mod extensions {
                 }
             }
         }
-        impl<'ser> Iterator for CtExtensionPropertyXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtExtensionPropertyXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -19005,7 +19051,7 @@ pub mod ofd {
     use std::borrow::Cow;
     use xsd_parser_types::quick_xml::{
         DeserializeBytes, DeserializeHelper, Error, ErrorKind, RawByteStr, SerializeBytes,
-        WithDeserializer, WithSerializer,
+        SerializeHelper, WithDeserializer, WithSerializer,
     };
     #[derive(Debug)]
     pub struct CtDocInfoXType {
@@ -19114,7 +19160,10 @@ pub mod ofd {
         Ofd,
     }
     impl SerializeBytes for OfdDocTypeXType {
-        fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+        fn serialize_bytes(
+            &self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Cow<'_, str>>, Error> {
             match self {
                 Self::Ofd => Ok(Some(Cow::Borrowed("OFD"))),
             }
@@ -22105,7 +22154,8 @@ pub mod ofd {
     }
     pub mod quick_xml_serialize {
         use xsd_parser_types::quick_xml::{
-            write_attrib, BytesEnd, BytesStart, Error, Event, IterSerializer, WithSerializer,
+            BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
+            WithSerializer,
         };
         #[derive(Debug)]
         pub struct CtDocInfoXTypeSerializer<'ser> {
@@ -22147,7 +22197,10 @@ pub mod ofd {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtDocInfoXTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtDocInfoXTypeSerializerState::Init__ => {
@@ -22158,72 +22211,79 @@ pub mod ofd {
                                     false,
                                 )?);
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
                             return Ok(Some(Event::Start(bytes)));
                         }
-                        CtDocInfoXTypeSerializerState::DocId(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => {
-                                *self.state =
-                                    CtDocInfoXTypeSerializerState::Title(IterSerializer::new(
-                                        self.value.title.as_ref(),
-                                        Some("Title"),
-                                        false,
-                                    ))
+                        CtDocInfoXTypeSerializerState::DocId(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => {
+                                    *self.state =
+                                        CtDocInfoXTypeSerializerState::Title(IterSerializer::new(
+                                            self.value.title.as_ref(),
+                                            Some("Title"),
+                                            false,
+                                        ))
+                                }
                             }
-                        },
-                        CtDocInfoXTypeSerializerState::Title(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => {
-                                *self.state =
-                                    CtDocInfoXTypeSerializerState::Author(IterSerializer::new(
-                                        self.value.author.as_ref(),
-                                        Some("Author"),
-                                        false,
-                                    ))
+                        }
+                        CtDocInfoXTypeSerializerState::Title(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => {
+                                    *self.state =
+                                        CtDocInfoXTypeSerializerState::Author(IterSerializer::new(
+                                            self.value.author.as_ref(),
+                                            Some("Author"),
+                                            false,
+                                        ))
+                                }
                             }
-                        },
-                        CtDocInfoXTypeSerializerState::Author(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => {
-                                *self.state =
-                                    CtDocInfoXTypeSerializerState::Subject(IterSerializer::new(
-                                        self.value.subject.as_ref(),
-                                        Some("Subject"),
-                                        false,
-                                    ))
+                        }
+                        CtDocInfoXTypeSerializerState::Author(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => {
+                                    *self.state =
+                                        CtDocInfoXTypeSerializerState::Subject(IterSerializer::new(
+                                            self.value.subject.as_ref(),
+                                            Some("Subject"),
+                                            false,
+                                        ))
+                                }
                             }
-                        },
-                        CtDocInfoXTypeSerializerState::Subject(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => {
-                                *self.state =
-                                    CtDocInfoXTypeSerializerState::Abstract(IterSerializer::new(
-                                        self.value.abstract_.as_ref(),
-                                        Some("Abstract"),
-                                        false,
-                                    ))
+                        }
+                        CtDocInfoXTypeSerializerState::Subject(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => {
+                                    *self.state = CtDocInfoXTypeSerializerState::Abstract(
+                                        IterSerializer::new(
+                                            self.value.abstract_.as_ref(),
+                                            Some("Abstract"),
+                                            false,
+                                        ),
+                                    )
+                                }
                             }
-                        },
-                        CtDocInfoXTypeSerializerState::Abstract(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => {
-                                *self.state = CtDocInfoXTypeSerializerState::CreationDate(
-                                    IterSerializer::new(
-                                        self.value.creation_date.as_ref(),
-                                        Some("CreationDate"),
-                                        false,
-                                    ),
-                                )
+                        }
+                        CtDocInfoXTypeSerializerState::Abstract(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => {
+                                    *self.state = CtDocInfoXTypeSerializerState::CreationDate(
+                                        IterSerializer::new(
+                                            self.value.creation_date.as_ref(),
+                                            Some("CreationDate"),
+                                            false,
+                                        ),
+                                    )
+                                }
                             }
-                        },
+                        }
                         CtDocInfoXTypeSerializerState::CreationDate(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state =
@@ -22235,64 +22295,76 @@ pub mod ofd {
                                 }
                             }
                         }
-                        CtDocInfoXTypeSerializerState::ModDate(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => {
-                                *self.state =
-                                    CtDocInfoXTypeSerializerState::DocUsage(IterSerializer::new(
-                                        self.value.doc_usage.as_ref(),
-                                        Some("DocUsage"),
-                                        false,
-                                    ))
+                        CtDocInfoXTypeSerializerState::ModDate(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => {
+                                    *self.state = CtDocInfoXTypeSerializerState::DocUsage(
+                                        IterSerializer::new(
+                                            self.value.doc_usage.as_ref(),
+                                            Some("DocUsage"),
+                                            false,
+                                        ),
+                                    )
+                                }
                             }
-                        },
-                        CtDocInfoXTypeSerializerState::DocUsage(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => {
-                                *self.state =
-                                    CtDocInfoXTypeSerializerState::Cover(IterSerializer::new(
-                                        self.value.cover.as_ref(),
-                                        Some("Cover"),
-                                        false,
-                                    ))
+                        }
+                        CtDocInfoXTypeSerializerState::DocUsage(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => {
+                                    *self.state =
+                                        CtDocInfoXTypeSerializerState::Cover(IterSerializer::new(
+                                            self.value.cover.as_ref(),
+                                            Some("Cover"),
+                                            false,
+                                        ))
+                                }
                             }
-                        },
-                        CtDocInfoXTypeSerializerState::Cover(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => {
-                                *self.state =
-                                    CtDocInfoXTypeSerializerState::Keywords(IterSerializer::new(
-                                        self.value.keywords.as_ref(),
-                                        Some("Keywords"),
-                                        false,
-                                    ))
+                        }
+                        CtDocInfoXTypeSerializerState::Cover(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => {
+                                    *self.state = CtDocInfoXTypeSerializerState::Keywords(
+                                        IterSerializer::new(
+                                            self.value.keywords.as_ref(),
+                                            Some("Keywords"),
+                                            false,
+                                        ),
+                                    )
+                                }
                             }
-                        },
-                        CtDocInfoXTypeSerializerState::Keywords(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => {
-                                *self.state =
-                                    CtDocInfoXTypeSerializerState::Creator(IterSerializer::new(
-                                        self.value.creator.as_ref(),
-                                        Some("Creator"),
-                                        false,
-                                    ))
+                        }
+                        CtDocInfoXTypeSerializerState::Keywords(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => {
+                                    *self.state =
+                                        CtDocInfoXTypeSerializerState::Creator(IterSerializer::new(
+                                            self.value.creator.as_ref(),
+                                            Some("Creator"),
+                                            false,
+                                        ))
+                                }
                             }
-                        },
-                        CtDocInfoXTypeSerializerState::Creator(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => {
-                                *self.state = CtDocInfoXTypeSerializerState::CreatorVersion(
-                                    IterSerializer::new(
-                                        self.value.creator_version.as_ref(),
-                                        Some("CreatorVersion"),
-                                        false,
-                                    ),
-                                )
+                        }
+                        CtDocInfoXTypeSerializerState::Creator(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => {
+                                    *self.state = CtDocInfoXTypeSerializerState::CreatorVersion(
+                                        IterSerializer::new(
+                                            self.value.creator_version.as_ref(),
+                                            Some("CreatorVersion"),
+                                            false,
+                                        ),
+                                    )
+                                }
                             }
-                        },
+                        }
                         CtDocInfoXTypeSerializerState::CreatorVersion(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = CtDocInfoXTypeSerializerState::CustomDatas(
@@ -22306,13 +22378,14 @@ pub mod ofd {
                             }
                         }
                         CtDocInfoXTypeSerializerState::CustomDatas(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = CtDocInfoXTypeSerializerState::End__,
                             }
                         }
                         CtDocInfoXTypeSerializerState::End__ => {
                             *self.state = CtDocInfoXTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         CtDocInfoXTypeSerializerState::Done__ => return Ok(None),
@@ -22321,10 +22394,9 @@ pub mod ofd {
                 }
             }
         }
-        impl<'ser> Iterator for CtDocInfoXTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtDocInfoXTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -22356,7 +22428,10 @@ pub mod ofd {
             Phantom__(&'ser ()),
         }
         impl<'ser> OfdXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         OfdXElementTypeSerializerState::Init__ => {
@@ -22367,22 +22442,21 @@ pub mod ofd {
                                     false,
                                 ));
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib(&mut bytes, "Version", &self.value.version)?;
-                            write_attrib(&mut bytes, "DocType", &self.value.doc_type)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib(&mut bytes, "Version", &self.value.version)?;
+                            helper.write_attrib(&mut bytes, "DocType", &self.value.doc_type)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
-                        OfdXElementTypeSerializerState::DocBody(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = OfdXElementTypeSerializerState::End__,
-                        },
+                        OfdXElementTypeSerializerState::DocBody(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = OfdXElementTypeSerializerState::End__,
+                            }
+                        }
                         OfdXElementTypeSerializerState::End__ => {
                             *self.state = OfdXElementTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         OfdXElementTypeSerializerState::Done__ => return Ok(None),
@@ -22391,10 +22465,9 @@ pub mod ofd {
                 }
             }
         }
-        impl<'ser> Iterator for OfdXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for OfdXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -22420,7 +22493,10 @@ pub mod ofd {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtDocInfoKeywordsXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtDocInfoKeywordsXElementTypeSerializerState::Init__ => {
@@ -22432,16 +22508,12 @@ pub mod ofd {
                                 ),
                             );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtDocInfoKeywordsXElementTypeSerializerState::Keyword(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state =
@@ -22451,6 +22523,7 @@ pub mod ofd {
                         }
                         CtDocInfoKeywordsXElementTypeSerializerState::End__ => {
                             *self.state = CtDocInfoKeywordsXElementTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         CtDocInfoKeywordsXElementTypeSerializerState::Done__ => return Ok(None),
@@ -22461,10 +22534,9 @@ pub mod ofd {
                 }
             }
         }
-        impl<'ser> Iterator for CtDocInfoKeywordsXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtDocInfoKeywordsXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -22496,7 +22568,10 @@ pub mod ofd {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtDocInfoCustomDatasXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtDocInfoCustomDatasXElementTypeSerializerState::Init__ => {
@@ -22509,16 +22584,12 @@ pub mod ofd {
                                     ),
                                 );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtDocInfoCustomDatasXElementTypeSerializerState::CustomData(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state =
@@ -22528,6 +22599,7 @@ pub mod ofd {
                         }
                         CtDocInfoCustomDatasXElementTypeSerializerState::End__ => {
                             *self.state = CtDocInfoCustomDatasXElementTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         CtDocInfoCustomDatasXElementTypeSerializerState::Done__ => return Ok(None),
@@ -22538,10 +22610,9 @@ pub mod ofd {
                 }
             }
         }
-        impl<'ser> Iterator for CtDocInfoCustomDatasXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtDocInfoCustomDatasXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -22576,7 +22647,10 @@ pub mod ofd {
             Phantom__(&'ser ()),
         }
         impl<'ser> OfdDocBodyXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         OfdDocBodyXElementTypeSerializerState::Init__ => {
@@ -22588,16 +22662,12 @@ pub mod ofd {
                                 )?,
                             );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         OfdDocBodyXElementTypeSerializerState::DocInfo(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = OfdDocBodyXElementTypeSerializerState::DocRoot(
@@ -22611,7 +22681,7 @@ pub mod ofd {
                             }
                         }
                         OfdDocBodyXElementTypeSerializerState::DocRoot(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = OfdDocBodyXElementTypeSerializerState::Versions(
@@ -22625,7 +22695,7 @@ pub mod ofd {
                             }
                         }
                         OfdDocBodyXElementTypeSerializerState::Versions(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = OfdDocBodyXElementTypeSerializerState::Signatures(
@@ -22639,13 +22709,14 @@ pub mod ofd {
                             }
                         }
                         OfdDocBodyXElementTypeSerializerState::Signatures(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = OfdDocBodyXElementTypeSerializerState::End__,
                             }
                         }
                         OfdDocBodyXElementTypeSerializerState::End__ => {
                             *self.state = OfdDocBodyXElementTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         OfdDocBodyXElementTypeSerializerState::Done__ => return Ok(None),
@@ -22654,10 +22725,9 @@ pub mod ofd {
                 }
             }
         }
-        impl<'ser> Iterator for OfdDocBodyXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for OfdDocBodyXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -22683,16 +22753,18 @@ pub mod ofd {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtDocInfoCustomDatasCustomDataXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { CtDocInfoCustomDatasCustomDataXElementTypeSerializerState :: Init__ => { * self . state = CtDocInfoCustomDatasCustomDataXElementTypeSerializerState :: Content__ (WithSerializer :: serializer (& self . value . content , None , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; if self . is_root { bytes . push_attribute ((& b"xmlns" [..] , & super :: super :: NS_UNNAMED_2 [..])) ; } write_attrib (& mut bytes , "Name" , & self . value . name) ? ; return Ok (Some (Event :: Start (bytes))) } CtDocInfoCustomDatasCustomDataXElementTypeSerializerState :: Content__ (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CtDocInfoCustomDatasCustomDataXElementTypeSerializerState :: End__ , } CtDocInfoCustomDatasCustomDataXElementTypeSerializerState :: End__ => { * self . state = CtDocInfoCustomDatasCustomDataXElementTypeSerializerState :: Done__ ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } CtDocInfoCustomDatasCustomDataXElementTypeSerializerState :: Done__ => return Ok (None) , CtDocInfoCustomDatasCustomDataXElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { CtDocInfoCustomDatasCustomDataXElementTypeSerializerState :: Init__ => { * self . state = CtDocInfoCustomDatasCustomDataXElementTypeSerializerState :: Content__ (WithSerializer :: serializer (& self . value . content , None , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns (& mut bytes , None , & super :: super :: NS_UNNAMED_2) ; helper . write_attrib (& mut bytes , "Name" , & self . value . name) ? ; return Ok (Some (Event :: Start (bytes))) } CtDocInfoCustomDatasCustomDataXElementTypeSerializerState :: Content__ (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CtDocInfoCustomDatasCustomDataXElementTypeSerializerState :: End__ , } CtDocInfoCustomDatasCustomDataXElementTypeSerializerState :: End__ => { * self . state = CtDocInfoCustomDatasCustomDataXElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } CtDocInfoCustomDatasCustomDataXElementTypeSerializerState :: Done__ => return Ok (None) , CtDocInfoCustomDatasCustomDataXElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
-        impl<'ser> Iterator for CtDocInfoCustomDatasCustomDataXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtDocInfoCustomDatasCustomDataXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -22725,7 +22797,10 @@ pub mod ofd {
             Phantom__(&'ser ()),
         }
         impl<'ser> OfdDocBodyVersionsXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         OfdDocBodyVersionsXElementTypeSerializerState::Init__ => {
@@ -22737,16 +22812,12 @@ pub mod ofd {
                                 ),
                             );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         OfdDocBodyVersionsXElementTypeSerializerState::Version(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state =
@@ -22756,6 +22827,7 @@ pub mod ofd {
                         }
                         OfdDocBodyVersionsXElementTypeSerializerState::End__ => {
                             *self.state = OfdDocBodyVersionsXElementTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         OfdDocBodyVersionsXElementTypeSerializerState::Done__ => return Ok(None),
@@ -22766,10 +22838,9 @@ pub mod ofd {
                 }
             }
         }
-        impl<'ser> Iterator for OfdDocBodyVersionsXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for OfdDocBodyVersionsXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -22793,23 +22864,23 @@ pub mod ofd {
             Phantom__(&'ser ()),
         }
         impl<'ser> OfdDocBodyVersionsVersionXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         OfdDocBodyVersionsVersionXElementTypeSerializerState::Init__ => {
                             *self.state =
                                 OfdDocBodyVersionsVersionXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib(&mut bytes, "ID", &self.value.id)?;
-                            write_attrib(&mut bytes, "Index", &self.value.index)?;
-                            write_attrib(&mut bytes, "Current", &self.value.current)?;
-                            write_attrib(&mut bytes, "BaseLoc", &self.value.base_loc)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib(&mut bytes, "ID", &self.value.id)?;
+                            helper.write_attrib(&mut bytes, "Index", &self.value.index)?;
+                            helper.write_attrib(&mut bytes, "Current", &self.value.current)?;
+                            helper.write_attrib(&mut bytes, "BaseLoc", &self.value.base_loc)?;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         OfdDocBodyVersionsVersionXElementTypeSerializerState::Done__ => {
@@ -22822,10 +22893,9 @@ pub mod ofd {
                 }
             }
         }
-        impl<'ser> Iterator for OfdDocBodyVersionsVersionXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for OfdDocBodyVersionsVersionXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -22841,7 +22911,7 @@ pub mod page {
     use std::borrow::Cow;
     use xsd_parser_types::quick_xml::{
         DeserializeBytes, DeserializeHelper, Error, ErrorKind, RawByteStr, SerializeBytes,
-        WithDeserializer, WithSerializer,
+        SerializeHelper, WithDeserializer, WithSerializer,
     };
     #[derive(Debug)]
     pub struct CtAxialShdXType {
@@ -23687,7 +23757,10 @@ pub mod page {
         Reflect,
     }
     impl SerializeBytes for CtAxialShdMapTypeXType {
-        fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+        fn serialize_bytes(
+            &self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Cow<'_, str>>, Error> {
             match self {
                 Self::Direct => Ok(Some(Cow::Borrowed("Direct"))),
                 Self::Repeat => Ok(Some(Cow::Borrowed("Repeat"))),
@@ -23715,7 +23788,10 @@ pub mod page {
         _3,
     }
     impl SerializeBytes for CtAxialShdExtendXType {
-        fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+        fn serialize_bytes(
+            &self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Cow<'_, str>>, Error> {
             match self {
                 Self::_0 => Ok(Some(Cow::Borrowed("0"))),
                 Self::_1 => Ok(Some(Cow::Borrowed("1"))),
@@ -23822,7 +23898,10 @@ pub mod page {
         Square,
     }
     impl SerializeBytes for CtGraphicUnitCapXType {
-        fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+        fn serialize_bytes(
+            &self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Cow<'_, str>>, Error> {
             match self {
                 Self::Butt => Ok(Some(Cow::Borrowed("Butt"))),
                 Self::Round => Ok(Some(Cow::Borrowed("Round"))),
@@ -23849,7 +23928,10 @@ pub mod page {
         Bevel,
     }
     impl SerializeBytes for CtGraphicUnitJoinXType {
-        fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+        fn serialize_bytes(
+            &self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Cow<'_, str>>, Error> {
             match self {
                 Self::Miter => Ok(Some(Cow::Borrowed("Miter"))),
                 Self::Round => Ok(Some(Cow::Borrowed("Round"))),
@@ -24024,7 +24106,10 @@ pub mod page {
         Custom,
     }
     impl SerializeBytes for CtLayerTypeXType {
-        fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+        fn serialize_bytes(
+            &self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Cow<'_, str>>, Error> {
             match self {
                 Self::Body => Ok(Some(Cow::Borrowed("Body"))),
                 Self::Background => Ok(Some(Cow::Borrowed("Background"))),
@@ -24426,7 +24511,10 @@ pub mod page {
         EvenOdd,
     }
     impl SerializeBytes for CtPathRuleXType {
-        fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+        fn serialize_bytes(
+            &self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Cow<'_, str>>, Error> {
             match self {
                 Self::NonZero => Ok(Some(Cow::Borrowed("NonZero"))),
                 Self::EvenOdd => Ok(Some(Cow::Borrowed("Even-Odd"))),
@@ -24452,7 +24540,10 @@ pub mod page {
         RowAndColumn,
     }
     impl SerializeBytes for CtPatternReflectMethodXType {
-        fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+        fn serialize_bytes(
+            &self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Cow<'_, str>>, Error> {
             match self {
                 Self::Normal => Ok(Some(Cow::Borrowed("Normal"))),
                 Self::Row => Ok(Some(Cow::Borrowed("Row"))),
@@ -24480,7 +24571,10 @@ pub mod page {
         Object,
     }
     impl SerializeBytes for CtPatternRelativeToXType {
-        fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+        fn serialize_bytes(
+            &self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Cow<'_, str>>, Error> {
             match self {
                 Self::Page => Ok(Some(Cow::Borrowed("Page"))),
                 Self::Object => Ok(Some(Cow::Borrowed("Object"))),
@@ -24556,7 +24650,10 @@ pub mod page {
         _1000,
     }
     impl SerializeBytes for CtTextWeightXType {
-        fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+        fn serialize_bytes(
+            &self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Cow<'_, str>>, Error> {
             match self {
                 Self::_0 => Ok(Some(Cow::Borrowed("0"))),
                 Self::_100 => Ok(Some(Cow::Borrowed("100"))),
@@ -24682,7 +24779,10 @@ pub mod page {
         _2,
     }
     impl SerializeBytes for CtGouraudShdPointEdgeFlagXType {
-        fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+        fn serialize_bytes(
+            &self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Cow<'_, str>>, Error> {
             match self {
                 Self::_0 => Ok(Some(Cow::Borrowed("0"))),
                 Self::_1 => Ok(Some(Cow::Borrowed("1"))),
@@ -24708,7 +24808,10 @@ pub mod page {
         Foreground,
     }
     impl SerializeBytes for PageTemplateZOrderXType {
-        fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+        fn serialize_bytes(
+            &self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Cow<'_, str>>, Error> {
             match self {
                 Self::Backqround => Ok(Some(Cow::Borrowed("Backqround"))),
                 Self::Foreground => Ok(Some(Cow::Borrowed("Foreground"))),
@@ -41418,7 +41521,7 @@ pub mod page {
     }
     pub mod quick_xml_serialize {
         use xsd_parser_types::quick_xml::{
-            write_attrib, write_attrib_opt, BytesEnd, BytesStart, Error, Event, IterSerializer,
+            BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
             WithSerializer,
         };
         #[derive(Debug)]
@@ -41443,7 +41546,10 @@ pub mod page {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtAxialShdXTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtAxialShdXTypeSerializerState::Init__ => {
@@ -41454,25 +41560,28 @@ pub mod page {
                                     false,
                                 ));
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib(&mut bytes, "MapType", &self.value.map_type)?;
-                            write_attrib_opt(&mut bytes, "MapUnit", &self.value.map_unit)?;
-                            write_attrib(&mut bytes, "Extend", &self.value.extend)?;
-                            write_attrib(&mut bytes, "StartPoint", &self.value.start_point)?;
-                            write_attrib(&mut bytes, "EndPoint", &self.value.end_point)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib(&mut bytes, "MapType", &self.value.map_type)?;
+                            helper.write_attrib_opt(&mut bytes, "MapUnit", &self.value.map_unit)?;
+                            helper.write_attrib(&mut bytes, "Extend", &self.value.extend)?;
+                            helper.write_attrib(
+                                &mut bytes,
+                                "StartPoint",
+                                &self.value.start_point,
+                            )?;
+                            helper.write_attrib(&mut bytes, "EndPoint", &self.value.end_point)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
-                        CtAxialShdXTypeSerializerState::Segment(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = CtAxialShdXTypeSerializerState::End__,
-                        },
+                        CtAxialShdXTypeSerializerState::Segment(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = CtAxialShdXTypeSerializerState::End__,
+                            }
+                        }
                         CtAxialShdXTypeSerializerState::End__ => {
                             *self.state = CtAxialShdXTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         CtAxialShdXTypeSerializerState::Done__ => return Ok(None),
@@ -41481,10 +41590,9 @@ pub mod page {
                 }
             }
         }
-        impl<'ser> Iterator for CtAxialShdXTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtAxialShdXTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -41510,7 +41618,10 @@ pub mod page {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtCgTransformXTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtCgTransformXTypeSerializerState::Init__ => {
@@ -41521,25 +41632,30 @@ pub mod page {
                                     false,
                                 ));
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib(&mut bytes, "CodePosition", &self.value.code_position)?;
-                            write_attrib(&mut bytes, "CodeCount", &self.value.code_count)?;
-                            write_attrib(&mut bytes, "GlyphCount", &self.value.glyph_count)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib(
+                                &mut bytes,
+                                "CodePosition",
+                                &self.value.code_position,
+                            )?;
+                            helper.write_attrib(&mut bytes, "CodeCount", &self.value.code_count)?;
+                            helper.write_attrib(
+                                &mut bytes,
+                                "GlyphCount",
+                                &self.value.glyph_count,
+                            )?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtCgTransformXTypeSerializerState::Glyphs(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = CtCgTransformXTypeSerializerState::End__,
                             }
                         }
                         CtCgTransformXTypeSerializerState::End__ => {
                             *self.state = CtCgTransformXTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         CtCgTransformXTypeSerializerState::Done__ => return Ok(None),
@@ -41548,10 +41664,9 @@ pub mod page {
                 }
             }
         }
-        impl<'ser> Iterator for CtCgTransformXTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtCgTransformXTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -41583,7 +41698,10 @@ pub mod page {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtClipXTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtClipXTypeSerializerState::Init__ => {
@@ -41593,20 +41711,17 @@ pub mod page {
                                 false,
                             ));
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
                             return Ok(Some(Event::Start(bytes)));
                         }
-                        CtClipXTypeSerializerState::Area(x) => match x.next().transpose()? {
+                        CtClipXTypeSerializerState::Area(x) => match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = CtClipXTypeSerializerState::End__,
                         },
                         CtClipXTypeSerializerState::End__ => {
                             *self.state = CtClipXTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         CtClipXTypeSerializerState::Done__ => return Ok(None),
@@ -41615,10 +41730,9 @@ pub mod page {
                 }
             }
         }
-        impl<'ser> Iterator for CtClipXTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtClipXTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -41650,7 +41764,10 @@ pub mod page {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtColorXTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtColorXTypeSerializerState::Init__ => {
@@ -41658,24 +41775,27 @@ pub mod page {
                                 IterSerializer::new(self.value.content.as_ref(), None, false),
                             );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib_opt(&mut bytes, "Value", &self.value.value)?;
-                            write_attrib_opt(&mut bytes, "Index", &self.value.index)?;
-                            write_attrib_opt(&mut bytes, "ColorSpace", &self.value.color_space)?;
-                            write_attrib(&mut bytes, "Alpha", &self.value.alpha)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib_opt(&mut bytes, "Value", &self.value.value)?;
+                            helper.write_attrib_opt(&mut bytes, "Index", &self.value.index)?;
+                            helper.write_attrib_opt(
+                                &mut bytes,
+                                "ColorSpace",
+                                &self.value.color_space,
+                            )?;
+                            helper.write_attrib(&mut bytes, "Alpha", &self.value.alpha)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
-                        CtColorXTypeSerializerState::Content__(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = CtColorXTypeSerializerState::End__,
-                        },
+                        CtColorXTypeSerializerState::Content__(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = CtColorXTypeSerializerState::End__,
+                            }
+                        }
                         CtColorXTypeSerializerState::End__ => {
                             *self.state = CtColorXTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         CtColorXTypeSerializerState::Done__ => return Ok(None),
@@ -41684,10 +41804,9 @@ pub mod page {
                 }
             }
         }
-        impl<'ser> Iterator for CtColorXTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtColorXTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -41714,7 +41833,10 @@ pub mod page {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtColorXTypeContentSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtColorXTypeContentSerializerState::Init__ => match self.value {
@@ -41745,31 +41867,31 @@ pub mod page {
                             }
                         },
                         CtColorXTypeContentSerializerState::Pattern(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = CtColorXTypeContentSerializerState::Done__,
                             }
                         }
                         CtColorXTypeContentSerializerState::AxialShd(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = CtColorXTypeContentSerializerState::Done__,
                             }
                         }
                         CtColorXTypeContentSerializerState::RadialShd(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = CtColorXTypeContentSerializerState::Done__,
                             }
                         }
                         CtColorXTypeContentSerializerState::GouraudShd(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = CtColorXTypeContentSerializerState::Done__,
                             }
                         }
                         CtColorXTypeContentSerializerState::LaGourandShd(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = CtColorXTypeContentSerializerState::Done__,
                             }
@@ -41780,10 +41902,9 @@ pub mod page {
                 }
             }
         }
-        impl<'ser> Iterator for CtColorXTypeContentSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtColorXTypeContentSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -41822,7 +41943,10 @@ pub mod page {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtCompositeXTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtCompositeXTypeSerializerState::Init__ => {
@@ -41833,29 +41957,45 @@ pub mod page {
                                     false,
                                 ));
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
-                            write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
-                            write_attrib(&mut bytes, "Visible", &self.value.visible)?;
-                            write_attrib_opt(&mut bytes, "CTM", &self.value.ctm)?;
-                            write_attrib_opt(&mut bytes, "DrawParam", &self.value.draw_param)?;
-                            write_attrib(&mut bytes, "LineWidth", &self.value.line_width)?;
-                            write_attrib(&mut bytes, "Cap", &self.value.cap)?;
-                            write_attrib(&mut bytes, "Join", &self.value.join)?;
-                            write_attrib(&mut bytes, "MiterLimit", &self.value.miter_limit)?;
-                            write_attrib(&mut bytes, "DashOffset", &self.value.dash_offset)?;
-                            write_attrib_opt(&mut bytes, "DashPattern", &self.value.dash_pattern)?;
-                            write_attrib(&mut bytes, "Alpha", &self.value.alpha)?;
-                            write_attrib(&mut bytes, "ResourceID", &self.value.resource_id)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
+                            helper.write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
+                            helper.write_attrib(&mut bytes, "Visible", &self.value.visible)?;
+                            helper.write_attrib_opt(&mut bytes, "CTM", &self.value.ctm)?;
+                            helper.write_attrib_opt(
+                                &mut bytes,
+                                "DrawParam",
+                                &self.value.draw_param,
+                            )?;
+                            helper.write_attrib(&mut bytes, "LineWidth", &self.value.line_width)?;
+                            helper.write_attrib(&mut bytes, "Cap", &self.value.cap)?;
+                            helper.write_attrib(&mut bytes, "Join", &self.value.join)?;
+                            helper.write_attrib(
+                                &mut bytes,
+                                "MiterLimit",
+                                &self.value.miter_limit,
+                            )?;
+                            helper.write_attrib(
+                                &mut bytes,
+                                "DashOffset",
+                                &self.value.dash_offset,
+                            )?;
+                            helper.write_attrib_opt(
+                                &mut bytes,
+                                "DashPattern",
+                                &self.value.dash_pattern,
+                            )?;
+                            helper.write_attrib(&mut bytes, "Alpha", &self.value.alpha)?;
+                            helper.write_attrib(
+                                &mut bytes,
+                                "ResourceID",
+                                &self.value.resource_id,
+                            )?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtCompositeXTypeSerializerState::Actions(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state =
@@ -41867,12 +42007,15 @@ pub mod page {
                                 }
                             }
                         }
-                        CtCompositeXTypeSerializerState::Clips(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = CtCompositeXTypeSerializerState::End__,
-                        },
+                        CtCompositeXTypeSerializerState::Clips(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = CtCompositeXTypeSerializerState::End__,
+                            }
+                        }
                         CtCompositeXTypeSerializerState::End__ => {
                             *self.state = CtCompositeXTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         CtCompositeXTypeSerializerState::Done__ => return Ok(None),
@@ -41881,10 +42024,9 @@ pub mod page {
                 }
             }
         }
-        impl<'ser> Iterator for CtCompositeXTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtCompositeXTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -41917,7 +42059,10 @@ pub mod page {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtGouraudShdXTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtGouraudShdXTypeSerializerState::Init__ => {
@@ -41925,35 +42070,34 @@ pub mod page {
                                 IterSerializer::new(&self.value.point[..], Some("Point"), false),
                             );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib_opt(&mut bytes, "Extend", &self.value.extend)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib_opt(&mut bytes, "Extend", &self.value.extend)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
-                        CtGouraudShdXTypeSerializerState::Point(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => {
-                                *self.state = CtGouraudShdXTypeSerializerState::BackColor(
-                                    IterSerializer::new(
-                                        self.value.back_color.as_deref(),
-                                        Some("BackColor"),
-                                        false,
-                                    ),
-                                )
+                        CtGouraudShdXTypeSerializerState::Point(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => {
+                                    *self.state = CtGouraudShdXTypeSerializerState::BackColor(
+                                        IterSerializer::new(
+                                            self.value.back_color.as_deref(),
+                                            Some("BackColor"),
+                                            false,
+                                        ),
+                                    )
+                                }
                             }
-                        },
+                        }
                         CtGouraudShdXTypeSerializerState::BackColor(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = CtGouraudShdXTypeSerializerState::End__,
                             }
                         }
                         CtGouraudShdXTypeSerializerState::End__ => {
                             *self.state = CtGouraudShdXTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         CtGouraudShdXTypeSerializerState::Done__ => return Ok(None),
@@ -41962,10 +42106,9 @@ pub mod page {
                 }
             }
         }
-        impl<'ser> Iterator for CtGouraudShdXTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtGouraudShdXTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -42004,7 +42147,10 @@ pub mod page {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtGraphicUnitXTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtGraphicUnitXTypeSerializerState::Init__ => {
@@ -42015,28 +42161,40 @@ pub mod page {
                                     false,
                                 ));
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
-                            write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
-                            write_attrib(&mut bytes, "Visible", &self.value.visible)?;
-                            write_attrib_opt(&mut bytes, "CTM", &self.value.ctm)?;
-                            write_attrib_opt(&mut bytes, "DrawParam", &self.value.draw_param)?;
-                            write_attrib(&mut bytes, "LineWidth", &self.value.line_width)?;
-                            write_attrib(&mut bytes, "Cap", &self.value.cap)?;
-                            write_attrib(&mut bytes, "Join", &self.value.join)?;
-                            write_attrib(&mut bytes, "MiterLimit", &self.value.miter_limit)?;
-                            write_attrib(&mut bytes, "DashOffset", &self.value.dash_offset)?;
-                            write_attrib_opt(&mut bytes, "DashPattern", &self.value.dash_pattern)?;
-                            write_attrib(&mut bytes, "Alpha", &self.value.alpha)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
+                            helper.write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
+                            helper.write_attrib(&mut bytes, "Visible", &self.value.visible)?;
+                            helper.write_attrib_opt(&mut bytes, "CTM", &self.value.ctm)?;
+                            helper.write_attrib_opt(
+                                &mut bytes,
+                                "DrawParam",
+                                &self.value.draw_param,
+                            )?;
+                            helper.write_attrib(&mut bytes, "LineWidth", &self.value.line_width)?;
+                            helper.write_attrib(&mut bytes, "Cap", &self.value.cap)?;
+                            helper.write_attrib(&mut bytes, "Join", &self.value.join)?;
+                            helper.write_attrib(
+                                &mut bytes,
+                                "MiterLimit",
+                                &self.value.miter_limit,
+                            )?;
+                            helper.write_attrib(
+                                &mut bytes,
+                                "DashOffset",
+                                &self.value.dash_offset,
+                            )?;
+                            helper.write_attrib_opt(
+                                &mut bytes,
+                                "DashPattern",
+                                &self.value.dash_pattern,
+                            )?;
+                            helper.write_attrib(&mut bytes, "Alpha", &self.value.alpha)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtGraphicUnitXTypeSerializerState::Actions(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = CtGraphicUnitXTypeSerializerState::Clips(
@@ -42050,13 +42208,14 @@ pub mod page {
                             }
                         }
                         CtGraphicUnitXTypeSerializerState::Clips(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = CtGraphicUnitXTypeSerializerState::End__,
                             }
                         }
                         CtGraphicUnitXTypeSerializerState::End__ => {
                             *self.state = CtGraphicUnitXTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         CtGraphicUnitXTypeSerializerState::Done__ => return Ok(None),
@@ -42065,10 +42224,9 @@ pub mod page {
                 }
             }
         }
-        impl<'ser> Iterator for CtGraphicUnitXTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtGraphicUnitXTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -42114,7 +42272,10 @@ pub mod page {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtImageXTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtImageXTypeSerializerState::Init__ => {
@@ -42125,57 +42286,88 @@ pub mod page {
                                     false,
                                 ));
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
-                            write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
-                            write_attrib(&mut bytes, "Visible", &self.value.visible)?;
-                            write_attrib_opt(&mut bytes, "CTM", &self.value.ctm)?;
-                            write_attrib_opt(&mut bytes, "DrawParam", &self.value.draw_param)?;
-                            write_attrib(&mut bytes, "LineWidth", &self.value.line_width)?;
-                            write_attrib(&mut bytes, "Cap", &self.value.cap)?;
-                            write_attrib(&mut bytes, "Join", &self.value.join)?;
-                            write_attrib(&mut bytes, "MiterLimit", &self.value.miter_limit)?;
-                            write_attrib(&mut bytes, "DashOffset", &self.value.dash_offset)?;
-                            write_attrib_opt(&mut bytes, "DashPattern", &self.value.dash_pattern)?;
-                            write_attrib(&mut bytes, "Alpha", &self.value.alpha)?;
-                            write_attrib(&mut bytes, "ResourceID", &self.value.resource_id)?;
-                            write_attrib_opt(&mut bytes, "Substitution", &self.value.substitution)?;
-                            write_attrib_opt(&mut bytes, "ImageMask", &self.value.image_mask)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
+                            helper.write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
+                            helper.write_attrib(&mut bytes, "Visible", &self.value.visible)?;
+                            helper.write_attrib_opt(&mut bytes, "CTM", &self.value.ctm)?;
+                            helper.write_attrib_opt(
+                                &mut bytes,
+                                "DrawParam",
+                                &self.value.draw_param,
+                            )?;
+                            helper.write_attrib(&mut bytes, "LineWidth", &self.value.line_width)?;
+                            helper.write_attrib(&mut bytes, "Cap", &self.value.cap)?;
+                            helper.write_attrib(&mut bytes, "Join", &self.value.join)?;
+                            helper.write_attrib(
+                                &mut bytes,
+                                "MiterLimit",
+                                &self.value.miter_limit,
+                            )?;
+                            helper.write_attrib(
+                                &mut bytes,
+                                "DashOffset",
+                                &self.value.dash_offset,
+                            )?;
+                            helper.write_attrib_opt(
+                                &mut bytes,
+                                "DashPattern",
+                                &self.value.dash_pattern,
+                            )?;
+                            helper.write_attrib(&mut bytes, "Alpha", &self.value.alpha)?;
+                            helper.write_attrib(
+                                &mut bytes,
+                                "ResourceID",
+                                &self.value.resource_id,
+                            )?;
+                            helper.write_attrib_opt(
+                                &mut bytes,
+                                "Substitution",
+                                &self.value.substitution,
+                            )?;
+                            helper.write_attrib_opt(
+                                &mut bytes,
+                                "ImageMask",
+                                &self.value.image_mask,
+                            )?;
                             return Ok(Some(Event::Start(bytes)));
                         }
-                        CtImageXTypeSerializerState::Actions(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => {
-                                *self.state =
-                                    CtImageXTypeSerializerState::Clips(IterSerializer::new(
-                                        self.value.clips.as_ref(),
-                                        Some("Clips"),
-                                        false,
-                                    ))
+                        CtImageXTypeSerializerState::Actions(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => {
+                                    *self.state =
+                                        CtImageXTypeSerializerState::Clips(IterSerializer::new(
+                                            self.value.clips.as_ref(),
+                                            Some("Clips"),
+                                            false,
+                                        ))
+                                }
                             }
-                        },
-                        CtImageXTypeSerializerState::Clips(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => {
-                                *self.state =
-                                    CtImageXTypeSerializerState::Border(IterSerializer::new(
-                                        self.value.border.as_ref(),
-                                        Some("Border"),
-                                        false,
-                                    ))
+                        }
+                        CtImageXTypeSerializerState::Clips(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => {
+                                    *self.state =
+                                        CtImageXTypeSerializerState::Border(IterSerializer::new(
+                                            self.value.border.as_ref(),
+                                            Some("Border"),
+                                            false,
+                                        ))
+                                }
                             }
-                        },
-                        CtImageXTypeSerializerState::Border(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = CtImageXTypeSerializerState::End__,
-                        },
+                        }
+                        CtImageXTypeSerializerState::Border(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = CtImageXTypeSerializerState::End__,
+                            }
+                        }
                         CtImageXTypeSerializerState::End__ => {
                             *self.state = CtImageXTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         CtImageXTypeSerializerState::Done__ => return Ok(None),
@@ -42184,10 +42376,9 @@ pub mod page {
                 }
             }
         }
-        impl<'ser> Iterator for CtImageXTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtImageXTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -42220,7 +42411,10 @@ pub mod page {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtLaGouraudShdXTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtLaGouraudShdXTypeSerializerState::Init__ => {
@@ -42228,22 +42422,18 @@ pub mod page {
                                 IterSerializer::new(&self.value.point[..], Some("Point"), false),
                             );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib(
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib(
                                 &mut bytes,
                                 "VerticesPerRow",
                                 &self.value.vertices_per_row,
                             )?;
-                            write_attrib_opt(&mut bytes, "Extend", &self.value.extend)?;
+                            helper.write_attrib_opt(&mut bytes, "Extend", &self.value.extend)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtLaGouraudShdXTypeSerializerState::Point(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = CtLaGouraudShdXTypeSerializerState::BackColor(
@@ -42257,13 +42447,14 @@ pub mod page {
                             }
                         }
                         CtLaGouraudShdXTypeSerializerState::BackColor(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = CtLaGouraudShdXTypeSerializerState::End__,
                             }
                         }
                         CtLaGouraudShdXTypeSerializerState::End__ => {
                             *self.state = CtLaGouraudShdXTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         CtLaGouraudShdXTypeSerializerState::Done__ => return Ok(None),
@@ -42272,10 +42463,9 @@ pub mod page {
                 }
             }
         }
-        impl<'ser> Iterator for CtLaGouraudShdXTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtLaGouraudShdXTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -42307,7 +42497,10 @@ pub mod page {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtLayerXTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtLayerXTypeSerializerState::Init__ => {
@@ -42315,22 +42508,25 @@ pub mod page {
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib(&mut bytes, "Type", &self.value.type_)?;
-                            write_attrib_opt(&mut bytes, "DrawParam", &self.value.draw_param)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib(&mut bytes, "Type", &self.value.type_)?;
+                            helper.write_attrib_opt(
+                                &mut bytes,
+                                "DrawParam",
+                                &self.value.draw_param,
+                            )?;
                             return Ok(Some(Event::Start(bytes)));
                         }
-                        CtLayerXTypeSerializerState::Content__(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = CtLayerXTypeSerializerState::End__,
-                        },
+                        CtLayerXTypeSerializerState::Content__(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = CtLayerXTypeSerializerState::End__,
+                            }
+                        }
                         CtLayerXTypeSerializerState::End__ => {
                             *self.state = CtLayerXTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         CtLayerXTypeSerializerState::Done__ => return Ok(None),
@@ -42339,10 +42535,9 @@ pub mod page {
                 }
             }
         }
-        impl<'ser> Iterator for CtLayerXTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtLayerXTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -42379,7 +42574,10 @@ pub mod page {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtLayerXTypeContentSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtLayerXTypeContentSerializerState::Init__ => match self.value {
@@ -42410,31 +42608,31 @@ pub mod page {
                             }
                         },
                         CtLayerXTypeContentSerializerState::TextObject(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = CtLayerXTypeContentSerializerState::Done__,
                             }
                         }
                         CtLayerXTypeContentSerializerState::PathObject(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = CtLayerXTypeContentSerializerState::Done__,
                             }
                         }
                         CtLayerXTypeContentSerializerState::ImageObject(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = CtLayerXTypeContentSerializerState::Done__,
                             }
                         }
                         CtLayerXTypeContentSerializerState::CompositeObject(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = CtLayerXTypeContentSerializerState::Done__,
                             }
                         }
                         CtLayerXTypeContentSerializerState::PageBlock(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = CtLayerXTypeContentSerializerState::Done__,
                             }
@@ -42445,10 +42643,9 @@ pub mod page {
                 }
             }
         }
-        impl<'ser> Iterator for CtLayerXTypeContentSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtLayerXTypeContentSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -42480,7 +42677,10 @@ pub mod page {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtPageBlockXTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtPageBlockXTypeSerializerState::Init__ => {
@@ -42488,22 +42688,19 @@ pub mod page {
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtPageBlockXTypeSerializerState::Content__(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = CtPageBlockXTypeSerializerState::End__,
                             }
                         }
                         CtPageBlockXTypeSerializerState::End__ => {
                             *self.state = CtPageBlockXTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         CtPageBlockXTypeSerializerState::Done__ => return Ok(None),
@@ -42512,10 +42709,9 @@ pub mod page {
                 }
             }
         }
-        impl<'ser> Iterator for CtPageBlockXTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtPageBlockXTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -42552,7 +42748,10 @@ pub mod page {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtPageBlockXTypeContentSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtPageBlockXTypeContentSerializerState::Init__ => match self.value {
@@ -42588,7 +42787,7 @@ pub mod page {
                             }
                         },
                         CtPageBlockXTypeContentSerializerState::TextObject(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = CtPageBlockXTypeContentSerializerState::Done__
@@ -42596,7 +42795,7 @@ pub mod page {
                             }
                         }
                         CtPageBlockXTypeContentSerializerState::PathObject(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = CtPageBlockXTypeContentSerializerState::Done__
@@ -42604,7 +42803,7 @@ pub mod page {
                             }
                         }
                         CtPageBlockXTypeContentSerializerState::ImageObject(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = CtPageBlockXTypeContentSerializerState::Done__
@@ -42612,7 +42811,7 @@ pub mod page {
                             }
                         }
                         CtPageBlockXTypeContentSerializerState::CompositeObject(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = CtPageBlockXTypeContentSerializerState::Done__
@@ -42620,7 +42819,7 @@ pub mod page {
                             }
                         }
                         CtPageBlockXTypeContentSerializerState::PageBlock(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = CtPageBlockXTypeContentSerializerState::Done__
@@ -42633,10 +42832,9 @@ pub mod page {
                 }
             }
         }
-        impl<'ser> Iterator for CtPageBlockXTypeContentSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtPageBlockXTypeContentSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -42680,7 +42878,10 @@ pub mod page {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtPathXTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtPathXTypeSerializerState::Init__ => {
@@ -42690,41 +42891,55 @@ pub mod page {
                                 false,
                             ));
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
-                            write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
-                            write_attrib(&mut bytes, "Visible", &self.value.visible)?;
-                            write_attrib_opt(&mut bytes, "CTM", &self.value.ctm)?;
-                            write_attrib_opt(&mut bytes, "DrawParam", &self.value.draw_param)?;
-                            write_attrib(&mut bytes, "LineWidth", &self.value.line_width)?;
-                            write_attrib(&mut bytes, "Cap", &self.value.cap)?;
-                            write_attrib(&mut bytes, "Join", &self.value.join)?;
-                            write_attrib(&mut bytes, "MiterLimit", &self.value.miter_limit)?;
-                            write_attrib(&mut bytes, "DashOffset", &self.value.dash_offset)?;
-                            write_attrib_opt(&mut bytes, "DashPattern", &self.value.dash_pattern)?;
-                            write_attrib(&mut bytes, "Alpha", &self.value.alpha)?;
-                            write_attrib(&mut bytes, "Stroke", &self.value.stroke)?;
-                            write_attrib(&mut bytes, "Fill", &self.value.fill)?;
-                            write_attrib(&mut bytes, "Rule", &self.value.rule)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
+                            helper.write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
+                            helper.write_attrib(&mut bytes, "Visible", &self.value.visible)?;
+                            helper.write_attrib_opt(&mut bytes, "CTM", &self.value.ctm)?;
+                            helper.write_attrib_opt(
+                                &mut bytes,
+                                "DrawParam",
+                                &self.value.draw_param,
+                            )?;
+                            helper.write_attrib(&mut bytes, "LineWidth", &self.value.line_width)?;
+                            helper.write_attrib(&mut bytes, "Cap", &self.value.cap)?;
+                            helper.write_attrib(&mut bytes, "Join", &self.value.join)?;
+                            helper.write_attrib(
+                                &mut bytes,
+                                "MiterLimit",
+                                &self.value.miter_limit,
+                            )?;
+                            helper.write_attrib(
+                                &mut bytes,
+                                "DashOffset",
+                                &self.value.dash_offset,
+                            )?;
+                            helper.write_attrib_opt(
+                                &mut bytes,
+                                "DashPattern",
+                                &self.value.dash_pattern,
+                            )?;
+                            helper.write_attrib(&mut bytes, "Alpha", &self.value.alpha)?;
+                            helper.write_attrib(&mut bytes, "Stroke", &self.value.stroke)?;
+                            helper.write_attrib(&mut bytes, "Fill", &self.value.fill)?;
+                            helper.write_attrib(&mut bytes, "Rule", &self.value.rule)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
-                        CtPathXTypeSerializerState::Actions(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => {
-                                *self.state =
-                                    CtPathXTypeSerializerState::Clips(IterSerializer::new(
-                                        self.value.clips.as_ref(),
-                                        Some("Clips"),
-                                        false,
-                                    ))
+                        CtPathXTypeSerializerState::Actions(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => {
+                                    *self.state =
+                                        CtPathXTypeSerializerState::Clips(IterSerializer::new(
+                                            self.value.clips.as_ref(),
+                                            Some("Clips"),
+                                            false,
+                                        ))
+                                }
                             }
-                        },
-                        CtPathXTypeSerializerState::Clips(x) => match x.next().transpose()? {
+                        }
+                        CtPathXTypeSerializerState::Clips(x) => match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state =
@@ -42735,37 +42950,42 @@ pub mod page {
                                     ))
                             }
                         },
-                        CtPathXTypeSerializerState::StrokeColor(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => {
-                                *self.state =
-                                    CtPathXTypeSerializerState::FillColor(IterSerializer::new(
-                                        self.value.fill_color.as_ref(),
-                                        Some("FillColor"),
-                                        false,
-                                    ))
+                        CtPathXTypeSerializerState::StrokeColor(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => {
+                                    *self.state =
+                                        CtPathXTypeSerializerState::FillColor(IterSerializer::new(
+                                            self.value.fill_color.as_ref(),
+                                            Some("FillColor"),
+                                            false,
+                                        ))
+                                }
                             }
-                        },
-                        CtPathXTypeSerializerState::FillColor(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => {
-                                *self.state = CtPathXTypeSerializerState::AbbreviatedData(
-                                    WithSerializer::serializer(
-                                        &self.value.abbreviated_data,
-                                        Some("AbbreviatedData"),
-                                        false,
-                                    )?,
-                                )
+                        }
+                        CtPathXTypeSerializerState::FillColor(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => {
+                                    *self.state = CtPathXTypeSerializerState::AbbreviatedData(
+                                        WithSerializer::serializer(
+                                            &self.value.abbreviated_data,
+                                            Some("AbbreviatedData"),
+                                            false,
+                                        )?,
+                                    )
+                                }
                             }
-                        },
+                        }
                         CtPathXTypeSerializerState::AbbreviatedData(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = CtPathXTypeSerializerState::End__,
                             }
                         }
                         CtPathXTypeSerializerState::End__ => {
                             *self.state = CtPathXTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         CtPathXTypeSerializerState::Done__ => return Ok(None),
@@ -42774,10 +42994,9 @@ pub mod page {
                 }
             }
         }
-        impl<'ser> Iterator for CtPathXTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtPathXTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -42805,7 +43024,10 @@ pub mod page {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtPatternXTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtPatternXTypeSerializerState::Init__ => {
@@ -42817,29 +43039,34 @@ pub mod page {
                                 )?,
                             );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib(&mut bytes, "Width", &self.value.width)?;
-                            write_attrib(&mut bytes, "Height", &self.value.height)?;
-                            write_attrib_opt(&mut bytes, "XStep", &self.value.x_step)?;
-                            write_attrib_opt(&mut bytes, "YStep", &self.value.y_step)?;
-                            write_attrib(&mut bytes, "ReflectMethod", &self.value.reflect_method)?;
-                            write_attrib(&mut bytes, "RelativeTo", &self.value.relative_to)?;
-                            write_attrib_opt(&mut bytes, "CTM", &self.value.ctm)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib(&mut bytes, "Width", &self.value.width)?;
+                            helper.write_attrib(&mut bytes, "Height", &self.value.height)?;
+                            helper.write_attrib_opt(&mut bytes, "XStep", &self.value.x_step)?;
+                            helper.write_attrib_opt(&mut bytes, "YStep", &self.value.y_step)?;
+                            helper.write_attrib(
+                                &mut bytes,
+                                "ReflectMethod",
+                                &self.value.reflect_method,
+                            )?;
+                            helper.write_attrib(
+                                &mut bytes,
+                                "RelativeTo",
+                                &self.value.relative_to,
+                            )?;
+                            helper.write_attrib_opt(&mut bytes, "CTM", &self.value.ctm)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtPatternXTypeSerializerState::CellContent(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = CtPatternXTypeSerializerState::End__,
                             }
                         }
                         CtPatternXTypeSerializerState::End__ => {
                             *self.state = CtPatternXTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         CtPatternXTypeSerializerState::Done__ => return Ok(None),
@@ -42848,10 +43075,9 @@ pub mod page {
                 }
             }
         }
-        impl<'ser> Iterator for CtPatternXTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtPatternXTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -42883,7 +43109,10 @@ pub mod page {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtRadialShdXTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtRadialShdXTypeSerializerState::Init__ => {
@@ -42894,31 +43123,40 @@ pub mod page {
                                     false,
                                 ));
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib(&mut bytes, "MapType", &self.value.map_type)?;
-                            write_attrib_opt(&mut bytes, "MapUnit", &self.value.map_unit)?;
-                            write_attrib(&mut bytes, "Eccentricity", &self.value.eccentricity)?;
-                            write_attrib(&mut bytes, "Angle", &self.value.angle)?;
-                            write_attrib(&mut bytes, "StartPoint", &self.value.start_point)?;
-                            write_attrib(&mut bytes, "StartRadius", &self.value.start_radius)?;
-                            write_attrib(&mut bytes, "EndPoint", &self.value.end_point)?;
-                            write_attrib(&mut bytes, "EndRadius", &self.value.end_radius)?;
-                            write_attrib(&mut bytes, "Extend", &self.value.extend)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib(&mut bytes, "MapType", &self.value.map_type)?;
+                            helper.write_attrib_opt(&mut bytes, "MapUnit", &self.value.map_unit)?;
+                            helper.write_attrib(
+                                &mut bytes,
+                                "Eccentricity",
+                                &self.value.eccentricity,
+                            )?;
+                            helper.write_attrib(&mut bytes, "Angle", &self.value.angle)?;
+                            helper.write_attrib(
+                                &mut bytes,
+                                "StartPoint",
+                                &self.value.start_point,
+                            )?;
+                            helper.write_attrib(
+                                &mut bytes,
+                                "StartRadius",
+                                &self.value.start_radius,
+                            )?;
+                            helper.write_attrib(&mut bytes, "EndPoint", &self.value.end_point)?;
+                            helper.write_attrib(&mut bytes, "EndRadius", &self.value.end_radius)?;
+                            helper.write_attrib(&mut bytes, "Extend", &self.value.extend)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtRadialShdXTypeSerializerState::Seqment(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = CtRadialShdXTypeSerializerState::End__,
                             }
                         }
                         CtRadialShdXTypeSerializerState::End__ => {
                             *self.state = CtRadialShdXTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         CtRadialShdXTypeSerializerState::Done__ => return Ok(None),
@@ -42927,10 +43165,9 @@ pub mod page {
                 }
             }
         }
-        impl<'ser> Iterator for CtRadialShdXTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtRadialShdXTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -42958,7 +43195,10 @@ pub mod page {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtTextXTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtTextXTypeSerializerState::Init__ => {
@@ -42966,41 +43206,64 @@ pub mod page {
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
-                            write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
-                            write_attrib(&mut bytes, "Visible", &self.value.visible)?;
-                            write_attrib_opt(&mut bytes, "CTM", &self.value.ctm)?;
-                            write_attrib_opt(&mut bytes, "DrawParam", &self.value.draw_param)?;
-                            write_attrib(&mut bytes, "LineWidth", &self.value.line_width)?;
-                            write_attrib(&mut bytes, "Cap", &self.value.cap)?;
-                            write_attrib(&mut bytes, "Join", &self.value.join)?;
-                            write_attrib(&mut bytes, "MiterLimit", &self.value.miter_limit)?;
-                            write_attrib(&mut bytes, "DashOffset", &self.value.dash_offset)?;
-                            write_attrib_opt(&mut bytes, "DashPattern", &self.value.dash_pattern)?;
-                            write_attrib(&mut bytes, "Alpha", &self.value.alpha)?;
-                            write_attrib(&mut bytes, "Font", &self.value.font)?;
-                            write_attrib(&mut bytes, "Size", &self.value.size)?;
-                            write_attrib(&mut bytes, "Stroke", &self.value.stroke)?;
-                            write_attrib(&mut bytes, "Fill", &self.value.fill)?;
-                            write_attrib(&mut bytes, "HScale", &self.value.h_scale)?;
-                            write_attrib(&mut bytes, "ReadDirection", &self.value.read_direction)?;
-                            write_attrib(&mut bytes, "CharDirection", &self.value.char_direction)?;
-                            write_attrib(&mut bytes, "Weight", &self.value.weight)?;
-                            write_attrib(&mut bytes, "Italic", &self.value.italic)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
+                            helper.write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
+                            helper.write_attrib(&mut bytes, "Visible", &self.value.visible)?;
+                            helper.write_attrib_opt(&mut bytes, "CTM", &self.value.ctm)?;
+                            helper.write_attrib_opt(
+                                &mut bytes,
+                                "DrawParam",
+                                &self.value.draw_param,
+                            )?;
+                            helper.write_attrib(&mut bytes, "LineWidth", &self.value.line_width)?;
+                            helper.write_attrib(&mut bytes, "Cap", &self.value.cap)?;
+                            helper.write_attrib(&mut bytes, "Join", &self.value.join)?;
+                            helper.write_attrib(
+                                &mut bytes,
+                                "MiterLimit",
+                                &self.value.miter_limit,
+                            )?;
+                            helper.write_attrib(
+                                &mut bytes,
+                                "DashOffset",
+                                &self.value.dash_offset,
+                            )?;
+                            helper.write_attrib_opt(
+                                &mut bytes,
+                                "DashPattern",
+                                &self.value.dash_pattern,
+                            )?;
+                            helper.write_attrib(&mut bytes, "Alpha", &self.value.alpha)?;
+                            helper.write_attrib(&mut bytes, "Font", &self.value.font)?;
+                            helper.write_attrib(&mut bytes, "Size", &self.value.size)?;
+                            helper.write_attrib(&mut bytes, "Stroke", &self.value.stroke)?;
+                            helper.write_attrib(&mut bytes, "Fill", &self.value.fill)?;
+                            helper.write_attrib(&mut bytes, "HScale", &self.value.h_scale)?;
+                            helper.write_attrib(
+                                &mut bytes,
+                                "ReadDirection",
+                                &self.value.read_direction,
+                            )?;
+                            helper.write_attrib(
+                                &mut bytes,
+                                "CharDirection",
+                                &self.value.char_direction,
+                            )?;
+                            helper.write_attrib(&mut bytes, "Weight", &self.value.weight)?;
+                            helper.write_attrib(&mut bytes, "Italic", &self.value.italic)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
-                        CtTextXTypeSerializerState::Content__(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = CtTextXTypeSerializerState::End__,
-                        },
+                        CtTextXTypeSerializerState::Content__(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = CtTextXTypeSerializerState::End__,
+                            }
+                        }
                         CtTextXTypeSerializerState::End__ => {
                             *self.state = CtTextXTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         CtTextXTypeSerializerState::Done__ => return Ok(None),
@@ -43009,10 +43272,9 @@ pub mod page {
                 }
             }
         }
-        impl<'ser> Iterator for CtTextXTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtTextXTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -43040,7 +43302,10 @@ pub mod page {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtTextXTypeContentSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtTextXTypeContentSerializerState::Init__ => match self.value {
@@ -43076,37 +43341,37 @@ pub mod page {
                             }
                         },
                         CtTextXTypeContentSerializerState::Actions(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = CtTextXTypeContentSerializerState::Done__,
                             }
                         }
                         CtTextXTypeContentSerializerState::Clips(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = CtTextXTypeContentSerializerState::Done__,
                             }
                         }
                         CtTextXTypeContentSerializerState::FillColor(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = CtTextXTypeContentSerializerState::Done__,
                             }
                         }
                         CtTextXTypeContentSerializerState::StrokeColor(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = CtTextXTypeContentSerializerState::Done__,
                             }
                         }
                         CtTextXTypeContentSerializerState::CgTransform(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = CtTextXTypeContentSerializerState::Done__,
                             }
                         }
                         CtTextXTypeContentSerializerState::TextCode(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = CtTextXTypeContentSerializerState::Done__,
                             }
@@ -43117,10 +43382,9 @@ pub mod page {
                 }
             }
         }
-        impl<'ser> Iterator for CtTextXTypeContentSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtTextXTypeContentSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -43174,7 +43438,10 @@ pub mod page {
             Phantom__(&'ser ()),
         }
         impl<'ser> PageXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         PageXElementTypeSerializerState::Init__ => {
@@ -43185,16 +43452,12 @@ pub mod page {
                                     false,
                                 ));
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         PageXElementTypeSerializerState::Template(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = PageXElementTypeSerializerState::PageRes(
@@ -43208,7 +43471,7 @@ pub mod page {
                             }
                         }
                         PageXElementTypeSerializerState::PageRes(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state =
@@ -43220,19 +43483,22 @@ pub mod page {
                                 }
                             }
                         }
-                        PageXElementTypeSerializerState::Area(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => {
-                                *self.state =
-                                    PageXElementTypeSerializerState::Content(IterSerializer::new(
-                                        self.value.content.as_ref(),
-                                        Some("Content"),
-                                        false,
-                                    ))
+                        PageXElementTypeSerializerState::Area(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => {
+                                    *self.state = PageXElementTypeSerializerState::Content(
+                                        IterSerializer::new(
+                                            self.value.content.as_ref(),
+                                            Some("Content"),
+                                            false,
+                                        ),
+                                    )
+                                }
                             }
-                        },
+                        }
                         PageXElementTypeSerializerState::Content(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = PageXElementTypeSerializerState::Actions(
@@ -43246,13 +43512,14 @@ pub mod page {
                             }
                         }
                         PageXElementTypeSerializerState::Actions(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = PageXElementTypeSerializerState::End__,
                             }
                         }
                         PageXElementTypeSerializerState::End__ => {
                             *self.state = PageXElementTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         PageXElementTypeSerializerState::Done__ => return Ok(None),
@@ -43261,10 +43528,9 @@ pub mod page {
                 }
             }
         }
-        impl<'ser> Iterator for PageXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for PageXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -43290,7 +43556,10 @@ pub mod page {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtAxialShdSegmentXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtAxialShdSegmentXElementTypeSerializerState::Init__ => {
@@ -43302,17 +43571,17 @@ pub mod page {
                                 )?,
                             );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib_opt(&mut bytes, "Position", &self.value.position)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib_opt(
+                                &mut bytes,
+                                "Position",
+                                &self.value.position,
+                            )?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtAxialShdSegmentXElementTypeSerializerState::Color(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state =
@@ -43322,6 +43591,7 @@ pub mod page {
                         }
                         CtAxialShdSegmentXElementTypeSerializerState::End__ => {
                             *self.state = CtAxialShdSegmentXElementTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         CtAxialShdSegmentXElementTypeSerializerState::Done__ => return Ok(None),
@@ -43332,10 +43602,9 @@ pub mod page {
                 }
             }
         }
-        impl<'ser> Iterator for CtAxialShdSegmentXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtAxialShdSegmentXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -43361,7 +43630,10 @@ pub mod page {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtClipAreaXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtClipAreaXElementTypeSerializerState::Init__ => {
@@ -43369,24 +43641,25 @@ pub mod page {
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib_opt(&mut bytes, "DrawParam", &self.value.draw_param)?;
-                            write_attrib_opt(&mut bytes, "CTM", &self.value.ctm)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib_opt(
+                                &mut bytes,
+                                "DrawParam",
+                                &self.value.draw_param,
+                            )?;
+                            helper.write_attrib_opt(&mut bytes, "CTM", &self.value.ctm)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtClipAreaXElementTypeSerializerState::Content__(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = CtClipAreaXElementTypeSerializerState::End__,
                             }
                         }
                         CtClipAreaXElementTypeSerializerState::End__ => {
                             *self.state = CtClipAreaXElementTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         CtClipAreaXElementTypeSerializerState::Done__ => return Ok(None),
@@ -43395,10 +43668,9 @@ pub mod page {
                 }
             }
         }
-        impl<'ser> Iterator for CtClipAreaXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtClipAreaXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -43422,7 +43694,10 @@ pub mod page {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtClipAreaXElementTypeContentSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtClipAreaXElementTypeContentSerializerState::Init__ => match self.value {
@@ -43438,7 +43713,7 @@ pub mod page {
                             }
                         },
                         CtClipAreaXElementTypeContentSerializerState::Path(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state =
@@ -43447,7 +43722,7 @@ pub mod page {
                             }
                         }
                         CtClipAreaXElementTypeContentSerializerState::Text(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state =
@@ -43463,10 +43738,9 @@ pub mod page {
                 }
             }
         }
-        impl<'ser> Iterator for CtClipAreaXElementTypeContentSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtClipAreaXElementTypeContentSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -43498,7 +43772,10 @@ pub mod page {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtGraphicUnitActionsXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtGraphicUnitActionsXElementTypeSerializerState::Init__ => {
@@ -43506,16 +43783,12 @@ pub mod page {
                                 IterSerializer::new(&self.value.action[..], Some("Action"), false),
                             );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtGraphicUnitActionsXElementTypeSerializerState::Action(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state =
@@ -43525,6 +43798,7 @@ pub mod page {
                         }
                         CtGraphicUnitActionsXElementTypeSerializerState::End__ => {
                             *self.state = CtGraphicUnitActionsXElementTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         CtGraphicUnitActionsXElementTypeSerializerState::Done__ => return Ok(None),
@@ -43535,10 +43809,9 @@ pub mod page {
                 }
             }
         }
-        impl<'ser> Iterator for CtGraphicUnitActionsXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtGraphicUnitActionsXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -43564,7 +43837,10 @@ pub mod page {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtGraphicUnitClipsXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtGraphicUnitClipsXElementTypeSerializerState::Init__ => {
@@ -43572,16 +43848,12 @@ pub mod page {
                                 IterSerializer::new(&self.value.clip[..], Some("Clip"), false),
                             );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtGraphicUnitClipsXElementTypeSerializerState::Clip(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state =
@@ -43591,6 +43863,7 @@ pub mod page {
                         }
                         CtGraphicUnitClipsXElementTypeSerializerState::End__ => {
                             *self.state = CtGraphicUnitClipsXElementTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         CtGraphicUnitClipsXElementTypeSerializerState::Done__ => return Ok(None),
@@ -43601,10 +43874,9 @@ pub mod page {
                 }
             }
         }
-        impl<'ser> Iterator for CtGraphicUnitClipsXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtGraphicUnitClipsXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -43630,7 +43902,10 @@ pub mod page {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtGouraudShdPointXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtGouraudShdPointXElementTypeSerializerState::Init__ => {
@@ -43642,19 +43917,19 @@ pub mod page {
                                 )?,
                             );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib(&mut bytes, "X", &self.value.x)?;
-                            write_attrib(&mut bytes, "y", &self.value.y)?;
-                            write_attrib_opt(&mut bytes, "EdgeFlag", &self.value.edge_flag)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib(&mut bytes, "X", &self.value.x)?;
+                            helper.write_attrib(&mut bytes, "y", &self.value.y)?;
+                            helper.write_attrib_opt(
+                                &mut bytes,
+                                "EdgeFlag",
+                                &self.value.edge_flag,
+                            )?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtGouraudShdPointXElementTypeSerializerState::Color(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state =
@@ -43664,6 +43939,7 @@ pub mod page {
                         }
                         CtGouraudShdPointXElementTypeSerializerState::End__ => {
                             *self.state = CtGouraudShdPointXElementTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         CtGouraudShdPointXElementTypeSerializerState::Done__ => return Ok(None),
@@ -43674,10 +43950,9 @@ pub mod page {
                 }
             }
         }
-        impl<'ser> Iterator for CtGouraudShdPointXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtGouraudShdPointXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -43705,7 +43980,10 @@ pub mod page {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtImageBorderXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtImageBorderXElementTypeSerializerState::Init__ => {
@@ -43717,36 +43995,41 @@ pub mod page {
                                 ),
                             );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib(&mut bytes, "LineWidth", &self.value.line_width)?;
-                            write_attrib(
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib(&mut bytes, "LineWidth", &self.value.line_width)?;
+                            helper.write_attrib(
                                 &mut bytes,
                                 "HorizonalCornerRadius",
                                 &self.value.horizonal_corner_radius,
                             )?;
-                            write_attrib(
+                            helper.write_attrib(
                                 &mut bytes,
                                 "VerticalCornerRadius",
                                 &self.value.vertical_corner_radius,
                             )?;
-                            write_attrib(&mut bytes, "DashOffset", &self.value.dash_offset)?;
-                            write_attrib_opt(&mut bytes, "DashPattern", &self.value.dash_pattern)?;
+                            helper.write_attrib(
+                                &mut bytes,
+                                "DashOffset",
+                                &self.value.dash_offset,
+                            )?;
+                            helper.write_attrib_opt(
+                                &mut bytes,
+                                "DashPattern",
+                                &self.value.dash_pattern,
+                            )?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtImageBorderXElementTypeSerializerState::BorderColor(x) => match x
-                            .next()
-                            .transpose(
-                        )? {
+                            .next(helper)
+                            .transpose()?
+                        {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = CtImageBorderXElementTypeSerializerState::End__,
                         },
                         CtImageBorderXElementTypeSerializerState::End__ => {
                             *self.state = CtImageBorderXElementTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         CtImageBorderXElementTypeSerializerState::Done__ => return Ok(None),
@@ -43755,10 +44038,9 @@ pub mod page {
                 }
             }
         }
-        impl<'ser> Iterator for CtImageBorderXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtImageBorderXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -43784,7 +44066,10 @@ pub mod page {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtLaGouraudShdPointXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtLaGouraudShdPointXElementTypeSerializerState::Init__ => {
@@ -43796,18 +44081,14 @@ pub mod page {
                                 )?,
                             );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib_opt(&mut bytes, "X", &self.value.x)?;
-                            write_attrib_opt(&mut bytes, "y", &self.value.y)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib_opt(&mut bytes, "X", &self.value.x)?;
+                            helper.write_attrib_opt(&mut bytes, "y", &self.value.y)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtLaGouraudShdPointXElementTypeSerializerState::Color(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state =
@@ -43817,6 +44098,7 @@ pub mod page {
                         }
                         CtLaGouraudShdPointXElementTypeSerializerState::End__ => {
                             *self.state = CtLaGouraudShdPointXElementTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         CtLaGouraudShdPointXElementTypeSerializerState::Done__ => return Ok(None),
@@ -43827,10 +44109,9 @@ pub mod page {
                 }
             }
         }
-        impl<'ser> Iterator for CtLaGouraudShdPointXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtLaGouraudShdPointXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -43862,7 +44143,10 @@ pub mod page {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtPageBlockTextObjectXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtPageBlockTextObjectXElementTypeSerializerState::Init__ => {
@@ -43871,38 +44155,58 @@ pub mod page {
                                     IterSerializer::new(&self.value.content[..], None, false),
                                 );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
-                            write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
-                            write_attrib(&mut bytes, "Visible", &self.value.visible)?;
-                            write_attrib_opt(&mut bytes, "CTM", &self.value.ctm)?;
-                            write_attrib_opt(&mut bytes, "DrawParam", &self.value.draw_param)?;
-                            write_attrib(&mut bytes, "LineWidth", &self.value.line_width)?;
-                            write_attrib(&mut bytes, "Cap", &self.value.cap)?;
-                            write_attrib(&mut bytes, "Join", &self.value.join)?;
-                            write_attrib(&mut bytes, "MiterLimit", &self.value.miter_limit)?;
-                            write_attrib(&mut bytes, "DashOffset", &self.value.dash_offset)?;
-                            write_attrib_opt(&mut bytes, "DashPattern", &self.value.dash_pattern)?;
-                            write_attrib(&mut bytes, "Alpha", &self.value.alpha)?;
-                            write_attrib(&mut bytes, "Font", &self.value.font)?;
-                            write_attrib(&mut bytes, "Size", &self.value.size)?;
-                            write_attrib(&mut bytes, "Stroke", &self.value.stroke)?;
-                            write_attrib(&mut bytes, "Fill", &self.value.fill)?;
-                            write_attrib(&mut bytes, "HScale", &self.value.h_scale)?;
-                            write_attrib(&mut bytes, "ReadDirection", &self.value.read_direction)?;
-                            write_attrib(&mut bytes, "CharDirection", &self.value.char_direction)?;
-                            write_attrib(&mut bytes, "Weight", &self.value.weight)?;
-                            write_attrib(&mut bytes, "Italic", &self.value.italic)?;
-                            write_attrib(&mut bytes, "ID", &self.value.id)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
+                            helper.write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
+                            helper.write_attrib(&mut bytes, "Visible", &self.value.visible)?;
+                            helper.write_attrib_opt(&mut bytes, "CTM", &self.value.ctm)?;
+                            helper.write_attrib_opt(
+                                &mut bytes,
+                                "DrawParam",
+                                &self.value.draw_param,
+                            )?;
+                            helper.write_attrib(&mut bytes, "LineWidth", &self.value.line_width)?;
+                            helper.write_attrib(&mut bytes, "Cap", &self.value.cap)?;
+                            helper.write_attrib(&mut bytes, "Join", &self.value.join)?;
+                            helper.write_attrib(
+                                &mut bytes,
+                                "MiterLimit",
+                                &self.value.miter_limit,
+                            )?;
+                            helper.write_attrib(
+                                &mut bytes,
+                                "DashOffset",
+                                &self.value.dash_offset,
+                            )?;
+                            helper.write_attrib_opt(
+                                &mut bytes,
+                                "DashPattern",
+                                &self.value.dash_pattern,
+                            )?;
+                            helper.write_attrib(&mut bytes, "Alpha", &self.value.alpha)?;
+                            helper.write_attrib(&mut bytes, "Font", &self.value.font)?;
+                            helper.write_attrib(&mut bytes, "Size", &self.value.size)?;
+                            helper.write_attrib(&mut bytes, "Stroke", &self.value.stroke)?;
+                            helper.write_attrib(&mut bytes, "Fill", &self.value.fill)?;
+                            helper.write_attrib(&mut bytes, "HScale", &self.value.h_scale)?;
+                            helper.write_attrib(
+                                &mut bytes,
+                                "ReadDirection",
+                                &self.value.read_direction,
+                            )?;
+                            helper.write_attrib(
+                                &mut bytes,
+                                "CharDirection",
+                                &self.value.char_direction,
+                            )?;
+                            helper.write_attrib(&mut bytes, "Weight", &self.value.weight)?;
+                            helper.write_attrib(&mut bytes, "Italic", &self.value.italic)?;
+                            helper.write_attrib(&mut bytes, "ID", &self.value.id)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtPageBlockTextObjectXElementTypeSerializerState::Content__(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state =
@@ -43912,6 +44216,7 @@ pub mod page {
                         }
                         CtPageBlockTextObjectXElementTypeSerializerState::End__ => {
                             *self.state = CtPageBlockTextObjectXElementTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         CtPageBlockTextObjectXElementTypeSerializerState::Done__ => {
@@ -43924,10 +44229,9 @@ pub mod page {
                 }
             }
         }
-        impl<'ser> Iterator for CtPageBlockTextObjectXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtPageBlockTextObjectXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -43955,16 +44259,18 @@ pub mod page {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtPageBlockTextObjectXElementTypeContentSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { CtPageBlockTextObjectXElementTypeContentSerializerState :: Init__ => { match self . value { super :: CtPageBlockTextObjectXElementTypeContent :: Actions (x) => * self . state = CtPageBlockTextObjectXElementTypeContentSerializerState :: Actions (WithSerializer :: serializer (x , Some ("Actions") , false) ?) , super :: CtPageBlockTextObjectXElementTypeContent :: Clips (x) => * self . state = CtPageBlockTextObjectXElementTypeContentSerializerState :: Clips (WithSerializer :: serializer (x , Some ("Clips") , false) ?) , super :: CtPageBlockTextObjectXElementTypeContent :: FillColor (x) => * self . state = CtPageBlockTextObjectXElementTypeContentSerializerState :: FillColor (WithSerializer :: serializer (x , Some ("FillColor") , false) ?) , super :: CtPageBlockTextObjectXElementTypeContent :: StrokeColor (x) => * self . state = CtPageBlockTextObjectXElementTypeContentSerializerState :: StrokeColor (WithSerializer :: serializer (x , Some ("StrokeColor") , false) ?) , super :: CtPageBlockTextObjectXElementTypeContent :: CgTransform (x) => * self . state = CtPageBlockTextObjectXElementTypeContentSerializerState :: CgTransform (WithSerializer :: serializer (x , Some ("CGTransform") , false) ?) , super :: CtPageBlockTextObjectXElementTypeContent :: TextCode (x) => * self . state = CtPageBlockTextObjectXElementTypeContentSerializerState :: TextCode (WithSerializer :: serializer (x , Some ("TextCode") , false) ?) , } } CtPageBlockTextObjectXElementTypeContentSerializerState :: Actions (x) => { match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CtPageBlockTextObjectXElementTypeContentSerializerState :: Done__ , } } CtPageBlockTextObjectXElementTypeContentSerializerState :: Clips (x) => { match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CtPageBlockTextObjectXElementTypeContentSerializerState :: Done__ , } } CtPageBlockTextObjectXElementTypeContentSerializerState :: FillColor (x) => { match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CtPageBlockTextObjectXElementTypeContentSerializerState :: Done__ , } } CtPageBlockTextObjectXElementTypeContentSerializerState :: StrokeColor (x) => { match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CtPageBlockTextObjectXElementTypeContentSerializerState :: Done__ , } } CtPageBlockTextObjectXElementTypeContentSerializerState :: CgTransform (x) => { match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CtPageBlockTextObjectXElementTypeContentSerializerState :: Done__ , } } CtPageBlockTextObjectXElementTypeContentSerializerState :: TextCode (x) => { match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CtPageBlockTextObjectXElementTypeContentSerializerState :: Done__ , } } CtPageBlockTextObjectXElementTypeContentSerializerState :: Done__ => return Ok (None) , CtPageBlockTextObjectXElementTypeContentSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { CtPageBlockTextObjectXElementTypeContentSerializerState :: Init__ => { match self . value { super :: CtPageBlockTextObjectXElementTypeContent :: Actions (x) => * self . state = CtPageBlockTextObjectXElementTypeContentSerializerState :: Actions (WithSerializer :: serializer (x , Some ("Actions") , false) ?) , super :: CtPageBlockTextObjectXElementTypeContent :: Clips (x) => * self . state = CtPageBlockTextObjectXElementTypeContentSerializerState :: Clips (WithSerializer :: serializer (x , Some ("Clips") , false) ?) , super :: CtPageBlockTextObjectXElementTypeContent :: FillColor (x) => * self . state = CtPageBlockTextObjectXElementTypeContentSerializerState :: FillColor (WithSerializer :: serializer (x , Some ("FillColor") , false) ?) , super :: CtPageBlockTextObjectXElementTypeContent :: StrokeColor (x) => * self . state = CtPageBlockTextObjectXElementTypeContentSerializerState :: StrokeColor (WithSerializer :: serializer (x , Some ("StrokeColor") , false) ?) , super :: CtPageBlockTextObjectXElementTypeContent :: CgTransform (x) => * self . state = CtPageBlockTextObjectXElementTypeContentSerializerState :: CgTransform (WithSerializer :: serializer (x , Some ("CGTransform") , false) ?) , super :: CtPageBlockTextObjectXElementTypeContent :: TextCode (x) => * self . state = CtPageBlockTextObjectXElementTypeContentSerializerState :: TextCode (WithSerializer :: serializer (x , Some ("TextCode") , false) ?) , } } CtPageBlockTextObjectXElementTypeContentSerializerState :: Actions (x) => { match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CtPageBlockTextObjectXElementTypeContentSerializerState :: Done__ , } } CtPageBlockTextObjectXElementTypeContentSerializerState :: Clips (x) => { match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CtPageBlockTextObjectXElementTypeContentSerializerState :: Done__ , } } CtPageBlockTextObjectXElementTypeContentSerializerState :: FillColor (x) => { match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CtPageBlockTextObjectXElementTypeContentSerializerState :: Done__ , } } CtPageBlockTextObjectXElementTypeContentSerializerState :: StrokeColor (x) => { match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CtPageBlockTextObjectXElementTypeContentSerializerState :: Done__ , } } CtPageBlockTextObjectXElementTypeContentSerializerState :: CgTransform (x) => { match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CtPageBlockTextObjectXElementTypeContentSerializerState :: Done__ , } } CtPageBlockTextObjectXElementTypeContentSerializerState :: TextCode (x) => { match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CtPageBlockTextObjectXElementTypeContentSerializerState :: Done__ , } } CtPageBlockTextObjectXElementTypeContentSerializerState :: Done__ => return Ok (None) , CtPageBlockTextObjectXElementTypeContentSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
-        impl<'ser> Iterator for CtPageBlockTextObjectXElementTypeContentSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtPageBlockTextObjectXElementTypeContentSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -44009,7 +44315,10 @@ pub mod page {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtPageBlockPathObjectXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtPageBlockPathObjectXElementTypeSerializerState::Init__ => {
@@ -44021,32 +44330,44 @@ pub mod page {
                                 ),
                             );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
-                            write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
-                            write_attrib(&mut bytes, "Visible", &self.value.visible)?;
-                            write_attrib_opt(&mut bytes, "CTM", &self.value.ctm)?;
-                            write_attrib_opt(&mut bytes, "DrawParam", &self.value.draw_param)?;
-                            write_attrib(&mut bytes, "LineWidth", &self.value.line_width)?;
-                            write_attrib(&mut bytes, "Cap", &self.value.cap)?;
-                            write_attrib(&mut bytes, "Join", &self.value.join)?;
-                            write_attrib(&mut bytes, "MiterLimit", &self.value.miter_limit)?;
-                            write_attrib(&mut bytes, "DashOffset", &self.value.dash_offset)?;
-                            write_attrib_opt(&mut bytes, "DashPattern", &self.value.dash_pattern)?;
-                            write_attrib(&mut bytes, "Alpha", &self.value.alpha)?;
-                            write_attrib(&mut bytes, "Stroke", &self.value.stroke)?;
-                            write_attrib(&mut bytes, "Fill", &self.value.fill)?;
-                            write_attrib(&mut bytes, "Rule", &self.value.rule)?;
-                            write_attrib(&mut bytes, "ID", &self.value.id)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
+                            helper.write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
+                            helper.write_attrib(&mut bytes, "Visible", &self.value.visible)?;
+                            helper.write_attrib_opt(&mut bytes, "CTM", &self.value.ctm)?;
+                            helper.write_attrib_opt(
+                                &mut bytes,
+                                "DrawParam",
+                                &self.value.draw_param,
+                            )?;
+                            helper.write_attrib(&mut bytes, "LineWidth", &self.value.line_width)?;
+                            helper.write_attrib(&mut bytes, "Cap", &self.value.cap)?;
+                            helper.write_attrib(&mut bytes, "Join", &self.value.join)?;
+                            helper.write_attrib(
+                                &mut bytes,
+                                "MiterLimit",
+                                &self.value.miter_limit,
+                            )?;
+                            helper.write_attrib(
+                                &mut bytes,
+                                "DashOffset",
+                                &self.value.dash_offset,
+                            )?;
+                            helper.write_attrib_opt(
+                                &mut bytes,
+                                "DashPattern",
+                                &self.value.dash_pattern,
+                            )?;
+                            helper.write_attrib(&mut bytes, "Alpha", &self.value.alpha)?;
+                            helper.write_attrib(&mut bytes, "Stroke", &self.value.stroke)?;
+                            helper.write_attrib(&mut bytes, "Fill", &self.value.fill)?;
+                            helper.write_attrib(&mut bytes, "Rule", &self.value.rule)?;
+                            helper.write_attrib(&mut bytes, "ID", &self.value.id)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtPageBlockPathObjectXElementTypeSerializerState::Actions(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state =
@@ -44061,7 +44382,7 @@ pub mod page {
                             }
                         }
                         CtPageBlockPathObjectXElementTypeSerializerState::Clips(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state =
                                     CtPageBlockPathObjectXElementTypeSerializerState::StrokeColor(
@@ -44074,7 +44395,7 @@ pub mod page {
                             }
                         }
                         CtPageBlockPathObjectXElementTypeSerializerState::StrokeColor(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state =
@@ -44089,7 +44410,7 @@ pub mod page {
                             }
                         }
                         CtPageBlockPathObjectXElementTypeSerializerState::FillColor(x) => match x
-                            .next()
+                            .next(helper)
                             .transpose()?
                         {
                             Some(event) => return Ok(Some(event)),
@@ -44103,7 +44424,7 @@ pub mod page {
                                 ),
                         },
                         CtPageBlockPathObjectXElementTypeSerializerState::AbbreviatedData(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state =
@@ -44113,6 +44434,7 @@ pub mod page {
                         }
                         CtPageBlockPathObjectXElementTypeSerializerState::End__ => {
                             *self.state = CtPageBlockPathObjectXElementTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         CtPageBlockPathObjectXElementTypeSerializerState::Done__ => {
@@ -44125,10 +44447,9 @@ pub mod page {
                 }
             }
         }
-        impl<'ser> Iterator for CtPageBlockPathObjectXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtPageBlockPathObjectXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -44174,7 +44495,10 @@ pub mod page {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtPageBlockImageObjectXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtPageBlockImageObjectXElementTypeSerializerState::Init__ => {
@@ -44187,32 +44511,56 @@ pub mod page {
                                     ),
                                 );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
-                            write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
-                            write_attrib(&mut bytes, "Visible", &self.value.visible)?;
-                            write_attrib_opt(&mut bytes, "CTM", &self.value.ctm)?;
-                            write_attrib_opt(&mut bytes, "DrawParam", &self.value.draw_param)?;
-                            write_attrib(&mut bytes, "LineWidth", &self.value.line_width)?;
-                            write_attrib(&mut bytes, "Cap", &self.value.cap)?;
-                            write_attrib(&mut bytes, "Join", &self.value.join)?;
-                            write_attrib(&mut bytes, "MiterLimit", &self.value.miter_limit)?;
-                            write_attrib(&mut bytes, "DashOffset", &self.value.dash_offset)?;
-                            write_attrib_opt(&mut bytes, "DashPattern", &self.value.dash_pattern)?;
-                            write_attrib(&mut bytes, "Alpha", &self.value.alpha)?;
-                            write_attrib(&mut bytes, "ResourceID", &self.value.resource_id)?;
-                            write_attrib_opt(&mut bytes, "Substitution", &self.value.substitution)?;
-                            write_attrib_opt(&mut bytes, "ImageMask", &self.value.image_mask)?;
-                            write_attrib(&mut bytes, "ID", &self.value.id)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
+                            helper.write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
+                            helper.write_attrib(&mut bytes, "Visible", &self.value.visible)?;
+                            helper.write_attrib_opt(&mut bytes, "CTM", &self.value.ctm)?;
+                            helper.write_attrib_opt(
+                                &mut bytes,
+                                "DrawParam",
+                                &self.value.draw_param,
+                            )?;
+                            helper.write_attrib(&mut bytes, "LineWidth", &self.value.line_width)?;
+                            helper.write_attrib(&mut bytes, "Cap", &self.value.cap)?;
+                            helper.write_attrib(&mut bytes, "Join", &self.value.join)?;
+                            helper.write_attrib(
+                                &mut bytes,
+                                "MiterLimit",
+                                &self.value.miter_limit,
+                            )?;
+                            helper.write_attrib(
+                                &mut bytes,
+                                "DashOffset",
+                                &self.value.dash_offset,
+                            )?;
+                            helper.write_attrib_opt(
+                                &mut bytes,
+                                "DashPattern",
+                                &self.value.dash_pattern,
+                            )?;
+                            helper.write_attrib(&mut bytes, "Alpha", &self.value.alpha)?;
+                            helper.write_attrib(
+                                &mut bytes,
+                                "ResourceID",
+                                &self.value.resource_id,
+                            )?;
+                            helper.write_attrib_opt(
+                                &mut bytes,
+                                "Substitution",
+                                &self.value.substitution,
+                            )?;
+                            helper.write_attrib_opt(
+                                &mut bytes,
+                                "ImageMask",
+                                &self.value.image_mask,
+                            )?;
+                            helper.write_attrib(&mut bytes, "ID", &self.value.id)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtPageBlockImageObjectXElementTypeSerializerState::Actions(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state =
@@ -44227,7 +44575,7 @@ pub mod page {
                             }
                         }
                         CtPageBlockImageObjectXElementTypeSerializerState::Clips(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state =
@@ -44242,7 +44590,7 @@ pub mod page {
                             }
                         }
                         CtPageBlockImageObjectXElementTypeSerializerState::Border(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state =
@@ -44252,6 +44600,7 @@ pub mod page {
                         }
                         CtPageBlockImageObjectXElementTypeSerializerState::End__ => {
                             *self.state = CtPageBlockImageObjectXElementTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         CtPageBlockImageObjectXElementTypeSerializerState::Done__ => {
@@ -44264,10 +44613,9 @@ pub mod page {
                 }
             }
         }
-        impl<'ser> Iterator for CtPageBlockImageObjectXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtPageBlockImageObjectXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -44306,7 +44654,10 @@ pub mod page {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtPageBlockCompositeObjectXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtPageBlockCompositeObjectXElementTypeSerializerState::Init__ => {
@@ -44319,30 +44670,46 @@ pub mod page {
                                     ),
                                 );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
-                            write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
-                            write_attrib(&mut bytes, "Visible", &self.value.visible)?;
-                            write_attrib_opt(&mut bytes, "CTM", &self.value.ctm)?;
-                            write_attrib_opt(&mut bytes, "DrawParam", &self.value.draw_param)?;
-                            write_attrib(&mut bytes, "LineWidth", &self.value.line_width)?;
-                            write_attrib(&mut bytes, "Cap", &self.value.cap)?;
-                            write_attrib(&mut bytes, "Join", &self.value.join)?;
-                            write_attrib(&mut bytes, "MiterLimit", &self.value.miter_limit)?;
-                            write_attrib(&mut bytes, "DashOffset", &self.value.dash_offset)?;
-                            write_attrib_opt(&mut bytes, "DashPattern", &self.value.dash_pattern)?;
-                            write_attrib(&mut bytes, "Alpha", &self.value.alpha)?;
-                            write_attrib(&mut bytes, "ResourceID", &self.value.resource_id)?;
-                            write_attrib(&mut bytes, "ID", &self.value.id)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
+                            helper.write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
+                            helper.write_attrib(&mut bytes, "Visible", &self.value.visible)?;
+                            helper.write_attrib_opt(&mut bytes, "CTM", &self.value.ctm)?;
+                            helper.write_attrib_opt(
+                                &mut bytes,
+                                "DrawParam",
+                                &self.value.draw_param,
+                            )?;
+                            helper.write_attrib(&mut bytes, "LineWidth", &self.value.line_width)?;
+                            helper.write_attrib(&mut bytes, "Cap", &self.value.cap)?;
+                            helper.write_attrib(&mut bytes, "Join", &self.value.join)?;
+                            helper.write_attrib(
+                                &mut bytes,
+                                "MiterLimit",
+                                &self.value.miter_limit,
+                            )?;
+                            helper.write_attrib(
+                                &mut bytes,
+                                "DashOffset",
+                                &self.value.dash_offset,
+                            )?;
+                            helper.write_attrib_opt(
+                                &mut bytes,
+                                "DashPattern",
+                                &self.value.dash_pattern,
+                            )?;
+                            helper.write_attrib(&mut bytes, "Alpha", &self.value.alpha)?;
+                            helper.write_attrib(
+                                &mut bytes,
+                                "ResourceID",
+                                &self.value.resource_id,
+                            )?;
+                            helper.write_attrib(&mut bytes, "ID", &self.value.id)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtPageBlockCompositeObjectXElementTypeSerializerState::Actions(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state =
@@ -44357,7 +44724,7 @@ pub mod page {
                             }
                         }
                         CtPageBlockCompositeObjectXElementTypeSerializerState::Clips(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state =
@@ -44368,6 +44735,7 @@ pub mod page {
                         CtPageBlockCompositeObjectXElementTypeSerializerState::End__ => {
                             *self.state =
                                 CtPageBlockCompositeObjectXElementTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         CtPageBlockCompositeObjectXElementTypeSerializerState::Done__ => {
@@ -44380,10 +44748,9 @@ pub mod page {
                 }
             }
         }
-        impl<'ser> Iterator for CtPageBlockCompositeObjectXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtPageBlockCompositeObjectXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -44415,7 +44782,10 @@ pub mod page {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtPageBlockPageBlockXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtPageBlockPageBlockXElementTypeSerializerState::Init__ => {
@@ -44424,17 +44794,13 @@ pub mod page {
                                     IterSerializer::new(&self.value.content[..], None, false),
                                 );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib(&mut bytes, "ID", &self.value.id)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib(&mut bytes, "ID", &self.value.id)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtPageBlockPageBlockXElementTypeSerializerState::Content__(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state =
@@ -44444,6 +44810,7 @@ pub mod page {
                         }
                         CtPageBlockPageBlockXElementTypeSerializerState::End__ => {
                             *self.state = CtPageBlockPageBlockXElementTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         CtPageBlockPageBlockXElementTypeSerializerState::Done__ => return Ok(None),
@@ -44454,10 +44821,9 @@ pub mod page {
                 }
             }
         }
-        impl<'ser> Iterator for CtPageBlockPageBlockXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtPageBlockPageBlockXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -44494,16 +44860,18 @@ pub mod page {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtPageBlockPageBlockXElementTypeContentSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { CtPageBlockPageBlockXElementTypeContentSerializerState :: Init__ => { match self . value { super :: CtPageBlockPageBlockXElementTypeContent :: TextObject (x) => * self . state = CtPageBlockPageBlockXElementTypeContentSerializerState :: TextObject (WithSerializer :: serializer (x , Some ("TextObject") , false) ?) , super :: CtPageBlockPageBlockXElementTypeContent :: PathObject (x) => * self . state = CtPageBlockPageBlockXElementTypeContentSerializerState :: PathObject (WithSerializer :: serializer (x , Some ("PathObject") , false) ?) , super :: CtPageBlockPageBlockXElementTypeContent :: ImageObject (x) => * self . state = CtPageBlockPageBlockXElementTypeContentSerializerState :: ImageObject (WithSerializer :: serializer (x , Some ("ImageObject") , false) ?) , super :: CtPageBlockPageBlockXElementTypeContent :: CompositeObject (x) => * self . state = CtPageBlockPageBlockXElementTypeContentSerializerState :: CompositeObject (WithSerializer :: serializer (x , Some ("CompositeObject") , false) ?) , super :: CtPageBlockPageBlockXElementTypeContent :: PageBlock (x) => * self . state = CtPageBlockPageBlockXElementTypeContentSerializerState :: PageBlock (WithSerializer :: serializer (x , Some ("PageBlock") , false) ?) , } } CtPageBlockPageBlockXElementTypeContentSerializerState :: TextObject (x) => { match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CtPageBlockPageBlockXElementTypeContentSerializerState :: Done__ , } } CtPageBlockPageBlockXElementTypeContentSerializerState :: PathObject (x) => { match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CtPageBlockPageBlockXElementTypeContentSerializerState :: Done__ , } } CtPageBlockPageBlockXElementTypeContentSerializerState :: ImageObject (x) => { match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CtPageBlockPageBlockXElementTypeContentSerializerState :: Done__ , } } CtPageBlockPageBlockXElementTypeContentSerializerState :: CompositeObject (x) => { match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CtPageBlockPageBlockXElementTypeContentSerializerState :: Done__ , } } CtPageBlockPageBlockXElementTypeContentSerializerState :: PageBlock (x) => { match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CtPageBlockPageBlockXElementTypeContentSerializerState :: Done__ , } } CtPageBlockPageBlockXElementTypeContentSerializerState :: Done__ => return Ok (None) , CtPageBlockPageBlockXElementTypeContentSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { CtPageBlockPageBlockXElementTypeContentSerializerState :: Init__ => { match self . value { super :: CtPageBlockPageBlockXElementTypeContent :: TextObject (x) => * self . state = CtPageBlockPageBlockXElementTypeContentSerializerState :: TextObject (WithSerializer :: serializer (x , Some ("TextObject") , false) ?) , super :: CtPageBlockPageBlockXElementTypeContent :: PathObject (x) => * self . state = CtPageBlockPageBlockXElementTypeContentSerializerState :: PathObject (WithSerializer :: serializer (x , Some ("PathObject") , false) ?) , super :: CtPageBlockPageBlockXElementTypeContent :: ImageObject (x) => * self . state = CtPageBlockPageBlockXElementTypeContentSerializerState :: ImageObject (WithSerializer :: serializer (x , Some ("ImageObject") , false) ?) , super :: CtPageBlockPageBlockXElementTypeContent :: CompositeObject (x) => * self . state = CtPageBlockPageBlockXElementTypeContentSerializerState :: CompositeObject (WithSerializer :: serializer (x , Some ("CompositeObject") , false) ?) , super :: CtPageBlockPageBlockXElementTypeContent :: PageBlock (x) => * self . state = CtPageBlockPageBlockXElementTypeContentSerializerState :: PageBlock (WithSerializer :: serializer (x , Some ("PageBlock") , false) ?) , } } CtPageBlockPageBlockXElementTypeContentSerializerState :: TextObject (x) => { match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CtPageBlockPageBlockXElementTypeContentSerializerState :: Done__ , } } CtPageBlockPageBlockXElementTypeContentSerializerState :: PathObject (x) => { match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CtPageBlockPageBlockXElementTypeContentSerializerState :: Done__ , } } CtPageBlockPageBlockXElementTypeContentSerializerState :: ImageObject (x) => { match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CtPageBlockPageBlockXElementTypeContentSerializerState :: Done__ , } } CtPageBlockPageBlockXElementTypeContentSerializerState :: CompositeObject (x) => { match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CtPageBlockPageBlockXElementTypeContentSerializerState :: Done__ , } } CtPageBlockPageBlockXElementTypeContentSerializerState :: PageBlock (x) => { match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CtPageBlockPageBlockXElementTypeContentSerializerState :: Done__ , } } CtPageBlockPageBlockXElementTypeContentSerializerState :: Done__ => return Ok (None) , CtPageBlockPageBlockXElementTypeContentSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
-        impl<'ser> Iterator for CtPageBlockPageBlockXElementTypeContentSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtPageBlockPageBlockXElementTypeContentSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -44536,7 +44904,10 @@ pub mod page {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtPatternCellContentXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtPatternCellContentXElementTypeSerializerState::Init__ => {
@@ -44545,17 +44916,17 @@ pub mod page {
                                     IterSerializer::new(&self.value.content[..], None, false),
                                 );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib_opt(&mut bytes, "Thumbnail", &self.value.thumbnail)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib_opt(
+                                &mut bytes,
+                                "Thumbnail",
+                                &self.value.thumbnail,
+                            )?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtPatternCellContentXElementTypeSerializerState::Content__(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state =
@@ -44565,6 +44936,7 @@ pub mod page {
                         }
                         CtPatternCellContentXElementTypeSerializerState::End__ => {
                             *self.state = CtPatternCellContentXElementTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         CtPatternCellContentXElementTypeSerializerState::Done__ => return Ok(None),
@@ -44575,10 +44947,9 @@ pub mod page {
                 }
             }
         }
-        impl<'ser> Iterator for CtPatternCellContentXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtPatternCellContentXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -44615,16 +44986,18 @@ pub mod page {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtPatternCellContentXElementTypeContentSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { CtPatternCellContentXElementTypeContentSerializerState :: Init__ => { match self . value { super :: CtPatternCellContentXElementTypeContent :: TextObject (x) => * self . state = CtPatternCellContentXElementTypeContentSerializerState :: TextObject (WithSerializer :: serializer (x , Some ("TextObject") , false) ?) , super :: CtPatternCellContentXElementTypeContent :: PathObject (x) => * self . state = CtPatternCellContentXElementTypeContentSerializerState :: PathObject (WithSerializer :: serializer (x , Some ("PathObject") , false) ?) , super :: CtPatternCellContentXElementTypeContent :: ImageObject (x) => * self . state = CtPatternCellContentXElementTypeContentSerializerState :: ImageObject (WithSerializer :: serializer (x , Some ("ImageObject") , false) ?) , super :: CtPatternCellContentXElementTypeContent :: CompositeObject (x) => * self . state = CtPatternCellContentXElementTypeContentSerializerState :: CompositeObject (WithSerializer :: serializer (x , Some ("CompositeObject") , false) ?) , super :: CtPatternCellContentXElementTypeContent :: PageBlock (x) => * self . state = CtPatternCellContentXElementTypeContentSerializerState :: PageBlock (WithSerializer :: serializer (x , Some ("PageBlock") , false) ?) , } } CtPatternCellContentXElementTypeContentSerializerState :: TextObject (x) => { match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CtPatternCellContentXElementTypeContentSerializerState :: Done__ , } } CtPatternCellContentXElementTypeContentSerializerState :: PathObject (x) => { match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CtPatternCellContentXElementTypeContentSerializerState :: Done__ , } } CtPatternCellContentXElementTypeContentSerializerState :: ImageObject (x) => { match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CtPatternCellContentXElementTypeContentSerializerState :: Done__ , } } CtPatternCellContentXElementTypeContentSerializerState :: CompositeObject (x) => { match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CtPatternCellContentXElementTypeContentSerializerState :: Done__ , } } CtPatternCellContentXElementTypeContentSerializerState :: PageBlock (x) => { match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CtPatternCellContentXElementTypeContentSerializerState :: Done__ , } } CtPatternCellContentXElementTypeContentSerializerState :: Done__ => return Ok (None) , CtPatternCellContentXElementTypeContentSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { CtPatternCellContentXElementTypeContentSerializerState :: Init__ => { match self . value { super :: CtPatternCellContentXElementTypeContent :: TextObject (x) => * self . state = CtPatternCellContentXElementTypeContentSerializerState :: TextObject (WithSerializer :: serializer (x , Some ("TextObject") , false) ?) , super :: CtPatternCellContentXElementTypeContent :: PathObject (x) => * self . state = CtPatternCellContentXElementTypeContentSerializerState :: PathObject (WithSerializer :: serializer (x , Some ("PathObject") , false) ?) , super :: CtPatternCellContentXElementTypeContent :: ImageObject (x) => * self . state = CtPatternCellContentXElementTypeContentSerializerState :: ImageObject (WithSerializer :: serializer (x , Some ("ImageObject") , false) ?) , super :: CtPatternCellContentXElementTypeContent :: CompositeObject (x) => * self . state = CtPatternCellContentXElementTypeContentSerializerState :: CompositeObject (WithSerializer :: serializer (x , Some ("CompositeObject") , false) ?) , super :: CtPatternCellContentXElementTypeContent :: PageBlock (x) => * self . state = CtPatternCellContentXElementTypeContentSerializerState :: PageBlock (WithSerializer :: serializer (x , Some ("PageBlock") , false) ?) , } } CtPatternCellContentXElementTypeContentSerializerState :: TextObject (x) => { match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CtPatternCellContentXElementTypeContentSerializerState :: Done__ , } } CtPatternCellContentXElementTypeContentSerializerState :: PathObject (x) => { match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CtPatternCellContentXElementTypeContentSerializerState :: Done__ , } } CtPatternCellContentXElementTypeContentSerializerState :: ImageObject (x) => { match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CtPatternCellContentXElementTypeContentSerializerState :: Done__ , } } CtPatternCellContentXElementTypeContentSerializerState :: CompositeObject (x) => { match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CtPatternCellContentXElementTypeContentSerializerState :: Done__ , } } CtPatternCellContentXElementTypeContentSerializerState :: PageBlock (x) => { match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CtPatternCellContentXElementTypeContentSerializerState :: Done__ , } } CtPatternCellContentXElementTypeContentSerializerState :: Done__ => return Ok (None) , CtPatternCellContentXElementTypeContentSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
-        impl<'ser> Iterator for CtPatternCellContentXElementTypeContentSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtPatternCellContentXElementTypeContentSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -44651,7 +45024,10 @@ pub mod page {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtTextTextCodeXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtTextTextCodeXElementTypeSerializerState::Init__ => {
@@ -44659,20 +45035,16 @@ pub mod page {
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib_opt(&mut bytes, "X", &self.value.x)?;
-                            write_attrib_opt(&mut bytes, "y", &self.value.y)?;
-                            write_attrib_opt(&mut bytes, "DeltaX", &self.value.delta_x)?;
-                            write_attrib_opt(&mut bytes, "Deltay", &self.value.deltay)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib_opt(&mut bytes, "X", &self.value.x)?;
+                            helper.write_attrib_opt(&mut bytes, "y", &self.value.y)?;
+                            helper.write_attrib_opt(&mut bytes, "DeltaX", &self.value.delta_x)?;
+                            helper.write_attrib_opt(&mut bytes, "Deltay", &self.value.deltay)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtTextTextCodeXElementTypeSerializerState::Content__(x) => match x
-                            .next()
+                            .next(helper)
                             .transpose()?
                         {
                             Some(event) => return Ok(Some(event)),
@@ -44680,6 +45052,7 @@ pub mod page {
                         },
                         CtTextTextCodeXElementTypeSerializerState::End__ => {
                             *self.state = CtTextTextCodeXElementTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         CtTextTextCodeXElementTypeSerializerState::Done__ => return Ok(None),
@@ -44688,10 +45061,9 @@ pub mod page {
                 }
             }
         }
-        impl<'ser> Iterator for CtTextTextCodeXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtTextTextCodeXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -44715,20 +45087,24 @@ pub mod page {
             Phantom__(&'ser ()),
         }
         impl<'ser> PageTemplateXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         PageTemplateXElementTypeSerializerState::Init__ => {
                             *self.state = PageTemplateXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib(&mut bytes, "TemplateID", &self.value.template_id)?;
-                            write_attrib(&mut bytes, "ZOrder", &self.value.z_order)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib(
+                                &mut bytes,
+                                "TemplateID",
+                                &self.value.template_id,
+                            )?;
+                            helper.write_attrib(&mut bytes, "ZOrder", &self.value.z_order)?;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         PageTemplateXElementTypeSerializerState::Done__ => return Ok(None),
@@ -44737,10 +45113,9 @@ pub mod page {
                 }
             }
         }
-        impl<'ser> Iterator for PageTemplateXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for PageTemplateXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -44772,7 +45147,10 @@ pub mod page {
             Phantom__(&'ser ()),
         }
         impl<'ser> PageContentXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         PageContentXElementTypeSerializerState::Init__ => {
@@ -44780,22 +45158,19 @@ pub mod page {
                                 IterSerializer::new(&self.value.layer[..], Some("Layer"), false),
                             );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         PageContentXElementTypeSerializerState::Layer(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = PageContentXElementTypeSerializerState::End__,
                             }
                         }
                         PageContentXElementTypeSerializerState::End__ => {
                             *self.state = PageContentXElementTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         PageContentXElementTypeSerializerState::Done__ => return Ok(None),
@@ -44804,10 +45179,9 @@ pub mod page {
                 }
             }
         }
-        impl<'ser> Iterator for PageContentXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for PageContentXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -44839,7 +45213,10 @@ pub mod page {
             Phantom__(&'ser ()),
         }
         impl<'ser> PageContentLayerXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         PageContentLayerXElementTypeSerializerState::Init__ => {
@@ -44847,19 +45224,19 @@ pub mod page {
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib(&mut bytes, "Type", &self.value.type_)?;
-                            write_attrib_opt(&mut bytes, "DrawParam", &self.value.draw_param)?;
-                            write_attrib(&mut bytes, "ID", &self.value.id)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib(&mut bytes, "Type", &self.value.type_)?;
+                            helper.write_attrib_opt(
+                                &mut bytes,
+                                "DrawParam",
+                                &self.value.draw_param,
+                            )?;
+                            helper.write_attrib(&mut bytes, "ID", &self.value.id)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         PageContentLayerXElementTypeSerializerState::Content__(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = PageContentLayerXElementTypeSerializerState::End__
@@ -44868,6 +45245,7 @@ pub mod page {
                         }
                         PageContentLayerXElementTypeSerializerState::End__ => {
                             *self.state = PageContentLayerXElementTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         PageContentLayerXElementTypeSerializerState::Done__ => return Ok(None),
@@ -44876,10 +45254,9 @@ pub mod page {
                 }
             }
         }
-        impl<'ser> Iterator for PageContentLayerXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for PageContentLayerXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -44916,14 +45293,17 @@ pub mod page {
             Phantom__(&'ser ()),
         }
         impl<'ser> PageContentLayerXElementTypeContentSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         PageContentLayerXElementTypeContentSerializerState::Init__ => {
                             match self . value { super :: PageContentLayerXElementTypeContent :: TextObject (x) => * self . state = PageContentLayerXElementTypeContentSerializerState :: TextObject (WithSerializer :: serializer (x , Some ("TextObject") , false) ?) , super :: PageContentLayerXElementTypeContent :: PathObject (x) => * self . state = PageContentLayerXElementTypeContentSerializerState :: PathObject (WithSerializer :: serializer (x , Some ("PathObject") , false) ?) , super :: PageContentLayerXElementTypeContent :: ImageObject (x) => * self . state = PageContentLayerXElementTypeContentSerializerState :: ImageObject (WithSerializer :: serializer (x , Some ("ImageObject") , false) ?) , super :: PageContentLayerXElementTypeContent :: CompositeObject (x) => * self . state = PageContentLayerXElementTypeContentSerializerState :: CompositeObject (WithSerializer :: serializer (x , Some ("CompositeObject") , false) ?) , super :: PageContentLayerXElementTypeContent :: PageBlock (x) => * self . state = PageContentLayerXElementTypeContentSerializerState :: PageBlock (WithSerializer :: serializer (x , Some ("PageBlock") , false) ?) , }
                         }
                         PageContentLayerXElementTypeContentSerializerState::TextObject(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state =
@@ -44932,7 +45312,7 @@ pub mod page {
                             }
                         }
                         PageContentLayerXElementTypeContentSerializerState::PathObject(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state =
@@ -44941,7 +45321,7 @@ pub mod page {
                             }
                         }
                         PageContentLayerXElementTypeContentSerializerState::ImageObject(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state =
@@ -44950,7 +45330,7 @@ pub mod page {
                             }
                         }
                         PageContentLayerXElementTypeContentSerializerState::CompositeObject(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state =
@@ -44959,7 +45339,7 @@ pub mod page {
                             }
                         }
                         PageContentLayerXElementTypeContentSerializerState::PageBlock(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state =
@@ -44977,10 +45357,9 @@ pub mod page {
                 }
             }
         }
-        impl<'ser> Iterator for PageContentLayerXElementTypeContentSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for PageContentLayerXElementTypeContentSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -44996,7 +45375,7 @@ pub mod res {
     use std::borrow::Cow;
     use xsd_parser_types::quick_xml::{
         DeserializeBytes, DeserializeHelper, Error, ErrorKind, RawByteStr, SerializeBytes,
-        WithDeserializer, WithSerializer,
+        SerializeHelper, WithDeserializer, WithSerializer,
     };
     #[derive(Debug)]
     pub struct CtColorSpaceXType {
@@ -45239,7 +45618,10 @@ pub mod res {
         Cmyk,
     }
     impl SerializeBytes for CtColorSpaceTypeXType {
-        fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+        fn serialize_bytes(
+            &self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Cow<'_, str>>, Error> {
             match self {
                 Self::Gray => Ok(Some(Cow::Borrowed("GRAY"))),
                 Self::Rgb => Ok(Some(Cow::Borrowed("RGB"))),
@@ -45296,7 +45678,10 @@ pub mod res {
         Unicode,
     }
     impl SerializeBytes for CtFontCharsetXType {
-        fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+        fn serialize_bytes(
+            &self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Cow<'_, str>>, Error> {
             match self {
                 Self::Symbol => Ok(Some(Cow::Borrowed("symbol"))),
                 Self::Prc => Ok(Some(Cow::Borrowed("prc"))),
@@ -45331,7 +45716,10 @@ pub mod res {
         Video,
     }
     impl SerializeBytes for CtMultiMediaTypeXType {
-        fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+        fn serialize_bytes(
+            &self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Cow<'_, str>>, Error> {
             match self {
                 Self::Image => Ok(Some(Cow::Borrowed("Image"))),
                 Self::Audio => Ok(Some(Cow::Borrowed("Audio"))),
@@ -50816,7 +51204,7 @@ pub mod res {
     }
     pub mod quick_xml_serialize {
         use xsd_parser_types::quick_xml::{
-            write_attrib, write_attrib_opt, BytesEnd, BytesStart, Error, Event, IterSerializer,
+            BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
             WithSerializer,
         };
         #[derive(Debug)]
@@ -50841,7 +51229,10 @@ pub mod res {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtColorSpaceXTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtColorSpaceXTypeSerializerState::Init__ => {
@@ -50852,29 +51243,26 @@ pub mod res {
                                     false,
                                 ));
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib(&mut bytes, "Type", &self.value.type_)?;
-                            write_attrib(
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib(&mut bytes, "Type", &self.value.type_)?;
+                            helper.write_attrib(
                                 &mut bytes,
                                 "BitsPerComponent",
                                 &self.value.bits_per_component,
                             )?;
-                            write_attrib_opt(&mut bytes, "Profile", &self.value.profile)?;
+                            helper.write_attrib_opt(&mut bytes, "Profile", &self.value.profile)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtColorSpaceXTypeSerializerState::Palette(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = CtColorSpaceXTypeSerializerState::End__,
                             }
                         }
                         CtColorSpaceXTypeSerializerState::End__ => {
                             *self.state = CtColorSpaceXTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         CtColorSpaceXTypeSerializerState::Done__ => return Ok(None),
@@ -50883,10 +51271,9 @@ pub mod res {
                 }
             }
         }
-        impl<'ser> Iterator for CtColorSpaceXTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtColorSpaceXTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -50925,7 +51312,10 @@ pub mod res {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtDrawParamXTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtDrawParamXTypeSerializerState::Init__ => {
@@ -50936,23 +51326,35 @@ pub mod res {
                                     false,
                                 ));
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib_opt(&mut bytes, "Relative", &self.value.relative)?;
-                            write_attrib(&mut bytes, "LineWidth", &self.value.line_width)?;
-                            write_attrib(&mut bytes, "Join", &self.value.join)?;
-                            write_attrib(&mut bytes, "Cap", &self.value.cap)?;
-                            write_attrib(&mut bytes, "DashOffset", &self.value.dash_offset)?;
-                            write_attrib_opt(&mut bytes, "DashPattern", &self.value.dash_pattern)?;
-                            write_attrib(&mut bytes, "MiterLimit", &self.value.miter_limit)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib_opt(
+                                &mut bytes,
+                                "Relative",
+                                &self.value.relative,
+                            )?;
+                            helper.write_attrib(&mut bytes, "LineWidth", &self.value.line_width)?;
+                            helper.write_attrib(&mut bytes, "Join", &self.value.join)?;
+                            helper.write_attrib(&mut bytes, "Cap", &self.value.cap)?;
+                            helper.write_attrib(
+                                &mut bytes,
+                                "DashOffset",
+                                &self.value.dash_offset,
+                            )?;
+                            helper.write_attrib_opt(
+                                &mut bytes,
+                                "DashPattern",
+                                &self.value.dash_pattern,
+                            )?;
+                            helper.write_attrib(
+                                &mut bytes,
+                                "MiterLimit",
+                                &self.value.miter_limit,
+                            )?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtDrawParamXTypeSerializerState::FillColor(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = CtDrawParamXTypeSerializerState::StrokeColor(
@@ -50966,13 +51368,14 @@ pub mod res {
                             }
                         }
                         CtDrawParamXTypeSerializerState::StrokeColor(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = CtDrawParamXTypeSerializerState::End__,
                             }
                         }
                         CtDrawParamXTypeSerializerState::End__ => {
                             *self.state = CtDrawParamXTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         CtDrawParamXTypeSerializerState::Done__ => return Ok(None),
@@ -50981,10 +51384,9 @@ pub mod res {
                 }
             }
         }
-        impl<'ser> Iterator for CtDrawParamXTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtDrawParamXTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -51010,7 +51412,10 @@ pub mod res {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtFontXTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtFontXTypeSerializerState::Init__ => {
@@ -51021,27 +51426,34 @@ pub mod res {
                                     false,
                                 ));
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib(&mut bytes, "FontName", &self.value.font_name)?;
-                            write_attrib_opt(&mut bytes, "FamilyName", &self.value.family_name)?;
-                            write_attrib(&mut bytes, "Charset", &self.value.charset)?;
-                            write_attrib(&mut bytes, "Italic", &self.value.italic)?;
-                            write_attrib(&mut bytes, "Bold", &self.value.bold)?;
-                            write_attrib(&mut bytes, "Serif", &self.value.serif)?;
-                            write_attrib(&mut bytes, "FixedWidth", &self.value.fixed_width)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib(&mut bytes, "FontName", &self.value.font_name)?;
+                            helper.write_attrib_opt(
+                                &mut bytes,
+                                "FamilyName",
+                                &self.value.family_name,
+                            )?;
+                            helper.write_attrib(&mut bytes, "Charset", &self.value.charset)?;
+                            helper.write_attrib(&mut bytes, "Italic", &self.value.italic)?;
+                            helper.write_attrib(&mut bytes, "Bold", &self.value.bold)?;
+                            helper.write_attrib(&mut bytes, "Serif", &self.value.serif)?;
+                            helper.write_attrib(
+                                &mut bytes,
+                                "FixedWidth",
+                                &self.value.fixed_width,
+                            )?;
                             return Ok(Some(Event::Start(bytes)));
                         }
-                        CtFontXTypeSerializerState::FontFile(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = CtFontXTypeSerializerState::End__,
-                        },
+                        CtFontXTypeSerializerState::FontFile(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = CtFontXTypeSerializerState::End__,
+                            }
+                        }
                         CtFontXTypeSerializerState::End__ => {
                             *self.state = CtFontXTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         CtFontXTypeSerializerState::Done__ => return Ok(None),
@@ -51050,10 +51462,9 @@ pub mod res {
                 }
             }
         }
-        impl<'ser> Iterator for CtFontXTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtFontXTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -51079,7 +51490,10 @@ pub mod res {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtMultiMediaXTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtMultiMediaXTypeSerializerState::Init__ => {
@@ -51091,24 +51505,21 @@ pub mod res {
                                 )?,
                             );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib(&mut bytes, "Type", &self.value.type_)?;
-                            write_attrib_opt(&mut bytes, "Format", &self.value.format)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib(&mut bytes, "Type", &self.value.type_)?;
+                            helper.write_attrib_opt(&mut bytes, "Format", &self.value.format)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtMultiMediaXTypeSerializerState::MediaFile(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = CtMultiMediaXTypeSerializerState::End__,
                             }
                         }
                         CtMultiMediaXTypeSerializerState::End__ => {
                             *self.state = CtMultiMediaXTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         CtMultiMediaXTypeSerializerState::Done__ => return Ok(None),
@@ -51117,10 +51528,9 @@ pub mod res {
                 }
             }
         }
-        impl<'ser> Iterator for CtMultiMediaXTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtMultiMediaXTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -51148,7 +51558,10 @@ pub mod res {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtVectorGxTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtVectorGxTypeSerializerState::Init__ => {
@@ -51159,18 +51572,14 @@ pub mod res {
                                     false,
                                 ));
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib(&mut bytes, "Width", &self.value.width)?;
-                            write_attrib(&mut bytes, "Height", &self.value.height)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib(&mut bytes, "Width", &self.value.width)?;
+                            helper.write_attrib(&mut bytes, "Height", &self.value.height)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtVectorGxTypeSerializerState::Thumbnail(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = CtVectorGxTypeSerializerState::Substitution(
@@ -51184,7 +51593,7 @@ pub mod res {
                             }
                         }
                         CtVectorGxTypeSerializerState::Substitution(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = CtVectorGxTypeSerializerState::Content(
@@ -51197,12 +51606,15 @@ pub mod res {
                                 }
                             }
                         }
-                        CtVectorGxTypeSerializerState::Content(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = CtVectorGxTypeSerializerState::End__,
-                        },
+                        CtVectorGxTypeSerializerState::Content(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = CtVectorGxTypeSerializerState::End__,
+                            }
+                        }
                         CtVectorGxTypeSerializerState::End__ => {
                             *self.state = CtVectorGxTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         CtVectorGxTypeSerializerState::Done__ => return Ok(None),
@@ -51211,10 +51623,9 @@ pub mod res {
                 }
             }
         }
-        impl<'ser> Iterator for CtVectorGxTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtVectorGxTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -51246,7 +51657,10 @@ pub mod res {
             Phantom__(&'ser ()),
         }
         impl<'ser> ResXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         ResXElementTypeSerializerState::Init__ => {
@@ -51254,23 +51668,20 @@ pub mod res {
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib(&mut bytes, "BaseLoc", &self.value.base_loc)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib(&mut bytes, "BaseLoc", &self.value.base_loc)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         ResXElementTypeSerializerState::Content__(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = ResXElementTypeSerializerState::End__,
                             }
                         }
                         ResXElementTypeSerializerState::End__ => {
                             *self.state = ResXElementTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         ResXElementTypeSerializerState::Done__ => return Ok(None),
@@ -51279,10 +51690,9 @@ pub mod res {
                 }
             }
         }
-        impl<'ser> Iterator for ResXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for ResXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -51311,7 +51721,10 @@ pub mod res {
             Phantom__(&'ser ()),
         }
         impl<'ser> ResXElementTypeContentSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         ResXElementTypeContentSerializerState::Init__ => match self.value {
@@ -51347,31 +51760,31 @@ pub mod res {
                             }
                         },
                         ResXElementTypeContentSerializerState::ColorSpaces(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = ResXElementTypeContentSerializerState::Done__,
                             }
                         }
                         ResXElementTypeContentSerializerState::DrawParams(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = ResXElementTypeContentSerializerState::Done__,
                             }
                         }
                         ResXElementTypeContentSerializerState::Fonts(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = ResXElementTypeContentSerializerState::Done__,
                             }
                         }
                         ResXElementTypeContentSerializerState::MultiMedias(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = ResXElementTypeContentSerializerState::Done__,
                             }
                         }
                         ResXElementTypeContentSerializerState::CompositeGraphicUnits(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = ResXElementTypeContentSerializerState::Done__,
                             }
@@ -51382,10 +51795,9 @@ pub mod res {
                 }
             }
         }
-        impl<'ser> Iterator for ResXElementTypeContentSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for ResXElementTypeContentSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -51411,7 +51823,10 @@ pub mod res {
             Phantom__(&'ser ()),
         }
         impl<'ser> CtColorSpacePaletteXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CtColorSpacePaletteXElementTypeSerializerState::Init__ => {
@@ -51419,16 +51834,12 @@ pub mod res {
                                 IterSerializer::new(&self.value.cv[..], Some("CV"), false),
                             );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtColorSpacePaletteXElementTypeSerializerState::Cv(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state =
@@ -51438,6 +51849,7 @@ pub mod res {
                         }
                         CtColorSpacePaletteXElementTypeSerializerState::End__ => {
                             *self.state = CtColorSpacePaletteXElementTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         CtColorSpacePaletteXElementTypeSerializerState::Done__ => return Ok(None),
@@ -51448,10 +51860,9 @@ pub mod res {
                 }
             }
         }
-        impl<'ser> Iterator for CtColorSpacePaletteXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CtColorSpacePaletteXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -51483,7 +51894,10 @@ pub mod res {
             Phantom__(&'ser ()),
         }
         impl<'ser> ResColorSpacesXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         ResColorSpacesXElementTypeSerializerState::Init__ => {
@@ -51495,23 +51909,20 @@ pub mod res {
                                 ),
                             );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         ResColorSpacesXElementTypeSerializerState::ColorSpace(x) => match x
-                            .next()
-                            .transpose(
-                        )? {
+                            .next(helper)
+                            .transpose()?
+                        {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = ResColorSpacesXElementTypeSerializerState::End__,
                         },
                         ResColorSpacesXElementTypeSerializerState::End__ => {
                             *self.state = ResColorSpacesXElementTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         ResColorSpacesXElementTypeSerializerState::Done__ => return Ok(None),
@@ -51520,10 +51931,9 @@ pub mod res {
                 }
             }
         }
-        impl<'ser> Iterator for ResColorSpacesXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for ResColorSpacesXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -51555,7 +51965,10 @@ pub mod res {
             Phantom__(&'ser ()),
         }
         impl<'ser> ResDrawParamsXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         ResDrawParamsXElementTypeSerializerState::Init__ => {
@@ -51567,16 +51980,12 @@ pub mod res {
                                 ),
                             );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         ResDrawParamsXElementTypeSerializerState::DrawParam(x) => match x
-                            .next()
+                            .next(helper)
                             .transpose()?
                         {
                             Some(event) => return Ok(Some(event)),
@@ -51584,6 +51993,7 @@ pub mod res {
                         },
                         ResDrawParamsXElementTypeSerializerState::End__ => {
                             *self.state = ResDrawParamsXElementTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         ResDrawParamsXElementTypeSerializerState::Done__ => return Ok(None),
@@ -51592,10 +52002,9 @@ pub mod res {
                 }
             }
         }
-        impl<'ser> Iterator for ResDrawParamsXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for ResDrawParamsXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -51627,7 +52036,10 @@ pub mod res {
             Phantom__(&'ser ()),
         }
         impl<'ser> ResFontsXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         ResFontsXElementTypeSerializerState::Init__ => {
@@ -51635,22 +52047,19 @@ pub mod res {
                                 IterSerializer::new(&self.value.font[..], Some("Font"), false),
                             );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         ResFontsXElementTypeSerializerState::Font(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = ResFontsXElementTypeSerializerState::End__,
                             }
                         }
                         ResFontsXElementTypeSerializerState::End__ => {
                             *self.state = ResFontsXElementTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         ResFontsXElementTypeSerializerState::Done__ => return Ok(None),
@@ -51659,10 +52068,9 @@ pub mod res {
                 }
             }
         }
-        impl<'ser> Iterator for ResFontsXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for ResFontsXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -51694,7 +52102,10 @@ pub mod res {
             Phantom__(&'ser ()),
         }
         impl<'ser> ResMultiMediasXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         ResMultiMediasXElementTypeSerializerState::Init__ => {
@@ -51706,23 +52117,20 @@ pub mod res {
                                 ),
                             );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         ResMultiMediasXElementTypeSerializerState::MultiMedia(x) => match x
-                            .next()
-                            .transpose(
-                        )? {
+                            .next(helper)
+                            .transpose()?
+                        {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = ResMultiMediasXElementTypeSerializerState::End__,
                         },
                         ResMultiMediasXElementTypeSerializerState::End__ => {
                             *self.state = ResMultiMediasXElementTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         ResMultiMediasXElementTypeSerializerState::Done__ => return Ok(None),
@@ -51731,10 +52139,9 @@ pub mod res {
                 }
             }
         }
-        impl<'ser> Iterator for ResMultiMediasXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for ResMultiMediasXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -51766,16 +52173,18 @@ pub mod res {
             Phantom__(&'ser ()),
         }
         impl<'ser> ResCompositeGraphicUnitsXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { ResCompositeGraphicUnitsXElementTypeSerializerState :: Init__ => { * self . state = ResCompositeGraphicUnitsXElementTypeSerializerState :: CompositeGraphicUnit (IterSerializer :: new (& self . value . composite_graphic_unit [..] , Some ("CompositeGraphicUnit") , false)) ; let mut bytes = BytesStart :: new (self . name) ; if self . is_root { bytes . push_attribute ((& b"xmlns" [..] , & super :: super :: NS_UNNAMED_2 [..])) ; } return Ok (Some (Event :: Start (bytes))) } ResCompositeGraphicUnitsXElementTypeSerializerState :: CompositeGraphicUnit (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResCompositeGraphicUnitsXElementTypeSerializerState :: End__ , } ResCompositeGraphicUnitsXElementTypeSerializerState :: End__ => { * self . state = ResCompositeGraphicUnitsXElementTypeSerializerState :: Done__ ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } ResCompositeGraphicUnitsXElementTypeSerializerState :: Done__ => return Ok (None) , ResCompositeGraphicUnitsXElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { ResCompositeGraphicUnitsXElementTypeSerializerState :: Init__ => { * self . state = ResCompositeGraphicUnitsXElementTypeSerializerState :: CompositeGraphicUnit (IterSerializer :: new (& self . value . composite_graphic_unit [..] , Some ("CompositeGraphicUnit") , false)) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns (& mut bytes , None , & super :: super :: NS_UNNAMED_2) ; return Ok (Some (Event :: Start (bytes))) } ResCompositeGraphicUnitsXElementTypeSerializerState :: CompositeGraphicUnit (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResCompositeGraphicUnitsXElementTypeSerializerState :: End__ , } ResCompositeGraphicUnitsXElementTypeSerializerState :: End__ => { * self . state = ResCompositeGraphicUnitsXElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } ResCompositeGraphicUnitsXElementTypeSerializerState :: Done__ => return Ok (None) , ResCompositeGraphicUnitsXElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
-        impl<'ser> Iterator for ResCompositeGraphicUnitsXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for ResCompositeGraphicUnitsXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -51807,7 +52216,10 @@ pub mod res {
             Phantom__(&'ser ()),
         }
         impl<'ser> ResColorSpacesColorSpaceXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         ResColorSpacesColorSpaceXElementTypeSerializerState::Init__ => {
@@ -51820,24 +52232,20 @@ pub mod res {
                                     ),
                                 );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib(&mut bytes, "Type", &self.value.type_)?;
-                            write_attrib(
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib(&mut bytes, "Type", &self.value.type_)?;
+                            helper.write_attrib(
                                 &mut bytes,
                                 "BitsPerComponent",
                                 &self.value.bits_per_component,
                             )?;
-                            write_attrib_opt(&mut bytes, "Profile", &self.value.profile)?;
-                            write_attrib(&mut bytes, "ID", &self.value.id)?;
+                            helper.write_attrib_opt(&mut bytes, "Profile", &self.value.profile)?;
+                            helper.write_attrib(&mut bytes, "ID", &self.value.id)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         ResColorSpacesColorSpaceXElementTypeSerializerState::Palette(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state =
@@ -51848,6 +52256,7 @@ pub mod res {
                         ResColorSpacesColorSpaceXElementTypeSerializerState::End__ => {
                             *self.state =
                                 ResColorSpacesColorSpaceXElementTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         ResColorSpacesColorSpaceXElementTypeSerializerState::Done__ => {
@@ -51860,10 +52269,9 @@ pub mod res {
                 }
             }
         }
-        impl<'ser> Iterator for ResColorSpacesColorSpaceXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for ResColorSpacesColorSpaceXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -51902,7 +52310,10 @@ pub mod res {
             Phantom__(&'ser ()),
         }
         impl<'ser> ResDrawParamsDrawParamXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         ResDrawParamsDrawParamXElementTypeSerializerState::Init__ => {
@@ -51915,24 +52326,36 @@ pub mod res {
                                     ),
                                 );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib_opt(&mut bytes, "Relative", &self.value.relative)?;
-                            write_attrib(&mut bytes, "LineWidth", &self.value.line_width)?;
-                            write_attrib(&mut bytes, "Join", &self.value.join)?;
-                            write_attrib(&mut bytes, "Cap", &self.value.cap)?;
-                            write_attrib(&mut bytes, "DashOffset", &self.value.dash_offset)?;
-                            write_attrib_opt(&mut bytes, "DashPattern", &self.value.dash_pattern)?;
-                            write_attrib(&mut bytes, "MiterLimit", &self.value.miter_limit)?;
-                            write_attrib(&mut bytes, "ID", &self.value.id)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib_opt(
+                                &mut bytes,
+                                "Relative",
+                                &self.value.relative,
+                            )?;
+                            helper.write_attrib(&mut bytes, "LineWidth", &self.value.line_width)?;
+                            helper.write_attrib(&mut bytes, "Join", &self.value.join)?;
+                            helper.write_attrib(&mut bytes, "Cap", &self.value.cap)?;
+                            helper.write_attrib(
+                                &mut bytes,
+                                "DashOffset",
+                                &self.value.dash_offset,
+                            )?;
+                            helper.write_attrib_opt(
+                                &mut bytes,
+                                "DashPattern",
+                                &self.value.dash_pattern,
+                            )?;
+                            helper.write_attrib(
+                                &mut bytes,
+                                "MiterLimit",
+                                &self.value.miter_limit,
+                            )?;
+                            helper.write_attrib(&mut bytes, "ID", &self.value.id)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         ResDrawParamsDrawParamXElementTypeSerializerState::FillColor(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state =
                                     ResDrawParamsDrawParamXElementTypeSerializerState::StrokeColor(
@@ -51945,7 +52368,7 @@ pub mod res {
                             }
                         }
                         ResDrawParamsDrawParamXElementTypeSerializerState::StrokeColor(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state =
@@ -51955,6 +52378,7 @@ pub mod res {
                         }
                         ResDrawParamsDrawParamXElementTypeSerializerState::End__ => {
                             *self.state = ResDrawParamsDrawParamXElementTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         ResDrawParamsDrawParamXElementTypeSerializerState::Done__ => {
@@ -51967,10 +52391,9 @@ pub mod res {
                 }
             }
         }
-        impl<'ser> Iterator for ResDrawParamsDrawParamXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for ResDrawParamsDrawParamXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -51996,7 +52419,10 @@ pub mod res {
             Phantom__(&'ser ()),
         }
         impl<'ser> ResFontsFontXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         ResFontsFontXElementTypeSerializerState::Init__ => {
@@ -52008,24 +52434,28 @@ pub mod res {
                                 ),
                             );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib(&mut bytes, "FontName", &self.value.font_name)?;
-                            write_attrib_opt(&mut bytes, "FamilyName", &self.value.family_name)?;
-                            write_attrib(&mut bytes, "Charset", &self.value.charset)?;
-                            write_attrib(&mut bytes, "Italic", &self.value.italic)?;
-                            write_attrib(&mut bytes, "Bold", &self.value.bold)?;
-                            write_attrib(&mut bytes, "Serif", &self.value.serif)?;
-                            write_attrib(&mut bytes, "FixedWidth", &self.value.fixed_width)?;
-                            write_attrib(&mut bytes, "ID", &self.value.id)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib(&mut bytes, "FontName", &self.value.font_name)?;
+                            helper.write_attrib_opt(
+                                &mut bytes,
+                                "FamilyName",
+                                &self.value.family_name,
+                            )?;
+                            helper.write_attrib(&mut bytes, "Charset", &self.value.charset)?;
+                            helper.write_attrib(&mut bytes, "Italic", &self.value.italic)?;
+                            helper.write_attrib(&mut bytes, "Bold", &self.value.bold)?;
+                            helper.write_attrib(&mut bytes, "Serif", &self.value.serif)?;
+                            helper.write_attrib(
+                                &mut bytes,
+                                "FixedWidth",
+                                &self.value.fixed_width,
+                            )?;
+                            helper.write_attrib(&mut bytes, "ID", &self.value.id)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         ResFontsFontXElementTypeSerializerState::FontFile(x) => match x
-                            .next()
+                            .next(helper)
                             .transpose()?
                         {
                             Some(event) => return Ok(Some(event)),
@@ -52033,6 +52463,7 @@ pub mod res {
                         },
                         ResFontsFontXElementTypeSerializerState::End__ => {
                             *self.state = ResFontsFontXElementTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         ResFontsFontXElementTypeSerializerState::Done__ => return Ok(None),
@@ -52041,10 +52472,9 @@ pub mod res {
                 }
             }
         }
-        impl<'ser> Iterator for ResFontsFontXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for ResFontsFontXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -52070,7 +52500,10 @@ pub mod res {
             Phantom__(&'ser ()),
         }
         impl<'ser> ResMultiMediasMultiMediaXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         ResMultiMediasMultiMediaXElementTypeSerializerState::Init__ => {
@@ -52083,19 +52516,15 @@ pub mod res {
                                     )?,
                                 );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib(&mut bytes, "Type", &self.value.type_)?;
-                            write_attrib_opt(&mut bytes, "Format", &self.value.format)?;
-                            write_attrib(&mut bytes, "ID", &self.value.id)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib(&mut bytes, "Type", &self.value.type_)?;
+                            helper.write_attrib_opt(&mut bytes, "Format", &self.value.format)?;
+                            helper.write_attrib(&mut bytes, "ID", &self.value.id)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         ResMultiMediasMultiMediaXElementTypeSerializerState::MediaFile(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state =
@@ -52106,6 +52535,7 @@ pub mod res {
                         ResMultiMediasMultiMediaXElementTypeSerializerState::End__ => {
                             *self.state =
                                 ResMultiMediasMultiMediaXElementTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         ResMultiMediasMultiMediaXElementTypeSerializerState::Done__ => {
@@ -52118,10 +52548,9 @@ pub mod res {
                 }
             }
         }
-        impl<'ser> Iterator for ResMultiMediasMultiMediaXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for ResMultiMediasMultiMediaXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -52152,16 +52581,20 @@ pub mod res {
             Phantom__(&'ser ()),
         }
         impl<'ser> ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Init__ => { * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Thumbnail (IterSerializer :: new (self . value . thumbnail . as_ref () , Some ("Thumbnail") , false)) ; let mut bytes = BytesStart :: new (self . name) ; if self . is_root { bytes . push_attribute ((& b"xmlns" [..] , & super :: super :: NS_UNNAMED_2 [..])) ; } write_attrib (& mut bytes , "Width" , & self . value . width) ? ; write_attrib (& mut bytes , "Height" , & self . value . height) ? ; write_attrib (& mut bytes , "ID" , & self . value . id) ? ; return Ok (Some (Event :: Start (bytes))) } ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Thumbnail (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Substitution (IterSerializer :: new (self . value . substitution . as_ref () , Some ("Substitution") , false)) , } ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Substitution (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Content (WithSerializer :: serializer (& self . value . content , Some ("Content") , false) ?) , } ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Content (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: End__ , } ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: End__ => { * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Done__ ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Done__ => return Ok (None) , ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Init__ => { * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Thumbnail (IterSerializer :: new (self . value . thumbnail . as_ref () , Some ("Thumbnail") , false)) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns (& mut bytes , None , & super :: super :: NS_UNNAMED_2) ; helper . write_attrib (& mut bytes , "Width" , & self . value . width) ? ; helper . write_attrib (& mut bytes , "Height" , & self . value . height) ? ; helper . write_attrib (& mut bytes , "ID" , & self . value . id) ? ; return Ok (Some (Event :: Start (bytes))) } ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Thumbnail (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Substitution (IterSerializer :: new (self . value . substitution . as_ref () , Some ("Substitution") , false)) , } ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Substitution (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Content (WithSerializer :: serializer (& self . value . content , Some ("Content") , false) ?) , } ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Content (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: End__ , } ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: End__ => { * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Done__ => return Ok (None) , ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
-        impl<'ser> Iterator for ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser>
+            for ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializer<'ser>
+        {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -52177,7 +52610,7 @@ pub mod signature {
     use std::borrow::Cow;
     use xsd_parser_types::quick_xml::{
         DeserializeBytes, DeserializeHelper, Error, ErrorKind, RawByteStr, SerializeBytes,
-        WithDeserializer, WithSerializer,
+        SerializeHelper, WithDeserializer, WithSerializer,
     };
     pub type Sianature = SianatureXElementType;
     #[derive(Debug)]
@@ -52327,7 +52760,10 @@ pub mod signature {
         Sha1,
     }
     impl SerializeBytes for SianatureSiqnedInfoReferencesCheckMethodXType {
-        fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+        fn serialize_bytes(
+            &self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Cow<'_, str>>, Error> {
             match self {
                 Self::Md5 => Ok(Some(Cow::Borrowed("MD5"))),
                 Self::Sha1 => Ok(Some(Cow::Borrowed("SHA1"))),
@@ -54249,7 +54685,7 @@ pub mod signature {
     }
     pub mod quick_xml_serialize {
         use xsd_parser_types::quick_xml::{
-            write_attrib, write_attrib_opt, BytesEnd, BytesStart, Error, Event, IterSerializer,
+            BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
             WithSerializer,
         };
         #[derive(Debug)]
@@ -54271,7 +54707,10 @@ pub mod signature {
             Phantom__(&'ser ()),
         }
         impl<'ser> SianatureXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         SianatureXElementTypeSerializerState::Init__ => {
@@ -54283,16 +54722,12 @@ pub mod signature {
                                 )?,
                             );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         SianatureXElementTypeSerializerState::SiqnedInfo(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = SianatureXElementTypeSerializerState::SignedValue(
@@ -54306,13 +54741,14 @@ pub mod signature {
                             }
                         }
                         SianatureXElementTypeSerializerState::SignedValue(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = SianatureXElementTypeSerializerState::End__,
                             }
                         }
                         SianatureXElementTypeSerializerState::End__ => {
                             *self.state = SianatureXElementTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         SianatureXElementTypeSerializerState::Done__ => return Ok(None),
@@ -54321,10 +54757,9 @@ pub mod signature {
                 }
             }
         }
-        impl<'ser> Iterator for SianatureXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for SianatureXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -54375,16 +54810,18 @@ pub mod signature {
             Phantom__(&'ser ()),
         }
         impl<'ser> SianatureSiqnedInfoXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { SianatureSiqnedInfoXElementTypeSerializerState :: Init__ => { * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: Provider (WithSerializer :: serializer (& self . value . provider , Some ("Provider") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; if self . is_root { bytes . push_attribute ((& b"xmlns" [..] , & super :: super :: NS_UNNAMED_2 [..])) ; } return Ok (Some (Event :: Start (bytes))) } SianatureSiqnedInfoXElementTypeSerializerState :: Provider (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: SignatureMethod (IterSerializer :: new (self . value . signature_method . as_ref () , Some ("SignatureMethod") , false)) , } SianatureSiqnedInfoXElementTypeSerializerState :: SignatureMethod (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: SianatureDateTime (IterSerializer :: new (self . value . sianature_date_time . as_ref () , Some ("SianatureDateTime") , false)) , } SianatureSiqnedInfoXElementTypeSerializerState :: SianatureDateTime (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: References (WithSerializer :: serializer (& self . value . references , Some ("References") , false) ?) , } SianatureSiqnedInfoXElementTypeSerializerState :: References (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: StampAnnot (IterSerializer :: new (& self . value . stamp_annot [..] , Some ("StampAnnot") , false)) , } SianatureSiqnedInfoXElementTypeSerializerState :: StampAnnot (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: Seal (IterSerializer :: new (self . value . seal . as_ref () , Some ("Seal") , false)) , } SianatureSiqnedInfoXElementTypeSerializerState :: Seal (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: End__ , } SianatureSiqnedInfoXElementTypeSerializerState :: End__ => { * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: Done__ ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } SianatureSiqnedInfoXElementTypeSerializerState :: Done__ => return Ok (None) , SianatureSiqnedInfoXElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { SianatureSiqnedInfoXElementTypeSerializerState :: Init__ => { * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: Provider (WithSerializer :: serializer (& self . value . provider , Some ("Provider") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns (& mut bytes , None , & super :: super :: NS_UNNAMED_2) ; return Ok (Some (Event :: Start (bytes))) } SianatureSiqnedInfoXElementTypeSerializerState :: Provider (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: SignatureMethod (IterSerializer :: new (self . value . signature_method . as_ref () , Some ("SignatureMethod") , false)) , } SianatureSiqnedInfoXElementTypeSerializerState :: SignatureMethod (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: SianatureDateTime (IterSerializer :: new (self . value . sianature_date_time . as_ref () , Some ("SianatureDateTime") , false)) , } SianatureSiqnedInfoXElementTypeSerializerState :: SianatureDateTime (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: References (WithSerializer :: serializer (& self . value . references , Some ("References") , false) ?) , } SianatureSiqnedInfoXElementTypeSerializerState :: References (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: StampAnnot (IterSerializer :: new (& self . value . stamp_annot [..] , Some ("StampAnnot") , false)) , } SianatureSiqnedInfoXElementTypeSerializerState :: StampAnnot (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: Seal (IterSerializer :: new (self . value . seal . as_ref () , Some ("Seal") , false)) , } SianatureSiqnedInfoXElementTypeSerializerState :: Seal (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: End__ , } SianatureSiqnedInfoXElementTypeSerializerState :: End__ => { * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } SianatureSiqnedInfoXElementTypeSerializerState :: Done__ => return Ok (None) , SianatureSiqnedInfoXElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
-        impl<'ser> Iterator for SianatureSiqnedInfoXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for SianatureSiqnedInfoXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -54408,22 +54845,26 @@ pub mod signature {
             Phantom__(&'ser ()),
         }
         impl<'ser> SianatureSiqnedInfoProviderXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         SianatureSiqnedInfoProviderXElementTypeSerializerState::Init__ => {
                             *self.state =
                                 SianatureSiqnedInfoProviderXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib(&mut bytes, "ProviderName", &self.value.provider_name)?;
-                            write_attrib_opt(&mut bytes, "Version", &self.value.version)?;
-                            write_attrib_opt(&mut bytes, "Company", &self.value.company)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib(
+                                &mut bytes,
+                                "ProviderName",
+                                &self.value.provider_name,
+                            )?;
+                            helper.write_attrib_opt(&mut bytes, "Version", &self.value.version)?;
+                            helper.write_attrib_opt(&mut bytes, "Company", &self.value.company)?;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         SianatureSiqnedInfoProviderXElementTypeSerializerState::Done__ => {
@@ -54436,10 +54877,9 @@ pub mod signature {
                 }
             }
         }
-        impl<'ser> Iterator for SianatureSiqnedInfoProviderXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for SianatureSiqnedInfoProviderXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -54472,7 +54912,10 @@ pub mod signature {
             Phantom__(&'ser ()),
         }
         impl<'ser> SianatureSiqnedInfoReferencesXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         SianatureSiqnedInfoReferencesXElementTypeSerializerState::Init__ => {
@@ -54485,17 +54928,17 @@ pub mod signature {
                                     ),
                                 );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib(&mut bytes, "CheckMethod", &self.value.check_method)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib(
+                                &mut bytes,
+                                "CheckMethod",
+                                &self.value.check_method,
+                            )?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         SianatureSiqnedInfoReferencesXElementTypeSerializerState::Reference(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state =
                                     SianatureSiqnedInfoReferencesXElementTypeSerializerState::End__,
@@ -54504,6 +54947,7 @@ pub mod signature {
                         SianatureSiqnedInfoReferencesXElementTypeSerializerState::End__ => {
                             *self.state =
                                 SianatureSiqnedInfoReferencesXElementTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         SianatureSiqnedInfoReferencesXElementTypeSerializerState::Done__ => {
@@ -54516,10 +54960,9 @@ pub mod signature {
                 }
             }
         }
-        impl<'ser> Iterator for SianatureSiqnedInfoReferencesXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for SianatureSiqnedInfoReferencesXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -54544,23 +54987,23 @@ pub mod signature {
             Phantom__(&'ser ()),
         }
         impl<'ser> SianatureSiqnedInfoStampAnnotXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         SianatureSiqnedInfoStampAnnotXElementTypeSerializerState::Init__ => {
                             *self.state =
                                 SianatureSiqnedInfoStampAnnotXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib(&mut bytes, "ID", &self.value.id)?;
-                            write_attrib(&mut bytes, "PageRef", &self.value.page_ref)?;
-                            write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
-                            write_attrib_opt(&mut bytes, "Clip", &self.value.clip)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib(&mut bytes, "ID", &self.value.id)?;
+                            helper.write_attrib(&mut bytes, "PageRef", &self.value.page_ref)?;
+                            helper.write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
+                            helper.write_attrib_opt(&mut bytes, "Clip", &self.value.clip)?;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         SianatureSiqnedInfoStampAnnotXElementTypeSerializerState::Done__ => {
@@ -54573,10 +55016,9 @@ pub mod signature {
                 }
             }
         }
-        impl<'ser> Iterator for SianatureSiqnedInfoStampAnnotXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for SianatureSiqnedInfoStampAnnotXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -54603,7 +55045,10 @@ pub mod signature {
             Phantom__(&'ser ()),
         }
         impl<'ser> SianatureSiqnedInfoSealXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         SianatureSiqnedInfoSealXElementTypeSerializerState::Init__ => {
@@ -54616,16 +55061,12 @@ pub mod signature {
                                     )?,
                                 );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         SianatureSiqnedInfoSealXElementTypeSerializerState::BaseLoc(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state =
@@ -54636,6 +55077,7 @@ pub mod signature {
                         SianatureSiqnedInfoSealXElementTypeSerializerState::End__ => {
                             *self.state =
                                 SianatureSiqnedInfoSealXElementTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         SianatureSiqnedInfoSealXElementTypeSerializerState::Done__ => {
@@ -54648,10 +55090,9 @@ pub mod signature {
                 }
             }
         }
-        impl<'ser> Iterator for SianatureSiqnedInfoSealXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for SianatureSiqnedInfoSealXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -54678,16 +55119,18 @@ pub mod signature {
             Phantom__(&'ser ()),
         }
         impl<'ser> SianatureSiqnedInfoReferencesReferenceXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: Init__ => { * self . state = SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: CheckValue (WithSerializer :: serializer (& self . value . check_value , Some ("CheckValue") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; if self . is_root { bytes . push_attribute ((& b"xmlns" [..] , & super :: super :: NS_UNNAMED_2 [..])) ; } write_attrib (& mut bytes , "FileRef" , & self . value . file_ref) ? ; return Ok (Some (Event :: Start (bytes))) } SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: CheckValue (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: End__ , } SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: End__ => { * self . state = SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: Done__ ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: Done__ => return Ok (None) , SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: Init__ => { * self . state = SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: CheckValue (WithSerializer :: serializer (& self . value . check_value , Some ("CheckValue") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns (& mut bytes , None , & super :: super :: NS_UNNAMED_2) ; helper . write_attrib (& mut bytes , "FileRef" , & self . value . file_ref) ? ; return Ok (Some (Event :: Start (bytes))) } SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: CheckValue (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: End__ , } SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: End__ => { * self . state = SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: Done__ => return Ok (None) , SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
-        impl<'ser> Iterator for SianatureSiqnedInfoReferencesReferenceXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for SianatureSiqnedInfoReferencesReferenceXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -54703,7 +55146,7 @@ pub mod signatures {
     use std::borrow::Cow;
     use xsd_parser_types::quick_xml::{
         DeserializeBytes, DeserializeHelper, Error, ErrorKind, RawByteStr, SerializeBytes,
-        WithDeserializer, WithSerializer,
+        SerializeHelper, WithDeserializer, WithSerializer,
     };
     pub type Siqnatures = SiqnaturesXElementType;
     #[derive(Debug)]
@@ -54769,7 +55212,10 @@ pub mod signatures {
         Siqn,
     }
     impl SerializeBytes for SiqnaturesSignatureTypeXType {
-        fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+        fn serialize_bytes(
+            &self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Cow<'_, str>>, Error> {
             match self {
                 Self::Seal => Ok(Some(Cow::Borrowed("Seal"))),
                 Self::Siqn => Ok(Some(Cow::Borrowed("Siqn"))),
@@ -55190,7 +55636,7 @@ pub mod signatures {
     }
     pub mod quick_xml_serialize {
         use xsd_parser_types::quick_xml::{
-            write_attrib, BytesEnd, BytesStart, Error, Event, IterSerializer,
+            BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
         };
         #[derive(Debug)]
         pub struct SiqnaturesXElementTypeSerializer<'ser> {
@@ -55215,7 +55661,10 @@ pub mod signatures {
             Phantom__(&'ser ()),
         }
         impl<'ser> SiqnaturesXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         SiqnaturesXElementTypeSerializerState::Init__ => {
@@ -55227,16 +55676,12 @@ pub mod signatures {
                                 ),
                             );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         SiqnaturesXElementTypeSerializerState::MaxSignId(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = SiqnaturesXElementTypeSerializerState::Signature(
@@ -55250,13 +55695,14 @@ pub mod signatures {
                             }
                         }
                         SiqnaturesXElementTypeSerializerState::Signature(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = SiqnaturesXElementTypeSerializerState::End__,
                             }
                         }
                         SiqnaturesXElementTypeSerializerState::End__ => {
                             *self.state = SiqnaturesXElementTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         SiqnaturesXElementTypeSerializerState::Done__ => return Ok(None),
@@ -55265,10 +55711,9 @@ pub mod signatures {
                 }
             }
         }
-        impl<'ser> Iterator for SiqnaturesXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for SiqnaturesXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -55292,21 +55737,21 @@ pub mod signatures {
             Phantom__(&'ser ()),
         }
         impl<'ser> SiqnaturesSignatureXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         SiqnaturesSignatureXElementTypeSerializerState::Init__ => {
                             *self.state = SiqnaturesSignatureXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib(&mut bytes, "ID", &self.value.id)?;
-                            write_attrib(&mut bytes, "Type", &self.value.type_)?;
-                            write_attrib(&mut bytes, "BaseLoc", &self.value.base_loc)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib(&mut bytes, "ID", &self.value.id)?;
+                            helper.write_attrib(&mut bytes, "Type", &self.value.type_)?;
+                            helper.write_attrib(&mut bytes, "BaseLoc", &self.value.base_loc)?;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         SiqnaturesSignatureXElementTypeSerializerState::Done__ => return Ok(None),
@@ -55317,10 +55762,9 @@ pub mod signatures {
                 }
             }
         }
-        impl<'ser> Iterator for SiqnaturesSignatureXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for SiqnaturesSignatureXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -56107,7 +56551,7 @@ pub mod version {
     }
     pub mod quick_xml_serialize {
         use xsd_parser_types::quick_xml::{
-            write_attrib, write_attrib_opt, BytesEnd, BytesStart, Error, Event, IterSerializer,
+            BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
             WithSerializer,
         };
         #[derive(Debug)]
@@ -56127,7 +56571,10 @@ pub mod version {
             Phantom__(&'ser ()),
         }
         impl<'ser> DocVersionXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         DocVersionXElementTypeSerializerState::Init__ => {
@@ -56139,16 +56586,12 @@ pub mod version {
                                 )?,
                             );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib(&mut bytes, "ID", &self.value.id)?;
-                            write_attrib_opt(&mut bytes, "Version", &self.value.version)?;
-                            write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
-                            write_attrib_opt(
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib(&mut bytes, "ID", &self.value.id)?;
+                            helper.write_attrib_opt(&mut bytes, "Version", &self.value.version)?;
+                            helper.write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
+                            helper.write_attrib_opt(
                                 &mut bytes,
                                 "CreationDate",
                                 &self.value.creation_date,
@@ -56156,7 +56599,7 @@ pub mod version {
                             return Ok(Some(Event::Start(bytes)));
                         }
                         DocVersionXElementTypeSerializerState::FileList(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = DocVersionXElementTypeSerializerState::DocRoot(
@@ -56170,13 +56613,14 @@ pub mod version {
                             }
                         }
                         DocVersionXElementTypeSerializerState::DocRoot(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = DocVersionXElementTypeSerializerState::End__,
                             }
                         }
                         DocVersionXElementTypeSerializerState::End__ => {
                             *self.state = DocVersionXElementTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         DocVersionXElementTypeSerializerState::Done__ => return Ok(None),
@@ -56185,10 +56629,9 @@ pub mod version {
                 }
             }
         }
-        impl<'ser> Iterator for DocVersionXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for DocVersionXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -56220,7 +56663,10 @@ pub mod version {
             Phantom__(&'ser ()),
         }
         impl<'ser> DocVersionFileListXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         DocVersionFileListXElementTypeSerializerState::Init__ => {
@@ -56228,16 +56674,12 @@ pub mod version {
                                 IterSerializer::new(&self.value.file[..], Some("File"), false),
                             );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         DocVersionFileListXElementTypeSerializerState::File(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state =
@@ -56247,6 +56689,7 @@ pub mod version {
                         }
                         DocVersionFileListXElementTypeSerializerState::End__ => {
                             *self.state = DocVersionFileListXElementTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         DocVersionFileListXElementTypeSerializerState::Done__ => return Ok(None),
@@ -56257,10 +56700,9 @@ pub mod version {
                 }
             }
         }
-        impl<'ser> Iterator for DocVersionFileListXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for DocVersionFileListXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -56286,7 +56728,10 @@ pub mod version {
             Phantom__(&'ser ()),
         }
         impl<'ser> DocVersionFileListFileXElementTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         DocVersionFileListFileXElementTypeSerializerState::Init__ => {
@@ -56295,17 +56740,13 @@ pub mod version {
                                     WithSerializer::serializer(&self.value.content, None, false)?,
                                 );
                             let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_2[..],
-                                ));
-                            }
-                            write_attrib(&mut bytes, "ID", &self.value.id)?;
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_2);
+                            helper.write_attrib(&mut bytes, "ID", &self.value.id)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         DocVersionFileListFileXElementTypeSerializerState::Content__(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state =
@@ -56315,6 +56756,7 @@ pub mod version {
                         }
                         DocVersionFileListFileXElementTypeSerializerState::End__ => {
                             *self.state = DocVersionFileListFileXElementTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         DocVersionFileListFileXElementTypeSerializerState::Done__ => {
@@ -56327,10 +56769,9 @@ pub mod version {
                 }
             }
         }
-        impl<'ser> Iterator for DocVersionFileListFileXElementTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for DocVersionFileListFileXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -56345,17 +56786,22 @@ pub mod version {
 pub mod xs {
     use num::{BigInt, BigUint};
     use std::borrow::Cow;
-    use xsd_parser_types::quick_xml::{DeserializeBytes, DeserializeHelper, Error, SerializeBytes};
+    use xsd_parser_types::quick_xml::{
+        DeserializeBytes, DeserializeHelper, Error, SerializeBytes, SerializeHelper,
+    };
     #[derive(Debug, Default)]
     pub struct EntitiesXType(pub Vec<String>);
     impl SerializeBytes for EntitiesXType {
-        fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+        fn serialize_bytes(
+            &self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Cow<'_, str>>, Error> {
             if self.0.is_empty() {
                 return Ok(None);
             }
             let mut data = String::new();
             for item in &self.0 {
-                if let Some(bytes) = item.serialize_bytes()? {
+                if let Some(bytes) = item.serialize_bytes(helper)? {
                     if !data.is_empty() {
                         data.push(' ');
                     }

@@ -1,23 +1,25 @@
 use std::borrow::Cow;
 use xsd_parser_types::{
-    misc::Namespace,
+    misc::{Namespace, NamespacePrefix},
     quick_xml::{
-        DeserializeBytes, DeserializeHelper, Error, SerializeBytes, WithDeserializer,
-        WithSerializer,
+        DeserializeBytes, DeserializeHelper, Error, SerializeBytes, SerializeHelper,
+        WithDeserializer, WithSerializer,
     },
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
+pub const PREFIX_XS: NamespacePrefix = NamespacePrefix::new_const(b"xs");
+pub const PREFIX_XML: NamespacePrefix = NamespacePrefix::new_const(b"xml");
 #[derive(Debug, Default)]
 pub struct EntitiesType(pub Vec<String>);
 impl SerializeBytes for EntitiesType {
-    fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+    fn serialize_bytes(&self, helper: &mut SerializeHelper) -> Result<Option<Cow<'_, str>>, Error> {
         if self.0.is_empty() {
             return Ok(None);
         }
         let mut data = String::new();
         for item in &self.0 {
-            if let Some(bytes) = item.serialize_bytes()? {
+            if let Some(bytes) = item.serialize_bytes(helper)? {
                 if !data.is_empty() {
                     data.push(' ');
                 }
@@ -40,13 +42,13 @@ impl DeserializeBytes for EntitiesType {
 #[derive(Debug, Default)]
 pub struct EntityType(pub Vec<String>);
 impl SerializeBytes for EntityType {
-    fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+    fn serialize_bytes(&self, helper: &mut SerializeHelper) -> Result<Option<Cow<'_, str>>, Error> {
         if self.0.is_empty() {
             return Ok(None);
         }
         let mut data = String::new();
         for item in &self.0 {
-            if let Some(bytes) = item.serialize_bytes()? {
+            if let Some(bytes) = item.serialize_bytes(helper)? {
                 if !data.is_empty() {
                     data.push(' ');
                 }
@@ -71,13 +73,13 @@ pub type IdrefType = String;
 #[derive(Debug, Default)]
 pub struct IdrefsType(pub Vec<String>);
 impl SerializeBytes for IdrefsType {
-    fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+    fn serialize_bytes(&self, helper: &mut SerializeHelper) -> Result<Option<Cow<'_, str>>, Error> {
         if self.0.is_empty() {
             return Ok(None);
         }
         let mut data = String::new();
         for item in &self.0 {
-            if let Some(bytes) = item.serialize_bytes()? {
+            if let Some(bytes) = item.serialize_bytes(helper)? {
                 if !data.is_empty() {
                     data.push(' ');
                 }
@@ -102,13 +104,13 @@ pub type NmtokenType = String;
 #[derive(Debug, Default)]
 pub struct NmtokensType(pub Vec<String>);
 impl SerializeBytes for NmtokensType {
-    fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+    fn serialize_bytes(&self, helper: &mut SerializeHelper) -> Result<Option<Cow<'_, str>>, Error> {
         if self.0.is_empty() {
             return Ok(None);
         }
         let mut data = String::new();
         for item in &self.0 {
-            if let Some(bytes) = item.serialize_bytes()? {
+            if let Some(bytes) = item.serialize_bytes(helper)? {
                 if !data.is_empty() {
                     data.push(' ');
                 }
@@ -257,7 +259,7 @@ pub mod quick_xml_deserialize {
     }
 }
 pub mod quick_xml_serialize {
-    use xsd_parser_types::quick_xml::{BytesStart, Error, Event};
+    use xsd_parser_types::quick_xml::{BytesStart, Error, Event, SerializeHelper, Serializer};
     #[derive(Debug)]
     pub struct AnyTypeSerializer<'ser> {
         pub(super) value: &'ser super::AnyType,
@@ -272,7 +274,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> AnyTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     AnyTypeSerializerState::Init__ => {
@@ -286,10 +291,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for AnyTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for AnyTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {

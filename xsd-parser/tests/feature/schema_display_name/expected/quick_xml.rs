@@ -1,7 +1,10 @@
-use xsd_parser_types::misc::Namespace;
+use xsd_parser_types::misc::{Namespace, NamespacePrefix};
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
 pub const NS_EXAMPLE: Namespace = Namespace::new_const(b"http://example.com");
+pub const PREFIX_XS: NamespacePrefix = NamespacePrefix::new_const(b"xs");
+pub const PREFIX_XML: NamespacePrefix = NamespacePrefix::new_const(b"xml");
+pub const PREFIX_EXAMPLE: NamespacePrefix = NamespacePrefix::new_const(b"example");
 pub mod example {
     use xsd_parser_types::quick_xml::{Error, WithDeserializer, WithSerializer};
     pub type Foo = FooType;
@@ -22,7 +25,7 @@ pub mod example {
             Ok(quick_xml_serialize::FooTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::FooTypeSerializerState::Init__),
-                name: name.unwrap_or("FooType"),
+                name: name.unwrap_or("example:FooType"),
                 is_root,
             })
         }
@@ -501,7 +504,8 @@ pub mod example {
     }
     pub mod quick_xml_serialize {
         use xsd_parser_types::quick_xml::{
-            BytesEnd, BytesStart, Error, Event, IterSerializer, WithSerializer,
+            BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
+            WithSerializer,
         };
         #[derive(Debug)]
         pub struct FooTypeSerializer<'ser> {
@@ -522,60 +526,72 @@ pub mod example {
             Phantom__(&'ser ()),
         }
         impl<'ser> FooTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         FooTypeSerializerState::Init__ => {
                             *self.state = FooTypeSerializerState::Once(WithSerializer::serializer(
                                 &self.value.once,
-                                Some("Once"),
+                                Some("example:Once"),
                                 false,
                             )?);
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_EXAMPLE[..]));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_EXAMPLE),
+                                    &super::super::NS_EXAMPLE,
+                                );
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
-                        FooTypeSerializerState::Once(x) => match x.next().transpose()? {
+                        FooTypeSerializerState::Once(x) => match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state = FooTypeSerializerState::Optional(IterSerializer::new(
                                     self.value.optional.as_ref(),
-                                    Some("Optional"),
+                                    Some("example:Optional"),
                                     false,
                                 ))
                             }
                         },
-                        FooTypeSerializerState::Optional(x) => match x.next().transpose()? {
+                        FooTypeSerializerState::Optional(x) => match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state =
                                     FooTypeSerializerState::OnceSpecify(WithSerializer::serializer(
                                         &self.value.once_specify,
-                                        Some("OnceSpecify"),
+                                        Some("example:OnceSpecify"),
                                         false,
                                     )?)
                             }
                         },
-                        FooTypeSerializerState::OnceSpecify(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => {
-                                *self.state =
-                                    FooTypeSerializerState::TwiceOrMore(IterSerializer::new(
-                                        &self.value.twice_or_more[..],
-                                        Some("TwiceOrMore"),
-                                        false,
-                                    ))
+                        FooTypeSerializerState::OnceSpecify(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => {
+                                    *self.state =
+                                        FooTypeSerializerState::TwiceOrMore(IterSerializer::new(
+                                            &self.value.twice_or_more[..],
+                                            Some("example:TwiceOrMore"),
+                                            false,
+                                        ))
+                                }
                             }
-                        },
-                        FooTypeSerializerState::TwiceOrMore(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = FooTypeSerializerState::End__,
-                        },
+                        }
+                        FooTypeSerializerState::TwiceOrMore(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = FooTypeSerializerState::End__,
+                            }
+                        }
                         FooTypeSerializerState::End__ => {
                             *self.state = FooTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         FooTypeSerializerState::Done__ => return Ok(None),
@@ -584,10 +600,9 @@ pub mod example {
                 }
             }
         }
-        impl<'ser> Iterator for FooTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for FooTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {

@@ -1,12 +1,15 @@
-use xsd_parser_types::misc::Namespace;
+use xsd_parser_types::misc::{Namespace, NamespacePrefix};
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
 pub const NS_ER: Namespace = Namespace::new_const(b"urn:oasis:names:tc:entity:xmlns:xml:catalog");
+pub const PREFIX_XS: NamespacePrefix = NamespacePrefix::new_const(b"xs");
+pub const PREFIX_XML: NamespacePrefix = NamespacePrefix::new_const(b"xml");
+pub const PREFIX_ER: NamespacePrefix = NamespacePrefix::new_const(b"er");
 pub mod er {
     use std::borrow::Cow;
     use xsd_parser_types::quick_xml::{
         DeserializeBytes, DeserializeHelper, Error, ErrorKind, RawByteStr, SerializeBytes,
-        WithDeserializer, WithSerializer,
+        SerializeHelper, WithDeserializer, WithSerializer,
     };
     #[derive(Debug)]
     pub struct CatalogType {
@@ -331,7 +334,10 @@ pub mod er {
         Public,
     }
     impl SerializeBytes for SystemOrPublicType {
-        fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+        fn serialize_bytes(
+            &self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Cow<'_, str>>, Error> {
             match self {
                 Self::System => Ok(Some(Cow::Borrowed("system"))),
                 Self::Public => Ok(Some(Cow::Borrowed("public"))),
@@ -4960,7 +4966,7 @@ pub mod er {
     }
     pub mod quick_xml_serialize {
         use xsd_parser_types::quick_xml::{
-            write_attrib, write_attrib_opt, BytesEnd, BytesStart, Error, Event, IterSerializer,
+            BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
             WithSerializer,
         };
         #[derive(Debug)]
@@ -4981,7 +4987,10 @@ pub mod er {
             Phantom__(&'ser ()),
         }
         impl<'ser> CatalogTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CatalogTypeSerializerState::Init__ => {
@@ -4989,19 +4998,27 @@ pub mod er {
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes.push_attribute((&b"xmlns:er"[..], &super::super::NS_ER[..]));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_ER),
+                                    &super::super::NS_ER,
+                                );
                             }
-                            write_attrib_opt(&mut bytes, "id", &self.value.id)?;
-                            write_attrib_opt(&mut bytes, "prefer", &self.value.prefer)?;
+                            helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
+                            helper.write_attrib_opt(&mut bytes, "prefer", &self.value.prefer)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
-                        CatalogTypeSerializerState::Content__(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = CatalogTypeSerializerState::End__,
-                        },
+                        CatalogTypeSerializerState::Content__(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = CatalogTypeSerializerState::End__,
+                            }
+                        }
                         CatalogTypeSerializerState::End__ => {
                             *self.state = CatalogTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         CatalogTypeSerializerState::Done__ => return Ok(None),
@@ -5010,10 +5027,9 @@ pub mod er {
                 }
             }
         }
-        impl<'ser> Iterator for CatalogTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CatalogTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -5047,7 +5063,10 @@ pub mod er {
             Phantom__(&'ser ()),
         }
         impl<'ser> CatalogTypeContentSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         CatalogTypeContentSerializerState::Init__ => match self.value {
@@ -5121,71 +5140,73 @@ pub mod er {
                             }
                         },
                         CatalogTypeContentSerializerState::Public(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = CatalogTypeContentSerializerState::Done__,
                             }
                         }
                         CatalogTypeContentSerializerState::System(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = CatalogTypeContentSerializerState::Done__,
                             }
                         }
-                        CatalogTypeContentSerializerState::Uri(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = CatalogTypeContentSerializerState::Done__,
-                        },
+                        CatalogTypeContentSerializerState::Uri(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = CatalogTypeContentSerializerState::Done__,
+                            }
+                        }
                         CatalogTypeContentSerializerState::RewriteSystem(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = CatalogTypeContentSerializerState::Done__,
                             }
                         }
                         CatalogTypeContentSerializerState::RewriteUri(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = CatalogTypeContentSerializerState::Done__,
                             }
                         }
                         CatalogTypeContentSerializerState::UriSuffix(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = CatalogTypeContentSerializerState::Done__,
                             }
                         }
                         CatalogTypeContentSerializerState::SystemSuffix(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = CatalogTypeContentSerializerState::Done__,
                             }
                         }
                         CatalogTypeContentSerializerState::DelegatePublic(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = CatalogTypeContentSerializerState::Done__,
                             }
                         }
                         CatalogTypeContentSerializerState::DelegateSystem(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = CatalogTypeContentSerializerState::Done__,
                             }
                         }
                         CatalogTypeContentSerializerState::DelegateUri(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = CatalogTypeContentSerializerState::Done__,
                             }
                         }
                         CatalogTypeContentSerializerState::NextCatalog(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = CatalogTypeContentSerializerState::Done__,
                             }
                         }
                         CatalogTypeContentSerializerState::Group(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = CatalogTypeContentSerializerState::Done__,
                             }
@@ -5196,10 +5217,9 @@ pub mod er {
                 }
             }
         }
-        impl<'ser> Iterator for CatalogTypeContentSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for CatalogTypeContentSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -5223,22 +5243,31 @@ pub mod er {
             Phantom__(&'ser ()),
         }
         impl<'ser> DelegatePublicTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         DelegatePublicTypeSerializerState::Init__ => {
                             *self.state = DelegatePublicTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes.push_attribute((&b"xmlns:er"[..], &super::super::NS_ER[..]));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_ER),
+                                    &super::super::NS_ER,
+                                );
                             }
-                            write_attrib(
+                            helper.write_attrib(
                                 &mut bytes,
                                 "publicIdStartString",
                                 &self.value.public_id_start_string,
                             )?;
-                            write_attrib(&mut bytes, "catalog", &self.value.catalog)?;
-                            write_attrib_opt(&mut bytes, "id", &self.value.id)?;
+                            helper.write_attrib(&mut bytes, "catalog", &self.value.catalog)?;
+                            helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         DelegatePublicTypeSerializerState::Done__ => return Ok(None),
@@ -5247,10 +5276,9 @@ pub mod er {
                 }
             }
         }
-        impl<'ser> Iterator for DelegatePublicTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for DelegatePublicTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -5274,22 +5302,31 @@ pub mod er {
             Phantom__(&'ser ()),
         }
         impl<'ser> DelegateSystemTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         DelegateSystemTypeSerializerState::Init__ => {
                             *self.state = DelegateSystemTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes.push_attribute((&b"xmlns:er"[..], &super::super::NS_ER[..]));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_ER),
+                                    &super::super::NS_ER,
+                                );
                             }
-                            write_attrib(
+                            helper.write_attrib(
                                 &mut bytes,
                                 "systemIdStartString",
                                 &self.value.system_id_start_string,
                             )?;
-                            write_attrib(&mut bytes, "catalog", &self.value.catalog)?;
-                            write_attrib_opt(&mut bytes, "id", &self.value.id)?;
+                            helper.write_attrib(&mut bytes, "catalog", &self.value.catalog)?;
+                            helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         DelegateSystemTypeSerializerState::Done__ => return Ok(None),
@@ -5298,10 +5335,9 @@ pub mod er {
                 }
             }
         }
-        impl<'ser> Iterator for DelegateSystemTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for DelegateSystemTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -5325,22 +5361,31 @@ pub mod er {
             Phantom__(&'ser ()),
         }
         impl<'ser> DelegateUriTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         DelegateUriTypeSerializerState::Init__ => {
                             *self.state = DelegateUriTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes.push_attribute((&b"xmlns:er"[..], &super::super::NS_ER[..]));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_ER),
+                                    &super::super::NS_ER,
+                                );
                             }
-                            write_attrib(
+                            helper.write_attrib(
                                 &mut bytes,
                                 "uriStartString",
                                 &self.value.uri_start_string,
                             )?;
-                            write_attrib(&mut bytes, "catalog", &self.value.catalog)?;
-                            write_attrib_opt(&mut bytes, "id", &self.value.id)?;
+                            helper.write_attrib(&mut bytes, "catalog", &self.value.catalog)?;
+                            helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         DelegateUriTypeSerializerState::Done__ => return Ok(None),
@@ -5349,10 +5394,9 @@ pub mod er {
                 }
             }
         }
-        impl<'ser> Iterator for DelegateUriTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for DelegateUriTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -5380,7 +5424,10 @@ pub mod er {
             Phantom__(&'ser ()),
         }
         impl<'ser> GroupTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         GroupTypeSerializerState::Init__ => {
@@ -5390,19 +5437,27 @@ pub mod er {
                                 false,
                             ));
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes.push_attribute((&b"xmlns:er"[..], &super::super::NS_ER[..]));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_ER),
+                                    &super::super::NS_ER,
+                                );
                             }
-                            write_attrib_opt(&mut bytes, "prefer", &self.value.prefer)?;
-                            write_attrib_opt(&mut bytes, "id", &self.value.id)?;
+                            helper.write_attrib_opt(&mut bytes, "prefer", &self.value.prefer)?;
+                            helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
-                        GroupTypeSerializerState::Content__(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = GroupTypeSerializerState::End__,
-                        },
+                        GroupTypeSerializerState::Content__(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = GroupTypeSerializerState::End__,
+                            }
+                        }
                         GroupTypeSerializerState::End__ => {
                             *self.state = GroupTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         GroupTypeSerializerState::Done__ => return Ok(None),
@@ -5411,10 +5466,9 @@ pub mod er {
                 }
             }
         }
-        impl<'ser> Iterator for GroupTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for GroupTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -5447,7 +5501,10 @@ pub mod er {
             Phantom__(&'ser ()),
         }
         impl<'ser> GroupTypeContentSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         GroupTypeContentSerializerState::Init__ => match self.value {
@@ -5516,65 +5573,67 @@ pub mod er {
                             }
                         },
                         GroupTypeContentSerializerState::Public(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = GroupTypeContentSerializerState::Done__,
                             }
                         }
                         GroupTypeContentSerializerState::System(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = GroupTypeContentSerializerState::Done__,
                             }
                         }
-                        GroupTypeContentSerializerState::Uri(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = GroupTypeContentSerializerState::Done__,
-                        },
+                        GroupTypeContentSerializerState::Uri(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = GroupTypeContentSerializerState::Done__,
+                            }
+                        }
                         GroupTypeContentSerializerState::RewriteSystem(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = GroupTypeContentSerializerState::Done__,
                             }
                         }
                         GroupTypeContentSerializerState::RewriteUri(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = GroupTypeContentSerializerState::Done__,
                             }
                         }
                         GroupTypeContentSerializerState::UriSuffix(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = GroupTypeContentSerializerState::Done__,
                             }
                         }
                         GroupTypeContentSerializerState::SystemSuffix(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = GroupTypeContentSerializerState::Done__,
                             }
                         }
                         GroupTypeContentSerializerState::DelegatePublic(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = GroupTypeContentSerializerState::Done__,
                             }
                         }
                         GroupTypeContentSerializerState::DelegateSystem(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = GroupTypeContentSerializerState::Done__,
                             }
                         }
                         GroupTypeContentSerializerState::DelegateUri(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = GroupTypeContentSerializerState::Done__,
                             }
                         }
                         GroupTypeContentSerializerState::NextCatalog(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = GroupTypeContentSerializerState::Done__,
                             }
@@ -5585,10 +5644,9 @@ pub mod er {
                 }
             }
         }
-        impl<'ser> Iterator for GroupTypeContentSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for GroupTypeContentSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -5612,17 +5670,26 @@ pub mod er {
             Phantom__(&'ser ()),
         }
         impl<'ser> NextCatalogTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         NextCatalogTypeSerializerState::Init__ => {
                             *self.state = NextCatalogTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes.push_attribute((&b"xmlns:er"[..], &super::super::NS_ER[..]));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_ER),
+                                    &super::super::NS_ER,
+                                );
                             }
-                            write_attrib(&mut bytes, "catalog", &self.value.catalog)?;
-                            write_attrib_opt(&mut bytes, "id", &self.value.id)?;
+                            helper.write_attrib(&mut bytes, "catalog", &self.value.catalog)?;
+                            helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         NextCatalogTypeSerializerState::Done__ => return Ok(None),
@@ -5631,10 +5698,9 @@ pub mod er {
                 }
             }
         }
-        impl<'ser> Iterator for NextCatalogTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for NextCatalogTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -5658,18 +5724,27 @@ pub mod er {
             Phantom__(&'ser ()),
         }
         impl<'ser> PublicTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         PublicTypeSerializerState::Init__ => {
                             *self.state = PublicTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes.push_attribute((&b"xmlns:er"[..], &super::super::NS_ER[..]));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_ER),
+                                    &super::super::NS_ER,
+                                );
                             }
-                            write_attrib(&mut bytes, "publicId", &self.value.public_id)?;
-                            write_attrib(&mut bytes, "uri", &self.value.uri)?;
-                            write_attrib_opt(&mut bytes, "id", &self.value.id)?;
+                            helper.write_attrib(&mut bytes, "publicId", &self.value.public_id)?;
+                            helper.write_attrib(&mut bytes, "uri", &self.value.uri)?;
+                            helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         PublicTypeSerializerState::Done__ => return Ok(None),
@@ -5678,10 +5753,9 @@ pub mod er {
                 }
             }
         }
-        impl<'ser> Iterator for PublicTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for PublicTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -5705,22 +5779,35 @@ pub mod er {
             Phantom__(&'ser ()),
         }
         impl<'ser> RewriteSystemTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         RewriteSystemTypeSerializerState::Init__ => {
                             *self.state = RewriteSystemTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes.push_attribute((&b"xmlns:er"[..], &super::super::NS_ER[..]));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_ER),
+                                    &super::super::NS_ER,
+                                );
                             }
-                            write_attrib(
+                            helper.write_attrib(
                                 &mut bytes,
                                 "systemIdStartString",
                                 &self.value.system_id_start_string,
                             )?;
-                            write_attrib(&mut bytes, "rewritePrefix", &self.value.rewrite_prefix)?;
-                            write_attrib_opt(&mut bytes, "id", &self.value.id)?;
+                            helper.write_attrib(
+                                &mut bytes,
+                                "rewritePrefix",
+                                &self.value.rewrite_prefix,
+                            )?;
+                            helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         RewriteSystemTypeSerializerState::Done__ => return Ok(None),
@@ -5729,10 +5816,9 @@ pub mod er {
                 }
             }
         }
-        impl<'ser> Iterator for RewriteSystemTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for RewriteSystemTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -5756,22 +5842,35 @@ pub mod er {
             Phantom__(&'ser ()),
         }
         impl<'ser> RewriteUriTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         RewriteUriTypeSerializerState::Init__ => {
                             *self.state = RewriteUriTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes.push_attribute((&b"xmlns:er"[..], &super::super::NS_ER[..]));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_ER),
+                                    &super::super::NS_ER,
+                                );
                             }
-                            write_attrib(
+                            helper.write_attrib(
                                 &mut bytes,
                                 "uriStartString",
                                 &self.value.uri_start_string,
                             )?;
-                            write_attrib(&mut bytes, "rewritePrefix", &self.value.rewrite_prefix)?;
-                            write_attrib_opt(&mut bytes, "id", &self.value.id)?;
+                            helper.write_attrib(
+                                &mut bytes,
+                                "rewritePrefix",
+                                &self.value.rewrite_prefix,
+                            )?;
+                            helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         RewriteUriTypeSerializerState::Done__ => return Ok(None),
@@ -5780,10 +5879,9 @@ pub mod er {
                 }
             }
         }
-        impl<'ser> Iterator for RewriteUriTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for RewriteUriTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -5807,18 +5905,27 @@ pub mod er {
             Phantom__(&'ser ()),
         }
         impl<'ser> SystemTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         SystemTypeSerializerState::Init__ => {
                             *self.state = SystemTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes.push_attribute((&b"xmlns:er"[..], &super::super::NS_ER[..]));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_ER),
+                                    &super::super::NS_ER,
+                                );
                             }
-                            write_attrib(&mut bytes, "systemId", &self.value.system_id)?;
-                            write_attrib(&mut bytes, "uri", &self.value.uri)?;
-                            write_attrib_opt(&mut bytes, "id", &self.value.id)?;
+                            helper.write_attrib(&mut bytes, "systemId", &self.value.system_id)?;
+                            helper.write_attrib(&mut bytes, "uri", &self.value.uri)?;
+                            helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         SystemTypeSerializerState::Done__ => return Ok(None),
@@ -5827,10 +5934,9 @@ pub mod er {
                 }
             }
         }
-        impl<'ser> Iterator for SystemTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for SystemTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -5854,22 +5960,31 @@ pub mod er {
             Phantom__(&'ser ()),
         }
         impl<'ser> SystemSuffixTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         SystemSuffixTypeSerializerState::Init__ => {
                             *self.state = SystemSuffixTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes.push_attribute((&b"xmlns:er"[..], &super::super::NS_ER[..]));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_ER),
+                                    &super::super::NS_ER,
+                                );
                             }
-                            write_attrib(
+                            helper.write_attrib(
                                 &mut bytes,
                                 "systemIdSuffix",
                                 &self.value.system_id_suffix,
                             )?;
-                            write_attrib(&mut bytes, "uri", &self.value.uri)?;
-                            write_attrib_opt(&mut bytes, "id", &self.value.id)?;
+                            helper.write_attrib(&mut bytes, "uri", &self.value.uri)?;
+                            helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         SystemSuffixTypeSerializerState::Done__ => return Ok(None),
@@ -5878,10 +5993,9 @@ pub mod er {
                 }
             }
         }
-        impl<'ser> Iterator for SystemSuffixTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for SystemSuffixTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -5905,18 +6019,27 @@ pub mod er {
             Phantom__(&'ser ()),
         }
         impl<'ser> UriTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         UriTypeSerializerState::Init__ => {
                             *self.state = UriTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes.push_attribute((&b"xmlns:er"[..], &super::super::NS_ER[..]));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_ER),
+                                    &super::super::NS_ER,
+                                );
                             }
-                            write_attrib(&mut bytes, "name", &self.value.name)?;
-                            write_attrib(&mut bytes, "uri", &self.value.uri)?;
-                            write_attrib_opt(&mut bytes, "id", &self.value.id)?;
+                            helper.write_attrib(&mut bytes, "name", &self.value.name)?;
+                            helper.write_attrib(&mut bytes, "uri", &self.value.uri)?;
+                            helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         UriTypeSerializerState::Done__ => return Ok(None),
@@ -5925,10 +6048,9 @@ pub mod er {
                 }
             }
         }
-        impl<'ser> Iterator for UriTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for UriTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -5952,18 +6074,27 @@ pub mod er {
             Phantom__(&'ser ()),
         }
         impl<'ser> UriSuffixTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         UriSuffixTypeSerializerState::Init__ => {
                             *self.state = UriSuffixTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes.push_attribute((&b"xmlns:er"[..], &super::super::NS_ER[..]));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_ER),
+                                    &super::super::NS_ER,
+                                );
                             }
-                            write_attrib(&mut bytes, "uriSuffix", &self.value.uri_suffix)?;
-                            write_attrib(&mut bytes, "uri", &self.value.uri)?;
-                            write_attrib_opt(&mut bytes, "id", &self.value.id)?;
+                            helper.write_attrib(&mut bytes, "uriSuffix", &self.value.uri_suffix)?;
+                            helper.write_attrib(&mut bytes, "uri", &self.value.uri)?;
+                            helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         UriSuffixTypeSerializerState::Done__ => return Ok(None),
@@ -5972,10 +6103,9 @@ pub mod er {
                 }
             }
         }
-        impl<'ser> Iterator for UriSuffixTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for UriSuffixTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -5989,17 +6119,22 @@ pub mod er {
 }
 pub mod xs {
     use std::borrow::Cow;
-    use xsd_parser_types::quick_xml::{DeserializeBytes, DeserializeHelper, Error, SerializeBytes};
+    use xsd_parser_types::quick_xml::{
+        DeserializeBytes, DeserializeHelper, Error, SerializeBytes, SerializeHelper,
+    };
     #[derive(Debug, Default)]
     pub struct EntitiesType(pub Vec<String>);
     impl SerializeBytes for EntitiesType {
-        fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+        fn serialize_bytes(
+            &self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Cow<'_, str>>, Error> {
             if self.0.is_empty() {
                 return Ok(None);
             }
             let mut data = String::new();
             for item in &self.0 {
-                if let Some(bytes) = item.serialize_bytes()? {
+                if let Some(bytes) = item.serialize_bytes(helper)? {
                     if !data.is_empty() {
                         data.push(' ');
                     }

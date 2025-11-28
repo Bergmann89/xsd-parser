@@ -1,7 +1,10 @@
-use xsd_parser_types::misc::Namespace;
+use xsd_parser_types::misc::{Namespace, NamespacePrefix};
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
 pub const NS_TNS: Namespace = Namespace::new_const(b"http://example.com");
+pub const PREFIX_XS: NamespacePrefix = NamespacePrefix::new_const(b"xs");
+pub const PREFIX_XML: NamespacePrefix = NamespacePrefix::new_const(b"xml");
+pub const PREFIX_TNS: NamespacePrefix = NamespacePrefix::new_const(b"tns");
 pub mod tns {
     use xsd_parser_types::{
         quick_xml::{Error, WithDeserializer, WithSerializer},
@@ -863,9 +866,9 @@ pub mod tns {
     }
     pub mod quick_xml_serialize {
         use xsd_parser_types::{
-            misc::Namespace,
+            misc::{Namespace, NamespacePrefix},
             quick_xml::{
-                write_attrib_opt, BytesEnd, BytesStart, Error, Event, IterSerializer,
+                BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
                 WithSerializer,
             },
             xml::Text,
@@ -886,7 +889,10 @@ pub mod tns {
             Phantom__(&'ser ()),
         }
         impl<'ser> RootTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         RootTypeSerializerState::Init__ => {
@@ -897,19 +903,30 @@ pub mod tns {
                                     false,
                                 )?);
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:tns"[..], &super::super::NS_TNS[..]));
-                                bytes.push_attribute((&b"xmlns:xsi"[..], &Namespace::XSI[..]));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&NamespacePrefix::XSI),
+                                    &Namespace::XSI,
+                                );
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_TNS),
+                                    &super::super::NS_TNS,
+                                );
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
-                        RootTypeSerializerState::Container(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = RootTypeSerializerState::End__,
-                        },
+                        RootTypeSerializerState::Container(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = RootTypeSerializerState::End__,
+                            }
+                        }
                         RootTypeSerializerState::End__ => {
                             *self.state = RootTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         RootTypeSerializerState::Done__ => return Ok(None),
@@ -918,10 +935,9 @@ pub mod tns {
                 }
             }
         }
-        impl<'ser> Iterator for RootTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for RootTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -953,7 +969,10 @@ pub mod tns {
             Phantom__(&'ser ()),
         }
         impl<'ser> ContainerTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         ContainerTypeSerializerState::Init__ => {
@@ -961,19 +980,30 @@ pub mod tns {
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:tns"[..], &super::super::NS_TNS[..]));
-                                bytes.push_attribute((&b"xmlns:xsi"[..], &Namespace::XSI[..]));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&NamespacePrefix::XSI),
+                                    &Namespace::XSI,
+                                );
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_TNS),
+                                    &super::super::NS_TNS,
+                                );
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
-                        ContainerTypeSerializerState::Content__(x) => match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = ContainerTypeSerializerState::End__,
-                        },
+                        ContainerTypeSerializerState::Content__(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = ContainerTypeSerializerState::End__,
+                            }
+                        }
                         ContainerTypeSerializerState::End__ => {
                             *self.state = ContainerTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         ContainerTypeSerializerState::Done__ => return Ok(None),
@@ -982,10 +1012,9 @@ pub mod tns {
                 }
             }
         }
-        impl<'ser> Iterator for ContainerTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for ContainerTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -1009,7 +1038,10 @@ pub mod tns {
             Phantom__(&'ser ()),
         }
         impl<'ser> ContainerTypeContentSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         ContainerTypeContentSerializerState::Init__ => match self.value {
@@ -1025,13 +1057,13 @@ pub mod tns {
                             }
                         },
                         ContainerTypeContentSerializerState::Known(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = ContainerTypeContentSerializerState::Done__,
                             }
                         }
                         ContainerTypeContentSerializerState::Text(x) => {
-                            match x.next().transpose()? {
+                            match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = ContainerTypeContentSerializerState::Done__,
                             }
@@ -1042,10 +1074,9 @@ pub mod tns {
                 }
             }
         }
-        impl<'ser> Iterator for ContainerTypeContentSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for ContainerTypeContentSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -1069,18 +1100,30 @@ pub mod tns {
             Phantom__(&'ser ()),
         }
         impl<'ser> KnownTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         KnownTypeSerializerState::Init__ => {
                             *self.state = KnownTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns:tns"[..], &super::super::NS_TNS[..]));
-                                bytes.push_attribute((&b"xmlns:xsi"[..], &Namespace::XSI[..]));
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&NamespacePrefix::XSI),
+                                    &Namespace::XSI,
+                                );
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_TNS),
+                                    &super::super::NS_TNS,
+                                );
                             }
-                            write_attrib_opt(&mut bytes, "name", &self.value.name)?;
+                            helper.write_attrib_opt(&mut bytes, "name", &self.value.name)?;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         KnownTypeSerializerState::Done__ => return Ok(None),
@@ -1089,10 +1132,9 @@ pub mod tns {
                 }
             }
         }
-        impl<'ser> Iterator for KnownTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for KnownTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {

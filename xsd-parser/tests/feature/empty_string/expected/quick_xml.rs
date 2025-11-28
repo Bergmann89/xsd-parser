@@ -1,13 +1,15 @@
 use std::borrow::Cow;
 use xsd_parser_types::{
-    misc::Namespace,
+    misc::{Namespace, NamespacePrefix},
     quick_xml::{
-        DeserializeBytes, DeserializeHelper, Error, SerializeBytes, WithDeserializer,
-        WithSerializer,
+        DeserializeBytes, DeserializeHelper, Error, SerializeBytes, SerializeHelper,
+        WithDeserializer, WithSerializer,
     },
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
+pub const PREFIX_XS: NamespacePrefix = NamespacePrefix::new_const(b"xs");
+pub const PREFIX_XML: NamespacePrefix = NamespacePrefix::new_const(b"xml");
 pub type ComplexContent = ComplexContentType;
 #[derive(Debug)]
 pub struct ComplexContentType {
@@ -59,13 +61,13 @@ impl WithDeserializer for SimpleContentType {
 #[derive(Debug, Default)]
 pub struct EntitiesType(pub Vec<String>);
 impl SerializeBytes for EntitiesType {
-    fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+    fn serialize_bytes(&self, helper: &mut SerializeHelper) -> Result<Option<Cow<'_, str>>, Error> {
         if self.0.is_empty() {
             return Ok(None);
         }
         let mut data = String::new();
         for item in &self.0 {
-            if let Some(bytes) = item.serialize_bytes()? {
+            if let Some(bytes) = item.serialize_bytes(helper)? {
                 if !data.is_empty() {
                     data.push(' ');
                 }
@@ -88,13 +90,13 @@ impl DeserializeBytes for EntitiesType {
 #[derive(Debug, Default)]
 pub struct EntityType(pub Vec<String>);
 impl SerializeBytes for EntityType {
-    fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+    fn serialize_bytes(&self, helper: &mut SerializeHelper) -> Result<Option<Cow<'_, str>>, Error> {
         if self.0.is_empty() {
             return Ok(None);
         }
         let mut data = String::new();
         for item in &self.0 {
-            if let Some(bytes) = item.serialize_bytes()? {
+            if let Some(bytes) = item.serialize_bytes(helper)? {
                 if !data.is_empty() {
                     data.push(' ');
                 }
@@ -119,13 +121,13 @@ pub type IdrefType = String;
 #[derive(Debug, Default)]
 pub struct IdrefsType(pub Vec<String>);
 impl SerializeBytes for IdrefsType {
-    fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+    fn serialize_bytes(&self, helper: &mut SerializeHelper) -> Result<Option<Cow<'_, str>>, Error> {
         if self.0.is_empty() {
             return Ok(None);
         }
         let mut data = String::new();
         for item in &self.0 {
-            if let Some(bytes) = item.serialize_bytes()? {
+            if let Some(bytes) = item.serialize_bytes(helper)? {
                 if !data.is_empty() {
                     data.push(' ');
                 }
@@ -150,13 +152,13 @@ pub type NmtokenType = String;
 #[derive(Debug, Default)]
 pub struct NmtokensType(pub Vec<String>);
 impl SerializeBytes for NmtokensType {
-    fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+    fn serialize_bytes(&self, helper: &mut SerializeHelper) -> Result<Option<Cow<'_, str>>, Error> {
         if self.0.is_empty() {
             return Ok(None);
         }
         let mut data = String::new();
         for item in &self.0 {
-            if let Some(bytes) = item.serialize_bytes()? {
+            if let Some(bytes) = item.serialize_bytes(helper)? {
                 if !data.is_empty() {
                     data.push(' ');
                 }
@@ -642,7 +644,7 @@ pub mod quick_xml_deserialize {
 }
 pub mod quick_xml_serialize {
     use xsd_parser_types::quick_xml::{
-        write_attrib, BytesEnd, BytesStart, Error, Event, WithSerializer,
+        BytesEnd, BytesStart, Error, Event, SerializeHelper, Serializer, WithSerializer,
     };
     #[derive(Debug)]
     pub struct ComplexContentTypeSerializer<'ser> {
@@ -660,7 +662,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> ComplexContentTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     ComplexContentTypeSerializerState::Init__ => {
@@ -671,13 +676,15 @@ pub mod quick_xml_serialize {
                                 false,
                             )?);
                         let mut bytes = BytesStart::new(self.name);
-                        write_attrib(&mut bytes, "lang", &self.value.lang)?;
+                        helper.write_attrib(&mut bytes, "lang", &self.value.lang)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
-                    ComplexContentTypeSerializerState::Content(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => *self.state = ComplexContentTypeSerializerState::End__,
-                    },
+                    ComplexContentTypeSerializerState::Content(x) => {
+                        match x.next(helper).transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => *self.state = ComplexContentTypeSerializerState::End__,
+                        }
+                    }
                     ComplexContentTypeSerializerState::End__ => {
                         *self.state = ComplexContentTypeSerializerState::Done__;
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
@@ -688,10 +695,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for ComplexContentTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for ComplexContentTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -717,7 +723,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> SimpleContentTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     SimpleContentTypeSerializerState::Init__ => {
@@ -725,13 +734,15 @@ pub mod quick_xml_serialize {
                             WithSerializer::serializer(&self.value.content, None, false)?,
                         );
                         let mut bytes = BytesStart::new(self.name);
-                        write_attrib(&mut bytes, "lang", &self.value.lang)?;
+                        helper.write_attrib(&mut bytes, "lang", &self.value.lang)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
-                    SimpleContentTypeSerializerState::Content__(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => *self.state = SimpleContentTypeSerializerState::End__,
-                    },
+                    SimpleContentTypeSerializerState::Content__(x) => {
+                        match x.next(helper).transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => *self.state = SimpleContentTypeSerializerState::End__,
+                        }
+                    }
                     SimpleContentTypeSerializerState::End__ => {
                         *self.state = SimpleContentTypeSerializerState::Done__;
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
@@ -742,10 +753,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for SimpleContentTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for SimpleContentTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -769,7 +779,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> AnyTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     AnyTypeSerializerState::Init__ => {
@@ -783,10 +796,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for AnyTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for AnyTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {

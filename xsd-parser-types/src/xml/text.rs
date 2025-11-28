@@ -13,7 +13,8 @@ use quick_xml::{
 #[cfg(feature = "quick-xml")]
 use crate::quick_xml::{
     DeserializeHelper, Deserializer, DeserializerArtifact, DeserializerEvent, DeserializerOutput,
-    DeserializerResult, Error, ErrorKind, WithDeserializer, WithSerializer,
+    DeserializerResult, Error, ErrorKind, SerializeHelper, Serializer, WithDeserializer,
+    WithSerializer,
 };
 
 /// Type to represent text values inside a XML.
@@ -96,10 +97,10 @@ pub enum TextSerializer<'ser> {
     Done,
 }
 
-impl<'ser> Iterator for TextSerializer<'ser> {
-    type Item = Result<Event<'ser>, Error>;
+impl<'ser> Serializer<'ser> for TextSerializer<'ser> {
+    fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+        let _helper = helper;
 
-    fn next(&mut self) -> Option<Self::Item> {
         match replace(self, Self::Done) {
             Self::Emit { value } => {
                 Some(Ok(Event::Text(BytesText::from_escaped(escape(&value.0)))))

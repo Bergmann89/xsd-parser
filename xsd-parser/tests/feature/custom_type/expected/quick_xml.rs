@@ -1,10 +1,12 @@
 use xsd_parser_types::{
-    misc::Namespace,
+    misc::{Namespace, NamespacePrefix},
     quick_xml::{Error, WithDeserializer, WithSerializer},
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
 pub const NS_UNNAMED_2: Namespace = Namespace::new_const(b"urn:example:minimal");
+pub const PREFIX_XS: NamespacePrefix = NamespacePrefix::new_const(b"xs");
+pub const PREFIX_XML: NamespacePrefix = NamespacePrefix::new_const(b"xml");
 pub type Amount = CurrencyAmountType;
 #[derive(Debug)]
 pub struct CurrencyAmountType {
@@ -175,7 +177,7 @@ pub mod quick_xml_deserialize {
 }
 pub mod quick_xml_serialize {
     use xsd_parser_types::quick_xml::{
-        write_attrib, BytesEnd, BytesStart, Error, Event, WithSerializer,
+        BytesEnd, BytesStart, Error, Event, SerializeHelper, Serializer, WithSerializer,
     };
     #[derive(Debug)]
     pub struct CurrencyAmountTypeSerializer<'ser> {
@@ -193,7 +195,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> CurrencyAmountTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     CurrencyAmountTypeSerializerState::Init__ => {
@@ -201,20 +206,20 @@ pub mod quick_xml_serialize {
                             WithSerializer::serializer(&self.value.content, None, false)?,
                         );
                         let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns"[..], &super::NS_UNNAMED_2[..]));
-                        }
-                        write_attrib(&mut bytes, "Ccy", &self.value.ccy)?;
+                        helper.begin_ns_scope();
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_attrib(&mut bytes, "Ccy", &self.value.ccy)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
                     CurrencyAmountTypeSerializerState::Content__(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = CurrencyAmountTypeSerializerState::End__,
                         }
                     }
                     CurrencyAmountTypeSerializerState::End__ => {
                         *self.state = CurrencyAmountTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     CurrencyAmountTypeSerializerState::Done__ => return Ok(None),
@@ -223,10 +228,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for CurrencyAmountTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for CurrencyAmountTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {

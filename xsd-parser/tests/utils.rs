@@ -14,8 +14,8 @@ use xsd_parser::{
     generate,
 };
 use xsd_parser_types::quick_xml::{
-    DeserializeAsync, DeserializeSync, ErrorReader, Event, IoReader, WithSerializer, Writer,
-    XmlReader,
+    DeserializeAsync, DeserializeSync, ErrorReader, Event, IoReader, Serializer, WithSerializer,
+    Writer, XmlReader,
 };
 
 pub trait ConfigEx {
@@ -205,6 +205,7 @@ where
         value
             .serializer(Some(root), true)
             .unwrap()
+            .into_iter()
             .map(|ret| ret.unwrap()),
     );
     let mut expected = FilteredIter::new(IterReader::from_file(path));

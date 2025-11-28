@@ -7,7 +7,8 @@ use quick_xml::events::Event;
 #[cfg(feature = "quick-xml")]
 use crate::quick_xml::{
     DeserializeHelper, Deserializer, DeserializerArtifact, DeserializerEvent, DeserializerOutput,
-    DeserializerResult, Error, IterSerializer, WithDeserializer, WithSerializer,
+    DeserializerResult, Error, IterSerializer, SerializeHelper, Serializer, WithDeserializer,
+    WithSerializer,
 };
 
 use super::text::{Text, TextDeserializer};
@@ -133,16 +134,14 @@ where
 }
 
 #[cfg(feature = "quick-xml")]
-impl<'ser, T> Iterator for MixedSerializer<'ser, T>
+impl<'ser, T> Serializer<'ser> for MixedSerializer<'ser, T>
 where
     T: WithSerializer,
 {
-    type Item = Result<Event<'ser>, Error>;
-
-    fn next(&mut self) -> Option<Self::Item> {
+    fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
         loop {
             match self {
-                Self::Inner { value, serializer } => match serializer.next() {
+                Self::Inner { value, serializer } => match serializer.next(helper) {
                     Some(Ok(event)) => return Some(Ok(event)),
                     Some(Err(error)) => {
                         *self = Self::Done;
@@ -156,7 +155,7 @@ where
                         *self = Self::TextAfter { serializer };
                     }
                 },
-                Self::TextAfter { serializer } => match serializer.next() {
+                Self::TextAfter { serializer } => match serializer.next(helper) {
                     Some(Ok(event)) => return Some(Ok(event)),
                     Some(Err(error)) => {
                         *self = Self::Done;

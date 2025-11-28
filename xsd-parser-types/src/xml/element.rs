@@ -15,7 +15,8 @@ use crate::misc::format_utf8_slice;
 #[cfg(feature = "quick-xml")]
 use crate::quick_xml::{
     DeserializeHelper, Deserializer, DeserializerArtifact, DeserializerEvent, DeserializerOutput,
-    DeserializerResult, Error, Event, WithDeserializer, WithSerializer,
+    DeserializerResult, Error, Event, SerializeHelper, Serializer, WithDeserializer,
+    WithSerializer,
 };
 
 use super::{
@@ -171,7 +172,7 @@ impl<'ser, 'el> ElementSerializer<'ser, 'el> {
         Self::Start { name, element }
     }
 
-    fn next_item(&mut self) -> Result<Option<Event<'ser>>, Error> {
+    fn next_item(&mut self, helper: &mut SerializeHelper) -> Result<Option<Event<'ser>>, Error> {
         loop {
             match replace(self, Self::Done) {
                 Self::Start { name, element } => {
@@ -256,7 +257,7 @@ impl<'ser, 'el> ElementSerializer<'ser, 'el> {
                     element,
                     values,
                     mut serializer,
-                } => match serializer.next() {
+                } => match serializer.next(helper) {
                     None => {
                         *self = Self::NextValue {
                             name,
@@ -282,11 +283,9 @@ impl<'ser, 'el> ElementSerializer<'ser, 'el> {
 }
 
 #[cfg(feature = "quick-xml")]
-impl<'ser> Iterator for ElementSerializer<'ser, '_> {
-    type Item = Result<Event<'ser>, Error>;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        self.next_item().transpose()
+impl<'ser> Serializer<'ser> for ElementSerializer<'ser, '_> {
+    fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+        self.next_item(helper).transpose()
     }
 }
 
@@ -540,8 +539,6 @@ mod tests {
     fn deserialize() {
         let mut reader = SliceReader::new(XML.trim());
         let root = Element::deserialize(&mut reader).unwrap();
-
-        dbg!(&root);
 
         assert_eq!(root.name.as_ref(), b"names");
         assert_eq!(root.values.len(), 5);

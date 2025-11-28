@@ -7,10 +7,13 @@ use crate::models::{
 };
 
 /// Represents the name of a XML tag including an optional namespace prefix.
-#[derive(Default, Debug)]
+#[derive(Debug)]
 pub struct TagName<'types> {
     /// Name of the XML tag.
     pub name: String,
+
+    /// Indicates if the tag name should be rendered with the namespace prefix or not.
+    pub form: FormChoiceType,
 
     /// Module the tag belongs to.
     pub module: Option<&'types ModuleMeta>,
@@ -26,25 +29,21 @@ impl<'types> TagName<'types> {
     #[must_use]
     pub fn new(types: &'types MetaTypes, ident: &Ident, form: FormChoiceType) -> Self {
         let name = ident.name.to_string();
-        let module = form
-            .eq(&FormChoiceType::Qualified)
-            .then_some(())
-            .and(ident.ns.as_ref())
-            .and_then(|ns| types.modules.get(ns));
+        let module = ident.ns.as_ref().and_then(|ns| types.modules.get(ns));
 
-        Self { name, module }
+        Self { name, form, module }
     }
 
     /// Get the resolved name of the the XML tag
     ///
     /// The `with_prefix` parameter tells whether the namespace prefix should be added to tag or not.
     #[must_use]
-    pub fn get(&self, with_prefix: bool) -> String {
-        let Self { name, module } = self;
-        let prefix = with_prefix
+    pub fn get(&self, use_prefix: bool) -> String {
+        let Self { name, form, module } = self;
+        let prefix = (use_prefix && *form == FormChoiceType::Qualified)
             .then_some(*module)
             .flatten()
-            .and_then(|module| module.prefix.as_ref());
+            .and_then(|module| module.prefix());
 
         if let Some(prefix) = prefix {
             format!("{prefix}:{name}")
@@ -64,5 +63,15 @@ impl<'types> TagName<'types> {
             !matches!((module_ns, ns), (Some(module_ns), Some(ns)) if module_ns == ns);
 
         self.get(with_prefix)
+    }
+}
+
+impl Default for TagName<'_> {
+    fn default() -> Self {
+        Self {
+            name: String::new(),
+            form: FormChoiceType::Unqualified,
+            module: None,
+        }
     }
 }

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Foo xmlns="http://example.com">
-    <Once>222</Once>
-    <OnceSpecify>444</OnceSpecify>
-    <TwiceOrMore>111</TwiceOrMore>
-    <TwiceOrMore>333</TwiceOrMore>
-    <TwiceOrMore>555</TwiceOrMore>
+<Foo xmlns:example="http://example.com">
+    <example:Once>222</example:Once>
+    <example:OnceSpecify>444</example:OnceSpecify>
+    <example:TwiceOrMore>111</example:TwiceOrMore>
+    <example:TwiceOrMore>333</example:TwiceOrMore>
+    <example:TwiceOrMore>555</example:TwiceOrMore>
 </Foo>

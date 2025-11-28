@@ -1,6 +1,6 @@
 use std::any::{Any, TypeId};
 use std::borrow::Cow;
-use std::collections::HashMap;
+use std::collections::hash_map::{Entry, HashMap};
 use std::ops::Deref;
 use std::str::FromStr;
 
@@ -44,7 +44,7 @@ pub struct Context<'a, 'types> {
 }
 
 pub trait ValueKey: Any {
-    type Type: Any + Clone;
+    type Type: Any;
 }
 
 impl<'a, 'types> Context<'a, 'types> {
@@ -137,6 +137,7 @@ impl<'a, 'types> Context<'a, 'types> {
     pub fn get<K>(&self) -> K::Type
     where
         K: ValueKey,
+        K::Type: Clone,
     {
         self.get_ref::<K>().clone()
     }
@@ -166,6 +167,36 @@ impl<'a, 'types> Context<'a, 'types> {
             .get_mut(&TypeId::of::<K>())
             .unwrap()
             .downcast_mut::<K::Type>()
+            .unwrap()
+    }
+
+    /// Get a mutable reference to the value that was stored for the specified key `K`.
+    /// If no value is available a new one is created.
+    pub fn get_or_create<K>(&mut self) -> &mut K::Type
+    where
+        K: ValueKey,
+        K::Type: Default,
+    {
+        match self.values.entry(TypeId::of::<K>()) {
+            Entry::Vacant(e) => e.insert(Box::new(<K::Type as Default>::default())),
+            Entry::Occupied(e) => e.into_mut(),
+        }
+        .downcast_mut::<K::Type>()
+        .unwrap()
+    }
+
+    /// Extracts the value stored for the specified key `K`.
+    ///
+    /// Panics if the key was not set before.
+    pub fn extract<K>(&mut self) -> K::Type
+    where
+        K: ValueKey,
+    {
+        *self
+            .values
+            .remove(&TypeId::of::<K>())
+            .unwrap()
+            .downcast::<K::Type>()
             .unwrap()
     }
 
@@ -212,7 +243,7 @@ impl<'a, 'types> Context<'a, 'types> {
     }
 
     pub(crate) fn resolve_type_for_serialize_module(&self, target_type: &PathData) -> TokenStream {
-        self.add_quick_xml_serialize_usings(&target_type.usings);
+        self.add_quick_xml_serialize_usings(false, &target_type.usings);
 
         target_type.resolve_relative_to(&self.serialize_module_path)
     }
@@ -235,7 +266,9 @@ impl<'a, 'types> Context<'a, 'types> {
     }
 
     pub(crate) fn resolve_quick_xml_serialize_ident_path(&self, path: &str) -> IdentPath {
-        self.resolve_ident_path_impl(path, Self::add_quick_xml_serialize_usings)
+        self.resolve_ident_path_impl(path, |x, path| {
+            x.add_quick_xml_serialize_usings(false, path);
+        })
     }
 
     pub(crate) fn resolve_quick_xml_deserialize_ident_path(&self, path: &str) -> IdentPath {
@@ -244,7 +277,7 @@ impl<'a, 'types> Context<'a, 'types> {
         })
     }
 
-    pub(crate) fn add_quick_xml_serialize_usings<I>(&self, usings: I)
+    pub(crate) fn add_quick_xml_serialize_usings<I>(&self, anonymous: bool, usings: I)
     where
         I: IntoIterator,
         I::Item: ToString,
@@ -254,7 +287,7 @@ impl<'a, 'types> Context<'a, 'types> {
         let mut root = self.module.lock();
         Self::get_current_module(&self.module_path.0, &mut root)
             .module_mut("quick_xml_serialize")
-            .usings(false, usings);
+            .usings(anonymous, usings);
     }
 
     pub(crate) fn add_quick_xml_deserialize_usings<I>(&self, anonymous: bool, usings: I)

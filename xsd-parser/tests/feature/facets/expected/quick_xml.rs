@@ -2,15 +2,18 @@ use core::{ops::Deref, str::from_utf8};
 use regex::Regex;
 use std::{borrow::Cow, sync::LazyLock};
 use xsd_parser_types::{
-    misc::Namespace,
+    misc::{Namespace, NamespacePrefix},
     quick_xml::{
         fraction_digits, whitespace_collapse, DeserializeBytes, DeserializeHelper, Error,
-        SerializeBytes, ValidateError, WithDeserializer, WithSerializer,
+        SerializeBytes, SerializeHelper, ValidateError, WithDeserializer, WithSerializer,
     },
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
 pub const NS_TNS: Namespace = Namespace::new_const(b"http://example.com");
+pub const PREFIX_XS: NamespacePrefix = NamespacePrefix::new_const(b"xs");
+pub const PREFIX_XML: NamespacePrefix = NamespacePrefix::new_const(b"xml");
+pub const PREFIX_TNS: NamespacePrefix = NamespacePrefix::new_const(b"tns");
 pub type Root = RootType;
 #[derive(Debug)]
 pub struct RootType {
@@ -101,7 +104,7 @@ impl Deref for NegativeDecimalType {
     }
 }
 impl SerializeBytes for NegativeDecimalType {
-    fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+    fn serialize_bytes(&self, helper: &mut SerializeHelper) -> Result<Option<Cow<'_, str>>, Error> {
         let Self(inner) = self;
         Ok(Some(Cow::Owned(format!("{inner:.02}"))))
     }
@@ -157,7 +160,7 @@ impl Deref for PositiveDecimalType {
     }
 }
 impl SerializeBytes for PositiveDecimalType {
-    fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+    fn serialize_bytes(&self, helper: &mut SerializeHelper) -> Result<Option<Cow<'_, str>>, Error> {
         let Self(inner) = self;
         Ok(Some(Cow::Owned(format!("{inner:.02}"))))
     }
@@ -219,8 +222,8 @@ impl Deref for RestrictedStringType {
     }
 }
 impl SerializeBytes for RestrictedStringType {
-    fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
-        self.0.serialize_bytes()
+    fn serialize_bytes(&self, helper: &mut SerializeHelper) -> Result<Option<Cow<'_, str>>, Error> {
+        self.0.serialize_bytes(helper)
     }
 }
 impl DeserializeBytes for RestrictedStringType {
@@ -880,7 +883,8 @@ pub mod quick_xml_deserialize {
 }
 pub mod quick_xml_serialize {
     use xsd_parser_types::quick_xml::{
-        BytesEnd, BytesStart, Error, Event, IterSerializer, WithSerializer,
+        BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
+        WithSerializer,
     };
     #[derive(Debug)]
     pub struct RootTypeSerializer<'ser> {
@@ -898,7 +902,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> RootTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     RootTypeSerializerState::Init__ => {
@@ -907,13 +914,10 @@ pub mod quick_xml_serialize {
                             None,
                             false,
                         ));
-                        let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns:tns"[..], &super::NS_TNS[..]));
-                        }
+                        let bytes = BytesStart::new(self.name);
                         return Ok(Some(Event::Start(bytes)));
                     }
-                    RootTypeSerializerState::Content__(x) => match x.next().transpose()? {
+                    RootTypeSerializerState::Content__(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => *self.state = RootTypeSerializerState::End__,
                     },
@@ -927,10 +931,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for RootTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for RootTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -955,7 +958,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> RootTypeContentSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     RootTypeContentSerializerState::Init__ => match self.value {
@@ -976,19 +982,19 @@ pub mod quick_xml_serialize {
                         }
                     },
                     RootTypeContentSerializerState::NegativeDecimal(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = RootTypeContentSerializerState::Done__,
                         }
                     }
                     RootTypeContentSerializerState::PositiveDecimal(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = RootTypeContentSerializerState::Done__,
                         }
                     }
                     RootTypeContentSerializerState::RestrictedString(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = RootTypeContentSerializerState::Done__,
                         }
@@ -999,10 +1005,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for RootTypeContentSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for RootTypeContentSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
