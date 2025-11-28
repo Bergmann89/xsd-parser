@@ -52,6 +52,7 @@ mod sequence_with_choice_nested;
 mod simple_content;
 mod simple_content_with_extension;
 mod simple_type;
+mod simple_type_emptiable_complex_base;
 mod simple_type_max_length;
 mod static_list;
 mod tuple_with_integer;

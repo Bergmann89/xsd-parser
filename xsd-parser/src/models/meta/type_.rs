@@ -138,6 +138,22 @@ impl MetaType {
     pub fn form(&self) -> FormChoiceType {
         self.form.unwrap_or(FormChoiceType::Unqualified)
     }
+
+    /// Returns `true` if this type is emptiable, `false` otherwise.
+    ///
+    /// Emptiable means that the type may not have any element.
+    #[must_use]
+    pub fn is_emptiable(&self, types: &MetaTypes) -> bool {
+        self.variant.is_emptiable(types)
+    }
+
+    /// Returns `true` if this type is mixed, `false` otherwise.
+    ///
+    /// Mixed means, that the type also accepts text intermixed with it's elements.
+    #[must_use]
+    pub fn is_mixed(&self, types: &MetaTypes) -> bool {
+        self.variant.is_mixed(types)
+    }
 }
 
 impl Deref for MetaType {
@@ -196,6 +212,42 @@ impl TypeEq for MetaType {
             (ComplexType(x), ComplexType(y)) => x.type_eq(y, types),
             (SimpleType(x), SimpleType(y)) => x.type_eq(y, types),
             (_, _) => false,
+        }
+    }
+}
+
+/* MetaTypeVariant */
+
+impl MetaTypeVariant {
+    /// Returns `true` if this type is emptiable, `false` otherwise.
+    ///
+    /// Emptiable means that the type may not have any element.
+    #[must_use]
+    pub fn is_emptiable(&self, types: &MetaTypes) -> bool {
+        match self {
+            Self::Union(_) | Self::BuildIn(_) | Self::Enumeration(_) | Self::SimpleType(_) => true,
+            Self::Custom(_) | Self::Dynamic(_) => false,
+            Self::Reference(x) => x.is_emptiable(types),
+            Self::All(x) | Self::Choice(x) | Self::Sequence(x) => x.is_emptiable(types),
+            Self::ComplexType(x) => x.is_emptiable(types),
+        }
+    }
+
+    /// Returns `true` if this type is mixed, `false` otherwise.
+    ///
+    /// Mixed means, that the type also accepts text intermixed with it's elements.
+    #[must_use]
+    pub fn is_mixed(&self, types: &MetaTypes) -> bool {
+        match self {
+            Self::Union(_)
+            | Self::BuildIn(_)
+            | Self::Enumeration(_)
+            | Self::SimpleType(_)
+            | Self::Custom(_)
+            | Self::Dynamic(_) => false,
+            Self::Reference(x) => x.is_mixed(types),
+            Self::All(x) | Self::Choice(x) | Self::Sequence(x) => x.is_mixed,
+            Self::ComplexType(x) => x.is_mixed,
         }
     }
 }

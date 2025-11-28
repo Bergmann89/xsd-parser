@@ -72,6 +72,32 @@ impl ReferenceMeta {
 
         self
     }
+
+    /// Returns `true` if this type is emptiable, `false` otherwise.
+    ///
+    /// Emptiable means that the type may not have any element.
+    #[must_use]
+    pub fn is_emptiable(&self, types: &MetaTypes) -> bool {
+        if self.min_occurs == 0 {
+            return true;
+        }
+
+        types
+            .items
+            .get(&self.type_)
+            .is_none_or(|ty| ty.is_emptiable(types))
+    }
+
+    /// Returns `true` if this type is mixed, `false` otherwise.
+    ///
+    /// Mixed means, that the type also accepts text intermixed with it's elements.
+    #[must_use]
+    pub fn is_mixed(&self, types: &MetaTypes) -> bool {
+        types
+            .items
+            .get(&self.type_)
+            .is_some_and(|ty| ty.is_mixed(types))
+    }
 }
 
 impl TypeEq for ReferenceMeta {
