@@ -1230,7 +1230,7 @@ impl ComplexDataEnum<'_> {
             .iter()
             .map(|x| x.deserializer_enum_variant_fn_next_create(ctx));
 
-        let handler_mixed = self.base.is_mixed.then(|| {
+        let handler_mixed = self.base.is_mixed().then(|| {
             quote! {
                 (state, #event::Text(_) | #event::CData(_)) => {
                     *self.state__ = state;
@@ -1843,7 +1843,7 @@ impl ComplexDataStruct<'_> {
 
         ctx.add_quick_xml_deserialize_usings(true, ["::xsd_parser_types::quick_xml::Deserializer"]);
 
-        let mixed_handler = self.base.is_mixed.then(|| {
+        let mixed_handler = self.base.is_mixed().then(|| {
             quote! {
                 else if matches!(&event, #event::Text(_) | #event::CData(_)) {
                     Ok(#deserializer_output {
@@ -2080,7 +2080,7 @@ impl ComplexDataStruct<'_> {
         let deserializer_artifact =
             resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializerArtifact");
 
-        let any_retry = self.has_any.then(|| {
+        let any_retry = self.has_any().then(|| {
             quote! {
                 let mut is_any_retry = false;
                 let mut any_fallback = None;
@@ -2104,7 +2104,7 @@ impl ComplexDataStruct<'_> {
             break (#deserializer_event::Continue(event), #done_allow_any);
         };
 
-        if self.has_any {
+        if self.has_any() {
             handle_done = quote! {
                 if let Some(state) = any_fallback.take() {
                     is_any_retry = true;
@@ -2118,7 +2118,7 @@ impl ComplexDataStruct<'_> {
             };
         }
 
-        let handler_mixed = (!text_only && self.base.is_mixed).then(|| {
+        let handler_mixed = (!text_only && self.base.is_mixed()).then(|| {
             quote! {
                 (state, #event::Text(_) | #event::CData(_)) => {
                     *self.state__ = state;

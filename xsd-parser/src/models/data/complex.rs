@@ -1,5 +1,6 @@
 use std::ops::Deref;
 
+use bitflags::bitflags;
 use proc_macro2::{Ident as Ident2, Literal, TokenStream};
 
 use crate::models::{
@@ -61,6 +62,9 @@ pub enum ComplexData<'types> {
 #[derive(Debug)]
 #[allow(clippy::struct_excessive_bools)]
 pub struct ComplexBase<'types> {
+    /// Flags set for this type.
+    pub flags: ComplexFlags,
+
     /// The identifier of the rendered type.
     pub type_ident: Ident2,
 
@@ -69,21 +73,6 @@ pub struct ComplexBase<'types> {
 
     /// Name of the XML tag of the type (if the type represents an element in the XML).
     pub tag_name: Option<TagName<'types>>,
-
-    /// Whether the type has at least one `xs:any` element or not.
-    pub has_any: bool,
-
-    /// `true` if the type is a mixed type, `false` otherwise.
-    pub is_mixed: bool,
-
-    /// `true` if the type is a complex type, `false` otherwise.
-    pub is_complex: bool,
-
-    /// `true` if the type is dynamic, `false` otherwise.
-    pub is_dynamic: bool,
-
-    /// `true` if the type is the content type of another complex type.
-    pub is_content: bool,
 
     /// Identifier of the serializer for this type.
     pub serializer_ident: Ident2,
@@ -294,11 +283,62 @@ pub struct ComplexDataAttribute<'types> {
     pub extra_attributes: Vec<TokenStream>,
 }
 
+bitflags! {
+    /// Different flags that may be set for a [`ComplexBase`] type.
+    #[derive(Debug, Clone, Copy, Eq, PartialEq)]
+    pub struct ComplexFlags: u32 {
+        /// Whether the type has at least one `xs:any` element or not.
+        const HAS_ANY = 1 << 0;
+
+        /// `true` if the type is a mixed type, `false` otherwise.
+        const IS_MIXED = 1 << 1;
+
+        /// `true` if the type is a complex type, `false` otherwise.
+        const IS_COMPLEX = 1 << 2;
+
+        /// `true/// `true` if the type is dynamic, `false` otherwise.` if the type is dynamic, `false` otherwise.
+        const IS_DYNAMIC = 1 << 3;
+
+        /// `true` if the type is the content type of another complex type.
+        const IS_CONTENT = 1 << 4;
+    }
+}
+
 impl<'types> ComplexBase<'types> {
+    /// Whether the type has at least one `xs:any` element or not.
+    #[must_use]
+    pub fn has_any(&self) -> bool {
+        self.flags.contains(ComplexFlags::HAS_ANY)
+    }
+
+    /// `true` if the type is a mixed type, `false` otherwise.
+    #[must_use]
+    pub fn is_mixed(&self) -> bool {
+        self.flags.contains(ComplexFlags::IS_MIXED)
+    }
+
+    /// `true` if the type is a complex type, `false` otherwise.
+    #[must_use]
+    pub fn is_complex(&self) -> bool {
+        self.flags.contains(ComplexFlags::IS_COMPLEX)
+    }
+
+    /// `true` if the type is dynamic, `false` otherwise.
+    #[must_use]
+    pub fn is_dynamic(&self) -> bool {
+        self.flags.contains(ComplexFlags::IS_DYNAMIC)
+    }
+
+    /// `true` if the type is the content type of another complex type.
+    #[must_use]
+    pub fn is_content(&self) -> bool {
+        self.flags.contains(ComplexFlags::IS_CONTENT)
+    }
+
     /// Returns the name of the element tag, if type is represented by a XML element.
     #[must_use]
     pub fn element_tag(&self) -> Option<&TagName<'types>> {
-        (self.is_complex && !self.is_dynamic)
+        (self.is_complex() && !self.is_dynamic())
             .then_some(self.tag_name.as_ref())
             .flatten()
     }
@@ -306,7 +346,7 @@ impl<'types> ComplexBase<'types> {
     /// Returns `true` if this type represents an element, `false` otherwise.
     #[must_use]
     pub fn represents_element(&self) -> bool {
-        self.is_complex && self.tag_name.is_some() && !self.is_dynamic
+        self.is_complex() && self.tag_name.is_some() && !self.is_dynamic()
     }
 }
 
@@ -386,6 +426,15 @@ impl<'types> Deref for ComplexDataStruct<'types> {
     }
 }
 
+impl ComplexDataContent<'_> {
+    /// returns `true` if the content is a simple type (e.g. a enum, union,
+    /// string, integer, ...), `false` otherwise.
+    #[must_use]
+    pub fn is_simple(&self) -> bool {
+        self.simple_type.is_some()
+    }
+}
+
 impl ComplexDataElement<'_> {
     /// Returns the [`ElementMeta`] this element was created for.
     #[inline]
@@ -398,11 +447,21 @@ impl ComplexDataElement<'_> {
     }
 }
 
-impl ComplexDataContent<'_> {
-    /// returns `true` if the content is a simple type (e.g. a enum, union,
-    /// string, integer, ...), `false` otherwise.
+impl ComplexFlags {
+    /// Adds the `other` flags to the current one if `value` is true and return
+    /// the result.
     #[must_use]
-    pub fn is_simple(&self) -> bool {
-        self.simple_type.is_some()
+    pub fn with(mut self, other: ComplexFlags, value: bool) -> Self {
+        self.set(other, value);
+
+        self
+    }
+
+    /// Extracts the `other` flags from the current ones and return them.
+    #[must_use]
+    pub fn extract(&mut self, other: ComplexFlags) -> Self {
+        let ret = self.intersection(other);
+        self.remove(other);
+        ret
     }
 }
