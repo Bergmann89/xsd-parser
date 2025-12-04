@@ -53,7 +53,8 @@ pub struct ComplexMeta {
 impl GroupMeta {
     /// Returns `true` if this type is emptiable, `false` otherwise.
     ///
-    /// Emptiable means that the type may not have any element.
+    /// Emptiable means that the type may not have any element, but a simple
+    /// text value.
     #[must_use]
     pub fn is_emptiable(&self, types: &MetaTypes) -> bool {
         for element in &*self.elements {
@@ -63,11 +64,11 @@ impl GroupMeta {
 
             match &element.variant {
                 ElementMetaVariant::Text => (),
-                ElementMetaVariant::Any { .. } => (),
-                ElementMetaVariant::Type {
+                ElementMetaVariant::Any { .. }
+                | ElementMetaVariant::Type {
                     mode: ElementMode::Element,
                     ..
-                } => (),
+                } => return false,
                 ElementMetaVariant::Type { type_, .. } => {
                     if let Some(ty) = types.items.get(type_) {
                         if !ty.is_emptiable(types) {

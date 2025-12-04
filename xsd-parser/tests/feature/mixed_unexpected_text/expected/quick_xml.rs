@@ -316,9 +316,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Group(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
-                            <super::MixedGroupType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::MixedGroupType as WithDeserializer>::init(helper, event)?;
                         match self.handle_group(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
@@ -402,14 +400,14 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_TNS),
                     Some(b"Fuu")
                 ) {
-                    let output = <i32 as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <i32 as WithDeserializer>::init(helper, event)?;
                     return self.handle_fuu(helper, Default::default(), output, &mut *fallback);
                 }
                 if matches!(
                     helper.resolve_local_name(x.name(), &super::NS_TNS),
                     Some(b"Bar")
                 ) {
-                    let output = <i32 as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <i32 as WithDeserializer>::init(helper, event)?;
                     return self.handle_bar(helper, Default::default(), output, &mut *fallback);
                 }
             }
@@ -901,9 +899,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Group(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
-                            <super::NormalGroupType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::NormalGroupType as WithDeserializer>::init(helper, event)?;
                         match self.handle_group(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
@@ -983,14 +979,14 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_TNS),
                     Some(b"Fuu")
                 ) {
-                    let output = <i32 as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <i32 as WithDeserializer>::init(helper, event)?;
                     return self.handle_fuu(helper, Default::default(), output, &mut *fallback);
                 }
                 if matches!(
                     helper.resolve_local_name(x.name(), &super::NS_TNS),
                     Some(b"Bar")
                 ) {
-                    let output = <i32 as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <i32 as WithDeserializer>::init(helper, event)?;
                     return self.handle_bar(helper, Default::default(), output, &mut *fallback);
                 }
             }

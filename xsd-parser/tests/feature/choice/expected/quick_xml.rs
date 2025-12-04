@@ -174,9 +174,7 @@ pub mod quick_xml_deserialize {
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
                         let output =
-                            <super::FooTypeContent as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::FooTypeContent as WithDeserializer>::init(helper, event)?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -228,14 +226,14 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_TNS),
                     Some(b"Bar")
                 ) {
-                    let output = <String as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <String as WithDeserializer>::init(helper, event)?;
                     return self.handle_bar(helper, Default::default(), output, &mut *fallback);
                 }
                 if matches!(
                     helper.resolve_local_name(x.name(), &super::NS_TNS),
                     Some(b"Baz")
                 ) {
-                    let output = <i32 as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <i32 as WithDeserializer>::init(helper, event)?;
                     return self.handle_baz(helper, Default::default(), output, &mut *fallback);
                 }
             }

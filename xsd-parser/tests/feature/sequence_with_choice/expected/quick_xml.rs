@@ -307,9 +307,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Content2(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
-                            <super::FooContent2Type as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::FooContent2Type as WithDeserializer>::init(helper, event)?;
                         match self.handle_content_2(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
@@ -322,9 +320,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Content3(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
-                            <super::FooContent3Type as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::FooContent3Type as WithDeserializer>::init(helper, event)?;
                         match self.handle_content_3(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
@@ -394,7 +390,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_TNS),
                     Some(b"Element1")
                 ) {
-                    let output = <i32 as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <i32 as WithDeserializer>::init(helper, event)?;
                     return self.handle_element_1(
                         helper,
                         Default::default(),
@@ -406,7 +402,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_TNS),
                     Some(b"Element2")
                 ) {
-                    let output = <String as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <String as WithDeserializer>::init(helper, event)?;
                     return self.handle_element_2(
                         helper,
                         Default::default(),
@@ -716,7 +712,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_TNS),
                     Some(b"Element3")
                 ) {
-                    let output = <i32 as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <i32 as WithDeserializer>::init(helper, event)?;
                     return self.handle_element_3(
                         helper,
                         Default::default(),
@@ -728,7 +724,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_TNS),
                     Some(b"Element4")
                 ) {
-                    let output = <String as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <String as WithDeserializer>::init(helper, event)?;
                     return self.handle_element_4(
                         helper,
                         Default::default(),

@@ -576,7 +576,9 @@ pub mod er {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = < super :: CatalogTypeContent as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                            let output = <super::CatalogTypeContent as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -676,9 +678,7 @@ pub mod er {
                         helper.resolve_local_name(x.name(), &super::super::NS_ER),
                         Some(b"public")
                     ) {
-                        let output = <super::PublicType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output = <super::PublicType as WithDeserializer>::init(helper, event)?;
                         return self.handle_public(
                             helper,
                             Default::default(),
@@ -690,9 +690,7 @@ pub mod er {
                         helper.resolve_local_name(x.name(), &super::super::NS_ER),
                         Some(b"system")
                     ) {
-                        let output = <super::SystemType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output = <super::SystemType as WithDeserializer>::init(helper, event)?;
                         return self.handle_system(
                             helper,
                             Default::default(),
@@ -704,9 +702,7 @@ pub mod er {
                         helper.resolve_local_name(x.name(), &super::super::NS_ER),
                         Some(b"uri")
                     ) {
-                        let output = <super::UriType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output = <super::UriType as WithDeserializer>::init(helper, event)?;
                         return self.handle_uri(helper, Default::default(), output, &mut *fallback);
                     }
                     if matches!(
@@ -714,9 +710,7 @@ pub mod er {
                         Some(b"rewriteSystem")
                     ) {
                         let output =
-                            <super::RewriteSystemType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::RewriteSystemType as WithDeserializer>::init(helper, event)?;
                         return self.handle_rewrite_system(
                             helper,
                             Default::default(),
@@ -729,9 +723,7 @@ pub mod er {
                         Some(b"rewriteURI")
                     ) {
                         let output =
-                            <super::RewriteUriType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::RewriteUriType as WithDeserializer>::init(helper, event)?;
                         return self.handle_rewrite_uri(
                             helper,
                             Default::default(),
@@ -744,9 +736,7 @@ pub mod er {
                         Some(b"uriSuffix")
                     ) {
                         let output =
-                            <super::UriSuffixType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::UriSuffixType as WithDeserializer>::init(helper, event)?;
                         return self.handle_uri_suffix(
                             helper,
                             Default::default(),
@@ -759,9 +749,7 @@ pub mod er {
                         Some(b"systemSuffix")
                     ) {
                         let output =
-                            <super::SystemSuffixType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::SystemSuffixType as WithDeserializer>::init(helper, event)?;
                         return self.handle_system_suffix(
                             helper,
                             Default::default(),
@@ -774,9 +762,7 @@ pub mod er {
                         Some(b"delegatePublic")
                     ) {
                         let output =
-                            <super::DelegatePublicType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::DelegatePublicType as WithDeserializer>::init(helper, event)?;
                         return self.handle_delegate_public(
                             helper,
                             Default::default(),
@@ -789,9 +775,7 @@ pub mod er {
                         Some(b"delegateSystem")
                     ) {
                         let output =
-                            <super::DelegateSystemType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::DelegateSystemType as WithDeserializer>::init(helper, event)?;
                         return self.handle_delegate_system(
                             helper,
                             Default::default(),
@@ -804,9 +788,7 @@ pub mod er {
                         Some(b"delegateURI")
                     ) {
                         let output =
-                            <super::DelegateUriType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::DelegateUriType as WithDeserializer>::init(helper, event)?;
                         return self.handle_delegate_uri(
                             helper,
                             Default::default(),
@@ -819,9 +801,7 @@ pub mod er {
                         Some(b"nextCatalog")
                     ) {
                         let output =
-                            <super::NextCatalogType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::NextCatalogType as WithDeserializer>::init(helper, event)?;
                         return self.handle_next_catalog(
                             helper,
                             Default::default(),
@@ -833,9 +813,7 @@ pub mod er {
                         helper.resolve_local_name(x.name(), &super::super::NS_ER),
                         Some(b"group")
                     ) {
-                        let output = <super::GroupType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output = <super::GroupType as WithDeserializer>::init(helper, event)?;
                         return self.handle_group(
                             helper,
                             Default::default(),
@@ -2676,9 +2654,7 @@ pub mod er {
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
                             let output =
-                                <super::GroupTypeContent as WithDeserializer>::Deserializer::init(
-                                    helper, event,
-                                )?;
+                                <super::GroupTypeContent as WithDeserializer>::init(helper, event)?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -2771,9 +2747,7 @@ pub mod er {
                         helper.resolve_local_name(x.name(), &super::super::NS_ER),
                         Some(b"public")
                     ) {
-                        let output = <super::PublicType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output = <super::PublicType as WithDeserializer>::init(helper, event)?;
                         return self.handle_public(
                             helper,
                             Default::default(),
@@ -2785,9 +2759,7 @@ pub mod er {
                         helper.resolve_local_name(x.name(), &super::super::NS_ER),
                         Some(b"system")
                     ) {
-                        let output = <super::SystemType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output = <super::SystemType as WithDeserializer>::init(helper, event)?;
                         return self.handle_system(
                             helper,
                             Default::default(),
@@ -2799,9 +2771,7 @@ pub mod er {
                         helper.resolve_local_name(x.name(), &super::super::NS_ER),
                         Some(b"uri")
                     ) {
-                        let output = <super::UriType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output = <super::UriType as WithDeserializer>::init(helper, event)?;
                         return self.handle_uri(helper, Default::default(), output, &mut *fallback);
                     }
                     if matches!(
@@ -2809,9 +2779,7 @@ pub mod er {
                         Some(b"rewriteSystem")
                     ) {
                         let output =
-                            <super::RewriteSystemType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::RewriteSystemType as WithDeserializer>::init(helper, event)?;
                         return self.handle_rewrite_system(
                             helper,
                             Default::default(),
@@ -2824,9 +2792,7 @@ pub mod er {
                         Some(b"rewriteURI")
                     ) {
                         let output =
-                            <super::RewriteUriType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::RewriteUriType as WithDeserializer>::init(helper, event)?;
                         return self.handle_rewrite_uri(
                             helper,
                             Default::default(),
@@ -2839,9 +2805,7 @@ pub mod er {
                         Some(b"uriSuffix")
                     ) {
                         let output =
-                            <super::UriSuffixType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::UriSuffixType as WithDeserializer>::init(helper, event)?;
                         return self.handle_uri_suffix(
                             helper,
                             Default::default(),
@@ -2854,9 +2818,7 @@ pub mod er {
                         Some(b"systemSuffix")
                     ) {
                         let output =
-                            <super::SystemSuffixType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::SystemSuffixType as WithDeserializer>::init(helper, event)?;
                         return self.handle_system_suffix(
                             helper,
                             Default::default(),
@@ -2869,9 +2831,7 @@ pub mod er {
                         Some(b"delegatePublic")
                     ) {
                         let output =
-                            <super::DelegatePublicType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::DelegatePublicType as WithDeserializer>::init(helper, event)?;
                         return self.handle_delegate_public(
                             helper,
                             Default::default(),
@@ -2884,9 +2844,7 @@ pub mod er {
                         Some(b"delegateSystem")
                     ) {
                         let output =
-                            <super::DelegateSystemType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::DelegateSystemType as WithDeserializer>::init(helper, event)?;
                         return self.handle_delegate_system(
                             helper,
                             Default::default(),
@@ -2899,9 +2857,7 @@ pub mod er {
                         Some(b"delegateURI")
                     ) {
                         let output =
-                            <super::DelegateUriType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::DelegateUriType as WithDeserializer>::init(helper, event)?;
                         return self.handle_delegate_uri(
                             helper,
                             Default::default(),
@@ -2914,9 +2870,7 @@ pub mod er {
                         Some(b"nextCatalog")
                     ) {
                         let output =
-                            <super::NextCatalogType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::NextCatalogType as WithDeserializer>::init(helper, event)?;
                         return self.handle_next_catalog(
                             helper,
                             Default::default(),

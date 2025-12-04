@@ -357,7 +357,7 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::TextBefore(None), event) => {
-                        let output = <Text as WithDeserializer>::Deserializer::init(helper, event)?;
+                        let output = <Text as WithDeserializer>::init(helper, event)?;
                         match self.handle_text_before(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
@@ -388,9 +388,7 @@ pub mod quick_xml_deserialize {
                     (S::Any(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         if is_any_retry {
                             let output =
-                                <Mixed<AnyElement> as WithDeserializer>::Deserializer::init(
-                                    helper, event,
-                                )?;
+                                <Mixed<AnyElement> as WithDeserializer>::init(helper, event)?;
                             match self.handle_any(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;

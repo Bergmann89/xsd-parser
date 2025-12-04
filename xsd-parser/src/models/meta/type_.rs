@@ -221,7 +221,8 @@ impl TypeEq for MetaType {
 impl MetaTypeVariant {
     /// Returns `true` if this type is emptiable, `false` otherwise.
     ///
-    /// Emptiable means that the type may not have any element.
+    /// Emptiable means that the type may not have any element, but a simple
+    /// text value.
     #[must_use]
     pub fn is_emptiable(&self, types: &MetaTypes) -> bool {
         match self {

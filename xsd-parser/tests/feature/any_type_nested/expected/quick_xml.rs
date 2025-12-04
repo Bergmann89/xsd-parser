@@ -396,9 +396,7 @@ pub mod quick_xml_deserialize {
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
                         let output =
-                            <super::ContainerTypeContent as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::ContainerTypeContent as WithDeserializer>::init(helper, event)?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -654,9 +652,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Any(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         if is_any_retry {
-                            let output = <AnyElement as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            let output = <AnyElement as WithDeserializer>::init(helper, event)?;
                             match self.handle_any(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;

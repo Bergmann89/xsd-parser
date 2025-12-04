@@ -261,8 +261,7 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::Base(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output =
-                            <super::Base as WithDeserializer>::Deserializer::init(helper, event)?;
+                        let output = <super::Base as WithDeserializer>::init(helper, event)?;
                         match self.handle_base(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
@@ -324,9 +323,7 @@ pub mod quick_xml_deserialize {
                     artifact,
                     event,
                     allow_any,
-                } = <super::IntermediateDyn as WithDeserializer>::Deserializer::init(
-                    helper, event,
-                )?;
+                } = <super::IntermediateDyn as WithDeserializer>::init(helper, event)?;
                 return Ok(DeserializerOutput {
                     artifact: artifact.map(|x| super::Base(Box::new(x)), |x| Self::Intermediate(x)),
                     event,
@@ -341,7 +338,7 @@ pub mod quick_xml_deserialize {
                     artifact,
                     event,
                     allow_any,
-                } = <super::FinalDyn as WithDeserializer>::Deserializer::init(helper, event)?;
+                } = <super::FinalDyn as WithDeserializer>::init(helper, event)?;
                 return Ok(DeserializerOutput {
                     artifact: artifact.map(|x| super::Base(Box::new(x)), |x| Self::Final(x)),
                     event,
@@ -513,9 +510,7 @@ pub mod quick_xml_deserialize {
                     artifact,
                     event,
                     allow_any,
-                } = <super::IntermediateDyn as WithDeserializer>::Deserializer::init(
-                    helper, event,
-                )?;
+                } = <super::IntermediateDyn as WithDeserializer>::init(helper, event)?;
                 return Ok(DeserializerOutput {
                     artifact: artifact.map(
                         |x| super::Intermediate(Box::new(x)),
@@ -533,7 +528,7 @@ pub mod quick_xml_deserialize {
                     artifact,
                     event,
                     allow_any,
-                } = <super::FinalDyn as WithDeserializer>::Deserializer::init(helper, event)?;
+                } = <super::FinalDyn as WithDeserializer>::init(helper, event)?;
                 return Ok(DeserializerOutput {
                     artifact: artifact
                         .map(|x| super::Intermediate(Box::new(x)), |x| Self::Final(x)),

@@ -3861,7 +3861,9 @@ pub mod quick_xml_deserialize {
                     }
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
-                        let output = < super :: BmecatElementTypeContent as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output = <super::BmecatElementTypeContent as WithDeserializer>::init(
+                            helper, event,
+                        )?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -3932,9 +3934,7 @@ pub mod quick_xml_deserialize {
                     Some(b"HEADER")
                 ) {
                     let output =
-                        <super::HeaderElementType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        <super::HeaderElementType as WithDeserializer>::init(helper, event)?;
                     return self.handle_header(helper, Default::default(), output, &mut *fallback);
                 }
                 if matches!(
@@ -3942,9 +3942,7 @@ pub mod quick_xml_deserialize {
                     Some(b"T_NEW_CATALOG")
                 ) {
                     let output =
-                        <super::TNewCatalogElementType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        <super::TNewCatalogElementType as WithDeserializer>::init(helper, event)?;
                     return self.handle_t_new_catalog(
                         helper,
                         Default::default(),
@@ -3956,7 +3954,9 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
                     Some(b"T_UPDATE_PRODUCTS")
                 ) {
-                    let output = < super :: TUpdateProductsElementType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                    let output = <super::TUpdateProductsElementType as WithDeserializer>::init(
+                        helper, event,
+                    )?;
                     return self.handle_t_update_products(
                         helper,
                         Default::default(),
@@ -3969,9 +3969,7 @@ pub mod quick_xml_deserialize {
                     Some(b"T_UPDATE_PRICES")
                 ) {
                     let output =
-                        <super::TUpdatePricesElementType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        <super::TUpdatePricesElementType as WithDeserializer>::init(helper, event)?;
                     return self.handle_t_update_prices(
                         helper,
                         Default::default(),
@@ -20785,7 +20783,7 @@ pub mod quick_xml_deserialize {
                     }
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
-                        let output = < super :: UdxEdxfDiscountGroupElementTypeContent as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output = < super :: UdxEdxfDiscountGroupElementTypeContent as WithDeserializer > :: init (helper , event) ? ;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -20846,7 +20844,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
                     Some(b"UDX.EDXF.DISCOUNT_GROUP_MANUFACTURER")
                 ) {
-                    let output = <String as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <String as WithDeserializer>::init(helper, event)?;
                     return self.handle_udx_edxf_discount_group_manufacturer(
                         helper,
                         Default::default(),
@@ -20858,7 +20856,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
                     Some(b"UDX.EDXF.DISCOUNT_GROUP_SUPPLIER")
                 ) {
-                    let output = <String as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <String as WithDeserializer>::init(helper, event)?;
                     return self.handle_udx_edxf_discount_group_supplier(
                         helper,
                         Default::default(),
@@ -25091,7 +25089,10 @@ pub mod quick_xml_deserialize {
                     }
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
-                        let output = < super :: UdxEdxfSurchargeElementTypeContent as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output =
+                            <super::UdxEdxfSurchargeElementTypeContent as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -25173,7 +25174,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
                     Some(b"UDX.EDXF.SURCHARGE_TYPE")
                 ) {
-                    let output = <String as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <String as WithDeserializer>::init(helper, event)?;
                     return self.handle_udx_edxf_surcharge_type(
                         helper,
                         Default::default(),
@@ -25185,7 +25186,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
                     Some(b"UDX.EDXF.SURCHARGE_MANNER")
                 ) {
-                    let output = <String as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <String as WithDeserializer>::init(helper, event)?;
                     return self.handle_udx_edxf_surcharge_manner(
                         helper,
                         Default::default(),
@@ -25197,7 +25198,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
                     Some(b"UDX.EDXF.SURCHARGE_PERCENTAGE")
                 ) {
-                    let output = <f64 as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <f64 as WithDeserializer>::init(helper, event)?;
                     return self.handle_udx_edxf_surcharge_percentage(
                         helper,
                         Default::default(),
@@ -25209,7 +25210,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
                     Some(b"UDX.EDXF.SURCHARGE_PRICE_AMOUNT")
                 ) {
-                    let output = <f64 as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <f64 as WithDeserializer>::init(helper, event)?;
                     return self.handle_udx_edxf_surcharge_price_amount(
                         helper,
                         Default::default(),
@@ -25221,7 +25222,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
                     Some(b"UDX.EDXF.SURCHARGE_CALCULATION")
                 ) {
-                    let output = <f64 as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <f64 as WithDeserializer>::init(helper, event)?;
                     return self.handle_udx_edxf_surcharge_calculation(
                         helper,
                         Default::default(),
@@ -25233,7 +25234,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
                     Some(b"UDX.EDXF.MATERIAL_BASIS")
                 ) {
-                    let output = <f64 as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <f64 as WithDeserializer>::init(helper, event)?;
                     return self.handle_udx_edxf_material_basis(
                         helper,
                         Default::default(),
@@ -25245,7 +25246,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
                     Some(b"UDX.EDXF.MATERIAL_BASIS_WEIGHT")
                 ) {
-                    let output = <f64 as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <f64 as WithDeserializer>::init(helper, event)?;
                     return self.handle_udx_edxf_material_basis_weight(
                         helper,
                         Default::default(),
@@ -25257,7 +25258,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
                     Some(b"UDX.EDXF.MATERIAL_BASIS_SURCHARGE_THRESHOLD")
                 ) {
-                    let output = <f64 as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <f64 as WithDeserializer>::init(helper, event)?;
                     return self.handle_udx_edxf_material_basis_surcharge_threshold(
                         helper,
                         Default::default(),
@@ -25269,7 +25270,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
                     Some(b"UDX.EDXF.MATERIAL_BASIS_SURCHARGE_SHUTTER")
                 ) {
-                    let output = <i32 as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <i32 as WithDeserializer>::init(helper, event)?;
                     return self.handle_udx_edxf_material_basis_surcharge_shutter(
                         helper,
                         Default::default(),
@@ -25281,7 +25282,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
                     Some(b"UDX.EDXF.MATERIAL_BASIS_SURCHARGE_CREDIT")
                 ) {
-                    let output = <i32 as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <i32 as WithDeserializer>::init(helper, event)?;
                     return self.handle_udx_edxf_material_basis_surcharge_credit(
                         helper,
                         Default::default(),
@@ -25293,8 +25294,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
                     Some(b"UDX.EDXF.MATERIAL_BASIS_SURCHARGE_TABLE")
                 ) {
-                    let output =
-                        <super::DtMlstring as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::DtMlstring as WithDeserializer>::init(helper, event)?;
                     return self.handle_udx_edxf_material_basis_surcharge_table(
                         helper,
                         Default::default(),

@@ -307,9 +307,8 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::Outer1(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = <super::FooOuterType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output =
+                            <super::FooOuterType as WithDeserializer>::init(helper, event)?;
                         match self.handle_outer_1(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
@@ -321,9 +320,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Outer2(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = <super::FooOuterType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output =
+                            <super::FooOuterType as WithDeserializer>::init(helper, event)?;
                         match self.handle_outer_2(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
@@ -399,20 +397,18 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_TNS),
                     Some(b"Bar")
                 ) {
-                    let output = <String as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <String as WithDeserializer>::init(helper, event)?;
                     return self.handle_bar(helper, Default::default(), output, &mut *fallback);
                 }
                 if matches!(
                     helper.resolve_local_name(x.name(), &super::NS_TNS),
                     Some(b"Baz")
                 ) {
-                    let output = <i32 as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <i32 as WithDeserializer>::init(helper, event)?;
                     return self.handle_baz(helper, Default::default(), output, &mut *fallback);
                 }
                 event = {
-                    let output = <super::FooInnerType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::FooInnerType as WithDeserializer>::init(helper, event)?;
                     match self.handle_inner(helper, Default::default(), output, &mut *fallback)? {
                         ElementHandlerOutput::Continue { event, allow_any } => {
                             allow_any_element = allow_any_element || allow_any;
@@ -753,9 +749,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Inner(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = <super::FooInnerType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output =
+                            <super::FooInnerType as WithDeserializer>::init(helper, event)?;
                         match self.handle_inner(helper, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)

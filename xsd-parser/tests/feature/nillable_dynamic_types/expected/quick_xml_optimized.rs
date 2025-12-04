@@ -244,8 +244,7 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::Base(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output =
-                            <super::Base as WithDeserializer>::Deserializer::init(helper, event)?;
+                        let output = <super::Base as WithDeserializer>::init(helper, event)?;
                         match self.handle_base(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
@@ -311,9 +310,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_TNS),
                     Some(b"intermediate")
                 ) {
-                    let output = <super::IntermediateDyn as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::IntermediateDyn as WithDeserializer>::init(helper, event)?;
                     return self.handle_intermediate(
                         helper,
                         Default::default(),
@@ -325,8 +322,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_TNS),
                     Some(b"final")
                 ) {
-                    let output =
-                        <super::FinalDyn as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::FinalDyn as WithDeserializer>::init(helper, event)?;
                     return self.handle_final_(helper, Default::default(), output, &mut *fallback);
                 }
             }

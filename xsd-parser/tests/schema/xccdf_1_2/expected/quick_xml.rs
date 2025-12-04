@@ -4302,7 +4302,10 @@ pub mod cdf {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = < super :: BenchmarkElementTypeContent as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                            let output =
+                                <super::BenchmarkElementTypeContent as WithDeserializer>::init(
+                                    helper, event,
+                                )?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -4359,9 +4362,7 @@ pub mod cdf {
                         Some(b"status")
                     ) {
                         let output =
-                            <super::StatusElementType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::StatusElementType as WithDeserializer>::init(helper, event)?;
                         return self.handle_status(
                             helper,
                             Default::default(),
@@ -4373,9 +4374,8 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"dc-status")
                     ) {
-                        let output = <super::DcStatusType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output =
+                            <super::DcStatusType as WithDeserializer>::init(helper, event)?;
                         return self.handle_dc_status(
                             helper,
                             Default::default(),
@@ -4387,9 +4387,7 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"title")
                     ) {
-                        let output = <super::TextType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output = <super::TextType as WithDeserializer>::init(helper, event)?;
                         return self.handle_title(
                             helper,
                             Default::default(),
@@ -4402,9 +4400,7 @@ pub mod cdf {
                         Some(b"description")
                     ) {
                         let output =
-                            <super::HtmlTextWithSubType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::HtmlTextWithSubType as WithDeserializer>::init(helper, event)?;
                         return self.handle_description(
                             helper,
                             Default::default(),
@@ -4416,9 +4412,7 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"notice")
                     ) {
-                        let output = <super::NoticeType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output = <super::NoticeType as WithDeserializer>::init(helper, event)?;
                         return self.handle_notice(
                             helper,
                             Default::default(),
@@ -4431,9 +4425,7 @@ pub mod cdf {
                         Some(b"front-matter")
                     ) {
                         let output =
-                            <super::HtmlTextWithSubType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::HtmlTextWithSubType as WithDeserializer>::init(helper, event)?;
                         return self.handle_front_matter(
                             helper,
                             Default::default(),
@@ -4446,9 +4438,7 @@ pub mod cdf {
                         Some(b"rear-matter")
                     ) {
                         let output =
-                            <super::HtmlTextWithSubType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::HtmlTextWithSubType as WithDeserializer>::init(helper, event)?;
                         return self.handle_rear_matter(
                             helper,
                             Default::default(),
@@ -4461,9 +4451,7 @@ pub mod cdf {
                         Some(b"reference")
                     ) {
                         let output =
-                            <super::ReferenceType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::ReferenceType as WithDeserializer>::init(helper, event)?;
                         return self.handle_reference(
                             helper,
                             Default::default(),
@@ -4476,9 +4464,7 @@ pub mod cdf {
                         Some(b"plain-text")
                     ) {
                         let output =
-                            <super::PlainTextType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::PlainTextType as WithDeserializer>::init(helper, event)?;
                         return self.handle_plain_text(
                             helper,
                             Default::default(),
@@ -4490,7 +4476,7 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CPE),
                         Some(b"platform-specification")
                     ) {
-                        let output = < super :: super :: cpe :: PlatformSpecificationType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output = < super :: super :: cpe :: PlatformSpecificationType as WithDeserializer > :: init (helper , event) ? ;
                         return self.handle_platform_specification(
                             helper,
                             Default::default(),
@@ -4503,9 +4489,7 @@ pub mod cdf {
                         Some(b"platform")
                     ) {
                         let output =
-                            <super::Cpe2IdrefType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::Cpe2IdrefType as WithDeserializer>::init(helper, event)?;
                         return self.handle_platform(
                             helper,
                             Default::default(),
@@ -4517,9 +4501,7 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"version")
                     ) {
-                        let output = <super::VersionType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output = <super::VersionType as WithDeserializer>::init(helper, event)?;
                         return self.handle_version(
                             helper,
                             Default::default(),
@@ -4531,9 +4513,8 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"metadata")
                     ) {
-                        let output = <super::MetadataType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output =
+                            <super::MetadataType as WithDeserializer>::init(helper, event)?;
                         return self.handle_metadata(
                             helper,
                             Default::default(),
@@ -4546,9 +4527,7 @@ pub mod cdf {
                         Some(b"model")
                     ) {
                         let output =
-                            <super::ModelElementType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::ModelElementType as WithDeserializer>::init(helper, event)?;
                         return self.handle_model(
                             helper,
                             Default::default(),
@@ -4560,9 +4539,7 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"Profile")
                     ) {
-                        let output = <super::ProfileType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output = <super::ProfileType as WithDeserializer>::init(helper, event)?;
                         return self.handle_profile(
                             helper,
                             Default::default(),
@@ -4574,9 +4551,7 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"Value")
                     ) {
-                        let output = <super::ValueType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output = <super::ValueType as WithDeserializer>::init(helper, event)?;
                         return self.handle_value(
                             helper,
                             Default::default(),
@@ -4588,9 +4563,7 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"Group")
                     ) {
-                        let output = <super::GroupType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output = <super::GroupType as WithDeserializer>::init(helper, event)?;
                         return self.handle_group(
                             helper,
                             Default::default(),
@@ -4602,9 +4575,7 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"Rule")
                     ) {
-                        let output = <super::RuleType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output = <super::RuleType as WithDeserializer>::init(helper, event)?;
                         return self.handle_rule(
                             helper,
                             Default::default(),
@@ -4617,9 +4588,7 @@ pub mod cdf {
                         Some(b"TestResult")
                     ) {
                         let output =
-                            <super::TestResultType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::TestResultType as WithDeserializer>::init(helper, event)?;
                         return self.handle_test_result(
                             helper,
                             Default::default(),
@@ -4632,9 +4601,7 @@ pub mod cdf {
                         Some(b"signature")
                     ) {
                         let output =
-                            <super::SignatureType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::SignatureType as WithDeserializer>::init(helper, event)?;
                         return self.handle_signature(
                             helper,
                             Default::default(),
@@ -7195,9 +7162,7 @@ pub mod cdf {
                         }
                         (S::Any(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             if is_any_retry {
-                                let output = <AnyElement as WithDeserializer>::Deserializer::init(
-                                    helper, event,
-                                )?;
+                                let output = <AnyElement as WithDeserializer>::init(helper, event)?;
                                 match self.handle_any(helper, output, &mut fallback)? {
                                     ElementHandlerOutput::Continue { event, allow_any } => {
                                         allow_any_element = allow_any_element || allow_any;
@@ -7531,7 +7496,10 @@ pub mod cdf {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = < super :: HtmlTextWithSubTypeContent as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                            let output =
+                                <super::HtmlTextWithSubTypeContent as WithDeserializer>::init(
+                                    helper, event,
+                                )?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -7599,14 +7567,11 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"sub")
                     ) {
-                        let output = <super::SubType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output = <super::SubType as WithDeserializer>::init(helper, event)?;
                         return self.handle_sub(helper, Default::default(), output, &mut *fallback);
                     }
                     event = {
-                        let output =
-                            <AnyElement as WithDeserializer>::Deserializer::init(helper, event)?;
+                        let output = <AnyElement as WithDeserializer>::init(helper, event)?;
                         match self.handle_any(helper, Default::default(), output, &mut *fallback)? {
                             ElementHandlerOutput::Continue { event, .. } => event,
                             output => {
@@ -7616,7 +7581,7 @@ pub mod cdf {
                     };
                 }
                 event = {
-                    let output = <Text as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <Text as WithDeserializer>::init(helper, event)?;
                     match self.handle_text(helper, Default::default(), output, &mut *fallback)? {
                         ElementHandlerOutput::Continue { event, .. } => event,
                         output => {
@@ -7982,8 +7947,7 @@ pub mod cdf {
                             }
                         }
                         (S::Text(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            let output =
-                                <Text as WithDeserializer>::Deserializer::init(helper, event)?;
+                            let output = <Text as WithDeserializer>::init(helper, event)?;
                             match self.handle_text(helper, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -8253,8 +8217,7 @@ pub mod cdf {
                             event
                         }
                         (S::TextBefore(None), event) => {
-                            let output =
-                                <Text as WithDeserializer>::Deserializer::init(helper, event)?;
+                            let output = <Text as WithDeserializer>::init(helper, event)?;
                             match self.handle_text_before(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
@@ -8268,9 +8231,7 @@ pub mod cdf {
                         (S::Any(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             if is_any_retry {
                                 let output =
-                                    <Mixed<AnyElement> as WithDeserializer>::Deserializer::init(
-                                        helper, event,
-                                    )?;
+                                    <Mixed<AnyElement> as WithDeserializer>::init(helper, event)?;
                                 match self.handle_any(helper, output, &mut fallback)? {
                                     ElementHandlerOutput::Continue { event, allow_any } => {
                                         allow_any_element = allow_any_element || allow_any;
@@ -8556,8 +8517,7 @@ pub mod cdf {
                             event
                         }
                         (S::TextBefore(None), event) => {
-                            let output =
-                                <Text as WithDeserializer>::Deserializer::init(helper, event)?;
+                            let output = <Text as WithDeserializer>::init(helper, event)?;
                             match self.handle_text_before(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
@@ -8571,9 +8531,7 @@ pub mod cdf {
                         (S::Any(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             if is_any_retry {
                                 let output =
-                                    <Mixed<AnyElement> as WithDeserializer>::Deserializer::init(
-                                        helper, event,
-                                    )?;
+                                    <Mixed<AnyElement> as WithDeserializer>::init(helper, event)?;
                                 match self.handle_any(helper, output, &mut fallback)? {
                                     ElementHandlerOutput::Continue { event, allow_any } => {
                                         allow_any_element = allow_any_element || allow_any;
@@ -9134,9 +9092,7 @@ pub mod cdf {
                         }
                         (S::Any(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             if is_any_retry {
-                                let output = <AnyElement as WithDeserializer>::Deserializer::init(
-                                    helper, event,
-                                )?;
+                                let output = <AnyElement as WithDeserializer>::init(helper, event)?;
                                 match self.handle_any(helper, output, &mut fallback)? {
                                     ElementHandlerOutput::Continue { event, allow_any } => {
                                         allow_any_element = allow_any_element || allow_any;
@@ -9569,7 +9525,9 @@ pub mod cdf {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = < super :: ProfileTypeContent as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                            let output = <super::ProfileTypeContent as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -9683,9 +9641,7 @@ pub mod cdf {
                         Some(b"status")
                     ) {
                         let output =
-                            <super::StatusElementType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::StatusElementType as WithDeserializer>::init(helper, event)?;
                         return self.handle_status(
                             helper,
                             Default::default(),
@@ -9697,9 +9653,8 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"dc-status")
                     ) {
-                        let output = <super::DcStatusType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output =
+                            <super::DcStatusType as WithDeserializer>::init(helper, event)?;
                         return self.handle_dc_status(
                             helper,
                             Default::default(),
@@ -9711,9 +9666,7 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"version")
                     ) {
-                        let output = <super::VersionType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output = <super::VersionType as WithDeserializer>::init(helper, event)?;
                         return self.handle_version(
                             helper,
                             Default::default(),
@@ -9726,9 +9679,7 @@ pub mod cdf {
                         Some(b"title")
                     ) {
                         let output =
-                            <super::TextWithSubType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::TextWithSubType as WithDeserializer>::init(helper, event)?;
                         return self.handle_title(
                             helper,
                             Default::default(),
@@ -9741,9 +9692,7 @@ pub mod cdf {
                         Some(b"description")
                     ) {
                         let output =
-                            <super::HtmlTextWithSubType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::HtmlTextWithSubType as WithDeserializer>::init(helper, event)?;
                         return self.handle_description(
                             helper,
                             Default::default(),
@@ -9756,9 +9705,7 @@ pub mod cdf {
                         Some(b"reference")
                     ) {
                         let output =
-                            <super::ReferenceType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::ReferenceType as WithDeserializer>::init(helper, event)?;
                         return self.handle_reference(
                             helper,
                             Default::default(),
@@ -9770,7 +9717,9 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"platform")
                     ) {
-                        let output = < super :: OverrideableCpe2IdrefType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output = <super::OverrideableCpe2IdrefType as WithDeserializer>::init(
+                            helper, event,
+                        )?;
                         return self.handle_platform(
                             helper,
                             Default::default(),
@@ -9783,9 +9732,7 @@ pub mod cdf {
                         Some(b"select")
                     ) {
                         let output =
-                            <super::ProfileSelectType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::ProfileSelectType as WithDeserializer>::init(helper, event)?;
                         return self.handle_select(
                             helper,
                             Default::default(),
@@ -9797,7 +9744,9 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"set-complex-value")
                     ) {
-                        let output = < super :: ProfileSetComplexValueType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output = <super::ProfileSetComplexValueType as WithDeserializer>::init(
+                            helper, event,
+                        )?;
                         return self.handle_set_complex_value(
                             helper,
                             Default::default(),
@@ -9810,9 +9759,7 @@ pub mod cdf {
                         Some(b"set-value")
                     ) {
                         let output =
-                            <super::ProfileSetValueType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::ProfileSetValueType as WithDeserializer>::init(helper, event)?;
                         return self.handle_set_value(
                             helper,
                             Default::default(),
@@ -9824,7 +9771,9 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"refine-value")
                     ) {
-                        let output = < super :: ProfileRefineValueType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output = <super::ProfileRefineValueType as WithDeserializer>::init(
+                            helper, event,
+                        )?;
                         return self.handle_refine_value(
                             helper,
                             Default::default(),
@@ -9836,10 +9785,9 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"refine-rule")
                     ) {
-                        let output =
-                            <super::ProfileRefineRuleType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                        let output = <super::ProfileRefineRuleType as WithDeserializer>::init(
+                            helper, event,
+                        )?;
                         return self.handle_refine_rule(
                             helper,
                             Default::default(),
@@ -9851,9 +9799,8 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"metadata")
                     ) {
-                        let output = <super::MetadataType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output =
+                            <super::MetadataType as WithDeserializer>::init(helper, event)?;
                         return self.handle_metadata(
                             helper,
                             Default::default(),
@@ -9866,9 +9813,7 @@ pub mod cdf {
                         Some(b"signature")
                     ) {
                         let output =
-                            <super::SignatureType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::SignatureType as WithDeserializer>::init(helper, event)?;
                         return self.handle_signature(
                             helper,
                             Default::default(),
@@ -11673,9 +11618,7 @@ pub mod cdf {
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
                             let output =
-                                <super::ValueTypeContent as WithDeserializer>::Deserializer::init(
-                                    helper, event,
-                                )?;
+                                <super::ValueTypeContent as WithDeserializer>::init(helper, event)?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -11812,9 +11755,7 @@ pub mod cdf {
                         Some(b"status")
                     ) {
                         let output =
-                            <super::StatusElementType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::StatusElementType as WithDeserializer>::init(helper, event)?;
                         return self.handle_status(
                             helper,
                             Default::default(),
@@ -11826,9 +11767,8 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"dc-status")
                     ) {
-                        let output = <super::DcStatusType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output =
+                            <super::DcStatusType as WithDeserializer>::init(helper, event)?;
                         return self.handle_dc_status(
                             helper,
                             Default::default(),
@@ -11840,9 +11780,7 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"version")
                     ) {
-                        let output = <super::VersionType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output = <super::VersionType as WithDeserializer>::init(helper, event)?;
                         return self.handle_version(
                             helper,
                             Default::default(),
@@ -11855,9 +11793,7 @@ pub mod cdf {
                         Some(b"title")
                     ) {
                         let output =
-                            <super::TextWithSubType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::TextWithSubType as WithDeserializer>::init(helper, event)?;
                         return self.handle_title(
                             helper,
                             Default::default(),
@@ -11870,9 +11806,7 @@ pub mod cdf {
                         Some(b"description")
                     ) {
                         let output =
-                            <super::HtmlTextWithSubType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::HtmlTextWithSubType as WithDeserializer>::init(helper, event)?;
                         return self.handle_description(
                             helper,
                             Default::default(),
@@ -11884,9 +11818,7 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"warning")
                     ) {
-                        let output = <super::WarningType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output = <super::WarningType as WithDeserializer>::init(helper, event)?;
                         return self.handle_warning(
                             helper,
                             Default::default(),
@@ -11898,9 +11830,7 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"question")
                     ) {
-                        let output = <super::TextType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output = <super::TextType as WithDeserializer>::init(helper, event)?;
                         return self.handle_question(
                             helper,
                             Default::default(),
@@ -11913,9 +11843,7 @@ pub mod cdf {
                         Some(b"reference")
                     ) {
                         let output =
-                            <super::ReferenceType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::ReferenceType as WithDeserializer>::init(helper, event)?;
                         return self.handle_reference(
                             helper,
                             Default::default(),
@@ -11927,9 +11855,8 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"metadata")
                     ) {
-                        let output = <super::MetadataType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output =
+                            <super::MetadataType as WithDeserializer>::init(helper, event)?;
                         return self.handle_metadata(
                             helper,
                             Default::default(),
@@ -11942,9 +11869,7 @@ pub mod cdf {
                         Some(b"value")
                     ) {
                         let output =
-                            <super::SelStringType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::SelStringType as WithDeserializer>::init(helper, event)?;
                         return self.handle_value(
                             helper,
                             Default::default(),
@@ -11957,9 +11882,7 @@ pub mod cdf {
                         Some(b"complex-value")
                     ) {
                         let output =
-                            <super::SelComplexValueType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::SelComplexValueType as WithDeserializer>::init(helper, event)?;
                         return self.handle_complex_value(
                             helper,
                             Default::default(),
@@ -11972,9 +11895,7 @@ pub mod cdf {
                         Some(b"default")
                     ) {
                         let output =
-                            <super::SelStringType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::SelStringType as WithDeserializer>::init(helper, event)?;
                         return self.handle_default(
                             helper,
                             Default::default(),
@@ -11987,9 +11908,7 @@ pub mod cdf {
                         Some(b"complex-default")
                     ) {
                         let output =
-                            <super::SelComplexValueType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::SelComplexValueType as WithDeserializer>::init(helper, event)?;
                         return self.handle_complex_default(
                             helper,
                             Default::default(),
@@ -12002,9 +11921,7 @@ pub mod cdf {
                         Some(b"match")
                     ) {
                         let output =
-                            <super::SelStringType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::SelStringType as WithDeserializer>::init(helper, event)?;
                         return self.handle_match_(
                             helper,
                             Default::default(),
@@ -12016,9 +11933,7 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"lower-bound")
                     ) {
-                        let output = <super::SelNumType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output = <super::SelNumType as WithDeserializer>::init(helper, event)?;
                         return self.handle_lower_bound(
                             helper,
                             Default::default(),
@@ -12030,9 +11945,7 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"upper-bound")
                     ) {
-                        let output = <super::SelNumType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output = <super::SelNumType as WithDeserializer>::init(helper, event)?;
                         return self.handle_upper_bound(
                             helper,
                             Default::default(),
@@ -12045,9 +11958,7 @@ pub mod cdf {
                         Some(b"choices")
                     ) {
                         let output =
-                            <super::SelChoicesType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::SelChoicesType as WithDeserializer>::init(helper, event)?;
                         return self.handle_choices(
                             helper,
                             Default::default(),
@@ -12059,9 +11970,7 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"source")
                     ) {
-                        let output = <super::UriRefType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output = <super::UriRefType as WithDeserializer>::init(helper, event)?;
                         return self.handle_source(
                             helper,
                             Default::default(),
@@ -12074,9 +11983,7 @@ pub mod cdf {
                         Some(b"signature")
                     ) {
                         let output =
-                            <super::SignatureType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::SignatureType as WithDeserializer>::init(helper, event)?;
                         return self.handle_signature(
                             helper,
                             Default::default(),
@@ -14325,9 +14232,7 @@ pub mod cdf {
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
                             let output =
-                                <super::GroupTypeContent as WithDeserializer>::Deserializer::init(
-                                    helper, event,
-                                )?;
+                                <super::GroupTypeContent as WithDeserializer>::init(helper, event)?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -14454,9 +14359,7 @@ pub mod cdf {
                         Some(b"status")
                     ) {
                         let output =
-                            <super::StatusElementType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::StatusElementType as WithDeserializer>::init(helper, event)?;
                         return self.handle_status(
                             helper,
                             Default::default(),
@@ -14468,9 +14371,8 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"dc-status")
                     ) {
-                        let output = <super::DcStatusType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output =
+                            <super::DcStatusType as WithDeserializer>::init(helper, event)?;
                         return self.handle_dc_status(
                             helper,
                             Default::default(),
@@ -14482,9 +14384,7 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"version")
                     ) {
-                        let output = <super::VersionType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output = <super::VersionType as WithDeserializer>::init(helper, event)?;
                         return self.handle_version(
                             helper,
                             Default::default(),
@@ -14497,9 +14397,7 @@ pub mod cdf {
                         Some(b"title")
                     ) {
                         let output =
-                            <super::TextWithSubType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::TextWithSubType as WithDeserializer>::init(helper, event)?;
                         return self.handle_title(
                             helper,
                             Default::default(),
@@ -14512,9 +14410,7 @@ pub mod cdf {
                         Some(b"description")
                     ) {
                         let output =
-                            <super::HtmlTextWithSubType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::HtmlTextWithSubType as WithDeserializer>::init(helper, event)?;
                         return self.handle_description(
                             helper,
                             Default::default(),
@@ -14526,9 +14422,7 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"warning")
                     ) {
-                        let output = <super::WarningType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output = <super::WarningType as WithDeserializer>::init(helper, event)?;
                         return self.handle_warning(
                             helper,
                             Default::default(),
@@ -14540,9 +14434,7 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"question")
                     ) {
-                        let output = <super::TextType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output = <super::TextType as WithDeserializer>::init(helper, event)?;
                         return self.handle_question(
                             helper,
                             Default::default(),
@@ -14555,9 +14447,7 @@ pub mod cdf {
                         Some(b"reference")
                     ) {
                         let output =
-                            <super::ReferenceType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::ReferenceType as WithDeserializer>::init(helper, event)?;
                         return self.handle_reference(
                             helper,
                             Default::default(),
@@ -14569,9 +14459,8 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"metadata")
                     ) {
-                        let output = <super::MetadataType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output =
+                            <super::MetadataType as WithDeserializer>::init(helper, event)?;
                         return self.handle_metadata(
                             helper,
                             Default::default(),
@@ -14584,9 +14473,7 @@ pub mod cdf {
                         Some(b"rationale")
                     ) {
                         let output =
-                            <super::HtmlTextWithSubType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::HtmlTextWithSubType as WithDeserializer>::init(helper, event)?;
                         return self.handle_rationale(
                             helper,
                             Default::default(),
@@ -14598,7 +14485,9 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"platform")
                     ) {
-                        let output = < super :: OverrideableCpe2IdrefType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output = <super::OverrideableCpe2IdrefType as WithDeserializer>::init(
+                            helper, event,
+                        )?;
                         return self.handle_platform(
                             helper,
                             Default::default(),
@@ -14611,9 +14500,7 @@ pub mod cdf {
                         Some(b"requires")
                     ) {
                         let output =
-                            <super::IdrefListType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::IdrefListType as WithDeserializer>::init(helper, event)?;
                         return self.handle_requires(
                             helper,
                             Default::default(),
@@ -14625,9 +14512,7 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"conflicts")
                     ) {
-                        let output = <super::IdrefType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output = <super::IdrefType as WithDeserializer>::init(helper, event)?;
                         return self.handle_conflicts(
                             helper,
                             Default::default(),
@@ -14639,9 +14524,7 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"Value")
                     ) {
-                        let output = <super::ValueType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output = <super::ValueType as WithDeserializer>::init(helper, event)?;
                         return self.handle_value(
                             helper,
                             Default::default(),
@@ -14653,9 +14536,7 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"Group")
                     ) {
-                        let output = <super::GroupType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output = <super::GroupType as WithDeserializer>::init(helper, event)?;
                         return self.handle_group(
                             helper,
                             Default::default(),
@@ -14667,9 +14548,7 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"Rule")
                     ) {
-                        let output = <super::RuleType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output = <super::RuleType as WithDeserializer>::init(helper, event)?;
                         return self.handle_rule(
                             helper,
                             Default::default(),
@@ -14682,9 +14561,7 @@ pub mod cdf {
                         Some(b"signature")
                     ) {
                         let output =
-                            <super::SignatureType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::SignatureType as WithDeserializer>::init(helper, event)?;
                         return self.handle_signature(
                             helper,
                             Default::default(),
@@ -16727,9 +16604,7 @@ pub mod cdf {
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
                             let output =
-                                <super::RuleTypeContent as WithDeserializer>::Deserializer::init(
-                                    helper, event,
-                                )?;
+                                <super::RuleTypeContent as WithDeserializer>::init(helper, event)?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -16875,9 +16750,7 @@ pub mod cdf {
                         Some(b"status")
                     ) {
                         let output =
-                            <super::StatusElementType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::StatusElementType as WithDeserializer>::init(helper, event)?;
                         return self.handle_status(
                             helper,
                             Default::default(),
@@ -16889,9 +16762,8 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"dc-status")
                     ) {
-                        let output = <super::DcStatusType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output =
+                            <super::DcStatusType as WithDeserializer>::init(helper, event)?;
                         return self.handle_dc_status(
                             helper,
                             Default::default(),
@@ -16903,9 +16775,7 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"version")
                     ) {
-                        let output = <super::VersionType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output = <super::VersionType as WithDeserializer>::init(helper, event)?;
                         return self.handle_version(
                             helper,
                             Default::default(),
@@ -16918,9 +16788,7 @@ pub mod cdf {
                         Some(b"title")
                     ) {
                         let output =
-                            <super::TextWithSubType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::TextWithSubType as WithDeserializer>::init(helper, event)?;
                         return self.handle_title(
                             helper,
                             Default::default(),
@@ -16933,9 +16801,7 @@ pub mod cdf {
                         Some(b"description")
                     ) {
                         let output =
-                            <super::HtmlTextWithSubType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::HtmlTextWithSubType as WithDeserializer>::init(helper, event)?;
                         return self.handle_description(
                             helper,
                             Default::default(),
@@ -16947,9 +16813,7 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"warning")
                     ) {
-                        let output = <super::WarningType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output = <super::WarningType as WithDeserializer>::init(helper, event)?;
                         return self.handle_warning(
                             helper,
                             Default::default(),
@@ -16961,9 +16825,7 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"question")
                     ) {
-                        let output = <super::TextType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output = <super::TextType as WithDeserializer>::init(helper, event)?;
                         return self.handle_question(
                             helper,
                             Default::default(),
@@ -16976,9 +16838,7 @@ pub mod cdf {
                         Some(b"reference")
                     ) {
                         let output =
-                            <super::ReferenceType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::ReferenceType as WithDeserializer>::init(helper, event)?;
                         return self.handle_reference(
                             helper,
                             Default::default(),
@@ -16990,9 +16850,8 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"metadata")
                     ) {
-                        let output = <super::MetadataType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output =
+                            <super::MetadataType as WithDeserializer>::init(helper, event)?;
                         return self.handle_metadata(
                             helper,
                             Default::default(),
@@ -17005,9 +16864,7 @@ pub mod cdf {
                         Some(b"rationale")
                     ) {
                         let output =
-                            <super::HtmlTextWithSubType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::HtmlTextWithSubType as WithDeserializer>::init(helper, event)?;
                         return self.handle_rationale(
                             helper,
                             Default::default(),
@@ -17019,7 +16876,9 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"platform")
                     ) {
-                        let output = < super :: OverrideableCpe2IdrefType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output = <super::OverrideableCpe2IdrefType as WithDeserializer>::init(
+                            helper, event,
+                        )?;
                         return self.handle_platform(
                             helper,
                             Default::default(),
@@ -17032,9 +16891,7 @@ pub mod cdf {
                         Some(b"requires")
                     ) {
                         let output =
-                            <super::IdrefListType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::IdrefListType as WithDeserializer>::init(helper, event)?;
                         return self.handle_requires(
                             helper,
                             Default::default(),
@@ -17046,9 +16903,7 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"conflicts")
                     ) {
-                        let output = <super::IdrefType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output = <super::IdrefType as WithDeserializer>::init(helper, event)?;
                         return self.handle_conflicts(
                             helper,
                             Default::default(),
@@ -17060,9 +16915,7 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"ident")
                     ) {
-                        let output = <super::IdentType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output = <super::IdentType as WithDeserializer>::init(helper, event)?;
                         return self.handle_ident(
                             helper,
                             Default::default(),
@@ -17074,8 +16927,7 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"impact-metric")
                     ) {
-                        let output =
-                            <String as WithDeserializer>::Deserializer::init(helper, event)?;
+                        let output = <String as WithDeserializer>::init(helper, event)?;
                         return self.handle_impact_metric(
                             helper,
                             Default::default(),
@@ -17088,9 +16940,7 @@ pub mod cdf {
                         Some(b"profile-note")
                     ) {
                         let output =
-                            <super::ProfileNoteType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::ProfileNoteType as WithDeserializer>::init(helper, event)?;
                         return self.handle_profile_note(
                             helper,
                             Default::default(),
@@ -17102,9 +16952,7 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"fixtext")
                     ) {
-                        let output = <super::FixTextType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output = <super::FixTextType as WithDeserializer>::init(helper, event)?;
                         return self.handle_fixtext(
                             helper,
                             Default::default(),
@@ -17116,18 +16964,14 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"fix")
                     ) {
-                        let output = <super::FixType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output = <super::FixType as WithDeserializer>::init(helper, event)?;
                         return self.handle_fix(helper, Default::default(), output, &mut *fallback);
                     }
                     if matches!(
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"check")
                     ) {
-                        let output = <super::CheckType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output = <super::CheckType as WithDeserializer>::init(helper, event)?;
                         return self.handle_check(
                             helper,
                             Default::default(),
@@ -17140,9 +16984,7 @@ pub mod cdf {
                         Some(b"complex-check")
                     ) {
                         let output =
-                            <super::ComplexCheckType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::ComplexCheckType as WithDeserializer>::init(helper, event)?;
                         return self.handle_complex_check(
                             helper,
                             Default::default(),
@@ -17155,9 +16997,7 @@ pub mod cdf {
                         Some(b"signature")
                     ) {
                         let output =
-                            <super::SignatureType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::SignatureType as WithDeserializer>::init(helper, event)?;
                         return self.handle_signature(
                             helper,
                             Default::default(),
@@ -19542,7 +19382,9 @@ pub mod cdf {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = < super :: TestResultTypeContent as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                            let output = <super::TestResultTypeContent as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -19678,7 +19520,9 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"benchmark")
                     ) {
-                        let output = < super :: BenchmarkReferenceType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output = <super::BenchmarkReferenceType as WithDeserializer>::init(
+                            helper, event,
+                        )?;
                         return self.handle_benchmark(
                             helper,
                             Default::default(),
@@ -19690,7 +19534,9 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"tailoring-file")
                     ) {
-                        let output = < super :: TailoringReferenceType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output = <super::TailoringReferenceType as WithDeserializer>::init(
+                            helper, event,
+                        )?;
                         return self.handle_tailoring_file(
                             helper,
                             Default::default(),
@@ -19702,9 +19548,7 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"title")
                     ) {
-                        let output = <super::TextType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output = <super::TextType as WithDeserializer>::init(helper, event)?;
                         return self.handle_title(
                             helper,
                             Default::default(),
@@ -19716,9 +19560,7 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"remark")
                     ) {
-                        let output = <super::TextType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output = <super::TextType as WithDeserializer>::init(helper, event)?;
                         return self.handle_remark(
                             helper,
                             Default::default(),
@@ -19730,8 +19572,7 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"organization")
                     ) {
-                        let output =
-                            <String as WithDeserializer>::Deserializer::init(helper, event)?;
+                        let output = <String as WithDeserializer>::init(helper, event)?;
                         return self.handle_organization(
                             helper,
                             Default::default(),
@@ -19743,9 +19584,8 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"identity")
                     ) {
-                        let output = <super::IdentityType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output =
+                            <super::IdentityType as WithDeserializer>::init(helper, event)?;
                         return self.handle_identity(
                             helper,
                             Default::default(),
@@ -19757,9 +19597,7 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"profile")
                     ) {
-                        let output = <super::IdrefType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output = <super::IdrefType as WithDeserializer>::init(helper, event)?;
                         return self.handle_profile(
                             helper,
                             Default::default(),
@@ -19771,8 +19609,7 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"target")
                     ) {
-                        let output =
-                            <String as WithDeserializer>::Deserializer::init(helper, event)?;
+                        let output = <String as WithDeserializer>::init(helper, event)?;
                         return self.handle_target(
                             helper,
                             Default::default(),
@@ -19784,8 +19621,7 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"target-address")
                     ) {
-                        let output =
-                            <String as WithDeserializer>::Deserializer::init(helper, event)?;
+                        let output = <String as WithDeserializer>::init(helper, event)?;
                         return self.handle_target_address(
                             helper,
                             Default::default(),
@@ -19798,9 +19634,7 @@ pub mod cdf {
                         Some(b"target-facts")
                     ) {
                         let output =
-                            <super::TargetFactsType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::TargetFactsType as WithDeserializer>::init(helper, event)?;
                         return self.handle_target_facts(
                             helper,
                             Default::default(),
@@ -19813,9 +19647,7 @@ pub mod cdf {
                         Some(b"target-id-ref")
                     ) {
                         let output =
-                            <super::TargetIdRefType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::TargetIdRefType as WithDeserializer>::init(helper, event)?;
                         return self.handle_target_id_ref(
                             helper,
                             Default::default(),
@@ -19828,9 +19660,7 @@ pub mod cdf {
                         Some(b"platform")
                     ) {
                         let output =
-                            <super::Cpe2IdrefType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::Cpe2IdrefType as WithDeserializer>::init(helper, event)?;
                         return self.handle_platform(
                             helper,
                             Default::default(),
@@ -19843,9 +19673,7 @@ pub mod cdf {
                         Some(b"set-value")
                     ) {
                         let output =
-                            <super::ProfileSetValueType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::ProfileSetValueType as WithDeserializer>::init(helper, event)?;
                         return self.handle_set_value(
                             helper,
                             Default::default(),
@@ -19857,7 +19685,9 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"set-complex-value")
                     ) {
-                        let output = < super :: ProfileSetComplexValueType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output = <super::ProfileSetComplexValueType as WithDeserializer>::init(
+                            helper, event,
+                        )?;
                         return self.handle_set_complex_value(
                             helper,
                             Default::default(),
@@ -19870,9 +19700,7 @@ pub mod cdf {
                         Some(b"rule-result")
                     ) {
                         let output =
-                            <super::RuleResultType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::RuleResultType as WithDeserializer>::init(helper, event)?;
                         return self.handle_rule_result(
                             helper,
                             Default::default(),
@@ -19884,9 +19712,7 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"score")
                     ) {
-                        let output = <super::ScoreType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output = <super::ScoreType as WithDeserializer>::init(helper, event)?;
                         return self.handle_score(
                             helper,
                             Default::default(),
@@ -19898,9 +19724,8 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"metadata")
                     ) {
-                        let output = <super::MetadataType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output =
+                            <super::MetadataType as WithDeserializer>::init(helper, event)?;
                         return self.handle_metadata(
                             helper,
                             Default::default(),
@@ -19913,9 +19738,7 @@ pub mod cdf {
                         Some(b"signature")
                     ) {
                         let output =
-                            <super::SignatureType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::SignatureType as WithDeserializer>::init(helper, event)?;
                         return self.handle_signature(
                             helper,
                             Default::default(),
@@ -19924,8 +19747,7 @@ pub mod cdf {
                         );
                     }
                     event = {
-                        let output =
-                            <AnyElement as WithDeserializer>::Deserializer::init(helper, event)?;
+                        let output = <AnyElement as WithDeserializer>::init(helper, event)?;
                         match self.handle_any(helper, Default::default(), output, &mut *fallback)? {
                             ElementHandlerOutput::Continue { event, .. } => event,
                             output => {
@@ -22233,9 +22055,7 @@ pub mod cdf {
                         }
                         (S::Any(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             if is_any_retry {
-                                let output = <AnyElement as WithDeserializer>::Deserializer::init(
-                                    helper, event,
-                                )?;
+                                let output = <AnyElement as WithDeserializer>::init(helper, event)?;
                                 match self.handle_any(helper, output, &mut fallback)? {
                                     ElementHandlerOutput::Continue { event, allow_any } => {
                                         allow_any_element = allow_any_element || allow_any;
@@ -22732,8 +22552,7 @@ pub mod cdf {
                             event
                         }
                         (S::TextBefore(None), event) => {
-                            let output =
-                                <Text as WithDeserializer>::Deserializer::init(helper, event)?;
+                            let output = <Text as WithDeserializer>::init(helper, event)?;
                             match self.handle_text_before(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
@@ -24042,7 +23861,9 @@ pub mod cdf {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = < super :: WarningTypeContent as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                            let output = <super::WarningTypeContent as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -24108,14 +23929,11 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"sub")
                     ) {
-                        let output = <super::SubType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output = <super::SubType as WithDeserializer>::init(helper, event)?;
                         return self.handle_sub(helper, Default::default(), output, &mut *fallback);
                     }
                     event = {
-                        let output =
-                            <AnyElement as WithDeserializer>::Deserializer::init(helper, event)?;
+                        let output = <AnyElement as WithDeserializer>::init(helper, event)?;
                         match self.handle_any(helper, Default::default(), output, &mut *fallback)? {
                             ElementHandlerOutput::Continue { event, .. } => event,
                             output => {
@@ -24125,7 +23943,7 @@ pub mod cdf {
                     };
                 }
                 event = {
-                    let output = <Text as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <Text as WithDeserializer>::init(helper, event)?;
                     match self.handle_text(helper, Default::default(), output, &mut *fallback)? {
                         ElementHandlerOutput::Continue { event, .. } => event,
                         output => {
@@ -24459,8 +24277,7 @@ pub mod cdf {
                             }
                         }
                         (S::Text(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            let output =
-                                <Text as WithDeserializer>::Deserializer::init(helper, event)?;
+                            let output = <Text as WithDeserializer>::init(helper, event)?;
                             match self.handle_text(helper, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -25101,7 +24918,9 @@ pub mod cdf {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = < super :: SelChoicesTypeContent as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                            let output = <super::SelChoicesTypeContent as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -25164,8 +24983,7 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"choice")
                     ) {
-                        let output =
-                            <String as WithDeserializer>::Deserializer::init(helper, event)?;
+                        let output = <String as WithDeserializer>::init(helper, event)?;
                         return self.handle_choice(
                             helper,
                             Default::default(),
@@ -25178,9 +24996,7 @@ pub mod cdf {
                         Some(b"complex-choice")
                     ) {
                         let output =
-                            <super::ComplexValueType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::ComplexValueType as WithDeserializer>::init(helper, event)?;
                         return self.handle_complex_choice(
                             helper,
                             Default::default(),
@@ -26004,7 +25820,9 @@ pub mod cdf {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = < super :: ProfileNoteTypeContent as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                            let output = <super::ProfileNoteTypeContent as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -26072,14 +25890,11 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"sub")
                     ) {
-                        let output = <super::SubType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output = <super::SubType as WithDeserializer>::init(helper, event)?;
                         return self.handle_sub(helper, Default::default(), output, &mut *fallback);
                     }
                     event = {
-                        let output =
-                            <AnyElement as WithDeserializer>::Deserializer::init(helper, event)?;
+                        let output = <AnyElement as WithDeserializer>::init(helper, event)?;
                         match self.handle_any(helper, Default::default(), output, &mut *fallback)? {
                             ElementHandlerOutput::Continue { event, .. } => event,
                             output => {
@@ -26089,7 +25904,7 @@ pub mod cdf {
                     };
                 }
                 event = {
-                    let output = <Text as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <Text as WithDeserializer>::init(helper, event)?;
                     match self.handle_text(helper, Default::default(), output, &mut *fallback)? {
                         ElementHandlerOutput::Continue { event, .. } => event,
                         output => {
@@ -26442,8 +26257,7 @@ pub mod cdf {
                             }
                         }
                         (S::Text(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            let output =
-                                <Text as WithDeserializer>::Deserializer::init(helper, event)?;
+                            let output = <Text as WithDeserializer>::init(helper, event)?;
                             match self.handle_text(helper, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -26660,7 +26474,9 @@ pub mod cdf {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = < super :: FixTextTypeContent as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                            let output = <super::FixTextTypeContent as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -26730,14 +26546,11 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"sub")
                     ) {
-                        let output = <super::SubType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output = <super::SubType as WithDeserializer>::init(helper, event)?;
                         return self.handle_sub(helper, Default::default(), output, &mut *fallback);
                     }
                     event = {
-                        let output =
-                            <AnyElement as WithDeserializer>::Deserializer::init(helper, event)?;
+                        let output = <AnyElement as WithDeserializer>::init(helper, event)?;
                         match self.handle_any(helper, Default::default(), output, &mut *fallback)? {
                             ElementHandlerOutput::Continue { event, .. } => event,
                             output => {
@@ -26747,7 +26560,7 @@ pub mod cdf {
                     };
                 }
                 event = {
-                    let output = <Text as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <Text as WithDeserializer>::init(helper, event)?;
                     match self.handle_text(helper, Default::default(), output, &mut *fallback)? {
                         ElementHandlerOutput::Continue { event, .. } => event,
                         output => {
@@ -27081,8 +26894,7 @@ pub mod cdf {
                             }
                         }
                         (S::Text(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            let output =
-                                <Text as WithDeserializer>::Deserializer::init(helper, event)?;
+                            let output = <Text as WithDeserializer>::init(helper, event)?;
                             match self.handle_text(helper, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -27297,9 +27109,7 @@ pub mod cdf {
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
                             let output =
-                                <super::FixTypeContent as WithDeserializer>::Deserializer::init(
-                                    helper, event,
-                                )?;
+                                <super::FixTypeContent as WithDeserializer>::init(helper, event)?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -27366,9 +27176,7 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"sub")
                     ) {
-                        let output = <super::SubType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output = <super::SubType as WithDeserializer>::init(helper, event)?;
                         return self.handle_sub(helper, Default::default(), output, &mut *fallback);
                     }
                     if matches!(
@@ -27376,9 +27184,7 @@ pub mod cdf {
                         Some(b"instance")
                     ) {
                         let output =
-                            <super::InstanceFixType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::InstanceFixType as WithDeserializer>::init(helper, event)?;
                         return self.handle_instance(
                             helper,
                             Default::default(),
@@ -27388,7 +27194,7 @@ pub mod cdf {
                     }
                 }
                 event = {
-                    let output = <Text as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <Text as WithDeserializer>::init(helper, event)?;
                     match self.handle_text(helper, Default::default(), output, &mut *fallback)? {
                         ElementHandlerOutput::Continue { event, .. } => event,
                         output => {
@@ -27732,8 +27538,7 @@ pub mod cdf {
                             }
                         }
                         (S::Text(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            let output =
-                                <Text as WithDeserializer>::Deserializer::init(helper, event)?;
+                            let output = <Text as WithDeserializer>::init(helper, event)?;
                             match self.handle_text(helper, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -28410,7 +28215,10 @@ pub mod cdf {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = < super :: ComplexCheckTypeContent as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                            let output =
+                                <super::ComplexCheckTypeContent as WithDeserializer>::init(
+                                    helper, event,
+                                )?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -28473,9 +28281,7 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"check")
                     ) {
-                        let output = <super::CheckType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output = <super::CheckType as WithDeserializer>::init(helper, event)?;
                         return self.handle_check(
                             helper,
                             Default::default(),
@@ -28488,9 +28294,7 @@ pub mod cdf {
                         Some(b"complex-check")
                     ) {
                         let output =
-                            <super::ComplexCheckType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::ComplexCheckType as WithDeserializer>::init(helper, event)?;
                         return self.handle_complex_check(
                             helper,
                             Default::default(),
@@ -29617,7 +29421,9 @@ pub mod cdf {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = < super :: RuleResultTypeContent as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                            let output = <super::RuleResultTypeContent as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -29713,9 +29519,7 @@ pub mod cdf {
                         Some(b"result")
                     ) {
                         let output =
-                            <super::ResultEnumType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::ResultEnumType as WithDeserializer>::init(helper, event)?;
                         return self.handle_result(
                             helper,
                             Default::default(),
@@ -29727,9 +29531,8 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"override")
                     ) {
-                        let output = <super::OverrideType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output =
+                            <super::OverrideType as WithDeserializer>::init(helper, event)?;
                         return self.handle_override_(
                             helper,
                             Default::default(),
@@ -29741,9 +29544,7 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"ident")
                     ) {
-                        let output = <super::IdentType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output = <super::IdentType as WithDeserializer>::init(helper, event)?;
                         return self.handle_ident(
                             helper,
                             Default::default(),
@@ -29755,9 +29556,8 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"metadata")
                     ) {
-                        let output = <super::MetadataType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output =
+                            <super::MetadataType as WithDeserializer>::init(helper, event)?;
                         return self.handle_metadata(
                             helper,
                             Default::default(),
@@ -29769,9 +29569,7 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"message")
                     ) {
-                        let output = <super::MessageType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output = <super::MessageType as WithDeserializer>::init(helper, event)?;
                         return self.handle_message(
                             helper,
                             Default::default(),
@@ -29784,9 +29582,7 @@ pub mod cdf {
                         Some(b"instance")
                     ) {
                         let output =
-                            <super::InstanceResultType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::InstanceResultType as WithDeserializer>::init(helper, event)?;
                         return self.handle_instance(
                             helper,
                             Default::default(),
@@ -29798,18 +29594,14 @@ pub mod cdf {
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"fix")
                     ) {
-                        let output = <super::FixType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output = <super::FixType as WithDeserializer>::init(helper, event)?;
                         return self.handle_fix(helper, Default::default(), output, &mut *fallback);
                     }
                     if matches!(
                         helper.resolve_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"check")
                     ) {
-                        let output = <super::CheckType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output = <super::CheckType as WithDeserializer>::init(helper, event)?;
                         return self.handle_check(
                             helper,
                             Default::default(),
@@ -29822,9 +29614,7 @@ pub mod cdf {
                         Some(b"complex-check")
                     ) {
                         let output =
-                            <super::ComplexCheckType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::ComplexCheckType as WithDeserializer>::init(helper, event)?;
                         return self.handle_complex_check(
                             helper,
                             Default::default(),
@@ -31591,8 +31381,7 @@ pub mod cdf {
                             event
                         }
                         (S::TextBefore(None), event) => {
-                            let output =
-                                <Text as WithDeserializer>::Deserializer::init(helper, event)?;
+                            let output = <Text as WithDeserializer>::init(helper, event)?;
                             match self.handle_text_before(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
@@ -31605,9 +31394,7 @@ pub mod cdf {
                         }
                         (S::Any(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             if is_any_retry {
-                                let output = <AnyElement as WithDeserializer>::Deserializer::init(
-                                    helper, event,
-                                )?;
+                                let output = <AnyElement as WithDeserializer>::init(helper, event)?;
                                 match self.handle_any(helper, output, &mut fallback)? {
                                     ElementHandlerOutput::Continue { event, allow_any } => {
                                         allow_any_element = allow_any_element || allow_any;
@@ -31624,8 +31411,7 @@ pub mod cdf {
                             }
                         }
                         (S::TextAfterAny36(None), event) => {
-                            let output =
-                                <Text as WithDeserializer>::Deserializer::init(helper, event)?;
+                            let output = <Text as WithDeserializer>::init(helper, event)?;
                             match self.handle_text_after_any_36(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
@@ -31985,7 +31771,10 @@ pub mod cdf {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = < super :: CheckContentTypeContent as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                            let output =
+                                <super::CheckContentTypeContent as WithDeserializer>::init(
+                                    helper, event,
+                                )?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -32044,8 +31833,7 @@ pub mod cdf {
                 let mut event = event;
                 if let Event::Start(_) | Event::Empty(_) = &event {
                     event = {
-                        let output =
-                            <AnyElement as WithDeserializer>::Deserializer::init(helper, event)?;
+                        let output = <AnyElement as WithDeserializer>::init(helper, event)?;
                         match self.handle_any(helper, Default::default(), output, &mut *fallback)? {
                             ElementHandlerOutput::Continue { event, .. } => event,
                             output => {
@@ -32055,7 +31843,7 @@ pub mod cdf {
                     };
                 }
                 event = {
-                    let output = <Text as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <Text as WithDeserializer>::init(helper, event)?;
                     match self.handle_text(helper, Default::default(), output, &mut *fallback)? {
                         ElementHandlerOutput::Continue { event, .. } => event,
                         output => {
@@ -32312,8 +32100,7 @@ pub mod cdf {
                             }
                         }
                         (S::Text(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            let output =
-                                <Text as WithDeserializer>::Deserializer::init(helper, event)?;
+                            let output = <Text as WithDeserializer>::init(helper, event)?;
                             match self.handle_text(helper, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)

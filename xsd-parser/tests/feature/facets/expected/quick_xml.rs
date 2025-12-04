@@ -363,9 +363,7 @@ pub mod quick_xml_deserialize {
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
                         let output =
-                            <super::RootTypeContent as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::RootTypeContent as WithDeserializer>::init(helper, event)?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -425,9 +423,7 @@ pub mod quick_xml_deserialize {
                     Some(b"NegativeDecimal")
                 ) {
                     let output =
-                        <super::NegativeDecimalType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        <super::NegativeDecimalType as WithDeserializer>::init(helper, event)?;
                     return self.handle_negative_decimal(
                         helper,
                         Default::default(),
@@ -440,9 +436,7 @@ pub mod quick_xml_deserialize {
                     Some(b"PositiveDecimal")
                 ) {
                     let output =
-                        <super::PositiveDecimalType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        <super::PositiveDecimalType as WithDeserializer>::init(helper, event)?;
                     return self.handle_positive_decimal(
                         helper,
                         Default::default(),
@@ -455,9 +449,7 @@ pub mod quick_xml_deserialize {
                     Some(b"RestrictedString")
                 ) {
                     let output =
-                        <super::RestrictedStringType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        <super::RestrictedStringType as WithDeserializer>::init(helper, event)?;
                     return self.handle_restricted_string(
                         helper,
                         Default::default(),

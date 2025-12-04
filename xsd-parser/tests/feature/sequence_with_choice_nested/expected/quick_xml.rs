@@ -245,10 +245,9 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::Content2(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output =
-                            <super::ContainerContent2Type as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                        let output = <super::ContainerContent2Type as WithDeserializer>::init(
+                            helper, event,
+                        )?;
                         match self.handle_content_2(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
@@ -318,14 +317,12 @@ pub mod quick_xml_deserialize {
             let mut allow_any_element = false;
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if x.name().local_name().as_ref() == b"Foo" {
-                    let output = <String as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <String as WithDeserializer>::init(helper, event)?;
                     return self.handle_foo(helper, Default::default(), output, &mut *fallback);
                 }
                 event = {
                     let output =
-                        <super::ContainerContent3Type as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        <super::ContainerContent3Type as WithDeserializer>::init(helper, event)?;
                     match self.handle_content_3(
                         helper,
                         Default::default(),
@@ -583,10 +580,9 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Content3(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output =
-                            <super::ContainerContent3Type as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                        let output = <super::ContainerContent3Type as WithDeserializer>::init(
+                            helper, event,
+                        )?;
                         match self.handle_content_3(helper, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -767,10 +763,9 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::Content4(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output =
-                            <super::ContainerContent4Type as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                        let output = <super::ContainerContent4Type as WithDeserializer>::init(
+                            helper, event,
+                        )?;
                         match self.handle_content_4(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
@@ -837,7 +832,7 @@ pub mod quick_xml_deserialize {
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if x.name().local_name().as_ref() == b"Bar" {
-                    let output = <String as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <String as WithDeserializer>::init(helper, event)?;
                     return self.handle_bar(helper, Default::default(), output, &mut *fallback);
                 }
             }

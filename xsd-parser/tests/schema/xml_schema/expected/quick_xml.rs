@@ -1513,7 +1513,9 @@ pub mod quick_xml_deserialize {
                     }
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
-                        let output = < super :: SchemaElementTypeContent as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output = <super::SchemaElementTypeContent as WithDeserializer>::init(
+                            helper, event,
+                        )?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -1630,9 +1632,7 @@ pub mod quick_xml_deserialize {
                     Some(b"include")
                 ) {
                     let output =
-                        <super::IncludeElementType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        <super::IncludeElementType as WithDeserializer>::init(helper, event)?;
                     return self.handle_include(helper, Default::default(), output, &mut *fallback);
                 }
                 if matches!(
@@ -1640,9 +1640,7 @@ pub mod quick_xml_deserialize {
                     Some(b"import")
                 ) {
                     let output =
-                        <super::ImportElementType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        <super::ImportElementType as WithDeserializer>::init(helper, event)?;
                     return self.handle_import(helper, Default::default(), output, &mut *fallback);
                 }
                 if matches!(
@@ -1650,9 +1648,7 @@ pub mod quick_xml_deserialize {
                     Some(b"redefine")
                 ) {
                     let output =
-                        <super::RedefineElementType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        <super::RedefineElementType as WithDeserializer>::init(helper, event)?;
                     return self.handle_redefine(
                         helper,
                         Default::default(),
@@ -1665,9 +1661,7 @@ pub mod quick_xml_deserialize {
                     Some(b"override")
                 ) {
                     let output =
-                        <super::OverrideElementType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        <super::OverrideElementType as WithDeserializer>::init(helper, event)?;
                     return self.handle_override_(
                         helper,
                         Default::default(),
@@ -1680,9 +1674,7 @@ pub mod quick_xml_deserialize {
                     Some(b"annotation")
                 ) {
                     let output =
-                        <super::AnnotationElementType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        <super::AnnotationElementType as WithDeserializer>::init(helper, event)?;
                     return self.handle_annotation(
                         helper,
                         Default::default(),
@@ -1694,7 +1686,9 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"defaultOpenContent")
                 ) {
-                    let output = < super :: DefaultOpenContentElementType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                    let output = <super::DefaultOpenContentElementType as WithDeserializer>::init(
+                        helper, event,
+                    )?;
                     return self.handle_default_open_content(
                         helper,
                         Default::default(),
@@ -1706,9 +1700,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"simpleType")
                 ) {
-                    let output = <super::SimpleBaseType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::SimpleBaseType as WithDeserializer>::init(helper, event)?;
                     return self.handle_simple_type(
                         helper,
                         Default::default(),
@@ -1720,9 +1712,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"complexType")
                 ) {
-                    let output = <super::ComplexBaseType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::ComplexBaseType as WithDeserializer>::init(helper, event)?;
                     return self.handle_complex_type(
                         helper,
                         Default::default(),
@@ -1734,8 +1724,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"group")
                 ) {
-                    let output =
-                        <super::GroupType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::GroupType as WithDeserializer>::init(helper, event)?;
                     return self.handle_group(helper, Default::default(), output, &mut *fallback);
                 }
                 if matches!(
@@ -1743,9 +1732,7 @@ pub mod quick_xml_deserialize {
                     Some(b"attributeGroup")
                 ) {
                     let output =
-                        <super::AttributeGroupType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        <super::AttributeGroupType as WithDeserializer>::init(helper, event)?;
                     return self.handle_attribute_group(
                         helper,
                         Default::default(),
@@ -1757,18 +1744,14 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"element")
                 ) {
-                    let output = <super::ElementType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::ElementType as WithDeserializer>::init(helper, event)?;
                     return self.handle_element(helper, Default::default(), output, &mut *fallback);
                 }
                 if matches!(
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"attribute")
                 ) {
-                    let output = <super::AttributeType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::AttributeType as WithDeserializer>::init(helper, event)?;
                     return self.handle_attribute(
                         helper,
                         Default::default(),
@@ -1781,9 +1764,7 @@ pub mod quick_xml_deserialize {
                     Some(b"notation")
                 ) {
                     let output =
-                        <super::NotationElementType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        <super::NotationElementType as WithDeserializer>::init(helper, event)?;
                     return self.handle_notation(
                         helper,
                         Default::default(),
@@ -3845,7 +3826,9 @@ pub mod quick_xml_deserialize {
                     }
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
-                        let output = < super :: RedefineElementTypeContent as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output = <super::RedefineElementTypeContent as WithDeserializer>::init(
+                            helper, event,
+                        )?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -3922,9 +3905,7 @@ pub mod quick_xml_deserialize {
                     Some(b"annotation")
                 ) {
                     let output =
-                        <super::AnnotationElementType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        <super::AnnotationElementType as WithDeserializer>::init(helper, event)?;
                     return self.handle_annotation(
                         helper,
                         Default::default(),
@@ -3936,9 +3917,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"simpleType")
                 ) {
-                    let output = <super::SimpleBaseType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::SimpleBaseType as WithDeserializer>::init(helper, event)?;
                     return self.handle_simple_type(
                         helper,
                         Default::default(),
@@ -3950,9 +3929,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"complexType")
                 ) {
-                    let output = <super::ComplexBaseType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::ComplexBaseType as WithDeserializer>::init(helper, event)?;
                     return self.handle_complex_type(
                         helper,
                         Default::default(),
@@ -3964,8 +3941,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"group")
                 ) {
-                    let output =
-                        <super::GroupType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::GroupType as WithDeserializer>::init(helper, event)?;
                     return self.handle_group(helper, Default::default(), output, &mut *fallback);
                 }
                 if matches!(
@@ -3973,9 +3949,7 @@ pub mod quick_xml_deserialize {
                     Some(b"attributeGroup")
                 ) {
                     let output =
-                        <super::AttributeGroupType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        <super::AttributeGroupType as WithDeserializer>::init(helper, event)?;
                     return self.handle_attribute_group(
                         helper,
                         Default::default(),
@@ -4752,7 +4726,9 @@ pub mod quick_xml_deserialize {
                     }
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
-                        let output = < super :: OverrideElementTypeContent as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output = <super::OverrideElementTypeContent as WithDeserializer>::init(
+                            helper, event,
+                        )?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -4841,9 +4817,7 @@ pub mod quick_xml_deserialize {
                     Some(b"annotation")
                 ) {
                     let output =
-                        <super::AnnotationElementType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        <super::AnnotationElementType as WithDeserializer>::init(helper, event)?;
                     return self.handle_annotation(
                         helper,
                         Default::default(),
@@ -4855,9 +4829,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"simpleType")
                 ) {
-                    let output = <super::SimpleBaseType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::SimpleBaseType as WithDeserializer>::init(helper, event)?;
                     return self.handle_simple_type(
                         helper,
                         Default::default(),
@@ -4869,9 +4841,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"complexType")
                 ) {
-                    let output = <super::ComplexBaseType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::ComplexBaseType as WithDeserializer>::init(helper, event)?;
                     return self.handle_complex_type(
                         helper,
                         Default::default(),
@@ -4883,8 +4853,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"group")
                 ) {
-                    let output =
-                        <super::GroupType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::GroupType as WithDeserializer>::init(helper, event)?;
                     return self.handle_group(helper, Default::default(), output, &mut *fallback);
                 }
                 if matches!(
@@ -4892,9 +4861,7 @@ pub mod quick_xml_deserialize {
                     Some(b"attributeGroup")
                 ) {
                     let output =
-                        <super::AttributeGroupType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        <super::AttributeGroupType as WithDeserializer>::init(helper, event)?;
                     return self.handle_attribute_group(
                         helper,
                         Default::default(),
@@ -4906,18 +4873,14 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"element")
                 ) {
-                    let output = <super::ElementType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::ElementType as WithDeserializer>::init(helper, event)?;
                     return self.handle_element(helper, Default::default(), output, &mut *fallback);
                 }
                 if matches!(
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"attribute")
                 ) {
-                    let output = <super::AttributeType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::AttributeType as WithDeserializer>::init(helper, event)?;
                     return self.handle_attribute(
                         helper,
                         Default::default(),
@@ -4930,9 +4893,7 @@ pub mod quick_xml_deserialize {
                     Some(b"notation")
                 ) {
                     let output =
-                        <super::NotationElementType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        <super::NotationElementType as WithDeserializer>::init(helper, event)?;
                     return self.handle_notation(
                         helper,
                         Default::default(),
@@ -6018,7 +5979,10 @@ pub mod quick_xml_deserialize {
                     }
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
-                        let output = < super :: AnnotationElementTypeContent as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output =
+                            <super::AnnotationElementTypeContent as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -6082,9 +6046,7 @@ pub mod quick_xml_deserialize {
                     Some(b"appinfo")
                 ) {
                     let output =
-                        <super::AppinfoElementType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        <super::AppinfoElementType as WithDeserializer>::init(helper, event)?;
                     return self.handle_appinfo(helper, Default::default(), output, &mut *fallback);
                 }
                 if matches!(
@@ -6092,9 +6054,7 @@ pub mod quick_xml_deserialize {
                     Some(b"documentation")
                 ) {
                     let output =
-                        <super::DocumentationElementType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        <super::DocumentationElementType as WithDeserializer>::init(helper, event)?;
                     return self.handle_documentation(
                         helper,
                         Default::default(),
@@ -6902,10 +6862,9 @@ pub mod quick_xml_deserialize {
                     }
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
-                        let output =
-                            <super::SimpleBaseTypeContent as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                        let output = <super::SimpleBaseTypeContent as WithDeserializer>::init(
+                            helper, event,
+                        )?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -6979,9 +6938,7 @@ pub mod quick_xml_deserialize {
                     Some(b"annotation")
                 ) {
                     let output =
-                        <super::AnnotationElementType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        <super::AnnotationElementType as WithDeserializer>::init(helper, event)?;
                     return self.handle_annotation(
                         helper,
                         Default::default(),
@@ -6994,9 +6951,7 @@ pub mod quick_xml_deserialize {
                     Some(b"restriction")
                 ) {
                     let output =
-                        <super::RestrictionElementType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        <super::RestrictionElementType as WithDeserializer>::init(helper, event)?;
                     return self.handle_restriction(
                         helper,
                         Default::default(),
@@ -7008,18 +6963,15 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"list")
                 ) {
-                    let output = <super::ListElementType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::ListElementType as WithDeserializer>::init(helper, event)?;
                     return self.handle_list(helper, Default::default(), output, &mut *fallback);
                 }
                 if matches!(
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"union")
                 ) {
-                    let output = <super::UnionElementType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output =
+                        <super::UnionElementType as WithDeserializer>::init(helper, event)?;
                     return self.handle_union_(helper, Default::default(), output, &mut *fallback);
                 }
             }
@@ -7700,7 +7652,9 @@ pub mod quick_xml_deserialize {
                     }
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
-                        let output = < super :: ComplexBaseTypeContent as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output = <super::ComplexBaseTypeContent as WithDeserializer>::init(
+                            helper, event,
+                        )?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -7810,9 +7764,7 @@ pub mod quick_xml_deserialize {
                     Some(b"annotation")
                 ) {
                     let output =
-                        <super::AnnotationElementType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        <super::AnnotationElementType as WithDeserializer>::init(helper, event)?;
                     return self.handle_annotation(
                         helper,
                         Default::default(),
@@ -7825,9 +7777,7 @@ pub mod quick_xml_deserialize {
                     Some(b"simpleContent")
                 ) {
                     let output =
-                        <super::SimpleContentElementType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        <super::SimpleContentElementType as WithDeserializer>::init(helper, event)?;
                     return self.handle_simple_content(
                         helper,
                         Default::default(),
@@ -7839,10 +7789,9 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"complexContent")
                 ) {
-                    let output =
-                        <super::ComplexContentElementType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                    let output = <super::ComplexContentElementType as WithDeserializer>::init(
+                        helper, event,
+                    )?;
                     return self.handle_complex_content(
                         helper,
                         Default::default(),
@@ -7855,9 +7804,7 @@ pub mod quick_xml_deserialize {
                     Some(b"openContent")
                 ) {
                     let output =
-                        <super::OpenContentElementType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        <super::OpenContentElementType as WithDeserializer>::init(helper, event)?;
                     return self.handle_open_content(
                         helper,
                         Default::default(),
@@ -7869,32 +7816,28 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"group")
                 ) {
-                    let output =
-                        <super::GroupType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::GroupType as WithDeserializer>::init(helper, event)?;
                     return self.handle_group(helper, Default::default(), output, &mut *fallback);
                 }
                 if matches!(
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"all")
                 ) {
-                    let output =
-                        <super::GroupType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::GroupType as WithDeserializer>::init(helper, event)?;
                     return self.handle_all(helper, Default::default(), output, &mut *fallback);
                 }
                 if matches!(
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"choice")
                 ) {
-                    let output =
-                        <super::GroupType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::GroupType as WithDeserializer>::init(helper, event)?;
                     return self.handle_choice(helper, Default::default(), output, &mut *fallback);
                 }
                 if matches!(
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"sequence")
                 ) {
-                    let output =
-                        <super::GroupType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::GroupType as WithDeserializer>::init(helper, event)?;
                     return self.handle_sequence(
                         helper,
                         Default::default(),
@@ -7906,9 +7849,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"attribute")
                 ) {
-                    let output = <super::AttributeType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::AttributeType as WithDeserializer>::init(helper, event)?;
                     return self.handle_attribute(
                         helper,
                         Default::default(),
@@ -7921,9 +7862,7 @@ pub mod quick_xml_deserialize {
                     Some(b"attributeGroup")
                 ) {
                     let output =
-                        <super::AttributeGroupType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        <super::AttributeGroupType as WithDeserializer>::init(helper, event)?;
                     return self.handle_attribute_group(
                         helper,
                         Default::default(),
@@ -7936,9 +7875,7 @@ pub mod quick_xml_deserialize {
                     Some(b"anyAttribute")
                 ) {
                     let output =
-                        <super::AnyAttributeElementType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        <super::AnyAttributeElementType as WithDeserializer>::init(helper, event)?;
                     return self.handle_any_attribute(
                         helper,
                         Default::default(),
@@ -7950,9 +7887,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"assert")
                 ) {
-                    let output = <super::AssertionType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::AssertionType as WithDeserializer>::init(helper, event)?;
                     return self.handle_assert(helper, Default::default(), output, &mut *fallback);
                 }
             }
@@ -9448,9 +9383,7 @@ pub mod quick_xml_deserialize {
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
                         let output =
-                            <super::GroupTypeContent as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::GroupTypeContent as WithDeserializer>::init(helper, event)?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -9532,9 +9465,7 @@ pub mod quick_xml_deserialize {
                     Some(b"annotation")
                 ) {
                     let output =
-                        <super::AnnotationElementType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        <super::AnnotationElementType as WithDeserializer>::init(helper, event)?;
                     return self.handle_annotation(
                         helper,
                         Default::default(),
@@ -9546,41 +9477,35 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"element")
                 ) {
-                    let output = <super::ElementType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::ElementType as WithDeserializer>::init(helper, event)?;
                     return self.handle_element(helper, Default::default(), output, &mut *fallback);
                 }
                 if matches!(
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"group")
                 ) {
-                    let output =
-                        <super::GroupType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::GroupType as WithDeserializer>::init(helper, event)?;
                     return self.handle_group(helper, Default::default(), output, &mut *fallback);
                 }
                 if matches!(
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"all")
                 ) {
-                    let output =
-                        <super::GroupType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::GroupType as WithDeserializer>::init(helper, event)?;
                     return self.handle_all(helper, Default::default(), output, &mut *fallback);
                 }
                 if matches!(
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"choice")
                 ) {
-                    let output =
-                        <super::GroupType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::GroupType as WithDeserializer>::init(helper, event)?;
                     return self.handle_choice(helper, Default::default(), output, &mut *fallback);
                 }
                 if matches!(
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"sequence")
                 ) {
-                    let output =
-                        <super::GroupType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::GroupType as WithDeserializer>::init(helper, event)?;
                     return self.handle_sequence(
                         helper,
                         Default::default(),
@@ -9592,9 +9517,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"any")
                 ) {
-                    let output = <super::AnyElementType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::AnyElementType as WithDeserializer>::init(helper, event)?;
                     return self.handle_any(helper, Default::default(), output, &mut *fallback);
                 }
             }
@@ -10506,7 +10429,9 @@ pub mod quick_xml_deserialize {
                     }
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
-                        let output = < super :: AttributeGroupTypeContent as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output = <super::AttributeGroupTypeContent as WithDeserializer>::init(
+                            helper, event,
+                        )?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -10580,9 +10505,7 @@ pub mod quick_xml_deserialize {
                     Some(b"annotation")
                 ) {
                     let output =
-                        <super::AnnotationElementType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        <super::AnnotationElementType as WithDeserializer>::init(helper, event)?;
                     return self.handle_annotation(
                         helper,
                         Default::default(),
@@ -10594,9 +10517,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"attribute")
                 ) {
-                    let output = <super::AttributeType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::AttributeType as WithDeserializer>::init(helper, event)?;
                     return self.handle_attribute(
                         helper,
                         Default::default(),
@@ -10609,9 +10530,7 @@ pub mod quick_xml_deserialize {
                     Some(b"attributeGroup")
                 ) {
                     let output =
-                        <super::AttributeGroupType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        <super::AttributeGroupType as WithDeserializer>::init(helper, event)?;
                     return self.handle_attribute_group(
                         helper,
                         Default::default(),
@@ -10624,9 +10543,7 @@ pub mod quick_xml_deserialize {
                     Some(b"anyAttribute")
                 ) {
                     let output =
-                        <super::AnyAttributeElementType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        <super::AnyAttributeElementType as WithDeserializer>::init(helper, event)?;
                     return self.handle_any_attribute(
                         helper,
                         Default::default(),
@@ -11411,9 +11328,7 @@ pub mod quick_xml_deserialize {
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
                         let output =
-                            <super::ElementTypeContent as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::ElementTypeContent as WithDeserializer>::init(helper, event)?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -11505,9 +11420,7 @@ pub mod quick_xml_deserialize {
                     Some(b"annotation")
                 ) {
                     let output =
-                        <super::AnnotationElementType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        <super::AnnotationElementType as WithDeserializer>::init(helper, event)?;
                     return self.handle_annotation(
                         helper,
                         Default::default(),
@@ -11519,9 +11432,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"simpleType")
                 ) {
-                    let output = <super::SimpleBaseType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::SimpleBaseType as WithDeserializer>::init(helper, event)?;
                     return self.handle_simple_type(
                         helper,
                         Default::default(),
@@ -11533,9 +11444,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"complexType")
                 ) {
-                    let output = <super::ComplexBaseType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::ComplexBaseType as WithDeserializer>::init(helper, event)?;
                     return self.handle_complex_type(
                         helper,
                         Default::default(),
@@ -11547,8 +11456,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"alternative")
                 ) {
-                    let output =
-                        <super::AltType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::AltType as WithDeserializer>::init(helper, event)?;
                     return self.handle_alternative(
                         helper,
                         Default::default(),
@@ -11560,18 +11468,14 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"unique")
                 ) {
-                    let output = <super::KeybaseType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::KeybaseType as WithDeserializer>::init(helper, event)?;
                     return self.handle_unique(helper, Default::default(), output, &mut *fallback);
                 }
                 if matches!(
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"key")
                 ) {
-                    let output = <super::KeybaseType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::KeybaseType as WithDeserializer>::init(helper, event)?;
                     return self.handle_key(helper, Default::default(), output, &mut *fallback);
                 }
                 if matches!(
@@ -11579,9 +11483,7 @@ pub mod quick_xml_deserialize {
                     Some(b"keyref")
                 ) {
                     let output =
-                        <super::KeyrefElementType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        <super::KeyrefElementType as WithDeserializer>::init(helper, event)?;
                     return self.handle_keyref(helper, Default::default(), output, &mut *fallback);
                 }
             }
@@ -13192,7 +13094,7 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::TextBefore(None), event) => {
-                        let output = <Text as WithDeserializer>::Deserializer::init(helper, event)?;
+                        let output = <Text as WithDeserializer>::init(helper, event)?;
                         match self.handle_text_before(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
@@ -13204,7 +13106,9 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Content(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = < super :: AppinfoElementTypeContent as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output = <super::AppinfoElementTypeContent as WithDeserializer>::init(
+                            helper, event,
+                        )?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
@@ -13409,9 +13313,7 @@ pub mod quick_xml_deserialize {
                     (S::Any(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         if is_any_retry {
                             let output =
-                                <Mixed<AnyElement> as WithDeserializer>::Deserializer::init(
-                                    helper, event,
-                                )?;
+                                <Mixed<AnyElement> as WithDeserializer>::init(helper, event)?;
                             match self.handle_any(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
@@ -13714,7 +13616,7 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::TextBefore(None), event) => {
-                        let output = <Text as WithDeserializer>::Deserializer::init(helper, event)?;
+                        let output = <Text as WithDeserializer>::init(helper, event)?;
                         match self.handle_text_before(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
@@ -13726,7 +13628,10 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Content(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = < super :: DocumentationElementTypeContent as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output =
+                            <super::DocumentationElementTypeContent as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
@@ -13937,9 +13842,7 @@ pub mod quick_xml_deserialize {
                     (S::Any(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         if is_any_retry {
                             let output =
-                                <Mixed<AnyElement> as WithDeserializer>::Deserializer::init(
-                                    helper, event,
-                                )?;
+                                <Mixed<AnyElement> as WithDeserializer>::init(helper, event)?;
                             match self.handle_any(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
@@ -14375,7 +14278,10 @@ pub mod quick_xml_deserialize {
                     }
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
-                        let output = < super :: RestrictionElementTypeContent as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output =
+                            <super::RestrictionElementTypeContent as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -14450,9 +14356,7 @@ pub mod quick_xml_deserialize {
                     Some(b"annotation")
                 ) {
                     let output =
-                        <super::AnnotationElementType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        <super::AnnotationElementType as WithDeserializer>::init(helper, event)?;
                     return self.handle_annotation(
                         helper,
                         Default::default(),
@@ -14464,9 +14368,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"simpleType")
                 ) {
-                    let output = <super::SimpleBaseType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::SimpleBaseType as WithDeserializer>::init(helper, event)?;
                     return self.handle_simple_type(
                         helper,
                         Default::default(),
@@ -14475,8 +14377,7 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 event = {
-                    let output =
-                        <super::Facet as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::Facet as WithDeserializer>::init(helper, event)?;
                     match self.handle_facet(helper, Default::default(), output, &mut *fallback)? {
                         ElementHandlerOutput::Continue { event, allow_any } => {
                             allow_any_element = allow_any_element || allow_any;
@@ -14488,8 +14389,7 @@ pub mod quick_xml_deserialize {
                     }
                 };
                 event = {
-                    let output =
-                        <AnyElement as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <AnyElement as WithDeserializer>::init(helper, event)?;
                     match self.handle_any(helper, Default::default(), output, &mut *fallback)? {
                         ElementHandlerOutput::Continue { event, .. } => event,
                         output => {
@@ -14963,8 +14863,7 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Facet(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output =
-                            <super::Facet as WithDeserializer>::Deserializer::init(helper, event)?;
+                        let output = <super::Facet as WithDeserializer>::init(helper, event)?;
                         match self.handle_facet(helper, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -15759,7 +15658,10 @@ pub mod quick_xml_deserialize {
                     }
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
-                        let output = < super :: SimpleContentElementTypeContent as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output =
+                            <super::SimpleContentElementTypeContent as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -15827,9 +15729,7 @@ pub mod quick_xml_deserialize {
                     Some(b"annotation")
                 ) {
                     let output =
-                        <super::AnnotationElementType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        <super::AnnotationElementType as WithDeserializer>::init(helper, event)?;
                     return self.handle_annotation(
                         helper,
                         Default::default(),
@@ -15841,9 +15741,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"restriction")
                 ) {
-                    let output = <super::RestrictionType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::RestrictionType as WithDeserializer>::init(helper, event)?;
                     return self.handle_restriction(
                         helper,
                         Default::default(),
@@ -15855,9 +15753,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"extension")
                 ) {
-                    let output = <super::ExtensionType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::ExtensionType as WithDeserializer>::init(helper, event)?;
                     return self.handle_extension(
                         helper,
                         Default::default(),
@@ -16437,7 +16333,10 @@ pub mod quick_xml_deserialize {
                     }
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
-                        let output = < super :: ComplexContentElementTypeContent as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output =
+                            <super::ComplexContentElementTypeContent as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -16506,9 +16405,7 @@ pub mod quick_xml_deserialize {
                     Some(b"annotation")
                 ) {
                     let output =
-                        <super::AnnotationElementType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        <super::AnnotationElementType as WithDeserializer>::init(helper, event)?;
                     return self.handle_annotation(
                         helper,
                         Default::default(),
@@ -16520,9 +16417,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"restriction")
                 ) {
-                    let output = <super::RestrictionType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::RestrictionType as WithDeserializer>::init(helper, event)?;
                     return self.handle_restriction(
                         helper,
                         Default::default(),
@@ -16534,9 +16429,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"extension")
                 ) {
-                    let output = <super::ExtensionType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::ExtensionType as WithDeserializer>::init(helper, event)?;
                     return self.handle_extension(
                         helper,
                         Default::default(),
@@ -18167,9 +18060,7 @@ pub mod quick_xml_deserialize {
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
                         let output =
-                            <super::AltTypeContent as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::AltTypeContent as WithDeserializer>::init(helper, event)?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -18234,9 +18125,7 @@ pub mod quick_xml_deserialize {
                     Some(b"annotation")
                 ) {
                     let output =
-                        <super::AnnotationElementType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        <super::AnnotationElementType as WithDeserializer>::init(helper, event)?;
                     return self.handle_annotation(
                         helper,
                         Default::default(),
@@ -18248,9 +18137,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"simpleType")
                 ) {
-                    let output = <super::SimpleBaseType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::SimpleBaseType as WithDeserializer>::init(helper, event)?;
                     return self.handle_simple_type(
                         helper,
                         Default::default(),
@@ -18262,9 +18149,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"complexType")
                 ) {
-                    let output = <super::ComplexBaseType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::ComplexBaseType as WithDeserializer>::init(helper, event)?;
                     return self.handle_complex_type(
                         helper,
                         Default::default(),
@@ -18793,9 +18678,7 @@ pub mod quick_xml_deserialize {
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
                         let output =
-                            <super::KeybaseTypeContent as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::KeybaseTypeContent as WithDeserializer>::init(helper, event)?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -19349,7 +19232,9 @@ pub mod quick_xml_deserialize {
                     }
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
-                        let output = < super :: KeyrefElementTypeContent as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output = <super::KeyrefElementTypeContent as WithDeserializer>::init(
+                            helper, event,
+                        )?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -19853,8 +19738,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"minExclusive")
                 ) {
-                    let output =
-                        <super::FacetType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::FacetType as WithDeserializer>::init(helper, event)?;
                     return self.handle_min_exclusive(
                         helper,
                         Default::default(),
@@ -19866,8 +19750,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"minInclusive")
                 ) {
-                    let output =
-                        <super::FacetType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::FacetType as WithDeserializer>::init(helper, event)?;
                     return self.handle_min_inclusive(
                         helper,
                         Default::default(),
@@ -19879,8 +19762,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"maxExclusive")
                 ) {
-                    let output =
-                        <super::FacetType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::FacetType as WithDeserializer>::init(helper, event)?;
                     return self.handle_max_exclusive(
                         helper,
                         Default::default(),
@@ -19892,8 +19774,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"maxInclusive")
                 ) {
-                    let output =
-                        <super::FacetType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::FacetType as WithDeserializer>::init(helper, event)?;
                     return self.handle_max_inclusive(
                         helper,
                         Default::default(),
@@ -19905,8 +19786,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"totalDigits")
                 ) {
-                    let output =
-                        <super::FacetType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::FacetType as WithDeserializer>::init(helper, event)?;
                     return self.handle_total_digits(
                         helper,
                         Default::default(),
@@ -19918,8 +19798,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"fractionDigits")
                 ) {
-                    let output =
-                        <super::FacetType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::FacetType as WithDeserializer>::init(helper, event)?;
                     return self.handle_fraction_digits(
                         helper,
                         Default::default(),
@@ -19931,16 +19810,14 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"length")
                 ) {
-                    let output =
-                        <super::FacetType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::FacetType as WithDeserializer>::init(helper, event)?;
                     return self.handle_length(helper, Default::default(), output, &mut *fallback);
                 }
                 if matches!(
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"minLength")
                 ) {
-                    let output =
-                        <super::FacetType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::FacetType as WithDeserializer>::init(helper, event)?;
                     return self.handle_min_length(
                         helper,
                         Default::default(),
@@ -19952,8 +19829,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"maxLength")
                 ) {
-                    let output =
-                        <super::FacetType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::FacetType as WithDeserializer>::init(helper, event)?;
                     return self.handle_max_length(
                         helper,
                         Default::default(),
@@ -19965,8 +19841,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"enumeration")
                 ) {
-                    let output =
-                        <super::FacetType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::FacetType as WithDeserializer>::init(helper, event)?;
                     return self.handle_enumeration(
                         helper,
                         Default::default(),
@@ -19978,8 +19853,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"whiteSpace")
                 ) {
-                    let output =
-                        <super::FacetType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::FacetType as WithDeserializer>::init(helper, event)?;
                     return self.handle_white_space(
                         helper,
                         Default::default(),
@@ -19991,17 +19865,14 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"pattern")
                 ) {
-                    let output =
-                        <super::FacetType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::FacetType as WithDeserializer>::init(helper, event)?;
                     return self.handle_pattern(helper, Default::default(), output, &mut *fallback);
                 }
                 if matches!(
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"assertion")
                 ) {
-                    let output = <super::AssertionType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::AssertionType as WithDeserializer>::init(helper, event)?;
                     return self.handle_assertion(
                         helper,
                         Default::default(),
@@ -20013,8 +19884,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"explicitTimezone")
                 ) {
-                    let output =
-                        <super::FacetType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::FacetType as WithDeserializer>::init(helper, event)?;
                     return self.handle_explicit_timezone(
                         helper,
                         Default::default(),
@@ -21613,7 +21483,9 @@ pub mod quick_xml_deserialize {
                     }
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
-                        let output = < super :: RestrictionTypeContent as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output = <super::RestrictionTypeContent as WithDeserializer>::init(
+                            helper, event,
+                        )?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -21724,9 +21596,7 @@ pub mod quick_xml_deserialize {
                     Some(b"annotation")
                 ) {
                     let output =
-                        <super::AnnotationElementType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        <super::AnnotationElementType as WithDeserializer>::init(helper, event)?;
                     return self.handle_annotation(
                         helper,
                         Default::default(),
@@ -21739,9 +21609,7 @@ pub mod quick_xml_deserialize {
                     Some(b"openContent")
                 ) {
                     let output =
-                        <super::OpenContentElementType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        <super::OpenContentElementType as WithDeserializer>::init(helper, event)?;
                     return self.handle_open_content(
                         helper,
                         Default::default(),
@@ -21753,32 +21621,28 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"group")
                 ) {
-                    let output =
-                        <super::GroupType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::GroupType as WithDeserializer>::init(helper, event)?;
                     return self.handle_group(helper, Default::default(), output, &mut *fallback);
                 }
                 if matches!(
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"all")
                 ) {
-                    let output =
-                        <super::GroupType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::GroupType as WithDeserializer>::init(helper, event)?;
                     return self.handle_all(helper, Default::default(), output, &mut *fallback);
                 }
                 if matches!(
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"choice")
                 ) {
-                    let output =
-                        <super::GroupType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::GroupType as WithDeserializer>::init(helper, event)?;
                     return self.handle_choice(helper, Default::default(), output, &mut *fallback);
                 }
                 if matches!(
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"sequence")
                 ) {
-                    let output =
-                        <super::GroupType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::GroupType as WithDeserializer>::init(helper, event)?;
                     return self.handle_sequence(
                         helper,
                         Default::default(),
@@ -21790,9 +21654,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"simpleType")
                 ) {
-                    let output = <super::SimpleBaseType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::SimpleBaseType as WithDeserializer>::init(helper, event)?;
                     return self.handle_simple_type(
                         helper,
                         Default::default(),
@@ -21804,9 +21666,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"attribute")
                 ) {
-                    let output = <super::AttributeType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::AttributeType as WithDeserializer>::init(helper, event)?;
                     return self.handle_attribute(
                         helper,
                         Default::default(),
@@ -21819,9 +21679,7 @@ pub mod quick_xml_deserialize {
                     Some(b"attributeGroup")
                 ) {
                     let output =
-                        <super::AttributeGroupType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        <super::AttributeGroupType as WithDeserializer>::init(helper, event)?;
                     return self.handle_attribute_group(
                         helper,
                         Default::default(),
@@ -21834,9 +21692,7 @@ pub mod quick_xml_deserialize {
                     Some(b"anyAttribute")
                 ) {
                     let output =
-                        <super::AnyAttributeElementType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        <super::AnyAttributeElementType as WithDeserializer>::init(helper, event)?;
                     return self.handle_any_attribute(
                         helper,
                         Default::default(),
@@ -21848,14 +21704,11 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"assert")
                 ) {
-                    let output = <super::AssertionType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::AssertionType as WithDeserializer>::init(helper, event)?;
                     return self.handle_assert(helper, Default::default(), output, &mut *fallback);
                 }
                 event = {
-                    let output =
-                        <super::Facet as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::Facet as WithDeserializer>::init(helper, event)?;
                     match self.handle_facet(helper, Default::default(), output, &mut *fallback)? {
                         ElementHandlerOutput::Continue { event, allow_any } => {
                             allow_any_element = allow_any_element || allow_any;
@@ -21867,8 +21720,7 @@ pub mod quick_xml_deserialize {
                     }
                 };
                 event = {
-                    let output =
-                        <AnyElement as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <AnyElement as WithDeserializer>::init(helper, event)?;
                     match self.handle_any(helper, Default::default(), output, &mut *fallback)? {
                         ElementHandlerOutput::Continue { event, .. } => event,
                         output => {
@@ -23166,8 +23018,7 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Facet(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output =
-                            <super::Facet as WithDeserializer>::Deserializer::init(helper, event)?;
+                        let output = <super::Facet as WithDeserializer>::init(helper, event)?;
                         match self.handle_facet(helper, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -23419,9 +23270,7 @@ pub mod quick_xml_deserialize {
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
                         let output =
-                            <super::ExtensionTypeContent as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::ExtensionTypeContent as WithDeserializer>::init(helper, event)?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -23515,9 +23364,7 @@ pub mod quick_xml_deserialize {
                     Some(b"annotation")
                 ) {
                     let output =
-                        <super::AnnotationElementType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        <super::AnnotationElementType as WithDeserializer>::init(helper, event)?;
                     return self.handle_annotation(
                         helper,
                         Default::default(),
@@ -23530,9 +23377,7 @@ pub mod quick_xml_deserialize {
                     Some(b"openContent")
                 ) {
                     let output =
-                        <super::OpenContentElementType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        <super::OpenContentElementType as WithDeserializer>::init(helper, event)?;
                     return self.handle_open_content(
                         helper,
                         Default::default(),
@@ -23544,32 +23389,28 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"group")
                 ) {
-                    let output =
-                        <super::GroupType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::GroupType as WithDeserializer>::init(helper, event)?;
                     return self.handle_group(helper, Default::default(), output, &mut *fallback);
                 }
                 if matches!(
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"all")
                 ) {
-                    let output =
-                        <super::GroupType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::GroupType as WithDeserializer>::init(helper, event)?;
                     return self.handle_all(helper, Default::default(), output, &mut *fallback);
                 }
                 if matches!(
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"choice")
                 ) {
-                    let output =
-                        <super::GroupType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::GroupType as WithDeserializer>::init(helper, event)?;
                     return self.handle_choice(helper, Default::default(), output, &mut *fallback);
                 }
                 if matches!(
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"sequence")
                 ) {
-                    let output =
-                        <super::GroupType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::GroupType as WithDeserializer>::init(helper, event)?;
                     return self.handle_sequence(
                         helper,
                         Default::default(),
@@ -23581,9 +23422,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"attribute")
                 ) {
-                    let output = <super::AttributeType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::AttributeType as WithDeserializer>::init(helper, event)?;
                     return self.handle_attribute(
                         helper,
                         Default::default(),
@@ -23596,9 +23435,7 @@ pub mod quick_xml_deserialize {
                     Some(b"attributeGroup")
                 ) {
                     let output =
-                        <super::AttributeGroupType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        <super::AttributeGroupType as WithDeserializer>::init(helper, event)?;
                     return self.handle_attribute_group(
                         helper,
                         Default::default(),
@@ -23611,9 +23448,7 @@ pub mod quick_xml_deserialize {
                     Some(b"anyAttribute")
                 ) {
                     let output =
-                        <super::AnyAttributeElementType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        <super::AnyAttributeElementType as WithDeserializer>::init(helper, event)?;
                     return self.handle_any_attribute(
                         helper,
                         Default::default(),
@@ -23625,9 +23460,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_XS),
                     Some(b"assert")
                 ) {
-                    let output = <super::AssertionType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::AssertionType as WithDeserializer>::init(helper, event)?;
                     return self.handle_assert(helper, Default::default(), output, &mut *fallback);
                 }
             }

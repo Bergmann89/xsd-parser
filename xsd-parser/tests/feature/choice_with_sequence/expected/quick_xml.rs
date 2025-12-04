@@ -114,9 +114,7 @@ pub mod quick_xml_deserialize {
             let mut allow_any_element = false;
             if let Event::Start(_) | Event::Empty(_) = &event {
                 event = {
-                    let output = <super::FooContent2Type as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::FooContent2Type as WithDeserializer>::init(helper, event)?;
                     match self.handle_content_2(
                         helper,
                         Default::default(),
@@ -133,9 +131,7 @@ pub mod quick_xml_deserialize {
                     }
                 };
                 event = {
-                    let output = <super::FooContent3Type as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::FooContent3Type as WithDeserializer>::init(helper, event)?;
                     match self.handle_content_3(
                         helper,
                         Default::default(),
@@ -372,9 +368,7 @@ pub mod quick_xml_deserialize {
                     },
                     (S::Content2(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
-                            <super::FooContent2Type as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::FooContent2Type as WithDeserializer>::init(helper, event)?;
                         match self.handle_content_2(helper, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -384,9 +378,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Content3(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
-                            <super::FooContent3Type as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::FooContent3Type as WithDeserializer>::init(helper, event)?;
                         match self.handle_content_3(helper, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)

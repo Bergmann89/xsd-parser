@@ -425,7 +425,9 @@ pub mod tns {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = < super :: ContainerTypeContent as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                            let output = <super::ContainerTypeContent as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -487,9 +489,7 @@ pub mod tns {
                         helper.resolve_local_name(x.name(), &super::super::NS_TNS),
                         Some(b"Known")
                     ) {
-                        let output = <super::KnownType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output = <super::KnownType as WithDeserializer>::init(helper, event)?;
                         return self.handle_known(
                             helper,
                             Default::default(),
@@ -499,7 +499,7 @@ pub mod tns {
                     }
                 }
                 event = {
-                    let output = <Text as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <Text as WithDeserializer>::init(helper, event)?;
                     match self.handle_text(helper, Default::default(), output, &mut *fallback)? {
                         ElementHandlerOutput::Continue { event, .. } => event,
                         output => {
@@ -754,8 +754,7 @@ pub mod tns {
                             }
                         }
                         (S::Text(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            let output =
-                                <Text as WithDeserializer>::Deserializer::init(helper, event)?;
+                            let output = <Text as WithDeserializer>::init(helper, event)?;
                             match self.handle_text(helper, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)

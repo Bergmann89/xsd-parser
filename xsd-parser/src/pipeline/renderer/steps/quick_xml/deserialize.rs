@@ -7,13 +7,12 @@ use proc_macro2::{Ident as Ident2, TokenStream};
 use quote::{format_ident, quote};
 
 use crate::config::TypedefMode;
-use crate::models::data::ConstrainsData;
 use crate::models::{
     data::{
         ComplexBase, ComplexData, ComplexDataAttribute, ComplexDataContent, ComplexDataElement,
-        ComplexDataEnum, ComplexDataStruct, DataTypeVariant, DerivedType, DynamicData,
-        EnumerationData, EnumerationTypeVariant, Occurs, ReferenceData, SimpleData, StructMode,
-        UnionData, UnionTypeVariant,
+        ComplexDataEnum, ComplexDataStruct, ConstrainsData, DataTypeVariant, DerivedType,
+        DynamicData, EnumerationData, EnumerationTypeVariant, Occurs, ReferenceData, SimpleData,
+        StructMode, UnionData, UnionTypeVariant,
     },
     meta::{
         ComplexMeta, ElementMeta, ElementMetaVariant, ElementMode, MetaTypeVariant, MetaTypes,
@@ -369,7 +368,7 @@ impl DerivedType {
                 artifact,
                 event,
                 allow_any,
-            } = <#target_type as #with_deserializer>::Deserializer::init(helper, event)?;
+            } = <#target_type as #with_deserializer>::init(helper, event)?;
 
             return Ok(#deserializer_output {
                 artifact: artifact.map(
@@ -1114,8 +1113,9 @@ impl ComplexDataEnum<'_> {
     }
 
     fn render_deserializer_fn_finish_state(&self, ctx: &Context<'_, '_>) -> TokenStream {
-        let type_ident = &self.type_ident;
         let config = ctx.get_ref::<DeserializerConfig>();
+
+        let type_ident = &self.type_ident;
         let deserializer_ident = &self.deserializer_ident;
         let deserializer_state_ident = &self.deserializer_state_ident;
 
@@ -1166,13 +1166,13 @@ impl ComplexDataEnum<'_> {
     }
 
     fn render_deserializer_fn_init_for_group(&self, ctx: &Context<'_, '_>) -> TokenStream {
-        let _self = self;
-
         let config = ctx.get_ref::<DeserializerConfig>();
+
         let deserializer_ident = &self.deserializer_ident;
+        let deserializer_state_ident = &self.deserializer_state_ident;
+
         let boxed_deserializer_ident =
             boxed_deserializer_ident(config.boxed_deserializer, deserializer_ident);
-        let deserializer_state_ident = &self.deserializer_state_ident;
 
         let box_ = resolve_build_in!(ctx, "::alloc::boxed::Box");
 
@@ -1559,6 +1559,7 @@ impl ComplexDataStruct<'_> {
     #[allow(clippy::too_many_lines)]
     fn render_deserializer_fn_from_bytes_start(&self, ctx: &Context<'_, '_>) -> TokenStream {
         let config = ctx.get_ref::<DeserializerConfig>();
+
         let deserializer_state_ident = &self.deserializer_state_ident;
 
         let mut index = 0;
@@ -1974,7 +1975,7 @@ impl ComplexDataStruct<'_> {
                     }
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
-                        let output = <#target_type as #with_deserializer>::Deserializer::init(helper, event)?;
+                        let output = <#target_type as #with_deserializer>::init(helper, event)?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             #element_handler_output::Break { event, allow_any } => break (event, allow_any),
                             #element_handler_output::Continue { event, .. } => event,
@@ -2774,7 +2775,7 @@ impl ComplexDataElement<'_> {
         ctx.add_quick_xml_deserialize_usings(true, ["::xsd_parser_types::quick_xml::Deserializer"]);
 
         let body = quote! {
-            let output = <#target_type as #with_deserializer>::Deserializer::init(helper, event)?;
+            let output = <#target_type as #with_deserializer>::init(helper, event)?;
 
             return #call_handler;
         };
@@ -2832,7 +2833,7 @@ impl ComplexDataElement<'_> {
 
         quote! {
             event = {
-                let output = <#target_type as #with_deserializer>::Deserializer::init(helper, event)?;
+                let output = <#target_type as #with_deserializer>::init(helper, event)?;
 
                 match #call_handler? {
                     #handle_continue
@@ -3285,7 +3286,7 @@ impl ComplexDataElement<'_> {
             );
 
             quote! {
-                <#target_type as #with_deserializer>::Deserializer::init(helper, event)
+                <#target_type as #with_deserializer>::init(helper, event)
             }
         };
 
@@ -3397,7 +3398,7 @@ impl ComplexDataElement<'_> {
         ctx.add_quick_xml_deserialize_usings(true, ["::xsd_parser_types::quick_xml::Deserializer"]);
 
         Some(quote! {
-            let output = <#target_type as #with_deserializer>::Deserializer::init(helper, event)?;
+            let output = <#target_type as #with_deserializer>::init(helper, event)?;
 
             self.#handler_ident(helper, output, &mut *fallback)
         })
@@ -3871,7 +3872,7 @@ impl ComplexDataElement<'_> {
             );
 
         let mut body = quote! {
-            let output = <#target_type as #with_deserializer>::Deserializer::init(helper, event)?;
+            let output = <#target_type as #with_deserializer>::init(helper, event)?;
             match self.#handler_ident(helper, output, &mut fallback)? {
                 #element_handler_output::Continue { event, allow_any } => {
                     allow_any_element = allow_any_element || allow_any;

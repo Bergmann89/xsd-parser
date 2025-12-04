@@ -443,9 +443,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Any0(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         if is_any_retry {
-                            let output = <AnyElement as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            let output = <AnyElement as WithDeserializer>::init(helper, event)?;
                             match self.handle_any_0(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
@@ -480,9 +478,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Any1(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         if is_any_retry {
-                            let output = <AnyElement as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            let output = <AnyElement as WithDeserializer>::init(helper, event)?;
                             match self.handle_any_1(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
@@ -655,9 +651,7 @@ pub mod quick_xml_deserialize {
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
                         let output =
-                            <super::ChoiceTypeContent as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::ChoiceTypeContent as WithDeserializer>::init(helper, event)?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -714,12 +708,11 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_TNS),
                     Some(b"Name")
                 ) {
-                    let output = <String as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <String as WithDeserializer>::init(helper, event)?;
                     return self.handle_name(helper, Default::default(), output, &mut *fallback);
                 }
                 event = {
-                    let output =
-                        <AnyElement as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <AnyElement as WithDeserializer>::init(helper, event)?;
                     match self.handle_any(helper, Default::default(), output, &mut *fallback)? {
                         ElementHandlerOutput::Continue { event, .. } => event,
                         output => {

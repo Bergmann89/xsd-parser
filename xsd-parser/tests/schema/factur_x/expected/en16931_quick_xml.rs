@@ -4019,9 +4019,7 @@ pub mod quick_xml_deserialize {
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
                         let output =
-                            <super::DateTimeTypeContent as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::DateTimeTypeContent as WithDeserializer>::init(helper, event)?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -4072,7 +4070,9 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_UDT),
                     Some(b"DateTimeString")
                 ) {
-                    let output = < super :: DateTimeTypeDateTimeStringType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                    let output = <super::DateTimeTypeDateTimeStringType as WithDeserializer>::init(
+                        helper, event,
+                    )?;
                     return self.handle_date_time_string(
                         helper,
                         Default::default(),
@@ -23611,9 +23611,7 @@ pub mod quick_xml_deserialize {
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
                         let output =
-                            <super::DateTypeContent as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::DateTypeContent as WithDeserializer>::init(helper, event)?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -23665,9 +23663,7 @@ pub mod quick_xml_deserialize {
                     Some(b"DateString")
                 ) {
                     let output =
-                        <super::DateTypeDateStringType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        <super::DateTypeDateStringType as WithDeserializer>::init(helper, event)?;
                     return self.handle_date_string(
                         helper,
                         Default::default(),
@@ -24219,9 +24215,7 @@ pub mod quick_xml_deserialize {
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
                         let output =
-                            <super::IndicatorTypeContent as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::IndicatorTypeContent as WithDeserializer>::init(helper, event)?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -24275,7 +24269,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_UDT),
                     Some(b"Indicator")
                 ) {
-                    let output = <bool as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <bool as WithDeserializer>::init(helper, event)?;
                     return self.handle_indicator(
                         helper,
                         Default::default(),

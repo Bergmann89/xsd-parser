@@ -427,7 +427,7 @@ impl<'types> Deref for ComplexDataStruct<'types> {
 }
 
 impl ComplexDataContent<'_> {
-    /// returns `true` if the content is a simple type (e.g. a enum, union,
+    /// Returns `true` if the content is a simple type (e.g. a enum, union,
     /// string, integer, ...), `false` otherwise.
     #[must_use]
     pub fn is_simple(&self) -> bool {

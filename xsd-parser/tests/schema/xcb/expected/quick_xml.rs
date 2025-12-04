@@ -1323,9 +1323,7 @@ pub mod quick_xml_deserialize {
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
                         let output =
-                            <super::XcbTypeContent as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::XcbTypeContent as WithDeserializer>::init(helper, event)?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -1423,21 +1421,16 @@ pub mod quick_xml_deserialize {
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if x.name().local_name().as_ref() == b"request" {
-                    let output = <super::RequestType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::RequestType as WithDeserializer>::init(helper, event)?;
                     return self.handle_request(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"event" {
-                    let output =
-                        <super::EventType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::EventType as WithDeserializer>::init(helper, event)?;
                     return self.handle_event(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"eventcopy" {
                     let output =
-                        <super::PacketStructCopyType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        <super::PacketStructCopyType as WithDeserializer>::init(helper, event)?;
                     return self.handle_eventcopy(
                         helper,
                         Default::default(),
@@ -1446,16 +1439,13 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if x.name().local_name().as_ref() == b"error" {
-                    let output = <super::PacketStructType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output =
+                        <super::PacketStructType as WithDeserializer>::init(helper, event)?;
                     return self.handle_error(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"errorcopy" {
                     let output =
-                        <super::PacketStructCopyType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        <super::PacketStructCopyType as WithDeserializer>::init(helper, event)?;
                     return self.handle_errorcopy(
                         helper,
                         Default::default(),
@@ -1464,25 +1454,19 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if x.name().local_name().as_ref() == b"struct" {
-                    let output =
-                        <super::StructType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::StructType as WithDeserializer>::init(helper, event)?;
                     return self.handle_struct_(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"union" {
-                    let output =
-                        <super::StructType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::StructType as WithDeserializer>::init(helper, event)?;
                     return self.handle_union_(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"xidtype" {
-                    let output = <super::XidtypeType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::XidtypeType as WithDeserializer>::init(helper, event)?;
                     return self.handle_xidtype(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"xidunion" {
-                    let output = <super::XidunionType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::XidunionType as WithDeserializer>::init(helper, event)?;
                     return self.handle_xidunion(
                         helper,
                         Default::default(),
@@ -1491,18 +1475,15 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if x.name().local_name().as_ref() == b"enum" {
-                    let output =
-                        <super::EnumType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::EnumType as WithDeserializer>::init(helper, event)?;
                     return self.handle_enum_(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"typedef" {
-                    let output = <super::TypedefType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::TypedefType as WithDeserializer>::init(helper, event)?;
                     return self.handle_typedef(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"import" {
-                    let output = <String as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <String as WithDeserializer>::init(helper, event)?;
                     return self.handle_import(helper, Default::default(), output, &mut *fallback);
                 }
             }
@@ -2837,9 +2818,7 @@ pub mod quick_xml_deserialize {
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
                         let output =
-                            <super::RequestTypeContent as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::RequestTypeContent as WithDeserializer>::init(helper, event)?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -2922,29 +2901,23 @@ pub mod quick_xml_deserialize {
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if x.name().local_name().as_ref() == b"pad" {
-                    let output =
-                        <super::PadType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::PadType as WithDeserializer>::init(helper, event)?;
                     return self.handle_pad(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"field" {
-                    let output =
-                        <super::VarType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::VarType as WithDeserializer>::init(helper, event)?;
                     return self.handle_field(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"list" {
-                    let output =
-                        <super::ListType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::ListType as WithDeserializer>::init(helper, event)?;
                     return self.handle_list(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"fd" {
-                    let output =
-                        <super::AnyType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::AnyType as WithDeserializer>::init(helper, event)?;
                     return self.handle_fd(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"exprfield" {
-                    let output = <super::ExprfieldType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::ExprfieldType as WithDeserializer>::init(helper, event)?;
                     return self.handle_exprfield(
                         helper,
                         Default::default(),
@@ -2953,9 +2926,7 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if x.name().local_name().as_ref() == b"valueparam" {
-                    let output = <super::ValueparamType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::ValueparamType as WithDeserializer>::init(helper, event)?;
                     return self.handle_valueparam(
                         helper,
                         Default::default(),
@@ -2964,20 +2935,16 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if x.name().local_name().as_ref() == b"switch" {
-                    let output = <super::SwitchexprType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::SwitchexprType as WithDeserializer>::init(helper, event)?;
                     return self.handle_switch(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"reply" {
-                    let output = <super::RequestReplyType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output =
+                        <super::RequestReplyType as WithDeserializer>::init(helper, event)?;
                     return self.handle_reply(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"doc" {
-                    let output =
-                        <super::DocType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::DocType as WithDeserializer>::init(helper, event)?;
                     return self.handle_doc(helper, Default::default(), output, &mut *fallback);
                 }
             }
@@ -4047,9 +4014,7 @@ pub mod quick_xml_deserialize {
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
                         let output =
-                            <super::EventTypeContent as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::EventTypeContent as WithDeserializer>::init(helper, event)?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -4117,28 +4082,23 @@ pub mod quick_xml_deserialize {
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if x.name().local_name().as_ref() == b"pad" {
-                    let output =
-                        <super::PadType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::PadType as WithDeserializer>::init(helper, event)?;
                     return self.handle_pad(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"field" {
-                    let output =
-                        <super::VarType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::VarType as WithDeserializer>::init(helper, event)?;
                     return self.handle_field(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"list" {
-                    let output =
-                        <super::ListType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::ListType as WithDeserializer>::init(helper, event)?;
                     return self.handle_list(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"fd" {
-                    let output =
-                        <super::AnyType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::AnyType as WithDeserializer>::init(helper, event)?;
                     return self.handle_fd(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"doc" {
-                    let output =
-                        <super::DocType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::DocType as WithDeserializer>::init(helper, event)?;
                     return self.handle_doc(helper, Default::default(), output, &mut *fallback);
                 }
             }
@@ -4906,7 +4866,9 @@ pub mod quick_xml_deserialize {
                     }
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
-                        let output = < super :: PacketStructTypeContent as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output = <super::PacketStructTypeContent as WithDeserializer>::init(
+                            helper, event,
+                        )?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -4974,23 +4936,19 @@ pub mod quick_xml_deserialize {
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if x.name().local_name().as_ref() == b"pad" {
-                    let output =
-                        <super::PadType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::PadType as WithDeserializer>::init(helper, event)?;
                     return self.handle_pad(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"field" {
-                    let output =
-                        <super::VarType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::VarType as WithDeserializer>::init(helper, event)?;
                     return self.handle_field(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"list" {
-                    let output =
-                        <super::ListType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::ListType as WithDeserializer>::init(helper, event)?;
                     return self.handle_list(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"fd" {
-                    let output =
-                        <super::AnyType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::AnyType as WithDeserializer>::init(helper, event)?;
                     return self.handle_fd(helper, Default::default(), output, &mut *fallback);
                 }
             }
@@ -5585,9 +5543,7 @@ pub mod quick_xml_deserialize {
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
                         let output =
-                            <super::StructTypeContent as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::StructTypeContent as WithDeserializer>::init(helper, event)?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -5652,29 +5608,23 @@ pub mod quick_xml_deserialize {
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if x.name().local_name().as_ref() == b"pad" {
-                    let output =
-                        <super::PadType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::PadType as WithDeserializer>::init(helper, event)?;
                     return self.handle_pad(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"field" {
-                    let output =
-                        <super::VarType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::VarType as WithDeserializer>::init(helper, event)?;
                     return self.handle_field(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"list" {
-                    let output =
-                        <super::ListType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::ListType as WithDeserializer>::init(helper, event)?;
                     return self.handle_list(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"fd" {
-                    let output =
-                        <super::AnyType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::AnyType as WithDeserializer>::init(helper, event)?;
                     return self.handle_fd(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"switch" {
-                    let output = <super::SwitchexprType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::SwitchexprType as WithDeserializer>::init(helper, event)?;
                     return self.handle_switch(helper, Default::default(), output, &mut *fallback);
                 }
             }
@@ -6602,9 +6552,7 @@ pub mod quick_xml_deserialize {
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
                         let output =
-                            <super::EnumTypeContent as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::EnumTypeContent as WithDeserializer>::init(helper, event)?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -7290,9 +7238,7 @@ pub mod quick_xml_deserialize {
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
                         let output =
-                            <super::ListTypeContent as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::ListTypeContent as WithDeserializer>::init(helper, event)?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -7370,17 +7316,15 @@ pub mod quick_xml_deserialize {
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if x.name().local_name().as_ref() == b"op" {
-                    let output =
-                        <super::OpType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::OpType as WithDeserializer>::init(helper, event)?;
                     return self.handle_op(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"unop" {
-                    let output =
-                        <super::UnopType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::UnopType as WithDeserializer>::init(helper, event)?;
                     return self.handle_unop(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"fieldref" {
-                    let output = <String as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <String as WithDeserializer>::init(helper, event)?;
                     return self.handle_fieldref(
                         helper,
                         Default::default(),
@@ -7389,15 +7333,11 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if x.name().local_name().as_ref() == b"enumref" {
-                    let output = <super::EnumrefType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::EnumrefType as WithDeserializer>::init(helper, event)?;
                     return self.handle_enumref(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"popcount" {
-                    let output = <super::PopcountType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::PopcountType as WithDeserializer>::init(helper, event)?;
                     return self.handle_popcount(
                         helper,
                         Default::default(),
@@ -7406,19 +7346,16 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if x.name().local_name().as_ref() == b"sumof" {
-                    let output =
-                        <super::SumofType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::SumofType as WithDeserializer>::init(helper, event)?;
                     return self.handle_sumof(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"value" {
                     let output =
-                        <super::DecOrHexIntegerType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        <super::DecOrHexIntegerType as WithDeserializer>::init(helper, event)?;
                     return self.handle_value(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"bit" {
-                    let output = <i32 as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <i32 as WithDeserializer>::init(helper, event)?;
                     return self.handle_bit(helper, Default::default(), output, &mut *fallback);
                 }
             }
@@ -8437,9 +8374,7 @@ pub mod quick_xml_deserialize {
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
                         let output =
-                            <super::ExprfieldTypeContent as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::ExprfieldTypeContent as WithDeserializer>::init(helper, event)?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -8520,17 +8455,15 @@ pub mod quick_xml_deserialize {
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if x.name().local_name().as_ref() == b"op" {
-                    let output =
-                        <super::OpType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::OpType as WithDeserializer>::init(helper, event)?;
                     return self.handle_op(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"unop" {
-                    let output =
-                        <super::UnopType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::UnopType as WithDeserializer>::init(helper, event)?;
                     return self.handle_unop(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"fieldref" {
-                    let output = <String as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <String as WithDeserializer>::init(helper, event)?;
                     return self.handle_fieldref(
                         helper,
                         Default::default(),
@@ -8539,15 +8472,11 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if x.name().local_name().as_ref() == b"enumref" {
-                    let output = <super::EnumrefType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::EnumrefType as WithDeserializer>::init(helper, event)?;
                     return self.handle_enumref(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"popcount" {
-                    let output = <super::PopcountType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::PopcountType as WithDeserializer>::init(helper, event)?;
                     return self.handle_popcount(
                         helper,
                         Default::default(),
@@ -8556,19 +8485,16 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if x.name().local_name().as_ref() == b"sumof" {
-                    let output =
-                        <super::SumofType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::SumofType as WithDeserializer>::init(helper, event)?;
                     return self.handle_sumof(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"value" {
                     let output =
-                        <super::DecOrHexIntegerType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        <super::DecOrHexIntegerType as WithDeserializer>::init(helper, event)?;
                     return self.handle_value(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"bit" {
-                    let output = <i32 as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <i32 as WithDeserializer>::init(helper, event)?;
                     return self.handle_bit(helper, Default::default(), output, &mut *fallback);
                 }
             }
@@ -9612,10 +9538,9 @@ pub mod quick_xml_deserialize {
                     }
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
-                        let output =
-                            <super::SwitchexprTypeContent as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                        let output = <super::SwitchexprTypeContent as WithDeserializer>::init(
+                            helper, event,
+                        )?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -9715,17 +9640,15 @@ pub mod quick_xml_deserialize {
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if x.name().local_name().as_ref() == b"op" {
-                    let output =
-                        <super::OpType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::OpType as WithDeserializer>::init(helper, event)?;
                     return self.handle_op(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"unop" {
-                    let output =
-                        <super::UnopType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::UnopType as WithDeserializer>::init(helper, event)?;
                     return self.handle_unop(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"fieldref" {
-                    let output = <String as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <String as WithDeserializer>::init(helper, event)?;
                     return self.handle_fieldref(
                         helper,
                         Default::default(),
@@ -9734,15 +9657,11 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if x.name().local_name().as_ref() == b"enumref" {
-                    let output = <super::EnumrefType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::EnumrefType as WithDeserializer>::init(helper, event)?;
                     return self.handle_enumref(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"popcount" {
-                    let output = <super::PopcountType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::PopcountType as WithDeserializer>::init(helper, event)?;
                     return self.handle_popcount(
                         helper,
                         Default::default(),
@@ -9751,45 +9670,36 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if x.name().local_name().as_ref() == b"sumof" {
-                    let output =
-                        <super::SumofType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::SumofType as WithDeserializer>::init(helper, event)?;
                     return self.handle_sumof(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"value" {
                     let output =
-                        <super::DecOrHexIntegerType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        <super::DecOrHexIntegerType as WithDeserializer>::init(helper, event)?;
                     return self.handle_value(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"bit" {
-                    let output = <i32 as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <i32 as WithDeserializer>::init(helper, event)?;
                     return self.handle_bit(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"bitcase" {
-                    let output = <super::CaseexprType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::CaseexprType as WithDeserializer>::init(helper, event)?;
                     return self.handle_bitcase(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"pad" {
-                    let output =
-                        <super::PadType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::PadType as WithDeserializer>::init(helper, event)?;
                     return self.handle_pad(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"field" {
-                    let output =
-                        <super::VarType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::VarType as WithDeserializer>::init(helper, event)?;
                     return self.handle_field(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"list" {
-                    let output =
-                        <super::ListType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::ListType as WithDeserializer>::init(helper, event)?;
                     return self.handle_list(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"fd" {
-                    let output =
-                        <super::AnyType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::AnyType as WithDeserializer>::init(helper, event)?;
                     return self.handle_fd(helper, Default::default(), output, &mut *fallback);
                 }
             }
@@ -11198,7 +11108,9 @@ pub mod quick_xml_deserialize {
                     }
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
-                        let output = < super :: RequestReplyTypeContent as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output = <super::RequestReplyTypeContent as WithDeserializer>::init(
+                            helper, event,
+                        )?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -11276,29 +11188,23 @@ pub mod quick_xml_deserialize {
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if x.name().local_name().as_ref() == b"pad" {
-                    let output =
-                        <super::PadType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::PadType as WithDeserializer>::init(helper, event)?;
                     return self.handle_pad(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"field" {
-                    let output =
-                        <super::VarType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::VarType as WithDeserializer>::init(helper, event)?;
                     return self.handle_field(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"list" {
-                    let output =
-                        <super::ListType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::ListType as WithDeserializer>::init(helper, event)?;
                     return self.handle_list(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"fd" {
-                    let output =
-                        <super::AnyType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::AnyType as WithDeserializer>::init(helper, event)?;
                     return self.handle_fd(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"valueparam" {
-                    let output = <super::ValueparamType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::ValueparamType as WithDeserializer>::init(helper, event)?;
                     return self.handle_valueparam(
                         helper,
                         Default::default(),
@@ -11307,14 +11213,11 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if x.name().local_name().as_ref() == b"switch" {
-                    let output = <super::SwitchexprType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::SwitchexprType as WithDeserializer>::init(helper, event)?;
                     return self.handle_switch(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"doc" {
-                    let output =
-                        <super::DocType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::DocType as WithDeserializer>::init(helper, event)?;
                     return self.handle_doc(helper, Default::default(), output, &mut *fallback);
                 }
             }
@@ -12191,9 +12094,7 @@ pub mod quick_xml_deserialize {
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
                         let output =
-                            <super::DocTypeContent as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::DocTypeContent as WithDeserializer>::init(helper, event)?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -12261,11 +12162,11 @@ pub mod quick_xml_deserialize {
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if x.name().local_name().as_ref() == b"brief" {
-                    let output = <String as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <String as WithDeserializer>::init(helper, event)?;
                     return self.handle_brief(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"description" {
-                    let output = <String as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <String as WithDeserializer>::init(helper, event)?;
                     return self.handle_description(
                         helper,
                         Default::default(),
@@ -12274,22 +12175,19 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if x.name().local_name().as_ref() == b"example" {
-                    let output = <String as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <String as WithDeserializer>::init(helper, event)?;
                     return self.handle_example(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"field" {
-                    let output =
-                        <super::FieldType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::FieldType as WithDeserializer>::init(helper, event)?;
                     return self.handle_field(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"error" {
-                    let output =
-                        <super::ErrorType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::ErrorType as WithDeserializer>::init(helper, event)?;
                     return self.handle_error(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"see" {
-                    let output =
-                        <super::SeeType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::SeeType as WithDeserializer>::init(helper, event)?;
                     return self.handle_see(helper, Default::default(), output, &mut *fallback);
                 }
             }
@@ -13052,9 +12950,7 @@ pub mod quick_xml_deserialize {
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
                         let output =
-                            <super::EnumItemTypeContent as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::EnumItemTypeContent as WithDeserializer>::init(helper, event)?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -13105,13 +13001,11 @@ pub mod quick_xml_deserialize {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if x.name().local_name().as_ref() == b"value" {
                     let output =
-                        <super::DecOrHexIntegerType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        <super::DecOrHexIntegerType as WithDeserializer>::init(helper, event)?;
                     return self.handle_value(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"bit" {
-                    let output = <i32 as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <i32 as WithDeserializer>::init(helper, event)?;
                     return self.handle_bit(helper, Default::default(), output, &mut *fallback);
                 }
             }
@@ -13517,9 +13411,7 @@ pub mod quick_xml_deserialize {
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
                         let output =
-                            <super::OpTypeContent as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::OpTypeContent as WithDeserializer>::init(helper, event)?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -13599,17 +13491,15 @@ pub mod quick_xml_deserialize {
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if x.name().local_name().as_ref() == b"op" {
-                    let output =
-                        <super::OpType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::OpType as WithDeserializer>::init(helper, event)?;
                     return self.handle_op(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"unop" {
-                    let output =
-                        <super::UnopType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::UnopType as WithDeserializer>::init(helper, event)?;
                     return self.handle_unop(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"fieldref" {
-                    let output = <String as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <String as WithDeserializer>::init(helper, event)?;
                     return self.handle_fieldref(
                         helper,
                         Default::default(),
@@ -13618,15 +13508,11 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if x.name().local_name().as_ref() == b"enumref" {
-                    let output = <super::EnumrefType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::EnumrefType as WithDeserializer>::init(helper, event)?;
                     return self.handle_enumref(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"popcount" {
-                    let output = <super::PopcountType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::PopcountType as WithDeserializer>::init(helper, event)?;
                     return self.handle_popcount(
                         helper,
                         Default::default(),
@@ -13635,19 +13521,16 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if x.name().local_name().as_ref() == b"sumof" {
-                    let output =
-                        <super::SumofType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::SumofType as WithDeserializer>::init(helper, event)?;
                     return self.handle_sumof(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"value" {
                     let output =
-                        <super::DecOrHexIntegerType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        <super::DecOrHexIntegerType as WithDeserializer>::init(helper, event)?;
                     return self.handle_value(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"bit" {
-                    let output = <i32 as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <i32 as WithDeserializer>::init(helper, event)?;
                     return self.handle_bit(helper, Default::default(), output, &mut *fallback);
                 }
             }
@@ -14578,9 +14461,7 @@ pub mod quick_xml_deserialize {
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
                         let output =
-                            <super::UnopTypeContent as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::UnopTypeContent as WithDeserializer>::init(helper, event)?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -14654,17 +14535,15 @@ pub mod quick_xml_deserialize {
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if x.name().local_name().as_ref() == b"op" {
-                    let output =
-                        <super::OpType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::OpType as WithDeserializer>::init(helper, event)?;
                     return self.handle_op(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"unop" {
-                    let output =
-                        <super::UnopType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::UnopType as WithDeserializer>::init(helper, event)?;
                     return self.handle_unop(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"fieldref" {
-                    let output = <String as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <String as WithDeserializer>::init(helper, event)?;
                     return self.handle_fieldref(
                         helper,
                         Default::default(),
@@ -14673,15 +14552,11 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if x.name().local_name().as_ref() == b"enumref" {
-                    let output = <super::EnumrefType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::EnumrefType as WithDeserializer>::init(helper, event)?;
                     return self.handle_enumref(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"popcount" {
-                    let output = <super::PopcountType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::PopcountType as WithDeserializer>::init(helper, event)?;
                     return self.handle_popcount(
                         helper,
                         Default::default(),
@@ -14690,19 +14565,16 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if x.name().local_name().as_ref() == b"sumof" {
-                    let output =
-                        <super::SumofType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::SumofType as WithDeserializer>::init(helper, event)?;
                     return self.handle_sumof(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"value" {
                     let output =
-                        <super::DecOrHexIntegerType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        <super::DecOrHexIntegerType as WithDeserializer>::init(helper, event)?;
                     return self.handle_value(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"bit" {
-                    let output = <i32 as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <i32 as WithDeserializer>::init(helper, event)?;
                     return self.handle_bit(helper, Default::default(), output, &mut *fallback);
                 }
             }
@@ -15690,17 +15562,15 @@ pub mod quick_xml_deserialize {
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if x.name().local_name().as_ref() == b"op" {
-                    let output =
-                        <super::OpType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::OpType as WithDeserializer>::init(helper, event)?;
                     return self.handle_op(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"unop" {
-                    let output =
-                        <super::UnopType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::UnopType as WithDeserializer>::init(helper, event)?;
                     return self.handle_unop(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"fieldref" {
-                    let output = <String as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <String as WithDeserializer>::init(helper, event)?;
                     return self.handle_fieldref(
                         helper,
                         Default::default(),
@@ -15709,15 +15579,11 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if x.name().local_name().as_ref() == b"enumref" {
-                    let output = <super::EnumrefType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::EnumrefType as WithDeserializer>::init(helper, event)?;
                     return self.handle_enumref(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"popcount" {
-                    let output = <super::PopcountType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::PopcountType as WithDeserializer>::init(helper, event)?;
                     return self.handle_popcount(
                         helper,
                         Default::default(),
@@ -15726,19 +15592,16 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if x.name().local_name().as_ref() == b"sumof" {
-                    let output =
-                        <super::SumofType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::SumofType as WithDeserializer>::init(helper, event)?;
                     return self.handle_sumof(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"value" {
                     let output =
-                        <super::DecOrHexIntegerType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        <super::DecOrHexIntegerType as WithDeserializer>::init(helper, event)?;
                     return self.handle_value(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"bit" {
-                    let output = <i32 as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <i32 as WithDeserializer>::init(helper, event)?;
                     return self.handle_bit(helper, Default::default(), output, &mut *fallback);
                 }
             }
@@ -16715,9 +16578,7 @@ pub mod quick_xml_deserialize {
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
                         let output =
-                            <super::CaseexprTypeContent as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::CaseexprTypeContent as WithDeserializer>::init(helper, event)?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -16811,17 +16672,15 @@ pub mod quick_xml_deserialize {
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if x.name().local_name().as_ref() == b"op" {
-                    let output =
-                        <super::OpType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::OpType as WithDeserializer>::init(helper, event)?;
                     return self.handle_op(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"unop" {
-                    let output =
-                        <super::UnopType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::UnopType as WithDeserializer>::init(helper, event)?;
                     return self.handle_unop(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"fieldref" {
-                    let output = <String as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <String as WithDeserializer>::init(helper, event)?;
                     return self.handle_fieldref(
                         helper,
                         Default::default(),
@@ -16830,15 +16689,11 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if x.name().local_name().as_ref() == b"enumref" {
-                    let output = <super::EnumrefType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::EnumrefType as WithDeserializer>::init(helper, event)?;
                     return self.handle_enumref(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"popcount" {
-                    let output = <super::PopcountType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::PopcountType as WithDeserializer>::init(helper, event)?;
                     return self.handle_popcount(
                         helper,
                         Default::default(),
@@ -16847,45 +16702,36 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if x.name().local_name().as_ref() == b"sumof" {
-                    let output =
-                        <super::SumofType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::SumofType as WithDeserializer>::init(helper, event)?;
                     return self.handle_sumof(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"value" {
                     let output =
-                        <super::DecOrHexIntegerType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        <super::DecOrHexIntegerType as WithDeserializer>::init(helper, event)?;
                     return self.handle_value(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"bit" {
-                    let output = <i32 as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <i32 as WithDeserializer>::init(helper, event)?;
                     return self.handle_bit(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"pad" {
-                    let output =
-                        <super::PadType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::PadType as WithDeserializer>::init(helper, event)?;
                     return self.handle_pad(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"field" {
-                    let output =
-                        <super::VarType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::VarType as WithDeserializer>::init(helper, event)?;
                     return self.handle_field(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"list" {
-                    let output =
-                        <super::ListType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::ListType as WithDeserializer>::init(helper, event)?;
                     return self.handle_list(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"fd" {
-                    let output =
-                        <super::AnyType as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <super::AnyType as WithDeserializer>::init(helper, event)?;
                     return self.handle_fd(helper, Default::default(), output, &mut *fallback);
                 }
                 if x.name().local_name().as_ref() == b"switch" {
-                    let output = <super::SwitchexprType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::SwitchexprType as WithDeserializer>::init(helper, event)?;
                     return self.handle_switch(helper, Default::default(), output, &mut *fallback);
                 }
             }

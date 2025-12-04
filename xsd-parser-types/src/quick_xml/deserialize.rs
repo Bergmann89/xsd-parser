@@ -23,6 +23,48 @@ use super::{Error, ErrorKind, RawByteStr, XmlReader, XmlReaderSync};
 pub trait WithDeserializer: Sized {
     /// The deserializer to use for this type.
     type Deserializer: for<'de> Deserializer<'de, Self>;
+
+    /// Initializes a new deserializer for the given `event` using the given `helper`.
+    ///
+    /// This is a shortcut for `Self::Deserializer::init()`.
+    ///
+    /// # Errors
+    ///
+    /// Forwards the errors from `Self::Deserializer::init()`;
+    fn init<'de>(
+        helper: &mut DeserializeHelper,
+        event: Event<'de>,
+    ) -> DeserializerResult<'de, Self> {
+        Self::Deserializer::init(helper, event)
+    }
+
+    /// Create a new default deserializer.
+    ///
+    /// If a type does not represent a element (for example a group type), it
+    /// does not need to extract attribute information from an element, which
+    /// means, that it's  deserializer may be constructed with default values.
+    ///
+    /// This is a shortcut for `Self::Deserializer::default()`.
+    #[must_use]
+    fn default_deserializer() -> Self::Deserializer
+    where
+        Self::Deserializer: Default,
+    {
+        Self::Deserializer::default()
+    }
+
+    /// Create a new default value by creating and default deserializer and
+    /// finish it right after.
+    ///
+    /// # Errors
+    ///
+    /// Forwards errors from [`Deserializer::finish`].
+    fn default_value(helper: &mut DeserializeHelper) -> Result<Self, Error>
+    where
+        Self::Deserializer: Default,
+    {
+        Self::default_deserializer().finish(helper)
+    }
 }
 
 impl<X> WithDeserializer for X

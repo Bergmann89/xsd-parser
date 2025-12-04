@@ -193,20 +193,18 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_TNS),
                     Some(b"Fuu")
                 ) {
-                    let output =
-                        <Mixed<i32> as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <Mixed<i32> as WithDeserializer>::init(helper, event)?;
                     return self.handle_fuu(helper, output, &mut *fallback);
                 }
                 if matches!(
                     helper.resolve_local_name(x.name(), &super::NS_TNS),
                     Some(b"Bar")
                 ) {
-                    let output =
-                        <Mixed<String> as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <Mixed<String> as WithDeserializer>::init(helper, event)?;
                     return self.handle_bar(helper, output, &mut *fallback);
                 }
             }
-            let output = <Text as WithDeserializer>::Deserializer::init(helper, event)?;
+            let output = <Text as WithDeserializer>::init(helper, event)?;
             self.handle_text_before(helper, output, &mut *fallback)
         }
         fn from_bytes_start(
@@ -708,7 +706,7 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::TextBefore(None), event) => {
-                        let output = <Text as WithDeserializer>::Deserializer::init(helper, event)?;
+                        let output = <Text as WithDeserializer>::init(helper, event)?;
                         match self.handle_text_before(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
@@ -720,7 +718,9 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Content(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = < super :: MixedChoiceTypeContent as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output = <super::MixedChoiceTypeContent as WithDeserializer>::init(
+                            helper, event,
+                        )?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
@@ -801,16 +801,14 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_TNS),
                     Some(b"Fuu")
                 ) {
-                    let output =
-                        <Mixed<i32> as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <Mixed<i32> as WithDeserializer>::init(helper, event)?;
                     return self.handle_fuu(helper, Default::default(), output, &mut *fallback);
                 }
                 if matches!(
                     helper.resolve_local_name(x.name(), &super::NS_TNS),
                     Some(b"Bar")
                 ) {
-                    let output =
-                        <Mixed<String> as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <Mixed<String> as WithDeserializer>::init(helper, event)?;
                     return self.handle_bar(helper, Default::default(), output, &mut *fallback);
                 }
             }
@@ -1217,7 +1215,9 @@ pub mod quick_xml_deserialize {
                     }
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
-                        let output = < super :: MixedChoiceListTypeContent as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output = <super::MixedChoiceListTypeContent as WithDeserializer>::init(
+                            helper, event,
+                        )?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -1280,19 +1280,19 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_TNS),
                     Some(b"Fuu")
                 ) {
-                    let output = <i32 as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <i32 as WithDeserializer>::init(helper, event)?;
                     return self.handle_fuu(helper, Default::default(), output, &mut *fallback);
                 }
                 if matches!(
                     helper.resolve_local_name(x.name(), &super::NS_TNS),
                     Some(b"Bar")
                 ) {
-                    let output = <String as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <String as WithDeserializer>::init(helper, event)?;
                     return self.handle_bar(helper, Default::default(), output, &mut *fallback);
                 }
             }
             event = {
-                let output = <Text as WithDeserializer>::Deserializer::init(helper, event)?;
+                let output = <Text as WithDeserializer>::init(helper, event)?;
                 match self.handle_text(helper, Default::default(), output, &mut *fallback)? {
                     ElementHandlerOutput::Continue { event, .. } => event,
                     output => {
@@ -1644,7 +1644,7 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Text(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = <Text as WithDeserializer>::Deserializer::init(helper, event)?;
+                        let output = <Text as WithDeserializer>::init(helper, event)?;
                         match self.handle_text(helper, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -2114,7 +2114,7 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::TextBefore(None), event) => {
-                        let output = <Text as WithDeserializer>::Deserializer::init(helper, event)?;
+                        let output = <Text as WithDeserializer>::init(helper, event)?;
                         match self.handle_text_before(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
@@ -2143,7 +2143,7 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::TextAfterFuu(None), event) => {
-                        let output = <Text as WithDeserializer>::Deserializer::init(helper, event)?;
+                        let output = <Text as WithDeserializer>::init(helper, event)?;
                         match self.handle_text_after_fuu(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
@@ -2172,7 +2172,7 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::TextAfterBar(None), event) => {
-                        let output = <Text as WithDeserializer>::Deserializer::init(helper, event)?;
+                        let output = <Text as WithDeserializer>::init(helper, event)?;
                         match self.handle_text_after_bar(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;

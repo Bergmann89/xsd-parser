@@ -2657,9 +2657,7 @@ pub mod quick_xml_deserialize {
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
                         let output =
-                            <super::KeyInfoTypeContent as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::KeyInfoTypeContent as WithDeserializer>::init(helper, event)?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -2735,7 +2733,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_DS),
                     Some(b"KeyName")
                 ) {
-                    let output = <String as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <String as WithDeserializer>::init(helper, event)?;
                     return self.handle_key_name(
                         helper,
                         Default::default(),
@@ -2747,9 +2745,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_DS),
                     Some(b"KeyValue")
                 ) {
-                    let output = <super::KeyValueType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::KeyValueType as WithDeserializer>::init(helper, event)?;
                     return self.handle_key_value(
                         helper,
                         Default::default(),
@@ -2762,9 +2758,7 @@ pub mod quick_xml_deserialize {
                     Some(b"RetrievalMethod")
                 ) {
                     let output =
-                        <super::RetrievalMethodType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        <super::RetrievalMethodType as WithDeserializer>::init(helper, event)?;
                     return self.handle_retrieval_method(
                         helper,
                         Default::default(),
@@ -2776,9 +2770,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_DS),
                     Some(b"X509Data")
                 ) {
-                    let output = <super::X509DataType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::X509DataType as WithDeserializer>::init(helper, event)?;
                     return self.handle_x509_data(
                         helper,
                         Default::default(),
@@ -2790,9 +2782,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_DS),
                     Some(b"PGPData")
                 ) {
-                    let output = <super::PgpDataType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::PgpDataType as WithDeserializer>::init(helper, event)?;
                     return self.handle_pgp_data(
                         helper,
                         Default::default(),
@@ -2804,9 +2794,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_DS),
                     Some(b"SPKIData")
                 ) {
-                    let output = <super::SpkiDataType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::SpkiDataType as WithDeserializer>::init(helper, event)?;
                     return self.handle_spki_data(
                         helper,
                         Default::default(),
@@ -2818,7 +2806,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_DS),
                     Some(b"MgmtData")
                 ) {
-                    let output = <String as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <String as WithDeserializer>::init(helper, event)?;
                     return self.handle_mgmt_data(
                         helper,
                         Default::default(),
@@ -4525,9 +4513,7 @@ pub mod quick_xml_deserialize {
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
                         let output =
-                            <super::KeyValueTypeContent as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::KeyValueTypeContent as WithDeserializer>::init(helper, event)?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -4582,9 +4568,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_DS),
                     Some(b"DSAKeyValue")
                 ) {
-                    let output = <super::DsaKeyValueType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::DsaKeyValueType as WithDeserializer>::init(helper, event)?;
                     return self.handle_dsa_key_value(
                         helper,
                         Default::default(),
@@ -4596,9 +4580,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_DS),
                     Some(b"RSAKeyValue")
                 ) {
-                    let output = <super::RsaKeyValueType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
+                    let output = <super::RsaKeyValueType as WithDeserializer>::init(helper, event)?;
                     return self.handle_rsa_key_value(
                         helper,
                         Default::default(),
@@ -5243,9 +5225,7 @@ pub mod quick_xml_deserialize {
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
                         let output =
-                            <super::X509DataTypeContent as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::X509DataTypeContent as WithDeserializer>::init(helper, event)?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -5417,10 +5397,9 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::Content43(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output =
-                            <super::X509DataContent43Type as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                        let output = <super::X509DataContent43Type as WithDeserializer>::init(
+                            helper, event,
+                        )?;
                         match self.handle_content_43(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
@@ -5581,9 +5560,7 @@ pub mod quick_xml_deserialize {
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
                         let output =
-                            <super::PgpDataTypeContent as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::PgpDataTypeContent as WithDeserializer>::init(helper, event)?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -5638,9 +5615,7 @@ pub mod quick_xml_deserialize {
             if let Event::Start(_) | Event::Empty(_) = &event {
                 event = {
                     let output =
-                        <super::PgpDataContent47Type as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        <super::PgpDataContent47Type as WithDeserializer>::init(helper, event)?;
                     match self.handle_content_47(
                         helper,
                         Default::default(),
@@ -5658,9 +5633,7 @@ pub mod quick_xml_deserialize {
                 };
                 event = {
                     let output =
-                        <super::PgpDataContent49Type as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        <super::PgpDataContent49Type as WithDeserializer>::init(helper, event)?;
                     match self.handle_content_49(
                         helper,
                         Default::default(),
@@ -5909,9 +5882,7 @@ pub mod quick_xml_deserialize {
                     },
                     (S::Content47(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
-                            <super::PgpDataContent47Type as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::PgpDataContent47Type as WithDeserializer>::init(helper, event)?;
                         match self.handle_content_47(helper, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -5921,9 +5892,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Content49(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
-                            <super::PgpDataContent49Type as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::PgpDataContent49Type as WithDeserializer>::init(helper, event)?;
                         match self.handle_content_49(helper, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -6082,9 +6051,7 @@ pub mod quick_xml_deserialize {
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
                         let output =
-                            <super::SpkiDataTypeContent as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::SpkiDataTypeContent as WithDeserializer>::init(helper, event)?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -7008,7 +6975,9 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::Content60(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = < super :: DsaKeyValueContent60Type as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output = <super::DsaKeyValueContent60Type as WithDeserializer>::init(
+                            helper, event,
+                        )?;
                         match self.handle_content_60(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
@@ -7071,7 +7040,9 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Content61(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = < super :: DsaKeyValueContent61Type as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output = <super::DsaKeyValueContent61Type as WithDeserializer>::init(
+                            helper, event,
+                        )?;
                         match self.handle_content_61(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
@@ -7533,7 +7504,10 @@ pub mod quick_xml_deserialize {
                     }
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
-                        let output = < super :: X509DataContent43TypeContent as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output =
+                            <super::X509DataContent43TypeContent as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -7614,9 +7588,7 @@ pub mod quick_xml_deserialize {
                     Some(b"X509IssuerSerial")
                 ) {
                     let output =
-                        <super::X509IssuerSerialType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        <super::X509IssuerSerialType as WithDeserializer>::init(helper, event)?;
                     return self.handle_x509_issuer_serial(
                         helper,
                         Default::default(),
@@ -7628,7 +7600,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_DS),
                     Some(b"X509SKI")
                 ) {
-                    let output = <String as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <String as WithDeserializer>::init(helper, event)?;
                     return self.handle_x509_ski(
                         helper,
                         Default::default(),
@@ -7640,7 +7612,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_DS),
                     Some(b"X509SubjectName")
                 ) {
-                    let output = <String as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <String as WithDeserializer>::init(helper, event)?;
                     return self.handle_x509_subject_name(
                         helper,
                         Default::default(),
@@ -7652,7 +7624,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_DS),
                     Some(b"X509Certificate")
                 ) {
-                    let output = <String as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <String as WithDeserializer>::init(helper, event)?;
                     return self.handle_x509_certificate(
                         helper,
                         Default::default(),
@@ -7664,7 +7636,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_DS),
                     Some(b"X509CRL")
                 ) {
-                    let output = <String as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <String as WithDeserializer>::init(helper, event)?;
                     return self.handle_x509_crl(
                         helper,
                         Default::default(),
@@ -8958,9 +8930,7 @@ pub mod quick_xml_deserialize {
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
                         let output =
-                            <super::TransformTypeContent as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::TransformTypeContent as WithDeserializer>::init(helper, event)?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -9015,7 +8985,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_DS),
                     Some(b"XPath")
                 ) {
-                    let output = <String as WithDeserializer>::Deserializer::init(helper, event)?;
+                    let output = <String as WithDeserializer>::init(helper, event)?;
                     return self.handle_x_path(helper, Default::default(), output, &mut *fallback);
                 }
             }

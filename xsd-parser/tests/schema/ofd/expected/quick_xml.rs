@@ -1852,7 +1852,7 @@ pub mod annotion {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = < super :: PageAnnotAnnotAppearanceXElementTypeContent as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                            let output = < super :: PageAnnotAnnotAppearanceXElementTypeContent as WithDeserializer > :: init (helper , event) ? ;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -1903,7 +1903,7 @@ pub mod annotion {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"TextObject")
                     ) {
-                        let output = < super :: super :: page :: CtPageBlockTextObjectXElementType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output = < super :: super :: page :: CtPageBlockTextObjectXElementType as WithDeserializer > :: init (helper , event) ? ;
                         return self.handle_text_object(
                             helper,
                             Default::default(),
@@ -1915,7 +1915,7 @@ pub mod annotion {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"PathObject")
                     ) {
-                        let output = < super :: super :: page :: CtPageBlockPathObjectXElementType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output = < super :: super :: page :: CtPageBlockPathObjectXElementType as WithDeserializer > :: init (helper , event) ? ;
                         return self.handle_path_object(
                             helper,
                             Default::default(),
@@ -1927,7 +1927,7 @@ pub mod annotion {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"ImageObject")
                     ) {
-                        let output = < super :: super :: page :: CtPageBlockImageObjectXElementType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output = < super :: super :: page :: CtPageBlockImageObjectXElementType as WithDeserializer > :: init (helper , event) ? ;
                         return self.handle_image_object(
                             helper,
                             Default::default(),
@@ -1939,7 +1939,7 @@ pub mod annotion {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"CompositeObject")
                     ) {
-                        let output = < super :: super :: page :: CtPageBlockCompositeObjectXElementType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output = < super :: super :: page :: CtPageBlockCompositeObjectXElementType as WithDeserializer > :: init (helper , event) ? ;
                         return self.handle_composite_object(
                             helper,
                             Default::default(),
@@ -1951,7 +1951,7 @@ pub mod annotion {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"PageBlock")
                     ) {
-                        let output = < super :: super :: page :: CtPageBlockPageBlockXElementType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output = < super :: super :: page :: CtPageBlockPageBlockXElementType as WithDeserializer > :: init (helper , event) ? ;
                         return self.handle_page_block(
                             helper,
                             Default::default(),
@@ -5097,7 +5097,9 @@ pub mod definition {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = < super :: CtActionXTypeContent as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                            let output = <super::CtActionXTypeContent as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -5176,9 +5178,7 @@ pub mod definition {
                         Some(b"Region")
                     ) {
                         let output =
-                            <super::CtRegionXType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::CtRegionXType as WithDeserializer>::init(helper, event)?;
                         return self.handle_region(
                             helper,
                             Default::default(),
@@ -5190,7 +5190,9 @@ pub mod definition {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"Goto")
                     ) {
-                        let output = < super :: CtActionGotoXElementType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output = <super::CtActionGotoXElementType as WithDeserializer>::init(
+                            helper, event,
+                        )?;
                         return self.handle_goto(
                             helper,
                             Default::default(),
@@ -5202,14 +5204,18 @@ pub mod definition {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"URI")
                     ) {
-                        let output = < super :: CtActionUriXElementType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output = <super::CtActionUriXElementType as WithDeserializer>::init(
+                            helper, event,
+                        )?;
                         return self.handle_uri(helper, Default::default(), output, &mut *fallback);
                     }
                     if matches!(
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"GotoA")
                     ) {
-                        let output = < super :: CtActionGotoAxElementType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output = <super::CtActionGotoAxElementType as WithDeserializer>::init(
+                            helper, event,
+                        )?;
                         return self.handle_goto_a(
                             helper,
                             Default::default(),
@@ -5221,7 +5227,9 @@ pub mod definition {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"Sound")
                     ) {
-                        let output = < super :: CtActionSoundXElementType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output = <super::CtActionSoundXElementType as WithDeserializer>::init(
+                            helper, event,
+                        )?;
                         return self.handle_sound(
                             helper,
                             Default::default(),
@@ -5233,7 +5241,9 @@ pub mod definition {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"Movie")
                     ) {
-                        let output = < super :: CtActionMovieXElementType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output = <super::CtActionMovieXElementType as WithDeserializer>::init(
+                            helper, event,
+                        )?;
                         return self.handle_movie(
                             helper,
                             Default::default(),
@@ -6754,9 +6764,7 @@ pub mod definition {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"Dest")
                     ) {
-                        let output = <super::CtDestXType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output = <super::CtDestXType as WithDeserializer>::init(helper, event)?;
                         return self.handle_dest(
                             helper,
                             Default::default(),
@@ -6768,7 +6776,10 @@ pub mod definition {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"Bookmark")
                     ) {
-                        let output = < super :: CtActionGotoBookmarkXElementType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output =
+                            <super::CtActionGotoBookmarkXElementType as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                         return self.handle_bookmark(
                             helper,
                             Default::default(),
@@ -7615,7 +7626,10 @@ pub mod definition {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = < super :: CtRegionAreaXElementTypeContent as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                            let output =
+                                <super::CtRegionAreaXElementTypeContent as WithDeserializer>::init(
+                                    helper, event,
+                                )?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -7666,7 +7680,10 @@ pub mod definition {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"Move")
                     ) {
-                        let output = < super :: CtRegionAreaLineXElementType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output =
+                            <super::CtRegionAreaLineXElementType as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                         return self.handle_move_(
                             helper,
                             Default::default(),
@@ -7678,7 +7695,10 @@ pub mod definition {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"Line")
                     ) {
-                        let output = < super :: CtRegionAreaLineXElementType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output =
+                            <super::CtRegionAreaLineXElementType as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                         return self.handle_line(
                             helper,
                             Default::default(),
@@ -7690,7 +7710,7 @@ pub mod definition {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"OuadraticBezier")
                     ) {
-                        let output = < super :: CtRegionAreaOuadraticBezierXElementType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output = < super :: CtRegionAreaOuadraticBezierXElementType as WithDeserializer > :: init (helper , event) ? ;
                         return self.handle_ouadratic_bezier(
                             helper,
                             Default::default(),
@@ -7702,7 +7722,10 @@ pub mod definition {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"CubicBezier")
                     ) {
-                        let output = < super :: CtRegionAreaCubicBezierXElementType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output =
+                            <super::CtRegionAreaCubicBezierXElementType as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                         return self.handle_cubic_bezier(
                             helper,
                             Default::default(),
@@ -7714,15 +7737,17 @@ pub mod definition {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"Arc")
                     ) {
-                        let output = < super :: CtRegionAreaArcXElementType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output =
+                            <super::CtRegionAreaArcXElementType as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                         return self.handle_arc(helper, Default::default(), output, &mut *fallback);
                     }
                     if matches!(
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"Close")
                     ) {
-                        let output =
-                            <AnyElement as WithDeserializer>::Deserializer::init(helper, event)?;
+                        let output = <AnyElement as WithDeserializer>::init(helper, event)?;
                         return self.handle_close(
                             helper,
                             Default::default(),
@@ -12227,7 +12252,10 @@ pub mod document {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = < super :: CtVPreferencesXTypeContent as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                            let output =
+                                <super::CtVPreferencesXTypeContent as WithDeserializer>::init(
+                                    helper, event,
+                                )?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -12317,7 +12345,10 @@ pub mod document {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"PageMode")
                     ) {
-                        let output = < super :: CtVPreferencesPageModeXElementType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output =
+                            <super::CtVPreferencesPageModeXElementType as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                         return self.handle_page_mode(
                             helper,
                             Default::default(),
@@ -12329,7 +12360,7 @@ pub mod document {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"PageLayout")
                     ) {
-                        let output = < super :: CtVPreferencesPageLayoutXElementType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output = < super :: CtVPreferencesPageLayoutXElementType as WithDeserializer > :: init (helper , event) ? ;
                         return self.handle_page_layout(
                             helper,
                             Default::default(),
@@ -12341,7 +12372,7 @@ pub mod document {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"TabDisplay")
                     ) {
-                        let output = < super :: CtVPreferencesTabDisplayXElementType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output = < super :: CtVPreferencesTabDisplayXElementType as WithDeserializer > :: init (helper , event) ? ;
                         return self.handle_tab_display(
                             helper,
                             Default::default(),
@@ -12353,7 +12384,7 @@ pub mod document {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"HideToolbar")
                     ) {
-                        let output = <bool as WithDeserializer>::Deserializer::init(helper, event)?;
+                        let output = <bool as WithDeserializer>::init(helper, event)?;
                         return self.handle_hide_toolbar(
                             helper,
                             Default::default(),
@@ -12365,7 +12396,7 @@ pub mod document {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"HideMenubar")
                     ) {
-                        let output = <bool as WithDeserializer>::Deserializer::init(helper, event)?;
+                        let output = <bool as WithDeserializer>::init(helper, event)?;
                         return self.handle_hide_menubar(
                             helper,
                             Default::default(),
@@ -12377,7 +12408,7 @@ pub mod document {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"HideWindowUI")
                     ) {
-                        let output = <bool as WithDeserializer>::Deserializer::init(helper, event)?;
+                        let output = <bool as WithDeserializer>::init(helper, event)?;
                         return self.handle_hide_window_ui(
                             helper,
                             Default::default(),
@@ -12389,7 +12420,10 @@ pub mod document {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"ZoomMode")
                     ) {
-                        let output = < super :: CtVPreferencesZoomModeXElementType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output =
+                            <super::CtVPreferencesZoomModeXElementType as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                         return self.handle_zoom_mode(
                             helper,
                             Default::default(),
@@ -12401,7 +12435,7 @@ pub mod document {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"Zoom")
                     ) {
-                        let output = <f64 as WithDeserializer>::Deserializer::init(helper, event)?;
+                        let output = <f64 as WithDeserializer>::init(helper, event)?;
                         return self.handle_zoom(
                             helper,
                             Default::default(),
@@ -17888,7 +17922,10 @@ pub mod extensions {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = < super :: CtExtensionXTypeContent as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                            let output =
+                                <super::CtExtensionXTypeContent as WithDeserializer>::init(
+                                    helper, event,
+                                )?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -17958,7 +17995,10 @@ pub mod extensions {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"Property")
                     ) {
-                        let output = < super :: CtExtensionPropertyXElementType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output =
+                            <super::CtExtensionPropertyXElementType as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                         return self.handle_property(
                             helper,
                             Default::default(),
@@ -17970,8 +18010,7 @@ pub mod extensions {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"Data")
                     ) {
-                        let output =
-                            <AnyElement as WithDeserializer>::Deserializer::init(helper, event)?;
+                        let output = <AnyElement as WithDeserializer>::init(helper, event)?;
                         return self.handle_data(
                             helper,
                             Default::default(),
@@ -17983,8 +18022,7 @@ pub mod extensions {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"ExtendData")
                     ) {
-                        let output =
-                            <String as WithDeserializer>::Deserializer::init(helper, event)?;
+                        let output = <String as WithDeserializer>::init(helper, event)?;
                         return self.handle_extend_data(
                             helper,
                             Default::default(),
@@ -25695,7 +25733,9 @@ pub mod page {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = < super :: CtColorXTypeContent as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                            let output = <super::CtColorXTypeContent as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -25770,9 +25810,7 @@ pub mod page {
                         Some(b"Pattern")
                     ) {
                         let output =
-                            <super::CtPatternXType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::CtPatternXType as WithDeserializer>::init(helper, event)?;
                         return self.handle_pattern(
                             helper,
                             Default::default(),
@@ -25785,9 +25823,7 @@ pub mod page {
                         Some(b"AxialShd")
                     ) {
                         let output =
-                            <super::CtAxialShdXType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::CtAxialShdXType as WithDeserializer>::init(helper, event)?;
                         return self.handle_axial_shd(
                             helper,
                             Default::default(),
@@ -25800,9 +25836,7 @@ pub mod page {
                         Some(b"RadialShd")
                     ) {
                         let output =
-                            <super::CtRadialShdXType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::CtRadialShdXType as WithDeserializer>::init(helper, event)?;
                         return self.handle_radial_shd(
                             helper,
                             Default::default(),
@@ -25815,9 +25849,7 @@ pub mod page {
                         Some(b"GouraudShd")
                     ) {
                         let output =
-                            <super::CtGouraudShdXType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::CtGouraudShdXType as WithDeserializer>::init(helper, event)?;
                         return self.handle_gouraud_shd(
                             helper,
                             Default::default(),
@@ -25830,9 +25862,7 @@ pub mod page {
                         Some(b"LaGourandShd")
                     ) {
                         let output =
-                            <super::CtLaGouraudShdXType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::CtLaGouraudShdXType as WithDeserializer>::init(helper, event)?;
                         return self.handle_la_gourand_shd(
                             helper,
                             Default::default(),
@@ -28568,7 +28598,9 @@ pub mod page {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = < super :: CtLayerXTypeContent as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                            let output = <super::CtLayerXTypeContent as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -28617,7 +28649,10 @@ pub mod page {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"TextObject")
                     ) {
-                        let output = < super :: CtPageBlockTextObjectXElementType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output =
+                            <super::CtPageBlockTextObjectXElementType as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                         return self.handle_text_object(
                             helper,
                             Default::default(),
@@ -28629,7 +28664,10 @@ pub mod page {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"PathObject")
                     ) {
-                        let output = < super :: CtPageBlockPathObjectXElementType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output =
+                            <super::CtPageBlockPathObjectXElementType as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                         return self.handle_path_object(
                             helper,
                             Default::default(),
@@ -28641,7 +28679,10 @@ pub mod page {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"ImageObject")
                     ) {
-                        let output = < super :: CtPageBlockImageObjectXElementType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output =
+                            <super::CtPageBlockImageObjectXElementType as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                         return self.handle_image_object(
                             helper,
                             Default::default(),
@@ -28653,7 +28694,7 @@ pub mod page {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"CompositeObject")
                     ) {
-                        let output = < super :: CtPageBlockCompositeObjectXElementType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output = < super :: CtPageBlockCompositeObjectXElementType as WithDeserializer > :: init (helper , event) ? ;
                         return self.handle_composite_object(
                             helper,
                             Default::default(),
@@ -28665,7 +28706,10 @@ pub mod page {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"PageBlock")
                     ) {
-                        let output = < super :: CtPageBlockPageBlockXElementType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output =
+                            <super::CtPageBlockPageBlockXElementType as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                         return self.handle_page_block(
                             helper,
                             Default::default(),
@@ -29445,7 +29489,10 @@ pub mod page {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = < super :: CtPageBlockXTypeContent as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                            let output =
+                                <super::CtPageBlockXTypeContent as WithDeserializer>::init(
+                                    helper, event,
+                                )?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -29495,7 +29542,10 @@ pub mod page {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"TextObject")
                     ) {
-                        let output = < super :: CtPageBlockTextObjectXElementType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output =
+                            <super::CtPageBlockTextObjectXElementType as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                         return self.handle_text_object(
                             helper,
                             Default::default(),
@@ -29507,7 +29557,10 @@ pub mod page {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"PathObject")
                     ) {
-                        let output = < super :: CtPageBlockPathObjectXElementType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output =
+                            <super::CtPageBlockPathObjectXElementType as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                         return self.handle_path_object(
                             helper,
                             Default::default(),
@@ -29519,7 +29572,10 @@ pub mod page {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"ImageObject")
                     ) {
-                        let output = < super :: CtPageBlockImageObjectXElementType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output =
+                            <super::CtPageBlockImageObjectXElementType as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                         return self.handle_image_object(
                             helper,
                             Default::default(),
@@ -29531,7 +29587,7 @@ pub mod page {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"CompositeObject")
                     ) {
-                        let output = < super :: CtPageBlockCompositeObjectXElementType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output = < super :: CtPageBlockCompositeObjectXElementType as WithDeserializer > :: init (helper , event) ? ;
                         return self.handle_composite_object(
                             helper,
                             Default::default(),
@@ -29543,7 +29599,10 @@ pub mod page {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"PageBlock")
                     ) {
-                        let output = < super :: CtPageBlockPageBlockXElementType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output =
+                            <super::CtPageBlockPageBlockXElementType as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                         return self.handle_page_block(
                             helper,
                             Default::default(),
@@ -31764,7 +31823,9 @@ pub mod page {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = < super :: CtTextXTypeContent as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                            let output = <super::CtTextXTypeContent as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -31859,7 +31920,10 @@ pub mod page {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"Actions")
                     ) {
-                        let output = < super :: CtGraphicUnitActionsXElementType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output =
+                            <super::CtGraphicUnitActionsXElementType as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                         return self.handle_actions(
                             helper,
                             Default::default(),
@@ -31871,7 +31935,10 @@ pub mod page {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"Clips")
                     ) {
-                        let output = < super :: CtGraphicUnitClipsXElementType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output =
+                            <super::CtGraphicUnitClipsXElementType as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                         return self.handle_clips(
                             helper,
                             Default::default(),
@@ -31883,9 +31950,8 @@ pub mod page {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"FillColor")
                     ) {
-                        let output = <super::CtColorXType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output =
+                            <super::CtColorXType as WithDeserializer>::init(helper, event)?;
                         return self.handle_fill_color(
                             helper,
                             Default::default(),
@@ -31897,9 +31963,8 @@ pub mod page {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"StrokeColor")
                     ) {
-                        let output = <super::CtColorXType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output =
+                            <super::CtColorXType as WithDeserializer>::init(helper, event)?;
                         return self.handle_stroke_color(
                             helper,
                             Default::default(),
@@ -31912,9 +31977,7 @@ pub mod page {
                         Some(b"CGTransform")
                     ) {
                         let output =
-                            <super::CtCgTransformXType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::CtCgTransformXType as WithDeserializer>::init(helper, event)?;
                         return self.handle_cg_transform(
                             helper,
                             Default::default(),
@@ -31926,7 +31989,9 @@ pub mod page {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"TextCode")
                     ) {
-                        let output = < super :: CtTextTextCodeXElementType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output = <super::CtTextTextCodeXElementType as WithDeserializer>::init(
+                            helper, event,
+                        )?;
                         return self.handle_text_code(
                             helper,
                             Default::default(),
@@ -33558,7 +33623,10 @@ pub mod page {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = < super :: CtClipAreaXElementTypeContent as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                            let output =
+                                <super::CtClipAreaXElementTypeContent as WithDeserializer>::init(
+                                    helper, event,
+                                )?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -33621,9 +33689,7 @@ pub mod page {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"Path")
                     ) {
-                        let output = <super::CtPathXType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output = <super::CtPathXType as WithDeserializer>::init(helper, event)?;
                         return self.handle_path(
                             helper,
                             Default::default(),
@@ -33635,9 +33701,7 @@ pub mod page {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"Text")
                     ) {
-                        let output = <super::CtTextXType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output = <super::CtTextXType as WithDeserializer>::init(helper, event)?;
                         return self.handle_text(
                             helper,
                             Default::default(),
@@ -35420,7 +35484,7 @@ pub mod page {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = < super :: CtPageBlockTextObjectXElementTypeContent as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                            let output = < super :: CtPageBlockTextObjectXElementTypeContent as WithDeserializer > :: init (helper , event) ? ;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -35519,7 +35583,10 @@ pub mod page {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"Actions")
                     ) {
-                        let output = < super :: CtGraphicUnitActionsXElementType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output =
+                            <super::CtGraphicUnitActionsXElementType as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                         return self.handle_actions(
                             helper,
                             Default::default(),
@@ -35531,7 +35598,10 @@ pub mod page {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"Clips")
                     ) {
-                        let output = < super :: CtGraphicUnitClipsXElementType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output =
+                            <super::CtGraphicUnitClipsXElementType as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                         return self.handle_clips(
                             helper,
                             Default::default(),
@@ -35543,9 +35613,8 @@ pub mod page {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"FillColor")
                     ) {
-                        let output = <super::CtColorXType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output =
+                            <super::CtColorXType as WithDeserializer>::init(helper, event)?;
                         return self.handle_fill_color(
                             helper,
                             Default::default(),
@@ -35557,9 +35626,8 @@ pub mod page {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"StrokeColor")
                     ) {
-                        let output = <super::CtColorXType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
+                        let output =
+                            <super::CtColorXType as WithDeserializer>::init(helper, event)?;
                         return self.handle_stroke_color(
                             helper,
                             Default::default(),
@@ -35572,9 +35640,7 @@ pub mod page {
                         Some(b"CGTransform")
                     ) {
                         let output =
-                            <super::CtCgTransformXType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::CtCgTransformXType as WithDeserializer>::init(helper, event)?;
                         return self.handle_cg_transform(
                             helper,
                             Default::default(),
@@ -35586,7 +35652,9 @@ pub mod page {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"TextCode")
                     ) {
-                        let output = < super :: CtTextTextCodeXElementType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output = <super::CtTextTextCodeXElementType as WithDeserializer>::init(
+                            helper, event,
+                        )?;
                         return self.handle_text_code(
                             helper,
                             Default::default(),
@@ -38358,7 +38426,7 @@ pub mod page {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = < super :: CtPageBlockPageBlockXElementTypeContent as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                            let output = < super :: CtPageBlockPageBlockXElementTypeContent as WithDeserializer > :: init (helper , event) ? ;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -38409,7 +38477,10 @@ pub mod page {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"TextObject")
                     ) {
-                        let output = < super :: CtPageBlockTextObjectXElementType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output =
+                            <super::CtPageBlockTextObjectXElementType as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                         return self.handle_text_object(
                             helper,
                             Default::default(),
@@ -38421,7 +38492,10 @@ pub mod page {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"PathObject")
                     ) {
-                        let output = < super :: CtPageBlockPathObjectXElementType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output =
+                            <super::CtPageBlockPathObjectXElementType as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                         return self.handle_path_object(
                             helper,
                             Default::default(),
@@ -38433,7 +38507,10 @@ pub mod page {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"ImageObject")
                     ) {
-                        let output = < super :: CtPageBlockImageObjectXElementType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output =
+                            <super::CtPageBlockImageObjectXElementType as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                         return self.handle_image_object(
                             helper,
                             Default::default(),
@@ -38445,7 +38522,7 @@ pub mod page {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"CompositeObject")
                     ) {
-                        let output = < super :: CtPageBlockCompositeObjectXElementType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output = < super :: CtPageBlockCompositeObjectXElementType as WithDeserializer > :: init (helper , event) ? ;
                         return self.handle_composite_object(
                             helper,
                             Default::default(),
@@ -38457,7 +38534,10 @@ pub mod page {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"PageBlock")
                     ) {
-                        let output = < super :: CtPageBlockPageBlockXElementType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output =
+                            <super::CtPageBlockPageBlockXElementType as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                         return self.handle_page_block(
                             helper,
                             Default::default(),
@@ -39299,7 +39379,7 @@ pub mod page {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = < super :: CtPatternCellContentXElementTypeContent as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                            let output = < super :: CtPatternCellContentXElementTypeContent as WithDeserializer > :: init (helper , event) ? ;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -39350,7 +39430,10 @@ pub mod page {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"TextObject")
                     ) {
-                        let output = < super :: CtPageBlockTextObjectXElementType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output =
+                            <super::CtPageBlockTextObjectXElementType as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                         return self.handle_text_object(
                             helper,
                             Default::default(),
@@ -39362,7 +39445,10 @@ pub mod page {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"PathObject")
                     ) {
-                        let output = < super :: CtPageBlockPathObjectXElementType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output =
+                            <super::CtPageBlockPathObjectXElementType as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                         return self.handle_path_object(
                             helper,
                             Default::default(),
@@ -39374,7 +39460,10 @@ pub mod page {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"ImageObject")
                     ) {
-                        let output = < super :: CtPageBlockImageObjectXElementType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output =
+                            <super::CtPageBlockImageObjectXElementType as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                         return self.handle_image_object(
                             helper,
                             Default::default(),
@@ -39386,7 +39475,7 @@ pub mod page {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"CompositeObject")
                     ) {
-                        let output = < super :: CtPageBlockCompositeObjectXElementType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output = < super :: CtPageBlockCompositeObjectXElementType as WithDeserializer > :: init (helper , event) ? ;
                         return self.handle_composite_object(
                             helper,
                             Default::default(),
@@ -39398,7 +39487,10 @@ pub mod page {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"PageBlock")
                     ) {
-                        let output = < super :: CtPageBlockPageBlockXElementType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output =
+                            <super::CtPageBlockPageBlockXElementType as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                         return self.handle_page_block(
                             helper,
                             Default::default(),
@@ -40714,7 +40806,7 @@ pub mod page {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = < super :: PageContentLayerXElementTypeContent as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                            let output = < super :: PageContentLayerXElementTypeContent as WithDeserializer > :: init (helper , event) ? ;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -40767,7 +40859,10 @@ pub mod page {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"TextObject")
                     ) {
-                        let output = < super :: CtPageBlockTextObjectXElementType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output =
+                            <super::CtPageBlockTextObjectXElementType as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                         return self.handle_text_object(
                             helper,
                             Default::default(),
@@ -40779,7 +40874,10 @@ pub mod page {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"PathObject")
                     ) {
-                        let output = < super :: CtPageBlockPathObjectXElementType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output =
+                            <super::CtPageBlockPathObjectXElementType as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                         return self.handle_path_object(
                             helper,
                             Default::default(),
@@ -40791,7 +40889,10 @@ pub mod page {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"ImageObject")
                     ) {
-                        let output = < super :: CtPageBlockImageObjectXElementType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output =
+                            <super::CtPageBlockImageObjectXElementType as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                         return self.handle_image_object(
                             helper,
                             Default::default(),
@@ -40803,7 +40904,7 @@ pub mod page {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"CompositeObject")
                     ) {
-                        let output = < super :: CtPageBlockCompositeObjectXElementType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output = < super :: CtPageBlockCompositeObjectXElementType as WithDeserializer > :: init (helper , event) ? ;
                         return self.handle_composite_object(
                             helper,
                             Default::default(),
@@ -40815,7 +40916,10 @@ pub mod page {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"PageBlock")
                     ) {
-                        let output = < super :: CtPageBlockPageBlockXElementType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output =
+                            <super::CtPageBlockPageBlockXElementType as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                         return self.handle_page_block(
                             helper,
                             Default::default(),
@@ -47641,7 +47745,9 @@ pub mod res {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = < super :: ResXElementTypeContent as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                            let output = <super::ResXElementTypeContent as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -47717,7 +47823,9 @@ pub mod res {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"ColorSpaces")
                     ) {
-                        let output = < super :: ResColorSpacesXElementType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output = <super::ResColorSpacesXElementType as WithDeserializer>::init(
+                            helper, event,
+                        )?;
                         return self.handle_color_spaces(
                             helper,
                             Default::default(),
@@ -47729,7 +47837,9 @@ pub mod res {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"DrawParams")
                     ) {
-                        let output = < super :: ResDrawParamsXElementType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output = <super::ResDrawParamsXElementType as WithDeserializer>::init(
+                            helper, event,
+                        )?;
                         return self.handle_draw_params(
                             helper,
                             Default::default(),
@@ -47742,9 +47852,7 @@ pub mod res {
                         Some(b"Fonts")
                     ) {
                         let output =
-                            <super::ResFontsXElementType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::ResFontsXElementType as WithDeserializer>::init(helper, event)?;
                         return self.handle_fonts(
                             helper,
                             Default::default(),
@@ -47756,7 +47864,9 @@ pub mod res {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"MultiMedias")
                     ) {
-                        let output = < super :: ResMultiMediasXElementType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output = <super::ResMultiMediasXElementType as WithDeserializer>::init(
+                            helper, event,
+                        )?;
                         return self.handle_multi_medias(
                             helper,
                             Default::default(),
@@ -47768,7 +47878,7 @@ pub mod res {
                         helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"CompositeGraphicUnits")
                     ) {
-                        let output = < super :: ResCompositeGraphicUnitsXElementType as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output = < super :: ResCompositeGraphicUnitsXElementType as WithDeserializer > :: init (helper , event) ? ;
                         return self.handle_composite_graphic_units(
                             helper,
                             Default::default(),

@@ -330,9 +330,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Group(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
-                            <super::NormalGroupType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::NormalGroupType as WithDeserializer>::init(helper, event)?;
                         match self.handle_group(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
@@ -963,7 +961,7 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::TextBefore(None), event) => {
-                        let output = <Text as WithDeserializer>::Deserializer::init(helper, event)?;
+                        let output = <Text as WithDeserializer>::init(helper, event)?;
                         match self.handle_text_before(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
@@ -976,9 +974,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Group(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
-                            <super::MixedGroupType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::MixedGroupType as WithDeserializer>::init(helper, event)?;
                         match self.handle_group(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
