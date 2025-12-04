@@ -247,9 +247,7 @@ pub mod quick_xml_deserialize {
             let state = replace(&mut *self.state__, FooTypeDeserializerState::Unknown__);
             self.finish_state(helper, state)?;
             Ok(super::FooType {
-                messages: self
-                    .messages
-                    .ok_or_else(|| ErrorKind::MissingElement("Messages".into()))?,
+                messages: helper.finish_element("Messages", self.messages)?,
             })
         }
     }
@@ -619,15 +617,9 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::FooTypeMessagesType {
-                aa: self
-                    .aa
-                    .ok_or_else(|| ErrorKind::MissingElement("aa".into()))?,
-                bb: self
-                    .bb
-                    .ok_or_else(|| ErrorKind::MissingElement("bb".into()))?,
-                a: self
-                    .a
-                    .ok_or_else(|| ErrorKind::MissingElement("a".into()))?,
+                aa: helper.finish_element("aa", self.aa)?,
+                bb: helper.finish_element("bb", self.bb)?,
+                a: helper.finish_element("a", self.a)?,
             })
         }
     }

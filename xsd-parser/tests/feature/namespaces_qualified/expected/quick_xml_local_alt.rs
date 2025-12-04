@@ -363,12 +363,8 @@ pub mod quick_xml_deserialize {
             let state = replace(&mut *self.state__, FooTypeDeserializerState::Unknown__);
             self.finish_state(helper, state)?;
             Ok(super::FooType {
-                inner_1: self
-                    .inner_1
-                    .ok_or_else(|| ErrorKind::MissingElement("Inner1".into()))?,
-                inner_2: self
-                    .inner_2
-                    .ok_or_else(|| ErrorKind::MissingElement("Inner2".into()))?,
+                inner_1: helper.finish_element("Inner1", self.inner_1)?,
+                inner_2: helper.finish_element("Inner2", self.inner_2)?,
             })
         }
     }
@@ -552,9 +548,7 @@ pub mod quick_xml_deserialize {
             let state = replace(&mut *self.state__, Inner1TypeDeserializerState::Unknown__);
             self.finish_state(helper, state)?;
             Ok(super::Inner1Type {
-                a: self
-                    .a
-                    .ok_or_else(|| ErrorKind::MissingElement("A".into()))?,
+                a: helper.finish_element("A", self.a)?,
             })
         }
     }
@@ -738,9 +732,7 @@ pub mod quick_xml_deserialize {
             let state = replace(&mut *self.state__, Inner2TypeDeserializerState::Unknown__);
             self.finish_state(helper, state)?;
             Ok(super::Inner2Type {
-                b: self
-                    .b
-                    .ok_or_else(|| ErrorKind::MissingElement("B".into()))?,
+                b: helper.finish_element("B", self.b)?,
             })
         }
     }

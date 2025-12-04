@@ -877,6 +877,133 @@ impl DeserializeHelper {
         }
     }
 
+    /// Try to extract the value from the storage type used by the deserializer.
+    ///
+    /// # Errors
+    ///
+    /// If the value is not valid a [`ErrorKind::MissingContent`] error is raised.
+    #[inline]
+    pub fn finish_content<T>(&self, value: Option<T>) -> Result<T, Error> {
+        Ok(value.ok_or_else(|| ErrorKind::MissingContent)?)
+    }
+
+    /// Try to extract the value from the storage type used by the deserializer.
+    ///
+    /// # Errors
+    ///
+    /// If the value is not valid a [`ErrorKind::MissingElement`] error is raised.
+    #[inline]
+    pub fn finish_element<T>(&self, name: &'static str, value: Option<T>) -> Result<T, Error> {
+        Ok(value.ok_or_else(|| ErrorKind::MissingElement(name.into()))?)
+    }
+
+    /// Try to extract the value from the storage type used by the deserializer
+    /// or create a new default value.
+    ///
+    /// # Errors
+    ///
+    /// Forwards the error from the deserializer that is used to default construct
+    /// a new value.
+    #[inline]
+    pub fn finish_default<T>(&mut self, value: Option<T>) -> Result<T, Error>
+    where
+        T: WithDeserializer,
+        T::Deserializer: Default,
+    {
+        if let Some(value) = value {
+            Ok(value)
+        } else {
+            T::default_value(self)
+        }
+    }
+
+    /// Try to extract the value from the storage type used by the deserializer
+    /// and checks it's bounds.
+    ///
+    /// # Errors
+    ///
+    /// If the value does not match the expected bounds a
+    /// [`ErrorKind::InsufficientSize`] error is raised.
+    #[inline]
+    pub fn finish_vec<T>(
+        &self,
+        min: usize,
+        max: Option<usize>,
+        value: Vec<T>,
+    ) -> Result<Vec<T>, Error> {
+        if value.len() < min && matches!(max, Some(max) if value.len() > max) {
+            return Err(ErrorKind::InsufficientSize {
+                min,
+                max,
+                actual: value.len(),
+            })?;
+        }
+
+        Ok(value)
+    }
+
+    /// Try to extract the value from the storage type used by the deserializer
+    /// and fill it up with default constructed values until the lower bound is
+    /// fulfilled.
+    ///
+    /// # Errors
+    ///
+    /// Forwards the error from the deserializer that is used to default construct
+    /// a new value.
+    #[inline]
+    pub fn finish_vec_default<T>(&mut self, min: usize, mut value: Vec<T>) -> Result<Vec<T>, Error>
+    where
+        T: WithDeserializer,
+        T::Deserializer: Default,
+    {
+        while value.len() < min {
+            value.push(T::default_value(self)?);
+        }
+
+        Ok(value)
+    }
+
+    /// Try to extract the value from the storage type used by the deserializer,
+    /// checks it's bounds and perform a conversion to the array.
+    ///
+    /// # Errors
+    ///
+    /// If the value does not match the expected bounds a
+    /// [`ErrorKind::InsufficientSize`] error is raised.
+    #[inline]
+    pub fn finish_arr<T, const N: usize>(&self, value: Vec<T>) -> Result<[T; N], Error> {
+        Ok(value
+            .try_into()
+            .map_err(|value: Vec<_>| ErrorKind::InsufficientSize {
+                min: N,
+                max: Some(N),
+                actual: value.len(),
+            })?)
+    }
+
+    /// Try to extract the value from the storage type used by the deserializer,
+    /// fill it up with default constructed values until the lower bound is
+    /// fulfilled and then convert it into an array.
+    ///
+    /// # Errors
+    ///
+    /// Forwards the error from the deserializer that is used to default construct
+    /// a new value.
+    #[inline]
+    pub fn finish_arr_default<T, const N: usize>(&mut self, value: Vec<T>) -> Result<[T; N], Error>
+    where
+        T: WithDeserializer,
+        T::Deserializer: Default,
+    {
+        let value = self.finish_vec_default(N, value)?;
+
+        if let Ok(arr) = value.try_into() {
+            Ok(arr)
+        } else {
+            unreachable!()
+        }
+    }
+
     fn handle_event(&mut self, event: &Event<'_>) -> Result<(), NamespaceError> {
         if take(&mut self.pending_pop) {
             self.resolver.pop();

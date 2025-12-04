@@ -355,12 +355,8 @@ pub mod quick_xml_deserialize {
             let state = replace(&mut *self.state__, FooTypeDeserializerState::Unknown__);
             self.finish_state(helper, state)?;
             Ok(super::FooType {
-                outer_1: self
-                    .outer_1
-                    .ok_or_else(|| ErrorKind::MissingElement("Outer".into()))?,
-                outer_2: self
-                    .outer_2
-                    .ok_or_else(|| ErrorKind::MissingElement("Outer_2".into()))?,
+                outer_1: helper.finish_default(self.outer_1)?,
+                outer_2: helper.finish_default(self.outer_2)?,
             })
         }
     }
@@ -442,7 +438,7 @@ pub mod quick_xml_deserialize {
                         Self::store_bar(&mut values, value)?;
                     }
                     Ok(super::FooOuterType::Bar(
-                        values.ok_or_else(|| ErrorKind::MissingElement("Bar".into()))?,
+                        helper.finish_element("Bar", values)?,
                     ))
                 }
                 S::Baz(mut values, deserializer) => {
@@ -451,7 +447,7 @@ pub mod quick_xml_deserialize {
                         Self::store_baz(&mut values, value)?;
                     }
                     Ok(super::FooOuterType::Baz(
-                        values.ok_or_else(|| ErrorKind::MissingElement("Baz".into()))?,
+                        helper.finish_element("Baz", values)?,
                     ))
                 }
                 S::Inner(mut values, deserializer) => {
@@ -459,9 +455,7 @@ pub mod quick_xml_deserialize {
                         let value = deserializer.finish(helper)?;
                         Self::store_inner(&mut values, value)?;
                     }
-                    Ok(super::FooOuterType::Inner(values.ok_or_else(|| {
-                        ErrorKind::MissingElement("Inner".into())
-                    })?))
+                    Ok(super::FooOuterType::Inner(helper.finish_default(values)?))
                 }
                 S::Done__(data) => Ok(data),
             }
@@ -647,14 +641,19 @@ pub mod quick_xml_deserialize {
             })
         }
     }
+    impl Default for FooOuterTypeDeserializer {
+        fn default() -> Self {
+            Self {
+                state__: Box::new(FooOuterTypeDeserializerState::Init__),
+            }
+        }
+    }
     impl<'de> Deserializer<'de, super::FooOuterType> for FooOuterTypeDeserializer {
         fn init(
             helper: &mut DeserializeHelper,
             event: Event<'de>,
         ) -> DeserializerResult<'de, super::FooOuterType> {
-            let deserializer = Self {
-                state__: Box::new(FooOuterTypeDeserializerState::Init__),
-            };
+            let deserializer = Self::default();
             let mut output = deserializer.next(helper, event)?;
             output.artifact = match output.artifact {
                 DeserializerArtifact::Deserializer(x)
@@ -922,6 +921,15 @@ pub mod quick_xml_deserialize {
             })
         }
     }
+    impl Default for FooInnerTypeDeserializer {
+        fn default() -> Self {
+            Self {
+                fizz: None,
+                buzz: None,
+                state__: Box::new(FooInnerTypeDeserializerState::Init__),
+            }
+        }
+    }
     impl<'de> Deserializer<'de, super::FooInnerType> for FooInnerTypeDeserializer {
         fn init(
             helper: &mut DeserializeHelper,
@@ -1052,12 +1060,8 @@ pub mod quick_xml_deserialize {
             let state = replace(&mut *self.state__, FooInnerTypeDeserializerState::Unknown__);
             self.finish_state(helper, state)?;
             Ok(super::FooInnerType {
-                fizz: self
-                    .fizz
-                    .ok_or_else(|| ErrorKind::MissingElement("Fizz".into()))?,
-                buzz: self
-                    .buzz
-                    .ok_or_else(|| ErrorKind::MissingElement("Buzz".into()))?,
+                fizz: helper.finish_element("Fizz", self.fizz)?,
+                buzz: helper.finish_element("Buzz", self.buzz)?,
             })
         }
     }

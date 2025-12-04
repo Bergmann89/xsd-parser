@@ -4338,7 +4338,7 @@ pub mod cdf {
                     style: self.style,
                     style_href: self.style_href,
                     lang: self.lang,
-                    content: self.content,
+                    content: helper.finish_vec_default(1usize, self.content)?,
                 })
             }
         }
@@ -4629,7 +4629,7 @@ pub mod cdf {
                             Self::store_status(&mut values, value)?;
                         }
                         Ok(super::BenchmarkElementTypeContent::Status(
-                            values.ok_or_else(|| ErrorKind::MissingElement("status".into()))?,
+                            helper.finish_element("status", values)?,
                         ))
                     }
                     S::DcStatus(mut values, deserializer) => {
@@ -4638,7 +4638,7 @@ pub mod cdf {
                             Self::store_dc_status(&mut values, value)?;
                         }
                         Ok(super::BenchmarkElementTypeContent::DcStatus(
-                            values.ok_or_else(|| ErrorKind::MissingElement("dc-status".into()))?,
+                            helper.finish_element("dc-status", values)?,
                         ))
                     }
                     S::Title(mut values, deserializer) => {
@@ -4647,7 +4647,7 @@ pub mod cdf {
                             Self::store_title(&mut values, value)?;
                         }
                         Ok(super::BenchmarkElementTypeContent::Title(
-                            values.ok_or_else(|| ErrorKind::MissingElement("title".into()))?,
+                            helper.finish_element("title", values)?,
                         ))
                     }
                     S::Description(mut values, deserializer) => {
@@ -4656,8 +4656,7 @@ pub mod cdf {
                             Self::store_description(&mut values, value)?;
                         }
                         Ok(super::BenchmarkElementTypeContent::Description(
-                            values
-                                .ok_or_else(|| ErrorKind::MissingElement("description".into()))?,
+                            helper.finish_element("description", values)?,
                         ))
                     }
                     S::Notice(mut values, deserializer) => {
@@ -4666,7 +4665,7 @@ pub mod cdf {
                             Self::store_notice(&mut values, value)?;
                         }
                         Ok(super::BenchmarkElementTypeContent::Notice(
-                            values.ok_or_else(|| ErrorKind::MissingElement("notice".into()))?,
+                            helper.finish_element("notice", values)?,
                         ))
                     }
                     S::FrontMatter(mut values, deserializer) => {
@@ -4675,8 +4674,7 @@ pub mod cdf {
                             Self::store_front_matter(&mut values, value)?;
                         }
                         Ok(super::BenchmarkElementTypeContent::FrontMatter(
-                            values
-                                .ok_or_else(|| ErrorKind::MissingElement("front-matter".into()))?,
+                            helper.finish_element("front-matter", values)?,
                         ))
                     }
                     S::RearMatter(mut values, deserializer) => {
@@ -4685,8 +4683,7 @@ pub mod cdf {
                             Self::store_rear_matter(&mut values, value)?;
                         }
                         Ok(super::BenchmarkElementTypeContent::RearMatter(
-                            values
-                                .ok_or_else(|| ErrorKind::MissingElement("rear-matter".into()))?,
+                            helper.finish_element("rear-matter", values)?,
                         ))
                     }
                     S::Reference(mut values, deserializer) => {
@@ -4695,7 +4692,7 @@ pub mod cdf {
                             Self::store_reference(&mut values, value)?;
                         }
                         Ok(super::BenchmarkElementTypeContent::Reference(
-                            values.ok_or_else(|| ErrorKind::MissingElement("reference".into()))?,
+                            helper.finish_element("reference", values)?,
                         ))
                     }
                     S::PlainText(mut values, deserializer) => {
@@ -4704,7 +4701,7 @@ pub mod cdf {
                             Self::store_plain_text(&mut values, value)?;
                         }
                         Ok(super::BenchmarkElementTypeContent::PlainText(
-                            values.ok_or_else(|| ErrorKind::MissingElement("plain-text".into()))?,
+                            helper.finish_element("plain-text", values)?,
                         ))
                     }
                     S::PlatformSpecification(mut values, deserializer) => {
@@ -4713,9 +4710,7 @@ pub mod cdf {
                             Self::store_platform_specification(&mut values, value)?;
                         }
                         Ok(super::BenchmarkElementTypeContent::PlatformSpecification(
-                            values.ok_or_else(|| {
-                                ErrorKind::MissingElement("platform-specification".into())
-                            })?,
+                            helper.finish_element("platform-specification", values)?,
                         ))
                     }
                     S::Platform(mut values, deserializer) => {
@@ -4724,7 +4719,7 @@ pub mod cdf {
                             Self::store_platform(&mut values, value)?;
                         }
                         Ok(super::BenchmarkElementTypeContent::Platform(
-                            values.ok_or_else(|| ErrorKind::MissingElement("platform".into()))?,
+                            helper.finish_element("platform", values)?,
                         ))
                     }
                     S::Version(mut values, deserializer) => {
@@ -4733,7 +4728,7 @@ pub mod cdf {
                             Self::store_version(&mut values, value)?;
                         }
                         Ok(super::BenchmarkElementTypeContent::Version(
-                            values.ok_or_else(|| ErrorKind::MissingElement("version".into()))?,
+                            helper.finish_element("version", values)?,
                         ))
                     }
                     S::Metadata(mut values, deserializer) => {
@@ -4742,7 +4737,7 @@ pub mod cdf {
                             Self::store_metadata(&mut values, value)?;
                         }
                         Ok(super::BenchmarkElementTypeContent::Metadata(
-                            values.ok_or_else(|| ErrorKind::MissingElement("metadata".into()))?,
+                            helper.finish_element("metadata", values)?,
                         ))
                     }
                     S::Model(mut values, deserializer) => {
@@ -4751,7 +4746,7 @@ pub mod cdf {
                             Self::store_model(&mut values, value)?;
                         }
                         Ok(super::BenchmarkElementTypeContent::Model(
-                            values.ok_or_else(|| ErrorKind::MissingElement("model".into()))?,
+                            helper.finish_element("model", values)?,
                         ))
                     }
                     S::Profile(mut values, deserializer) => {
@@ -4760,7 +4755,7 @@ pub mod cdf {
                             Self::store_profile(&mut values, value)?;
                         }
                         Ok(super::BenchmarkElementTypeContent::Profile(
-                            values.ok_or_else(|| ErrorKind::MissingElement("Profile".into()))?,
+                            helper.finish_element("Profile", values)?,
                         ))
                     }
                     S::Value(mut values, deserializer) => {
@@ -4769,7 +4764,7 @@ pub mod cdf {
                             Self::store_value(&mut values, value)?;
                         }
                         Ok(super::BenchmarkElementTypeContent::Value(
-                            values.ok_or_else(|| ErrorKind::MissingElement("Value".into()))?,
+                            helper.finish_element("Value", values)?,
                         ))
                     }
                     S::Group(mut values, deserializer) => {
@@ -4778,7 +4773,7 @@ pub mod cdf {
                             Self::store_group(&mut values, value)?;
                         }
                         Ok(super::BenchmarkElementTypeContent::Group(
-                            values.ok_or_else(|| ErrorKind::MissingElement("Group".into()))?,
+                            helper.finish_element("Group", values)?,
                         ))
                     }
                     S::Rule(mut values, deserializer) => {
@@ -4787,7 +4782,7 @@ pub mod cdf {
                             Self::store_rule(&mut values, value)?;
                         }
                         Ok(super::BenchmarkElementTypeContent::Rule(
-                            values.ok_or_else(|| ErrorKind::MissingElement("Rule".into()))?,
+                            helper.finish_element("Rule", values)?,
                         ))
                     }
                     S::TestResult(mut values, deserializer) => {
@@ -4796,7 +4791,7 @@ pub mod cdf {
                             Self::store_test_result(&mut values, value)?;
                         }
                         Ok(super::BenchmarkElementTypeContent::TestResult(
-                            values.ok_or_else(|| ErrorKind::MissingElement("TestResult".into()))?,
+                            helper.finish_element("TestResult", values)?,
                         ))
                     }
                     S::Signature(mut values, deserializer) => {
@@ -4805,7 +4800,7 @@ pub mod cdf {
                             Self::store_signature(&mut values, value)?;
                         }
                         Ok(super::BenchmarkElementTypeContent::Signature(
-                            values.ok_or_else(|| ErrorKind::MissingElement("signature".into()))?,
+                            helper.finish_element("signature", values)?,
                         ))
                     }
                     S::Done__(data) => Ok(data),
@@ -6299,6 +6294,13 @@ pub mod cdf {
                 })
             }
         }
+        impl Default for BenchmarkElementTypeContentDeserializer {
+            fn default() -> Self {
+                Self {
+                    state__: Box::new(BenchmarkElementTypeContentDeserializerState::Init__),
+                }
+            }
+        }
         impl<'de> Deserializer<'de, super::BenchmarkElementTypeContent>
             for BenchmarkElementTypeContentDeserializer
         {
@@ -6306,9 +6308,7 @@ pub mod cdf {
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
             ) -> DeserializerResult<'de, super::BenchmarkElementTypeContent> {
-                let deserializer = Self {
-                    state__: Box::new(BenchmarkElementTypeContentDeserializerState::Init__),
-                };
+                let deserializer = Self::default();
                 let mut output = deserializer.next(helper, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
@@ -7015,7 +7015,7 @@ pub mod cdf {
                 self.finish_state(helper, state)?;
                 Ok(super::StatusElementType {
                     date: self.date,
-                    content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                    content: helper.finish_content(self.content)?,
                 })
             }
         }
@@ -7209,7 +7209,9 @@ pub mod cdf {
             ) -> Result<super::DcStatusType, Error> {
                 let state = replace(&mut *self.state__, DcStatusTypeDeserializerState::Unknown__);
                 self.finish_state(helper, state)?;
-                Ok(super::DcStatusType { any: self.any })
+                Ok(super::DcStatusType {
+                    any: helper.finish_vec(1usize, None, self.any)?,
+                })
             }
         }
         #[derive(Debug)]
@@ -7347,7 +7349,7 @@ pub mod cdf {
                 Ok(super::TextType {
                     lang: self.lang,
                     override_: self.override_,
-                    content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                    content: helper.finish_content(self.content)?,
                 })
             }
         }
@@ -7528,7 +7530,7 @@ pub mod cdf {
                 Ok(super::HtmlTextWithSubType {
                     lang: self.lang,
                     override_: self.override_,
-                    content: self.content,
+                    content: helper.finish_vec_default(0usize, self.content)?,
                 })
             }
         }
@@ -7608,7 +7610,7 @@ pub mod cdf {
                             Self::store_sub(&mut values, value)?;
                         }
                         Ok(super::HtmlTextWithSubTypeContent::Sub(
-                            values.ok_or_else(|| ErrorKind::MissingElement("sub".into()))?,
+                            helper.finish_element("sub", values)?,
                         ))
                     }
                     S::Any(mut values, deserializer) => {
@@ -7616,9 +7618,9 @@ pub mod cdf {
                             let value = deserializer.finish(helper)?;
                             Self::store_any(&mut values, value)?;
                         }
-                        Ok(super::HtmlTextWithSubTypeContent::Any(values.ok_or_else(
-                            || ErrorKind::MissingElement("any17".into()),
-                        )?))
+                        Ok(super::HtmlTextWithSubTypeContent::Any(
+                            helper.finish_element("any17", values)?,
+                        ))
                     }
                     S::Text(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
@@ -7626,7 +7628,7 @@ pub mod cdf {
                             Self::store_text(&mut values, value)?;
                         }
                         Ok(super::HtmlTextWithSubTypeContent::Text(
-                            values.ok_or_else(|| ErrorKind::MissingElement("text".into()))?,
+                            helper.finish_element("text", values)?,
                         ))
                     }
                     S::Done__(data) => Ok(data),
@@ -7842,6 +7844,13 @@ pub mod cdf {
                 })
             }
         }
+        impl Default for HtmlTextWithSubTypeContentDeserializer {
+            fn default() -> Self {
+                Self {
+                    state__: Box::new(HtmlTextWithSubTypeContentDeserializerState::Init__),
+                }
+            }
+        }
         impl<'de> Deserializer<'de, super::HtmlTextWithSubTypeContent>
             for HtmlTextWithSubTypeContentDeserializer
         {
@@ -7849,9 +7858,7 @@ pub mod cdf {
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
             ) -> DeserializerResult<'de, super::HtmlTextWithSubTypeContent> {
-                let deserializer = Self {
-                    state__: Box::new(HtmlTextWithSubTypeContentDeserializerState::Init__),
-                };
+                let deserializer = Self::default();
                 let mut output = deserializer.next(helper, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
@@ -8725,7 +8732,7 @@ pub mod cdf {
                 self.finish_state(helper, state)?;
                 Ok(super::PlainTextType {
                     id: self.id,
-                    content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                    content: helper.finish_content(self.content)?,
                 })
             }
         }
@@ -8945,7 +8952,7 @@ pub mod cdf {
                 Ok(super::VersionType {
                     time: self.time,
                     update: self.update,
-                    content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                    content: helper.finish_content(self.content)?,
                 })
             }
         }
@@ -9139,7 +9146,9 @@ pub mod cdf {
             ) -> Result<super::MetadataType, Error> {
                 let state = replace(&mut *self.state__, MetadataTypeDeserializerState::Unknown__);
                 self.finish_state(helper, state)?;
-                Ok(super::MetadataType { any: self.any })
+                Ok(super::MetadataType {
+                    any: helper.finish_vec(1usize, None, self.any)?,
+                })
             }
         }
         #[derive(Debug)]
@@ -9558,7 +9567,7 @@ pub mod cdf {
                     extends: self.extends,
                     base: self.base,
                     xml_id: self.xml_id,
-                    content: self.content,
+                    content: helper.finish_vec_default(1usize, self.content)?,
                 })
             }
         }
@@ -9840,72 +9849,72 @@ pub mod cdf {
                             let value = deserializer.finish(helper)?;
                             Self::store_status(&mut values, value)?;
                         }
-                        Ok(super::ProfileTypeContent::Status(values.ok_or_else(
-                            || ErrorKind::MissingElement("status".into()),
-                        )?))
+                        Ok(super::ProfileTypeContent::Status(
+                            helper.finish_element("status", values)?,
+                        ))
                     }
                     S::DcStatus(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_dc_status(&mut values, value)?;
                         }
-                        Ok(super::ProfileTypeContent::DcStatus(values.ok_or_else(
-                            || ErrorKind::MissingElement("dc-status".into()),
-                        )?))
+                        Ok(super::ProfileTypeContent::DcStatus(
+                            helper.finish_element("dc-status", values)?,
+                        ))
                     }
                     S::Version(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_version(&mut values, value)?;
                         }
-                        Ok(super::ProfileTypeContent::Version(values.ok_or_else(
-                            || ErrorKind::MissingElement("version".into()),
-                        )?))
+                        Ok(super::ProfileTypeContent::Version(
+                            helper.finish_element("version", values)?,
+                        ))
                     }
                     S::Title(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_title(&mut values, value)?;
                         }
-                        Ok(super::ProfileTypeContent::Title(values.ok_or_else(
-                            || ErrorKind::MissingElement("title".into()),
-                        )?))
+                        Ok(super::ProfileTypeContent::Title(
+                            helper.finish_element("title", values)?,
+                        ))
                     }
                     S::Description(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_description(&mut values, value)?;
                         }
-                        Ok(super::ProfileTypeContent::Description(values.ok_or_else(
-                            || ErrorKind::MissingElement("description".into()),
-                        )?))
+                        Ok(super::ProfileTypeContent::Description(
+                            helper.finish_element("description", values)?,
+                        ))
                     }
                     S::Reference(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_reference(&mut values, value)?;
                         }
-                        Ok(super::ProfileTypeContent::Reference(values.ok_or_else(
-                            || ErrorKind::MissingElement("reference".into()),
-                        )?))
+                        Ok(super::ProfileTypeContent::Reference(
+                            helper.finish_element("reference", values)?,
+                        ))
                     }
                     S::Platform(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_platform(&mut values, value)?;
                         }
-                        Ok(super::ProfileTypeContent::Platform(values.ok_or_else(
-                            || ErrorKind::MissingElement("platform".into()),
-                        )?))
+                        Ok(super::ProfileTypeContent::Platform(
+                            helper.finish_element("platform", values)?,
+                        ))
                     }
                     S::Select(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_select(&mut values, value)?;
                         }
-                        Ok(super::ProfileTypeContent::Select(values.ok_or_else(
-                            || ErrorKind::MissingElement("select".into()),
-                        )?))
+                        Ok(super::ProfileTypeContent::Select(
+                            helper.finish_element("select", values)?,
+                        ))
                     }
                     S::SetComplexValue(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
@@ -9913,9 +9922,7 @@ pub mod cdf {
                             Self::store_set_complex_value(&mut values, value)?;
                         }
                         Ok(super::ProfileTypeContent::SetComplexValue(
-                            values.ok_or_else(|| {
-                                ErrorKind::MissingElement("set-complex-value".into())
-                            })?,
+                            helper.finish_element("set-complex-value", values)?,
                         ))
                     }
                     S::SetValue(mut values, deserializer) => {
@@ -9923,45 +9930,45 @@ pub mod cdf {
                             let value = deserializer.finish(helper)?;
                             Self::store_set_value(&mut values, value)?;
                         }
-                        Ok(super::ProfileTypeContent::SetValue(values.ok_or_else(
-                            || ErrorKind::MissingElement("set-value".into()),
-                        )?))
+                        Ok(super::ProfileTypeContent::SetValue(
+                            helper.finish_element("set-value", values)?,
+                        ))
                     }
                     S::RefineValue(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_refine_value(&mut values, value)?;
                         }
-                        Ok(super::ProfileTypeContent::RefineValue(values.ok_or_else(
-                            || ErrorKind::MissingElement("refine-value".into()),
-                        )?))
+                        Ok(super::ProfileTypeContent::RefineValue(
+                            helper.finish_element("refine-value", values)?,
+                        ))
                     }
                     S::RefineRule(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_refine_rule(&mut values, value)?;
                         }
-                        Ok(super::ProfileTypeContent::RefineRule(values.ok_or_else(
-                            || ErrorKind::MissingElement("refine-rule".into()),
-                        )?))
+                        Ok(super::ProfileTypeContent::RefineRule(
+                            helper.finish_element("refine-rule", values)?,
+                        ))
                     }
                     S::Metadata(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_metadata(&mut values, value)?;
                         }
-                        Ok(super::ProfileTypeContent::Metadata(values.ok_or_else(
-                            || ErrorKind::MissingElement("metadata".into()),
-                        )?))
+                        Ok(super::ProfileTypeContent::Metadata(
+                            helper.finish_element("metadata", values)?,
+                        ))
                     }
                     S::Signature(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_signature(&mut values, value)?;
                         }
-                        Ok(super::ProfileTypeContent::Signature(values.ok_or_else(
-                            || ErrorKind::MissingElement("signature".into()),
-                        )?))
+                        Ok(super::ProfileTypeContent::Signature(
+                            helper.finish_element("signature", values)?,
+                        ))
                     }
                     S::Done__(data) => Ok(data),
                 }
@@ -10946,14 +10953,19 @@ pub mod cdf {
                 })
             }
         }
+        impl Default for ProfileTypeContentDeserializer {
+            fn default() -> Self {
+                Self {
+                    state__: Box::new(ProfileTypeContentDeserializerState::Init__),
+                }
+            }
+        }
         impl<'de> Deserializer<'de, super::ProfileTypeContent> for ProfileTypeContentDeserializer {
             fn init(
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
             ) -> DeserializerResult<'de, super::ProfileTypeContent> {
-                let deserializer = Self {
-                    state__: Box::new(ProfileTypeContentDeserializerState::Init__),
-                };
+                let deserializer = Self::default();
                 let mut output = deserializer.next(helper, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
@@ -11652,7 +11664,7 @@ pub mod cdf {
                     operator: self.operator,
                     interactive: self.interactive,
                     interface_hint: self.interface_hint,
-                    content: self.content,
+                    content: helper.finish_vec_default(1usize, self.content)?,
                 })
             }
         }
@@ -12010,171 +12022,171 @@ pub mod cdf {
                             let value = deserializer.finish(helper)?;
                             Self::store_status(&mut values, value)?;
                         }
-                        Ok(super::ValueTypeContent::Status(values.ok_or_else(
-                            || ErrorKind::MissingElement("status".into()),
-                        )?))
+                        Ok(super::ValueTypeContent::Status(
+                            helper.finish_element("status", values)?,
+                        ))
                     }
                     S::DcStatus(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_dc_status(&mut values, value)?;
                         }
-                        Ok(super::ValueTypeContent::DcStatus(values.ok_or_else(
-                            || ErrorKind::MissingElement("dc-status".into()),
-                        )?))
+                        Ok(super::ValueTypeContent::DcStatus(
+                            helper.finish_element("dc-status", values)?,
+                        ))
                     }
                     S::Version(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_version(&mut values, value)?;
                         }
-                        Ok(super::ValueTypeContent::Version(values.ok_or_else(
-                            || ErrorKind::MissingElement("version".into()),
-                        )?))
+                        Ok(super::ValueTypeContent::Version(
+                            helper.finish_element("version", values)?,
+                        ))
                     }
                     S::Title(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_title(&mut values, value)?;
                         }
-                        Ok(super::ValueTypeContent::Title(values.ok_or_else(|| {
-                            ErrorKind::MissingElement("title".into())
-                        })?))
+                        Ok(super::ValueTypeContent::Title(
+                            helper.finish_element("title", values)?,
+                        ))
                     }
                     S::Description(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_description(&mut values, value)?;
                         }
-                        Ok(super::ValueTypeContent::Description(values.ok_or_else(
-                            || ErrorKind::MissingElement("description".into()),
-                        )?))
+                        Ok(super::ValueTypeContent::Description(
+                            helper.finish_element("description", values)?,
+                        ))
                     }
                     S::Warning(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_warning(&mut values, value)?;
                         }
-                        Ok(super::ValueTypeContent::Warning(values.ok_or_else(
-                            || ErrorKind::MissingElement("warning".into()),
-                        )?))
+                        Ok(super::ValueTypeContent::Warning(
+                            helper.finish_element("warning", values)?,
+                        ))
                     }
                     S::Question(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_question(&mut values, value)?;
                         }
-                        Ok(super::ValueTypeContent::Question(values.ok_or_else(
-                            || ErrorKind::MissingElement("question".into()),
-                        )?))
+                        Ok(super::ValueTypeContent::Question(
+                            helper.finish_element("question", values)?,
+                        ))
                     }
                     S::Reference(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_reference(&mut values, value)?;
                         }
-                        Ok(super::ValueTypeContent::Reference(values.ok_or_else(
-                            || ErrorKind::MissingElement("reference".into()),
-                        )?))
+                        Ok(super::ValueTypeContent::Reference(
+                            helper.finish_element("reference", values)?,
+                        ))
                     }
                     S::Metadata(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_metadata(&mut values, value)?;
                         }
-                        Ok(super::ValueTypeContent::Metadata(values.ok_or_else(
-                            || ErrorKind::MissingElement("metadata".into()),
-                        )?))
+                        Ok(super::ValueTypeContent::Metadata(
+                            helper.finish_element("metadata", values)?,
+                        ))
                     }
                     S::Value(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_value(&mut values, value)?;
                         }
-                        Ok(super::ValueTypeContent::Value(values.ok_or_else(|| {
-                            ErrorKind::MissingElement("value".into())
-                        })?))
+                        Ok(super::ValueTypeContent::Value(
+                            helper.finish_element("value", values)?,
+                        ))
                     }
                     S::ComplexValue(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_complex_value(&mut values, value)?;
                         }
-                        Ok(super::ValueTypeContent::ComplexValue(values.ok_or_else(
-                            || ErrorKind::MissingElement("complex-value".into()),
-                        )?))
+                        Ok(super::ValueTypeContent::ComplexValue(
+                            helper.finish_element("complex-value", values)?,
+                        ))
                     }
                     S::Default(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_default(&mut values, value)?;
                         }
-                        Ok(super::ValueTypeContent::Default(values.ok_or_else(
-                            || ErrorKind::MissingElement("default".into()),
-                        )?))
+                        Ok(super::ValueTypeContent::Default(
+                            helper.finish_element("default", values)?,
+                        ))
                     }
                     S::ComplexDefault(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_complex_default(&mut values, value)?;
                         }
-                        Ok(super::ValueTypeContent::ComplexDefault(values.ok_or_else(
-                            || ErrorKind::MissingElement("complex-default".into()),
-                        )?))
+                        Ok(super::ValueTypeContent::ComplexDefault(
+                            helper.finish_element("complex-default", values)?,
+                        ))
                     }
                     S::Match(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_match_(&mut values, value)?;
                         }
-                        Ok(super::ValueTypeContent::Match(values.ok_or_else(|| {
-                            ErrorKind::MissingElement("match".into())
-                        })?))
+                        Ok(super::ValueTypeContent::Match(
+                            helper.finish_element("match", values)?,
+                        ))
                     }
                     S::LowerBound(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_lower_bound(&mut values, value)?;
                         }
-                        Ok(super::ValueTypeContent::LowerBound(values.ok_or_else(
-                            || ErrorKind::MissingElement("lower-bound".into()),
-                        )?))
+                        Ok(super::ValueTypeContent::LowerBound(
+                            helper.finish_element("lower-bound", values)?,
+                        ))
                     }
                     S::UpperBound(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_upper_bound(&mut values, value)?;
                         }
-                        Ok(super::ValueTypeContent::UpperBound(values.ok_or_else(
-                            || ErrorKind::MissingElement("upper-bound".into()),
-                        )?))
+                        Ok(super::ValueTypeContent::UpperBound(
+                            helper.finish_element("upper-bound", values)?,
+                        ))
                     }
                     S::Choices(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_choices(&mut values, value)?;
                         }
-                        Ok(super::ValueTypeContent::Choices(values.ok_or_else(
-                            || ErrorKind::MissingElement("choices".into()),
-                        )?))
+                        Ok(super::ValueTypeContent::Choices(
+                            helper.finish_element("choices", values)?,
+                        ))
                     }
                     S::Source(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_source(&mut values, value)?;
                         }
-                        Ok(super::ValueTypeContent::Source(values.ok_or_else(
-                            || ErrorKind::MissingElement("source".into()),
-                        )?))
+                        Ok(super::ValueTypeContent::Source(
+                            helper.finish_element("source", values)?,
+                        ))
                     }
                     S::Signature(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_signature(&mut values, value)?;
                         }
-                        Ok(super::ValueTypeContent::Signature(values.ok_or_else(
-                            || ErrorKind::MissingElement("signature".into()),
-                        )?))
+                        Ok(super::ValueTypeContent::Signature(
+                            helper.finish_element("signature", values)?,
+                        ))
                     }
                     S::Done__(data) => Ok(data),
                 }
@@ -13451,14 +13463,19 @@ pub mod cdf {
                 })
             }
         }
+        impl Default for ValueTypeContentDeserializer {
+            fn default() -> Self {
+                Self {
+                    state__: Box::new(ValueTypeContentDeserializerState::Init__),
+                }
+            }
+        }
         impl<'de> Deserializer<'de, super::ValueTypeContent> for ValueTypeContentDeserializer {
             fn init(
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
             ) -> DeserializerResult<'de, super::ValueTypeContent> {
-                let deserializer = Self {
-                    state__: Box::new(ValueTypeContentDeserializerState::Init__),
-                };
+                let deserializer = Self::default();
                 let mut output = deserializer.next(helper, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
@@ -14264,7 +14281,7 @@ pub mod cdf {
                     selected: self.selected,
                     weight: self.weight,
                     id: self.id,
-                    content: self.content,
+                    content: helper.finish_vec_default(0usize, self.content)?,
                 })
             }
         }
@@ -14588,135 +14605,135 @@ pub mod cdf {
                             let value = deserializer.finish(helper)?;
                             Self::store_status(&mut values, value)?;
                         }
-                        Ok(super::GroupTypeContent::Status(values.ok_or_else(
-                            || ErrorKind::MissingElement("status".into()),
-                        )?))
+                        Ok(super::GroupTypeContent::Status(
+                            helper.finish_element("status", values)?,
+                        ))
                     }
                     S::DcStatus(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_dc_status(&mut values, value)?;
                         }
-                        Ok(super::GroupTypeContent::DcStatus(values.ok_or_else(
-                            || ErrorKind::MissingElement("dc-status".into()),
-                        )?))
+                        Ok(super::GroupTypeContent::DcStatus(
+                            helper.finish_element("dc-status", values)?,
+                        ))
                     }
                     S::Version(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_version(&mut values, value)?;
                         }
-                        Ok(super::GroupTypeContent::Version(values.ok_or_else(
-                            || ErrorKind::MissingElement("version".into()),
-                        )?))
+                        Ok(super::GroupTypeContent::Version(
+                            helper.finish_element("version", values)?,
+                        ))
                     }
                     S::Title(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_title(&mut values, value)?;
                         }
-                        Ok(super::GroupTypeContent::Title(values.ok_or_else(|| {
-                            ErrorKind::MissingElement("title".into())
-                        })?))
+                        Ok(super::GroupTypeContent::Title(
+                            helper.finish_element("title", values)?,
+                        ))
                     }
                     S::Description(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_description(&mut values, value)?;
                         }
-                        Ok(super::GroupTypeContent::Description(values.ok_or_else(
-                            || ErrorKind::MissingElement("description".into()),
-                        )?))
+                        Ok(super::GroupTypeContent::Description(
+                            helper.finish_element("description", values)?,
+                        ))
                     }
                     S::Warning(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_warning(&mut values, value)?;
                         }
-                        Ok(super::GroupTypeContent::Warning(values.ok_or_else(
-                            || ErrorKind::MissingElement("warning".into()),
-                        )?))
+                        Ok(super::GroupTypeContent::Warning(
+                            helper.finish_element("warning", values)?,
+                        ))
                     }
                     S::Question(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_question(&mut values, value)?;
                         }
-                        Ok(super::GroupTypeContent::Question(values.ok_or_else(
-                            || ErrorKind::MissingElement("question".into()),
-                        )?))
+                        Ok(super::GroupTypeContent::Question(
+                            helper.finish_element("question", values)?,
+                        ))
                     }
                     S::Reference(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_reference(&mut values, value)?;
                         }
-                        Ok(super::GroupTypeContent::Reference(values.ok_or_else(
-                            || ErrorKind::MissingElement("reference".into()),
-                        )?))
+                        Ok(super::GroupTypeContent::Reference(
+                            helper.finish_element("reference", values)?,
+                        ))
                     }
                     S::Metadata(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_metadata(&mut values, value)?;
                         }
-                        Ok(super::GroupTypeContent::Metadata(values.ok_or_else(
-                            || ErrorKind::MissingElement("metadata".into()),
-                        )?))
+                        Ok(super::GroupTypeContent::Metadata(
+                            helper.finish_element("metadata", values)?,
+                        ))
                     }
                     S::Rationale(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_rationale(&mut values, value)?;
                         }
-                        Ok(super::GroupTypeContent::Rationale(values.ok_or_else(
-                            || ErrorKind::MissingElement("rationale".into()),
-                        )?))
+                        Ok(super::GroupTypeContent::Rationale(
+                            helper.finish_element("rationale", values)?,
+                        ))
                     }
                     S::Platform(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_platform(&mut values, value)?;
                         }
-                        Ok(super::GroupTypeContent::Platform(values.ok_or_else(
-                            || ErrorKind::MissingElement("platform".into()),
-                        )?))
+                        Ok(super::GroupTypeContent::Platform(
+                            helper.finish_element("platform", values)?,
+                        ))
                     }
                     S::Requires(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_requires(&mut values, value)?;
                         }
-                        Ok(super::GroupTypeContent::Requires(values.ok_or_else(
-                            || ErrorKind::MissingElement("requires".into()),
-                        )?))
+                        Ok(super::GroupTypeContent::Requires(
+                            helper.finish_element("requires", values)?,
+                        ))
                     }
                     S::Conflicts(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_conflicts(&mut values, value)?;
                         }
-                        Ok(super::GroupTypeContent::Conflicts(values.ok_or_else(
-                            || ErrorKind::MissingElement("conflicts".into()),
-                        )?))
+                        Ok(super::GroupTypeContent::Conflicts(
+                            helper.finish_element("conflicts", values)?,
+                        ))
                     }
                     S::Value(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_value(&mut values, value)?;
                         }
-                        Ok(super::GroupTypeContent::Value(values.ok_or_else(|| {
-                            ErrorKind::MissingElement("Value".into())
-                        })?))
+                        Ok(super::GroupTypeContent::Value(
+                            helper.finish_element("Value", values)?,
+                        ))
                     }
                     S::Group(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_group(&mut values, value)?;
                         }
-                        Ok(super::GroupTypeContent::Group(values.ok_or_else(|| {
-                            ErrorKind::MissingElement("Group".into())
-                        })?))
+                        Ok(super::GroupTypeContent::Group(
+                            helper.finish_element("Group", values)?,
+                        ))
                     }
                     S::Rule(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
@@ -14724,7 +14741,7 @@ pub mod cdf {
                             Self::store_rule(&mut values, value)?;
                         }
                         Ok(super::GroupTypeContent::Rule(
-                            values.ok_or_else(|| ErrorKind::MissingElement("Rule".into()))?,
+                            helper.finish_element("Rule", values)?,
                         ))
                     }
                     S::Signature(mut values, deserializer) => {
@@ -14732,9 +14749,9 @@ pub mod cdf {
                             let value = deserializer.finish(helper)?;
                             Self::store_signature(&mut values, value)?;
                         }
-                        Ok(super::GroupTypeContent::Signature(values.ok_or_else(
-                            || ErrorKind::MissingElement("signature".into()),
-                        )?))
+                        Ok(super::GroupTypeContent::Signature(
+                            helper.finish_element("signature", values)?,
+                        ))
                     }
                     S::Done__(data) => Ok(data),
                 }
@@ -15867,14 +15884,19 @@ pub mod cdf {
                 })
             }
         }
+        impl Default for GroupTypeContentDeserializer {
+            fn default() -> Self {
+                Self {
+                    state__: Box::new(GroupTypeContentDeserializerState::Init__),
+                }
+            }
+        }
         impl<'de> Deserializer<'de, super::GroupTypeContent> for GroupTypeContentDeserializer {
             fn init(
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
             ) -> DeserializerResult<'de, super::GroupTypeContent> {
-                let deserializer = Self {
-                    state__: Box::new(GroupTypeContentDeserializerState::Init__),
-                };
+                let deserializer = Self::default();
                 let mut output = deserializer.next(helper, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
@@ -16639,7 +16661,7 @@ pub mod cdf {
                     role: self.role,
                     severity: self.severity,
                     multiple: self.multiple,
-                    content: self.content,
+                    content: helper.finish_vec_default(0usize, self.content)?,
                 })
             }
         }
@@ -17024,153 +17046,153 @@ pub mod cdf {
                             let value = deserializer.finish(helper)?;
                             Self::store_status(&mut values, value)?;
                         }
-                        Ok(super::RuleTypeContent::Status(values.ok_or_else(|| {
-                            ErrorKind::MissingElement("status".into())
-                        })?))
+                        Ok(super::RuleTypeContent::Status(
+                            helper.finish_element("status", values)?,
+                        ))
                     }
                     S::DcStatus(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_dc_status(&mut values, value)?;
                         }
-                        Ok(super::RuleTypeContent::DcStatus(values.ok_or_else(
-                            || ErrorKind::MissingElement("dc-status".into()),
-                        )?))
+                        Ok(super::RuleTypeContent::DcStatus(
+                            helper.finish_element("dc-status", values)?,
+                        ))
                     }
                     S::Version(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_version(&mut values, value)?;
                         }
-                        Ok(super::RuleTypeContent::Version(values.ok_or_else(
-                            || ErrorKind::MissingElement("version".into()),
-                        )?))
+                        Ok(super::RuleTypeContent::Version(
+                            helper.finish_element("version", values)?,
+                        ))
                     }
                     S::Title(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_title(&mut values, value)?;
                         }
-                        Ok(super::RuleTypeContent::Title(values.ok_or_else(|| {
-                            ErrorKind::MissingElement("title".into())
-                        })?))
+                        Ok(super::RuleTypeContent::Title(
+                            helper.finish_element("title", values)?,
+                        ))
                     }
                     S::Description(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_description(&mut values, value)?;
                         }
-                        Ok(super::RuleTypeContent::Description(values.ok_or_else(
-                            || ErrorKind::MissingElement("description".into()),
-                        )?))
+                        Ok(super::RuleTypeContent::Description(
+                            helper.finish_element("description", values)?,
+                        ))
                     }
                     S::Warning(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_warning(&mut values, value)?;
                         }
-                        Ok(super::RuleTypeContent::Warning(values.ok_or_else(
-                            || ErrorKind::MissingElement("warning".into()),
-                        )?))
+                        Ok(super::RuleTypeContent::Warning(
+                            helper.finish_element("warning", values)?,
+                        ))
                     }
                     S::Question(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_question(&mut values, value)?;
                         }
-                        Ok(super::RuleTypeContent::Question(values.ok_or_else(
-                            || ErrorKind::MissingElement("question".into()),
-                        )?))
+                        Ok(super::RuleTypeContent::Question(
+                            helper.finish_element("question", values)?,
+                        ))
                     }
                     S::Reference(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_reference(&mut values, value)?;
                         }
-                        Ok(super::RuleTypeContent::Reference(values.ok_or_else(
-                            || ErrorKind::MissingElement("reference".into()),
-                        )?))
+                        Ok(super::RuleTypeContent::Reference(
+                            helper.finish_element("reference", values)?,
+                        ))
                     }
                     S::Metadata(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_metadata(&mut values, value)?;
                         }
-                        Ok(super::RuleTypeContent::Metadata(values.ok_or_else(
-                            || ErrorKind::MissingElement("metadata".into()),
-                        )?))
+                        Ok(super::RuleTypeContent::Metadata(
+                            helper.finish_element("metadata", values)?,
+                        ))
                     }
                     S::Rationale(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_rationale(&mut values, value)?;
                         }
-                        Ok(super::RuleTypeContent::Rationale(values.ok_or_else(
-                            || ErrorKind::MissingElement("rationale".into()),
-                        )?))
+                        Ok(super::RuleTypeContent::Rationale(
+                            helper.finish_element("rationale", values)?,
+                        ))
                     }
                     S::Platform(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_platform(&mut values, value)?;
                         }
-                        Ok(super::RuleTypeContent::Platform(values.ok_or_else(
-                            || ErrorKind::MissingElement("platform".into()),
-                        )?))
+                        Ok(super::RuleTypeContent::Platform(
+                            helper.finish_element("platform", values)?,
+                        ))
                     }
                     S::Requires(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_requires(&mut values, value)?;
                         }
-                        Ok(super::RuleTypeContent::Requires(values.ok_or_else(
-                            || ErrorKind::MissingElement("requires".into()),
-                        )?))
+                        Ok(super::RuleTypeContent::Requires(
+                            helper.finish_element("requires", values)?,
+                        ))
                     }
                     S::Conflicts(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_conflicts(&mut values, value)?;
                         }
-                        Ok(super::RuleTypeContent::Conflicts(values.ok_or_else(
-                            || ErrorKind::MissingElement("conflicts".into()),
-                        )?))
+                        Ok(super::RuleTypeContent::Conflicts(
+                            helper.finish_element("conflicts", values)?,
+                        ))
                     }
                     S::Ident(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_ident(&mut values, value)?;
                         }
-                        Ok(super::RuleTypeContent::Ident(values.ok_or_else(|| {
-                            ErrorKind::MissingElement("ident".into())
-                        })?))
+                        Ok(super::RuleTypeContent::Ident(
+                            helper.finish_element("ident", values)?,
+                        ))
                     }
                     S::ImpactMetric(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_impact_metric(&mut values, value)?;
                         }
-                        Ok(super::RuleTypeContent::ImpactMetric(values.ok_or_else(
-                            || ErrorKind::MissingElement("impact-metric".into()),
-                        )?))
+                        Ok(super::RuleTypeContent::ImpactMetric(
+                            helper.finish_element("impact-metric", values)?,
+                        ))
                     }
                     S::ProfileNote(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_profile_note(&mut values, value)?;
                         }
-                        Ok(super::RuleTypeContent::ProfileNote(values.ok_or_else(
-                            || ErrorKind::MissingElement("profile-note".into()),
-                        )?))
+                        Ok(super::RuleTypeContent::ProfileNote(
+                            helper.finish_element("profile-note", values)?,
+                        ))
                     }
                     S::Fixtext(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_fixtext(&mut values, value)?;
                         }
-                        Ok(super::RuleTypeContent::Fixtext(values.ok_or_else(
-                            || ErrorKind::MissingElement("fixtext".into()),
-                        )?))
+                        Ok(super::RuleTypeContent::Fixtext(
+                            helper.finish_element("fixtext", values)?,
+                        ))
                     }
                     S::Fix(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
@@ -17178,7 +17200,7 @@ pub mod cdf {
                             Self::store_fix(&mut values, value)?;
                         }
                         Ok(super::RuleTypeContent::Fix(
-                            values.ok_or_else(|| ErrorKind::MissingElement("fix".into()))?,
+                            helper.finish_element("fix", values)?,
                         ))
                     }
                     S::Check(mut values, deserializer) => {
@@ -17186,27 +17208,27 @@ pub mod cdf {
                             let value = deserializer.finish(helper)?;
                             Self::store_check(&mut values, value)?;
                         }
-                        Ok(super::RuleTypeContent::Check(values.ok_or_else(|| {
-                            ErrorKind::MissingElement("check".into())
-                        })?))
+                        Ok(super::RuleTypeContent::Check(
+                            helper.finish_element("check", values)?,
+                        ))
                     }
                     S::ComplexCheck(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_complex_check(&mut values, value)?;
                         }
-                        Ok(super::RuleTypeContent::ComplexCheck(values.ok_or_else(
-                            || ErrorKind::MissingElement("complex-check".into()),
-                        )?))
+                        Ok(super::RuleTypeContent::ComplexCheck(
+                            helper.finish_element("complex-check", values)?,
+                        ))
                     }
                     S::Signature(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_signature(&mut values, value)?;
                         }
-                        Ok(super::RuleTypeContent::Signature(values.ok_or_else(
-                            || ErrorKind::MissingElement("signature".into()),
-                        )?))
+                        Ok(super::RuleTypeContent::Signature(
+                            helper.finish_element("signature", values)?,
+                        ))
                     }
                     S::Done__(data) => Ok(data),
                 }
@@ -18590,14 +18612,19 @@ pub mod cdf {
                 })
             }
         }
+        impl Default for RuleTypeContentDeserializer {
+            fn default() -> Self {
+                Self {
+                    state__: Box::new(RuleTypeContentDeserializerState::Init__),
+                }
+            }
+        }
         impl<'de> Deserializer<'de, super::RuleTypeContent> for RuleTypeContentDeserializer {
             fn init(
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
             ) -> DeserializerResult<'de, super::RuleTypeContent> {
-                let deserializer = Self {
-                    state__: Box::new(RuleTypeContentDeserializerState::Init__),
-                };
+                let deserializer = Self::default();
                 let mut output = deserializer.next(helper, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
@@ -19417,7 +19444,7 @@ pub mod cdf {
                     test_system: self.test_system,
                     version: self.version,
                     xml_id: self.xml_id,
-                    content: self.content,
+                    content: helper.finish_vec_default(1usize, self.content)?,
                 })
             }
         }
@@ -19774,9 +19801,9 @@ pub mod cdf {
                             let value = deserializer.finish(helper)?;
                             Self::store_benchmark(&mut values, value)?;
                         }
-                        Ok(super::TestResultTypeContent::Benchmark(values.ok_or_else(
-                            || ErrorKind::MissingElement("benchmark".into()),
-                        )?))
+                        Ok(super::TestResultTypeContent::Benchmark(
+                            helper.finish_element("benchmark", values)?,
+                        ))
                     }
                     S::TailoringFile(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
@@ -19784,9 +19811,7 @@ pub mod cdf {
                             Self::store_tailoring_file(&mut values, value)?;
                         }
                         Ok(super::TestResultTypeContent::TailoringFile(
-                            values.ok_or_else(|| {
-                                ErrorKind::MissingElement("tailoring-file".into())
-                            })?,
+                            helper.finish_element("tailoring-file", values)?,
                         ))
                     }
                     S::Title(mut values, deserializer) => {
@@ -19794,18 +19819,18 @@ pub mod cdf {
                             let value = deserializer.finish(helper)?;
                             Self::store_title(&mut values, value)?;
                         }
-                        Ok(super::TestResultTypeContent::Title(values.ok_or_else(
-                            || ErrorKind::MissingElement("title".into()),
-                        )?))
+                        Ok(super::TestResultTypeContent::Title(
+                            helper.finish_element("title", values)?,
+                        ))
                     }
                     S::Remark(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_remark(&mut values, value)?;
                         }
-                        Ok(super::TestResultTypeContent::Remark(values.ok_or_else(
-                            || ErrorKind::MissingElement("remark".into()),
-                        )?))
+                        Ok(super::TestResultTypeContent::Remark(
+                            helper.finish_element("remark", values)?,
+                        ))
                     }
                     S::Organization(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
@@ -19813,8 +19838,7 @@ pub mod cdf {
                             Self::store_organization(&mut values, value)?;
                         }
                         Ok(super::TestResultTypeContent::Organization(
-                            values
-                                .ok_or_else(|| ErrorKind::MissingElement("organization".into()))?,
+                            helper.finish_element("organization", values)?,
                         ))
                     }
                     S::Identity(mut values, deserializer) => {
@@ -19822,27 +19846,27 @@ pub mod cdf {
                             let value = deserializer.finish(helper)?;
                             Self::store_identity(&mut values, value)?;
                         }
-                        Ok(super::TestResultTypeContent::Identity(values.ok_or_else(
-                            || ErrorKind::MissingElement("identity".into()),
-                        )?))
+                        Ok(super::TestResultTypeContent::Identity(
+                            helper.finish_element("identity", values)?,
+                        ))
                     }
                     S::Profile(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_profile(&mut values, value)?;
                         }
-                        Ok(super::TestResultTypeContent::Profile(values.ok_or_else(
-                            || ErrorKind::MissingElement("profile".into()),
-                        )?))
+                        Ok(super::TestResultTypeContent::Profile(
+                            helper.finish_element("profile", values)?,
+                        ))
                     }
                     S::Target(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_target(&mut values, value)?;
                         }
-                        Ok(super::TestResultTypeContent::Target(values.ok_or_else(
-                            || ErrorKind::MissingElement("target".into()),
-                        )?))
+                        Ok(super::TestResultTypeContent::Target(
+                            helper.finish_element("target", values)?,
+                        ))
                     }
                     S::TargetAddress(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
@@ -19850,9 +19874,7 @@ pub mod cdf {
                             Self::store_target_address(&mut values, value)?;
                         }
                         Ok(super::TestResultTypeContent::TargetAddress(
-                            values.ok_or_else(|| {
-                                ErrorKind::MissingElement("target-address".into())
-                            })?,
+                            helper.finish_element("target-address", values)?,
                         ))
                     }
                     S::TargetFacts(mut values, deserializer) => {
@@ -19861,8 +19883,7 @@ pub mod cdf {
                             Self::store_target_facts(&mut values, value)?;
                         }
                         Ok(super::TestResultTypeContent::TargetFacts(
-                            values
-                                .ok_or_else(|| ErrorKind::MissingElement("target-facts".into()))?,
+                            helper.finish_element("target-facts", values)?,
                         ))
                     }
                     S::TargetIdRef(mut values, deserializer) => {
@@ -19871,8 +19892,7 @@ pub mod cdf {
                             Self::store_target_id_ref(&mut values, value)?;
                         }
                         Ok(super::TestResultTypeContent::TargetIdRef(
-                            values
-                                .ok_or_else(|| ErrorKind::MissingElement("target-id-ref".into()))?,
+                            helper.finish_element("target-id-ref", values)?,
                         ))
                     }
                     S::Any(mut values, deserializer) => {
@@ -19880,27 +19900,27 @@ pub mod cdf {
                             let value = deserializer.finish(helper)?;
                             Self::store_any(&mut values, value)?;
                         }
-                        Ok(super::TestResultTypeContent::Any(values.ok_or_else(
-                            || ErrorKind::MissingElement("any54".into()),
-                        )?))
+                        Ok(super::TestResultTypeContent::Any(
+                            helper.finish_element("any54", values)?,
+                        ))
                     }
                     S::Platform(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_platform(&mut values, value)?;
                         }
-                        Ok(super::TestResultTypeContent::Platform(values.ok_or_else(
-                            || ErrorKind::MissingElement("platform".into()),
-                        )?))
+                        Ok(super::TestResultTypeContent::Platform(
+                            helper.finish_element("platform", values)?,
+                        ))
                     }
                     S::SetValue(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_set_value(&mut values, value)?;
                         }
-                        Ok(super::TestResultTypeContent::SetValue(values.ok_or_else(
-                            || ErrorKind::MissingElement("set-value".into()),
-                        )?))
+                        Ok(super::TestResultTypeContent::SetValue(
+                            helper.finish_element("set-value", values)?,
+                        ))
                     }
                     S::SetComplexValue(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
@@ -19908,9 +19928,7 @@ pub mod cdf {
                             Self::store_set_complex_value(&mut values, value)?;
                         }
                         Ok(super::TestResultTypeContent::SetComplexValue(
-                            values.ok_or_else(|| {
-                                ErrorKind::MissingElement("set-complex-value".into())
-                            })?,
+                            helper.finish_element("set-complex-value", values)?,
                         ))
                     }
                     S::RuleResult(mut values, deserializer) => {
@@ -19919,8 +19937,7 @@ pub mod cdf {
                             Self::store_rule_result(&mut values, value)?;
                         }
                         Ok(super::TestResultTypeContent::RuleResult(
-                            values
-                                .ok_or_else(|| ErrorKind::MissingElement("rule-result".into()))?,
+                            helper.finish_element("rule-result", values)?,
                         ))
                     }
                     S::Score(mut values, deserializer) => {
@@ -19928,27 +19945,27 @@ pub mod cdf {
                             let value = deserializer.finish(helper)?;
                             Self::store_score(&mut values, value)?;
                         }
-                        Ok(super::TestResultTypeContent::Score(values.ok_or_else(
-                            || ErrorKind::MissingElement("score".into()),
-                        )?))
+                        Ok(super::TestResultTypeContent::Score(
+                            helper.finish_element("score", values)?,
+                        ))
                     }
                     S::Metadata(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_metadata(&mut values, value)?;
                         }
-                        Ok(super::TestResultTypeContent::Metadata(values.ok_or_else(
-                            || ErrorKind::MissingElement("metadata".into()),
-                        )?))
+                        Ok(super::TestResultTypeContent::Metadata(
+                            helper.finish_element("metadata", values)?,
+                        ))
                     }
                     S::Signature(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_signature(&mut values, value)?;
                         }
-                        Ok(super::TestResultTypeContent::Signature(values.ok_or_else(
-                            || ErrorKind::MissingElement("signature".into()),
-                        )?))
+                        Ok(super::TestResultTypeContent::Signature(
+                            helper.finish_element("signature", values)?,
+                        ))
                     }
                     S::Done__(data) => Ok(data),
                 }
@@ -21316,14 +21333,19 @@ pub mod cdf {
                 })
             }
         }
+        impl Default for TestResultTypeContentDeserializer {
+            fn default() -> Self {
+                Self {
+                    state__: Box::new(TestResultTypeContentDeserializerState::Init__),
+                }
+            }
+        }
         impl<'de> Deserializer<'de, super::TestResultTypeContent> for TestResultTypeContentDeserializer {
             fn init(
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
             ) -> DeserializerResult<'de, super::TestResultTypeContent> {
-                let deserializer = Self {
-                    state__: Box::new(TestResultTypeContentDeserializerState::Init__),
-                };
+                let deserializer = Self::default();
                 let mut output = deserializer.next(helper, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
@@ -22106,9 +22128,7 @@ pub mod cdf {
                 );
                 self.finish_state(helper, state)?;
                 Ok(super::SignatureType {
-                    any: self
-                        .any
-                        .ok_or_else(|| ErrorKind::MissingElement("any10".into()))?,
+                    any: helper.finish_element("any10", self.any)?,
                 })
             }
         }
@@ -22321,7 +22341,7 @@ pub mod cdf {
                 self.finish_state(helper, state)?;
                 Ok(super::ParamType {
                     name: self.name,
-                    content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                    content: helper.finish_content(self.content)?,
                 })
             }
         }
@@ -23252,7 +23272,7 @@ pub mod cdf {
                 self.finish_state(helper, state)?;
                 Ok(super::ProfileSetValueType {
                     idref: self.idref,
-                    content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                    content: helper.finish_content(self.content)?,
                 })
             }
         }
@@ -23890,7 +23910,7 @@ pub mod cdf {
                     lang: self.lang,
                     override_: self.override_,
                     category: self.category,
-                    content: self.content,
+                    content: helper.finish_vec_default(0usize, self.content)?,
                 })
             }
         }
@@ -23970,7 +23990,7 @@ pub mod cdf {
                             Self::store_sub(&mut values, value)?;
                         }
                         Ok(super::WarningTypeContent::Sub(
-                            values.ok_or_else(|| ErrorKind::MissingElement("sub".into()))?,
+                            helper.finish_element("sub", values)?,
                         ))
                     }
                     S::Any(mut values, deserializer) => {
@@ -23978,9 +23998,9 @@ pub mod cdf {
                             let value = deserializer.finish(helper)?;
                             Self::store_any(&mut values, value)?;
                         }
-                        Ok(super::WarningTypeContent::Any(values.ok_or_else(|| {
-                            ErrorKind::MissingElement("any17".into())
-                        })?))
+                        Ok(super::WarningTypeContent::Any(
+                            helper.finish_element("any17", values)?,
+                        ))
                     }
                     S::Text(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
@@ -23988,7 +24008,7 @@ pub mod cdf {
                             Self::store_text(&mut values, value)?;
                         }
                         Ok(super::WarningTypeContent::Text(
-                            values.ok_or_else(|| ErrorKind::MissingElement("text".into()))?,
+                            helper.finish_element("text", values)?,
                         ))
                     }
                     S::Done__(data) => Ok(data),
@@ -24177,14 +24197,19 @@ pub mod cdf {
                 })
             }
         }
+        impl Default for WarningTypeContentDeserializer {
+            fn default() -> Self {
+                Self {
+                    state__: Box::new(WarningTypeContentDeserializerState::Init__),
+                }
+            }
+        }
         impl<'de> Deserializer<'de, super::WarningTypeContent> for WarningTypeContentDeserializer {
             fn init(
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
             ) -> DeserializerResult<'de, super::WarningTypeContent> {
-                let deserializer = Self {
-                    state__: Box::new(WarningTypeContentDeserializerState::Init__),
-                };
+                let deserializer = Self::default();
                 let mut output = deserializer.next(helper, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
@@ -24445,7 +24470,7 @@ pub mod cdf {
                 self.finish_state(helper, state)?;
                 Ok(super::SelStringType {
                     selector: self.selector,
-                    content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                    content: helper.finish_content(self.content)?,
                 })
             }
         }
@@ -24773,7 +24798,7 @@ pub mod cdf {
                 self.finish_state(helper, state)?;
                 Ok(super::SelNumType {
                     selector: self.selector,
-                    content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                    content: helper.finish_content(self.content)?,
                 })
             }
         }
@@ -24949,7 +24974,7 @@ pub mod cdf {
                 Ok(super::SelChoicesType {
                     must_match: self.must_match,
                     selector: self.selector,
-                    content: self.content,
+                    content: helper.finish_vec_default(1usize, self.content)?,
                 })
             }
         }
@@ -25023,9 +25048,9 @@ pub mod cdf {
                             let value = deserializer.finish(helper)?;
                             Self::store_choice(&mut values, value)?;
                         }
-                        Ok(super::SelChoicesTypeContent::Choice(values.ok_or_else(
-                            || ErrorKind::MissingElement("choice".into()),
-                        )?))
+                        Ok(super::SelChoicesTypeContent::Choice(
+                            helper.finish_element("choice", values)?,
+                        ))
                     }
                     S::ComplexChoice(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
@@ -25033,9 +25058,7 @@ pub mod cdf {
                             Self::store_complex_choice(&mut values, value)?;
                         }
                         Ok(super::SelChoicesTypeContent::ComplexChoice(
-                            values.ok_or_else(|| {
-                                ErrorKind::MissingElement("complex-choice".into())
-                            })?,
+                            helper.finish_element("complex-choice", values)?,
                         ))
                     }
                     S::Done__(data) => Ok(data),
@@ -25182,14 +25205,19 @@ pub mod cdf {
                 })
             }
         }
+        impl Default for SelChoicesTypeContentDeserializer {
+            fn default() -> Self {
+                Self {
+                    state__: Box::new(SelChoicesTypeContentDeserializerState::Init__),
+                }
+            }
+        }
         impl<'de> Deserializer<'de, super::SelChoicesTypeContent> for SelChoicesTypeContentDeserializer {
             fn init(
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
             ) -> DeserializerResult<'de, super::SelChoicesTypeContent> {
-                let deserializer = Self {
-                    state__: Box::new(SelChoicesTypeContentDeserializerState::Init__),
-                };
+                let deserializer = Self::default();
                 let mut output = deserializer.next(helper, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
@@ -25675,7 +25703,7 @@ pub mod cdf {
                 Ok(super::IdentType {
                     system: self.system,
                     any_attribute: self.any_attribute,
-                    content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                    content: helper.finish_content(self.content)?,
                 })
             }
         }
@@ -25851,7 +25879,7 @@ pub mod cdf {
                 Ok(super::ProfileNoteType {
                     lang: self.lang,
                     tag: self.tag,
-                    content: self.content,
+                    content: helper.finish_vec_default(0usize, self.content)?,
                 })
             }
         }
@@ -25931,7 +25959,7 @@ pub mod cdf {
                             Self::store_sub(&mut values, value)?;
                         }
                         Ok(super::ProfileNoteTypeContent::Sub(
-                            values.ok_or_else(|| ErrorKind::MissingElement("sub".into()))?,
+                            helper.finish_element("sub", values)?,
                         ))
                     }
                     S::Any(mut values, deserializer) => {
@@ -25939,9 +25967,9 @@ pub mod cdf {
                             let value = deserializer.finish(helper)?;
                             Self::store_any(&mut values, value)?;
                         }
-                        Ok(super::ProfileNoteTypeContent::Any(values.ok_or_else(
-                            || ErrorKind::MissingElement("any19".into()),
-                        )?))
+                        Ok(super::ProfileNoteTypeContent::Any(
+                            helper.finish_element("any19", values)?,
+                        ))
                     }
                     S::Text(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
@@ -25949,7 +25977,7 @@ pub mod cdf {
                             Self::store_text(&mut values, value)?;
                         }
                         Ok(super::ProfileNoteTypeContent::Text(
-                            values.ok_or_else(|| ErrorKind::MissingElement("text".into()))?,
+                            helper.finish_element("text", values)?,
                         ))
                     }
                     S::Done__(data) => Ok(data),
@@ -26154,14 +26182,19 @@ pub mod cdf {
                 })
             }
         }
+        impl Default for ProfileNoteTypeContentDeserializer {
+            fn default() -> Self {
+                Self {
+                    state__: Box::new(ProfileNoteTypeContentDeserializerState::Init__),
+                }
+            }
+        }
         impl<'de> Deserializer<'de, super::ProfileNoteTypeContent> for ProfileNoteTypeContentDeserializer {
             fn init(
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
             ) -> DeserializerResult<'de, super::ProfileNoteTypeContent> {
-                let deserializer = Self {
-                    state__: Box::new(ProfileNoteTypeContentDeserializerState::Init__),
-                };
+                let deserializer = Self::default();
                 let mut output = deserializer.next(helper, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
@@ -26507,7 +26540,7 @@ pub mod cdf {
                     strategy: self.strategy,
                     disruption: self.disruption,
                     complexity: self.complexity,
-                    content: self.content,
+                    content: helper.finish_vec_default(0usize, self.content)?,
                 })
             }
         }
@@ -26587,7 +26620,7 @@ pub mod cdf {
                             Self::store_sub(&mut values, value)?;
                         }
                         Ok(super::FixTextTypeContent::Sub(
-                            values.ok_or_else(|| ErrorKind::MissingElement("sub".into()))?,
+                            helper.finish_element("sub", values)?,
                         ))
                     }
                     S::Any(mut values, deserializer) => {
@@ -26595,9 +26628,9 @@ pub mod cdf {
                             let value = deserializer.finish(helper)?;
                             Self::store_any(&mut values, value)?;
                         }
-                        Ok(super::FixTextTypeContent::Any(values.ok_or_else(|| {
-                            ErrorKind::MissingElement("any17".into())
-                        })?))
+                        Ok(super::FixTextTypeContent::Any(
+                            helper.finish_element("any17", values)?,
+                        ))
                     }
                     S::Text(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
@@ -26605,7 +26638,7 @@ pub mod cdf {
                             Self::store_text(&mut values, value)?;
                         }
                         Ok(super::FixTextTypeContent::Text(
-                            values.ok_or_else(|| ErrorKind::MissingElement("text".into()))?,
+                            helper.finish_element("text", values)?,
                         ))
                     }
                     S::Done__(data) => Ok(data),
@@ -26794,14 +26827,19 @@ pub mod cdf {
                 })
             }
         }
+        impl Default for FixTextTypeContentDeserializer {
+            fn default() -> Self {
+                Self {
+                    state__: Box::new(FixTextTypeContentDeserializerState::Init__),
+                }
+            }
+        }
         impl<'de> Deserializer<'de, super::FixTextTypeContent> for FixTextTypeContentDeserializer {
             fn init(
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
             ) -> DeserializerResult<'de, super::FixTextTypeContent> {
-                let deserializer = Self {
-                    state__: Box::new(FixTextTypeContentDeserializerState::Init__),
-                };
+                let deserializer = Self::default();
                 let mut output = deserializer.next(helper, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
@@ -27137,7 +27175,7 @@ pub mod cdf {
                     complexity: self.complexity,
                     system: self.system,
                     platform: self.platform,
-                    content: self.content,
+                    content: helper.finish_vec_default(0usize, self.content)?,
                 })
             }
         }
@@ -27221,7 +27259,7 @@ pub mod cdf {
                             Self::store_sub(&mut values, value)?;
                         }
                         Ok(super::FixTypeContent::Sub(
-                            values.ok_or_else(|| ErrorKind::MissingElement("sub".into()))?,
+                            helper.finish_element("sub", values)?,
                         ))
                     }
                     S::Instance(mut values, deserializer) => {
@@ -27229,9 +27267,9 @@ pub mod cdf {
                             let value = deserializer.finish(helper)?;
                             Self::store_instance(&mut values, value)?;
                         }
-                        Ok(super::FixTypeContent::Instance(values.ok_or_else(
-                            || ErrorKind::MissingElement("instance".into()),
-                        )?))
+                        Ok(super::FixTypeContent::Instance(
+                            helper.finish_element("instance", values)?,
+                        ))
                     }
                     S::Text(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
@@ -27239,7 +27277,7 @@ pub mod cdf {
                             Self::store_text(&mut values, value)?;
                         }
                         Ok(super::FixTypeContent::Text(
-                            values.ok_or_else(|| ErrorKind::MissingElement("text".into()))?,
+                            helper.finish_element("text", values)?,
                         ))
                     }
                     S::Done__(data) => Ok(data),
@@ -27431,14 +27469,19 @@ pub mod cdf {
                 })
             }
         }
+        impl Default for FixTypeContentDeserializer {
+            fn default() -> Self {
+                Self {
+                    state__: Box::new(FixTypeContentDeserializerState::Init__),
+                }
+            }
+        }
         impl<'de> Deserializer<'de, super::FixTypeContent> for FixTypeContentDeserializer {
             fn init(
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
             ) -> DeserializerResult<'de, super::FixTypeContent> {
-                let deserializer = Self {
-                    state__: Box::new(FixTypeContentDeserializerState::Init__),
-                };
+                let deserializer = Self::default();
                 let mut output = deserializer.next(helper, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
@@ -28247,7 +28290,7 @@ pub mod cdf {
                 Ok(super::ComplexCheckType {
                     operator: self.operator,
                     negate: self.negate,
-                    content: self.content,
+                    content: helper.finish_vec_default(1usize, self.content)?,
                 })
             }
         }
@@ -28321,9 +28364,9 @@ pub mod cdf {
                             let value = deserializer.finish(helper)?;
                             Self::store_check(&mut values, value)?;
                         }
-                        Ok(super::ComplexCheckTypeContent::Check(values.ok_or_else(
-                            || ErrorKind::MissingElement("check".into()),
-                        )?))
+                        Ok(super::ComplexCheckTypeContent::Check(
+                            helper.finish_element("check", values)?,
+                        ))
                     }
                     S::ComplexCheck(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
@@ -28331,8 +28374,7 @@ pub mod cdf {
                             Self::store_complex_check(&mut values, value)?;
                         }
                         Ok(super::ComplexCheckTypeContent::ComplexCheck(
-                            values
-                                .ok_or_else(|| ErrorKind::MissingElement("complex-check".into()))?,
+                            helper.finish_element("complex-check", values)?,
                         ))
                     }
                     S::Done__(data) => Ok(data),
@@ -28487,6 +28529,13 @@ pub mod cdf {
                 })
             }
         }
+        impl Default for ComplexCheckTypeContentDeserializer {
+            fn default() -> Self {
+                Self {
+                    state__: Box::new(ComplexCheckTypeContentDeserializerState::Init__),
+                }
+            }
+        }
         impl<'de> Deserializer<'de, super::ComplexCheckTypeContent>
             for ComplexCheckTypeContentDeserializer
         {
@@ -28494,9 +28543,7 @@ pub mod cdf {
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
             ) -> DeserializerResult<'de, super::ComplexCheckTypeContent> {
-                let deserializer = Self {
-                    state__: Box::new(ComplexCheckTypeContentDeserializerState::Init__),
-                };
+                let deserializer = Self::default();
                 let mut output = deserializer.next(helper, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
@@ -28964,7 +29011,7 @@ pub mod cdf {
                 Ok(super::IdentityType {
                     authenticated: self.authenticated,
                     privileged: self.privileged,
-                    content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                    content: helper.finish_content(self.content)?,
                 })
             }
         }
@@ -29456,7 +29503,7 @@ pub mod cdf {
                     time: self.time,
                     version: self.version,
                     weight: self.weight,
-                    content: self.content,
+                    content: helper.finish_vec_default(1usize, self.content)?,
                 })
             }
         }
@@ -29641,54 +29688,54 @@ pub mod cdf {
                             let value = deserializer.finish(helper)?;
                             Self::store_result(&mut values, value)?;
                         }
-                        Ok(super::RuleResultTypeContent::Result(values.ok_or_else(
-                            || ErrorKind::MissingElement("result".into()),
-                        )?))
+                        Ok(super::RuleResultTypeContent::Result(
+                            helper.finish_element("result", values)?,
+                        ))
                     }
                     S::Override(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_override_(&mut values, value)?;
                         }
-                        Ok(super::RuleResultTypeContent::Override(values.ok_or_else(
-                            || ErrorKind::MissingElement("override".into()),
-                        )?))
+                        Ok(super::RuleResultTypeContent::Override(
+                            helper.finish_element("override", values)?,
+                        ))
                     }
                     S::Ident(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_ident(&mut values, value)?;
                         }
-                        Ok(super::RuleResultTypeContent::Ident(values.ok_or_else(
-                            || ErrorKind::MissingElement("ident".into()),
-                        )?))
+                        Ok(super::RuleResultTypeContent::Ident(
+                            helper.finish_element("ident", values)?,
+                        ))
                     }
                     S::Metadata(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_metadata(&mut values, value)?;
                         }
-                        Ok(super::RuleResultTypeContent::Metadata(values.ok_or_else(
-                            || ErrorKind::MissingElement("metadata".into()),
-                        )?))
+                        Ok(super::RuleResultTypeContent::Metadata(
+                            helper.finish_element("metadata", values)?,
+                        ))
                     }
                     S::Message(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_message(&mut values, value)?;
                         }
-                        Ok(super::RuleResultTypeContent::Message(values.ok_or_else(
-                            || ErrorKind::MissingElement("message".into()),
-                        )?))
+                        Ok(super::RuleResultTypeContent::Message(
+                            helper.finish_element("message", values)?,
+                        ))
                     }
                     S::Instance(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_instance(&mut values, value)?;
                         }
-                        Ok(super::RuleResultTypeContent::Instance(values.ok_or_else(
-                            || ErrorKind::MissingElement("instance".into()),
-                        )?))
+                        Ok(super::RuleResultTypeContent::Instance(
+                            helper.finish_element("instance", values)?,
+                        ))
                     }
                     S::Fix(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
@@ -29696,7 +29743,7 @@ pub mod cdf {
                             Self::store_fix(&mut values, value)?;
                         }
                         Ok(super::RuleResultTypeContent::Fix(
-                            values.ok_or_else(|| ErrorKind::MissingElement("fix".into()))?,
+                            helper.finish_element("fix", values)?,
                         ))
                     }
                     S::Check(mut values, deserializer) => {
@@ -29704,9 +29751,9 @@ pub mod cdf {
                             let value = deserializer.finish(helper)?;
                             Self::store_check(&mut values, value)?;
                         }
-                        Ok(super::RuleResultTypeContent::Check(values.ok_or_else(
-                            || ErrorKind::MissingElement("check".into()),
-                        )?))
+                        Ok(super::RuleResultTypeContent::Check(
+                            helper.finish_element("check", values)?,
+                        ))
                     }
                     S::ComplexCheck(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
@@ -29714,8 +29761,7 @@ pub mod cdf {
                             Self::store_complex_check(&mut values, value)?;
                         }
                         Ok(super::RuleResultTypeContent::ComplexCheck(
-                            values
-                                .ok_or_else(|| ErrorKind::MissingElement("complex-check".into()))?,
+                            helper.finish_element("complex-check", values)?,
                         ))
                     }
                     S::Done__(data) => Ok(data),
@@ -30362,14 +30408,19 @@ pub mod cdf {
                 })
             }
         }
+        impl Default for RuleResultTypeContentDeserializer {
+            fn default() -> Self {
+                Self {
+                    state__: Box::new(RuleResultTypeContentDeserializerState::Init__),
+                }
+            }
+        }
         impl<'de> Deserializer<'de, super::RuleResultTypeContent> for RuleResultTypeContentDeserializer {
             fn init(
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
             ) -> DeserializerResult<'de, super::RuleResultTypeContent> {
-                let deserializer = Self {
-                    state__: Box::new(RuleResultTypeContentDeserializerState::Init__),
-                };
+                let deserializer = Self::default();
                 let mut output = deserializer.next(helper, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
@@ -30805,7 +30856,7 @@ pub mod cdf {
                 Ok(super::ScoreType {
                     system: self.system,
                     maximum: self.maximum,
-                    content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                    content: helper.finish_content(self.content)?,
                 })
             }
         }
@@ -31801,7 +31852,7 @@ pub mod cdf {
                 );
                 self.finish_state(helper, state)?;
                 Ok(super::CheckContentType {
-                    content: self.content,
+                    content: helper.finish_vec_default(0usize, self.content)?,
                 })
             }
         }
@@ -31869,9 +31920,9 @@ pub mod cdf {
                             let value = deserializer.finish(helper)?;
                             Self::store_any(&mut values, value)?;
                         }
-                        Ok(super::CheckContentTypeContent::Any(values.ok_or_else(
-                            || ErrorKind::MissingElement("any38".into()),
-                        )?))
+                        Ok(super::CheckContentTypeContent::Any(
+                            helper.finish_element("any38", values)?,
+                        ))
                     }
                     S::Text(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
@@ -31879,7 +31930,7 @@ pub mod cdf {
                             Self::store_text(&mut values, value)?;
                         }
                         Ok(super::CheckContentTypeContent::Text(
-                            values.ok_or_else(|| ErrorKind::MissingElement("text".into()))?,
+                            helper.finish_element("text", values)?,
                         ))
                     }
                     S::Done__(data) => Ok(data),
@@ -32018,6 +32069,13 @@ pub mod cdf {
                 })
             }
         }
+        impl Default for CheckContentTypeContentDeserializer {
+            fn default() -> Self {
+                Self {
+                    state__: Box::new(CheckContentTypeContentDeserializerState::Init__),
+                }
+            }
+        }
         impl<'de> Deserializer<'de, super::CheckContentTypeContent>
             for CheckContentTypeContentDeserializer
         {
@@ -32025,9 +32083,7 @@ pub mod cdf {
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
             ) -> DeserializerResult<'de, super::CheckContentTypeContent> {
-                let deserializer = Self {
-                    state__: Box::new(CheckContentTypeContentDeserializerState::Init__),
-                };
+                let deserializer = Self::default();
                 let mut output = deserializer.next(helper, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
@@ -32271,7 +32327,7 @@ pub mod cdf {
                 Ok(super::FactType {
                     name: self.name,
                     type_: self.type_,
-                    content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                    content: helper.finish_content(self.content)?,
                 })
             }
         }
@@ -32671,15 +32727,9 @@ pub mod cdf {
                 Ok(super::OverrideType {
                     time: self.time,
                     authority: self.authority,
-                    old_result: self
-                        .old_result
-                        .ok_or_else(|| ErrorKind::MissingElement("old-result".into()))?,
-                    new_result: self
-                        .new_result
-                        .ok_or_else(|| ErrorKind::MissingElement("new-result".into()))?,
-                    remark: self
-                        .remark
-                        .ok_or_else(|| ErrorKind::MissingElement("remark".into()))?,
+                    old_result: helper.finish_element("old-result", self.old_result)?,
+                    new_result: helper.finish_element("new-result", self.new_result)?,
+                    remark: helper.finish_element("remark", self.remark)?,
                 })
             }
         }
@@ -32813,7 +32863,7 @@ pub mod cdf {
                 self.finish_state(helper, state)?;
                 Ok(super::MessageType {
                     severity: self.severity,
-                    content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                    content: helper.finish_content(self.content)?,
                 })
             }
         }
@@ -32958,7 +33008,7 @@ pub mod cdf {
                 Ok(super::InstanceResultType {
                     context: self.context,
                     parent_context: self.parent_context,
-                    content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                    content: helper.finish_content(self.content)?,
                 })
             }
         }
@@ -39965,7 +40015,7 @@ pub mod cpe {
                 );
                 self.finish_state(helper, state)?;
                 Ok(super::PlatformSpecificationType {
-                    platform: self.platform,
+                    platform: helper.finish_vec(1usize, None, self.platform)?,
                 })
             }
         }
@@ -40337,9 +40387,7 @@ pub mod cpe {
                     id: self.id,
                     title: self.title,
                     remark: self.remark,
-                    logical_test: self
-                        .logical_test
-                        .ok_or_else(|| ErrorKind::MissingElement("logical-test".into()))?,
+                    logical_test: helper.finish_element("logical-test", self.logical_test)?,
                 })
             }
         }
@@ -40469,7 +40517,7 @@ pub mod cpe {
                 self.finish_state(helper, state)?;
                 Ok(super::TextType {
                     lang: self.lang,
-                    content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                    content: helper.finish_content(self.content)?,
                 })
             }
         }

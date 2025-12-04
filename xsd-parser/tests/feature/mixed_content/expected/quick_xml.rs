@@ -479,12 +479,8 @@ pub mod quick_xml_deserialize {
             self.finish_state(helper, state)?;
             Ok(super::MixedAllType {
                 text_before: self.text_before,
-                fuu: self
-                    .fuu
-                    .ok_or_else(|| ErrorKind::MissingElement("Fuu".into()))?,
-                bar: self
-                    .bar
-                    .ok_or_else(|| ErrorKind::MissingElement("Bar".into()))?,
+                fuu: helper.finish_element("Fuu", self.fuu)?,
+                bar: helper.finish_element("Bar", self.bar)?,
             })
         }
     }
@@ -765,9 +761,7 @@ pub mod quick_xml_deserialize {
             self.finish_state(helper, state)?;
             Ok(super::MixedChoiceType {
                 text_before: self.text_before,
-                content: self
-                    .content
-                    .ok_or_else(|| ErrorKind::MissingElement("content".into()))?,
+                content: helper.finish_default(self.content)?,
             })
         }
     }
@@ -831,7 +825,7 @@ pub mod quick_xml_deserialize {
                         Self::store_fuu(&mut values, value)?;
                     }
                     Ok(super::MixedChoiceTypeContent::Fuu(
-                        values.ok_or_else(|| ErrorKind::MissingElement("Fuu".into()))?,
+                        helper.finish_element("Fuu", values)?,
                     ))
                 }
                 S::Bar(mut values, deserializer) => {
@@ -840,7 +834,7 @@ pub mod quick_xml_deserialize {
                         Self::store_bar(&mut values, value)?;
                     }
                     Ok(super::MixedChoiceTypeContent::Bar(
-                        values.ok_or_else(|| ErrorKind::MissingElement("Bar".into()))?,
+                        helper.finish_element("Bar", values)?,
                     ))
                 }
                 S::Done__(data) => Ok(data),
@@ -968,14 +962,19 @@ pub mod quick_xml_deserialize {
             })
         }
     }
+    impl Default for MixedChoiceTypeContentDeserializer {
+        fn default() -> Self {
+            Self {
+                state__: Box::new(MixedChoiceTypeContentDeserializerState::Init__),
+            }
+        }
+    }
     impl<'de> Deserializer<'de, super::MixedChoiceTypeContent> for MixedChoiceTypeContentDeserializer {
         fn init(
             helper: &mut DeserializeHelper,
             event: Event<'de>,
         ) -> DeserializerResult<'de, super::MixedChoiceTypeContent> {
-            let deserializer = Self {
-                state__: Box::new(MixedChoiceTypeContentDeserializerState::Init__),
-            };
+            let deserializer = Self::default();
             let mut output = deserializer.next(helper, event)?;
             output.artifact = match output.artifact {
                 DeserializerArtifact::Deserializer(x)
@@ -1244,7 +1243,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::MixedChoiceListType {
-                content: self.content,
+                content: helper.finish_vec_default(0usize, self.content)?,
             })
         }
     }
@@ -1319,7 +1318,7 @@ pub mod quick_xml_deserialize {
                         Self::store_fuu(&mut values, value)?;
                     }
                     Ok(super::MixedChoiceListTypeContent::Fuu(
-                        values.ok_or_else(|| ErrorKind::MissingElement("Fuu".into()))?,
+                        helper.finish_element("Fuu", values)?,
                     ))
                 }
                 S::Bar(mut values, deserializer) => {
@@ -1328,7 +1327,7 @@ pub mod quick_xml_deserialize {
                         Self::store_bar(&mut values, value)?;
                     }
                     Ok(super::MixedChoiceListTypeContent::Bar(
-                        values.ok_or_else(|| ErrorKind::MissingElement("Bar".into()))?,
+                        helper.finish_element("Bar", values)?,
                     ))
                 }
                 S::Text(mut values, deserializer) => {
@@ -1337,7 +1336,7 @@ pub mod quick_xml_deserialize {
                         Self::store_text(&mut values, value)?;
                     }
                     Ok(super::MixedChoiceListTypeContent::Text(
-                        values.ok_or_else(|| ErrorKind::MissingElement("text".into()))?,
+                        helper.finish_element("text", values)?,
                     ))
                 }
                 S::Done__(data) => Ok(data),
@@ -1537,6 +1536,13 @@ pub mod quick_xml_deserialize {
             })
         }
     }
+    impl Default for MixedChoiceListTypeContentDeserializer {
+        fn default() -> Self {
+            Self {
+                state__: Box::new(MixedChoiceListTypeContentDeserializerState::Init__),
+            }
+        }
+    }
     impl<'de> Deserializer<'de, super::MixedChoiceListTypeContent>
         for MixedChoiceListTypeContentDeserializer
     {
@@ -1544,9 +1550,7 @@ pub mod quick_xml_deserialize {
             helper: &mut DeserializeHelper,
             event: Event<'de>,
         ) -> DeserializerResult<'de, super::MixedChoiceListTypeContent> {
-            let deserializer = Self {
-                state__: Box::new(MixedChoiceListTypeContentDeserializerState::Init__),
-            };
+            let deserializer = Self::default();
             let mut output = deserializer.next(helper, event)?;
             output.artifact = match output.artifact {
                 DeserializerArtifact::Deserializer(x)
@@ -2213,13 +2217,9 @@ pub mod quick_xml_deserialize {
             self.finish_state(helper, state)?;
             Ok(super::MixedSequenceType {
                 text_before: self.text_before,
-                fuu: self
-                    .fuu
-                    .ok_or_else(|| ErrorKind::MissingElement("Fuu".into()))?,
+                fuu: helper.finish_element("Fuu", self.fuu)?,
                 text_after_fuu: self.text_after_fuu,
-                bar: self
-                    .bar
-                    .ok_or_else(|| ErrorKind::MissingElement("Bar".into()))?,
+                bar: helper.finish_element("Bar", self.bar)?,
                 text_after_bar: self.text_after_bar,
             })
         }

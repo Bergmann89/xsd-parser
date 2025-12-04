@@ -1188,15 +1188,10 @@ pub mod quick_xml_deserialize {
             self.finish_state(helper, state)?;
             Ok(super::DirectoryReqType {
                 version: self.version,
-                create_date_timestamp: self
-                    .create_date_timestamp
-                    .ok_or_else(|| ErrorKind::MissingElement("createDateTimestamp".into()))?,
-                merchant: self
-                    .merchant
-                    .ok_or_else(|| ErrorKind::MissingElement("Merchant".into()))?,
-                signature: self
-                    .signature
-                    .ok_or_else(|| ErrorKind::MissingElement("Signature".into()))?,
+                create_date_timestamp: helper
+                    .finish_element("createDateTimestamp", self.create_date_timestamp)?,
+                merchant: helper.finish_element("Merchant", self.merchant)?,
+                signature: helper.finish_element("Signature", self.signature)?,
             })
         }
     }
@@ -1492,12 +1487,8 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::DirectoryReqMerchantType {
-                merchant_id: self
-                    .merchant_id
-                    .ok_or_else(|| ErrorKind::MissingElement("merchantID".into()))?,
-                sub_id: self
-                    .sub_id
-                    .ok_or_else(|| ErrorKind::MissingElement("subID".into()))?,
+                merchant_id: helper.finish_element("merchantID", self.merchant_id)?,
+                sub_id: helper.finish_element("subID", self.sub_id)?,
             })
         }
     }
@@ -1963,12 +1954,8 @@ pub mod quick_xml_deserialize {
             self.finish_state(helper, state)?;
             Ok(super::SignatureType {
                 id: self.id,
-                signed_info: self
-                    .signed_info
-                    .ok_or_else(|| ErrorKind::MissingElement("SignedInfo".into()))?,
-                signature_value: self
-                    .signature_value
-                    .ok_or_else(|| ErrorKind::MissingElement("SignatureValue".into()))?,
+                signed_info: helper.finish_element("SignedInfo", self.signed_info)?,
+                signature_value: helper.finish_element("SignatureValue", self.signature_value)?,
                 key_info: self.key_info,
                 object: self.object,
             })
@@ -2378,13 +2365,11 @@ pub mod quick_xml_deserialize {
             self.finish_state(helper, state)?;
             Ok(super::SignedInfoType {
                 id: self.id,
-                canonicalization_method: self
-                    .canonicalization_method
-                    .ok_or_else(|| ErrorKind::MissingElement("CanonicalizationMethod".into()))?,
-                signature_method: self
-                    .signature_method
-                    .ok_or_else(|| ErrorKind::MissingElement("SignatureMethod".into()))?,
-                reference: self.reference,
+                canonicalization_method: helper
+                    .finish_element("CanonicalizationMethod", self.canonicalization_method)?,
+                signature_method: helper
+                    .finish_element("SignatureMethod", self.signature_method)?,
+                reference: helper.finish_vec(1usize, None, self.reference)?,
             })
         }
     }
@@ -2520,7 +2505,7 @@ pub mod quick_xml_deserialize {
             self.finish_state(helper, state)?;
             Ok(super::SignatureValueType {
                 id: self.id,
-                content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                content: helper.finish_content(self.content)?,
             })
         }
     }
@@ -2679,7 +2664,7 @@ pub mod quick_xml_deserialize {
             self.finish_state(helper, state)?;
             Ok(super::KeyInfoType {
                 id: self.id,
-                content: self.content,
+                content: helper.finish_vec_default(1usize, self.content)?,
             })
         }
     }
@@ -2833,18 +2818,18 @@ pub mod quick_xml_deserialize {
                         let value = deserializer.finish(helper)?;
                         Self::store_key_name(&mut values, value)?;
                     }
-                    Ok(super::KeyInfoTypeContent::KeyName(values.ok_or_else(
-                        || ErrorKind::MissingElement("KeyName".into()),
-                    )?))
+                    Ok(super::KeyInfoTypeContent::KeyName(
+                        helper.finish_element("KeyName", values)?,
+                    ))
                 }
                 S::KeyValue(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_key_value(&mut values, value)?;
                     }
-                    Ok(super::KeyInfoTypeContent::KeyValue(values.ok_or_else(
-                        || ErrorKind::MissingElement("KeyValue".into()),
-                    )?))
+                    Ok(super::KeyInfoTypeContent::KeyValue(
+                        helper.finish_element("KeyValue", values)?,
+                    ))
                 }
                 S::RetrievalMethod(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
@@ -2852,8 +2837,7 @@ pub mod quick_xml_deserialize {
                         Self::store_retrieval_method(&mut values, value)?;
                     }
                     Ok(super::KeyInfoTypeContent::RetrievalMethod(
-                        values
-                            .ok_or_else(|| ErrorKind::MissingElement("RetrievalMethod".into()))?,
+                        helper.finish_element("RetrievalMethod", values)?,
                     ))
                 }
                 S::X509Data(mut values, deserializer) => {
@@ -2861,36 +2845,36 @@ pub mod quick_xml_deserialize {
                         let value = deserializer.finish(helper)?;
                         Self::store_x509_data(&mut values, value)?;
                     }
-                    Ok(super::KeyInfoTypeContent::X509Data(values.ok_or_else(
-                        || ErrorKind::MissingElement("X509Data".into()),
-                    )?))
+                    Ok(super::KeyInfoTypeContent::X509Data(
+                        helper.finish_element("X509Data", values)?,
+                    ))
                 }
                 S::PgpData(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_pgp_data(&mut values, value)?;
                     }
-                    Ok(super::KeyInfoTypeContent::PgpData(values.ok_or_else(
-                        || ErrorKind::MissingElement("PGPData".into()),
-                    )?))
+                    Ok(super::KeyInfoTypeContent::PgpData(
+                        helper.finish_element("PGPData", values)?,
+                    ))
                 }
                 S::SpkiData(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_spki_data(&mut values, value)?;
                     }
-                    Ok(super::KeyInfoTypeContent::SpkiData(values.ok_or_else(
-                        || ErrorKind::MissingElement("SPKIData".into()),
-                    )?))
+                    Ok(super::KeyInfoTypeContent::SpkiData(
+                        helper.finish_element("SPKIData", values)?,
+                    ))
                 }
                 S::MgmtData(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_mgmt_data(&mut values, value)?;
                     }
-                    Ok(super::KeyInfoTypeContent::MgmtData(values.ok_or_else(
-                        || ErrorKind::MissingElement("MgmtData".into()),
-                    )?))
+                    Ok(super::KeyInfoTypeContent::MgmtData(
+                        helper.finish_element("MgmtData", values)?,
+                    ))
                 }
                 S::Done__(data) => Ok(data),
             }
@@ -3347,14 +3331,19 @@ pub mod quick_xml_deserialize {
             })
         }
     }
+    impl Default for KeyInfoTypeContentDeserializer {
+        fn default() -> Self {
+            Self {
+                state__: Box::new(KeyInfoTypeContentDeserializerState::Init__),
+            }
+        }
+    }
     impl<'de> Deserializer<'de, super::KeyInfoTypeContent> for KeyInfoTypeContentDeserializer {
         fn init(
             helper: &mut DeserializeHelper,
             event: Event<'de>,
         ) -> DeserializerResult<'de, super::KeyInfoTypeContent> {
-            let deserializer = Self {
-                state__: Box::new(KeyInfoTypeContentDeserializerState::Init__),
-            };
+            let deserializer = Self::default();
             let mut output = deserializer.next(helper, event)?;
             output.artifact = match output.artifact {
                 DeserializerArtifact::Deserializer(x)
@@ -4389,12 +4378,8 @@ pub mod quick_xml_deserialize {
                 uri: self.uri,
                 type_: self.type_,
                 transforms: self.transforms,
-                digest_method: self
-                    .digest_method
-                    .ok_or_else(|| ErrorKind::MissingElement("DigestMethod".into()))?,
-                digest_value: self
-                    .digest_value
-                    .ok_or_else(|| ErrorKind::MissingElement("DigestValue".into()))?,
+                digest_method: helper.finish_element("DigestMethod", self.digest_method)?,
+                digest_value: helper.finish_element("DigestValue", self.digest_value)?,
             })
         }
     }
@@ -4534,7 +4519,7 @@ pub mod quick_xml_deserialize {
             let state = replace(&mut *self.state__, KeyValueTypeDeserializerState::Unknown__);
             self.finish_state(helper, state)?;
             Ok(super::KeyValueType {
-                content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                content: helper.finish_default(self.content)?,
             })
         }
     }
@@ -4607,18 +4592,18 @@ pub mod quick_xml_deserialize {
                         let value = deserializer.finish(helper)?;
                         Self::store_dsa_key_value(&mut values, value)?;
                     }
-                    Ok(super::KeyValueTypeContent::DsaKeyValue(values.ok_or_else(
-                        || ErrorKind::MissingElement("DSAKeyValue".into()),
-                    )?))
+                    Ok(super::KeyValueTypeContent::DsaKeyValue(
+                        helper.finish_element("DSAKeyValue", values)?,
+                    ))
                 }
                 S::RsaKeyValue(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_rsa_key_value(&mut values, value)?;
                     }
-                    Ok(super::KeyValueTypeContent::RsaKeyValue(values.ok_or_else(
-                        || ErrorKind::MissingElement("RSAKeyValue".into()),
-                    )?))
+                    Ok(super::KeyValueTypeContent::RsaKeyValue(
+                        helper.finish_element("RSAKeyValue", values)?,
+                    ))
                 }
                 S::Done__(data) => Ok(data),
             }
@@ -4764,14 +4749,19 @@ pub mod quick_xml_deserialize {
             })
         }
     }
+    impl Default for KeyValueTypeContentDeserializer {
+        fn default() -> Self {
+            Self {
+                state__: Box::new(KeyValueTypeContentDeserializerState::Init__),
+            }
+        }
+    }
     impl<'de> Deserializer<'de, super::KeyValueTypeContent> for KeyValueTypeContentDeserializer {
         fn init(
             helper: &mut DeserializeHelper,
             event: Event<'de>,
         ) -> DeserializerResult<'de, super::KeyValueTypeContent> {
-            let deserializer = Self {
-                state__: Box::new(KeyValueTypeContentDeserializerState::Init__),
-            };
+            let deserializer = Self::default();
             let mut output = deserializer.next(helper, event)?;
             output.artifact = match output.artifact {
                 DeserializerArtifact::Deserializer(x)
@@ -5246,7 +5236,7 @@ pub mod quick_xml_deserialize {
             let state = replace(&mut *self.state__, X509DataTypeDeserializerState::Unknown__);
             self.finish_state(helper, state)?;
             Ok(super::X509DataType {
-                content: self.content,
+                content: helper.finish_vec_default(1usize, self.content)?,
             })
         }
     }
@@ -5334,6 +5324,14 @@ pub mod quick_xml_deserialize {
                     ret
                 }
             })
+        }
+    }
+    impl Default for X509DataTypeContentDeserializer {
+        fn default() -> Self {
+            Self {
+                content_43: None,
+                state__: Box::new(X509DataTypeContentDeserializerState::Init__),
+            }
         }
     }
     impl<'de> Deserializer<'de, super::X509DataTypeContent> for X509DataTypeContentDeserializer {
@@ -5439,9 +5437,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::X509DataTypeContent {
-                content_43: self
-                    .content_43
-                    .ok_or_else(|| ErrorKind::MissingElement("Content43".into()))?,
+                content_43: helper.finish_default(self.content_43)?,
             })
         }
     }
@@ -5581,7 +5577,7 @@ pub mod quick_xml_deserialize {
             let state = replace(&mut *self.state__, PgpDataTypeDeserializerState::Unknown__);
             self.finish_state(helper, state)?;
             Ok(super::PgpDataType {
-                content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                content: helper.finish_default(self.content)?,
             })
         }
     }
@@ -5671,18 +5667,18 @@ pub mod quick_xml_deserialize {
                         let value = deserializer.finish(helper)?;
                         Self::store_content_47(&mut values, value)?;
                     }
-                    Ok(super::PgpDataTypeContent::Content47(values.ok_or_else(
-                        || ErrorKind::MissingElement("Content47".into()),
-                    )?))
+                    Ok(super::PgpDataTypeContent::Content47(
+                        helper.finish_default(values)?,
+                    ))
                 }
                 S::Content49(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_content_49(&mut values, value)?;
                     }
-                    Ok(super::PgpDataTypeContent::Content49(values.ok_or_else(
-                        || ErrorKind::MissingElement("Content49".into()),
-                    )?))
+                    Ok(super::PgpDataTypeContent::Content49(
+                        helper.finish_default(values)?,
+                    ))
                 }
                 S::Done__(data) => Ok(data),
             }
@@ -5816,14 +5812,19 @@ pub mod quick_xml_deserialize {
             })
         }
     }
+    impl Default for PgpDataTypeContentDeserializer {
+        fn default() -> Self {
+            Self {
+                state__: Box::new(PgpDataTypeContentDeserializerState::Init__),
+            }
+        }
+    }
     impl<'de> Deserializer<'de, super::PgpDataTypeContent> for PgpDataTypeContentDeserializer {
         fn init(
             helper: &mut DeserializeHelper,
             event: Event<'de>,
         ) -> DeserializerResult<'de, super::PgpDataTypeContent> {
-            let deserializer = Self {
-                state__: Box::new(PgpDataTypeContentDeserializerState::Init__),
-            };
+            let deserializer = Self::default();
             let mut output = deserializer.next(helper, event)?;
             output.artifact = match output.artifact {
                 DeserializerArtifact::Deserializer(x)
@@ -6072,7 +6073,7 @@ pub mod quick_xml_deserialize {
             let state = replace(&mut *self.state__, SpkiDataTypeDeserializerState::Unknown__);
             self.finish_state(helper, state)?;
             Ok(super::SpkiDataType {
-                content: self.content,
+                content: helper.finish_vec_default(1usize, self.content)?,
             })
         }
     }
@@ -6160,6 +6161,14 @@ pub mod quick_xml_deserialize {
                     ret
                 }
             })
+        }
+    }
+    impl Default for SpkiDataTypeContentDeserializer {
+        fn default() -> Self {
+            Self {
+                spki_sexp: None,
+                state__: Box::new(SpkiDataTypeContentDeserializerState::Init__),
+            }
         }
     }
     impl<'de> Deserializer<'de, super::SpkiDataTypeContent> for SpkiDataTypeContentDeserializer {
@@ -6269,9 +6278,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::SpkiDataTypeContent {
-                spki_sexp: self
-                    .spki_sexp
-                    .ok_or_else(|| ErrorKind::MissingElement("SPKISexp".into()))?,
+                spki_sexp: helper.finish_element("SPKISexp", self.spki_sexp)?,
             })
         }
     }
@@ -6462,7 +6469,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::TransformsType {
-                transform: self.transform,
+                transform: helper.finish_vec(1usize, None, self.transform)?,
             })
         }
     }
@@ -7084,9 +7091,7 @@ pub mod quick_xml_deserialize {
             Ok(super::DsaKeyValueType {
                 content_60: self.content_60,
                 g: self.g,
-                y: self
-                    .y
-                    .ok_or_else(|| ErrorKind::MissingElement("Y".into()))?,
+                y: helper.finish_element("Y", self.y)?,
                 j: self.j,
                 content_61: self.content_61,
             })
@@ -7377,12 +7382,8 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::RsaKeyValueType {
-                modulus: self
-                    .modulus
-                    .ok_or_else(|| ErrorKind::MissingElement("Modulus".into()))?,
-                exponent: self
-                    .exponent
-                    .ok_or_else(|| ErrorKind::MissingElement("Exponent".into()))?,
+                modulus: helper.finish_element("Modulus", self.modulus)?,
+                exponent: helper.finish_element("Exponent", self.exponent)?,
             })
         }
     }
@@ -7452,6 +7453,14 @@ pub mod quick_xml_deserialize {
                     ElementHandlerOutput::from_event_end(event, allow_any)
                 }
             })
+        }
+    }
+    impl Default for X509DataContent43TypeDeserializer {
+        fn default() -> Self {
+            Self {
+                content: None,
+                state__: Box::new(X509DataContent43TypeDeserializerState::Init__),
+            }
         }
     }
     impl<'de> Deserializer<'de, super::X509DataContent43Type> for X509DataContent43TypeDeserializer {
@@ -7541,7 +7550,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::X509DataContent43Type {
-                content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                content: helper.finish_default(self.content)?,
             })
         }
     }
@@ -7664,8 +7673,7 @@ pub mod quick_xml_deserialize {
                         Self::store_x509_issuer_serial(&mut values, value)?;
                     }
                     Ok(super::X509DataContent43TypeContent::X509IssuerSerial(
-                        values
-                            .ok_or_else(|| ErrorKind::MissingElement("X509IssuerSerial".into()))?,
+                        helper.finish_element("X509IssuerSerial", values)?,
                     ))
                 }
                 S::X509Ski(mut values, deserializer) => {
@@ -7674,7 +7682,7 @@ pub mod quick_xml_deserialize {
                         Self::store_x509_ski(&mut values, value)?;
                     }
                     Ok(super::X509DataContent43TypeContent::X509Ski(
-                        values.ok_or_else(|| ErrorKind::MissingElement("X509SKI".into()))?,
+                        helper.finish_element("X509SKI", values)?,
                     ))
                 }
                 S::X509SubjectName(mut values, deserializer) => {
@@ -7683,8 +7691,7 @@ pub mod quick_xml_deserialize {
                         Self::store_x509_subject_name(&mut values, value)?;
                     }
                     Ok(super::X509DataContent43TypeContent::X509SubjectName(
-                        values
-                            .ok_or_else(|| ErrorKind::MissingElement("X509SubjectName".into()))?,
+                        helper.finish_element("X509SubjectName", values)?,
                     ))
                 }
                 S::X509Certificate(mut values, deserializer) => {
@@ -7693,8 +7700,7 @@ pub mod quick_xml_deserialize {
                         Self::store_x509_certificate(&mut values, value)?;
                     }
                     Ok(super::X509DataContent43TypeContent::X509Certificate(
-                        values
-                            .ok_or_else(|| ErrorKind::MissingElement("X509Certificate".into()))?,
+                        helper.finish_element("X509Certificate", values)?,
                     ))
                 }
                 S::X509Crl(mut values, deserializer) => {
@@ -7703,7 +7709,7 @@ pub mod quick_xml_deserialize {
                         Self::store_x509_crl(&mut values, value)?;
                     }
                     Ok(super::X509DataContent43TypeContent::X509Crl(
-                        values.ok_or_else(|| ErrorKind::MissingElement("X509CRL".into()))?,
+                        helper.finish_element("X509CRL", values)?,
                     ))
                 }
                 S::Done__(data) => Ok(data),
@@ -8078,6 +8084,13 @@ pub mod quick_xml_deserialize {
             })
         }
     }
+    impl Default for X509DataContent43TypeContentDeserializer {
+        fn default() -> Self {
+            Self {
+                state__: Box::new(X509DataContent43TypeContentDeserializerState::Init__),
+            }
+        }
+    }
     impl<'de> Deserializer<'de, super::X509DataContent43TypeContent>
         for X509DataContent43TypeContentDeserializer
     {
@@ -8085,9 +8098,7 @@ pub mod quick_xml_deserialize {
             helper: &mut DeserializeHelper,
             event: Event<'de>,
         ) -> DeserializerResult<'de, super::X509DataContent43TypeContent> {
-            let deserializer = Self {
-                state__: Box::new(X509DataContent43TypeContentDeserializerState::Init__),
-            };
+            let deserializer = Self::default();
             let mut output = deserializer.next(helper, event)?;
             output.artifact = match output.artifact {
                 DeserializerArtifact::Deserializer(x)
@@ -8449,6 +8460,15 @@ pub mod quick_xml_deserialize {
             })
         }
     }
+    impl Default for PgpDataContent47TypeDeserializer {
+        fn default() -> Self {
+            Self {
+                pgp_key_id: None,
+                pgp_key_packet: None,
+                state__: Box::new(PgpDataContent47TypeDeserializerState::Init__),
+            }
+        }
+    }
     impl<'de> Deserializer<'de, super::PgpDataContent47Type> for PgpDataContent47TypeDeserializer {
         fn init(
             helper: &mut DeserializeHelper,
@@ -8586,9 +8606,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::PgpDataContent47Type {
-                pgp_key_id: self
-                    .pgp_key_id
-                    .ok_or_else(|| ErrorKind::MissingElement("PGPKeyID".into()))?,
+                pgp_key_id: helper.finish_element("PGPKeyID", self.pgp_key_id)?,
                 pgp_key_packet: self.pgp_key_packet,
             })
         }
@@ -8681,6 +8699,14 @@ pub mod quick_xml_deserialize {
                     ret
                 }
             })
+        }
+    }
+    impl Default for PgpDataContent49TypeDeserializer {
+        fn default() -> Self {
+            Self {
+                pgp_key_packet: None,
+                state__: Box::new(PgpDataContent49TypeDeserializerState::Init__),
+            }
         }
     }
     impl<'de> Deserializer<'de, super::PgpDataContent49Type> for PgpDataContent49TypeDeserializer {
@@ -8790,9 +8816,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::PgpDataContent49Type {
-                pgp_key_packet: self
-                    .pgp_key_packet
-                    .ok_or_else(|| ErrorKind::MissingElement("PGPKeyPacket".into()))?,
+                pgp_key_packet: helper.finish_element("PGPKeyPacket", self.pgp_key_packet)?,
             })
         }
     }
@@ -8955,7 +8979,7 @@ pub mod quick_xml_deserialize {
             self.finish_state(helper, state)?;
             Ok(super::TransformType {
                 algorithm: self.algorithm,
-                content: self.content,
+                content: helper.finish_vec_default(0usize, self.content)?,
             })
         }
     }
@@ -9007,9 +9031,9 @@ pub mod quick_xml_deserialize {
                         let value = deserializer.finish(helper)?;
                         Self::store_x_path(&mut values, value)?;
                     }
-                    Ok(super::TransformTypeContent::XPath(values.ok_or_else(
-                        || ErrorKind::MissingElement("XPath".into()),
-                    )?))
+                    Ok(super::TransformTypeContent::XPath(
+                        helper.finish_element("XPath", values)?,
+                    ))
                 }
                 S::Done__(data) => Ok(data),
             }
@@ -9076,14 +9100,19 @@ pub mod quick_xml_deserialize {
             })
         }
     }
+    impl Default for TransformTypeContentDeserializer {
+        fn default() -> Self {
+            Self {
+                state__: Box::new(TransformTypeContentDeserializerState::Init__),
+            }
+        }
+    }
     impl<'de> Deserializer<'de, super::TransformTypeContent> for TransformTypeContentDeserializer {
         fn init(
             helper: &mut DeserializeHelper,
             event: Event<'de>,
         ) -> DeserializerResult<'de, super::TransformTypeContent> {
-            let deserializer = Self {
-                state__: Box::new(TransformTypeContentDeserializerState::Init__),
-            };
+            let deserializer = Self::default();
             let mut output = deserializer.next(helper, event)?;
             output.artifact = match output.artifact {
                 DeserializerArtifact::Deserializer(x)
@@ -9318,6 +9347,15 @@ pub mod quick_xml_deserialize {
             })
         }
     }
+    impl Default for DsaKeyValueContent60TypeDeserializer {
+        fn default() -> Self {
+            Self {
+                p: None,
+                q: None,
+                state__: Box::new(DsaKeyValueContent60TypeDeserializerState::Init__),
+            }
+        }
+    }
     impl<'de> Deserializer<'de, super::DsaKeyValueContent60Type>
         for DsaKeyValueContent60TypeDeserializer
     {
@@ -9459,12 +9497,8 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::DsaKeyValueContent60Type {
-                p: self
-                    .p
-                    .ok_or_else(|| ErrorKind::MissingElement("P".into()))?,
-                q: self
-                    .q
-                    .ok_or_else(|| ErrorKind::MissingElement("Q".into()))?,
+                p: helper.finish_element("P", self.p)?,
+                q: helper.finish_element("Q", self.q)?,
             })
         }
     }
@@ -9619,6 +9653,15 @@ pub mod quick_xml_deserialize {
             })
         }
     }
+    impl Default for DsaKeyValueContent61TypeDeserializer {
+        fn default() -> Self {
+            Self {
+                seed: None,
+                pgen_counter: None,
+                state__: Box::new(DsaKeyValueContent61TypeDeserializerState::Init__),
+            }
+        }
+    }
     impl<'de> Deserializer<'de, super::DsaKeyValueContent61Type>
         for DsaKeyValueContent61TypeDeserializer
     {
@@ -9760,12 +9803,8 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::DsaKeyValueContent61Type {
-                seed: self
-                    .seed
-                    .ok_or_else(|| ErrorKind::MissingElement("Seed".into()))?,
-                pgen_counter: self
-                    .pgen_counter
-                    .ok_or_else(|| ErrorKind::MissingElement("PgenCounter".into()))?,
+                seed: helper.finish_element("Seed", self.seed)?,
+                pgen_counter: helper.finish_element("PgenCounter", self.pgen_counter)?,
             })
         }
     }
@@ -10064,12 +10103,9 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::X509IssuerSerialType {
-                x509_issuer_name: self
-                    .x509_issuer_name
-                    .ok_or_else(|| ErrorKind::MissingElement("X509IssuerName".into()))?,
-                x509_serial_number: self
-                    .x509_serial_number
-                    .ok_or_else(|| ErrorKind::MissingElement("X509SerialNumber".into()))?,
+                x509_issuer_name: helper.finish_element("X509IssuerName", self.x509_issuer_name)?,
+                x509_serial_number: helper
+                    .finish_element("X509SerialNumber", self.x509_serial_number)?,
             })
         }
     }

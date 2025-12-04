@@ -265,9 +265,7 @@ pub mod quick_xml_deserialize {
             let state = replace(&mut *self.state__, FooTypeDeserializerState::Unknown__);
             self.finish_state(helper, state)?;
             Ok(super::FooType {
-                enum_: self
-                    .enum_
-                    .ok_or_else(|| ErrorKind::MissingElement("Enum".into()))?,
+                enum_: helper.finish_element("Enum", self.enum_)?,
             })
         }
     }

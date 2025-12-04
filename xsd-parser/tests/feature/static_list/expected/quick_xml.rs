@@ -35,7 +35,7 @@ pub mod quick_xml_deserialize {
     use core::mem::replace;
     use xsd_parser_types::quick_xml::{
         BytesStart, DeserializeHelper, Deserializer, DeserializerArtifact, DeserializerEvent,
-        DeserializerOutput, DeserializerResult, ElementHandlerOutput, Error, ErrorKind, Event,
+        DeserializerOutput, DeserializerResult, ElementHandlerOutput, Error, Event,
         WithDeserializer,
     };
     #[derive(Debug)]
@@ -203,14 +203,7 @@ pub mod quick_xml_deserialize {
             let state = replace(&mut *self.state__, ArrayTypeDeserializerState::Unknown__);
             self.finish_state(helper, state)?;
             Ok(super::ArrayType {
-                item: self
-                    .item
-                    .try_into()
-                    .map_err(|vec: Vec<_>| ErrorKind::InsufficientSize {
-                        min: 5usize,
-                        max: 5usize,
-                        actual: vec.len(),
-                    })?,
+                item: helper.finish_arr::<_, 5usize>(self.item)?,
             })
         }
     }

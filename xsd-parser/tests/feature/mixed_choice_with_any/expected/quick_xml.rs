@@ -296,9 +296,7 @@ pub mod tns {
                 let state = replace(&mut *self.state__, RootTypeDeserializerState::Unknown__);
                 self.finish_state(helper, state)?;
                 Ok(super::RootType {
-                    container: self
-                        .container
-                        .ok_or_else(|| ErrorKind::MissingElement("Container".into()))?,
+                    container: helper.finish_element("Container", self.container)?,
                 })
             }
         }
@@ -454,7 +452,7 @@ pub mod tns {
                 );
                 self.finish_state(helper, state)?;
                 Ok(super::ContainerType {
-                    content: self.content,
+                    content: helper.finish_vec_default(0usize, self.content)?,
                 })
             }
         }
@@ -525,9 +523,9 @@ pub mod tns {
                             let value = deserializer.finish(helper)?;
                             Self::store_known(&mut values, value)?;
                         }
-                        Ok(super::ContainerTypeContent::Known(values.ok_or_else(
-                            || ErrorKind::MissingElement("Known".into()),
-                        )?))
+                        Ok(super::ContainerTypeContent::Known(
+                            helper.finish_element("Known", values)?,
+                        ))
                     }
                     S::Text(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
@@ -535,7 +533,7 @@ pub mod tns {
                             Self::store_text(&mut values, value)?;
                         }
                         Ok(super::ContainerTypeContent::Text(
-                            values.ok_or_else(|| ErrorKind::MissingElement("text".into()))?,
+                            helper.finish_element("text", values)?,
                         ))
                     }
                     S::Done__(data) => Ok(data),
@@ -673,14 +671,19 @@ pub mod tns {
                 })
             }
         }
+        impl Default for ContainerTypeContentDeserializer {
+            fn default() -> Self {
+                Self {
+                    state__: Box::new(ContainerTypeContentDeserializerState::Init__),
+                }
+            }
+        }
         impl<'de> Deserializer<'de, super::ContainerTypeContent> for ContainerTypeContentDeserializer {
             fn init(
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
             ) -> DeserializerResult<'de, super::ContainerTypeContent> {
-                let deserializer = Self {
-                    state__: Box::new(ContainerTypeContentDeserializerState::Init__),
-                };
+                let deserializer = Self::default();
                 let mut output = deserializer.next(helper, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)

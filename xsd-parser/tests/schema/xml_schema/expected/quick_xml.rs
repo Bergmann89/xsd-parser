@@ -1553,7 +1553,7 @@ pub mod quick_xml_deserialize {
                 xpath_default_namespace: self.xpath_default_namespace,
                 id: self.id,
                 lang: self.lang,
-                content: self.content,
+                content: helper.finish_vec_default(0usize, self.content)?,
             })
         }
     }
@@ -1792,7 +1792,7 @@ pub mod quick_xml_deserialize {
                         Self::store_include(&mut values, value)?;
                     }
                     Ok(super::SchemaElementTypeContent::Include(
-                        values.ok_or_else(|| ErrorKind::MissingElement("include".into()))?,
+                        helper.finish_element("include", values)?,
                     ))
                 }
                 S::Import(mut values, deserializer) => {
@@ -1800,9 +1800,9 @@ pub mod quick_xml_deserialize {
                         let value = deserializer.finish(helper)?;
                         Self::store_import(&mut values, value)?;
                     }
-                    Ok(super::SchemaElementTypeContent::Import(values.ok_or_else(
-                        || ErrorKind::MissingElement("import".into()),
-                    )?))
+                    Ok(super::SchemaElementTypeContent::Import(
+                        helper.finish_element("import", values)?,
+                    ))
                 }
                 S::Redefine(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
@@ -1810,7 +1810,7 @@ pub mod quick_xml_deserialize {
                         Self::store_redefine(&mut values, value)?;
                     }
                     Ok(super::SchemaElementTypeContent::Redefine(
-                        values.ok_or_else(|| ErrorKind::MissingElement("redefine".into()))?,
+                        helper.finish_element("redefine", values)?,
                     ))
                 }
                 S::Override(mut values, deserializer) => {
@@ -1819,7 +1819,7 @@ pub mod quick_xml_deserialize {
                         Self::store_override_(&mut values, value)?;
                     }
                     Ok(super::SchemaElementTypeContent::Override(
-                        values.ok_or_else(|| ErrorKind::MissingElement("override".into()))?,
+                        helper.finish_element("override", values)?,
                     ))
                 }
                 S::Annotation(mut values, deserializer) => {
@@ -1828,7 +1828,7 @@ pub mod quick_xml_deserialize {
                         Self::store_annotation(&mut values, value)?;
                     }
                     Ok(super::SchemaElementTypeContent::Annotation(
-                        values.ok_or_else(|| ErrorKind::MissingElement("annotation".into()))?,
+                        helper.finish_element("annotation", values)?,
                     ))
                 }
                 S::DefaultOpenContent(mut values, deserializer) => {
@@ -1837,9 +1837,7 @@ pub mod quick_xml_deserialize {
                         Self::store_default_open_content(&mut values, value)?;
                     }
                     Ok(super::SchemaElementTypeContent::DefaultOpenContent(
-                        values.ok_or_else(|| {
-                            ErrorKind::MissingElement("defaultOpenContent".into())
-                        })?,
+                        helper.finish_element("defaultOpenContent", values)?,
                     ))
                 }
                 S::SimpleType(mut values, deserializer) => {
@@ -1848,7 +1846,7 @@ pub mod quick_xml_deserialize {
                         Self::store_simple_type(&mut values, value)?;
                     }
                     Ok(super::SchemaElementTypeContent::SimpleType(
-                        values.ok_or_else(|| ErrorKind::MissingElement("simpleType".into()))?,
+                        helper.finish_element("simpleType", values)?,
                     ))
                 }
                 S::ComplexType(mut values, deserializer) => {
@@ -1857,7 +1855,7 @@ pub mod quick_xml_deserialize {
                         Self::store_complex_type(&mut values, value)?;
                     }
                     Ok(super::SchemaElementTypeContent::ComplexType(
-                        values.ok_or_else(|| ErrorKind::MissingElement("complexType".into()))?,
+                        helper.finish_element("complexType", values)?,
                     ))
                 }
                 S::Group(mut values, deserializer) => {
@@ -1865,9 +1863,9 @@ pub mod quick_xml_deserialize {
                         let value = deserializer.finish(helper)?;
                         Self::store_group(&mut values, value)?;
                     }
-                    Ok(super::SchemaElementTypeContent::Group(values.ok_or_else(
-                        || ErrorKind::MissingElement("group".into()),
-                    )?))
+                    Ok(super::SchemaElementTypeContent::Group(
+                        helper.finish_element("group", values)?,
+                    ))
                 }
                 S::AttributeGroup(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
@@ -1875,7 +1873,7 @@ pub mod quick_xml_deserialize {
                         Self::store_attribute_group(&mut values, value)?;
                     }
                     Ok(super::SchemaElementTypeContent::AttributeGroup(
-                        values.ok_or_else(|| ErrorKind::MissingElement("attributeGroup".into()))?,
+                        helper.finish_element("attributeGroup", values)?,
                     ))
                 }
                 S::Element(mut values, deserializer) => {
@@ -1884,7 +1882,7 @@ pub mod quick_xml_deserialize {
                         Self::store_element(&mut values, value)?;
                     }
                     Ok(super::SchemaElementTypeContent::Element(
-                        values.ok_or_else(|| ErrorKind::MissingElement("element".into()))?,
+                        helper.finish_element("element", values)?,
                     ))
                 }
                 S::Attribute(mut values, deserializer) => {
@@ -1893,7 +1891,7 @@ pub mod quick_xml_deserialize {
                         Self::store_attribute(&mut values, value)?;
                     }
                     Ok(super::SchemaElementTypeContent::Attribute(
-                        values.ok_or_else(|| ErrorKind::MissingElement("attribute".into()))?,
+                        helper.finish_element("attribute", values)?,
                     ))
                 }
                 S::Notation(mut values, deserializer) => {
@@ -1902,7 +1900,7 @@ pub mod quick_xml_deserialize {
                         Self::store_notation(&mut values, value)?;
                     }
                     Ok(super::SchemaElementTypeContent::Notation(
-                        values.ok_or_else(|| ErrorKind::MissingElement("notation".into()))?,
+                        helper.finish_element("notation", values)?,
                     ))
                 }
                 S::Done__(data) => Ok(data),
@@ -2847,6 +2845,13 @@ pub mod quick_xml_deserialize {
             })
         }
     }
+    impl Default for SchemaElementTypeContentDeserializer {
+        fn default() -> Self {
+            Self {
+                state__: Box::new(SchemaElementTypeContentDeserializerState::Init__),
+            }
+        }
+    }
     impl<'de> Deserializer<'de, super::SchemaElementTypeContent>
         for SchemaElementTypeContentDeserializer
     {
@@ -2854,9 +2859,7 @@ pub mod quick_xml_deserialize {
             helper: &mut DeserializeHelper,
             event: Event<'de>,
         ) -> DeserializerResult<'de, super::SchemaElementTypeContent> {
-            let deserializer = Self {
-                state__: Box::new(SchemaElementTypeContentDeserializerState::Init__),
-            };
+            let deserializer = Self::default();
             let mut output = deserializer.next(helper, event)?;
             output.artifact = match output.artifact {
                 DeserializerArtifact::Deserializer(x)
@@ -3858,7 +3861,7 @@ pub mod quick_xml_deserialize {
                 any_attribute: self.any_attribute,
                 schema_location: self.schema_location,
                 id: self.id,
-                content: self.content,
+                content: helper.finish_vec_default(0usize, self.content)?,
             })
         }
     }
@@ -3977,7 +3980,7 @@ pub mod quick_xml_deserialize {
                         Self::store_annotation(&mut values, value)?;
                     }
                     Ok(super::RedefineElementTypeContent::Annotation(
-                        values.ok_or_else(|| ErrorKind::MissingElement("annotation".into()))?,
+                        helper.finish_element("annotation", values)?,
                     ))
                 }
                 S::SimpleType(mut values, deserializer) => {
@@ -3986,7 +3989,7 @@ pub mod quick_xml_deserialize {
                         Self::store_simple_type(&mut values, value)?;
                     }
                     Ok(super::RedefineElementTypeContent::SimpleType(
-                        values.ok_or_else(|| ErrorKind::MissingElement("simpleType".into()))?,
+                        helper.finish_element("simpleType", values)?,
                     ))
                 }
                 S::ComplexType(mut values, deserializer) => {
@@ -3995,7 +3998,7 @@ pub mod quick_xml_deserialize {
                         Self::store_complex_type(&mut values, value)?;
                     }
                     Ok(super::RedefineElementTypeContent::ComplexType(
-                        values.ok_or_else(|| ErrorKind::MissingElement("complexType".into()))?,
+                        helper.finish_element("complexType", values)?,
                     ))
                 }
                 S::Group(mut values, deserializer) => {
@@ -4004,7 +4007,7 @@ pub mod quick_xml_deserialize {
                         Self::store_group(&mut values, value)?;
                     }
                     Ok(super::RedefineElementTypeContent::Group(
-                        values.ok_or_else(|| ErrorKind::MissingElement("group".into()))?,
+                        helper.finish_element("group", values)?,
                     ))
                 }
                 S::AttributeGroup(mut values, deserializer) => {
@@ -4013,7 +4016,7 @@ pub mod quick_xml_deserialize {
                         Self::store_attribute_group(&mut values, value)?;
                     }
                     Ok(super::RedefineElementTypeContent::AttributeGroup(
-                        values.ok_or_else(|| ErrorKind::MissingElement("attributeGroup".into()))?,
+                        helper.finish_element("attributeGroup", values)?,
                     ))
                 }
                 S::Done__(data) => Ok(data),
@@ -4384,6 +4387,13 @@ pub mod quick_xml_deserialize {
             })
         }
     }
+    impl Default for RedefineElementTypeContentDeserializer {
+        fn default() -> Self {
+            Self {
+                state__: Box::new(RedefineElementTypeContentDeserializerState::Init__),
+            }
+        }
+    }
     impl<'de> Deserializer<'de, super::RedefineElementTypeContent>
         for RedefineElementTypeContentDeserializer
     {
@@ -4391,9 +4401,7 @@ pub mod quick_xml_deserialize {
             helper: &mut DeserializeHelper,
             event: Event<'de>,
         ) -> DeserializerResult<'de, super::RedefineElementTypeContent> {
-            let deserializer = Self {
-                state__: Box::new(RedefineElementTypeContentDeserializerState::Init__),
-            };
+            let deserializer = Self::default();
             let mut output = deserializer.next(helper, event)?;
             output.artifact = match output.artifact {
                 DeserializerArtifact::Deserializer(x)
@@ -4758,7 +4766,7 @@ pub mod quick_xml_deserialize {
                 any_attribute: self.any_attribute,
                 schema_location: self.schema_location,
                 id: self.id,
-                content: self.content,
+                content: helper.finish_vec_default(0usize, self.content)?,
             })
         }
     }
@@ -4921,7 +4929,7 @@ pub mod quick_xml_deserialize {
                         Self::store_annotation(&mut values, value)?;
                     }
                     Ok(super::OverrideElementTypeContent::Annotation(
-                        values.ok_or_else(|| ErrorKind::MissingElement("annotation".into()))?,
+                        helper.finish_element("annotation", values)?,
                     ))
                 }
                 S::SimpleType(mut values, deserializer) => {
@@ -4930,7 +4938,7 @@ pub mod quick_xml_deserialize {
                         Self::store_simple_type(&mut values, value)?;
                     }
                     Ok(super::OverrideElementTypeContent::SimpleType(
-                        values.ok_or_else(|| ErrorKind::MissingElement("simpleType".into()))?,
+                        helper.finish_element("simpleType", values)?,
                     ))
                 }
                 S::ComplexType(mut values, deserializer) => {
@@ -4939,7 +4947,7 @@ pub mod quick_xml_deserialize {
                         Self::store_complex_type(&mut values, value)?;
                     }
                     Ok(super::OverrideElementTypeContent::ComplexType(
-                        values.ok_or_else(|| ErrorKind::MissingElement("complexType".into()))?,
+                        helper.finish_element("complexType", values)?,
                     ))
                 }
                 S::Group(mut values, deserializer) => {
@@ -4948,7 +4956,7 @@ pub mod quick_xml_deserialize {
                         Self::store_group(&mut values, value)?;
                     }
                     Ok(super::OverrideElementTypeContent::Group(
-                        values.ok_or_else(|| ErrorKind::MissingElement("group".into()))?,
+                        helper.finish_element("group", values)?,
                     ))
                 }
                 S::AttributeGroup(mut values, deserializer) => {
@@ -4957,7 +4965,7 @@ pub mod quick_xml_deserialize {
                         Self::store_attribute_group(&mut values, value)?;
                     }
                     Ok(super::OverrideElementTypeContent::AttributeGroup(
-                        values.ok_or_else(|| ErrorKind::MissingElement("attributeGroup".into()))?,
+                        helper.finish_element("attributeGroup", values)?,
                     ))
                 }
                 S::Element(mut values, deserializer) => {
@@ -4966,7 +4974,7 @@ pub mod quick_xml_deserialize {
                         Self::store_element(&mut values, value)?;
                     }
                     Ok(super::OverrideElementTypeContent::Element(
-                        values.ok_or_else(|| ErrorKind::MissingElement("element".into()))?,
+                        helper.finish_element("element", values)?,
                     ))
                 }
                 S::Attribute(mut values, deserializer) => {
@@ -4975,7 +4983,7 @@ pub mod quick_xml_deserialize {
                         Self::store_attribute(&mut values, value)?;
                     }
                     Ok(super::OverrideElementTypeContent::Attribute(
-                        values.ok_or_else(|| ErrorKind::MissingElement("attribute".into()))?,
+                        helper.finish_element("attribute", values)?,
                     ))
                 }
                 S::Notation(mut values, deserializer) => {
@@ -4984,7 +4992,7 @@ pub mod quick_xml_deserialize {
                         Self::store_notation(&mut values, value)?;
                     }
                     Ok(super::OverrideElementTypeContent::Notation(
-                        values.ok_or_else(|| ErrorKind::MissingElement("notation".into()))?,
+                        helper.finish_element("notation", values)?,
                     ))
                 }
                 S::Done__(data) => Ok(data),
@@ -5574,6 +5582,13 @@ pub mod quick_xml_deserialize {
             })
         }
     }
+    impl Default for OverrideElementTypeContentDeserializer {
+        fn default() -> Self {
+            Self {
+                state__: Box::new(OverrideElementTypeContentDeserializerState::Init__),
+            }
+        }
+    }
     impl<'de> Deserializer<'de, super::OverrideElementTypeContent>
         for OverrideElementTypeContentDeserializer
     {
@@ -5581,9 +5596,7 @@ pub mod quick_xml_deserialize {
             helper: &mut DeserializeHelper,
             event: Event<'de>,
         ) -> DeserializerResult<'de, super::OverrideElementTypeContent> {
-            let deserializer = Self {
-                state__: Box::new(OverrideElementTypeContentDeserializerState::Init__),
-            };
+            let deserializer = Self::default();
             let mut output = deserializer.next(helper, event)?;
             output.artifact = match output.artifact {
                 DeserializerArtifact::Deserializer(x)
@@ -6011,7 +6024,7 @@ pub mod quick_xml_deserialize {
             Ok(super::AnnotationElementType {
                 any_attribute: self.any_attribute,
                 id: self.id,
-                content: self.content,
+                content: helper.finish_vec_default(0usize, self.content)?,
             })
         }
     }
@@ -6082,7 +6095,7 @@ pub mod quick_xml_deserialize {
                         Self::store_appinfo(&mut values, value)?;
                     }
                     Ok(super::AnnotationElementTypeContent::Appinfo(
-                        values.ok_or_else(|| ErrorKind::MissingElement("appinfo".into()))?,
+                        helper.finish_element("appinfo", values)?,
                     ))
                 }
                 S::Documentation(mut values, deserializer) => {
@@ -6091,7 +6104,7 @@ pub mod quick_xml_deserialize {
                         Self::store_documentation(&mut values, value)?;
                     }
                     Ok(super::AnnotationElementTypeContent::Documentation(
-                        values.ok_or_else(|| ErrorKind::MissingElement("documentation".into()))?,
+                        helper.finish_element("documentation", values)?,
                     ))
                 }
                 S::Done__(data) => Ok(data),
@@ -6246,6 +6259,13 @@ pub mod quick_xml_deserialize {
             })
         }
     }
+    impl Default for AnnotationElementTypeContentDeserializer {
+        fn default() -> Self {
+            Self {
+                state__: Box::new(AnnotationElementTypeContentDeserializerState::Init__),
+            }
+        }
+    }
     impl<'de> Deserializer<'de, super::AnnotationElementTypeContent>
         for AnnotationElementTypeContentDeserializer
     {
@@ -6253,9 +6273,7 @@ pub mod quick_xml_deserialize {
             helper: &mut DeserializeHelper,
             event: Event<'de>,
         ) -> DeserializerResult<'de, super::AnnotationElementTypeContent> {
-            let deserializer = Self {
-                state__: Box::new(AnnotationElementTypeContentDeserializerState::Init__),
-            };
+            let deserializer = Self::default();
             let mut output = deserializer.next(helper, event)?;
             output.artifact = match output.artifact {
                 DeserializerArtifact::Deserializer(x)
@@ -6699,9 +6717,7 @@ pub mod quick_xml_deserialize {
                 applies_to_empty: self.applies_to_empty,
                 mode: self.mode,
                 annotation: self.annotation,
-                any: self
-                    .any
-                    .ok_or_else(|| ErrorKind::MissingElement("any".into()))?,
+                any: helper.finish_element("any", self.any)?,
             })
         }
     }
@@ -6895,7 +6911,7 @@ pub mod quick_xml_deserialize {
                 id: self.id,
                 final_: self.final_,
                 name: self.name,
-                content: self.content,
+                content: helper.finish_vec_default(1usize, self.content)?,
             })
         }
     }
@@ -6994,7 +7010,7 @@ pub mod quick_xml_deserialize {
                         Self::store_annotation(&mut values, value)?;
                     }
                     Ok(super::SimpleBaseTypeContent::Annotation(
-                        values.ok_or_else(|| ErrorKind::MissingElement("annotation".into()))?,
+                        helper.finish_element("annotation", values)?,
                     ))
                 }
                 S::Restriction(mut values, deserializer) => {
@@ -7003,7 +7019,7 @@ pub mod quick_xml_deserialize {
                         Self::store_restriction(&mut values, value)?;
                     }
                     Ok(super::SimpleBaseTypeContent::Restriction(
-                        values.ok_or_else(|| ErrorKind::MissingElement("restriction".into()))?,
+                        helper.finish_element("restriction", values)?,
                     ))
                 }
                 S::List(mut values, deserializer) => {
@@ -7012,7 +7028,7 @@ pub mod quick_xml_deserialize {
                         Self::store_list(&mut values, value)?;
                     }
                     Ok(super::SimpleBaseTypeContent::List(
-                        values.ok_or_else(|| ErrorKind::MissingElement("list".into()))?,
+                        helper.finish_element("list", values)?,
                     ))
                 }
                 S::Union(mut values, deserializer) => {
@@ -7020,9 +7036,9 @@ pub mod quick_xml_deserialize {
                         let value = deserializer.finish(helper)?;
                         Self::store_union_(&mut values, value)?;
                     }
-                    Ok(super::SimpleBaseTypeContent::Union(values.ok_or_else(
-                        || ErrorKind::MissingElement("union".into()),
-                    )?))
+                    Ok(super::SimpleBaseTypeContent::Union(
+                        helper.finish_element("union", values)?,
+                    ))
                 }
                 S::Done__(data) => Ok(data),
             }
@@ -7297,14 +7313,19 @@ pub mod quick_xml_deserialize {
             })
         }
     }
+    impl Default for SimpleBaseTypeContentDeserializer {
+        fn default() -> Self {
+            Self {
+                state__: Box::new(SimpleBaseTypeContentDeserializerState::Init__),
+            }
+        }
+    }
     impl<'de> Deserializer<'de, super::SimpleBaseTypeContent> for SimpleBaseTypeContentDeserializer {
         fn init(
             helper: &mut DeserializeHelper,
             event: Event<'de>,
         ) -> DeserializerResult<'de, super::SimpleBaseTypeContent> {
-            let deserializer = Self {
-                state__: Box::new(SimpleBaseTypeContentDeserializerState::Init__),
-            };
+            let deserializer = Self::default();
             let mut output = deserializer.next(helper, event)?;
             output.artifact = match output.artifact {
                 DeserializerArtifact::Deserializer(x)
@@ -7689,7 +7710,7 @@ pub mod quick_xml_deserialize {
                 final_: self.final_,
                 block: self.block,
                 default_attributes_apply: self.default_attributes_apply,
-                content: self.content,
+                content: helper.finish_vec_default(0usize, self.content)?,
             })
         }
     }
@@ -7910,7 +7931,7 @@ pub mod quick_xml_deserialize {
                         Self::store_annotation(&mut values, value)?;
                     }
                     Ok(super::ComplexBaseTypeContent::Annotation(
-                        values.ok_or_else(|| ErrorKind::MissingElement("annotation".into()))?,
+                        helper.finish_element("annotation", values)?,
                     ))
                 }
                 S::SimpleContent(mut values, deserializer) => {
@@ -7919,7 +7940,7 @@ pub mod quick_xml_deserialize {
                         Self::store_simple_content(&mut values, value)?;
                     }
                     Ok(super::ComplexBaseTypeContent::SimpleContent(
-                        values.ok_or_else(|| ErrorKind::MissingElement("simpleContent".into()))?,
+                        helper.finish_element("simpleContent", values)?,
                     ))
                 }
                 S::ComplexContent(mut values, deserializer) => {
@@ -7928,7 +7949,7 @@ pub mod quick_xml_deserialize {
                         Self::store_complex_content(&mut values, value)?;
                     }
                     Ok(super::ComplexBaseTypeContent::ComplexContent(
-                        values.ok_or_else(|| ErrorKind::MissingElement("complexContent".into()))?,
+                        helper.finish_element("complexContent", values)?,
                     ))
                 }
                 S::OpenContent(mut values, deserializer) => {
@@ -7937,7 +7958,7 @@ pub mod quick_xml_deserialize {
                         Self::store_open_content(&mut values, value)?;
                     }
                     Ok(super::ComplexBaseTypeContent::OpenContent(
-                        values.ok_or_else(|| ErrorKind::MissingElement("openContent".into()))?,
+                        helper.finish_element("openContent", values)?,
                     ))
                 }
                 S::Group(mut values, deserializer) => {
@@ -7945,9 +7966,9 @@ pub mod quick_xml_deserialize {
                         let value = deserializer.finish(helper)?;
                         Self::store_group(&mut values, value)?;
                     }
-                    Ok(super::ComplexBaseTypeContent::Group(values.ok_or_else(
-                        || ErrorKind::MissingElement("group".into()),
-                    )?))
+                    Ok(super::ComplexBaseTypeContent::Group(
+                        helper.finish_element("group", values)?,
+                    ))
                 }
                 S::All(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
@@ -7955,7 +7976,7 @@ pub mod quick_xml_deserialize {
                         Self::store_all(&mut values, value)?;
                     }
                     Ok(super::ComplexBaseTypeContent::All(
-                        values.ok_or_else(|| ErrorKind::MissingElement("all".into()))?,
+                        helper.finish_element("all", values)?,
                     ))
                 }
                 S::Choice(mut values, deserializer) => {
@@ -7963,18 +7984,18 @@ pub mod quick_xml_deserialize {
                         let value = deserializer.finish(helper)?;
                         Self::store_choice(&mut values, value)?;
                     }
-                    Ok(super::ComplexBaseTypeContent::Choice(values.ok_or_else(
-                        || ErrorKind::MissingElement("choice".into()),
-                    )?))
+                    Ok(super::ComplexBaseTypeContent::Choice(
+                        helper.finish_element("choice", values)?,
+                    ))
                 }
                 S::Sequence(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_sequence(&mut values, value)?;
                     }
-                    Ok(super::ComplexBaseTypeContent::Sequence(values.ok_or_else(
-                        || ErrorKind::MissingElement("sequence".into()),
-                    )?))
+                    Ok(super::ComplexBaseTypeContent::Sequence(
+                        helper.finish_element("sequence", values)?,
+                    ))
                 }
                 S::Attribute(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
@@ -7982,7 +8003,7 @@ pub mod quick_xml_deserialize {
                         Self::store_attribute(&mut values, value)?;
                     }
                     Ok(super::ComplexBaseTypeContent::Attribute(
-                        values.ok_or_else(|| ErrorKind::MissingElement("attribute".into()))?,
+                        helper.finish_element("attribute", values)?,
                     ))
                 }
                 S::AttributeGroup(mut values, deserializer) => {
@@ -7991,7 +8012,7 @@ pub mod quick_xml_deserialize {
                         Self::store_attribute_group(&mut values, value)?;
                     }
                     Ok(super::ComplexBaseTypeContent::AttributeGroup(
-                        values.ok_or_else(|| ErrorKind::MissingElement("attributeGroup".into()))?,
+                        helper.finish_element("attributeGroup", values)?,
                     ))
                 }
                 S::AnyAttribute(mut values, deserializer) => {
@@ -8000,7 +8021,7 @@ pub mod quick_xml_deserialize {
                         Self::store_any_attribute(&mut values, value)?;
                     }
                     Ok(super::ComplexBaseTypeContent::AnyAttribute(
-                        values.ok_or_else(|| ErrorKind::MissingElement("anyAttribute".into()))?,
+                        helper.finish_element("anyAttribute", values)?,
                     ))
                 }
                 S::Assert(mut values, deserializer) => {
@@ -8008,9 +8029,9 @@ pub mod quick_xml_deserialize {
                         let value = deserializer.finish(helper)?;
                         Self::store_assert(&mut values, value)?;
                     }
-                    Ok(super::ComplexBaseTypeContent::Assert(values.ok_or_else(
-                        || ErrorKind::MissingElement("assert".into()),
-                    )?))
+                    Ok(super::ComplexBaseTypeContent::Assert(
+                        helper.finish_element("assert", values)?,
+                    ))
                 }
                 S::Done__(data) => Ok(data),
             }
@@ -8854,14 +8875,19 @@ pub mod quick_xml_deserialize {
             })
         }
     }
+    impl Default for ComplexBaseTypeContentDeserializer {
+        fn default() -> Self {
+            Self {
+                state__: Box::new(ComplexBaseTypeContentDeserializerState::Init__),
+            }
+        }
+    }
     impl<'de> Deserializer<'de, super::ComplexBaseTypeContent> for ComplexBaseTypeContentDeserializer {
         fn init(
             helper: &mut DeserializeHelper,
             event: Event<'de>,
         ) -> DeserializerResult<'de, super::ComplexBaseTypeContent> {
-            let deserializer = Self {
-                state__: Box::new(ComplexBaseTypeContentDeserializerState::Init__),
-            };
+            let deserializer = Self::default();
             let mut output = deserializer.next(helper, event)?;
             output.artifact = match output.artifact {
                 DeserializerArtifact::Deserializer(x)
@@ -9410,7 +9436,7 @@ pub mod quick_xml_deserialize {
                 ref_: self.ref_,
                 min_occurs: self.min_occurs,
                 max_occurs: self.max_occurs,
-                content: self.content,
+                content: helper.finish_vec_default(0usize, self.content)?,
             })
         }
     }
@@ -9539,27 +9565,27 @@ pub mod quick_xml_deserialize {
                         let value = deserializer.finish(helper)?;
                         Self::store_annotation(&mut values, value)?;
                     }
-                    Ok(super::GroupTypeContent::Annotation(values.ok_or_else(
-                        || ErrorKind::MissingElement("annotation".into()),
-                    )?))
+                    Ok(super::GroupTypeContent::Annotation(
+                        helper.finish_element("annotation", values)?,
+                    ))
                 }
                 S::Element(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_element(&mut values, value)?;
                     }
-                    Ok(super::GroupTypeContent::Element(values.ok_or_else(
-                        || ErrorKind::MissingElement("element".into()),
-                    )?))
+                    Ok(super::GroupTypeContent::Element(
+                        helper.finish_element("element", values)?,
+                    ))
                 }
                 S::Group(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_group(&mut values, value)?;
                     }
-                    Ok(super::GroupTypeContent::Group(values.ok_or_else(|| {
-                        ErrorKind::MissingElement("group".into())
-                    })?))
+                    Ok(super::GroupTypeContent::Group(
+                        helper.finish_element("group", values)?,
+                    ))
                 }
                 S::All(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
@@ -9567,7 +9593,7 @@ pub mod quick_xml_deserialize {
                         Self::store_all(&mut values, value)?;
                     }
                     Ok(super::GroupTypeContent::All(
-                        values.ok_or_else(|| ErrorKind::MissingElement("all".into()))?,
+                        helper.finish_element("all", values)?,
                     ))
                 }
                 S::Choice(mut values, deserializer) => {
@@ -9575,18 +9601,18 @@ pub mod quick_xml_deserialize {
                         let value = deserializer.finish(helper)?;
                         Self::store_choice(&mut values, value)?;
                     }
-                    Ok(super::GroupTypeContent::Choice(values.ok_or_else(
-                        || ErrorKind::MissingElement("choice".into()),
-                    )?))
+                    Ok(super::GroupTypeContent::Choice(
+                        helper.finish_element("choice", values)?,
+                    ))
                 }
                 S::Sequence(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_sequence(&mut values, value)?;
                     }
-                    Ok(super::GroupTypeContent::Sequence(values.ok_or_else(
-                        || ErrorKind::MissingElement("sequence".into()),
-                    )?))
+                    Ok(super::GroupTypeContent::Sequence(
+                        helper.finish_element("sequence", values)?,
+                    ))
                 }
                 S::Any(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
@@ -9594,7 +9620,7 @@ pub mod quick_xml_deserialize {
                         Self::store_any(&mut values, value)?;
                     }
                     Ok(super::GroupTypeContent::Any(
-                        values.ok_or_else(|| ErrorKind::MissingElement("any".into()))?,
+                        helper.finish_element("any", values)?,
                     ))
                 }
                 S::Done__(data) => Ok(data),
@@ -10045,14 +10071,19 @@ pub mod quick_xml_deserialize {
             })
         }
     }
+    impl Default for GroupTypeContentDeserializer {
+        fn default() -> Self {
+            Self {
+                state__: Box::new(GroupTypeContentDeserializerState::Init__),
+            }
+        }
+    }
     impl<'de> Deserializer<'de, super::GroupTypeContent> for GroupTypeContentDeserializer {
         fn init(
             helper: &mut DeserializeHelper,
             event: Event<'de>,
         ) -> DeserializerResult<'de, super::GroupTypeContent> {
-            let deserializer = Self {
-                state__: Box::new(GroupTypeContentDeserializerState::Init__),
-            };
+            let deserializer = Self::default();
             let mut output = deserializer.next(helper, event)?;
             output.artifact = match output.artifact {
                 DeserializerArtifact::Deserializer(x)
@@ -10462,7 +10493,7 @@ pub mod quick_xml_deserialize {
                 id: self.id,
                 name: self.name,
                 ref_: self.ref_,
-                content: self.content,
+                content: helper.finish_vec_default(0usize, self.content)?,
             })
         }
     }
@@ -10571,7 +10602,7 @@ pub mod quick_xml_deserialize {
                         Self::store_annotation(&mut values, value)?;
                     }
                     Ok(super::AttributeGroupTypeContent::Annotation(
-                        values.ok_or_else(|| ErrorKind::MissingElement("annotation".into()))?,
+                        helper.finish_element("annotation", values)?,
                     ))
                 }
                 S::Attribute(mut values, deserializer) => {
@@ -10580,7 +10611,7 @@ pub mod quick_xml_deserialize {
                         Self::store_attribute(&mut values, value)?;
                     }
                     Ok(super::AttributeGroupTypeContent::Attribute(
-                        values.ok_or_else(|| ErrorKind::MissingElement("attribute".into()))?,
+                        helper.finish_element("attribute", values)?,
                     ))
                 }
                 S::AttributeGroup(mut values, deserializer) => {
@@ -10589,7 +10620,7 @@ pub mod quick_xml_deserialize {
                         Self::store_attribute_group(&mut values, value)?;
                     }
                     Ok(super::AttributeGroupTypeContent::AttributeGroup(
-                        values.ok_or_else(|| ErrorKind::MissingElement("attributeGroup".into()))?,
+                        helper.finish_element("attributeGroup", values)?,
                     ))
                 }
                 S::AnyAttribute(mut values, deserializer) => {
@@ -10598,7 +10629,7 @@ pub mod quick_xml_deserialize {
                         Self::store_any_attribute(&mut values, value)?;
                     }
                     Ok(super::AttributeGroupTypeContent::AnyAttribute(
-                        values.ok_or_else(|| ErrorKind::MissingElement("anyAttribute".into()))?,
+                        helper.finish_element("anyAttribute", values)?,
                     ))
                 }
                 S::Done__(data) => Ok(data),
@@ -10899,6 +10930,13 @@ pub mod quick_xml_deserialize {
             })
         }
     }
+    impl Default for AttributeGroupTypeContentDeserializer {
+        fn default() -> Self {
+            Self {
+                state__: Box::new(AttributeGroupTypeContentDeserializerState::Init__),
+            }
+        }
+    }
     impl<'de> Deserializer<'de, super::AttributeGroupTypeContent>
         for AttributeGroupTypeContentDeserializer
     {
@@ -10906,9 +10944,7 @@ pub mod quick_xml_deserialize {
             helper: &mut DeserializeHelper,
             event: Event<'de>,
         ) -> DeserializerResult<'de, super::AttributeGroupTypeContent> {
-            let deserializer = Self {
-                state__: Box::new(AttributeGroupTypeContentDeserializerState::Init__),
-            };
+            let deserializer = Self::default();
             let mut output = deserializer.next(helper, event)?;
             output.artifact = match output.artifact {
                 DeserializerArtifact::Deserializer(x)
@@ -11365,7 +11401,7 @@ pub mod quick_xml_deserialize {
                 block: self.block,
                 form: self.form,
                 target_namespace: self.target_namespace,
-                content: self.content,
+                content: helper.finish_vec_default(0usize, self.content)?,
             })
         }
     }
@@ -11505,45 +11541,45 @@ pub mod quick_xml_deserialize {
                         let value = deserializer.finish(helper)?;
                         Self::store_annotation(&mut values, value)?;
                     }
-                    Ok(super::ElementTypeContent::Annotation(values.ok_or_else(
-                        || ErrorKind::MissingElement("annotation".into()),
-                    )?))
+                    Ok(super::ElementTypeContent::Annotation(
+                        helper.finish_element("annotation", values)?,
+                    ))
                 }
                 S::SimpleType(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_simple_type(&mut values, value)?;
                     }
-                    Ok(super::ElementTypeContent::SimpleType(values.ok_or_else(
-                        || ErrorKind::MissingElement("simpleType".into()),
-                    )?))
+                    Ok(super::ElementTypeContent::SimpleType(
+                        helper.finish_element("simpleType", values)?,
+                    ))
                 }
                 S::ComplexType(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_complex_type(&mut values, value)?;
                     }
-                    Ok(super::ElementTypeContent::ComplexType(values.ok_or_else(
-                        || ErrorKind::MissingElement("complexType".into()),
-                    )?))
+                    Ok(super::ElementTypeContent::ComplexType(
+                        helper.finish_element("complexType", values)?,
+                    ))
                 }
                 S::Alternative(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_alternative(&mut values, value)?;
                     }
-                    Ok(super::ElementTypeContent::Alternative(values.ok_or_else(
-                        || ErrorKind::MissingElement("alternative".into()),
-                    )?))
+                    Ok(super::ElementTypeContent::Alternative(
+                        helper.finish_element("alternative", values)?,
+                    ))
                 }
                 S::Unique(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_unique(&mut values, value)?;
                     }
-                    Ok(super::ElementTypeContent::Unique(values.ok_or_else(
-                        || ErrorKind::MissingElement("unique".into()),
-                    )?))
+                    Ok(super::ElementTypeContent::Unique(
+                        helper.finish_element("unique", values)?,
+                    ))
                 }
                 S::Key(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
@@ -11551,7 +11587,7 @@ pub mod quick_xml_deserialize {
                         Self::store_key(&mut values, value)?;
                     }
                     Ok(super::ElementTypeContent::Key(
-                        values.ok_or_else(|| ErrorKind::MissingElement("key".into()))?,
+                        helper.finish_element("key", values)?,
                     ))
                 }
                 S::Keyref(mut values, deserializer) => {
@@ -11559,9 +11595,9 @@ pub mod quick_xml_deserialize {
                         let value = deserializer.finish(helper)?;
                         Self::store_keyref(&mut values, value)?;
                     }
-                    Ok(super::ElementTypeContent::Keyref(values.ok_or_else(
-                        || ErrorKind::MissingElement("keyref".into()),
-                    )?))
+                    Ok(super::ElementTypeContent::Keyref(
+                        helper.finish_element("keyref", values)?,
+                    ))
                 }
                 S::Done__(data) => Ok(data),
             }
@@ -12029,14 +12065,19 @@ pub mod quick_xml_deserialize {
             })
         }
     }
+    impl Default for ElementTypeContentDeserializer {
+        fn default() -> Self {
+            Self {
+                state__: Box::new(ElementTypeContentDeserializerState::Init__),
+            }
+        }
+    }
     impl<'de> Deserializer<'de, super::ElementTypeContent> for ElementTypeContentDeserializer {
         fn init(
             helper: &mut DeserializeHelper,
             event: Event<'de>,
         ) -> DeserializerResult<'de, super::ElementTypeContent> {
-            let deserializer = Self {
-                state__: Box::new(ElementTypeContentDeserializerState::Init__),
-            };
+            let deserializer = Self::default();
             let mut output = deserializer.next(helper, event)?;
             output.artifact = match output.artifact {
                 DeserializerArtifact::Deserializer(x)
@@ -13243,6 +13284,14 @@ pub mod quick_xml_deserialize {
             })
         }
     }
+    impl Default for AppinfoElementTypeContentDeserializer {
+        fn default() -> Self {
+            Self {
+                any: None,
+                state__: Box::new(AppinfoElementTypeContentDeserializerState::Init__),
+            }
+        }
+    }
     impl<'de> Deserializer<'de, super::AppinfoElementTypeContent>
         for AppinfoElementTypeContentDeserializer
     {
@@ -13368,9 +13417,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::AppinfoElementTypeContent {
-                any: self
-                    .any
-                    .ok_or_else(|| ErrorKind::MissingElement("any116".into()))?,
+                any: helper.finish_element("any116", self.any)?,
             })
         }
     }
@@ -13772,6 +13819,14 @@ pub mod quick_xml_deserialize {
             })
         }
     }
+    impl Default for DocumentationElementTypeContentDeserializer {
+        fn default() -> Self {
+            Self {
+                any: None,
+                state__: Box::new(DocumentationElementTypeContentDeserializerState::Init__),
+            }
+        }
+    }
     impl<'de> Deserializer<'de, super::DocumentationElementTypeContent>
         for DocumentationElementTypeContentDeserializer
     {
@@ -13897,9 +13952,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::DocumentationElementTypeContent {
-                any: self
-                    .any
-                    .ok_or_else(|| ErrorKind::MissingElement("any118".into()))?,
+                any: helper.finish_element("any118", self.any)?,
             })
         }
     }
@@ -14311,7 +14364,7 @@ pub mod quick_xml_deserialize {
                 any_attribute: self.any_attribute,
                 id: self.id,
                 base: self.base,
-                content: self.content,
+                content: helper.finish_vec_default(0usize, self.content)?,
             })
         }
     }
@@ -14420,7 +14473,7 @@ pub mod quick_xml_deserialize {
                         Self::store_annotation(&mut values, value)?;
                     }
                     Ok(super::RestrictionElementTypeContent::Annotation(
-                        values.ok_or_else(|| ErrorKind::MissingElement("annotation".into()))?,
+                        helper.finish_element("annotation", values)?,
                     ))
                 }
                 S::SimpleType(mut values, deserializer) => {
@@ -14429,7 +14482,7 @@ pub mod quick_xml_deserialize {
                         Self::store_simple_type(&mut values, value)?;
                     }
                     Ok(super::RestrictionElementTypeContent::SimpleType(
-                        values.ok_or_else(|| ErrorKind::MissingElement("simpleType".into()))?,
+                        helper.finish_element("simpleType", values)?,
                     ))
                 }
                 S::Facet(mut values, deserializer) => {
@@ -14438,7 +14491,7 @@ pub mod quick_xml_deserialize {
                         Self::store_facet(&mut values, value)?;
                     }
                     Ok(super::RestrictionElementTypeContent::Facet(
-                        values.ok_or_else(|| ErrorKind::MissingElement("facet".into()))?,
+                        helper.finish_element("facet", values)?,
                     ))
                 }
                 S::Any(mut values, deserializer) => {
@@ -14447,7 +14500,7 @@ pub mod quick_xml_deserialize {
                         Self::store_any(&mut values, value)?;
                     }
                     Ok(super::RestrictionElementTypeContent::Any(
-                        values.ok_or_else(|| ErrorKind::MissingElement("any130".into()))?,
+                        helper.finish_element("any130", values)?,
                     ))
                 }
                 S::Done__(data) => Ok(data),
@@ -14747,6 +14800,13 @@ pub mod quick_xml_deserialize {
             })
         }
     }
+    impl Default for RestrictionElementTypeContentDeserializer {
+        fn default() -> Self {
+            Self {
+                state__: Box::new(RestrictionElementTypeContentDeserializerState::Init__),
+            }
+        }
+    }
     impl<'de> Deserializer<'de, super::RestrictionElementTypeContent>
         for RestrictionElementTypeContentDeserializer
     {
@@ -14754,9 +14814,7 @@ pub mod quick_xml_deserialize {
             helper: &mut DeserializeHelper,
             event: Event<'de>,
         ) -> DeserializerResult<'de, super::RestrictionElementTypeContent> {
-            let deserializer = Self {
-                state__: Box::new(RestrictionElementTypeContentDeserializerState::Init__),
-            };
+            let deserializer = Self::default();
             let mut output = deserializer.next(helper, event)?;
             output.artifact = match output.artifact {
                 DeserializerArtifact::Deserializer(x)
@@ -15690,7 +15748,7 @@ pub mod quick_xml_deserialize {
             Ok(super::SimpleContentElementType {
                 any_attribute: self.any_attribute,
                 id: self.id,
-                content: self.content,
+                content: helper.finish_vec_default(1usize, self.content)?,
             })
         }
     }
@@ -15781,7 +15839,7 @@ pub mod quick_xml_deserialize {
                         Self::store_annotation(&mut values, value)?;
                     }
                     Ok(super::SimpleContentElementTypeContent::Annotation(
-                        values.ok_or_else(|| ErrorKind::MissingElement("annotation".into()))?,
+                        helper.finish_element("annotation", values)?,
                     ))
                 }
                 S::Restriction(mut values, deserializer) => {
@@ -15790,7 +15848,7 @@ pub mod quick_xml_deserialize {
                         Self::store_restriction(&mut values, value)?;
                     }
                     Ok(super::SimpleContentElementTypeContent::Restriction(
-                        values.ok_or_else(|| ErrorKind::MissingElement("restriction".into()))?,
+                        helper.finish_element("restriction", values)?,
                     ))
                 }
                 S::Extension(mut values, deserializer) => {
@@ -15799,7 +15857,7 @@ pub mod quick_xml_deserialize {
                         Self::store_extension(&mut values, value)?;
                     }
                     Ok(super::SimpleContentElementTypeContent::Extension(
-                        values.ok_or_else(|| ErrorKind::MissingElement("extension".into()))?,
+                        helper.finish_element("extension", values)?,
                     ))
                 }
                 S::Done__(data) => Ok(data),
@@ -16031,6 +16089,13 @@ pub mod quick_xml_deserialize {
             })
         }
     }
+    impl Default for SimpleContentElementTypeContentDeserializer {
+        fn default() -> Self {
+            Self {
+                state__: Box::new(SimpleContentElementTypeContentDeserializerState::Init__),
+            }
+        }
+    }
     impl<'de> Deserializer<'de, super::SimpleContentElementTypeContent>
         for SimpleContentElementTypeContentDeserializer
     {
@@ -16038,9 +16103,7 @@ pub mod quick_xml_deserialize {
             helper: &mut DeserializeHelper,
             event: Event<'de>,
         ) -> DeserializerResult<'de, super::SimpleContentElementTypeContent> {
-            let deserializer = Self {
-                state__: Box::new(SimpleContentElementTypeContentDeserializerState::Init__),
-            };
+            let deserializer = Self::default();
             let mut output = deserializer.next(helper, event)?;
             output.artifact = match output.artifact {
                 DeserializerArtifact::Deserializer(x)
@@ -16366,7 +16429,7 @@ pub mod quick_xml_deserialize {
                 any_attribute: self.any_attribute,
                 id: self.id,
                 mixed: self.mixed,
-                content: self.content,
+                content: helper.finish_vec_default(1usize, self.content)?,
             })
         }
     }
@@ -16457,7 +16520,7 @@ pub mod quick_xml_deserialize {
                         Self::store_annotation(&mut values, value)?;
                     }
                     Ok(super::ComplexContentElementTypeContent::Annotation(
-                        values.ok_or_else(|| ErrorKind::MissingElement("annotation".into()))?,
+                        helper.finish_element("annotation", values)?,
                     ))
                 }
                 S::Restriction(mut values, deserializer) => {
@@ -16466,7 +16529,7 @@ pub mod quick_xml_deserialize {
                         Self::store_restriction(&mut values, value)?;
                     }
                     Ok(super::ComplexContentElementTypeContent::Restriction(
-                        values.ok_or_else(|| ErrorKind::MissingElement("restriction".into()))?,
+                        helper.finish_element("restriction", values)?,
                     ))
                 }
                 S::Extension(mut values, deserializer) => {
@@ -16475,7 +16538,7 @@ pub mod quick_xml_deserialize {
                         Self::store_extension(&mut values, value)?;
                     }
                     Ok(super::ComplexContentElementTypeContent::Extension(
-                        values.ok_or_else(|| ErrorKind::MissingElement("extension".into()))?,
+                        helper.finish_element("extension", values)?,
                     ))
                 }
                 S::Done__(data) => Ok(data),
@@ -16709,6 +16772,13 @@ pub mod quick_xml_deserialize {
             })
         }
     }
+    impl Default for ComplexContentElementTypeContentDeserializer {
+        fn default() -> Self {
+            Self {
+                state__: Box::new(ComplexContentElementTypeContentDeserializerState::Init__),
+            }
+        }
+    }
     impl<'de> Deserializer<'de, super::ComplexContentElementTypeContent>
         for ComplexContentElementTypeContentDeserializer
     {
@@ -16716,9 +16786,7 @@ pub mod quick_xml_deserialize {
             helper: &mut DeserializeHelper,
             event: Event<'de>,
         ) -> DeserializerResult<'de, super::ComplexContentElementTypeContent> {
-            let deserializer = Self {
-                state__: Box::new(ComplexContentElementTypeContentDeserializerState::Init__),
-            };
+            let deserializer = Self::default();
             let mut output = deserializer.next(helper, event)?;
             output.artifact = match output.artifact {
                 DeserializerArtifact::Deserializer(x)
@@ -18086,7 +18154,7 @@ pub mod quick_xml_deserialize {
                 test: self.test,
                 type_: self.type_,
                 xpath_default_namespace: self.xpath_default_namespace,
-                content: self.content,
+                content: helper.finish_vec_default(0usize, self.content)?,
             })
         }
     }
@@ -18176,27 +18244,27 @@ pub mod quick_xml_deserialize {
                         let value = deserializer.finish(helper)?;
                         Self::store_annotation(&mut values, value)?;
                     }
-                    Ok(super::AltTypeContent::Annotation(values.ok_or_else(
-                        || ErrorKind::MissingElement("annotation".into()),
-                    )?))
+                    Ok(super::AltTypeContent::Annotation(
+                        helper.finish_element("annotation", values)?,
+                    ))
                 }
                 S::SimpleType(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_simple_type(&mut values, value)?;
                     }
-                    Ok(super::AltTypeContent::SimpleType(values.ok_or_else(
-                        || ErrorKind::MissingElement("simpleType".into()),
-                    )?))
+                    Ok(super::AltTypeContent::SimpleType(
+                        helper.finish_element("simpleType", values)?,
+                    ))
                 }
                 S::ComplexType(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_complex_type(&mut values, value)?;
                     }
-                    Ok(super::AltTypeContent::ComplexType(values.ok_or_else(
-                        || ErrorKind::MissingElement("complexType".into()),
-                    )?))
+                    Ok(super::AltTypeContent::ComplexType(
+                        helper.finish_element("complexType", values)?,
+                    ))
                 }
                 S::Done__(data) => Ok(data),
             }
@@ -18394,14 +18462,19 @@ pub mod quick_xml_deserialize {
             })
         }
     }
+    impl Default for AltTypeContentDeserializer {
+        fn default() -> Self {
+            Self {
+                state__: Box::new(AltTypeContentDeserializerState::Init__),
+            }
+        }
+    }
     impl<'de> Deserializer<'de, super::AltTypeContent> for AltTypeContentDeserializer {
         fn init(
             helper: &mut DeserializeHelper,
             event: Event<'de>,
         ) -> DeserializerResult<'de, super::AltTypeContent> {
-            let deserializer = Self {
-                state__: Box::new(AltTypeContentDeserializerState::Init__),
-            };
+            let deserializer = Self::default();
             let mut output = deserializer.next(helper, event)?;
             output.artifact = match output.artifact {
                 DeserializerArtifact::Deserializer(x)
@@ -18907,6 +18980,16 @@ pub mod quick_xml_deserialize {
             })
         }
     }
+    impl Default for KeybaseTypeContentDeserializer {
+        fn default() -> Self {
+            Self {
+                annotation: None,
+                selector: None,
+                field: Vec::new(),
+                state__: Box::new(KeybaseTypeContentDeserializerState::Init__),
+            }
+        }
+    }
     impl<'de> Deserializer<'de, super::KeybaseTypeContent> for KeybaseTypeContentDeserializer {
         fn init(
             helper: &mut DeserializeHelper,
@@ -19074,10 +19157,8 @@ pub mod quick_xml_deserialize {
             self.finish_state(helper, state)?;
             Ok(super::KeybaseTypeContent {
                 annotation: self.annotation,
-                selector: self
-                    .selector
-                    .ok_or_else(|| ErrorKind::MissingElement("selector".into()))?,
-                field: self.field,
+                selector: helper.finish_element("selector", self.selector)?,
+                field: helper.finish_vec(1usize, None, self.field)?,
             })
         }
     }
@@ -19481,6 +19562,16 @@ pub mod quick_xml_deserialize {
             })
         }
     }
+    impl Default for KeyrefElementTypeContentDeserializer {
+        fn default() -> Self {
+            Self {
+                annotation: None,
+                selector: None,
+                field: Vec::new(),
+                state__: Box::new(KeyrefElementTypeContentDeserializerState::Init__),
+            }
+        }
+    }
     impl<'de> Deserializer<'de, super::KeyrefElementTypeContent>
         for KeyrefElementTypeContentDeserializer
     {
@@ -19653,10 +19744,8 @@ pub mod quick_xml_deserialize {
             self.finish_state(helper, state)?;
             Ok(super::KeyrefElementTypeContent {
                 annotation: self.annotation,
-                selector: self
-                    .selector
-                    .ok_or_else(|| ErrorKind::MissingElement("selector".into()))?,
-                field: self.field,
+                selector: helper.finish_element("selector", self.selector)?,
+                field: helper.finish_vec(1usize, None, self.field)?,
             })
         }
     }
@@ -19909,126 +19998,126 @@ pub mod quick_xml_deserialize {
                         let value = deserializer.finish(helper)?;
                         Self::store_min_exclusive(&mut values, value)?;
                     }
-                    Ok(super::Facet::MinExclusive(values.ok_or_else(|| {
-                        ErrorKind::MissingElement("minExclusive".into())
-                    })?))
+                    Ok(super::Facet::MinExclusive(
+                        helper.finish_element("minExclusive", values)?,
+                    ))
                 }
                 S::MinInclusive(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_min_inclusive(&mut values, value)?;
                     }
-                    Ok(super::Facet::MinInclusive(values.ok_or_else(|| {
-                        ErrorKind::MissingElement("minInclusive".into())
-                    })?))
+                    Ok(super::Facet::MinInclusive(
+                        helper.finish_element("minInclusive", values)?,
+                    ))
                 }
                 S::MaxExclusive(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_max_exclusive(&mut values, value)?;
                     }
-                    Ok(super::Facet::MaxExclusive(values.ok_or_else(|| {
-                        ErrorKind::MissingElement("maxExclusive".into())
-                    })?))
+                    Ok(super::Facet::MaxExclusive(
+                        helper.finish_element("maxExclusive", values)?,
+                    ))
                 }
                 S::MaxInclusive(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_max_inclusive(&mut values, value)?;
                     }
-                    Ok(super::Facet::MaxInclusive(values.ok_or_else(|| {
-                        ErrorKind::MissingElement("maxInclusive".into())
-                    })?))
+                    Ok(super::Facet::MaxInclusive(
+                        helper.finish_element("maxInclusive", values)?,
+                    ))
                 }
                 S::TotalDigits(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_total_digits(&mut values, value)?;
                     }
-                    Ok(super::Facet::TotalDigits(values.ok_or_else(|| {
-                        ErrorKind::MissingElement("totalDigits".into())
-                    })?))
+                    Ok(super::Facet::TotalDigits(
+                        helper.finish_element("totalDigits", values)?,
+                    ))
                 }
                 S::FractionDigits(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_fraction_digits(&mut values, value)?;
                     }
-                    Ok(super::Facet::FractionDigits(values.ok_or_else(|| {
-                        ErrorKind::MissingElement("fractionDigits".into())
-                    })?))
+                    Ok(super::Facet::FractionDigits(
+                        helper.finish_element("fractionDigits", values)?,
+                    ))
                 }
                 S::Length(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_length(&mut values, value)?;
                     }
-                    Ok(super::Facet::Length(values.ok_or_else(|| {
-                        ErrorKind::MissingElement("length".into())
-                    })?))
+                    Ok(super::Facet::Length(
+                        helper.finish_element("length", values)?,
+                    ))
                 }
                 S::MinLength(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_min_length(&mut values, value)?;
                     }
-                    Ok(super::Facet::MinLength(values.ok_or_else(|| {
-                        ErrorKind::MissingElement("minLength".into())
-                    })?))
+                    Ok(super::Facet::MinLength(
+                        helper.finish_element("minLength", values)?,
+                    ))
                 }
                 S::MaxLength(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_max_length(&mut values, value)?;
                     }
-                    Ok(super::Facet::MaxLength(values.ok_or_else(|| {
-                        ErrorKind::MissingElement("maxLength".into())
-                    })?))
+                    Ok(super::Facet::MaxLength(
+                        helper.finish_element("maxLength", values)?,
+                    ))
                 }
                 S::Enumeration(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_enumeration(&mut values, value)?;
                     }
-                    Ok(super::Facet::Enumeration(values.ok_or_else(|| {
-                        ErrorKind::MissingElement("enumeration".into())
-                    })?))
+                    Ok(super::Facet::Enumeration(
+                        helper.finish_element("enumeration", values)?,
+                    ))
                 }
                 S::WhiteSpace(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_white_space(&mut values, value)?;
                     }
-                    Ok(super::Facet::WhiteSpace(values.ok_or_else(|| {
-                        ErrorKind::MissingElement("whiteSpace".into())
-                    })?))
+                    Ok(super::Facet::WhiteSpace(
+                        helper.finish_element("whiteSpace", values)?,
+                    ))
                 }
                 S::Pattern(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_pattern(&mut values, value)?;
                     }
-                    Ok(super::Facet::Pattern(values.ok_or_else(|| {
-                        ErrorKind::MissingElement("pattern".into())
-                    })?))
+                    Ok(super::Facet::Pattern(
+                        helper.finish_element("pattern", values)?,
+                    ))
                 }
                 S::Assertion(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_assertion(&mut values, value)?;
                     }
-                    Ok(super::Facet::Assertion(values.ok_or_else(|| {
-                        ErrorKind::MissingElement("assertion".into())
-                    })?))
+                    Ok(super::Facet::Assertion(
+                        helper.finish_element("assertion", values)?,
+                    ))
                 }
                 S::ExplicitTimezone(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_explicit_timezone(&mut values, value)?;
                     }
-                    Ok(super::Facet::ExplicitTimezone(values.ok_or_else(|| {
-                        ErrorKind::MissingElement("explicitTimezone".into())
-                    })?))
+                    Ok(super::Facet::ExplicitTimezone(
+                        helper.finish_element("explicitTimezone", values)?,
+                    ))
                 }
                 S::Done__(data) => Ok(data),
             }
@@ -20918,14 +21007,19 @@ pub mod quick_xml_deserialize {
             })
         }
     }
+    impl Default for FacetDeserializer {
+        fn default() -> Self {
+            Self {
+                state__: Box::new(FacetDeserializerState::Init__),
+            }
+        }
+    }
     impl<'de> Deserializer<'de, super::Facet> for FacetDeserializer {
         fn init(
             helper: &mut DeserializeHelper,
             event: Event<'de>,
         ) -> DeserializerResult<'de, super::Facet> {
-            let deserializer = Self {
-                state__: Box::new(FacetDeserializerState::Init__),
-            };
+            let deserializer = Self::default();
             let mut output = deserializer.next(helper, event)?;
             output.artifact = match output.artifact {
                 DeserializerArtifact::Deserializer(x)
@@ -21515,7 +21609,7 @@ pub mod quick_xml_deserialize {
                 any_attribute: self.any_attribute,
                 id: self.id,
                 base: self.base,
-                content: self.content,
+                content: helper.finish_vec_default(0usize, self.content)?,
             })
         }
     }
@@ -21751,7 +21845,7 @@ pub mod quick_xml_deserialize {
                         Self::store_annotation(&mut values, value)?;
                     }
                     Ok(super::RestrictionTypeContent::Annotation(
-                        values.ok_or_else(|| ErrorKind::MissingElement("annotation".into()))?,
+                        helper.finish_element("annotation", values)?,
                     ))
                 }
                 S::OpenContent(mut values, deserializer) => {
@@ -21760,7 +21854,7 @@ pub mod quick_xml_deserialize {
                         Self::store_open_content(&mut values, value)?;
                     }
                     Ok(super::RestrictionTypeContent::OpenContent(
-                        values.ok_or_else(|| ErrorKind::MissingElement("openContent".into()))?,
+                        helper.finish_element("openContent", values)?,
                     ))
                 }
                 S::Group(mut values, deserializer) => {
@@ -21768,9 +21862,9 @@ pub mod quick_xml_deserialize {
                         let value = deserializer.finish(helper)?;
                         Self::store_group(&mut values, value)?;
                     }
-                    Ok(super::RestrictionTypeContent::Group(values.ok_or_else(
-                        || ErrorKind::MissingElement("group".into()),
-                    )?))
+                    Ok(super::RestrictionTypeContent::Group(
+                        helper.finish_element("group", values)?,
+                    ))
                 }
                 S::All(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
@@ -21778,7 +21872,7 @@ pub mod quick_xml_deserialize {
                         Self::store_all(&mut values, value)?;
                     }
                     Ok(super::RestrictionTypeContent::All(
-                        values.ok_or_else(|| ErrorKind::MissingElement("all".into()))?,
+                        helper.finish_element("all", values)?,
                     ))
                 }
                 S::Choice(mut values, deserializer) => {
@@ -21786,18 +21880,18 @@ pub mod quick_xml_deserialize {
                         let value = deserializer.finish(helper)?;
                         Self::store_choice(&mut values, value)?;
                     }
-                    Ok(super::RestrictionTypeContent::Choice(values.ok_or_else(
-                        || ErrorKind::MissingElement("choice".into()),
-                    )?))
+                    Ok(super::RestrictionTypeContent::Choice(
+                        helper.finish_element("choice", values)?,
+                    ))
                 }
                 S::Sequence(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_sequence(&mut values, value)?;
                     }
-                    Ok(super::RestrictionTypeContent::Sequence(values.ok_or_else(
-                        || ErrorKind::MissingElement("sequence".into()),
-                    )?))
+                    Ok(super::RestrictionTypeContent::Sequence(
+                        helper.finish_element("sequence", values)?,
+                    ))
                 }
                 S::SimpleType(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
@@ -21805,7 +21899,7 @@ pub mod quick_xml_deserialize {
                         Self::store_simple_type(&mut values, value)?;
                     }
                     Ok(super::RestrictionTypeContent::SimpleType(
-                        values.ok_or_else(|| ErrorKind::MissingElement("simpleType".into()))?,
+                        helper.finish_element("simpleType", values)?,
                     ))
                 }
                 S::Facet(mut values, deserializer) => {
@@ -21813,18 +21907,18 @@ pub mod quick_xml_deserialize {
                         let value = deserializer.finish(helper)?;
                         Self::store_facet(&mut values, value)?;
                     }
-                    Ok(super::RestrictionTypeContent::Facet(values.ok_or_else(
-                        || ErrorKind::MissingElement("facet".into()),
-                    )?))
+                    Ok(super::RestrictionTypeContent::Facet(
+                        helper.finish_element("facet", values)?,
+                    ))
                 }
                 S::Any(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_any(&mut values, value)?;
                     }
-                    Ok(super::RestrictionTypeContent::Any(values.ok_or_else(
-                        || ErrorKind::MissingElement("any37".into()),
-                    )?))
+                    Ok(super::RestrictionTypeContent::Any(
+                        helper.finish_element("any37", values)?,
+                    ))
                 }
                 S::Attribute(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
@@ -21832,7 +21926,7 @@ pub mod quick_xml_deserialize {
                         Self::store_attribute(&mut values, value)?;
                     }
                     Ok(super::RestrictionTypeContent::Attribute(
-                        values.ok_or_else(|| ErrorKind::MissingElement("attribute".into()))?,
+                        helper.finish_element("attribute", values)?,
                     ))
                 }
                 S::AttributeGroup(mut values, deserializer) => {
@@ -21841,7 +21935,7 @@ pub mod quick_xml_deserialize {
                         Self::store_attribute_group(&mut values, value)?;
                     }
                     Ok(super::RestrictionTypeContent::AttributeGroup(
-                        values.ok_or_else(|| ErrorKind::MissingElement("attributeGroup".into()))?,
+                        helper.finish_element("attributeGroup", values)?,
                     ))
                 }
                 S::AnyAttribute(mut values, deserializer) => {
@@ -21850,7 +21944,7 @@ pub mod quick_xml_deserialize {
                         Self::store_any_attribute(&mut values, value)?;
                     }
                     Ok(super::RestrictionTypeContent::AnyAttribute(
-                        values.ok_or_else(|| ErrorKind::MissingElement("anyAttribute".into()))?,
+                        helper.finish_element("anyAttribute", values)?,
                     ))
                 }
                 S::Assert(mut values, deserializer) => {
@@ -21858,9 +21952,9 @@ pub mod quick_xml_deserialize {
                         let value = deserializer.finish(helper)?;
                         Self::store_assert(&mut values, value)?;
                     }
-                    Ok(super::RestrictionTypeContent::Assert(values.ok_or_else(
-                        || ErrorKind::MissingElement("assert".into()),
-                    )?))
+                    Ok(super::RestrictionTypeContent::Assert(
+                        helper.finish_element("assert", values)?,
+                    ))
                 }
                 S::Done__(data) => Ok(data),
             }
@@ -22756,14 +22850,19 @@ pub mod quick_xml_deserialize {
             })
         }
     }
+    impl Default for RestrictionTypeContentDeserializer {
+        fn default() -> Self {
+            Self {
+                state__: Box::new(RestrictionTypeContentDeserializerState::Init__),
+            }
+        }
+    }
     impl<'de> Deserializer<'de, super::RestrictionTypeContent> for RestrictionTypeContentDeserializer {
         fn init(
             helper: &mut DeserializeHelper,
             event: Event<'de>,
         ) -> DeserializerResult<'de, super::RestrictionTypeContent> {
-            let deserializer = Self {
-                state__: Box::new(RestrictionTypeContentDeserializerState::Init__),
-            };
+            let deserializer = Self::default();
             let mut output = deserializer.next(helper, event)?;
             output.artifact = match output.artifact {
                 DeserializerArtifact::Deserializer(x)
@@ -23297,7 +23396,7 @@ pub mod quick_xml_deserialize {
                 any_attribute: self.any_attribute,
                 id: self.id,
                 base: self.base,
-                content: self.content,
+                content: helper.finish_vec_default(0usize, self.content)?,
             })
         }
     }
@@ -23482,9 +23581,9 @@ pub mod quick_xml_deserialize {
                         let value = deserializer.finish(helper)?;
                         Self::store_annotation(&mut values, value)?;
                     }
-                    Ok(super::ExtensionTypeContent::Annotation(values.ok_or_else(
-                        || ErrorKind::MissingElement("annotation".into()),
-                    )?))
+                    Ok(super::ExtensionTypeContent::Annotation(
+                        helper.finish_element("annotation", values)?,
+                    ))
                 }
                 S::OpenContent(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
@@ -23492,7 +23591,7 @@ pub mod quick_xml_deserialize {
                         Self::store_open_content(&mut values, value)?;
                     }
                     Ok(super::ExtensionTypeContent::OpenContent(
-                        values.ok_or_else(|| ErrorKind::MissingElement("openContent".into()))?,
+                        helper.finish_element("openContent", values)?,
                     ))
                 }
                 S::Group(mut values, deserializer) => {
@@ -23500,9 +23599,9 @@ pub mod quick_xml_deserialize {
                         let value = deserializer.finish(helper)?;
                         Self::store_group(&mut values, value)?;
                     }
-                    Ok(super::ExtensionTypeContent::Group(values.ok_or_else(
-                        || ErrorKind::MissingElement("group".into()),
-                    )?))
+                    Ok(super::ExtensionTypeContent::Group(
+                        helper.finish_element("group", values)?,
+                    ))
                 }
                 S::All(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
@@ -23510,7 +23609,7 @@ pub mod quick_xml_deserialize {
                         Self::store_all(&mut values, value)?;
                     }
                     Ok(super::ExtensionTypeContent::All(
-                        values.ok_or_else(|| ErrorKind::MissingElement("all".into()))?,
+                        helper.finish_element("all", values)?,
                     ))
                 }
                 S::Choice(mut values, deserializer) => {
@@ -23518,27 +23617,27 @@ pub mod quick_xml_deserialize {
                         let value = deserializer.finish(helper)?;
                         Self::store_choice(&mut values, value)?;
                     }
-                    Ok(super::ExtensionTypeContent::Choice(values.ok_or_else(
-                        || ErrorKind::MissingElement("choice".into()),
-                    )?))
+                    Ok(super::ExtensionTypeContent::Choice(
+                        helper.finish_element("choice", values)?,
+                    ))
                 }
                 S::Sequence(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_sequence(&mut values, value)?;
                     }
-                    Ok(super::ExtensionTypeContent::Sequence(values.ok_or_else(
-                        || ErrorKind::MissingElement("sequence".into()),
-                    )?))
+                    Ok(super::ExtensionTypeContent::Sequence(
+                        helper.finish_element("sequence", values)?,
+                    ))
                 }
                 S::Attribute(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_attribute(&mut values, value)?;
                     }
-                    Ok(super::ExtensionTypeContent::Attribute(values.ok_or_else(
-                        || ErrorKind::MissingElement("attribute".into()),
-                    )?))
+                    Ok(super::ExtensionTypeContent::Attribute(
+                        helper.finish_element("attribute", values)?,
+                    ))
                 }
                 S::AttributeGroup(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
@@ -23546,7 +23645,7 @@ pub mod quick_xml_deserialize {
                         Self::store_attribute_group(&mut values, value)?;
                     }
                     Ok(super::ExtensionTypeContent::AttributeGroup(
-                        values.ok_or_else(|| ErrorKind::MissingElement("attributeGroup".into()))?,
+                        helper.finish_element("attributeGroup", values)?,
                     ))
                 }
                 S::AnyAttribute(mut values, deserializer) => {
@@ -23555,7 +23654,7 @@ pub mod quick_xml_deserialize {
                         Self::store_any_attribute(&mut values, value)?;
                     }
                     Ok(super::ExtensionTypeContent::AnyAttribute(
-                        values.ok_or_else(|| ErrorKind::MissingElement("anyAttribute".into()))?,
+                        helper.finish_element("anyAttribute", values)?,
                     ))
                 }
                 S::Assert(mut values, deserializer) => {
@@ -23563,9 +23662,9 @@ pub mod quick_xml_deserialize {
                         let value = deserializer.finish(helper)?;
                         Self::store_assert(&mut values, value)?;
                     }
-                    Ok(super::ExtensionTypeContent::Assert(values.ok_or_else(
-                        || ErrorKind::MissingElement("assert".into()),
-                    )?))
+                    Ok(super::ExtensionTypeContent::Assert(
+                        helper.finish_element("assert", values)?,
+                    ))
                 }
                 S::Done__(data) => Ok(data),
             }
@@ -24247,14 +24346,19 @@ pub mod quick_xml_deserialize {
             })
         }
     }
+    impl Default for ExtensionTypeContentDeserializer {
+        fn default() -> Self {
+            Self {
+                state__: Box::new(ExtensionTypeContentDeserializerState::Init__),
+            }
+        }
+    }
     impl<'de> Deserializer<'de, super::ExtensionTypeContent> for ExtensionTypeContentDeserializer {
         fn init(
             helper: &mut DeserializeHelper,
             event: Event<'de>,
         ) -> DeserializerResult<'de, super::ExtensionTypeContent> {
-            let deserializer = Self {
-                state__: Box::new(ExtensionTypeContentDeserializerState::Init__),
-            };
+            let deserializer = Self::default();
             let mut output = deserializer.next(helper, event)?;
             output.artifact = match output.artifact {
                 DeserializerArtifact::Deserializer(x)

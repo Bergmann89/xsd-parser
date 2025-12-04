@@ -447,9 +447,7 @@ pub mod quick_xml_deserialize {
                 data_type: self.data_type,
                 any_attribute: self.any_attribute,
                 text_before: self.text_before,
-                base_element: self
-                    .base_element
-                    .ok_or_else(|| ErrorKind::MissingElement("BaseElement".into()))?,
+                base_element: helper.finish_element("BaseElement", self.base_element)?,
                 any: self.any,
             })
         }

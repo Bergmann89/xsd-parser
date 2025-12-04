@@ -438,9 +438,7 @@ pub mod quick_xml_deserialize {
             self.finish_state(helper, state)?;
             Ok(super::ComplexContentType {
                 lang: self.lang,
-                content: self
-                    .content
-                    .ok_or_else(|| ErrorKind::MissingElement("Content".into()))?,
+                content: helper.finish_element("Content", self.content)?,
             })
         }
     }
@@ -573,7 +571,7 @@ pub mod quick_xml_deserialize {
             self.finish_state(helper, state)?;
             Ok(super::SimpleContentType {
                 lang: self.lang,
-                content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                content: helper.finish_content(self.content)?,
             })
         }
     }

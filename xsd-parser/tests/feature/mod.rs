@@ -13,6 +13,7 @@ mod complex_type_empty;
 mod complex_type_with_group;
 mod complex_type_with_repeated_content;
 mod custom_type;
+mod defaultable_content;
 mod derive;
 mod documentation;
 mod dynamic_types;

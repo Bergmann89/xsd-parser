@@ -384,7 +384,7 @@ pub mod quick_xml_deserialize {
             let state = replace(&mut *self.state__, RootTypeDeserializerState::Unknown__);
             self.finish_state(helper, state)?;
             Ok(super::RootType {
-                content: self.content,
+                content: helper.finish_vec_default(0usize, self.content)?,
             })
         }
     }
@@ -476,18 +476,18 @@ pub mod quick_xml_deserialize {
                         let value = deserializer.finish(helper)?;
                         Self::store_negative_decimal(&mut values, value)?;
                     }
-                    Ok(super::RootTypeContent::NegativeDecimal(values.ok_or_else(
-                        || ErrorKind::MissingElement("NegativeDecimal".into()),
-                    )?))
+                    Ok(super::RootTypeContent::NegativeDecimal(
+                        helper.finish_element("NegativeDecimal", values)?,
+                    ))
                 }
                 S::PositiveDecimal(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_positive_decimal(&mut values, value)?;
                     }
-                    Ok(super::RootTypeContent::PositiveDecimal(values.ok_or_else(
-                        || ErrorKind::MissingElement("PositiveDecimal".into()),
-                    )?))
+                    Ok(super::RootTypeContent::PositiveDecimal(
+                        helper.finish_element("PositiveDecimal", values)?,
+                    ))
                 }
                 S::RestrictedString(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
@@ -495,8 +495,7 @@ pub mod quick_xml_deserialize {
                         Self::store_restricted_string(&mut values, value)?;
                     }
                     Ok(super::RootTypeContent::RestrictedString(
-                        values
-                            .ok_or_else(|| ErrorKind::MissingElement("RestrictedString".into()))?,
+                        helper.finish_element("RestrictedString", values)?,
                     ))
                 }
                 S::Done__(data) => Ok(data),
@@ -713,14 +712,19 @@ pub mod quick_xml_deserialize {
             })
         }
     }
+    impl Default for RootTypeContentDeserializer {
+        fn default() -> Self {
+            Self {
+                state__: Box::new(RootTypeContentDeserializerState::Init__),
+            }
+        }
+    }
     impl<'de> Deserializer<'de, super::RootTypeContent> for RootTypeContentDeserializer {
         fn init(
             helper: &mut DeserializeHelper,
             event: Event<'de>,
         ) -> DeserializerResult<'de, super::RootTypeContent> {
-            let deserializer = Self {
-                state__: Box::new(RootTypeContentDeserializerState::Init__),
-            };
+            let deserializer = Self::default();
             let mut output = deserializer.next(helper, event)?;
             output.artifact = match output.artifact {
                 DeserializerArtifact::Deserializer(x)

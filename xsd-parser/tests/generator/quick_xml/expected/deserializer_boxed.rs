@@ -175,7 +175,7 @@ pub mod quick_xml_deserialize {
             let state = replace(&mut *self.state__, MyChoiceTypeDeserializerState::Unknown__);
             self.finish_state(helper, state)?;
             Ok(super::MyChoiceType {
-                content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                content: helper.finish_default(self.content)?,
             })
         }
     }
@@ -264,7 +264,7 @@ pub mod quick_xml_deserialize {
                         MyChoiceTypeContentDeserializer::store_once(&mut values, value)?;
                     }
                     Ok(super::MyChoiceTypeContent::Once(
-                        values.ok_or_else(|| ErrorKind::MissingElement("Once".into()))?,
+                        helper.finish_element("Once", values)?,
                     ))
                 }
                 S::Optional(mut values, deserializer) => {
@@ -279,16 +279,18 @@ pub mod quick_xml_deserialize {
                         let value = deserializer.finish(helper)?;
                         MyChoiceTypeContentDeserializer::store_once_specify(&mut values, value)?;
                     }
-                    Ok(super::MyChoiceTypeContent::OnceSpecify(values.ok_or_else(
-                        || ErrorKind::MissingElement("OnceSpecify".into()),
-                    )?))
+                    Ok(super::MyChoiceTypeContent::OnceSpecify(
+                        helper.finish_element("OnceSpecify", values)?,
+                    ))
                 }
                 S::TwiceOrMore(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         MyChoiceTypeContentDeserializer::store_twice_or_more(&mut values, value)?;
                     }
-                    Ok(super::MyChoiceTypeContent::TwiceOrMore(values))
+                    Ok(super::MyChoiceTypeContent::TwiceOrMore(
+                        helper.finish_vec(2usize, None, values)?,
+                    ))
                 }
                 S::Done__(data) => Ok(data),
             }
@@ -550,14 +552,19 @@ pub mod quick_xml_deserialize {
             })
         }
     }
+    impl Default for MyChoiceTypeContentDeserializer {
+        fn default() -> Self {
+            Self {
+                state__: Box::new(MyChoiceTypeContentDeserializerState::Init__),
+            }
+        }
+    }
     impl<'de> Deserializer<'de, super::MyChoiceTypeContent> for Box<MyChoiceTypeContentDeserializer> {
         fn init(
             helper: &mut DeserializeHelper,
             event: Event<'de>,
         ) -> DeserializerResult<'de, super::MyChoiceTypeContent> {
-            let deserializer = Box::new(MyChoiceTypeContentDeserializer {
-                state__: Box::new(MyChoiceTypeContentDeserializerState::Init__),
-            });
+            let deserializer = Box::new(MyChoiceTypeContentDeserializer::default());
             let mut output = deserializer.next(helper, event)?;
             output.artifact = match output.artifact {
                 DeserializerArtifact::Deserializer(x)
@@ -1176,14 +1183,10 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::MySequenceType {
-                once: self
-                    .once
-                    .ok_or_else(|| ErrorKind::MissingElement("Once".into()))?,
+                once: helper.finish_element("Once", self.once)?,
                 optional: self.optional,
-                once_specify: self
-                    .once_specify
-                    .ok_or_else(|| ErrorKind::MissingElement("OnceSpecify".into()))?,
-                twice_or_more: self.twice_or_more,
+                once_specify: helper.finish_element("OnceSpecify", self.once_specify)?,
+                twice_or_more: helper.finish_vec(2usize, None, self.twice_or_more)?,
             })
         }
     }

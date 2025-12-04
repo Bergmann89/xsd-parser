@@ -179,18 +179,14 @@ pub mod quick_xml_deserialize {
                         let value = deserializer.finish(helper)?;
                         Self::store_content_2(&mut values, value)?;
                     }
-                    Ok(super::FooType::Content2(values.ok_or_else(|| {
-                        ErrorKind::MissingElement("Content2".into())
-                    })?))
+                    Ok(super::FooType::Content2(helper.finish_default(values)?))
                 }
                 S::Content3(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_content_3(&mut values, value)?;
                     }
-                    Ok(super::FooType::Content3(values.ok_or_else(|| {
-                        ErrorKind::MissingElement("Content3".into())
-                    })?))
+                    Ok(super::FooType::Content3(helper.finish_default(values)?))
                 }
                 S::Done__(data) => Ok(data),
             }
@@ -560,6 +556,15 @@ pub mod quick_xml_deserialize {
             })
         }
     }
+    impl Default for FooContent2TypeDeserializer {
+        fn default() -> Self {
+            Self {
+                element_1: None,
+                element_2: None,
+                state__: Box::new(FooContent2TypeDeserializerState::Init__),
+            }
+        }
+    }
     impl<'de> Deserializer<'de, super::FooContent2Type> for FooContent2TypeDeserializer {
         fn init(
             helper: &mut DeserializeHelper,
@@ -696,12 +701,8 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::FooContent2Type {
-                element_1: self
-                    .element_1
-                    .ok_or_else(|| ErrorKind::MissingElement("Element1".into()))?,
-                element_2: self
-                    .element_2
-                    .ok_or_else(|| ErrorKind::MissingElement("Element2".into()))?,
+                element_1: helper.finish_element("Element1", self.element_1)?,
+                element_2: helper.finish_element("Element2", self.element_2)?,
             })
         }
     }
@@ -854,6 +855,15 @@ pub mod quick_xml_deserialize {
             })
         }
     }
+    impl Default for FooContent3TypeDeserializer {
+        fn default() -> Self {
+            Self {
+                element_3: None,
+                element_4: None,
+                state__: Box::new(FooContent3TypeDeserializerState::Init__),
+            }
+        }
+    }
     impl<'de> Deserializer<'de, super::FooContent3Type> for FooContent3TypeDeserializer {
         fn init(
             helper: &mut DeserializeHelper,
@@ -990,12 +1000,8 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::FooContent3Type {
-                element_3: self
-                    .element_3
-                    .ok_or_else(|| ErrorKind::MissingElement("Element3".into()))?,
-                element_4: self
-                    .element_4
-                    .ok_or_else(|| ErrorKind::MissingElement("Element4".into()))?,
+                element_3: helper.finish_element("Element3", self.element_3)?,
+                element_4: helper.finish_element("Element4", self.element_4)?,
             })
         }
     }

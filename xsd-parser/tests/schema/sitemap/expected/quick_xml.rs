@@ -284,7 +284,9 @@ pub mod quick_xml_deserialize {
         fn finish(mut self, helper: &mut DeserializeHelper) -> Result<super::UrlsetType, Error> {
             let state = replace(&mut *self.state__, UrlsetTypeDeserializerState::Unknown__);
             self.finish_state(helper, state)?;
-            Ok(super::UrlsetType { url: self.url })
+            Ok(super::UrlsetType {
+                url: helper.finish_vec(1usize, None, self.url)?,
+            })
         }
     }
     #[derive(Debug)]
@@ -730,9 +732,7 @@ pub mod quick_xml_deserialize {
             let state = replace(&mut *self.state__, TUrlTypeDeserializerState::Unknown__);
             self.finish_state(helper, state)?;
             Ok(super::TUrlType {
-                loc: self
-                    .loc
-                    .ok_or_else(|| ErrorKind::MissingElement("loc".into()))?,
+                loc: helper.finish_element("loc", self.loc)?,
                 lastmod: self.lastmod,
                 changefreq: self.changefreq,
                 priority: self.priority,

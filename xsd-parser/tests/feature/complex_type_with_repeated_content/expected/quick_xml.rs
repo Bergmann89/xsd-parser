@@ -203,7 +203,7 @@ pub mod quick_xml_deserialize {
             let state = replace(&mut *self.state__, FooTypeDeserializerState::Unknown__);
             self.finish_state(helper, state)?;
             Ok(super::FooType {
-                content: self.content,
+                content: helper.finish_vec_default(0usize, self.content)?,
             })
         }
     }
@@ -394,6 +394,16 @@ pub mod quick_xml_deserialize {
             })
         }
     }
+    impl Default for FooTypeContentDeserializer {
+        fn default() -> Self {
+            Self {
+                a: None,
+                b: None,
+                c: None,
+                state__: Box::new(FooTypeContentDeserializerState::Init__),
+            }
+        }
+    }
     impl<'de> Deserializer<'de, super::FooTypeContent> for FooTypeContentDeserializer {
         fn init(
             helper: &mut DeserializeHelper,
@@ -560,9 +570,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::FooTypeContent {
-                a: self
-                    .a
-                    .ok_or_else(|| ErrorKind::MissingElement("a".into()))?,
+                a: helper.finish_element("a", self.a)?,
                 b: self.b,
                 c: self.c,
             })

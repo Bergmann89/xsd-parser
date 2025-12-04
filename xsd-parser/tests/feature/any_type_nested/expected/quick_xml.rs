@@ -267,9 +267,7 @@ pub mod quick_xml_deserialize {
             let state = replace(&mut *self.state__, RootTypeDeserializerState::Unknown__);
             self.finish_state(helper, state)?;
             Ok(super::RootType {
-                container: self
-                    .container
-                    .ok_or_else(|| ErrorKind::MissingElement("Container".into()))?,
+                container: helper.finish_element("Container", self.container)?,
             })
         }
     }
@@ -420,7 +418,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::ContainerType {
-                content: self.content,
+                content: helper.finish_vec_default(0usize, self.content)?,
             })
         }
     }
@@ -560,6 +558,15 @@ pub mod quick_xml_deserialize {
                     ret
                 }
             })
+        }
+    }
+    impl Default for ContainerTypeContentDeserializer {
+        fn default() -> Self {
+            Self {
+                known: None,
+                any: None,
+                state__: Box::new(ContainerTypeContentDeserializerState::Init__),
+            }
         }
     }
     impl<'de> Deserializer<'de, super::ContainerTypeContent> for ContainerTypeContentDeserializer {
@@ -703,9 +710,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::ContainerTypeContent {
-                known: self
-                    .known
-                    .ok_or_else(|| ErrorKind::MissingElement("Known".into()))?,
+                known: helper.finish_element("Known", self.known)?,
                 any: self.any,
             })
         }

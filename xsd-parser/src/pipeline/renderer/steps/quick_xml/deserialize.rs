@@ -502,7 +502,7 @@ impl ReferenceData<'_> {
                         if index >= #size {
                             return Err(#error::from(#error_kind::InsufficientSize {
                                 min: #size,
-                                max: #size,
+                                max: Some(#size),
                                 actual: index,
                             }));
                         }
@@ -515,7 +515,7 @@ impl ReferenceData<'_> {
                     if index < #size {
                         return Err(#error::from(#error_kind::InsufficientSize {
                             min: #size,
-                            max: #size,
+                            max: Some(#size),
                             actual: index,
                         }));
                     }
@@ -947,8 +947,9 @@ impl ComplexDataEnum<'_> {
     }
 
     fn render_deserializer_helper(&self, ctx: &mut Context<'_, '_>) {
-        let represents_element = self.represents_element();
         let config = ctx.get_ref::<DeserializerConfig>();
+
+        let represents_element = self.represents_element();
         let deserializer_ident = &self.deserializer_ident;
         let deserializer_state_ident = &self.deserializer_state_ident;
 
@@ -970,6 +971,10 @@ impl ComplexDataEnum<'_> {
             )
         });
 
+        let impl_default = represents_element
+            .not()
+            .then(|| self.render_deserializer_impl_default(ctx));
+
         let code = quote! {
             impl #deserializer_ident {
                 #fn_find_suitable
@@ -979,6 +984,8 @@ impl ComplexDataEnum<'_> {
                 #( #store_elements )*
                 #( #handle_elements )*
             }
+
+            #impl_default
         };
 
         ctx.quick_xml_deserialize().append(code);
@@ -1065,6 +1072,7 @@ impl ComplexDataEnum<'_> {
 
     fn render_deserializer_fn_from_bytes_start(&self, ctx: &Context<'_, '_>) -> TokenStream {
         let config = ctx.get_ref::<DeserializerConfig>();
+
         let deserializer_state_ident = &self.deserializer_state_ident;
 
         let box_ = resolve_build_in!(ctx, "::alloc::boxed::Box");
@@ -1082,14 +1090,16 @@ impl ComplexDataEnum<'_> {
             quote!(Self)
         };
 
-        let self_ctor = ctx.do_box(
-            config.boxed_deserializer,
+        let self_ctor = if self.represents_element() {
             quote! {
                 Self {
                     state__: #box_::new(#deserializer_state_ident::Init__)
                 }
-            },
-        );
+            }
+        } else {
+            quote!(Self::default())
+        };
+        let self_ctor = ctx.do_box(config.boxed_deserializer, self_ctor);
 
         let attrib_loop = self.allow_any_attribute.not().then(|| {
             quote! {
@@ -1134,15 +1144,48 @@ impl ComplexDataEnum<'_> {
         let deserialize_helper =
             resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializeHelper");
 
+        let is_single_variant_group = self.elements.len() == 1
+            && matches!(
+                &self.elements[0].meta().variant,
+                ElementMetaVariant::Type {
+                    mode: ElementMode::Group,
+                    ..
+                }
+            );
+
+        let finish_init = if is_single_variant_group {
+            self.elements[0].deserializer_enum_variant_default(ctx, type_ident)
+        } else {
+            quote!(Err(#error_kind::MissingContent.into()))
+        };
+
         quote! {
             fn finish_state(helper: &mut #deserialize_helper, state: #deserializer_state_ident) -> #result<super::#type_ident, #error> {
                 use #deserializer_state_ident as S;
 
                 match state {
                     S::Unknown__ => unreachable!(),
-                    S::Init__ => Err(#error_kind::MissingContent.into()),
+                    S::Init__ => #finish_init,
                     #( #finish_elements )*
                     S::Done__(data) => Ok(data),
+                }
+            }
+        }
+    }
+
+    fn render_deserializer_impl_default(&self, ctx: &Context<'_, '_>) -> TokenStream {
+        let deserializer_ident = &self.deserializer_ident;
+        let deserializer_state_ident = &self.deserializer_state_ident;
+
+        let box_ = resolve_build_in!(ctx, "::alloc::boxed::Box");
+        let default = resolve_build_in!(ctx, "::core::default::Default");
+
+        quote! {
+            impl #default for #deserializer_ident {
+                fn default() -> Self {
+                    Self {
+                        state__: #box_::new(#deserializer_state_ident::Init__),
+                    }
                 }
             }
         }
@@ -1174,17 +1217,13 @@ impl ComplexDataEnum<'_> {
         let boxed_deserializer_ident =
             boxed_deserializer_ident(config.boxed_deserializer, deserializer_ident);
 
-        let box_ = resolve_build_in!(ctx, "::alloc::boxed::Box");
-
         let deserializer_artifact =
             resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializerArtifact");
 
         let init_deserializer = ctx.do_box(
             config.boxed_deserializer,
             quote! {
-                #boxed_deserializer_ident {
-                    state__: #box_::new(#deserializer_state_ident::Init__),
-                }
+                #boxed_deserializer_ident::default()
             },
         );
 
@@ -1470,6 +1509,10 @@ impl ComplexDataStruct<'_> {
             }
         });
 
+        let impl_default = represents_element
+            .not()
+            .then(|| self.render_deserializer_impl_default(ctx));
+
         let code = quote! {
             impl #deserializer_ident {
                 #fn_find_suitable
@@ -1482,6 +1525,8 @@ impl ComplexDataStruct<'_> {
                 #( #store_elements )*
                 #( #handle_elements )*
             }
+
+            #impl_default
         };
 
         ctx.quick_xml_deserialize().append(code);
@@ -1621,8 +1666,7 @@ impl ComplexDataStruct<'_> {
             quote!(Self)
         };
 
-        let self_ctor = ctx.do_box(
-            config.boxed_deserializer,
+        let self_ctor = if self.represents_element() {
             quote! {
                 Self {
                     #( #attrib_init )*
@@ -1630,8 +1674,11 @@ impl ComplexDataStruct<'_> {
                     #content_init
                     state__: #box_::new(#deserializer_state_ident::Init__),
                 }
-            },
-        );
+            }
+        } else {
+            quote!(Self::default())
+        };
+        let self_ctor = ctx.do_box(config.boxed_deserializer, self_ctor);
 
         let result = resolve_build_in!(ctx, "::core::result::Result");
 
@@ -1716,6 +1763,34 @@ impl ComplexDataStruct<'_> {
                 state: #deserializer_state_ident
             ) -> #result<(), #error> {
                 #body
+            }
+        }
+    }
+
+    fn render_deserializer_impl_default(&self, ctx: &Context<'_, '_>) -> TokenStream {
+        let box_ = resolve_build_in!(ctx, "::alloc::boxed::Box");
+        let default = resolve_build_in!(ctx, "::core::default::Default");
+
+        let deserializer_ident = &self.deserializer_ident;
+        let deserializer_state_ident = &self.deserializer_state_ident;
+
+        let element_init = self
+            .elements()
+            .iter()
+            .map(|x| x.deserializer_struct_field_init(ctx));
+        let content_init = self
+            .content()
+            .map(|x| x.deserializer_struct_field_init(ctx));
+
+        quote! {
+            impl #default for #deserializer_ident {
+                fn default() -> Self {
+                    Self {
+                        #( #element_init )*
+                        #content_init
+                        state__: #box_::new(#deserializer_state_ident::Init__),
+                    }
+                }
             }
         }
     }
@@ -2206,7 +2281,7 @@ impl ComplexDataStruct<'_> {
             .map(|x| x.deserializer_struct_field_finish(ctx));
         let content = self
             .content()
-            .map(|x| x.deserializer_struct_field_finish(ctx));
+            .map(ComplexDataContent::deserializer_struct_field_finish);
 
         let replace = resolve_quick_xml_ident!(ctx, "::core::mem::replace");
 
@@ -2266,32 +2341,34 @@ impl ComplexDataContent<'_> {
         }
     }
 
-    fn deserializer_struct_field_finish(&self, ctx: &Context<'_, '_>) -> TokenStream {
+    fn deserializer_struct_field_finish(&self) -> TokenStream {
         let convert = match self.occurs {
             Occurs::None => crate::unreachable!(),
             Occurs::Single => {
-                let error_kind =
-                    resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::ErrorKind");
-
-                quote! {
-                    self.content.ok_or_else(|| #error_kind::MissingContent)?
+                if self.is_simple() {
+                    quote!(helper.finish_content(self.content)?)
+                } else {
+                    quote!(helper.finish_default(self.content)?)
                 }
             }
-            Occurs::Optional | Occurs::DynamicList => {
+            Occurs::Optional => {
                 quote! { self.content }
             }
+            Occurs::DynamicList => {
+                let min = self.min_occurs;
+                let max = self.max_occurs.render_opt();
+
+                if self.is_simple() {
+                    quote!(helper.finish_vec(#min, #max, self.content)?)
+                } else {
+                    quote!(helper.finish_vec_default(#min, self.content)?)
+                }
+            }
             Occurs::StaticList(sz) => {
-                let vec = resolve_build_in!(ctx, "::alloc::vec::Vec");
-
-                let error_kind =
-                    resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::ErrorKind");
-
-                quote! {
-                    self.content.try_into().map_err(|vec: #vec<_>| #error_kind::InsufficientSize {
-                        min: #sz,
-                        max: #sz,
-                        actual: vec.len(),
-                    })?
+                if self.is_simple() {
+                    quote!(helper.finish_arr::<_, #sz>(self.content)?)
+                } else {
+                    quote!(helper.finish_arr_default::<_, #sz>(self.content)?)
                 }
             }
         };
@@ -2885,7 +2962,7 @@ impl ComplexDataElement<'_> {
         ctx: &Context<'_, '_>,
         handle_any: bool,
     ) -> Option<TokenStream> {
-        if !self.treat_as_group() {
+        if !self.treat_as_group_or_dynamic() {
             return None;
         }
 
@@ -2926,6 +3003,42 @@ impl ComplexDataElement<'_> {
         Some(self.deserializer_init_group(ctx, false, &call_handler))
     }
 
+    fn deserializer_enum_variant_default(
+        &self,
+        ctx: &Context<'_, '_>,
+        type_ident: &Ident2,
+    ) -> TokenStream {
+        let variant_ident = &self.variant_ident;
+
+        match self.occurs {
+            Occurs::None => unreachable!(),
+            Occurs::Single => {
+                let value = quote!(helper.finish_default(None)?);
+                let value = ctx.do_box(self.need_indirection, value);
+
+                quote! {
+                    Ok(super::#type_ident::#variant_ident(#value))
+                }
+            }
+            Occurs::Optional => quote!(Ok(super::#type_ident::#variant_ident(None))),
+            Occurs::DynamicList => {
+                let min = self.meta().min_occurs;
+
+                quote! {
+                    Ok(super::#type_ident::#variant_ident(helper.finish_vec_default(#min, Vec::new())?))
+                }
+            }
+            Occurs::StaticList(sz) => {
+                let value = quote!(helper.finish_arr_default::<_, #sz>(Vec::new())?);
+                let value = ctx.do_box(self.need_indirection, value);
+
+                quote! {
+                    Ok(super::#type_ident::#variant_ident(#value))
+                }
+            }
+        }
+    }
+
     fn deserializer_enum_variant_finish(
         &self,
         ctx: &Context<'_, '_>,
@@ -2939,42 +3052,42 @@ impl ComplexDataElement<'_> {
         let convert = match self.occurs {
             Occurs::None => crate::unreachable!(),
             Occurs::Single => {
-                let error_kind =
-                    resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::ErrorKind");
-
-                let mut content = quote! {
-                    values.ok_or_else(|| #error_kind::MissingElement(#name.into()))?
+                let value = if self.treat_as_group() {
+                    quote!(helper.finish_default(values)?)
+                } else {
+                    quote!(helper.finish_element(#name, values)?)
                 };
 
-                if self.need_indirection {
-                    let box_ = resolve_build_in!(ctx, "::alloc::boxed::Box");
-
-                    content = quote! { #box_::new(#content) };
-                }
-
-                content
+                ctx.do_box(self.need_indirection, value)
             }
             Occurs::Optional if self.need_indirection => {
                 let box_ = resolve_build_in!(ctx, "::alloc::boxed::Box");
 
                 quote! { values.map(#box_::new) }
             }
-            Occurs::Optional | Occurs::DynamicList => {
+            Occurs::Optional => {
                 quote! { values }
             }
-            Occurs::StaticList(sz) => {
-                let vec = resolve_build_in!(ctx, "::alloc::vec::Vec");
+            Occurs::DynamicList => {
+                let min = self.meta().min_occurs;
+                let max = self.meta().max_occurs.render_opt();
 
-                let error_kind =
-                    resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::ErrorKind");
-
-                quote! {
-                    values.try_into().map_err(|vec: #vec<_>| #error_kind::InsufficientSize {
-                        min: #sz,
-                        max: #sz,
-                        actual: vec.len(),
-                    })?
+                if min == 0 {
+                    quote!(values)
+                } else if self.treat_as_group() {
+                    quote!(helper.finish_vec_default(#min, values)?)
+                } else {
+                    quote!(helper.finish_vec(#min, #max, values)?)
                 }
+            }
+            Occurs::StaticList(sz) => {
+                let value = if self.treat_as_group() {
+                    quote!(helper.finish_arr_default::<_, #sz>(values)?)
+                } else {
+                    quote!(helper.finish_arr::<_, #sz>(values)?)
+                };
+
+                ctx.do_box(self.need_indirection, value)
             }
         };
 
@@ -3374,7 +3487,7 @@ impl ComplexDataElement<'_> {
         ctx: &Context<'_, '_>,
         handle_any: bool,
     ) -> Option<TokenStream> {
-        if !self.treat_as_group() {
+        if !self.treat_as_group_or_dynamic() {
             return None;
         }
 
@@ -3429,42 +3542,42 @@ impl ComplexDataElement<'_> {
         let convert = match self.occurs {
             Occurs::None => crate::unreachable!(),
             Occurs::Single => {
-                let error_kind =
-                    resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::ErrorKind");
-
-                let mut content = quote! {
-                    self.#field_ident.ok_or_else(|| #error_kind::MissingElement(#name.into()))?
+                let value = if self.treat_as_group() {
+                    quote!(helper.finish_default(self.#field_ident)?)
+                } else {
+                    quote!(helper.finish_element(#name, self.#field_ident)?)
                 };
 
-                if self.need_indirection {
-                    let box_ = resolve_build_in!(ctx, "::alloc::boxed::Box");
-
-                    content = quote! { #box_::new(#content) };
-                }
-
-                content
+                ctx.do_box(self.need_indirection, value)
             }
             Occurs::Optional if self.need_indirection => {
                 let box_ = resolve_build_in!(ctx, "::alloc::boxed::Box");
 
                 quote! { self.#field_ident.map(#box_::new) }
             }
-            Occurs::Optional | Occurs::DynamicList => {
+            Occurs::Optional => {
                 quote! { self.#field_ident }
             }
-            Occurs::StaticList(sz) => {
-                let vec = resolve_build_in!(ctx, "::alloc::vec::Vec");
+            Occurs::DynamicList => {
+                let min = self.meta().min_occurs;
+                let max = self.meta().max_occurs.render_opt();
 
-                let error_kind =
-                    resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::ErrorKind");
-
-                quote! {
-                    self.#field_ident.try_into().map_err(|vec: #vec<_>| #error_kind::InsufficientSize {
-                        min: #sz,
-                        max: #sz,
-                        actual: vec.len(),
-                    })?
+                if min == 0 {
+                    quote!(self.#field_ident)
+                } else if self.treat_as_group() {
+                    quote!(helper.finish_vec_default(#min, self.#field_ident)?)
+                } else {
+                    quote!(helper.finish_vec(#min, #max, self.#field_ident)?)
                 }
+            }
+            Occurs::StaticList(sz) => {
+                let value = if self.treat_as_group() {
+                    quote!(helper.finish_arr_default::<_, #sz>(self.#field_ident)?)
+                } else {
+                    quote!(helper.finish_arr::<_, #sz>(self.#field_ident)?)
+                };
+
+                ctx.do_box(self.need_indirection, value)
             }
         };
 
@@ -3939,6 +4052,15 @@ impl Context<'_, '_> {
             quote!(#box_::new(#tokens))
         } else {
             tokens
+        }
+    }
+}
+
+impl MaxOccurs {
+    fn render_opt(&self) -> TokenStream {
+        match self {
+            Self::Unbounded => quote!(None),
+            Self::Bounded(sz) => quote!(Some(#sz)),
         }
     }
 }

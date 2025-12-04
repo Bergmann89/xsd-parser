@@ -306,12 +306,8 @@ pub mod quick_xml_deserialize {
             let state = replace(&mut *self.state__, FooTypeDeserializerState::Unknown__);
             self.finish_state(helper, state)?;
             Ok(super::FooType {
-                min: self
-                    .min
-                    .ok_or_else(|| ErrorKind::MissingElement("Min".into()))?,
-                max: self
-                    .max
-                    .ok_or_else(|| ErrorKind::MissingElement("Max".into()))?,
+                min: helper.finish_element("Min", self.min)?,
+                max: helper.finish_element("Max", self.max)?,
             })
         }
     }

@@ -306,12 +306,8 @@ pub mod other {
                 let state = replace(&mut *self.state__, BarTypeDeserializerState::Unknown__);
                 self.finish_state(helper, state)?;
                 Ok(super::BarType {
-                    b: self
-                        .b
-                        .ok_or_else(|| ErrorKind::MissingElement("b".into()))?,
-                    c: self
-                        .c
-                        .ok_or_else(|| ErrorKind::MissingElement("c".into()))?,
+                    b: helper.finish_element("b", self.b)?,
+                    c: helper.finish_element("c", self.c)?,
                 })
             }
         }
@@ -699,12 +695,8 @@ pub mod tns {
                 let state = replace(&mut *self.state__, FooTypeDeserializerState::Unknown__);
                 self.finish_state(helper, state)?;
                 Ok(super::FooType {
-                    a: self
-                        .a
-                        .ok_or_else(|| ErrorKind::MissingElement("a".into()))?,
-                    b: self
-                        .b
-                        .ok_or_else(|| ErrorKind::MissingElement("b".into()))?,
+                    a: helper.finish_element("a", self.a)?,
+                    b: helper.finish_element("b", self.b)?,
                 })
             }
         }

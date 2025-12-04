@@ -342,18 +342,16 @@ pub mod quick_xml_deserialize {
                         let value = deserializer.finish(helper)?;
                         Self::store_intermediate(&mut values, value)?;
                     }
-                    Ok(super::Base::Intermediate(values.ok_or_else(|| {
-                        ErrorKind::MissingElement("intermediate".into())
-                    })?))
+                    Ok(super::Base::Intermediate(
+                        helper.finish_element("intermediate", values)?,
+                    ))
                 }
                 S::Final(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_final_(&mut values, value)?;
                     }
-                    Ok(super::Base::Final(values.ok_or_else(|| {
-                        ErrorKind::MissingElement("final".into())
-                    })?))
+                    Ok(super::Base::Final(helper.finish_element("final", values)?))
                 }
                 S::Done__(data) => Ok(data),
             }
@@ -483,14 +481,19 @@ pub mod quick_xml_deserialize {
             })
         }
     }
+    impl Default for BaseDeserializer {
+        fn default() -> Self {
+            Self {
+                state__: Box::new(BaseDeserializerState::Init__),
+            }
+        }
+    }
     impl<'de> Deserializer<'de, super::Base> for BaseDeserializer {
         fn init(
             helper: &mut DeserializeHelper,
             event: Event<'de>,
         ) -> DeserializerResult<'de, super::Base> {
-            let deserializer = Self {
-                state__: Box::new(BaseDeserializerState::Init__),
-            };
+            let deserializer = Self::default();
             let mut output = deserializer.next(helper, event)?;
             output.artifact = match output.artifact {
                 DeserializerArtifact::Deserializer(x)

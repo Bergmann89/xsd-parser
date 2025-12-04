@@ -604,7 +604,7 @@ pub mod er {
                 Ok(super::CatalogType {
                     id: self.id,
                     prefer: self.prefer,
-                    content: self.content,
+                    content: helper.finish_vec_default(1usize, self.content)?,
                 })
             }
         }
@@ -840,18 +840,18 @@ pub mod er {
                             let value = deserializer.finish(helper)?;
                             Self::store_public(&mut values, value)?;
                         }
-                        Ok(super::CatalogTypeContent::Public(values.ok_or_else(
-                            || ErrorKind::MissingElement("public".into()),
-                        )?))
+                        Ok(super::CatalogTypeContent::Public(
+                            helper.finish_element("public", values)?,
+                        ))
                     }
                     S::System(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_system(&mut values, value)?;
                         }
-                        Ok(super::CatalogTypeContent::System(values.ok_or_else(
-                            || ErrorKind::MissingElement("system".into()),
-                        )?))
+                        Ok(super::CatalogTypeContent::System(
+                            helper.finish_element("system", values)?,
+                        ))
                     }
                     S::Uri(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
@@ -859,7 +859,7 @@ pub mod er {
                             Self::store_uri(&mut values, value)?;
                         }
                         Ok(super::CatalogTypeContent::Uri(
-                            values.ok_or_else(|| ErrorKind::MissingElement("uri".into()))?,
+                            helper.finish_element("uri", values)?,
                         ))
                     }
                     S::RewriteSystem(mut values, deserializer) => {
@@ -868,8 +868,7 @@ pub mod er {
                             Self::store_rewrite_system(&mut values, value)?;
                         }
                         Ok(super::CatalogTypeContent::RewriteSystem(
-                            values
-                                .ok_or_else(|| ErrorKind::MissingElement("rewriteSystem".into()))?,
+                            helper.finish_element("rewriteSystem", values)?,
                         ))
                     }
                     S::RewriteUri(mut values, deserializer) => {
@@ -877,27 +876,27 @@ pub mod er {
                             let value = deserializer.finish(helper)?;
                             Self::store_rewrite_uri(&mut values, value)?;
                         }
-                        Ok(super::CatalogTypeContent::RewriteUri(values.ok_or_else(
-                            || ErrorKind::MissingElement("rewriteURI".into()),
-                        )?))
+                        Ok(super::CatalogTypeContent::RewriteUri(
+                            helper.finish_element("rewriteURI", values)?,
+                        ))
                     }
                     S::UriSuffix(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_uri_suffix(&mut values, value)?;
                         }
-                        Ok(super::CatalogTypeContent::UriSuffix(values.ok_or_else(
-                            || ErrorKind::MissingElement("uriSuffix".into()),
-                        )?))
+                        Ok(super::CatalogTypeContent::UriSuffix(
+                            helper.finish_element("uriSuffix", values)?,
+                        ))
                     }
                     S::SystemSuffix(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_system_suffix(&mut values, value)?;
                         }
-                        Ok(super::CatalogTypeContent::SystemSuffix(values.ok_or_else(
-                            || ErrorKind::MissingElement("systemSuffix".into()),
-                        )?))
+                        Ok(super::CatalogTypeContent::SystemSuffix(
+                            helper.finish_element("systemSuffix", values)?,
+                        ))
                     }
                     S::DelegatePublic(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
@@ -905,9 +904,7 @@ pub mod er {
                             Self::store_delegate_public(&mut values, value)?;
                         }
                         Ok(super::CatalogTypeContent::DelegatePublic(
-                            values.ok_or_else(|| {
-                                ErrorKind::MissingElement("delegatePublic".into())
-                            })?,
+                            helper.finish_element("delegatePublic", values)?,
                         ))
                     }
                     S::DelegateSystem(mut values, deserializer) => {
@@ -916,9 +913,7 @@ pub mod er {
                             Self::store_delegate_system(&mut values, value)?;
                         }
                         Ok(super::CatalogTypeContent::DelegateSystem(
-                            values.ok_or_else(|| {
-                                ErrorKind::MissingElement("delegateSystem".into())
-                            })?,
+                            helper.finish_element("delegateSystem", values)?,
                         ))
                     }
                     S::DelegateUri(mut values, deserializer) => {
@@ -926,27 +921,27 @@ pub mod er {
                             let value = deserializer.finish(helper)?;
                             Self::store_delegate_uri(&mut values, value)?;
                         }
-                        Ok(super::CatalogTypeContent::DelegateUri(values.ok_or_else(
-                            || ErrorKind::MissingElement("delegateURI".into()),
-                        )?))
+                        Ok(super::CatalogTypeContent::DelegateUri(
+                            helper.finish_element("delegateURI", values)?,
+                        ))
                     }
                     S::NextCatalog(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_next_catalog(&mut values, value)?;
                         }
-                        Ok(super::CatalogTypeContent::NextCatalog(values.ok_or_else(
-                            || ErrorKind::MissingElement("nextCatalog".into()),
-                        )?))
+                        Ok(super::CatalogTypeContent::NextCatalog(
+                            helper.finish_element("nextCatalog", values)?,
+                        ))
                     }
                     S::Group(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_group(&mut values, value)?;
                         }
-                        Ok(super::CatalogTypeContent::Group(values.ok_or_else(
-                            || ErrorKind::MissingElement("group".into()),
-                        )?))
+                        Ok(super::CatalogTypeContent::Group(
+                            helper.finish_element("group", values)?,
+                        ))
                     }
                     S::Done__(data) => Ok(data),
                 }
@@ -1793,14 +1788,19 @@ pub mod er {
                 })
             }
         }
+        impl Default for CatalogTypeContentDeserializer {
+            fn default() -> Self {
+                Self {
+                    state__: Box::new(CatalogTypeContentDeserializerState::Init__),
+                }
+            }
+        }
         impl<'de> Deserializer<'de, super::CatalogTypeContent> for CatalogTypeContentDeserializer {
             fn init(
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
             ) -> DeserializerResult<'de, super::CatalogTypeContent> {
-                let deserializer = Self {
-                    state__: Box::new(CatalogTypeContentDeserializerState::Init__),
-                };
+                let deserializer = Self::default();
                 let mut output = deserializer.next(helper, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
@@ -2677,7 +2677,7 @@ pub mod er {
                 Ok(super::GroupType {
                     prefer: self.prefer,
                     id: self.id,
-                    content: self.content,
+                    content: helper.finish_vec_default(1usize, self.content)?,
                 })
             }
         }
@@ -2897,18 +2897,18 @@ pub mod er {
                             let value = deserializer.finish(helper)?;
                             Self::store_public(&mut values, value)?;
                         }
-                        Ok(super::GroupTypeContent::Public(values.ok_or_else(
-                            || ErrorKind::MissingElement("public".into()),
-                        )?))
+                        Ok(super::GroupTypeContent::Public(
+                            helper.finish_element("public", values)?,
+                        ))
                     }
                     S::System(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_system(&mut values, value)?;
                         }
-                        Ok(super::GroupTypeContent::System(values.ok_or_else(
-                            || ErrorKind::MissingElement("system".into()),
-                        )?))
+                        Ok(super::GroupTypeContent::System(
+                            helper.finish_element("system", values)?,
+                        ))
                     }
                     S::Uri(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
@@ -2916,7 +2916,7 @@ pub mod er {
                             Self::store_uri(&mut values, value)?;
                         }
                         Ok(super::GroupTypeContent::Uri(
-                            values.ok_or_else(|| ErrorKind::MissingElement("uri".into()))?,
+                            helper.finish_element("uri", values)?,
                         ))
                     }
                     S::RewriteSystem(mut values, deserializer) => {
@@ -2924,72 +2924,72 @@ pub mod er {
                             let value = deserializer.finish(helper)?;
                             Self::store_rewrite_system(&mut values, value)?;
                         }
-                        Ok(super::GroupTypeContent::RewriteSystem(values.ok_or_else(
-                            || ErrorKind::MissingElement("rewriteSystem".into()),
-                        )?))
+                        Ok(super::GroupTypeContent::RewriteSystem(
+                            helper.finish_element("rewriteSystem", values)?,
+                        ))
                     }
                     S::RewriteUri(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_rewrite_uri(&mut values, value)?;
                         }
-                        Ok(super::GroupTypeContent::RewriteUri(values.ok_or_else(
-                            || ErrorKind::MissingElement("rewriteURI".into()),
-                        )?))
+                        Ok(super::GroupTypeContent::RewriteUri(
+                            helper.finish_element("rewriteURI", values)?,
+                        ))
                     }
                     S::UriSuffix(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_uri_suffix(&mut values, value)?;
                         }
-                        Ok(super::GroupTypeContent::UriSuffix(values.ok_or_else(
-                            || ErrorKind::MissingElement("uriSuffix".into()),
-                        )?))
+                        Ok(super::GroupTypeContent::UriSuffix(
+                            helper.finish_element("uriSuffix", values)?,
+                        ))
                     }
                     S::SystemSuffix(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_system_suffix(&mut values, value)?;
                         }
-                        Ok(super::GroupTypeContent::SystemSuffix(values.ok_or_else(
-                            || ErrorKind::MissingElement("systemSuffix".into()),
-                        )?))
+                        Ok(super::GroupTypeContent::SystemSuffix(
+                            helper.finish_element("systemSuffix", values)?,
+                        ))
                     }
                     S::DelegatePublic(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_delegate_public(&mut values, value)?;
                         }
-                        Ok(super::GroupTypeContent::DelegatePublic(values.ok_or_else(
-                            || ErrorKind::MissingElement("delegatePublic".into()),
-                        )?))
+                        Ok(super::GroupTypeContent::DelegatePublic(
+                            helper.finish_element("delegatePublic", values)?,
+                        ))
                     }
                     S::DelegateSystem(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_delegate_system(&mut values, value)?;
                         }
-                        Ok(super::GroupTypeContent::DelegateSystem(values.ok_or_else(
-                            || ErrorKind::MissingElement("delegateSystem".into()),
-                        )?))
+                        Ok(super::GroupTypeContent::DelegateSystem(
+                            helper.finish_element("delegateSystem", values)?,
+                        ))
                     }
                     S::DelegateUri(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_delegate_uri(&mut values, value)?;
                         }
-                        Ok(super::GroupTypeContent::DelegateUri(values.ok_or_else(
-                            || ErrorKind::MissingElement("delegateURI".into()),
-                        )?))
+                        Ok(super::GroupTypeContent::DelegateUri(
+                            helper.finish_element("delegateURI", values)?,
+                        ))
                     }
                     S::NextCatalog(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_next_catalog(&mut values, value)?;
                         }
-                        Ok(super::GroupTypeContent::NextCatalog(values.ok_or_else(
-                            || ErrorKind::MissingElement("nextCatalog".into()),
-                        )?))
+                        Ok(super::GroupTypeContent::NextCatalog(
+                            helper.finish_element("nextCatalog", values)?,
+                        ))
                     }
                     S::Done__(data) => Ok(data),
                 }
@@ -3756,14 +3756,19 @@ pub mod er {
                 })
             }
         }
+        impl Default for GroupTypeContentDeserializer {
+            fn default() -> Self {
+                Self {
+                    state__: Box::new(GroupTypeContentDeserializerState::Init__),
+                }
+            }
+        }
         impl<'de> Deserializer<'de, super::GroupTypeContent> for GroupTypeContentDeserializer {
             fn init(
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
             ) -> DeserializerResult<'de, super::GroupTypeContent> {
-                let deserializer = Self {
-                    state__: Box::new(GroupTypeContentDeserializerState::Init__),
-                };
+                let deserializer = Self::default();
                 let mut output = deserializer.next(helper, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)

@@ -381,12 +381,8 @@ pub mod quick_xml_deserialize {
             let state = replace(&mut *self.state__, NormalTypeDeserializerState::Unknown__);
             self.finish_state(helper, state)?;
             Ok(super::NormalType {
-                group: self
-                    .group
-                    .ok_or_else(|| ErrorKind::MissingElement("Group".into()))?,
-                baz: self
-                    .baz
-                    .ok_or_else(|| ErrorKind::MissingElement("Baz".into()))?,
+                group: helper.finish_default(self.group)?,
+                baz: helper.finish_element("Baz", self.baz)?,
             })
         }
     }
@@ -531,6 +527,15 @@ pub mod quick_xml_deserialize {
             })
         }
     }
+    impl Default for NormalGroupTypeDeserializer {
+        fn default() -> Self {
+            Self {
+                fuu: None,
+                bar: None,
+                state__: Box::new(NormalGroupTypeDeserializerState::Init__),
+            }
+        }
+    }
     impl<'de> Deserializer<'de, super::NormalGroupType> for NormalGroupTypeDeserializer {
         fn init(
             helper: &mut DeserializeHelper,
@@ -667,12 +672,8 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::NormalGroupType {
-                fuu: self
-                    .fuu
-                    .ok_or_else(|| ErrorKind::MissingElement("Fuu".into()))?,
-                bar: self
-                    .bar
-                    .ok_or_else(|| ErrorKind::MissingElement("Bar".into()))?,
+                fuu: helper.finish_element("Fuu", self.fuu)?,
+                bar: helper.finish_element("Bar", self.bar)?,
             })
         }
     }
@@ -1030,12 +1031,8 @@ pub mod quick_xml_deserialize {
             self.finish_state(helper, state)?;
             Ok(super::MixedType {
                 text_before: self.text_before,
-                group: self
-                    .group
-                    .ok_or_else(|| ErrorKind::MissingElement("Group".into()))?,
-                baz: self
-                    .baz
-                    .ok_or_else(|| ErrorKind::MissingElement("Baz".into()))?,
+                group: helper.finish_default(self.group)?,
+                baz: helper.finish_element("Baz", self.baz)?,
             })
         }
     }
@@ -1180,6 +1177,15 @@ pub mod quick_xml_deserialize {
             })
         }
     }
+    impl Default for MixedGroupTypeDeserializer {
+        fn default() -> Self {
+            Self {
+                fuu: None,
+                bar: None,
+                state__: Box::new(MixedGroupTypeDeserializerState::Init__),
+            }
+        }
+    }
     impl<'de> Deserializer<'de, super::MixedGroupType> for MixedGroupTypeDeserializer {
         fn init(
             helper: &mut DeserializeHelper,
@@ -1320,12 +1326,8 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::MixedGroupType {
-                fuu: self
-                    .fuu
-                    .ok_or_else(|| ErrorKind::MissingElement("Fuu".into()))?,
-                bar: self
-                    .bar
-                    .ok_or_else(|| ErrorKind::MissingElement("Bar".into()))?,
+                fuu: helper.finish_element("Fuu", self.fuu)?,
+                bar: helper.finish_element("Bar", self.bar)?,
             })
         }
     }

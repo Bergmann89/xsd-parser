@@ -3891,7 +3891,7 @@ pub mod quick_xml_deserialize {
             self.finish_state(helper, state)?;
             Ok(super::BmecatElementType {
                 version: self.version,
-                content: self.content,
+                content: helper.finish_vec_default(1usize, self.content)?,
             })
         }
     }
@@ -3996,9 +3996,9 @@ pub mod quick_xml_deserialize {
                         let value = deserializer.finish(helper)?;
                         Self::store_header(&mut values, value)?;
                     }
-                    Ok(super::BmecatElementTypeContent::Header(values.ok_or_else(
-                        || ErrorKind::MissingElement("HEADER".into()),
-                    )?))
+                    Ok(super::BmecatElementTypeContent::Header(
+                        helper.finish_element("HEADER", values)?,
+                    ))
                 }
                 S::TNewCatalog(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
@@ -4006,7 +4006,7 @@ pub mod quick_xml_deserialize {
                         Self::store_t_new_catalog(&mut values, value)?;
                     }
                     Ok(super::BmecatElementTypeContent::TNewCatalog(
-                        values.ok_or_else(|| ErrorKind::MissingElement("T_NEW_CATALOG".into()))?,
+                        helper.finish_element("T_NEW_CATALOG", values)?,
                     ))
                 }
                 S::TUpdateProducts(mut values, deserializer) => {
@@ -4015,8 +4015,7 @@ pub mod quick_xml_deserialize {
                         Self::store_t_update_products(&mut values, value)?;
                     }
                     Ok(super::BmecatElementTypeContent::TUpdateProducts(
-                        values
-                            .ok_or_else(|| ErrorKind::MissingElement("T_UPDATE_PRODUCTS".into()))?,
+                        helper.finish_element("T_UPDATE_PRODUCTS", values)?,
                     ))
                 }
                 S::TUpdatePrices(mut values, deserializer) => {
@@ -4025,8 +4024,7 @@ pub mod quick_xml_deserialize {
                         Self::store_t_update_prices(&mut values, value)?;
                     }
                     Ok(super::BmecatElementTypeContent::TUpdatePrices(
-                        values
-                            .ok_or_else(|| ErrorKind::MissingElement("T_UPDATE_PRICES".into()))?,
+                        helper.finish_element("T_UPDATE_PRICES", values)?,
                     ))
                 }
                 S::Done__(data) => Ok(data),
@@ -4324,6 +4322,13 @@ pub mod quick_xml_deserialize {
             })
         }
     }
+    impl Default for BmecatElementTypeContentDeserializer {
+        fn default() -> Self {
+            Self {
+                state__: Box::new(BmecatElementTypeContentDeserializerState::Init__),
+            }
+        }
+    }
     impl<'de> Deserializer<'de, super::BmecatElementTypeContent>
         for BmecatElementTypeContentDeserializer
     {
@@ -4331,9 +4336,7 @@ pub mod quick_xml_deserialize {
             helper: &mut DeserializeHelper,
             event: Event<'de>,
         ) -> DeserializerResult<'de, super::BmecatElementTypeContent> {
-            let deserializer = Self {
-                state__: Box::new(BmecatElementTypeContentDeserializerState::Init__),
-            };
+            let deserializer = Self::default();
             let mut output = deserializer.next(helper, event)?;
             output.artifact = match output.artifact {
                 DeserializerArtifact::Deserializer(x)
@@ -5082,18 +5085,11 @@ pub mod quick_xml_deserialize {
             self.finish_state(helper, state)?;
             Ok(super::HeaderElementType {
                 generator_info: self.generator_info,
-                catalog: self
-                    .catalog
-                    .ok_or_else(|| ErrorKind::MissingElement("CATALOG".into()))?,
-                buyer: self
-                    .buyer
-                    .ok_or_else(|| ErrorKind::MissingElement("BUYER".into()))?,
-                supplier: self
-                    .supplier
-                    .ok_or_else(|| ErrorKind::MissingElement("SUPPLIER".into()))?,
-                user_defined_extensions: self
-                    .user_defined_extensions
-                    .ok_or_else(|| ErrorKind::MissingElement("USER_DEFINED_EXTENSIONS".into()))?,
+                catalog: helper.finish_element("CATALOG", self.catalog)?,
+                buyer: helper.finish_element("BUYER", self.buyer)?,
+                supplier: helper.finish_element("SUPPLIER", self.supplier)?,
+                user_defined_extensions: helper
+                    .finish_element("USER_DEFINED_EXTENSIONS", self.user_defined_extensions)?,
             })
         }
     }
@@ -5290,7 +5286,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::TNewCatalogElementType {
-                product: self.product,
+                product: helper.finish_vec(1usize, None, self.product)?,
             })
         }
     }
@@ -5505,7 +5501,7 @@ pub mod quick_xml_deserialize {
             self.finish_state(helper, state)?;
             Ok(super::TUpdateProductsElementType {
                 prev_version: self.prev_version,
-                product: self.product,
+                product: helper.finish_vec(1usize, None, self.product)?,
             })
         }
     }
@@ -5718,7 +5714,7 @@ pub mod quick_xml_deserialize {
             self.finish_state(helper, state)?;
             Ok(super::TUpdatePricesElementType {
                 prev_version: self.prev_version,
-                product: self.product,
+                product: helper.finish_vec(1usize, None, self.product)?,
             })
         }
     }
@@ -6541,17 +6537,11 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::CatalogElementType {
-                language: self.language,
-                catalog_id: self
-                    .catalog_id
-                    .ok_or_else(|| ErrorKind::MissingElement("CATALOG_ID".into()))?,
-                catalog_version: self
-                    .catalog_version
-                    .ok_or_else(|| ErrorKind::MissingElement("CATALOG_VERSION".into()))?,
-                catalog_name: self.catalog_name,
-                datetime: self
-                    .datetime
-                    .ok_or_else(|| ErrorKind::MissingElement("DATETIME".into()))?,
+                language: helper.finish_vec(1usize, None, self.language)?,
+                catalog_id: helper.finish_element("CATALOG_ID", self.catalog_id)?,
+                catalog_version: helper.finish_element("CATALOG_VERSION", self.catalog_version)?,
+                catalog_name: helper.finish_vec(1usize, None, self.catalog_name)?,
+                datetime: helper.finish_element("DATETIME", self.datetime)?,
                 territory: self.territory,
                 currency: self.currency,
                 mime_root: self.mime_root,
@@ -6839,9 +6829,7 @@ pub mod quick_xml_deserialize {
             self.finish_state(helper, state)?;
             Ok(super::BuyerElementType {
                 buyer_id: self.buyer_id,
-                buyer_name: self
-                    .buyer_name
-                    .ok_or_else(|| ErrorKind::MissingElement("BUYER_NAME".into()))?,
+                buyer_name: helper.finish_element("BUYER_NAME", self.buyer_name)?,
             })
         }
     }
@@ -7315,9 +7303,7 @@ pub mod quick_xml_deserialize {
             self.finish_state(helper, state)?;
             Ok(super::SupplierElementType {
                 supplier_id: self.supplier_id,
-                supplier_name: self
-                    .supplier_name
-                    .ok_or_else(|| ErrorKind::MissingElement("SUPPLIER_NAME".into()))?,
+                supplier_name: helper.finish_element("SUPPLIER_NAME", self.supplier_name)?,
                 address: self.address,
                 mime_info: self.mime_info,
             })
@@ -7509,9 +7495,8 @@ pub mod quick_xml_deserialize {
             let state = replace(&mut *self.state__, UdxHeaderDeserializerState::Unknown__);
             self.finish_state(helper, state)?;
             Ok(super::UdxHeader {
-                udx_edxf_version: self
-                    .udx_edxf_version
-                    .ok_or_else(|| ErrorKind::MissingElement("UDX.EDXF.VERSION".into()))?,
+                udx_edxf_version: helper
+                    .finish_element("UDX.EDXF.VERSION", self.udx_edxf_version)?,
             })
         }
     }
@@ -8556,21 +8541,19 @@ pub mod quick_xml_deserialize {
             self.finish_state(helper, state)?;
             Ok(super::TNewCatalogProductElementType {
                 mode: self.mode,
-                supplier_pid: self
-                    .supplier_pid
-                    .ok_or_else(|| ErrorKind::MissingElement("SUPPLIER_PID".into()))?,
-                product_details: self
-                    .product_details
-                    .ok_or_else(|| ErrorKind::MissingElement("PRODUCT_DETAILS".into()))?,
-                product_features: self.product_features,
-                product_order_details: self
-                    .product_order_details
-                    .ok_or_else(|| ErrorKind::MissingElement("PRODUCT_ORDER_DETAILS".into()))?,
-                product_price_details: self.product_price_details,
+                supplier_pid: helper.finish_element("SUPPLIER_PID", self.supplier_pid)?,
+                product_details: helper.finish_element("PRODUCT_DETAILS", self.product_details)?,
+                product_features: helper.finish_vec(1usize, None, self.product_features)?,
+                product_order_details: helper
+                    .finish_element("PRODUCT_ORDER_DETAILS", self.product_order_details)?,
+                product_price_details: helper.finish_vec(
+                    1usize,
+                    None,
+                    self.product_price_details,
+                )?,
                 mime_info: self.mime_info,
-                user_defined_extensions: self
-                    .user_defined_extensions
-                    .ok_or_else(|| ErrorKind::MissingElement("USER_DEFINED_EXTENSIONS".into()))?,
+                user_defined_extensions: helper
+                    .finish_element("USER_DEFINED_EXTENSIONS", self.user_defined_extensions)?,
                 product_reference: self.product_reference,
                 product_logistic_details: self.product_logistic_details,
             })
@@ -9594,17 +9577,16 @@ pub mod quick_xml_deserialize {
             self.finish_state(helper, state)?;
             Ok(super::TUpdateProductsProductElementType {
                 mode: self.mode,
-                supplier_pid: self
-                    .supplier_pid
-                    .ok_or_else(|| ErrorKind::MissingElement("SUPPLIER_PID".into()))?,
-                product_details: self
-                    .product_details
-                    .ok_or_else(|| ErrorKind::MissingElement("PRODUCT_DETAILS".into()))?,
+                supplier_pid: helper.finish_element("SUPPLIER_PID", self.supplier_pid)?,
+                product_details: helper.finish_element("PRODUCT_DETAILS", self.product_details)?,
                 product_features: self.product_features,
-                product_order_details: self
-                    .product_order_details
-                    .ok_or_else(|| ErrorKind::MissingElement("PRODUCT_ORDER_DETAILS".into()))?,
-                product_price_details: self.product_price_details,
+                product_order_details: helper
+                    .finish_element("PRODUCT_ORDER_DETAILS", self.product_order_details)?,
+                product_price_details: helper.finish_vec(
+                    1usize,
+                    None,
+                    self.product_price_details,
+                )?,
                 mime_info: self.mime_info,
                 user_defined_extensions: self.user_defined_extensions,
                 product_reference: self.product_reference,
@@ -10018,10 +10000,12 @@ pub mod quick_xml_deserialize {
             self.finish_state(helper, state)?;
             Ok(super::TUpdatePricesProductElementType {
                 mode: self.mode,
-                supplier_pid: self
-                    .supplier_pid
-                    .ok_or_else(|| ErrorKind::MissingElement("SUPPLIER_PID".into()))?,
-                product_price_details: self.product_price_details,
+                supplier_pid: helper.finish_element("SUPPLIER_PID", self.supplier_pid)?,
+                product_price_details: helper.finish_vec(
+                    1usize,
+                    None,
+                    self.product_price_details,
+                )?,
                 user_defined_extensions: self.user_defined_extensions,
             })
         }
@@ -10158,7 +10142,7 @@ pub mod quick_xml_deserialize {
             self.finish_state(helper, state)?;
             Ok(super::LanguageElementType {
                 default: self.default,
-                content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                content: helper.finish_content(self.content)?,
             })
         }
     }
@@ -10288,7 +10272,7 @@ pub mod quick_xml_deserialize {
             self.finish_state(helper, state)?;
             Ok(super::DtMlstring {
                 lang: self.lang,
-                content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                content: helper.finish_content(self.content)?,
             })
         }
     }
@@ -10675,9 +10659,7 @@ pub mod quick_xml_deserialize {
             self.finish_state(helper, state)?;
             Ok(super::CatalogDatetimeElementType {
                 type_: self.type_,
-                date: self
-                    .date
-                    .ok_or_else(|| ErrorKind::MissingElement("DATE".into()))?,
+                date: helper.finish_element("DATE", self.date)?,
                 time: self.time,
                 timezone: self.timezone,
             })
@@ -10809,7 +10791,7 @@ pub mod quick_xml_deserialize {
             self.finish_state(helper, state)?;
             Ok(super::TypePartyId {
                 type_: self.type_,
-                content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                content: helper.finish_content(self.content)?,
             })
         }
     }
@@ -11630,9 +11612,7 @@ pub mod quick_xml_deserialize {
                 city: self.city,
                 country: self.country,
                 vat_id: self.vat_id,
-                email: self
-                    .email
-                    .ok_or_else(|| ErrorKind::MissingElement("EMAIL".into()))?,
+                email: helper.finish_element("EMAIL", self.email)?,
                 url: self.url,
             })
         }
@@ -11821,7 +11801,9 @@ pub mod quick_xml_deserialize {
                 MimeInfoElementTypeDeserializerState::Unknown__,
             );
             self.finish_state(helper, state)?;
-            Ok(super::MimeInfoElementType { mime: self.mime })
+            Ok(super::MimeInfoElementType {
+                mime: helper.finish_vec(1usize, None, self.mime)?,
+            })
         }
     }
     #[derive(Debug)]
@@ -11956,7 +11938,7 @@ pub mod quick_xml_deserialize {
             self.finish_state(helper, state)?;
             Ok(super::SupplierPidElementType {
                 type_: self.type_,
-                content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                content: helper.finish_content(self.content)?,
             })
         }
     }
@@ -13189,7 +13171,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::ProductDetailsElementType {
-                description_short: self.description_short,
+                description_short: helper.finish_vec(1usize, None, self.description_short)?,
                 description_long: self.description_long,
                 international_pid: self.international_pid,
                 supplier_alt_pid: self.supplier_alt_pid,
@@ -13621,13 +13603,15 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::ProductFeaturesElementType {
-                reference_feature_system_name: self.reference_feature_system_name.ok_or_else(
-                    || ErrorKind::MissingElement("REFERENCE_FEATURE_SYSTEM_NAME".into()),
+                reference_feature_system_name: helper.finish_element(
+                    "REFERENCE_FEATURE_SYSTEM_NAME",
+                    self.reference_feature_system_name,
                 )?,
-                reference_feature_group_id: self.reference_feature_group_id.ok_or_else(|| {
-                    ErrorKind::MissingElement("REFERENCE_FEATURE_GROUP_ID".into())
-                })?,
-                feature: self.feature,
+                reference_feature_group_id: helper.finish_element(
+                    "REFERENCE_FEATURE_GROUP_ID",
+                    self.reference_feature_group_id,
+                )?,
+                feature: helper.finish_vec(1usize, None, self.feature)?,
             })
         }
     }
@@ -14327,12 +14311,8 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::ProductOrderDetailsElementType {
-                order_unit: self
-                    .order_unit
-                    .ok_or_else(|| ErrorKind::MissingElement("ORDER_UNIT".into()))?,
-                content_unit: self
-                    .content_unit
-                    .ok_or_else(|| ErrorKind::MissingElement("CONTENT_UNIT".into()))?,
+                order_unit: helper.finish_element("ORDER_UNIT", self.order_unit)?,
+                content_unit: helper.finish_element("CONTENT_UNIT", self.content_unit)?,
                 no_cu_per_ou: self.no_cu_per_ou,
                 price_quantity: self.price_quantity,
                 quantity_min: self.quantity_min,
@@ -14755,9 +14735,9 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::ProductPriceDetailsElementType {
-                datetime: self.datetime,
+                datetime: helper.finish_vec(1usize, Some(2usize), self.datetime)?,
                 daily_price: self.daily_price,
-                product_price: self.product_price,
+                product_price: helper.finish_vec(1usize, None, self.product_price)?,
             })
         }
     }
@@ -17317,9 +17297,7 @@ pub mod quick_xml_deserialize {
             Ok(super::ProductReferenceElementType {
                 type_: self.type_,
                 quantity: self.quantity,
-                prod_id_to: self
-                    .prod_id_to
-                    .ok_or_else(|| ErrorKind::MissingElement("PROD_ID_TO".into()))?,
+                prod_id_to: helper.finish_element("PROD_ID_TO", self.prod_id_to)?,
                 catalog_id: self.catalog_id,
                 catalog_version: self.catalog_version,
             })
@@ -18253,15 +18231,11 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::MimeElementType {
-                mime_type: self
-                    .mime_type
-                    .ok_or_else(|| ErrorKind::MissingElement("MIME_TYPE".into()))?,
-                mime_source: self.mime_source,
+                mime_type: helper.finish_element("MIME_TYPE", self.mime_type)?,
+                mime_source: helper.finish_vec(1usize, None, self.mime_source)?,
                 mime_descr: self.mime_descr,
                 mime_alt: self.mime_alt,
-                mime_purpose: self
-                    .mime_purpose
-                    .ok_or_else(|| ErrorKind::MissingElement("MIME_PURPOSE".into()))?,
+                mime_purpose: helper.finish_element("MIME_PURPOSE", self.mime_purpose)?,
             })
         }
     }
@@ -18399,7 +18373,7 @@ pub mod quick_xml_deserialize {
             self.finish_state(helper, state)?;
             Ok(super::InternationalPidElementType {
                 type_: self.type_,
-                content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                content: helper.finish_content(self.content)?,
             })
         }
     }
@@ -18535,7 +18509,7 @@ pub mod quick_xml_deserialize {
             self.finish_state(helper, state)?;
             Ok(super::BuyerPidElementType {
                 type_: self.type_,
-                content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                content: helper.finish_content(self.content)?,
             })
         }
     }
@@ -18675,7 +18649,7 @@ pub mod quick_xml_deserialize {
             self.finish_state(helper, state)?;
             Ok(super::SpecialTreatmentClassElementType {
                 type_: self.type_,
-                content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                content: helper.finish_content(self.content)?,
             })
         }
     }
@@ -18820,7 +18794,7 @@ pub mod quick_xml_deserialize {
             Ok(super::RemarksElementType {
                 lang: self.lang,
                 type_: self.type_,
-                content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                content: helper.finish_content(self.content)?,
             })
         }
     }
@@ -18967,7 +18941,7 @@ pub mod quick_xml_deserialize {
             Ok(super::ProductStatusElementType {
                 lang: self.lang,
                 type_: self.type_,
-                content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                content: helper.finish_content(self.content)?,
             })
         }
     }
@@ -19105,7 +19079,7 @@ pub mod quick_xml_deserialize {
             self.finish_state(helper, state)?;
             Ok(super::TypeClassificationGroupId {
                 type_: self.type_,
-                content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                content: helper.finish_content(self.content)?,
             })
         }
     }
@@ -19554,8 +19528,8 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::FeatureElementType {
-                fname: self.fname,
-                fvalue: self.fvalue,
+                fname: helper.finish_vec(1usize, None, self.fname)?,
+                fvalue: helper.finish_vec(1usize, None, self.fvalue)?,
                 funit: self.funit,
                 fvalue_details: self.fvalue_details,
             })
@@ -19963,9 +19937,7 @@ pub mod quick_xml_deserialize {
             self.finish_state(helper, state)?;
             Ok(super::ProductPriceDetailsDatetimeElementType {
                 type_: self.type_,
-                date: self
-                    .date
-                    .ok_or_else(|| ErrorKind::MissingElement("DATE".into()))?,
+                date: helper.finish_element("DATE", self.date)?,
                 time: self.time,
                 timezone: self.timezone,
             })
@@ -20631,9 +20603,7 @@ pub mod quick_xml_deserialize {
             self.finish_state(helper, state)?;
             Ok(super::ProductPriceElementType {
                 price_type: self.price_type,
-                price_amount: self
-                    .price_amount
-                    .ok_or_else(|| ErrorKind::MissingElement("PRICE_AMOUNT".into()))?,
+                price_amount: helper.finish_element("PRICE_AMOUNT", self.price_amount)?,
                 price_currency: self.price_currency,
                 tax: self.tax,
                 price_factor: self.price_factor,
@@ -20810,7 +20780,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::UdxEdxfDiscountGroupElementType {
-                content: self.content,
+                content: helper.finish_vec_default(1usize, self.content)?,
             })
         }
     }
@@ -20883,7 +20853,7 @@ pub mod quick_xml_deserialize {
                         let value = deserializer.finish(helper)?;
                         Self::store_udx_edxf_discount_group_manufacturer(&mut values, value)?;
                     }
-                    Ok (super :: UdxEdxfDiscountGroupElementTypeContent :: UdxEdxfDiscountGroupManufacturer (values . ok_or_else (|| ErrorKind :: MissingElement ("UDX.EDXF.DISCOUNT_GROUP_MANUFACTURER" . into ())) ?))
+                    Ok (super :: UdxEdxfDiscountGroupElementTypeContent :: UdxEdxfDiscountGroupManufacturer (helper . finish_element ("UDX.EDXF.DISCOUNT_GROUP_MANUFACTURER" , values) ?))
                 }
                 S::UdxEdxfDiscountGroupSupplier(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
@@ -20892,9 +20862,7 @@ pub mod quick_xml_deserialize {
                     }
                     Ok(
                         super::UdxEdxfDiscountGroupElementTypeContent::UdxEdxfDiscountGroupSupplier(
-                            values.ok_or_else(|| {
-                                ErrorKind::MissingElement("UDX.EDXF.DISCOUNT_GROUP_SUPPLIER".into())
-                            })?,
+                            helper.finish_element("UDX.EDXF.DISCOUNT_GROUP_SUPPLIER", values)?,
                         ),
                     )
                 }
@@ -20990,6 +20958,13 @@ pub mod quick_xml_deserialize {
             })
         }
     }
+    impl Default for UdxEdxfDiscountGroupElementTypeContentDeserializer {
+        fn default() -> Self {
+            Self {
+                state__: Box::new(UdxEdxfDiscountGroupElementTypeContentDeserializerState::Init__),
+            }
+        }
+    }
     impl<'de> Deserializer<'de, super::UdxEdxfDiscountGroupElementTypeContent>
         for UdxEdxfDiscountGroupElementTypeContentDeserializer
     {
@@ -20997,9 +20972,7 @@ pub mod quick_xml_deserialize {
             helper: &mut DeserializeHelper,
             event: Event<'de>,
         ) -> DeserializerResult<'de, super::UdxEdxfDiscountGroupElementTypeContent> {
-            let deserializer = Self {
-                state__: Box::new(UdxEdxfDiscountGroupElementTypeContentDeserializerState::Init__),
-            };
+            let deserializer = Self::default();
             let mut output = deserializer.next(helper, event)?;
             output.artifact = match output.artifact {
                 DeserializerArtifact::Deserializer(x)
@@ -21284,7 +21257,7 @@ pub mod quick_xml_deserialize {
             Ok(super::UdxEdxfDeclarationElementType {
                 type_: self.type_,
                 date: self.date,
-                content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                content: helper.finish_content(self.content)?,
             })
         }
     }
@@ -21595,13 +21568,13 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::UdxEdxfAdditionalFactorsElementType {
-                udx_edxf_additional_price_factor: self
-                    .udx_edxf_additional_price_factor
-                    .ok_or_else(|| {
-                        ErrorKind::MissingElement("UDX.EDXF.ADDITIONAL_PRICE_FACTOR".into())
-                    })?,
-                udx_edxf_additional_factor_info: self.udx_edxf_additional_factor_info.ok_or_else(
-                    || ErrorKind::MissingElement("UDX.EDXF.ADDITIONAL_FACTOR_INFO".into()),
+                udx_edxf_additional_price_factor: helper.finish_element(
+                    "UDX.EDXF.ADDITIONAL_PRICE_FACTOR",
+                    self.udx_edxf_additional_price_factor,
+                )?,
+                udx_edxf_additional_factor_info: helper.finish_element(
+                    "UDX.EDXF.ADDITIONAL_FACTOR_INFO",
+                    self.udx_edxf_additional_factor_info,
                 )?,
             })
         }
@@ -21806,7 +21779,11 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::UdxEdxfCountryBranchNumbersElementType {
-                udx_edxf_country_branch_number: self.udx_edxf_country_branch_number,
+                udx_edxf_country_branch_number: helper.finish_vec(
+                    1usize,
+                    None,
+                    self.udx_edxf_country_branch_number,
+                )?,
             })
         }
     }
@@ -22013,7 +21990,11 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::UdxEdxfCountryBranchSupplierIdsElementType {
-                udx_edxf_country_branch_supplier_id: self.udx_edxf_country_branch_supplier_id,
+                udx_edxf_country_branch_supplier_id: helper.finish_vec(
+                    1usize,
+                    None,
+                    self.udx_edxf_country_branch_supplier_id,
+                )?,
             })
         }
     }
@@ -22225,7 +22206,11 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::UdxEdxfPackingUnitsElementType {
-                udx_edxf_packing_unit: self.udx_edxf_packing_unit,
+                udx_edxf_packing_unit: helper.finish_vec(
+                    1usize,
+                    None,
+                    self.udx_edxf_packing_unit,
+                )?,
             })
         }
     }
@@ -22826,9 +22811,8 @@ pub mod quick_xml_deserialize {
             self.finish_state(helper, state)?;
             Ok(super::UdxEdxfReachElementType {
                 udx_edxf_reach_listdate: self.udx_edxf_reach_listdate,
-                udx_edxf_reach_info: self
-                    .udx_edxf_reach_info
-                    .ok_or_else(|| ErrorKind::MissingElement("UDX.EDXF.REACH.INFO".into()))?,
+                udx_edxf_reach_info: helper
+                    .finish_element("UDX.EDXF.REACH.INFO", self.udx_edxf_reach_info)?,
             })
         }
     }
@@ -23040,7 +23024,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::UdxEdxfSurchargeListElementType {
-                udx_edxf_surcharge: self.udx_edxf_surcharge,
+                udx_edxf_surcharge: helper.finish_vec(1usize, None, self.udx_edxf_surcharge)?,
             })
         }
     }
@@ -23246,9 +23230,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::CustomsTariffNumberElementType {
-                customs_number: self
-                    .customs_number
-                    .ok_or_else(|| ErrorKind::MissingElement("CUSTOMS_NUMBER".into()))?,
+                customs_number: helper.finish_element("CUSTOMS_NUMBER", self.customs_number)?,
             })
         }
     }
@@ -23398,7 +23380,7 @@ pub mod quick_xml_deserialize {
                 super::UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementType {
                     type_: self.type_,
                     country: self.country,
-                    content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                    content: helper.finish_content(self.content)?,
                 },
             )
         }
@@ -23547,7 +23529,7 @@ pub mod quick_xml_deserialize {
                 super::UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementType {
                     type_: self.type_,
                     country: self.country,
-                    content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                    content: helper.finish_content(self.content)?,
                 },
             )
         }
@@ -24938,13 +24920,13 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::UdxEdxfPackingUnitElementType {
-                udx_edxf_quantity_min: self
-                    .udx_edxf_quantity_min
-                    .ok_or_else(|| ErrorKind::MissingElement("UDX.EDXF.QUANTITY_MIN".into()))?,
+                udx_edxf_quantity_min: helper
+                    .finish_element("UDX.EDXF.QUANTITY_MIN", self.udx_edxf_quantity_min)?,
                 udx_edxf_quantity_max: self.udx_edxf_quantity_max,
-                udx_edxf_packing_unit_code: self.udx_edxf_packing_unit_code.ok_or_else(|| {
-                    ErrorKind::MissingElement("UDX.EDXF.PACKING_UNIT_CODE".into())
-                })?,
+                udx_edxf_packing_unit_code: helper.finish_element(
+                    "UDX.EDXF.PACKING_UNIT_CODE",
+                    self.udx_edxf_packing_unit_code,
+                )?,
                 udx_edxf_packing_unit_name: self.udx_edxf_packing_unit_name,
                 udx_edxf_package_break: self.udx_edxf_package_break,
                 udx_edxf_volume: self.udx_edxf_volume,
@@ -25119,7 +25101,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::UdxEdxfSurchargeElementType {
-                content: self.content,
+                content: helper.finish_vec_default(1usize, self.content)?,
             })
         }
     }
@@ -25323,9 +25305,7 @@ pub mod quick_xml_deserialize {
                     }
                     Ok(
                         super::UdxEdxfSurchargeElementTypeContent::UdxEdxfSurchargeType(
-                            values.ok_or_else(|| {
-                                ErrorKind::MissingElement("UDX.EDXF.SURCHARGE_TYPE".into())
-                            })?,
+                            helper.finish_element("UDX.EDXF.SURCHARGE_TYPE", values)?,
                         ),
                     )
                 }
@@ -25336,9 +25316,7 @@ pub mod quick_xml_deserialize {
                     }
                     Ok(
                         super::UdxEdxfSurchargeElementTypeContent::UdxEdxfSurchargeManner(
-                            values.ok_or_else(|| {
-                                ErrorKind::MissingElement("UDX.EDXF.SURCHARGE_MANNER".into())
-                            })?,
+                            helper.finish_element("UDX.EDXF.SURCHARGE_MANNER", values)?,
                         ),
                     )
                 }
@@ -25349,9 +25327,7 @@ pub mod quick_xml_deserialize {
                     }
                     Ok(
                         super::UdxEdxfSurchargeElementTypeContent::UdxEdxfSurchargePercentage(
-                            values.ok_or_else(|| {
-                                ErrorKind::MissingElement("UDX.EDXF.SURCHARGE_PERCENTAGE".into())
-                            })?,
+                            helper.finish_element("UDX.EDXF.SURCHARGE_PERCENTAGE", values)?,
                         ),
                     )
                 }
@@ -25362,9 +25338,7 @@ pub mod quick_xml_deserialize {
                     }
                     Ok(
                         super::UdxEdxfSurchargeElementTypeContent::UdxEdxfSurchargePriceAmount(
-                            values.ok_or_else(|| {
-                                ErrorKind::MissingElement("UDX.EDXF.SURCHARGE_PRICE_AMOUNT".into())
-                            })?,
+                            helper.finish_element("UDX.EDXF.SURCHARGE_PRICE_AMOUNT", values)?,
                         ),
                     )
                 }
@@ -25375,9 +25349,7 @@ pub mod quick_xml_deserialize {
                     }
                     Ok(
                         super::UdxEdxfSurchargeElementTypeContent::UdxEdxfSurchargeCalculation(
-                            values.ok_or_else(|| {
-                                ErrorKind::MissingElement("UDX.EDXF.SURCHARGE_CALCULATION".into())
-                            })?,
+                            helper.finish_element("UDX.EDXF.SURCHARGE_CALCULATION", values)?,
                         ),
                     )
                 }
@@ -25388,9 +25360,7 @@ pub mod quick_xml_deserialize {
                     }
                     Ok(
                         super::UdxEdxfSurchargeElementTypeContent::UdxEdxfMaterialBasis(
-                            values.ok_or_else(|| {
-                                ErrorKind::MissingElement("UDX.EDXF.MATERIAL_BASIS".into())
-                            })?,
+                            helper.finish_element("UDX.EDXF.MATERIAL_BASIS", values)?,
                         ),
                     )
                 }
@@ -25401,9 +25371,7 @@ pub mod quick_xml_deserialize {
                     }
                     Ok(
                         super::UdxEdxfSurchargeElementTypeContent::UdxEdxfMaterialBasisWeight(
-                            values.ok_or_else(|| {
-                                ErrorKind::MissingElement("UDX.EDXF.MATERIAL_BASIS_WEIGHT".into())
-                            })?,
+                            helper.finish_element("UDX.EDXF.MATERIAL_BASIS_WEIGHT", values)?,
                         ),
                     )
                 }
@@ -25415,28 +25383,28 @@ pub mod quick_xml_deserialize {
                             value,
                         )?;
                     }
-                    Ok (super :: UdxEdxfSurchargeElementTypeContent :: UdxEdxfMaterialBasisSurchargeThreshold (values . ok_or_else (|| ErrorKind :: MissingElement ("UDX.EDXF.MATERIAL_BASIS_SURCHARGE_THRESHOLD" . into ())) ?))
+                    Ok (super :: UdxEdxfSurchargeElementTypeContent :: UdxEdxfMaterialBasisSurchargeThreshold (helper . finish_element ("UDX.EDXF.MATERIAL_BASIS_SURCHARGE_THRESHOLD" , values) ?))
                 }
                 S::UdxEdxfMaterialBasisSurchargeShutter(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_udx_edxf_material_basis_surcharge_shutter(&mut values, value)?;
                     }
-                    Ok (super :: UdxEdxfSurchargeElementTypeContent :: UdxEdxfMaterialBasisSurchargeShutter (values . ok_or_else (|| ErrorKind :: MissingElement ("UDX.EDXF.MATERIAL_BASIS_SURCHARGE_SHUTTER" . into ())) ?))
+                    Ok (super :: UdxEdxfSurchargeElementTypeContent :: UdxEdxfMaterialBasisSurchargeShutter (helper . finish_element ("UDX.EDXF.MATERIAL_BASIS_SURCHARGE_SHUTTER" , values) ?))
                 }
                 S::UdxEdxfMaterialBasisSurchargeCredit(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_udx_edxf_material_basis_surcharge_credit(&mut values, value)?;
                     }
-                    Ok (super :: UdxEdxfSurchargeElementTypeContent :: UdxEdxfMaterialBasisSurchargeCredit (values . ok_or_else (|| ErrorKind :: MissingElement ("UDX.EDXF.MATERIAL_BASIS_SURCHARGE_CREDIT" . into ())) ?))
+                    Ok (super :: UdxEdxfSurchargeElementTypeContent :: UdxEdxfMaterialBasisSurchargeCredit (helper . finish_element ("UDX.EDXF.MATERIAL_BASIS_SURCHARGE_CREDIT" , values) ?))
                 }
                 S::UdxEdxfMaterialBasisSurchargeTable(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_udx_edxf_material_basis_surcharge_table(&mut values, value)?;
                     }
-                    Ok (super :: UdxEdxfSurchargeElementTypeContent :: UdxEdxfMaterialBasisSurchargeTable (values . ok_or_else (|| ErrorKind :: MissingElement ("UDX.EDXF.MATERIAL_BASIS_SURCHARGE_TABLE" . into ())) ?))
+                    Ok (super :: UdxEdxfSurchargeElementTypeContent :: UdxEdxfMaterialBasisSurchargeTable (helper . finish_element ("UDX.EDXF.MATERIAL_BASIS_SURCHARGE_TABLE" , values) ?))
                 }
                 S::Done__(data) => Ok(data),
             }
@@ -26075,6 +26043,13 @@ pub mod quick_xml_deserialize {
             })
         }
     }
+    impl Default for UdxEdxfSurchargeElementTypeContentDeserializer {
+        fn default() -> Self {
+            Self {
+                state__: Box::new(UdxEdxfSurchargeElementTypeContentDeserializerState::Init__),
+            }
+        }
+    }
     impl<'de> Deserializer<'de, super::UdxEdxfSurchargeElementTypeContent>
         for UdxEdxfSurchargeElementTypeContentDeserializer
     {
@@ -26082,9 +26057,7 @@ pub mod quick_xml_deserialize {
             helper: &mut DeserializeHelper,
             event: Event<'de>,
         ) -> DeserializerResult<'de, super::UdxEdxfSurchargeElementTypeContent> {
-            let deserializer = Self {
-                state__: Box::new(UdxEdxfSurchargeElementTypeContentDeserializerState::Init__),
-            };
+            let deserializer = Self::default();
             let mut output = deserializer.next(helper, event)?;
             output.artifact = match output.artifact {
                 DeserializerArtifact::Deserializer(x)

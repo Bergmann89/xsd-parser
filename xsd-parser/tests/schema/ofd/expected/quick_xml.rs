@@ -467,9 +467,7 @@ pub mod annotations {
                 self.finish_state(helper, state)?;
                 Ok(super::AnnotationsPageXElementType {
                     page_id: self.page_id,
-                    file_loc: self
-                        .file_loc
-                        .ok_or_else(|| ErrorKind::MissingElement("FileLoc".into()))?,
+                    file_loc: helper.finish_element("FileLoc", self.file_loc)?,
                 })
             }
         }
@@ -997,7 +995,9 @@ pub mod annotion {
                     PageAnnotXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(helper, state)?;
-                Ok(super::PageAnnotXElementType { annot: self.annot })
+                Ok(super::PageAnnotXElementType {
+                    annot: helper.finish_vec(1usize, None, self.annot)?,
+                })
             }
         }
         #[derive(Debug)]
@@ -1506,9 +1506,7 @@ pub mod annotion {
                     read_only: self.read_only,
                     remark: self.remark,
                     parameters: self.parameters,
-                    appearance: self
-                        .appearance
-                        .ok_or_else(|| ErrorKind::MissingElement("Appearance".into()))?,
+                    appearance: helper.finish_element("Appearance", self.appearance)?,
                 })
             }
         }
@@ -1710,7 +1708,7 @@ pub mod annotion {
                 );
                 self.finish_state(helper, state)?;
                 Ok(super::PageAnnotAnnotParametersXElementType {
-                    parameter: self.parameter,
+                    parameter: helper.finish_vec(1usize, None, self.parameter)?,
                 })
             }
         }
@@ -1880,7 +1878,7 @@ pub mod annotion {
                 self.finish_state(helper, state)?;
                 Ok(super::PageAnnotAnnotAppearanceXElementType {
                     boundary: self.boundary,
-                    content: self.content,
+                    content: helper.finish_vec_default(0usize, self.content)?,
                 })
             }
         }
@@ -1980,9 +1978,7 @@ pub mod annotion {
                         }
                         Ok(
                             super::PageAnnotAnnotAppearanceXElementTypeContent::TextObject(
-                                values.ok_or_else(|| {
-                                    ErrorKind::MissingElement("TextObject".into())
-                                })?,
+                                helper.finish_element("TextObject", values)?,
                             ),
                         )
                     }
@@ -1993,9 +1989,7 @@ pub mod annotion {
                         }
                         Ok(
                             super::PageAnnotAnnotAppearanceXElementTypeContent::PathObject(
-                                values.ok_or_else(|| {
-                                    ErrorKind::MissingElement("PathObject".into())
-                                })?,
+                                helper.finish_element("PathObject", values)?,
                             ),
                         )
                     }
@@ -2006,9 +2000,7 @@ pub mod annotion {
                         }
                         Ok(
                             super::PageAnnotAnnotAppearanceXElementTypeContent::ImageObject(
-                                values.ok_or_else(|| {
-                                    ErrorKind::MissingElement("ImageObject".into())
-                                })?,
+                                helper.finish_element("ImageObject", values)?,
                             ),
                         )
                     }
@@ -2019,9 +2011,7 @@ pub mod annotion {
                         }
                         Ok(
                             super::PageAnnotAnnotAppearanceXElementTypeContent::CompositeObject(
-                                values.ok_or_else(|| {
-                                    ErrorKind::MissingElement("CompositeObject".into())
-                                })?,
+                                helper.finish_element("CompositeObject", values)?,
                             ),
                         )
                     }
@@ -2032,8 +2022,7 @@ pub mod annotion {
                         }
                         Ok(
                             super::PageAnnotAnnotAppearanceXElementTypeContent::PageBlock(
-                                values
-                                    .ok_or_else(|| ErrorKind::MissingElement("PageBlock".into()))?,
+                                helper.finish_element("PageBlock", values)?,
                             ),
                         )
                     }
@@ -2365,6 +2354,15 @@ pub mod annotion {
                 })
             }
         }
+        impl Default for PageAnnotAnnotAppearanceXElementTypeContentDeserializer {
+            fn default() -> Self {
+                Self {
+                    state__: Box::new(
+                        PageAnnotAnnotAppearanceXElementTypeContentDeserializerState::Init__,
+                    ),
+                }
+            }
+        }
         impl<'de> Deserializer<'de, super::PageAnnotAnnotAppearanceXElementTypeContent>
             for PageAnnotAnnotAppearanceXElementTypeContentDeserializer
         {
@@ -2373,11 +2371,7 @@ pub mod annotion {
                 event: Event<'de>,
             ) -> DeserializerResult<'de, super::PageAnnotAnnotAppearanceXElementTypeContent>
             {
-                let deserializer = Self {
-                    state__: Box::new(
-                        PageAnnotAnnotAppearanceXElementTypeContentDeserializerState::Init__,
-                    ),
-                };
+                let deserializer = Self::default();
                 let mut output = deserializer.next(helper, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
@@ -3508,9 +3502,7 @@ pub mod attachments {
                     size: self.size,
                     visible: self.visible,
                     usage: self.usage,
-                    file_loc: self
-                        .file_loc
-                        .ok_or_else(|| ErrorKind::MissingElement("FileLoc".into()))?,
+                    file_loc: helper.finish_element("FileLoc", self.file_loc)?,
                 })
             }
         }
@@ -4233,9 +4225,7 @@ pub mod custom_tags {
                 Ok(super::CustomTagsCustomTagXElementType {
                     name_space: self.name_space,
                     schema_loc: self.schema_loc,
-                    file_loc: self
-                        .file_loc
-                        .ok_or_else(|| ErrorKind::MissingElement("FileLoc".into()))?,
+                    file_loc: helper.finish_element("FileLoc", self.file_loc)?,
                 })
             }
         }
@@ -5127,7 +5117,7 @@ pub mod definition {
                 self.finish_state(helper, state)?;
                 Ok(super::CtActionXType {
                     event: self.event,
-                    content: self.content,
+                    content: helper.finish_vec_default(1usize, self.content)?,
                 })
             }
         }
@@ -5270,9 +5260,9 @@ pub mod definition {
                             let value = deserializer.finish(helper)?;
                             Self::store_region(&mut values, value)?;
                         }
-                        Ok(super::CtActionXTypeContent::Region(values.ok_or_else(
-                            || ErrorKind::MissingElement("Region".into()),
-                        )?))
+                        Ok(super::CtActionXTypeContent::Region(
+                            helper.finish_element("Region", values)?,
+                        ))
                     }
                     S::Goto(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
@@ -5280,7 +5270,7 @@ pub mod definition {
                             Self::store_goto(&mut values, value)?;
                         }
                         Ok(super::CtActionXTypeContent::Goto(
-                            values.ok_or_else(|| ErrorKind::MissingElement("Goto".into()))?,
+                            helper.finish_element("Goto", values)?,
                         ))
                     }
                     S::Uri(mut values, deserializer) => {
@@ -5289,7 +5279,7 @@ pub mod definition {
                             Self::store_uri(&mut values, value)?;
                         }
                         Ok(super::CtActionXTypeContent::Uri(
-                            values.ok_or_else(|| ErrorKind::MissingElement("URI".into()))?,
+                            helper.finish_element("URI", values)?,
                         ))
                     }
                     S::GotoA(mut values, deserializer) => {
@@ -5297,27 +5287,27 @@ pub mod definition {
                             let value = deserializer.finish(helper)?;
                             Self::store_goto_a(&mut values, value)?;
                         }
-                        Ok(super::CtActionXTypeContent::GotoA(values.ok_or_else(
-                            || ErrorKind::MissingElement("GotoA".into()),
-                        )?))
+                        Ok(super::CtActionXTypeContent::GotoA(
+                            helper.finish_element("GotoA", values)?,
+                        ))
                     }
                     S::Sound(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_sound(&mut values, value)?;
                         }
-                        Ok(super::CtActionXTypeContent::Sound(values.ok_or_else(
-                            || ErrorKind::MissingElement("Sound".into()),
-                        )?))
+                        Ok(super::CtActionXTypeContent::Sound(
+                            helper.finish_element("Sound", values)?,
+                        ))
                     }
                     S::Movie(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_movie(&mut values, value)?;
                         }
-                        Ok(super::CtActionXTypeContent::Movie(values.ok_or_else(
-                            || ErrorKind::MissingElement("Movie".into()),
-                        )?))
+                        Ok(super::CtActionXTypeContent::Movie(
+                            helper.finish_element("Movie", values)?,
+                        ))
                     }
                     S::Done__(data) => Ok(data),
                 }
@@ -5727,14 +5717,19 @@ pub mod definition {
                 })
             }
         }
+        impl Default for CtActionXTypeContentDeserializer {
+            fn default() -> Self {
+                Self {
+                    state__: Box::new(CtActionXTypeContentDeserializerState::Init__),
+                }
+            }
+        }
         impl<'de> Deserializer<'de, super::CtActionXTypeContent> for CtActionXTypeContentDeserializer {
             fn init(
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
             ) -> DeserializerResult<'de, super::CtActionXTypeContent> {
-                let deserializer = Self {
-                    state__: Box::new(CtActionXTypeContentDeserializerState::Init__),
-                };
+                let deserializer = Self::default();
                 let mut output = deserializer.next(helper, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
@@ -6538,9 +6533,7 @@ pub mod definition {
                 );
                 self.finish_state(helper, state)?;
                 Ok(super::CtPageAreaXType {
-                    physical_box: self
-                        .physical_box
-                        .ok_or_else(|| ErrorKind::MissingElement("PhysicalBox".into()))?,
+                    physical_box: helper.finish_element("PhysicalBox", self.physical_box)?,
                     application_box: self.application_box,
                     content_box: self.content_box,
                     bleed_box: self.bleed_box,
@@ -6731,7 +6724,9 @@ pub mod definition {
                     CtRegionXTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(helper, state)?;
-                Ok(super::CtRegionXType { area: self.area })
+                Ok(super::CtRegionXType {
+                    area: helper.finish_vec(1usize, None, self.area)?,
+                })
             }
         }
         #[derive(Debug)]
@@ -6819,7 +6814,7 @@ pub mod definition {
                             Self::store_dest(&mut values, value)?;
                         }
                         Ok(super::CtActionGotoXElementType::Dest(
-                            values.ok_or_else(|| ErrorKind::MissingElement("Dest".into()))?,
+                            helper.finish_element("Dest", values)?,
                         ))
                     }
                     S::Bookmark(mut values, deserializer) => {
@@ -6828,7 +6823,7 @@ pub mod definition {
                             Self::store_bookmark(&mut values, value)?;
                         }
                         Ok(super::CtActionGotoXElementType::Bookmark(
-                            values.ok_or_else(|| ErrorKind::MissingElement("Bookmark".into()))?,
+                            helper.finish_element("Bookmark", values)?,
                         ))
                     }
                     S::Done__(data) => Ok(data),
@@ -7657,7 +7652,7 @@ pub mod definition {
                 self.finish_state(helper, state)?;
                 Ok(super::CtRegionAreaXElementType {
                     start: self.start,
-                    content: self.content,
+                    content: helper.finish_vec_default(1usize, self.content)?,
                 })
             }
         }
@@ -7775,7 +7770,7 @@ pub mod definition {
                             Self::store_move_(&mut values, value)?;
                         }
                         Ok(super::CtRegionAreaXElementTypeContent::Move(
-                            values.ok_or_else(|| ErrorKind::MissingElement("Move".into()))?,
+                            helper.finish_element("Move", values)?,
                         ))
                     }
                     S::Line(mut values, deserializer) => {
@@ -7784,7 +7779,7 @@ pub mod definition {
                             Self::store_line(&mut values, value)?;
                         }
                         Ok(super::CtRegionAreaXElementTypeContent::Line(
-                            values.ok_or_else(|| ErrorKind::MissingElement("Line".into()))?,
+                            helper.finish_element("Line", values)?,
                         ))
                     }
                     S::OuadraticBezier(mut values, deserializer) => {
@@ -7793,9 +7788,7 @@ pub mod definition {
                             Self::store_ouadratic_bezier(&mut values, value)?;
                         }
                         Ok(super::CtRegionAreaXElementTypeContent::OuadraticBezier(
-                            values.ok_or_else(|| {
-                                ErrorKind::MissingElement("OuadraticBezier".into())
-                            })?,
+                            helper.finish_element("OuadraticBezier", values)?,
                         ))
                     }
                     S::CubicBezier(mut values, deserializer) => {
@@ -7804,8 +7797,7 @@ pub mod definition {
                             Self::store_cubic_bezier(&mut values, value)?;
                         }
                         Ok(super::CtRegionAreaXElementTypeContent::CubicBezier(
-                            values
-                                .ok_or_else(|| ErrorKind::MissingElement("CubicBezier".into()))?,
+                            helper.finish_element("CubicBezier", values)?,
                         ))
                     }
                     S::Arc(mut values, deserializer) => {
@@ -7814,7 +7806,7 @@ pub mod definition {
                             Self::store_arc(&mut values, value)?;
                         }
                         Ok(super::CtRegionAreaXElementTypeContent::Arc(
-                            values.ok_or_else(|| ErrorKind::MissingElement("Arc".into()))?,
+                            helper.finish_element("Arc", values)?,
                         ))
                     }
                     S::Close(mut values, deserializer) => {
@@ -7823,7 +7815,7 @@ pub mod definition {
                             Self::store_close(&mut values, value)?;
                         }
                         Ok(super::CtRegionAreaXElementTypeContent::Close(
-                            values.ok_or_else(|| ErrorKind::MissingElement("Close".into()))?,
+                            helper.finish_element("Close", values)?,
                         ))
                     }
                     S::Done__(data) => Ok(data),
@@ -8292,6 +8284,13 @@ pub mod definition {
                 })
             }
         }
+        impl Default for CtRegionAreaXElementTypeContentDeserializer {
+            fn default() -> Self {
+                Self {
+                    state__: Box::new(CtRegionAreaXElementTypeContentDeserializerState::Init__),
+                }
+            }
+        }
         impl<'de> Deserializer<'de, super::CtRegionAreaXElementTypeContent>
             for CtRegionAreaXElementTypeContentDeserializer
         {
@@ -8299,9 +8298,7 @@ pub mod definition {
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
             ) -> DeserializerResult<'de, super::CtRegionAreaXElementTypeContent> {
-                let deserializer = Self {
-                    state__: Box::new(CtRegionAreaXElementTypeContentDeserializerState::Init__),
-                };
+                let deserializer = Self::default();
                 let mut output = deserializer.next(helper, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
@@ -10965,9 +10962,7 @@ pub mod document {
                 self.finish_state(helper, state)?;
                 Ok(super::CtBookmarkXType {
                     name: self.name,
-                    dest: self
-                        .dest
-                        .ok_or_else(|| ErrorKind::MissingElement("Dest".into()))?,
+                    dest: helper.finish_element("Dest", self.dest)?,
                 })
             }
         }
@@ -12282,7 +12277,7 @@ pub mod document {
                 );
                 self.finish_state(helper, state)?;
                 Ok(super::CtVPreferencesXType {
-                    content: self.content,
+                    content: helper.finish_vec_default(0usize, self.content)?,
                 })
             }
         }
@@ -12463,7 +12458,7 @@ pub mod document {
                             Self::store_page_mode(&mut values, value)?;
                         }
                         Ok(super::CtVPreferencesXTypeContent::PageMode(
-                            values.ok_or_else(|| ErrorKind::MissingElement("PageMode".into()))?,
+                            helper.finish_element("PageMode", values)?,
                         ))
                     }
                     S::PageLayout(mut values, deserializer) => {
@@ -12472,7 +12467,7 @@ pub mod document {
                             Self::store_page_layout(&mut values, value)?;
                         }
                         Ok(super::CtVPreferencesXTypeContent::PageLayout(
-                            values.ok_or_else(|| ErrorKind::MissingElement("PageLayout".into()))?,
+                            helper.finish_element("PageLayout", values)?,
                         ))
                     }
                     S::TabDisplay(mut values, deserializer) => {
@@ -12481,7 +12476,7 @@ pub mod document {
                             Self::store_tab_display(&mut values, value)?;
                         }
                         Ok(super::CtVPreferencesXTypeContent::TabDisplay(
-                            values.ok_or_else(|| ErrorKind::MissingElement("TabDisplay".into()))?,
+                            helper.finish_element("TabDisplay", values)?,
                         ))
                     }
                     S::HideToolbar(mut values, deserializer) => {
@@ -12490,8 +12485,7 @@ pub mod document {
                             Self::store_hide_toolbar(&mut values, value)?;
                         }
                         Ok(super::CtVPreferencesXTypeContent::HideToolbar(
-                            values
-                                .ok_or_else(|| ErrorKind::MissingElement("HideToolbar".into()))?,
+                            helper.finish_element("HideToolbar", values)?,
                         ))
                     }
                     S::HideMenubar(mut values, deserializer) => {
@@ -12500,8 +12494,7 @@ pub mod document {
                             Self::store_hide_menubar(&mut values, value)?;
                         }
                         Ok(super::CtVPreferencesXTypeContent::HideMenubar(
-                            values
-                                .ok_or_else(|| ErrorKind::MissingElement("HideMenubar".into()))?,
+                            helper.finish_element("HideMenubar", values)?,
                         ))
                     }
                     S::HideWindowUi(mut values, deserializer) => {
@@ -12510,8 +12503,7 @@ pub mod document {
                             Self::store_hide_window_ui(&mut values, value)?;
                         }
                         Ok(super::CtVPreferencesXTypeContent::HideWindowUi(
-                            values
-                                .ok_or_else(|| ErrorKind::MissingElement("HideWindowUI".into()))?,
+                            helper.finish_element("HideWindowUI", values)?,
                         ))
                     }
                     S::ZoomMode(mut values, deserializer) => {
@@ -12520,7 +12512,7 @@ pub mod document {
                             Self::store_zoom_mode(&mut values, value)?;
                         }
                         Ok(super::CtVPreferencesXTypeContent::ZoomMode(
-                            values.ok_or_else(|| ErrorKind::MissingElement("ZoomMode".into()))?,
+                            helper.finish_element("ZoomMode", values)?,
                         ))
                     }
                     S::Zoom(mut values, deserializer) => {
@@ -12529,7 +12521,7 @@ pub mod document {
                             Self::store_zoom(&mut values, value)?;
                         }
                         Ok(super::CtVPreferencesXTypeContent::Zoom(
-                            values.ok_or_else(|| ErrorKind::MissingElement("Zoom".into()))?,
+                            helper.finish_element("Zoom", values)?,
                         ))
                     }
                     S::Done__(data) => Ok(data),
@@ -13116,6 +13108,13 @@ pub mod document {
                 })
             }
         }
+        impl Default for CtVPreferencesXTypeContentDeserializer {
+            fn default() -> Self {
+                Self {
+                    state__: Box::new(CtVPreferencesXTypeContentDeserializerState::Init__),
+                }
+            }
+        }
         impl<'de> Deserializer<'de, super::CtVPreferencesXTypeContent>
             for CtVPreferencesXTypeContentDeserializer
         {
@@ -13123,9 +13122,7 @@ pub mod document {
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
             ) -> DeserializerResult<'de, super::CtVPreferencesXTypeContent> {
-                let deserializer = Self {
-                    state__: Box::new(CtVPreferencesXTypeContentDeserializerState::Init__),
-                };
+                let deserializer = Self::default();
                 let mut output = deserializer.next(helper, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
@@ -14543,12 +14540,8 @@ pub mod document {
                 );
                 self.finish_state(helper, state)?;
                 Ok(super::DocumentXElementType {
-                    common_data: self
-                        .common_data
-                        .ok_or_else(|| ErrorKind::MissingElement("CommonData".into()))?,
-                    pages: self
-                        .pages
-                        .ok_or_else(|| ErrorKind::MissingElement("Pages".into()))?,
+                    common_data: helper.finish_element("CommonData", self.common_data)?,
+                    pages: helper.finish_element("Pages", self.pages)?,
                     outlines: self.outlines,
                     permissions: self.permissions,
                     actions: self.actions,
@@ -15429,12 +15422,8 @@ pub mod document {
                 );
                 self.finish_state(helper, state)?;
                 Ok(super::DocumentCommonDataXElementType {
-                    max_unit_id: self
-                        .max_unit_id
-                        .ok_or_else(|| ErrorKind::MissingElement("MaxUnitID".into()))?,
-                    page_area: self
-                        .page_area
-                        .ok_or_else(|| ErrorKind::MissingElement("PageArea".into()))?,
+                    max_unit_id: helper.finish_element("MaxUnitID", self.max_unit_id)?,
+                    page_area: helper.finish_element("PageArea", self.page_area)?,
                     public_res: self.public_res,
                     document_res: self.document_res,
                     template_page: self.template_page,
@@ -15636,7 +15625,9 @@ pub mod document {
                     DocumentPagesXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(helper, state)?;
-                Ok(super::DocumentPagesXElementType { page: self.page })
+                Ok(super::DocumentPagesXElementType {
+                    page: helper.finish_vec(1usize, None, self.page)?,
+                })
             }
         }
         #[derive(Debug)]
@@ -15843,7 +15834,7 @@ pub mod document {
                 );
                 self.finish_state(helper, state)?;
                 Ok(super::DocumentOutlinesXElementType {
-                    outline_elem: self.outline_elem,
+                    outline_elem: helper.finish_vec(1usize, None, self.outline_elem)?,
                 })
             }
         }
@@ -16046,7 +16037,7 @@ pub mod document {
                 );
                 self.finish_state(helper, state)?;
                 Ok(super::DocumentBookmarksXElementType {
-                    bookmark: self.bookmark,
+                    bookmark: helper.finish_vec(1usize, None, self.bookmark)?,
                 })
             }
         }
@@ -17957,7 +17948,7 @@ pub mod extensions {
                     app_version: self.app_version,
                     date: self.date,
                     ref_id: self.ref_id,
-                    content: self.content,
+                    content: helper.finish_vec_default(1usize, self.content)?,
                 })
             }
         }
@@ -18050,7 +18041,7 @@ pub mod extensions {
                             Self::store_property(&mut values, value)?;
                         }
                         Ok(super::CtExtensionXTypeContent::Property(
-                            values.ok_or_else(|| ErrorKind::MissingElement("Property".into()))?,
+                            helper.finish_element("Property", values)?,
                         ))
                     }
                     S::Data(mut values, deserializer) => {
@@ -18059,7 +18050,7 @@ pub mod extensions {
                             Self::store_data(&mut values, value)?;
                         }
                         Ok(super::CtExtensionXTypeContent::Data(
-                            values.ok_or_else(|| ErrorKind::MissingElement("Data".into()))?,
+                            helper.finish_element("Data", values)?,
                         ))
                     }
                     S::ExtendData(mut values, deserializer) => {
@@ -18068,7 +18059,7 @@ pub mod extensions {
                             Self::store_extend_data(&mut values, value)?;
                         }
                         Ok(super::CtExtensionXTypeContent::ExtendData(
-                            values.ok_or_else(|| ErrorKind::MissingElement("ExtendData".into()))?,
+                            helper.finish_element("ExtendData", values)?,
                         ))
                     }
                     S::Done__(data) => Ok(data),
@@ -18283,6 +18274,13 @@ pub mod extensions {
                 })
             }
         }
+        impl Default for CtExtensionXTypeContentDeserializer {
+            fn default() -> Self {
+                Self {
+                    state__: Box::new(CtExtensionXTypeContentDeserializerState::Init__),
+                }
+            }
+        }
         impl<'de> Deserializer<'de, super::CtExtensionXTypeContent>
             for CtExtensionXTypeContentDeserializer
         {
@@ -18290,9 +18288,7 @@ pub mod extensions {
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
             ) -> DeserializerResult<'de, super::CtExtensionXTypeContent> {
-                let deserializer = Self {
-                    state__: Box::new(CtExtensionXTypeContentDeserializerState::Init__),
-                };
+                let deserializer = Self::default();
                 let mut output = deserializer.next(helper, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
@@ -18633,7 +18629,7 @@ pub mod extensions {
                 );
                 self.finish_state(helper, state)?;
                 Ok(super::ExtensionsXElementType {
-                    extension: self.extension,
+                    extension: helper.finish_vec(1usize, None, self.extension)?,
                 })
             }
         }
@@ -18782,7 +18778,7 @@ pub mod extensions {
                 Ok(super::CtExtensionPropertyXElementType {
                     name: self.name,
                     type_: self.type_,
-                    content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                    content: helper.finish_content(self.content)?,
                 })
             }
         }
@@ -20591,9 +20587,7 @@ pub mod ofd {
                 );
                 self.finish_state(helper, state)?;
                 Ok(super::CtDocInfoXType {
-                    doc_id: self
-                        .doc_id
-                        .ok_or_else(|| ErrorKind::MissingElement("DocID".into()))?,
+                    doc_id: helper.finish_element("DocID", self.doc_id)?,
                     title: self.title,
                     author: self.author,
                     subject: self.subject,
@@ -20821,7 +20815,7 @@ pub mod ofd {
                 Ok(super::OfdXElementType {
                     version: self.version,
                     doc_type: self.doc_type,
-                    doc_body: self.doc_body,
+                    doc_body: helper.finish_vec(1usize, None, self.doc_body)?,
                 })
             }
         }
@@ -21024,7 +21018,7 @@ pub mod ofd {
                 );
                 self.finish_state(helper, state)?;
                 Ok(super::CtDocInfoKeywordsXElementType {
-                    keyword: self.keyword,
+                    keyword: helper.finish_vec(1usize, None, self.keyword)?,
                 })
             }
         }
@@ -21228,7 +21222,7 @@ pub mod ofd {
                 );
                 self.finish_state(helper, state)?;
                 Ok(super::CtDocInfoCustomDatasXElementType {
-                    custom_data: self.custom_data,
+                    custom_data: helper.finish_vec(1usize, None, self.custom_data)?,
                 })
             }
         }
@@ -21716,12 +21710,8 @@ pub mod ofd {
                 );
                 self.finish_state(helper, state)?;
                 Ok(super::OfdDocBodyXElementType {
-                    doc_info: self
-                        .doc_info
-                        .ok_or_else(|| ErrorKind::MissingElement("DocInfo".into()))?,
-                    doc_root: self
-                        .doc_root
-                        .ok_or_else(|| ErrorKind::MissingElement("DocRoot".into()))?,
+                    doc_info: helper.finish_element("DocInfo", self.doc_info)?,
+                    doc_root: helper.finish_element("DocRoot", self.doc_root)?,
                     versions: self.versions,
                     signatures: self.signatures,
                 })
@@ -21869,7 +21859,7 @@ pub mod ofd {
                 self.finish_state(helper, state)?;
                 Ok(super::CtDocInfoCustomDatasCustomDataXElementType {
                     name: self.name,
-                    content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                    content: helper.finish_content(self.content)?,
                 })
             }
         }
@@ -22071,7 +22061,7 @@ pub mod ofd {
                 );
                 self.finish_state(helper, state)?;
                 Ok(super::OfdDocBodyVersionsXElementType {
-                    version: self.version,
+                    version: helper.finish_vec(1usize, None, self.version)?,
                 })
             }
         }
@@ -25174,7 +25164,7 @@ pub mod page {
                     extend: self.extend,
                     start_point: self.start_point,
                     end_point: self.end_point,
-                    segment: self.segment,
+                    segment: helper.finish_vec(2usize, None, self.segment)?,
                 })
             }
         }
@@ -25582,7 +25572,9 @@ pub mod page {
             ) -> Result<super::CtClipXType, Error> {
                 let state = replace(&mut *self.state__, CtClipXTypeDeserializerState::Unknown__);
                 self.finish_state(helper, state)?;
-                Ok(super::CtClipXType { area: self.area })
+                Ok(super::CtClipXType {
+                    area: helper.finish_vec(1usize, None, self.area)?,
+                })
             }
         }
         #[derive(Debug)]
@@ -25889,36 +25881,36 @@ pub mod page {
                             let value = deserializer.finish(helper)?;
                             Self::store_pattern(&mut values, value)?;
                         }
-                        Ok(super::CtColorXTypeContent::Pattern(values.ok_or_else(
-                            || ErrorKind::MissingElement("Pattern".into()),
-                        )?))
+                        Ok(super::CtColorXTypeContent::Pattern(
+                            helper.finish_element("Pattern", values)?,
+                        ))
                     }
                     S::AxialShd(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_axial_shd(&mut values, value)?;
                         }
-                        Ok(super::CtColorXTypeContent::AxialShd(values.ok_or_else(
-                            || ErrorKind::MissingElement("AxialShd".into()),
-                        )?))
+                        Ok(super::CtColorXTypeContent::AxialShd(
+                            helper.finish_element("AxialShd", values)?,
+                        ))
                     }
                     S::RadialShd(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_radial_shd(&mut values, value)?;
                         }
-                        Ok(super::CtColorXTypeContent::RadialShd(values.ok_or_else(
-                            || ErrorKind::MissingElement("RadialShd".into()),
-                        )?))
+                        Ok(super::CtColorXTypeContent::RadialShd(
+                            helper.finish_element("RadialShd", values)?,
+                        ))
                     }
                     S::GouraudShd(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_gouraud_shd(&mut values, value)?;
                         }
-                        Ok(super::CtColorXTypeContent::GouraudShd(values.ok_or_else(
-                            || ErrorKind::MissingElement("GouraudShd".into()),
-                        )?))
+                        Ok(super::CtColorXTypeContent::GouraudShd(
+                            helper.finish_element("GouraudShd", values)?,
+                        ))
                     }
                     S::LaGourandShd(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
@@ -25926,8 +25918,7 @@ pub mod page {
                             Self::store_la_gourand_shd(&mut values, value)?;
                         }
                         Ok(super::CtColorXTypeContent::LaGourandShd(
-                            values
-                                .ok_or_else(|| ErrorKind::MissingElement("LaGourandShd".into()))?,
+                            helper.finish_element("LaGourandShd", values)?,
                         ))
                     }
                     S::Done__(data) => Ok(data),
@@ -26293,14 +26284,19 @@ pub mod page {
                 })
             }
         }
+        impl Default for CtColorXTypeContentDeserializer {
+            fn default() -> Self {
+                Self {
+                    state__: Box::new(CtColorXTypeContentDeserializerState::Init__),
+                }
+            }
+        }
         impl<'de> Deserializer<'de, super::CtColorXTypeContent> for CtColorXTypeContentDeserializer {
             fn init(
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
             ) -> DeserializerResult<'de, super::CtColorXTypeContent> {
-                let deserializer = Self {
-                    state__: Box::new(CtColorXTypeContentDeserializerState::Init__),
-                };
+                let deserializer = Self::default();
                 let mut output = deserializer.next(helper, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
@@ -27212,7 +27208,7 @@ pub mod page {
                 self.finish_state(helper, state)?;
                 Ok(super::CtGouraudShdXType {
                     extend: self.extend,
-                    point: self.point,
+                    point: helper.finish_vec(3usize, None, self.point)?,
                     back_color: self.back_color.map(Box::new),
                 })
             }
@@ -28452,7 +28448,7 @@ pub mod page {
                 Ok(super::CtLaGouraudShdXType {
                     vertices_per_row: self.vertices_per_row,
                     extend: self.extend,
-                    point: self.point,
+                    point: helper.finish_vec(4usize, None, self.point)?,
                     back_color: self.back_color.map(Box::new),
                 })
             }
@@ -28626,7 +28622,7 @@ pub mod page {
                 Ok(super::CtLayerXType {
                     type_: self.type_,
                     draw_param: self.draw_param,
-                    content: self.content,
+                    content: helper.finish_vec_default(0usize, self.content)?,
                 })
             }
         }
@@ -28736,27 +28732,27 @@ pub mod page {
                             let value = deserializer.finish(helper)?;
                             Self::store_text_object(&mut values, value)?;
                         }
-                        Ok(super::CtLayerXTypeContent::TextObject(values.ok_or_else(
-                            || ErrorKind::MissingElement("TextObject".into()),
-                        )?))
+                        Ok(super::CtLayerXTypeContent::TextObject(
+                            helper.finish_element("TextObject", values)?,
+                        ))
                     }
                     S::PathObject(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_path_object(&mut values, value)?;
                         }
-                        Ok(super::CtLayerXTypeContent::PathObject(values.ok_or_else(
-                            || ErrorKind::MissingElement("PathObject".into()),
-                        )?))
+                        Ok(super::CtLayerXTypeContent::PathObject(
+                            helper.finish_element("PathObject", values)?,
+                        ))
                     }
                     S::ImageObject(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_image_object(&mut values, value)?;
                         }
-                        Ok(super::CtLayerXTypeContent::ImageObject(values.ok_or_else(
-                            || ErrorKind::MissingElement("ImageObject".into()),
-                        )?))
+                        Ok(super::CtLayerXTypeContent::ImageObject(
+                            helper.finish_element("ImageObject", values)?,
+                        ))
                     }
                     S::CompositeObject(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
@@ -28764,9 +28760,7 @@ pub mod page {
                             Self::store_composite_object(&mut values, value)?;
                         }
                         Ok(super::CtLayerXTypeContent::CompositeObject(
-                            values.ok_or_else(|| {
-                                ErrorKind::MissingElement("CompositeObject".into())
-                            })?,
+                            helper.finish_element("CompositeObject", values)?,
                         ))
                     }
                     S::PageBlock(mut values, deserializer) => {
@@ -28774,9 +28768,9 @@ pub mod page {
                             let value = deserializer.finish(helper)?;
                             Self::store_page_block(&mut values, value)?;
                         }
-                        Ok(super::CtLayerXTypeContent::PageBlock(values.ok_or_else(
-                            || ErrorKind::MissingElement("PageBlock".into()),
-                        )?))
+                        Ok(super::CtLayerXTypeContent::PageBlock(
+                            helper.finish_element("PageBlock", values)?,
+                        ))
                     }
                     S::Done__(data) => Ok(data),
                 }
@@ -29147,14 +29141,19 @@ pub mod page {
                 })
             }
         }
+        impl Default for CtLayerXTypeContentDeserializer {
+            fn default() -> Self {
+                Self {
+                    state__: Box::new(CtLayerXTypeContentDeserializerState::Init__),
+                }
+            }
+        }
         impl<'de> Deserializer<'de, super::CtLayerXTypeContent> for CtLayerXTypeContentDeserializer {
             fn init(
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
             ) -> DeserializerResult<'de, super::CtLayerXTypeContent> {
-                let deserializer = Self {
-                    state__: Box::new(CtLayerXTypeContentDeserializerState::Init__),
-                };
+                let deserializer = Self::default();
                 let mut output = deserializer.next(helper, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
@@ -29519,7 +29518,7 @@ pub mod page {
                 );
                 self.finish_state(helper, state)?;
                 Ok(super::CtPageBlockXType {
-                    content: self.content,
+                    content: helper.finish_vec_default(0usize, self.content)?,
                 })
             }
         }
@@ -29630,7 +29629,7 @@ pub mod page {
                             Self::store_text_object(&mut values, value)?;
                         }
                         Ok(super::CtPageBlockXTypeContent::TextObject(
-                            values.ok_or_else(|| ErrorKind::MissingElement("TextObject".into()))?,
+                            helper.finish_element("TextObject", values)?,
                         ))
                     }
                     S::PathObject(mut values, deserializer) => {
@@ -29639,7 +29638,7 @@ pub mod page {
                             Self::store_path_object(&mut values, value)?;
                         }
                         Ok(super::CtPageBlockXTypeContent::PathObject(
-                            values.ok_or_else(|| ErrorKind::MissingElement("PathObject".into()))?,
+                            helper.finish_element("PathObject", values)?,
                         ))
                     }
                     S::ImageObject(mut values, deserializer) => {
@@ -29648,8 +29647,7 @@ pub mod page {
                             Self::store_image_object(&mut values, value)?;
                         }
                         Ok(super::CtPageBlockXTypeContent::ImageObject(
-                            values
-                                .ok_or_else(|| ErrorKind::MissingElement("ImageObject".into()))?,
+                            helper.finish_element("ImageObject", values)?,
                         ))
                     }
                     S::CompositeObject(mut values, deserializer) => {
@@ -29658,9 +29656,7 @@ pub mod page {
                             Self::store_composite_object(&mut values, value)?;
                         }
                         Ok(super::CtPageBlockXTypeContent::CompositeObject(
-                            values.ok_or_else(|| {
-                                ErrorKind::MissingElement("CompositeObject".into())
-                            })?,
+                            helper.finish_element("CompositeObject", values)?,
                         ))
                     }
                     S::PageBlock(mut values, deserializer) => {
@@ -29669,7 +29665,7 @@ pub mod page {
                             Self::store_page_block(&mut values, value)?;
                         }
                         Ok(super::CtPageBlockXTypeContent::PageBlock(
-                            values.ok_or_else(|| ErrorKind::MissingElement("PageBlock".into()))?,
+                            helper.finish_element("PageBlock", values)?,
                         ))
                     }
                     S::Done__(data) => Ok(data),
@@ -30043,6 +30039,13 @@ pub mod page {
                 })
             }
         }
+        impl Default for CtPageBlockXTypeContentDeserializer {
+            fn default() -> Self {
+                Self {
+                    state__: Box::new(CtPageBlockXTypeContentDeserializerState::Init__),
+                }
+            }
+        }
         impl<'de> Deserializer<'de, super::CtPageBlockXTypeContent>
             for CtPageBlockXTypeContentDeserializer
         {
@@ -30050,9 +30053,7 @@ pub mod page {
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
             ) -> DeserializerResult<'de, super::CtPageBlockXTypeContent> {
-                let deserializer = Self {
-                    state__: Box::new(CtPageBlockXTypeContentDeserializerState::Init__),
-                };
+                let deserializer = Self::default();
                 let mut output = deserializer.next(helper, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
@@ -30962,9 +30963,8 @@ pub mod page {
                     clips: self.clips,
                     stroke_color: self.stroke_color,
                     fill_color: self.fill_color,
-                    abbreviated_data: self
-                        .abbreviated_data
-                        .ok_or_else(|| ErrorKind::MissingElement("AbbreviatedData".into()))?,
+                    abbreviated_data: helper
+                        .finish_element("AbbreviatedData", self.abbreviated_data)?,
                 })
             }
         }
@@ -31235,9 +31235,7 @@ pub mod page {
                     reflect_method: self.reflect_method,
                     relative_to: self.relative_to,
                     ctm: self.ctm,
-                    cell_content: self
-                        .cell_content
-                        .ok_or_else(|| ErrorKind::MissingElement("CellContent".into()))?,
+                    cell_content: helper.finish_element("CellContent", self.cell_content)?,
                 })
             }
         }
@@ -31521,7 +31519,7 @@ pub mod page {
                     end_point: self.end_point,
                     end_radius: self.end_radius,
                     extend: self.extend,
-                    seqment: self.seqment,
+                    seqment: helper.finish_vec(2usize, None, self.seqment)?,
                 })
             }
         }
@@ -31870,7 +31868,7 @@ pub mod page {
                     char_direction: self.char_direction,
                     weight: self.weight,
                     italic: self.italic,
-                    content: self.content,
+                    content: helper.finish_vec_default(1usize, self.content)?,
                 })
             }
         }
@@ -32018,54 +32016,54 @@ pub mod page {
                             let value = deserializer.finish(helper)?;
                             Self::store_actions(&mut values, value)?;
                         }
-                        Ok(super::CtTextXTypeContent::Actions(values.ok_or_else(
-                            || ErrorKind::MissingElement("Actions".into()),
-                        )?))
+                        Ok(super::CtTextXTypeContent::Actions(
+                            helper.finish_element("Actions", values)?,
+                        ))
                     }
                     S::Clips(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_clips(&mut values, value)?;
                         }
-                        Ok(super::CtTextXTypeContent::Clips(values.ok_or_else(
-                            || ErrorKind::MissingElement("Clips".into()),
-                        )?))
+                        Ok(super::CtTextXTypeContent::Clips(
+                            helper.finish_element("Clips", values)?,
+                        ))
                     }
                     S::FillColor(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_fill_color(&mut values, value)?;
                         }
-                        Ok(super::CtTextXTypeContent::FillColor(values.ok_or_else(
-                            || ErrorKind::MissingElement("FillColor".into()),
-                        )?))
+                        Ok(super::CtTextXTypeContent::FillColor(
+                            helper.finish_element("FillColor", values)?,
+                        ))
                     }
                     S::StrokeColor(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_stroke_color(&mut values, value)?;
                         }
-                        Ok(super::CtTextXTypeContent::StrokeColor(values.ok_or_else(
-                            || ErrorKind::MissingElement("StrokeColor".into()),
-                        )?))
+                        Ok(super::CtTextXTypeContent::StrokeColor(
+                            helper.finish_element("StrokeColor", values)?,
+                        ))
                     }
                     S::CgTransform(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_cg_transform(&mut values, value)?;
                         }
-                        Ok(super::CtTextXTypeContent::CgTransform(values.ok_or_else(
-                            || ErrorKind::MissingElement("CGTransform".into()),
-                        )?))
+                        Ok(super::CtTextXTypeContent::CgTransform(
+                            helper.finish_element("CGTransform", values)?,
+                        ))
                     }
                     S::TextCode(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_text_code(&mut values, value)?;
                         }
-                        Ok(super::CtTextXTypeContent::TextCode(values.ok_or_else(
-                            || ErrorKind::MissingElement("TextCode".into()),
-                        )?))
+                        Ok(super::CtTextXTypeContent::TextCode(
+                            helper.finish_element("TextCode", values)?,
+                        ))
                     }
                     S::Done__(data) => Ok(data),
                 }
@@ -32490,14 +32488,19 @@ pub mod page {
                 })
             }
         }
+        impl Default for CtTextXTypeContentDeserializer {
+            fn default() -> Self {
+                Self {
+                    state__: Box::new(CtTextXTypeContentDeserializerState::Init__),
+                }
+            }
+        }
         impl<'de> Deserializer<'de, super::CtTextXTypeContent> for CtTextXTypeContentDeserializer {
             fn init(
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
             ) -> DeserializerResult<'de, super::CtTextXTypeContent> {
-                let deserializer = Self {
-                    state__: Box::new(CtTextXTypeContentDeserializerState::Init__),
-                };
+                let deserializer = Self::default();
                 let mut output = deserializer.next(helper, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
@@ -33480,10 +33483,7 @@ pub mod page {
                 self.finish_state(helper, state)?;
                 Ok(super::CtAxialShdSegmentXElementType {
                     position: self.position,
-                    color: Box::new(
-                        self.color
-                            .ok_or_else(|| ErrorKind::MissingElement("Color".into()))?,
-                    ),
+                    color: Box::new(helper.finish_element("Color", self.color)?),
                 })
             }
         }
@@ -33655,7 +33655,7 @@ pub mod page {
                 Ok(super::CtClipAreaXElementType {
                     draw_param: self.draw_param,
                     ctm: self.ctm,
-                    content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                    content: helper.finish_default(self.content)?,
                 })
             }
         }
@@ -33729,7 +33729,7 @@ pub mod page {
                             Self::store_path(&mut values, value)?;
                         }
                         Ok(super::CtClipAreaXElementTypeContent::Path(
-                            values.ok_or_else(|| ErrorKind::MissingElement("Path".into()))?,
+                            helper.finish_element("Path", values)?,
                         ))
                     }
                     S::Text(mut values, deserializer) => {
@@ -33738,7 +33738,7 @@ pub mod page {
                             Self::store_text(&mut values, value)?;
                         }
                         Ok(super::CtClipAreaXElementTypeContent::Text(
-                            values.ok_or_else(|| ErrorKind::MissingElement("Text".into()))?,
+                            helper.finish_element("Text", values)?,
                         ))
                     }
                     S::Done__(data) => Ok(data),
@@ -33889,6 +33889,13 @@ pub mod page {
                 })
             }
         }
+        impl Default for CtClipAreaXElementTypeContentDeserializer {
+            fn default() -> Self {
+                Self {
+                    state__: Box::new(CtClipAreaXElementTypeContentDeserializerState::Init__),
+                }
+            }
+        }
         impl<'de> Deserializer<'de, super::CtClipAreaXElementTypeContent>
             for CtClipAreaXElementTypeContentDeserializer
         {
@@ -33896,9 +33903,7 @@ pub mod page {
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
             ) -> DeserializerResult<'de, super::CtClipAreaXElementTypeContent> {
-                let deserializer = Self {
-                    state__: Box::new(CtClipAreaXElementTypeContentDeserializerState::Init__),
-                };
+                let deserializer = Self::default();
                 let mut output = deserializer.next(helper, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
@@ -34220,7 +34225,7 @@ pub mod page {
                 );
                 self.finish_state(helper, state)?;
                 Ok(super::CtGraphicUnitActionsXElementType {
-                    action: self.action,
+                    action: helper.finish_vec(1usize, None, self.action)?,
                 })
             }
         }
@@ -34418,7 +34423,9 @@ pub mod page {
                     CtGraphicUnitClipsXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(helper, state)?;
-                Ok(super::CtGraphicUnitClipsXElementType { clip: self.clip })
+                Ok(super::CtGraphicUnitClipsXElementType {
+                    clip: helper.finish_vec(1usize, None, self.clip)?,
+                })
             }
         }
         #[derive(Debug)]
@@ -34652,10 +34659,7 @@ pub mod page {
                     x: self.x,
                     y: self.y,
                     edge_flag: self.edge_flag,
-                    color: Box::new(
-                        self.color
-                            .ok_or_else(|| ErrorKind::MissingElement("Color".into()))?,
-                    ),
+                    color: Box::new(helper.finish_element("Color", self.color)?),
                 })
             }
         }
@@ -35143,10 +35147,7 @@ pub mod page {
                 Ok(super::CtLaGouraudShdPointXElementType {
                     x: self.x,
                     y: self.y,
-                    color: Box::new(
-                        self.color
-                            .ok_or_else(|| ErrorKind::MissingElement("Color".into()))?,
-                    ),
+                    color: Box::new(helper.finish_element("Color", self.color)?),
                 })
             }
         }
@@ -35533,7 +35534,7 @@ pub mod page {
                     weight: self.weight,
                     italic: self.italic,
                     id: self.id,
-                    content: self.content,
+                    content: helper.finish_vec_default(1usize, self.content)?,
                 })
             }
         }
@@ -35682,7 +35683,7 @@ pub mod page {
                             Self::store_actions(&mut values, value)?;
                         }
                         Ok(super::CtPageBlockTextObjectXElementTypeContent::Actions(
-                            values.ok_or_else(|| ErrorKind::MissingElement("Actions".into()))?,
+                            helper.finish_element("Actions", values)?,
                         ))
                     }
                     S::Clips(mut values, deserializer) => {
@@ -35691,7 +35692,7 @@ pub mod page {
                             Self::store_clips(&mut values, value)?;
                         }
                         Ok(super::CtPageBlockTextObjectXElementTypeContent::Clips(
-                            values.ok_or_else(|| ErrorKind::MissingElement("Clips".into()))?,
+                            helper.finish_element("Clips", values)?,
                         ))
                     }
                     S::FillColor(mut values, deserializer) => {
@@ -35700,7 +35701,7 @@ pub mod page {
                             Self::store_fill_color(&mut values, value)?;
                         }
                         Ok(super::CtPageBlockTextObjectXElementTypeContent::FillColor(
-                            values.ok_or_else(|| ErrorKind::MissingElement("FillColor".into()))?,
+                            helper.finish_element("FillColor", values)?,
                         ))
                     }
                     S::StrokeColor(mut values, deserializer) => {
@@ -35710,9 +35711,7 @@ pub mod page {
                         }
                         Ok(
                             super::CtPageBlockTextObjectXElementTypeContent::StrokeColor(
-                                values.ok_or_else(|| {
-                                    ErrorKind::MissingElement("StrokeColor".into())
-                                })?,
+                                helper.finish_element("StrokeColor", values)?,
                             ),
                         )
                     }
@@ -35723,9 +35722,7 @@ pub mod page {
                         }
                         Ok(
                             super::CtPageBlockTextObjectXElementTypeContent::CgTransform(
-                                values.ok_or_else(|| {
-                                    ErrorKind::MissingElement("CGTransform".into())
-                                })?,
+                                helper.finish_element("CGTransform", values)?,
                             ),
                         )
                     }
@@ -35735,7 +35732,7 @@ pub mod page {
                             Self::store_text_code(&mut values, value)?;
                         }
                         Ok(super::CtPageBlockTextObjectXElementTypeContent::TextCode(
-                            values.ok_or_else(|| ErrorKind::MissingElement("TextCode".into()))?,
+                            helper.finish_element("TextCode", values)?,
                         ))
                     }
                     S::Done__(data) => Ok(data),
@@ -36248,6 +36245,15 @@ pub mod page {
                 })
             }
         }
+        impl Default for CtPageBlockTextObjectXElementTypeContentDeserializer {
+            fn default() -> Self {
+                Self {
+                    state__: Box::new(
+                        CtPageBlockTextObjectXElementTypeContentDeserializerState::Init__,
+                    ),
+                }
+            }
+        }
         impl<'de> Deserializer<'de, super::CtPageBlockTextObjectXElementTypeContent>
             for CtPageBlockTextObjectXElementTypeContentDeserializer
         {
@@ -36256,11 +36262,7 @@ pub mod page {
                 event: Event<'de>,
             ) -> DeserializerResult<'de, super::CtPageBlockTextObjectXElementTypeContent>
             {
-                let deserializer = Self {
-                    state__: Box::new(
-                        CtPageBlockTextObjectXElementTypeContentDeserializerState::Init__,
-                    ),
-                };
+                let deserializer = Self::default();
                 let mut output = deserializer.next(helper, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
@@ -37248,9 +37250,8 @@ pub mod page {
                     clips: self.clips,
                     stroke_color: self.stroke_color,
                     fill_color: self.fill_color,
-                    abbreviated_data: self
-                        .abbreviated_data
-                        .ok_or_else(|| ErrorKind::MissingElement("AbbreviatedData".into()))?,
+                    abbreviated_data: helper
+                        .finish_element("AbbreviatedData", self.abbreviated_data)?,
                 })
             }
         }
@@ -38454,7 +38455,7 @@ pub mod page {
                 self.finish_state(helper, state)?;
                 Ok(super::CtPageBlockPageBlockXElementType {
                     id: self.id,
-                    content: self.content,
+                    content: helper.finish_vec_default(0usize, self.content)?,
                 })
             }
         }
@@ -38565,7 +38566,7 @@ pub mod page {
                             Self::store_text_object(&mut values, value)?;
                         }
                         Ok(super::CtPageBlockPageBlockXElementTypeContent::TextObject(
-                            values.ok_or_else(|| ErrorKind::MissingElement("TextObject".into()))?,
+                            helper.finish_element("TextObject", values)?,
                         ))
                     }
                     S::PathObject(mut values, deserializer) => {
@@ -38574,7 +38575,7 @@ pub mod page {
                             Self::store_path_object(&mut values, value)?;
                         }
                         Ok(super::CtPageBlockPageBlockXElementTypeContent::PathObject(
-                            values.ok_or_else(|| ErrorKind::MissingElement("PathObject".into()))?,
+                            helper.finish_element("PathObject", values)?,
                         ))
                     }
                     S::ImageObject(mut values, deserializer) => {
@@ -38583,8 +38584,7 @@ pub mod page {
                             Self::store_image_object(&mut values, value)?;
                         }
                         Ok(super::CtPageBlockPageBlockXElementTypeContent::ImageObject(
-                            values
-                                .ok_or_else(|| ErrorKind::MissingElement("ImageObject".into()))?,
+                            helper.finish_element("ImageObject", values)?,
                         ))
                     }
                     S::CompositeObject(mut values, deserializer) => {
@@ -38594,9 +38594,7 @@ pub mod page {
                         }
                         Ok(
                             super::CtPageBlockPageBlockXElementTypeContent::CompositeObject(
-                                values.ok_or_else(|| {
-                                    ErrorKind::MissingElement("CompositeObject".into())
-                                })?,
+                                helper.finish_element("CompositeObject", values)?,
                             ),
                         )
                     }
@@ -38606,7 +38604,7 @@ pub mod page {
                             Self::store_page_block(&mut values, value)?;
                         }
                         Ok(super::CtPageBlockPageBlockXElementTypeContent::PageBlock(
-                            values.ok_or_else(|| ErrorKind::MissingElement("PageBlock".into()))?,
+                            helper.finish_element("PageBlock", values)?,
                         ))
                     }
                     S::Done__(data) => Ok(data),
@@ -39007,6 +39005,15 @@ pub mod page {
                 })
             }
         }
+        impl Default for CtPageBlockPageBlockXElementTypeContentDeserializer {
+            fn default() -> Self {
+                Self {
+                    state__: Box::new(
+                        CtPageBlockPageBlockXElementTypeContentDeserializerState::Init__,
+                    ),
+                }
+            }
+        }
         impl<'de> Deserializer<'de, super::CtPageBlockPageBlockXElementTypeContent>
             for CtPageBlockPageBlockXElementTypeContentDeserializer
         {
@@ -39015,11 +39022,7 @@ pub mod page {
                 event: Event<'de>,
             ) -> DeserializerResult<'de, super::CtPageBlockPageBlockXElementTypeContent>
             {
-                let deserializer = Self {
-                    state__: Box::new(
-                        CtPageBlockPageBlockXElementTypeContentDeserializerState::Init__,
-                    ),
-                };
+                let deserializer = Self::default();
                 let mut output = deserializer.next(helper, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
@@ -39407,7 +39410,7 @@ pub mod page {
                 self.finish_state(helper, state)?;
                 Ok(super::CtPatternCellContentXElementType {
                     thumbnail: self.thumbnail,
-                    content: self.content,
+                    content: helper.finish_vec_default(0usize, self.content)?,
                 })
             }
         }
@@ -39518,7 +39521,7 @@ pub mod page {
                             Self::store_text_object(&mut values, value)?;
                         }
                         Ok(super::CtPatternCellContentXElementTypeContent::TextObject(
-                            values.ok_or_else(|| ErrorKind::MissingElement("TextObject".into()))?,
+                            helper.finish_element("TextObject", values)?,
                         ))
                     }
                     S::PathObject(mut values, deserializer) => {
@@ -39527,7 +39530,7 @@ pub mod page {
                             Self::store_path_object(&mut values, value)?;
                         }
                         Ok(super::CtPatternCellContentXElementTypeContent::PathObject(
-                            values.ok_or_else(|| ErrorKind::MissingElement("PathObject".into()))?,
+                            helper.finish_element("PathObject", values)?,
                         ))
                     }
                     S::ImageObject(mut values, deserializer) => {
@@ -39536,8 +39539,7 @@ pub mod page {
                             Self::store_image_object(&mut values, value)?;
                         }
                         Ok(super::CtPatternCellContentXElementTypeContent::ImageObject(
-                            values
-                                .ok_or_else(|| ErrorKind::MissingElement("ImageObject".into()))?,
+                            helper.finish_element("ImageObject", values)?,
                         ))
                     }
                     S::CompositeObject(mut values, deserializer) => {
@@ -39547,9 +39549,7 @@ pub mod page {
                         }
                         Ok(
                             super::CtPatternCellContentXElementTypeContent::CompositeObject(
-                                values.ok_or_else(|| {
-                                    ErrorKind::MissingElement("CompositeObject".into())
-                                })?,
+                                helper.finish_element("CompositeObject", values)?,
                             ),
                         )
                     }
@@ -39559,7 +39559,7 @@ pub mod page {
                             Self::store_page_block(&mut values, value)?;
                         }
                         Ok(super::CtPatternCellContentXElementTypeContent::PageBlock(
-                            values.ok_or_else(|| ErrorKind::MissingElement("PageBlock".into()))?,
+                            helper.finish_element("PageBlock", values)?,
                         ))
                     }
                     S::Done__(data) => Ok(data),
@@ -39960,6 +39960,15 @@ pub mod page {
                 })
             }
         }
+        impl Default for CtPatternCellContentXElementTypeContentDeserializer {
+            fn default() -> Self {
+                Self {
+                    state__: Box::new(
+                        CtPatternCellContentXElementTypeContentDeserializerState::Init__,
+                    ),
+                }
+            }
+        }
         impl<'de> Deserializer<'de, super::CtPatternCellContentXElementTypeContent>
             for CtPatternCellContentXElementTypeContentDeserializer
         {
@@ -39968,11 +39977,7 @@ pub mod page {
                 event: Event<'de>,
             ) -> DeserializerResult<'de, super::CtPatternCellContentXElementTypeContent>
             {
-                let deserializer = Self {
-                    state__: Box::new(
-                        CtPatternCellContentXElementTypeContentDeserializerState::Init__,
-                    ),
-                };
+                let deserializer = Self::default();
                 let mut output = deserializer.next(helper, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
@@ -40347,7 +40352,7 @@ pub mod page {
                     y: self.y,
                     delta_x: self.delta_x,
                     deltay: self.deltay,
-                    content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                    content: helper.finish_content(self.content)?,
                 })
             }
         }
@@ -40640,7 +40645,9 @@ pub mod page {
                     PageContentXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(helper, state)?;
-                Ok(super::PageContentXElementType { layer: self.layer })
+                Ok(super::PageContentXElementType {
+                    layer: helper.finish_vec(1usize, None, self.layer)?,
+                })
             }
         }
         #[derive(Debug)]
@@ -40836,7 +40843,7 @@ pub mod page {
                     type_: self.type_,
                     draw_param: self.draw_param,
                     id: self.id,
-                    content: self.content,
+                    content: helper.finish_vec_default(0usize, self.content)?,
                 })
             }
         }
@@ -40947,7 +40954,7 @@ pub mod page {
                             Self::store_text_object(&mut values, value)?;
                         }
                         Ok(super::PageContentLayerXElementTypeContent::TextObject(
-                            values.ok_or_else(|| ErrorKind::MissingElement("TextObject".into()))?,
+                            helper.finish_element("TextObject", values)?,
                         ))
                     }
                     S::PathObject(mut values, deserializer) => {
@@ -40956,7 +40963,7 @@ pub mod page {
                             Self::store_path_object(&mut values, value)?;
                         }
                         Ok(super::PageContentLayerXElementTypeContent::PathObject(
-                            values.ok_or_else(|| ErrorKind::MissingElement("PathObject".into()))?,
+                            helper.finish_element("PathObject", values)?,
                         ))
                     }
                     S::ImageObject(mut values, deserializer) => {
@@ -40965,8 +40972,7 @@ pub mod page {
                             Self::store_image_object(&mut values, value)?;
                         }
                         Ok(super::PageContentLayerXElementTypeContent::ImageObject(
-                            values
-                                .ok_or_else(|| ErrorKind::MissingElement("ImageObject".into()))?,
+                            helper.finish_element("ImageObject", values)?,
                         ))
                     }
                     S::CompositeObject(mut values, deserializer) => {
@@ -40975,9 +40981,7 @@ pub mod page {
                             Self::store_composite_object(&mut values, value)?;
                         }
                         Ok(super::PageContentLayerXElementTypeContent::CompositeObject(
-                            values.ok_or_else(|| {
-                                ErrorKind::MissingElement("CompositeObject".into())
-                            })?,
+                            helper.finish_element("CompositeObject", values)?,
                         ))
                     }
                     S::PageBlock(mut values, deserializer) => {
@@ -40986,7 +40990,7 @@ pub mod page {
                             Self::store_page_block(&mut values, value)?;
                         }
                         Ok(super::PageContentLayerXElementTypeContent::PageBlock(
-                            values.ok_or_else(|| ErrorKind::MissingElement("PageBlock".into()))?,
+                            helper.finish_element("PageBlock", values)?,
                         ))
                     }
                     S::Done__(data) => Ok(data),
@@ -41401,6 +41405,13 @@ pub mod page {
                 })
             }
         }
+        impl Default for PageContentLayerXElementTypeContentDeserializer {
+            fn default() -> Self {
+                Self {
+                    state__: Box::new(PageContentLayerXElementTypeContentDeserializerState::Init__),
+                }
+            }
+        }
         impl<'de> Deserializer<'de, super::PageContentLayerXElementTypeContent>
             for PageContentLayerXElementTypeContentDeserializer
         {
@@ -41408,9 +41419,7 @@ pub mod page {
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
             ) -> DeserializerResult<'de, super::PageContentLayerXElementTypeContent> {
-                let deserializer = Self {
-                    state__: Box::new(PageContentLayerXElementTypeContentDeserializerState::Init__),
-                };
+                let deserializer = Self::default();
                 let mut output = deserializer.next(helper, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
@@ -47201,9 +47210,7 @@ pub mod res {
                 Ok(super::CtMultiMediaXType {
                     type_: self.type_,
                     format: self.format,
-                    media_file: self
-                        .media_file
-                        .ok_or_else(|| ErrorKind::MissingElement("MediaFile".into()))?,
+                    media_file: helper.finish_element("MediaFile", self.media_file)?,
                 })
             }
         }
@@ -47605,9 +47612,7 @@ pub mod res {
                     height: self.height,
                     thumbnail: self.thumbnail,
                     substitution: self.substitution,
-                    content: self
-                        .content
-                        .ok_or_else(|| ErrorKind::MissingElement("Content".into()))?,
+                    content: helper.finish_element("Content", self.content)?,
                 })
             }
         }
@@ -47775,7 +47780,7 @@ pub mod res {
                 self.finish_state(helper, state)?;
                 Ok(super::ResXElementType {
                     base_loc: self.base_loc,
-                    content: self.content,
+                    content: helper.finish_vec_default(0usize, self.content)?,
                 })
             }
         }
@@ -47906,8 +47911,7 @@ pub mod res {
                             Self::store_color_spaces(&mut values, value)?;
                         }
                         Ok(super::ResXElementTypeContent::ColorSpaces(
-                            values
-                                .ok_or_else(|| ErrorKind::MissingElement("ColorSpaces".into()))?,
+                            helper.finish_element("ColorSpaces", values)?,
                         ))
                     }
                     S::DrawParams(mut values, deserializer) => {
@@ -47916,7 +47920,7 @@ pub mod res {
                             Self::store_draw_params(&mut values, value)?;
                         }
                         Ok(super::ResXElementTypeContent::DrawParams(
-                            values.ok_or_else(|| ErrorKind::MissingElement("DrawParams".into()))?,
+                            helper.finish_element("DrawParams", values)?,
                         ))
                     }
                     S::Fonts(mut values, deserializer) => {
@@ -47924,9 +47928,9 @@ pub mod res {
                             let value = deserializer.finish(helper)?;
                             Self::store_fonts(&mut values, value)?;
                         }
-                        Ok(super::ResXElementTypeContent::Fonts(values.ok_or_else(
-                            || ErrorKind::MissingElement("Fonts".into()),
-                        )?))
+                        Ok(super::ResXElementTypeContent::Fonts(
+                            helper.finish_element("Fonts", values)?,
+                        ))
                     }
                     S::MultiMedias(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
@@ -47934,8 +47938,7 @@ pub mod res {
                             Self::store_multi_medias(&mut values, value)?;
                         }
                         Ok(super::ResXElementTypeContent::MultiMedias(
-                            values
-                                .ok_or_else(|| ErrorKind::MissingElement("MultiMedias".into()))?,
+                            helper.finish_element("MultiMedias", values)?,
                         ))
                     }
                     S::CompositeGraphicUnits(mut values, deserializer) => {
@@ -47944,9 +47947,7 @@ pub mod res {
                             Self::store_composite_graphic_units(&mut values, value)?;
                         }
                         Ok(super::ResXElementTypeContent::CompositeGraphicUnits(
-                            values.ok_or_else(|| {
-                                ErrorKind::MissingElement("CompositeGraphicUnits".into())
-                            })?,
+                            helper.finish_element("CompositeGraphicUnits", values)?,
                         ))
                     }
                     S::Done__(data) => Ok(data),
@@ -48320,14 +48321,19 @@ pub mod res {
                 })
             }
         }
+        impl Default for ResXElementTypeContentDeserializer {
+            fn default() -> Self {
+                Self {
+                    state__: Box::new(ResXElementTypeContentDeserializerState::Init__),
+                }
+            }
+        }
         impl<'de> Deserializer<'de, super::ResXElementTypeContent> for ResXElementTypeContentDeserializer {
             fn init(
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
             ) -> DeserializerResult<'de, super::ResXElementTypeContent> {
-                let deserializer = Self {
-                    state__: Box::new(ResXElementTypeContentDeserializerState::Init__),
-                };
+                let deserializer = Self::default();
                 let mut output = deserializer.next(helper, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
@@ -48730,7 +48736,9 @@ pub mod res {
                     CtColorSpacePaletteXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(helper, state)?;
-                Ok(super::CtColorSpacePaletteXElementType { cv: self.cv })
+                Ok(super::CtColorSpacePaletteXElementType {
+                    cv: helper.finish_vec(1usize, None, self.cv)?,
+                })
             }
         }
         #[derive(Debug)]
@@ -48939,7 +48947,7 @@ pub mod res {
                 );
                 self.finish_state(helper, state)?;
                 Ok(super::ResColorSpacesXElementType {
-                    color_space: self.color_space,
+                    color_space: helper.finish_vec(1usize, None, self.color_space)?,
                 })
             }
         }
@@ -49147,7 +49155,7 @@ pub mod res {
                 );
                 self.finish_state(helper, state)?;
                 Ok(super::ResDrawParamsXElementType {
-                    draw_param: self.draw_param,
+                    draw_param: helper.finish_vec(1usize, None, self.draw_param)?,
                 })
             }
         }
@@ -49335,7 +49343,9 @@ pub mod res {
                     ResFontsXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(helper, state)?;
-                Ok(super::ResFontsXElementType { font: self.font })
+                Ok(super::ResFontsXElementType {
+                    font: helper.finish_vec(1usize, None, self.font)?,
+                })
             }
         }
         #[derive(Debug)]
@@ -49544,7 +49554,7 @@ pub mod res {
                 );
                 self.finish_state(helper, state)?;
                 Ok(super::ResMultiMediasXElementType {
-                    multi_media: self.multi_media,
+                    multi_media: helper.finish_vec(1usize, None, self.multi_media)?,
                 })
             }
         }
@@ -49751,7 +49761,11 @@ pub mod res {
                 );
                 self.finish_state(helper, state)?;
                 Ok(super::ResCompositeGraphicUnitsXElementType {
-                    composite_graphic_unit: self.composite_graphic_unit,
+                    composite_graphic_unit: helper.finish_vec(
+                        1usize,
+                        None,
+                        self.composite_graphic_unit,
+                    )?,
                 })
             }
         }
@@ -50898,9 +50912,7 @@ pub mod res {
                     type_: self.type_,
                     format: self.format,
                     id: self.id,
-                    media_file: self
-                        .media_file
-                        .ok_or_else(|| ErrorKind::MissingElement("MediaFile".into()))?,
+                    media_file: helper.finish_element("MediaFile", self.media_file)?,
                 })
             }
         }
@@ -51304,9 +51316,7 @@ pub mod res {
                         id: self.id,
                         thumbnail: self.thumbnail,
                         substitution: self.substitution,
-                        content: self
-                            .content
-                            .ok_or_else(|| ErrorKind::MissingElement("Content".into()))?,
+                        content: helper.finish_element("Content", self.content)?,
                     },
                 )
             }
@@ -53220,12 +53230,8 @@ pub mod signature {
                 );
                 self.finish_state(helper, state)?;
                 Ok(super::SianatureXElementType {
-                    siqned_info: self
-                        .siqned_info
-                        .ok_or_else(|| ErrorKind::MissingElement("SiqnedInfo".into()))?,
-                    signed_value: self
-                        .signed_value
-                        .ok_or_else(|| ErrorKind::MissingElement("SignedValue".into()))?,
+                    siqned_info: helper.finish_element("SiqnedInfo", self.siqned_info)?,
+                    signed_value: helper.finish_element("SignedValue", self.signed_value)?,
                 })
             }
         }
@@ -53911,14 +53917,10 @@ pub mod signature {
                 );
                 self.finish_state(helper, state)?;
                 Ok(super::SianatureSiqnedInfoXElementType {
-                    provider: self
-                        .provider
-                        .ok_or_else(|| ErrorKind::MissingElement("Provider".into()))?,
+                    provider: helper.finish_element("Provider", self.provider)?,
                     signature_method: self.signature_method,
                     sianature_date_time: self.sianature_date_time,
-                    references: self
-                        .references
-                        .ok_or_else(|| ErrorKind::MissingElement("References".into()))?,
+                    references: helper.finish_element("References", self.references)?,
                     stamp_annot: self.stamp_annot,
                     seal: self.seal,
                 })
@@ -54246,7 +54248,7 @@ pub mod signature {
                 self.finish_state(helper, state)?;
                 Ok(super::SianatureSiqnedInfoReferencesXElementType {
                     check_method: self.check_method,
-                    reference: self.reference,
+                    reference: helper.finish_vec(1usize, None, self.reference)?,
                 })
             }
         }
@@ -54570,9 +54572,7 @@ pub mod signature {
                 );
                 self.finish_state(helper, state)?;
                 Ok(super::SianatureSiqnedInfoSealXElementType {
-                    base_loc: self
-                        .base_loc
-                        .ok_or_else(|| ErrorKind::MissingElement("BaseLoc".into()))?,
+                    base_loc: helper.finish_element("BaseLoc", self.base_loc)?,
                 })
             }
         }
@@ -54786,9 +54786,7 @@ pub mod signature {
                 self.finish_state(helper, state)?;
                 Ok(super::SianatureSiqnedInfoReferencesReferenceXElementType {
                     file_ref: self.file_ref,
-                    check_value: self
-                        .check_value
-                        .ok_or_else(|| ErrorKind::MissingElement("CheckValue".into()))?,
+                    check_value: helper.finish_element("CheckValue", self.check_value)?,
                 })
             }
         }
@@ -56304,12 +56302,8 @@ pub mod version {
                     version: self.version,
                     name: self.name,
                     creation_date: self.creation_date,
-                    file_list: self
-                        .file_list
-                        .ok_or_else(|| ErrorKind::MissingElement("FileList".into()))?,
-                    doc_root: self
-                        .doc_root
-                        .ok_or_else(|| ErrorKind::MissingElement("DocRoot".into()))?,
+                    file_list: helper.finish_element("FileList", self.file_list)?,
+                    doc_root: helper.finish_element("DocRoot", self.doc_root)?,
                 })
             }
         }
@@ -56514,7 +56508,9 @@ pub mod version {
                     DocVersionFileListXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(helper, state)?;
-                Ok(super::DocVersionFileListXElementType { file: self.file })
+                Ok(super::DocVersionFileListXElementType {
+                    file: helper.finish_vec(1usize, None, self.file)?,
+                })
             }
         }
         #[derive(Debug)]
@@ -56654,7 +56650,7 @@ pub mod version {
                 self.finish_state(helper, state)?;
                 Ok(super::DocVersionFileListFileXElementType {
                     id: self.id,
-                    content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                    content: helper.finish_content(self.content)?,
                 })
             }
         }

@@ -2080,14 +2080,13 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::CrossIndustryInvoiceType {
-                exchanged_document_context: self
-                    .exchanged_document_context
-                    .ok_or_else(|| ErrorKind::MissingElement("ExchangedDocumentContext".into()))?,
-                exchanged_document: self
-                    .exchanged_document
-                    .ok_or_else(|| ErrorKind::MissingElement("ExchangedDocument".into()))?,
-                supply_chain_trade_transaction: self.supply_chain_trade_transaction.ok_or_else(
-                    || ErrorKind::MissingElement("SupplyChainTradeTransaction".into()),
+                exchanged_document_context: helper
+                    .finish_element("ExchangedDocumentContext", self.exchanged_document_context)?,
+                exchanged_document: helper
+                    .finish_element("ExchangedDocument", self.exchanged_document)?,
+                supply_chain_trade_transaction: helper.finish_element(
+                    "SupplyChainTradeTransaction",
+                    self.supply_chain_trade_transaction,
                 )?,
             })
         }
@@ -2417,13 +2416,10 @@ pub mod quick_xml_deserialize {
             Ok(super::ExchangedDocumentContextType {
                 business_process_specified_document_context_parameter: self
                     .business_process_specified_document_context_parameter,
-                guideline_specified_document_context_parameter: self
-                    .guideline_specified_document_context_parameter
-                    .ok_or_else(|| {
-                        ErrorKind::MissingElement(
-                            "GuidelineSpecifiedDocumentContextParameter".into(),
-                        )
-                    })?,
+                guideline_specified_document_context_parameter: helper.finish_element(
+                    "GuidelineSpecifiedDocumentContextParameter",
+                    self.guideline_specified_document_context_parameter,
+                )?,
             })
         }
     }
@@ -2897,15 +2893,9 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::ExchangedDocumentType {
-                id: self
-                    .id
-                    .ok_or_else(|| ErrorKind::MissingElement("ID".into()))?,
-                type_code: self
-                    .type_code
-                    .ok_or_else(|| ErrorKind::MissingElement("TypeCode".into()))?,
-                issue_date_time: self
-                    .issue_date_time
-                    .ok_or_else(|| ErrorKind::MissingElement("IssueDateTime".into()))?,
+                id: helper.finish_element("ID", self.id)?,
+                type_code: helper.finish_element("TypeCode", self.type_code)?,
+                issue_date_time: helper.finish_element("IssueDateTime", self.issue_date_time)?,
                 included_note: self.included_note,
             })
         }
@@ -3431,22 +3421,23 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::SupplyChainTradeTransactionType {
-                included_supply_chain_trade_line_item: self.included_supply_chain_trade_line_item,
-                applicable_header_trade_agreement: self
-                    .applicable_header_trade_agreement
-                    .ok_or_else(|| {
-                        ErrorKind::MissingElement("ApplicableHeaderTradeAgreement".into())
-                    })?,
-                applicable_header_trade_delivery: self
-                    .applicable_header_trade_delivery
-                    .ok_or_else(|| {
-                        ErrorKind::MissingElement("ApplicableHeaderTradeDelivery".into())
-                    })?,
-                applicable_header_trade_settlement: self
-                    .applicable_header_trade_settlement
-                    .ok_or_else(|| {
-                        ErrorKind::MissingElement("ApplicableHeaderTradeSettlement".into())
-                    })?,
+                included_supply_chain_trade_line_item: helper.finish_vec(
+                    1usize,
+                    None,
+                    self.included_supply_chain_trade_line_item,
+                )?,
+                applicable_header_trade_agreement: helper.finish_element(
+                    "ApplicableHeaderTradeAgreement",
+                    self.applicable_header_trade_agreement,
+                )?,
+                applicable_header_trade_delivery: helper.finish_element(
+                    "ApplicableHeaderTradeDelivery",
+                    self.applicable_header_trade_delivery,
+                )?,
+                applicable_header_trade_settlement: helper.finish_element(
+                    "ApplicableHeaderTradeSettlement",
+                    self.applicable_header_trade_settlement,
+                )?,
             })
         }
     }
@@ -3643,9 +3634,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::DocumentContextParameterType {
-                id: self
-                    .id
-                    .ok_or_else(|| ErrorKind::MissingElement("ID".into()))?,
+                id: helper.finish_element("ID", self.id)?,
             })
         }
     }
@@ -3775,7 +3764,7 @@ pub mod quick_xml_deserialize {
             self.finish_state(helper, state)?;
             Ok(super::IdType {
                 scheme_id: self.scheme_id,
-                content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                content: helper.finish_content(self.content)?,
             })
         }
     }
@@ -3900,7 +3889,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::DocumentCodeType {
-                content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                content: helper.finish_content(self.content)?,
             })
         }
     }
@@ -4040,7 +4029,7 @@ pub mod quick_xml_deserialize {
             let state = replace(&mut *self.state__, DateTimeTypeDeserializerState::Unknown__);
             self.finish_state(helper, state)?;
             Ok(super::DateTimeType {
-                content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                content: helper.finish_default(self.content)?,
             })
         }
     }
@@ -4100,7 +4089,7 @@ pub mod quick_xml_deserialize {
                         Self::store_date_time_string(&mut values, value)?;
                     }
                     Ok(super::DateTimeTypeContent::DateTimeString(
-                        values.ok_or_else(|| ErrorKind::MissingElement("DateTimeString".into()))?,
+                        helper.finish_element("DateTimeString", values)?,
                     ))
                 }
                 S::Done__(data) => Ok(data),
@@ -4180,14 +4169,19 @@ pub mod quick_xml_deserialize {
             })
         }
     }
+    impl Default for DateTimeTypeContentDeserializer {
+        fn default() -> Self {
+            Self {
+                state__: Box::new(DateTimeTypeContentDeserializerState::Init__),
+            }
+        }
+    }
     impl<'de> Deserializer<'de, super::DateTimeTypeContent> for DateTimeTypeContentDeserializer {
         fn init(
             helper: &mut DeserializeHelper,
             event: Event<'de>,
         ) -> DeserializerResult<'de, super::DateTimeTypeContent> {
-            let deserializer = Self {
-                state__: Box::new(DateTimeTypeContentDeserializerState::Init__),
-            };
+            let deserializer = Self::default();
             let mut output = deserializer.next(helper, event)?;
             output.artifact = match output.artifact {
                 DeserializerArtifact::Deserializer(x)
@@ -4553,9 +4547,7 @@ pub mod quick_xml_deserialize {
             let state = replace(&mut *self.state__, NoteTypeDeserializerState::Unknown__);
             self.finish_state(helper, state)?;
             Ok(super::NoteType {
-                content: self
-                    .content
-                    .ok_or_else(|| ErrorKind::MissingElement("Content".into()))?,
+                content: helper.finish_element("Content", self.content)?,
                 subject_code: self.subject_code,
             })
         }
@@ -5225,22 +5217,23 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::SupplyChainTradeLineItemType {
-                associated_document_line_document: self
-                    .associated_document_line_document
-                    .ok_or_else(|| {
-                        ErrorKind::MissingElement("AssociatedDocumentLineDocument".into())
-                    })?,
-                specified_trade_product: self
-                    .specified_trade_product
-                    .ok_or_else(|| ErrorKind::MissingElement("SpecifiedTradeProduct".into()))?,
-                specified_line_trade_agreement: self.specified_line_trade_agreement.ok_or_else(
-                    || ErrorKind::MissingElement("SpecifiedLineTradeAgreement".into()),
+                associated_document_line_document: helper.finish_element(
+                    "AssociatedDocumentLineDocument",
+                    self.associated_document_line_document,
                 )?,
-                specified_line_trade_delivery: self.specified_line_trade_delivery.ok_or_else(
-                    || ErrorKind::MissingElement("SpecifiedLineTradeDelivery".into()),
+                specified_trade_product: helper
+                    .finish_element("SpecifiedTradeProduct", self.specified_trade_product)?,
+                specified_line_trade_agreement: helper.finish_element(
+                    "SpecifiedLineTradeAgreement",
+                    self.specified_line_trade_agreement,
                 )?,
-                specified_line_trade_settlement: self.specified_line_trade_settlement.ok_or_else(
-                    || ErrorKind::MissingElement("SpecifiedLineTradeSettlement".into()),
+                specified_line_trade_delivery: helper.finish_element(
+                    "SpecifiedLineTradeDelivery",
+                    self.specified_line_trade_delivery,
+                )?,
+                specified_line_trade_settlement: helper.finish_element(
+                    "SpecifiedLineTradeSettlement",
+                    self.specified_line_trade_settlement,
                 )?,
             })
         }
@@ -6280,12 +6273,10 @@ pub mod quick_xml_deserialize {
             self.finish_state(helper, state)?;
             Ok(super::HeaderTradeAgreementType {
                 buyer_reference: self.buyer_reference,
-                seller_trade_party: self
-                    .seller_trade_party
-                    .ok_or_else(|| ErrorKind::MissingElement("SellerTradeParty".into()))?,
-                buyer_trade_party: self
-                    .buyer_trade_party
-                    .ok_or_else(|| ErrorKind::MissingElement("BuyerTradeParty".into()))?,
+                seller_trade_party: helper
+                    .finish_element("SellerTradeParty", self.seller_trade_party)?,
+                buyer_trade_party: helper
+                    .finish_element("BuyerTradeParty", self.buyer_trade_party)?,
                 seller_tax_representative_trade_party: self.seller_tax_representative_trade_party,
                 seller_order_referenced_document: self.seller_order_referenced_document,
                 buyer_order_referenced_document: self.buyer_order_referenced_document,
@@ -8220,23 +8211,19 @@ pub mod quick_xml_deserialize {
                 creditor_reference_id: self.creditor_reference_id,
                 payment_reference: self.payment_reference,
                 tax_currency_code: self.tax_currency_code,
-                invoice_currency_code: self
-                    .invoice_currency_code
-                    .ok_or_else(|| ErrorKind::MissingElement("InvoiceCurrencyCode".into()))?,
+                invoice_currency_code: helper
+                    .finish_element("InvoiceCurrencyCode", self.invoice_currency_code)?,
                 payee_trade_party: self.payee_trade_party,
                 specified_trade_settlement_payment_means: self
                     .specified_trade_settlement_payment_means,
-                applicable_trade_tax: self.applicable_trade_tax,
+                applicable_trade_tax: helper.finish_vec(1usize, None, self.applicable_trade_tax)?,
                 billing_specified_period: self.billing_specified_period,
                 specified_trade_allowance_charge: self.specified_trade_allowance_charge,
                 specified_trade_payment_terms: self.specified_trade_payment_terms,
-                specified_trade_settlement_header_monetary_summation: self
-                    .specified_trade_settlement_header_monetary_summation
-                    .ok_or_else(|| {
-                        ErrorKind::MissingElement(
-                            "SpecifiedTradeSettlementHeaderMonetarySummation".into(),
-                        )
-                    })?,
+                specified_trade_settlement_header_monetary_summation: helper.finish_element(
+                    "SpecifiedTradeSettlementHeaderMonetarySummation",
+                    self.specified_trade_settlement_header_monetary_summation,
+                )?,
                 invoice_referenced_document: self.invoice_referenced_document,
                 receivable_specified_trade_accounting_account: self
                     .receivable_specified_trade_accounting_account,
@@ -8378,7 +8365,7 @@ pub mod quick_xml_deserialize {
             self.finish_state(helper, state)?;
             Ok(super::DateTimeTypeDateTimeStringType {
                 format: self.format,
-                content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                content: helper.finish_content(self.content)?,
             })
         }
     }
@@ -8497,7 +8484,7 @@ pub mod quick_xml_deserialize {
             let state = replace(&mut *self.state__, TextTypeDeserializerState::Unknown__);
             self.finish_state(helper, state)?;
             Ok(super::TextType {
-                content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                content: helper.finish_content(self.content)?,
             })
         }
     }
@@ -8636,7 +8623,7 @@ pub mod quick_xml_deserialize {
             Ok(super::CodeType {
                 list_id: self.list_id,
                 list_version_id: self.list_version_id,
-                content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                content: helper.finish_content(self.content)?,
             })
         }
     }
@@ -8931,9 +8918,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::DocumentLineDocumentType {
-                line_id: self
-                    .line_id
-                    .ok_or_else(|| ErrorKind::MissingElement("LineID".into()))?,
+                line_id: helper.finish_element("LineID", self.line_id)?,
                 included_note: self.included_note,
             })
         }
@@ -9807,9 +9792,7 @@ pub mod quick_xml_deserialize {
                 global_id: self.global_id,
                 seller_assigned_id: self.seller_assigned_id,
                 buyer_assigned_id: self.buyer_assigned_id,
-                name: self
-                    .name
-                    .ok_or_else(|| ErrorKind::MissingElement("Name".into()))?,
+                name: helper.finish_element("Name", self.name)?,
                 description: self.description,
                 applicable_product_characteristic: self.applicable_product_characteristic,
                 designated_product_classification: self.designated_product_classification,
@@ -10250,9 +10233,10 @@ pub mod quick_xml_deserialize {
             Ok(super::LineTradeAgreementType {
                 buyer_order_referenced_document: self.buyer_order_referenced_document,
                 gross_price_product_trade_price: self.gross_price_product_trade_price,
-                net_price_product_trade_price: self
-                    .net_price_product_trade_price
-                    .ok_or_else(|| ErrorKind::MissingElement("NetPriceProductTradePrice".into()))?,
+                net_price_product_trade_price: helper.finish_element(
+                    "NetPriceProductTradePrice",
+                    self.net_price_product_trade_price,
+                )?,
             })
         }
     }
@@ -10454,9 +10438,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::LineTradeDeliveryType {
-                billed_quantity: self
-                    .billed_quantity
-                    .ok_or_else(|| ErrorKind::MissingElement("BilledQuantity".into()))?,
+                billed_quantity: helper.finish_element("BilledQuantity", self.billed_quantity)?,
             })
         }
     }
@@ -11204,18 +11186,14 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::LineTradeSettlementType {
-                applicable_trade_tax: self
-                    .applicable_trade_tax
-                    .ok_or_else(|| ErrorKind::MissingElement("ApplicableTradeTax".into()))?,
+                applicable_trade_tax: helper
+                    .finish_element("ApplicableTradeTax", self.applicable_trade_tax)?,
                 billing_specified_period: self.billing_specified_period,
                 specified_trade_allowance_charge: self.specified_trade_allowance_charge,
-                specified_trade_settlement_line_monetary_summation: self
-                    .specified_trade_settlement_line_monetary_summation
-                    .ok_or_else(|| {
-                        ErrorKind::MissingElement(
-                            "SpecifiedTradeSettlementLineMonetarySummation".into(),
-                        )
-                    })?,
+                specified_trade_settlement_line_monetary_summation: helper.finish_element(
+                    "SpecifiedTradeSettlementLineMonetarySummation",
+                    self.specified_trade_settlement_line_monetary_summation,
+                )?,
                 additional_referenced_document: self.additional_referenced_document,
                 receivable_specified_trade_accounting_account: self
                     .receivable_specified_trade_accounting_account,
@@ -13350,12 +13328,8 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::ProcuringProjectType {
-                id: self
-                    .id
-                    .ok_or_else(|| ErrorKind::MissingElement("ID".into()))?,
-                name: self
-                    .name
-                    .ok_or_else(|| ErrorKind::MissingElement("Name".into()))?,
+                id: helper.finish_element("ID", self.id)?,
+                name: helper.finish_element("Name", self.name)?,
             })
         }
     }
@@ -13558,9 +13532,8 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::SupplyChainEventType {
-                occurrence_date_time: self
-                    .occurrence_date_time
-                    .ok_or_else(|| ErrorKind::MissingElement("OccurrenceDateTime".into()))?,
+                occurrence_date_time: helper
+                    .finish_element("OccurrenceDateTime", self.occurrence_date_time)?,
             })
         }
     }
@@ -13685,7 +13658,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::CurrencyCodeType {
-                content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                content: helper.finish_content(self.content)?,
             })
         }
     }
@@ -14399,9 +14372,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::TradeSettlementPaymentMeansType {
-                type_code: self
-                    .type_code
-                    .ok_or_else(|| ErrorKind::MissingElement("TypeCode".into()))?,
+                type_code: helper.finish_element("TypeCode", self.type_code)?,
                 information: self.information,
                 applicable_trade_settlement_financial_card: self
                     .applicable_trade_settlement_financial_card,
@@ -15325,14 +15296,10 @@ pub mod quick_xml_deserialize {
             self.finish_state(helper, state)?;
             Ok(super::TradeTaxType {
                 calculated_amount: self.calculated_amount,
-                type_code: self
-                    .type_code
-                    .ok_or_else(|| ErrorKind::MissingElement("TypeCode".into()))?,
+                type_code: helper.finish_element("TypeCode", self.type_code)?,
                 exemption_reason: self.exemption_reason,
                 basis_amount: self.basis_amount,
-                category_code: self
-                    .category_code
-                    .ok_or_else(|| ErrorKind::MissingElement("CategoryCode".into()))?,
+                category_code: helper.finish_element("CategoryCode", self.category_code)?,
                 exemption_reason_code: self.exemption_reason_code,
                 tax_point_date: self.tax_point_date,
                 due_date_type_code: self.due_date_type_code,
@@ -16399,14 +16366,11 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::TradeAllowanceChargeType {
-                charge_indicator: self
-                    .charge_indicator
-                    .ok_or_else(|| ErrorKind::MissingElement("ChargeIndicator".into()))?,
+                charge_indicator: helper
+                    .finish_element("ChargeIndicator", self.charge_indicator)?,
                 calculation_percent: self.calculation_percent,
                 basis_amount: self.basis_amount,
-                actual_amount: self
-                    .actual_amount
-                    .ok_or_else(|| ErrorKind::MissingElement("ActualAmount".into()))?,
+                actual_amount: helper.finish_element("ActualAmount", self.actual_amount)?,
                 reason_code: self.reason_code,
                 reason: self.reason,
                 category_trade_tax: self.category_trade_tax,
@@ -17732,23 +17696,19 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::TradeSettlementHeaderMonetarySummationType {
-                line_total_amount: self
-                    .line_total_amount
-                    .ok_or_else(|| ErrorKind::MissingElement("LineTotalAmount".into()))?,
+                line_total_amount: helper
+                    .finish_element("LineTotalAmount", self.line_total_amount)?,
                 charge_total_amount: self.charge_total_amount,
                 allowance_total_amount: self.allowance_total_amount,
-                tax_basis_total_amount: self
-                    .tax_basis_total_amount
-                    .ok_or_else(|| ErrorKind::MissingElement("TaxBasisTotalAmount".into()))?,
+                tax_basis_total_amount: helper
+                    .finish_element("TaxBasisTotalAmount", self.tax_basis_total_amount)?,
                 tax_total_amount: self.tax_total_amount,
                 rounding_amount: self.rounding_amount,
-                grand_total_amount: self
-                    .grand_total_amount
-                    .ok_or_else(|| ErrorKind::MissingElement("GrandTotalAmount".into()))?,
+                grand_total_amount: helper
+                    .finish_element("GrandTotalAmount", self.grand_total_amount)?,
                 total_prepaid_amount: self.total_prepaid_amount,
-                due_payable_amount: self
-                    .due_payable_amount
-                    .ok_or_else(|| ErrorKind::MissingElement("DuePayableAmount".into()))?,
+                due_payable_amount: helper
+                    .finish_element("DuePayableAmount", self.due_payable_amount)?,
             })
         }
     }
@@ -17942,9 +17902,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::TradeAccountingAccountType {
-                id: self
-                    .id
-                    .ok_or_else(|| ErrorKind::MissingElement("ID".into()))?,
+                id: helper.finish_element("ID", self.id)?,
             })
         }
     }
@@ -18242,12 +18200,8 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::ProductCharacteristicType {
-                description: self
-                    .description
-                    .ok_or_else(|| ErrorKind::MissingElement("Description".into()))?,
-                value: self
-                    .value
-                    .ok_or_else(|| ErrorKind::MissingElement("Value".into()))?,
+                description: helper.finish_element("Description", self.description)?,
+                value: helper.finish_element("Value", self.value)?,
             })
         }
     }
@@ -18635,9 +18589,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::TradeCountryType {
-                id: self
-                    .id
-                    .ok_or_else(|| ErrorKind::MissingElement("ID".into()))?,
+                id: helper.finish_element("ID", self.id)?,
             })
         }
     }
@@ -19033,9 +18985,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::TradePriceType {
-                charge_amount: self
-                    .charge_amount
-                    .ok_or_else(|| ErrorKind::MissingElement("ChargeAmount".into()))?,
+                charge_amount: helper.finish_element("ChargeAmount", self.charge_amount)?,
                 basis_quantity: self.basis_quantity,
                 applied_trade_allowance_charge: self.applied_trade_allowance_charge,
             })
@@ -19167,7 +19117,7 @@ pub mod quick_xml_deserialize {
             self.finish_state(helper, state)?;
             Ok(super::QuantityType {
                 unit_code: self.unit_code,
-                content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                content: helper.finish_content(self.content)?,
             })
         }
     }
@@ -19374,9 +19324,8 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::TradeSettlementLineMonetarySummationType {
-                line_total_amount: self
-                    .line_total_amount
-                    .ok_or_else(|| ErrorKind::MissingElement("LineTotalAmount".into()))?,
+                line_total_amount: helper
+                    .finish_element("LineTotalAmount", self.line_total_amount)?,
             })
         }
     }
@@ -20922,9 +20871,7 @@ pub mod quick_xml_deserialize {
                 line_two: self.line_two,
                 line_three: self.line_three,
                 city_name: self.city_name,
-                country_id: self
-                    .country_id
-                    .ok_or_else(|| ErrorKind::MissingElement("CountryID".into()))?,
+                country_id: helper.finish_element("CountryID", self.country_id)?,
                 country_sub_division_name: self.country_sub_division_name,
             })
         }
@@ -21408,9 +21355,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::TaxRegistrationType {
-                id: self
-                    .id
-                    .ok_or_else(|| ErrorKind::MissingElement("ID".into()))?,
+                id: helper.finish_element("ID", self.id)?,
             })
         }
     }
@@ -21556,7 +21501,7 @@ pub mod quick_xml_deserialize {
             Ok(super::BinaryObjectType {
                 mime_code: self.mime_code,
                 filename: self.filename,
-                content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                content: helper.finish_content(self.content)?,
             })
         }
     }
@@ -21681,7 +21626,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::ReferenceCodeType {
-                content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                content: helper.finish_content(self.content)?,
             })
         }
     }
@@ -21890,9 +21835,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::FormattedDateTimeType {
-                date_time_string: self
-                    .date_time_string
-                    .ok_or_else(|| ErrorKind::MissingElement("DateTimeString".into()))?,
+                date_time_string: helper.finish_element("DateTimeString", self.date_time_string)?,
             })
         }
     }
@@ -22017,7 +21960,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::PaymentMeansCodeType {
-                content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                content: helper.finish_content(self.content)?,
             })
         }
     }
@@ -22315,9 +22258,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::TradeSettlementFinancialCardType {
-                id: self
-                    .id
-                    .ok_or_else(|| ErrorKind::MissingElement("ID".into()))?,
+                id: helper.finish_element("ID", self.id)?,
                 cardholder_name: self.cardholder_name,
             })
         }
@@ -22518,9 +22459,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::DebtorFinancialAccountType {
-                ibanid: self
-                    .ibanid
-                    .ok_or_else(|| ErrorKind::MissingElement("IBANID".into()))?,
+                ibanid: helper.finish_element("IBANID", self.ibanid)?,
             })
         }
     }
@@ -23112,9 +23051,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::CreditorFinancialInstitutionType {
-                bicid: self
-                    .bicid
-                    .ok_or_else(|| ErrorKind::MissingElement("BICID".into()))?,
+                bicid: helper.finish_element("BICID", self.bicid)?,
             })
         }
     }
@@ -23244,7 +23181,7 @@ pub mod quick_xml_deserialize {
             self.finish_state(helper, state)?;
             Ok(super::AmountType {
                 currency_id: self.currency_id,
-                content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                content: helper.finish_content(self.content)?,
             })
         }
     }
@@ -23369,7 +23306,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::TaxTypeCodeType {
-                content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                content: helper.finish_content(self.content)?,
             })
         }
     }
@@ -23494,7 +23431,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::TaxCategoryCodeType {
-                content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                content: helper.finish_content(self.content)?,
             })
         }
     }
@@ -23632,7 +23569,7 @@ pub mod quick_xml_deserialize {
             let state = replace(&mut *self.state__, DateTypeDeserializerState::Unknown__);
             self.finish_state(helper, state)?;
             Ok(super::DateType {
-                content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                content: helper.finish_default(self.content)?,
             })
         }
     }
@@ -23690,9 +23627,9 @@ pub mod quick_xml_deserialize {
                         let value = deserializer.finish(helper)?;
                         Self::store_date_string(&mut values, value)?;
                     }
-                    Ok(super::DateTypeContent::DateString(values.ok_or_else(
-                        || ErrorKind::MissingElement("DateString".into()),
-                    )?))
+                    Ok(super::DateTypeContent::DateString(
+                        helper.finish_element("DateString", values)?,
+                    ))
                 }
                 S::Done__(data) => Ok(data),
             }
@@ -23762,14 +23699,19 @@ pub mod quick_xml_deserialize {
             })
         }
     }
+    impl Default for DateTypeContentDeserializer {
+        fn default() -> Self {
+            Self {
+                state__: Box::new(DateTypeContentDeserializerState::Init__),
+            }
+        }
+    }
     impl<'de> Deserializer<'de, super::DateTypeContent> for DateTypeContentDeserializer {
         fn init(
             helper: &mut DeserializeHelper,
             event: Event<'de>,
         ) -> DeserializerResult<'de, super::DateTypeContent> {
-            let deserializer = Self {
-                state__: Box::new(DateTypeContentDeserializerState::Init__),
-            };
+            let deserializer = Self::default();
             let mut output = deserializer.next(helper, event)?;
             output.artifact = match output.artifact {
                 DeserializerArtifact::Deserializer(x)
@@ -23977,7 +23919,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::TimeReferenceCodeType {
-                content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                content: helper.finish_content(self.content)?,
             })
         }
     }
@@ -24096,7 +24038,7 @@ pub mod quick_xml_deserialize {
             let state = replace(&mut *self.state__, PercentTypeDeserializerState::Unknown__);
             self.finish_state(helper, state)?;
             Ok(super::PercentType {
-                content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                content: helper.finish_content(self.content)?,
             })
         }
     }
@@ -24239,7 +24181,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::IndicatorType {
-                content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                content: helper.finish_default(self.content)?,
             })
         }
     }
@@ -24296,9 +24238,9 @@ pub mod quick_xml_deserialize {
                         let value = deserializer.finish(helper)?;
                         Self::store_indicator(&mut values, value)?;
                     }
-                    Ok(super::IndicatorTypeContent::Indicator(values.ok_or_else(
-                        || ErrorKind::MissingElement("Indicator".into()),
-                    )?))
+                    Ok(super::IndicatorTypeContent::Indicator(
+                        helper.finish_element("Indicator", values)?,
+                    ))
                 }
                 S::Done__(data) => Ok(data),
             }
@@ -24370,14 +24312,19 @@ pub mod quick_xml_deserialize {
             })
         }
     }
+    impl Default for IndicatorTypeContentDeserializer {
+        fn default() -> Self {
+            Self {
+                state__: Box::new(IndicatorTypeContentDeserializerState::Init__),
+            }
+        }
+    }
     impl<'de> Deserializer<'de, super::IndicatorTypeContent> for IndicatorTypeContentDeserializer {
         fn init(
             helper: &mut DeserializeHelper,
             event: Event<'de>,
         ) -> DeserializerResult<'de, super::IndicatorTypeContent> {
-            let deserializer = Self {
-                state__: Box::new(IndicatorTypeContentDeserializerState::Init__),
-            };
+            let deserializer = Self::default();
             let mut output = deserializer.next(helper, event)?;
             output.artifact = match output.artifact {
                 DeserializerArtifact::Deserializer(x)
@@ -24590,7 +24537,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::AllowanceChargeReasonCodeType {
-                content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                content: helper.finish_content(self.content)?,
             })
         }
     }
@@ -24712,7 +24659,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::CountryIdType {
-                content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                content: helper.finish_content(self.content)?,
             })
         }
     }
@@ -24853,7 +24800,7 @@ pub mod quick_xml_deserialize {
             self.finish_state(helper, state)?;
             Ok(super::FormattedDateTimeTypeDateTimeStringType {
                 format: self.format,
-                content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                content: helper.finish_content(self.content)?,
             })
         }
     }
@@ -24989,7 +24936,7 @@ pub mod quick_xml_deserialize {
             self.finish_state(helper, state)?;
             Ok(super::DateTypeDateStringType {
                 format: self.format,
-                content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                content: helper.finish_content(self.content)?,
             })
         }
     }

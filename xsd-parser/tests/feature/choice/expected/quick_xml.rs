@@ -195,7 +195,7 @@ pub mod quick_xml_deserialize {
             let state = replace(&mut *self.state__, FooTypeDeserializerState::Unknown__);
             self.finish_state(helper, state)?;
             Ok(super::FooType {
-                content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                content: helper.finish_default(self.content)?,
             })
         }
     }
@@ -256,7 +256,7 @@ pub mod quick_xml_deserialize {
                         Self::store_bar(&mut values, value)?;
                     }
                     Ok(super::FooTypeContent::Bar(
-                        values.ok_or_else(|| ErrorKind::MissingElement("Bar".into()))?,
+                        helper.finish_element("Bar", values)?,
                     ))
                 }
                 S::Baz(mut values, deserializer) => {
@@ -265,7 +265,7 @@ pub mod quick_xml_deserialize {
                         Self::store_baz(&mut values, value)?;
                     }
                     Ok(super::FooTypeContent::Baz(
-                        values.ok_or_else(|| ErrorKind::MissingElement("Baz".into()))?,
+                        helper.finish_element("Baz", values)?,
                     ))
                 }
                 S::Done__(data) => Ok(data),
@@ -390,14 +390,19 @@ pub mod quick_xml_deserialize {
             })
         }
     }
+    impl Default for FooTypeContentDeserializer {
+        fn default() -> Self {
+            Self {
+                state__: Box::new(FooTypeContentDeserializerState::Init__),
+            }
+        }
+    }
     impl<'de> Deserializer<'de, super::FooTypeContent> for FooTypeContentDeserializer {
         fn init(
             helper: &mut DeserializeHelper,
             event: Event<'de>,
         ) -> DeserializerResult<'de, super::FooTypeContent> {
-            let deserializer = Self {
-                state__: Box::new(FooTypeContentDeserializerState::Init__),
-            };
+            let deserializer = Self::default();
             let mut output = deserializer.next(helper, event)?;
             output.artifact = match output.artifact {
                 DeserializerArtifact::Deserializer(x)

@@ -284,7 +284,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::ContainerType {
-                content_2: self.content_2,
+                content_2: helper.finish_vec_default(1usize, self.content_2)?,
             })
         }
     }
@@ -361,7 +361,7 @@ pub mod quick_xml_deserialize {
                         Self::store_foo(&mut values, value)?;
                     }
                     Ok(super::ContainerContent2Type::Foo(
-                        values.ok_or_else(|| ErrorKind::MissingElement("Foo".into()))?,
+                        helper.finish_element("Foo", values)?,
                     ))
                 }
                 S::Content3(mut values, deserializer) => {
@@ -369,9 +369,9 @@ pub mod quick_xml_deserialize {
                         let value = deserializer.finish(helper)?;
                         Self::store_content_3(&mut values, value)?;
                     }
-                    Ok(super::ContainerContent2Type::Content3(values.ok_or_else(
-                        || ErrorKind::MissingElement("Content3".into()),
-                    )?))
+                    Ok(super::ContainerContent2Type::Content3(
+                        helper.finish_default(values)?,
+                    ))
                 }
                 S::Done__(data) => Ok(data),
             }
@@ -505,14 +505,19 @@ pub mod quick_xml_deserialize {
             })
         }
     }
+    impl Default for ContainerContent2TypeDeserializer {
+        fn default() -> Self {
+            Self {
+                state__: Box::new(ContainerContent2TypeDeserializerState::Init__),
+            }
+        }
+    }
     impl<'de> Deserializer<'de, super::ContainerContent2Type> for ContainerContent2TypeDeserializer {
         fn init(
             helper: &mut DeserializeHelper,
             event: Event<'de>,
         ) -> DeserializerResult<'de, super::ContainerContent2Type> {
-            let deserializer = Self {
-                state__: Box::new(ContainerContent2TypeDeserializerState::Init__),
-            };
+            let deserializer = Self::default();
             let mut output = deserializer.next(helper, event)?;
             output.artifact = match output.artifact {
                 DeserializerArtifact::Deserializer(x)
@@ -702,6 +707,14 @@ pub mod quick_xml_deserialize {
             })
         }
     }
+    impl Default for ContainerContent3TypeDeserializer {
+        fn default() -> Self {
+            Self {
+                content_4: Vec::new(),
+                state__: Box::new(ContainerContent3TypeDeserializerState::Init__),
+            }
+        }
+    }
     impl<'de> Deserializer<'de, super::ContainerContent3Type> for ContainerContent3TypeDeserializer {
         fn init(
             helper: &mut DeserializeHelper,
@@ -805,7 +818,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::ContainerContent3Type {
-                content_4: self.content_4,
+                content_4: helper.finish_vec_default(1usize, self.content_4)?,
             })
         }
     }
@@ -855,7 +868,7 @@ pub mod quick_xml_deserialize {
                         Self::store_bar(&mut values, value)?;
                     }
                     Ok(super::ContainerContent4Type::Bar(
-                        values.ok_or_else(|| ErrorKind::MissingElement("Bar".into()))?,
+                        helper.finish_element("Bar", values)?,
                     ))
                 }
                 S::Done__(data) => Ok(data),
@@ -921,14 +934,19 @@ pub mod quick_xml_deserialize {
             })
         }
     }
+    impl Default for ContainerContent4TypeDeserializer {
+        fn default() -> Self {
+            Self {
+                state__: Box::new(ContainerContent4TypeDeserializerState::Init__),
+            }
+        }
+    }
     impl<'de> Deserializer<'de, super::ContainerContent4Type> for ContainerContent4TypeDeserializer {
         fn init(
             helper: &mut DeserializeHelper,
             event: Event<'de>,
         ) -> DeserializerResult<'de, super::ContainerContent4Type> {
-            let deserializer = Self {
-                state__: Box::new(ContainerContent4TypeDeserializerState::Init__),
-            };
+            let deserializer = Self::default();
             let mut output = deserializer.next(helper, event)?;
             output.artifact = match output.artifact {
                 DeserializerArtifact::Deserializer(x)

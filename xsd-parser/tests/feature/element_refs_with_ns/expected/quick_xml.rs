@@ -250,9 +250,7 @@ pub mod bar {
                 let state = replace(&mut *self.state__, InnerTypeDeserializerState::Unknown__);
                 self.finish_state(helper, state)?;
                 Ok(super::InnerType {
-                    a: self
-                        .a
-                        .ok_or_else(|| ErrorKind::MissingElement("A".into()))?,
+                    a: helper.finish_element("A", self.a)?,
                 })
             }
         }
@@ -532,9 +530,7 @@ pub mod baz {
                 let state = replace(&mut *self.state__, InnerTypeDeserializerState::Unknown__);
                 self.finish_state(helper, state)?;
                 Ok(super::InnerType {
-                    b: self
-                        .b
-                        .ok_or_else(|| ErrorKind::MissingElement("B".into()))?,
+                    b: helper.finish_element("B", self.b)?,
                 })
             }
         }
@@ -814,9 +810,7 @@ pub mod biz {
                 let state = replace(&mut *self.state__, InnerTypeDeserializerState::Unknown__);
                 self.finish_state(helper, state)?;
                 Ok(super::InnerType {
-                    c: self
-                        .c
-                        .ok_or_else(|| ErrorKind::MissingElement("C".into()))?,
+                    c: helper.finish_element("C", self.c)?,
                 })
             }
         }
@@ -1263,15 +1257,9 @@ pub mod quick_xml_deserialize {
             let state = replace(&mut *self.state__, OuterTypeDeserializerState::Unknown__);
             self.finish_state(helper, state)?;
             Ok(super::OuterType {
-                bar_inner: self
-                    .bar_inner
-                    .ok_or_else(|| ErrorKind::MissingElement("Inner".into()))?,
-                baz_inner: self
-                    .baz_inner
-                    .ok_or_else(|| ErrorKind::MissingElement("Inner".into()))?,
-                biz_inner: self
-                    .biz_inner
-                    .ok_or_else(|| ErrorKind::MissingElement("Inner".into()))?,
+                bar_inner: helper.finish_element("Inner", self.bar_inner)?,
+                baz_inner: helper.finish_element("Inner", self.baz_inner)?,
+                biz_inner: helper.finish_element("Inner", self.biz_inner)?,
             })
         }
     }

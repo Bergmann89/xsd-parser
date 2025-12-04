@@ -197,7 +197,7 @@ pub mod quick_xml_deserialize {
             let state = replace(&mut *self.state__, FooTypeDeserializerState::Unknown__);
             self.finish_state(helper, state)?;
             Ok(super::FooType {
-                content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                content: helper.finish_default(self.content)?,
             })
         }
     }
@@ -286,7 +286,7 @@ pub mod quick_xml_deserialize {
                         Self::store_once(&mut values, value)?;
                     }
                     Ok(super::FooTypeContent::Once(
-                        values.ok_or_else(|| ErrorKind::MissingElement("Once".into()))?,
+                        helper.finish_element("Once", values)?,
                     ))
                 }
                 S::Optional(mut values, deserializer) => {
@@ -301,16 +301,18 @@ pub mod quick_xml_deserialize {
                         let value = deserializer.finish(helper)?;
                         Self::store_once_specify(&mut values, value)?;
                     }
-                    Ok(super::FooTypeContent::OnceSpecify(values.ok_or_else(
-                        || ErrorKind::MissingElement("OnceSpecify".into()),
-                    )?))
+                    Ok(super::FooTypeContent::OnceSpecify(
+                        helper.finish_element("OnceSpecify", values)?,
+                    ))
                 }
                 S::TwiceOrMore(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_twice_or_more(&mut values, value)?;
                     }
-                    Ok(super::FooTypeContent::TwiceOrMore(values))
+                    Ok(super::FooTypeContent::TwiceOrMore(
+                        helper.finish_vec(2usize, None, values)?,
+                    ))
                 }
                 S::Done__(data) => Ok(data),
             }
@@ -560,14 +562,19 @@ pub mod quick_xml_deserialize {
             })
         }
     }
+    impl Default for FooTypeContentDeserializer {
+        fn default() -> Self {
+            Self {
+                state__: Box::new(FooTypeContentDeserializerState::Init__),
+            }
+        }
+    }
     impl<'de> Deserializer<'de, super::FooTypeContent> for FooTypeContentDeserializer {
         fn init(
             helper: &mut DeserializeHelper,
             event: Event<'de>,
         ) -> DeserializerResult<'de, super::FooTypeContent> {
-            let deserializer = Self {
-                state__: Box::new(FooTypeContentDeserializerState::Init__),
-            };
+            let deserializer = Self::default();
             let mut output = deserializer.next(helper, event)?;
             output.artifact = match output.artifact {
                 DeserializerArtifact::Deserializer(x)

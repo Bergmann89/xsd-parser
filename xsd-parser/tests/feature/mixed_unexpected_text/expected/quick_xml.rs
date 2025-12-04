@@ -371,8 +371,8 @@ pub mod quick_xml_deserialize {
             let state = replace(&mut *self.state__, MixedTypeDeserializerState::Unknown__);
             self.finish_state(helper, state)?;
             Ok(super::MixedType {
-                group: self.group,
-                baz: self.baz,
+                group: helper.finish_vec_default(1usize, self.group)?,
+                baz: helper.finish_vec(1usize, None, self.baz)?,
             })
         }
     }
@@ -429,14 +429,18 @@ pub mod quick_xml_deserialize {
                         let value = deserializer.finish(helper)?;
                         Self::store_fuu(&mut values, value)?;
                     }
-                    Ok(super::MixedGroupType::Fuu(values))
+                    Ok(super::MixedGroupType::Fuu(
+                        helper.finish_vec(1usize, None, values)?,
+                    ))
                 }
                 S::Bar(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_bar(&mut values, value)?;
                     }
-                    Ok(super::MixedGroupType::Bar(values))
+                    Ok(super::MixedGroupType::Bar(
+                        helper.finish_vec(1usize, None, values)?,
+                    ))
                 }
                 S::Done__(data) => Ok(data),
             }
@@ -570,14 +574,19 @@ pub mod quick_xml_deserialize {
             })
         }
     }
+    impl Default for MixedGroupTypeDeserializer {
+        fn default() -> Self {
+            Self {
+                state__: Box::new(MixedGroupTypeDeserializerState::Init__),
+            }
+        }
+    }
     impl<'de> Deserializer<'de, super::MixedGroupType> for MixedGroupTypeDeserializer {
         fn init(
             helper: &mut DeserializeHelper,
             event: Event<'de>,
         ) -> DeserializerResult<'de, super::MixedGroupType> {
-            let deserializer = Self {
-                state__: Box::new(MixedGroupTypeDeserializerState::Init__),
-            };
+            let deserializer = Self::default();
             let mut output = deserializer.next(helper, event)?;
             output.artifact = match output.artifact {
                 DeserializerArtifact::Deserializer(x)
@@ -950,8 +959,8 @@ pub mod quick_xml_deserialize {
             let state = replace(&mut *self.state__, NormalTypeDeserializerState::Unknown__);
             self.finish_state(helper, state)?;
             Ok(super::NormalType {
-                group: self.group,
-                baz: self.baz,
+                group: helper.finish_vec_default(1usize, self.group)?,
+                baz: helper.finish_vec(1usize, None, self.baz)?,
             })
         }
     }
@@ -1008,14 +1017,18 @@ pub mod quick_xml_deserialize {
                         let value = deserializer.finish(helper)?;
                         Self::store_fuu(&mut values, value)?;
                     }
-                    Ok(super::NormalGroupType::Fuu(values))
+                    Ok(super::NormalGroupType::Fuu(
+                        helper.finish_vec(1usize, None, values)?,
+                    ))
                 }
                 S::Bar(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_bar(&mut values, value)?;
                     }
-                    Ok(super::NormalGroupType::Bar(values))
+                    Ok(super::NormalGroupType::Bar(
+                        helper.finish_vec(1usize, None, values)?,
+                    ))
                 }
                 S::Done__(data) => Ok(data),
             }
@@ -1149,14 +1162,19 @@ pub mod quick_xml_deserialize {
             })
         }
     }
+    impl Default for NormalGroupTypeDeserializer {
+        fn default() -> Self {
+            Self {
+                state__: Box::new(NormalGroupTypeDeserializerState::Init__),
+            }
+        }
+    }
     impl<'de> Deserializer<'de, super::NormalGroupType> for NormalGroupTypeDeserializer {
         fn init(
             helper: &mut DeserializeHelper,
             event: Event<'de>,
         ) -> DeserializerResult<'de, super::NormalGroupType> {
-            let deserializer = Self {
-                state__: Box::new(NormalGroupTypeDeserializerState::Init__),
-            };
+            let deserializer = Self::default();
             let mut output = deserializer.next(helper, event)?;
             output.artifact = match output.artifact {
                 DeserializerArtifact::Deserializer(x)

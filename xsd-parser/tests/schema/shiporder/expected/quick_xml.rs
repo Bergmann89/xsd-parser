@@ -455,13 +455,9 @@ pub mod quick_xml_deserialize {
             self.finish_state(helper, state)?;
             Ok(super::ShiporderType {
                 orderid: self.orderid,
-                orderperson: self
-                    .orderperson
-                    .ok_or_else(|| ErrorKind::MissingElement("orderperson".into()))?,
-                shipto: self
-                    .shipto
-                    .ok_or_else(|| ErrorKind::MissingElement("shipto".into()))?,
-                item: self.item,
+                orderperson: helper.finish_element("orderperson", self.orderperson)?,
+                shipto: helper.finish_element("shipto", self.shipto)?,
+                item: helper.finish_vec(1usize, None, self.item)?,
             })
         }
     }
@@ -912,18 +908,10 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::ShiporderShiptoType {
-                name: self
-                    .name
-                    .ok_or_else(|| ErrorKind::MissingElement("name".into()))?,
-                address: self
-                    .address
-                    .ok_or_else(|| ErrorKind::MissingElement("address".into()))?,
-                city: self
-                    .city
-                    .ok_or_else(|| ErrorKind::MissingElement("city".into()))?,
-                country: self
-                    .country
-                    .ok_or_else(|| ErrorKind::MissingElement("country".into()))?,
+                name: helper.finish_element("name", self.name)?,
+                address: helper.finish_element("address", self.address)?,
+                city: helper.finish_element("city", self.city)?,
+                country: helper.finish_element("country", self.country)?,
             })
         }
     }
@@ -1369,16 +1357,10 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::ShiporderItemType {
-                title: self
-                    .title
-                    .ok_or_else(|| ErrorKind::MissingElement("title".into()))?,
+                title: helper.finish_element("title", self.title)?,
                 note: self.note,
-                quantity: self
-                    .quantity
-                    .ok_or_else(|| ErrorKind::MissingElement("quantity".into()))?,
-                price: self
-                    .price
-                    .ok_or_else(|| ErrorKind::MissingElement("price".into()))?,
+                quantity: helper.finish_element("quantity", self.quantity)?,
+                price: helper.finish_element("price", self.price)?,
             })
         }
     }

@@ -488,14 +488,10 @@ pub mod quick_xml_deserialize {
             let state = replace(&mut *self.state__, FooTypeDeserializerState::Unknown__);
             self.finish_state(helper, state)?;
             Ok(super::FooType {
-                once: self
-                    .once
-                    .ok_or_else(|| ErrorKind::MissingElement("Once".into()))?,
+                once: helper.finish_element("Once", self.once)?,
                 optional: self.optional,
-                once_specify: self
-                    .once_specify
-                    .ok_or_else(|| ErrorKind::MissingElement("OnceSpecify".into()))?,
-                twice_or_more: self.twice_or_more,
+                once_specify: helper.finish_element("OnceSpecify", self.once_specify)?,
+                twice_or_more: helper.finish_vec(2usize, None, self.twice_or_more)?,
             })
         }
     }

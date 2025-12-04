@@ -135,9 +135,7 @@ pub mod quick_xml_deserialize {
                         let value = deserializer.finish(helper)?;
                         Self::store_once(&mut values, value)?;
                     }
-                    Ok(super::FooType::Once(
-                        values.ok_or_else(|| ErrorKind::MissingElement("Once".into()))?,
-                    ))
+                    Ok(super::FooType::Once(helper.finish_element("Once", values)?))
                 }
                 S::Optional(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
@@ -151,16 +149,20 @@ pub mod quick_xml_deserialize {
                         let value = deserializer.finish(helper)?;
                         Self::store_once_specify(&mut values, value)?;
                     }
-                    Ok(super::FooType::OnceSpecify(values.ok_or_else(|| {
-                        ErrorKind::MissingElement("OnceSpecify".into())
-                    })?))
+                    Ok(super::FooType::OnceSpecify(
+                        helper.finish_element("OnceSpecify", values)?,
+                    ))
                 }
                 S::TwiceOrMore(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_twice_or_more(&mut values, value)?;
                     }
-                    Ok(super::FooType::TwiceOrMore(values))
+                    Ok(super::FooType::TwiceOrMore(helper.finish_vec(
+                        2usize,
+                        Some(100usize),
+                        values,
+                    )?))
                 }
                 S::Done__(data) => Ok(data),
             }

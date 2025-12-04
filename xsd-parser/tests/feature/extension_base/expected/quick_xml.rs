@@ -391,15 +391,9 @@ pub mod quick_xml_deserialize {
             let state = replace(&mut *self.state__, FooTypeDeserializerState::Unknown__);
             self.finish_state(helper, state)?;
             Ok(super::FooType {
-                b: self
-                    .b
-                    .ok_or_else(|| ErrorKind::MissingElement("b".into()))?,
-                c: self
-                    .c
-                    .ok_or_else(|| ErrorKind::MissingElement("c".into()))?,
-                a: self
-                    .a
-                    .ok_or_else(|| ErrorKind::MissingElement("a".into()))?,
+                b: helper.finish_element("b", self.b)?,
+                c: helper.finish_element("c", self.c)?,
+                a: helper.finish_element("a", self.a)?,
             })
         }
     }

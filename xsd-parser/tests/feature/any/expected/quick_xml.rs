@@ -524,9 +524,7 @@ pub mod quick_xml_deserialize {
             self.finish_state(helper, state)?;
             Ok(super::FooType {
                 any_attribute: self.any_attribute,
-                name: self
-                    .name
-                    .ok_or_else(|| ErrorKind::MissingElement("Name".into()))?,
+                name: helper.finish_element("Name", self.name)?,
                 any_0: self.any_0,
                 choice: self.choice,
                 any_1: self.any_1,
@@ -673,7 +671,7 @@ pub mod quick_xml_deserialize {
             self.finish_state(helper, state)?;
             Ok(super::ChoiceType {
                 any_attribute: self.any_attribute,
-                content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                content: helper.finish_default(self.content)?,
             })
         }
     }
@@ -740,7 +738,7 @@ pub mod quick_xml_deserialize {
                         Self::store_name(&mut values, value)?;
                     }
                     Ok(super::ChoiceTypeContent::Name(
-                        values.ok_or_else(|| ErrorKind::MissingElement("Name".into()))?,
+                        helper.finish_element("Name", values)?,
                     ))
                 }
                 S::Any(mut values, deserializer) => {
@@ -749,7 +747,7 @@ pub mod quick_xml_deserialize {
                         Self::store_any(&mut values, value)?;
                     }
                     Ok(super::ChoiceTypeContent::Any(
-                        values.ok_or_else(|| ErrorKind::MissingElement("any2".into()))?,
+                        helper.finish_element("any2", values)?,
                     ))
                 }
                 S::Done__(data) => Ok(data),
@@ -874,14 +872,19 @@ pub mod quick_xml_deserialize {
             })
         }
     }
+    impl Default for ChoiceTypeContentDeserializer {
+        fn default() -> Self {
+            Self {
+                state__: Box::new(ChoiceTypeContentDeserializerState::Init__),
+            }
+        }
+    }
     impl<'de> Deserializer<'de, super::ChoiceTypeContent> for ChoiceTypeContentDeserializer {
         fn init(
             helper: &mut DeserializeHelper,
             event: Event<'de>,
         ) -> DeserializerResult<'de, super::ChoiceTypeContent> {
-            let deserializer = Self {
-                state__: Box::new(ChoiceTypeContentDeserializerState::Init__),
-            };
+            let deserializer = Self::default();
             let mut output = deserializer.next(helper, event)?;
             output.artifact = match output.artifact {
                 DeserializerArtifact::Deserializer(x)
