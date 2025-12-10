@@ -151,8 +151,8 @@ impl<'a> ElementHandlerOutput<'a> {
     /// Create a [`Break`](Self::Break) instance that will return the passed
     /// `event` to root of the deserialization process.
     #[must_use]
-    pub fn return_to_root(event: Event<'a>, allow_any: bool) -> Self {
-        Self::break_(DeserializerEvent::Break(event), allow_any)
+    pub fn return_to_root(event: DeserializerEvent<'a>, allow_any: bool) -> Self {
+        Self::break_(event.into_break(), allow_any)
     }
 
     /// Create a [`Continue`](Self::Continue) instance if the passed `event` is
@@ -177,6 +177,21 @@ impl<'a> ElementHandlerOutput<'a> {
             DeserializerEvent::Continue(event) => Self::return_to_parent(event, allow_any),
             event => Self::break_(event, allow_any),
         }
+    }
+
+    /// Returns `true` if this is a [`Continue`](ElementHandlerOutput::Continue)
+    /// that contains a [`Start`](Event::Start) or [`Empty`](Event::Empty) event,
+    /// `false` otherwise.
+    #[inline]
+    #[must_use]
+    pub fn is_continue_start_or_empty(&self) -> bool {
+        matches!(
+            self,
+            Self::Continue {
+                event: Event::Start(_) | Event::Empty(_),
+                ..
+            }
+        )
     }
 }
 
@@ -291,18 +306,42 @@ pub enum DeserializerEvent<'a> {
     /// for additional evaluation.
     Break(Event<'a>),
 
-    /// The event was not consumed by the deserializer an may be processed again
+    /// The event was not consumed by the deserializer and may be processed again
     /// by any of it's parents.
     Continue(Event<'a>),
 }
 
 impl<'a> DeserializerEvent<'a> {
     /// Extract the event as `Option`.
+    #[inline]
     #[must_use]
     pub fn into_event(self) -> Option<Event<'a>> {
         match self {
             Self::None => None,
             Self::Break(event) | Self::Continue(event) => Some(event),
+        }
+    }
+
+    /// Return [`None`](DeserializerEvent::None) if the contained event is
+    /// [`Text`](Event::Text) or [`CData`](Event::CData).
+    #[must_use]
+    pub fn drop_text(self) -> Self {
+        match self {
+            Self::None => Self::None,
+            Self::Break(Event::Text(_) | Event::CData(_)) => Self::None,
+            Self::Continue(Event::Text(_) | Event::CData(_)) => Self::None,
+            x => x,
+        }
+    }
+
+    /// Converts a [`Continue`](DeserializerEvent::Continue) into a
+    /// [`Break`](DeserializerEvent::Break).
+    #[must_use]
+    pub fn into_break(self) -> Self {
+        match self {
+            Self::None => Self::None,
+            Self::Break(event) => Self::Break(event),
+            Self::Continue(event) => Self::Break(event),
         }
     }
 }

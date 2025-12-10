@@ -64,6 +64,10 @@ fn read_quick_xml() {
     crate::utils::quick_xml_read_test::<NestedSeq, _>(
         "tests/feature/defaultable_content/example/nested.xml",
     );
+
+    crate::utils::quick_xml_read_test::<NestedSeq, _>(
+        "tests/feature/defaultable_content/example/nested2.xml",
+    );
 }
 
 #[cfg(not(feature = "update-expectations"))]

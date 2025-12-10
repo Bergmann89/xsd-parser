@@ -160,9 +160,11 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                if self.url.len() < 1usize {
-                    *self.state__ = UrlsetTypeDeserializerState::Url(None);
+                if matches!(&fallback, Some(UrlsetTypeDeserializerState::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
+                } else if self.url.len() < 1usize {
+                    fallback.get_or_insert(UrlsetTypeDeserializerState::Url(None));
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 } else {
                     fallback.get_or_insert(UrlsetTypeDeserializerState::Url(None));
                     *self.state__ = UrlsetTypeDeserializerState::Done__;
@@ -172,29 +174,19 @@ pub mod quick_xml_deserialize {
             if let Some(fallback) = fallback.take() {
                 self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_url(data)?;
                     *self.state__ = UrlsetTypeDeserializerState::Url(None);
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback.get_or_insert(UrlsetTypeDeserializerState::Url(Some(
-                                deserializer,
-                            )));
-                            *self.state__ = UrlsetTypeDeserializerState::Url(None);
-                        }
-                        ElementHandlerOutput::Break { .. } => {
-                            *self.state__ = UrlsetTypeDeserializerState::Url(Some(deserializer));
-                        }
-                    }
-                    ret
+                    fallback.get_or_insert(UrlsetTypeDeserializerState::Url(Some(deserializer)));
+                    *self.state__ = UrlsetTypeDeserializerState::Url(None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
     }
     impl<'de> Deserializer<'de, super::UrlsetType> for UrlsetTypeDeserializer {
@@ -263,7 +255,7 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Done__, event) => {
-                        fallback.get_or_insert(S::Done__);
+                        *self.state__ = S::Done__;
                         break (DeserializerEvent::Continue(event), true);
                     }
                     (state, event) => {
@@ -391,40 +383,29 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                if self.loc.is_some() {
-                    fallback.get_or_insert(TUrlTypeDeserializerState::Loc(None));
-                    *self.state__ = TUrlTypeDeserializerState::Lastmod(None);
-                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                } else {
-                    *self.state__ = TUrlTypeDeserializerState::Loc(None);
+                fallback.get_or_insert(TUrlTypeDeserializerState::Loc(None));
+                if matches!(&fallback, Some(TUrlTypeDeserializerState::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
+                } else {
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 }
             }
             if let Some(fallback) = fallback.take() {
                 self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_loc(data)?;
                     *self.state__ = TUrlTypeDeserializerState::Lastmod(None);
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback
-                                .get_or_insert(TUrlTypeDeserializerState::Loc(Some(deserializer)));
-                            *self.state__ = TUrlTypeDeserializerState::Lastmod(None);
-                        }
-                        ElementHandlerOutput::Break { .. } => {
-                            *self.state__ = TUrlTypeDeserializerState::Loc(Some(deserializer));
-                        }
-                    }
-                    ret
+                    fallback.get_or_insert(TUrlTypeDeserializerState::Loc(Some(deserializer)));
+                    *self.state__ = TUrlTypeDeserializerState::Lastmod(None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_lastmod<'de>(
             &mut self,
@@ -445,29 +426,19 @@ pub mod quick_xml_deserialize {
             if let Some(fallback) = fallback.take() {
                 self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_lastmod(data)?;
                     *self.state__ = TUrlTypeDeserializerState::Changefreq(None);
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback.get_or_insert(TUrlTypeDeserializerState::Lastmod(Some(
-                                deserializer,
-                            )));
-                            *self.state__ = TUrlTypeDeserializerState::Changefreq(None);
-                        }
-                        ElementHandlerOutput::Break { .. } => {
-                            *self.state__ = TUrlTypeDeserializerState::Lastmod(Some(deserializer));
-                        }
-                    }
-                    ret
+                    fallback.get_or_insert(TUrlTypeDeserializerState::Lastmod(Some(deserializer)));
+                    *self.state__ = TUrlTypeDeserializerState::Changefreq(None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_changefreq<'de>(
             &mut self,
@@ -488,30 +459,20 @@ pub mod quick_xml_deserialize {
             if let Some(fallback) = fallback.take() {
                 self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_changefreq(data)?;
                     *self.state__ = TUrlTypeDeserializerState::Priority(None);
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback.get_or_insert(TUrlTypeDeserializerState::Changefreq(Some(
-                                deserializer,
-                            )));
-                            *self.state__ = TUrlTypeDeserializerState::Priority(None);
-                        }
-                        ElementHandlerOutput::Break { .. } => {
-                            *self.state__ =
-                                TUrlTypeDeserializerState::Changefreq(Some(deserializer));
-                        }
-                    }
-                    ret
+                    fallback
+                        .get_or_insert(TUrlTypeDeserializerState::Changefreq(Some(deserializer)));
+                    *self.state__ = TUrlTypeDeserializerState::Priority(None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_priority<'de>(
             &mut self,
@@ -532,29 +493,19 @@ pub mod quick_xml_deserialize {
             if let Some(fallback) = fallback.take() {
                 self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_priority(data)?;
                     *self.state__ = TUrlTypeDeserializerState::Done__;
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback.get_or_insert(TUrlTypeDeserializerState::Priority(Some(
-                                deserializer,
-                            )));
-                            *self.state__ = TUrlTypeDeserializerState::Done__;
-                        }
-                        ElementHandlerOutput::Break { .. } => {
-                            *self.state__ = TUrlTypeDeserializerState::Priority(Some(deserializer));
-                        }
-                    }
-                    ret
+                    fallback.get_or_insert(TUrlTypeDeserializerState::Priority(Some(deserializer)));
+                    *self.state__ = TUrlTypeDeserializerState::Done__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
     }
     impl<'de> Deserializer<'de, super::TUrlType> for TUrlTypeDeserializer {
@@ -710,7 +661,7 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Done__, event) => {
-                        fallback.get_or_insert(S::Done__);
+                        *self.state__ = S::Done__;
                         break (DeserializerEvent::Continue(event), true);
                     }
                     (state, event) => {

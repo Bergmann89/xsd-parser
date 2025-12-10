@@ -433,6 +433,13 @@ impl ComplexDataContent<'_> {
     pub fn is_simple(&self) -> bool {
         self.simple_type.is_some()
     }
+
+    /// Returns `true` if the content is a complex type (e.g. a sequence, choice,
+    /// all, ...), `false` otherwise.
+    #[must_use]
+    pub fn is_complex(&self) -> bool {
+        self.simple_type.is_none()
+    }
 }
 
 impl ComplexDataElement<'_> {

@@ -189,28 +189,19 @@ pub mod quick_xml_deserialize {
             if let Some(fallback) = fallback.take() {
                 self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_base(data)?;
                     *self.state__ = ListTypeDeserializerState::Base(None);
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback
-                                .get_or_insert(ListTypeDeserializerState::Base(Some(deserializer)));
-                            *self.state__ = ListTypeDeserializerState::Base(None);
-                        }
-                        ElementHandlerOutput::Break { .. } => {
-                            *self.state__ = ListTypeDeserializerState::Base(Some(deserializer));
-                        }
-                    }
-                    ret
+                    fallback.get_or_insert(ListTypeDeserializerState::Base(Some(deserializer)));
+                    *self.state__ = ListTypeDeserializerState::Base(None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
     }
     impl<'de> Deserializer<'de, super::ListType> for ListTypeDeserializer {
@@ -273,7 +264,7 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Done__, event) => {
-                        fallback.get_or_insert(S::Done__);
+                        *self.state__ = S::Done__;
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
                     (state, event) => {

@@ -310,42 +310,31 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                if self.content.is_some() {
-                    fallback.get_or_insert(ComplexContentTypeDeserializerState::Content(None));
-                    *self.state__ = ComplexContentTypeDeserializerState::Done__;
-                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                } else {
-                    *self.state__ = ComplexContentTypeDeserializerState::Content(None);
+                fallback.get_or_insert(ComplexContentTypeDeserializerState::Content(None));
+                if matches!(&fallback, Some(ComplexContentTypeDeserializerState::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
+                } else {
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 }
             }
             if let Some(fallback) = fallback.take() {
                 self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_content(data)?;
                     *self.state__ = ComplexContentTypeDeserializerState::Done__;
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback.get_or_insert(ComplexContentTypeDeserializerState::Content(
-                                Some(deserializer),
-                            ));
-                            *self.state__ = ComplexContentTypeDeserializerState::Done__;
-                        }
-                        ElementHandlerOutput::Break { .. } => {
-                            *self.state__ =
-                                ComplexContentTypeDeserializerState::Content(Some(deserializer));
-                        }
-                    }
-                    ret
+                    fallback.get_or_insert(ComplexContentTypeDeserializerState::Content(Some(
+                        deserializer,
+                    )));
+                    *self.state__ = ComplexContentTypeDeserializerState::Done__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
     }
     impl<'de> Deserializer<'de, super::ComplexContentType> for ComplexContentTypeDeserializer {
@@ -409,7 +398,7 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Done__, event) => {
-                        fallback.get_or_insert(S::Done__);
+                        *self.state__ = S::Done__;
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
                     (state, event) => {

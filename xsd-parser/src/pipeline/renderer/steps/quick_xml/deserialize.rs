@@ -1,6 +1,6 @@
 #![allow(clippy::redundant_closure_for_method_calls)]
 
-use std::collections::HashSet;
+use std::collections::{hash_map::Entry, HashMap, HashSet};
 use std::ops::Not;
 
 use proc_macro2::{Ident as Ident2, TokenStream};
@@ -770,7 +770,9 @@ impl ComplexData<'_> {
                 type_.render_deserializer(ctx);
 
                 if let Some(content_type) = content_type {
+                    ctx.set_content(true);
                     content_type.render_deserializer(ctx);
+                    ctx.set_content(false);
                 }
             }
             Self::Struct {
@@ -780,7 +782,9 @@ impl ComplexData<'_> {
                 type_.render_deserializer(ctx);
 
                 if let Some(content_type) = content_type {
+                    ctx.set_content(true);
                     content_type.render_deserializer(ctx);
+                    ctx.set_content(false);
                 }
             }
         }
@@ -947,7 +951,8 @@ impl ComplexDataEnum<'_> {
     }
 
     fn render_deserializer_helper(&self, ctx: &mut Context<'_, '_>) {
-        let config = ctx.get_ref::<DeserializerConfig>();
+        let config = ctx.get::<DeserializerConfig>();
+        let is_defaultable = ctx.is_defaultable_type();
 
         let represents_element = self.represents_element();
         let deserializer_ident = &self.deserializer_ident;
@@ -961,19 +966,22 @@ impl ComplexDataEnum<'_> {
         let store_elements = self
             .elements
             .iter()
-            .map(|x| x.deserializer_enum_variant_fn_store(ctx));
-        let handle_elements = self.elements.iter().map(|x| {
-            x.deserializer_enum_variant_fn_handle(
-                ctx,
-                represents_element,
-                &boxed_deserializer_ident(config.boxed_deserializer, deserializer_ident),
-                deserializer_state_ident,
-            )
-        });
+            .map(|x| x.deserializer_enum_variant_fn_store(ctx))
+            .collect::<Vec<_>>();
+        let handle_elements = self
+            .elements
+            .iter()
+            .map(|x| {
+                x.deserializer_enum_variant_fn_handle(
+                    ctx,
+                    represents_element,
+                    &boxed_deserializer_ident(config.boxed_deserializer, deserializer_ident),
+                    deserializer_state_ident,
+                )
+            })
+            .collect::<Vec<_>>();
 
-        let impl_default = represents_element
-            .not()
-            .then(|| self.render_deserializer_impl_default(ctx));
+        let impl_default = is_defaultable.then(|| self.render_deserializer_impl_default(ctx));
 
         let code = quote! {
             impl #deserializer_ident {
@@ -996,7 +1004,6 @@ impl ComplexDataEnum<'_> {
         let deserializer_state_ident = &self.deserializer_state_ident;
 
         let result = resolve_build_in!(ctx, "::core::result::Result");
-        let option = resolve_build_in!(ctx, "::core::option::Option");
 
         let event = resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::Event");
         let error = resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::Error");
@@ -1042,18 +1049,11 @@ impl ComplexDataEnum<'_> {
             )
         };
 
-        let fallback = quote! {
-            *self.state__ = fallback.take().unwrap_or(#deserializer_state_ident::Init__);
-
-            Ok(#element_handler_output::return_to_parent(event, #allow_any_result))
-        };
-
         quote! {
             fn find_suitable<'de>(
                 &mut self,
                 helper: &mut #deserialize_helper,
                 event: #event<'de>,
-                fallback: &mut #option<#deserializer_state_ident>,
             ) -> #result<#element_handler_output<'de>, #error> {
                 #event_decl
                 #allow_any_decl
@@ -1065,13 +1065,17 @@ impl ComplexDataEnum<'_> {
                 }
 
                 #text
-                #fallback
+
+                *self.state__ = #deserializer_state_ident::Init__;
+
+                Ok(#element_handler_output::return_to_parent(event, #allow_any_result))
             }
         }
     }
 
-    fn render_deserializer_fn_from_bytes_start(&self, ctx: &Context<'_, '_>) -> TokenStream {
-        let config = ctx.get_ref::<DeserializerConfig>();
+    fn render_deserializer_fn_from_bytes_start(&self, ctx: &mut Context<'_, '_>) -> TokenStream {
+        let config = ctx.get::<DeserializerConfig>();
+        let is_defaultable = ctx.is_defaultable_type();
 
         let deserializer_state_ident = &self.deserializer_state_ident;
 
@@ -1090,14 +1094,14 @@ impl ComplexDataEnum<'_> {
             quote!(Self)
         };
 
-        let self_ctor = if self.represents_element() {
+        let self_ctor = if is_defaultable {
+            quote!(Self::default())
+        } else {
             quote! {
                 Self {
                     state__: #box_::new(#deserializer_state_ident::Init__)
                 }
             }
-        } else {
-            quote!(Self::default())
         };
         let self_ctor = ctx.do_box(config.boxed_deserializer, self_ctor);
 
@@ -1122,20 +1126,13 @@ impl ComplexDataEnum<'_> {
         }
     }
 
-    fn render_deserializer_fn_finish_state(&self, ctx: &Context<'_, '_>) -> TokenStream {
-        let config = ctx.get_ref::<DeserializerConfig>();
+    fn render_deserializer_fn_finish_state(&self, ctx: &mut Context<'_, '_>) -> TokenStream {
+        let config = ctx.get::<DeserializerConfig>();
+        let is_defaultable = ctx.is_defaultable_type();
 
         let type_ident = &self.type_ident;
         let deserializer_ident = &self.deserializer_ident;
         let deserializer_state_ident = &self.deserializer_state_ident;
-
-        let finish_elements = self.elements.iter().map(|x| {
-            x.deserializer_enum_variant_finish(
-                ctx,
-                type_ident,
-                &boxed_deserializer_ident(config.boxed_deserializer, deserializer_ident),
-            )
-        });
 
         let result = resolve_build_in!(ctx, "::core::result::Result");
 
@@ -1144,16 +1141,19 @@ impl ComplexDataEnum<'_> {
         let deserialize_helper =
             resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializeHelper");
 
-        let is_single_variant_group = self.elements.len() == 1
-            && matches!(
-                &self.elements[0].meta().variant,
-                ElementMetaVariant::Type {
-                    mode: ElementMode::Group,
-                    ..
-                }
-            );
+        let finish_elements = self
+            .elements
+            .iter()
+            .map(|x| {
+                x.deserializer_enum_variant_finish(
+                    ctx,
+                    type_ident,
+                    &boxed_deserializer_ident(config.boxed_deserializer, deserializer_ident),
+                )
+            })
+            .collect::<Vec<_>>();
 
-        let finish_init = if is_single_variant_group {
+        let finish_init = if is_defaultable {
             self.elements[0].deserializer_enum_variant_default(ctx, type_ident)
         } else {
             quote!(Err(#error_kind::MissingContent.into()))
@@ -1164,10 +1164,10 @@ impl ComplexDataEnum<'_> {
                 use #deserializer_state_ident as S;
 
                 match state {
-                    S::Unknown__ => unreachable!(),
                     S::Init__ => #finish_init,
                     #( #finish_elements )*
                     S::Done__(data) => Ok(data),
+                    _ => unreachable!(),
                 }
             }
         }
@@ -1200,7 +1200,7 @@ impl ComplexDataEnum<'_> {
             .render_deserializer_impl(ctx, &fn_init, &fn_next, &fn_finish, false);
     }
 
-    fn render_deserializer_fn_init(&self, ctx: &Context<'_, '_>) -> TokenStream {
+    fn render_deserializer_fn_init(&self, ctx: &mut Context<'_, '_>) -> TokenStream {
         if self.represents_element() {
             self.render_deserializer_fn_init_for_element(ctx)
         } else {
@@ -1208,24 +1208,30 @@ impl ComplexDataEnum<'_> {
         }
     }
 
-    fn render_deserializer_fn_init_for_group(&self, ctx: &Context<'_, '_>) -> TokenStream {
-        let config = ctx.get_ref::<DeserializerConfig>();
+    fn render_deserializer_fn_init_for_group(&self, ctx: &mut Context<'_, '_>) -> TokenStream {
+        let config = ctx.get::<DeserializerConfig>();
+        let is_defaultable = ctx.is_defaultable_type();
 
         let deserializer_ident = &self.deserializer_ident;
         let deserializer_state_ident = &self.deserializer_state_ident;
 
-        let boxed_deserializer_ident =
-            boxed_deserializer_ident(config.boxed_deserializer, deserializer_ident);
+        let box_ = resolve_build_in!(ctx, "::alloc::boxed::Box");
 
         let deserializer_artifact =
             resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializerArtifact");
 
-        let init_deserializer = ctx.do_box(
-            config.boxed_deserializer,
+        let boxed_deserializer_ident =
+            boxed_deserializer_ident(config.boxed_deserializer, deserializer_ident);
+        let init_deserializer = if is_defaultable {
+            quote! { #boxed_deserializer_ident::default() }
+        } else {
             quote! {
-                #boxed_deserializer_ident::default()
-            },
-        );
+                #boxed_deserializer_ident {
+                    state__: #box_::new(#deserializer_state_ident::Init__),
+                }
+            }
+        };
+        let init_deserializer = ctx.do_box(config.boxed_deserializer, init_deserializer);
 
         quote! {
             let deserializer = #init_deserializer;
@@ -1242,6 +1248,7 @@ impl ComplexDataEnum<'_> {
 
     fn render_deserializer_fn_next(&self, ctx: &Context<'_, '_>) -> TokenStream {
         let config = ctx.get_ref::<DeserializerConfig>();
+
         let deserializer_ident =
             boxed_deserializer_ident(config.boxed_deserializer, &self.deserializer_ident);
         let deserializer_state_ident = &self.deserializer_state_ident;
@@ -1282,7 +1289,6 @@ impl ComplexDataEnum<'_> {
             use #deserializer_state_ident as S;
 
             let mut event = event;
-            let mut fallback = None;
 
             let (event, allow_any) = loop {
                 let state = #replace(&mut *self.state__, S::Unknown__);
@@ -1296,20 +1302,20 @@ impl ComplexDataEnum<'_> {
                             allow_any: false,
                         });
                     }
-                    (S::Init__, event) => match self.find_suitable(helper, event, &mut fallback)? {
+                    (S::Init__, event) => match self.find_suitable(helper, event)? {
                         #element_handler_output::Break { event, allow_any } => break (event, allow_any),
                         #element_handler_output::Continue { event, .. } => event,
                     },
                     #( #handlers_create )*
-                    (s @ S::Done__(_), event) => {
-                        *self.state__ = s;
+                    (state @ S::Done__(_), event) => {
+                        *self.state__ = state;
 
                         break (#deserializer_event::Continue(event), false);
                     },
                     #handler_mixed
                     (state, event) => {
                         *self.state__ = state;
-                        break (#deserializer_event::Break(event), false);
+                        break (#deserializer_event::Continue(event), false);
                     }
                 }
             };
@@ -1471,6 +1477,8 @@ impl ComplexDataStruct<'_> {
     }
 
     fn render_deserializer_helper(&self, ctx: &mut Context<'_, '_>) {
+        let is_defaultable = ctx.is_defaultable_type();
+
         let type_ident = &self.type_ident;
         let represents_element = self.represents_element();
         let deserializer_ident = &self.deserializer_ident;
@@ -1498,20 +1506,27 @@ impl ComplexDataStruct<'_> {
         let elements = self.elements();
         let store_elements = elements
             .iter()
-            .map(|x| x.deserializer_struct_field_fn_store(ctx));
-        let handle_elements = elements.iter().enumerate().map(|(i, x)| {
-            let next = elements.get(i + 1);
+            .map(|x| x.deserializer_struct_field_fn_store(ctx))
+            .collect::<Vec<_>>();
+        let handle_elements = elements
+            .iter()
+            .enumerate()
+            .map(|(i, x)| {
+                let next = elements.get(i + 1);
 
-            if let StructMode::All { .. } = &self.mode {
-                x.deserializer_struct_field_fn_handle_all(ctx, deserializer_state_ident)
-            } else {
-                x.deserializer_struct_field_fn_handle_sequence(ctx, next, deserializer_state_ident)
-            }
-        });
+                if let StructMode::All { .. } = &self.mode {
+                    x.deserializer_struct_field_fn_handle_all(ctx, deserializer_state_ident)
+                } else {
+                    x.deserializer_struct_field_fn_handle_sequence(
+                        ctx,
+                        next,
+                        deserializer_state_ident,
+                    )
+                }
+            })
+            .collect::<Vec<_>>();
 
-        let impl_default = represents_element
-            .not()
-            .then(|| self.render_deserializer_impl_default(ctx));
+        let impl_default = is_defaultable.then(|| self.render_deserializer_impl_default(ctx));
 
         let code = quote! {
             impl #deserializer_ident {
@@ -1876,7 +1891,9 @@ impl ComplexDataStruct<'_> {
             let mut output = deserializer.next(helper, event)?;
 
             output.artifact = match output.artifact {
-                #deserializer_artifact::Deserializer(x) if matches!(&*x.state__, #deserializer_state_ident::Init__) => #deserializer_artifact::None,
+                #deserializer_artifact::Deserializer(x)
+                    if matches!(&*x.state__, #deserializer_state_ident::Init__)
+                        => #deserializer_artifact::None,
                 artifact => artifact,
             };
 
@@ -2060,6 +2077,10 @@ impl ComplexDataStruct<'_> {
                 }
             };
 
+            if let Some(fallback) = fallback {
+                *self.state__ = fallback;
+            }
+
             #artifact_handler
 
             Ok(#deserializer_output {
@@ -2074,11 +2095,6 @@ impl ComplexDataStruct<'_> {
         let (event_at, return_end_event) = self.return_end_event(ctx);
         let deserializer_state_ident = &self.deserializer_state_ident;
 
-        let handlers = self
-            .elements()
-            .iter()
-            .map(|x| x.deserializer_struct_field_fn_next_all(ctx));
-
         let event = resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::Event");
         let replace = resolve_quick_xml_ident!(ctx, "::core::mem::replace");
         let deserializer_output =
@@ -2087,6 +2103,11 @@ impl ComplexDataStruct<'_> {
             resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializerArtifact");
         let element_handler_output =
             resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::ElementHandlerOutput");
+
+        let handlers = self
+            .elements()
+            .iter()
+            .map(|x| x.deserializer_struct_field_fn_next_all(ctx));
 
         quote! {
             use #deserializer_state_ident as S;
@@ -2117,6 +2138,10 @@ impl ComplexDataStruct<'_> {
                 }
             };
 
+            if let Some(fallback) = fallback {
+                *self.state__ = fallback;
+            }
+
             Ok(#deserializer_output {
                 artifact: #deserializer_artifact::Deserializer(self),
                 event,
@@ -2127,11 +2152,20 @@ impl ComplexDataStruct<'_> {
 
     #[allow(clippy::too_many_lines)]
     fn render_deserializer_fn_next_sequence(&self, ctx: &Context<'_, '_>) -> TokenStream {
+        let elements = self.elements();
         let allow_any = self.allow_any();
         let (event_at, return_end_event) = self.return_end_event(ctx);
         let deserializer_state_ident = &self.deserializer_state_ident;
 
-        let elements = self.elements();
+        let event = resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::Event");
+        let replace = resolve_quick_xml_ident!(ctx, "::core::mem::replace");
+        let deserializer_event =
+            resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializerEvent");
+        let deserializer_output =
+            resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializerOutput");
+        let deserializer_artifact =
+            resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializerArtifact");
+
         let text_only = elements.iter().all(|el| el.meta().is_text());
         let first = elements
             .first()
@@ -2146,15 +2180,6 @@ impl ComplexDataStruct<'_> {
 
             x.deserializer_struct_field_fn_next_sequence_create(ctx, next, allow_any)
         });
-
-        let event = resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::Event");
-        let replace = resolve_quick_xml_ident!(ctx, "::core::mem::replace");
-        let deserializer_event =
-            resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializerEvent");
-        let deserializer_output =
-            resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializerOutput");
-        let deserializer_artifact =
-            resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializerArtifact");
 
         let any_retry = self.has_any().then(|| {
             quote! {
@@ -2176,7 +2201,7 @@ impl ComplexDataStruct<'_> {
         };
 
         let mut handle_done = quote! {
-            fallback.get_or_insert(S::Done__);
+            *self.state__ = S::Done__;
             break (#deserializer_event::Continue(event), #done_allow_any);
         };
 
@@ -2267,7 +2292,7 @@ impl ComplexDataStruct<'_> {
         }
     }
 
-    fn render_deserializer_fn_finish(&self, ctx: &Context<'_, '_>) -> TokenStream {
+    fn render_deserializer_fn_finish(&self, ctx: &mut Context<'_, '_>) -> TokenStream {
         let type_ident = &self.type_ident;
         let deserializer_state_ident = &self.deserializer_state_ident;
 
@@ -2278,10 +2303,11 @@ impl ComplexDataStruct<'_> {
         let elements = self
             .elements()
             .iter()
-            .map(|x| x.deserializer_struct_field_finish(ctx));
+            .map(|x| x.deserializer_struct_field_finish(ctx))
+            .collect::<Vec<_>>();
         let content = self
             .content()
-            .map(ComplexDataContent::deserializer_struct_field_finish);
+            .map(|x| x.deserializer_struct_field_finish(ctx));
 
         let replace = resolve_quick_xml_ident!(ctx, "::core::mem::replace");
 
@@ -2341,14 +2367,14 @@ impl ComplexDataContent<'_> {
         }
     }
 
-    fn deserializer_struct_field_finish(&self) -> TokenStream {
+    fn deserializer_struct_field_finish(&self, ctx: &mut Context<'_, '_>) -> TokenStream {
         let convert = match self.occurs {
             Occurs::None => crate::unreachable!(),
             Occurs::Single => {
-                if self.is_simple() {
-                    quote!(helper.finish_content(self.content)?)
-                } else {
+                if ctx.has_defaultable_content() {
                     quote!(helper.finish_default(self.content)?)
+                } else {
+                    quote!(helper.finish_content(self.content)?)
                 }
             }
             Occurs::Optional => {
@@ -2358,17 +2384,17 @@ impl ComplexDataContent<'_> {
                 let min = self.min_occurs;
                 let max = self.max_occurs.render_opt();
 
-                if self.is_simple() {
-                    quote!(helper.finish_vec(#min, #max, self.content)?)
-                } else {
+                if ctx.has_defaultable_content() {
                     quote!(helper.finish_vec_default(#min, self.content)?)
+                } else {
+                    quote!(helper.finish_vec(#min, #max, self.content)?)
                 }
             }
             Occurs::StaticList(sz) => {
-                if self.is_simple() {
-                    quote!(helper.finish_arr::<_, #sz>(self.content)?)
-                } else {
+                if ctx.has_defaultable_content() {
                     quote!(helper.finish_arr_default::<_, #sz>(self.content)?)
+                } else {
+                    quote!(helper.finish_arr::<_, #sz>(self.content)?)
                 }
             }
         };
@@ -2415,7 +2441,7 @@ impl ComplexDataContent<'_> {
 
     fn deserializer_struct_field_fn_handle(
         &self,
-        ctx: &Context<'_, '_>,
+        ctx: &mut Context<'_, '_>,
         type_ident: &Ident2,
         represents_element: bool,
         deserializer_state_ident: &Ident2,
@@ -2441,6 +2467,10 @@ impl ComplexDataContent<'_> {
         type_ident: &Ident2,
         deserializer_state_ident: &Ident2,
     ) -> TokenStream {
+        assert!(self.is_simple());
+        assert_eq!(self.min_occurs, 1);
+        assert_eq!(self.max_occurs, MaxOccurs::Bounded(1));
+
         let box_ = resolve_build_in!(ctx, "::alloc::boxed::Box");
 
         let target_type = ctx.resolve_type_for_deserialize_module(&self.target_type);
@@ -2499,14 +2529,17 @@ impl ComplexDataContent<'_> {
     #[allow(clippy::too_many_lines)]
     fn deserializer_struct_field_fn_handle_complex(
         &self,
-        ctx: &Context<'_, '_>,
+        ctx: &mut Context<'_, '_>,
         represents_element: bool,
         deserializer_state_ident: &Ident2,
     ) -> TokenStream {
+        assert!(!self.is_simple());
+
         let target_type = ctx.resolve_type_for_deserialize_module(&self.target_type);
 
         let result = resolve_build_in!(ctx, "::core::result::Result");
         let option = resolve_build_in!(ctx, "::core::option::Option");
+        let usize_ = resolve_build_in!(ctx, "::core::primitive::usize");
 
         let error = resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::Error");
         let deserialize_helper =
@@ -2518,98 +2551,126 @@ impl ComplexDataContent<'_> {
         let element_handler_output =
             resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::ElementHandlerOutput");
 
-        // Handler for `#deserializer_artifact::Data`
+        // Handler for `DeserializerArtifact::None`: Should only be the case if
+        // we try to initialize a new deserializer.
+        let min = self.min_occurs;
+        let is_defaultable = self.min_occurs == 0 || ctx.has_defaultable_content();
+        let none_handler = match (represents_element, is_defaultable, self.occurs) {
+            (_, _, Occurs::None) => unreachable!(),
+            // For groups with defaultable content: If we were not able to create
+            // a new deserializer we return to the parent.
+            (false, true, _) => quote! {
+                *self.state__ = fallback.take().unwrap_or(#deserializer_state_ident::Next__);
+
+                return Ok(#element_handler_output::break_(event, allow_any));
+            },
+            // For groups with non-defaultable single content: If we were not able
+            // to create a new deserializer, we return to the parent because this
+            // can only happen if we are in the `Init__` state.
+            (false, false, Occurs::Single | Occurs::Optional) => quote! {
+                *self.state__ = #deserializer_state_ident::Init__;
+
+                return Ok(#element_handler_output::break_(event, allow_any));
+            },
+            // For groups with non-defaultable list content: If we were not able
+            // to create a new deserializer, we check the current size of the list
+            // and return to the parent if the minimum bound is fulfilled.
+            (false, false, Occurs::DynamicList | Occurs::StaticList(_)) => quote! {
+                *self.state__ = fallback.take().unwrap_or(#deserializer_state_ident::Next__);
+
+                let len = self.content.len() + #usize_::from(matches!(*self.state__, #deserializer_state_ident::Content__(_)));
+                if len < #min {
+                    return Ok(#element_handler_output::return_to_root(event, allow_any));
+                } else {
+                    return Ok(#element_handler_output::break_(event, allow_any));
+                }
+            },
+            // For elements: If we were not able to create a new deserializer we
+            // continue only for `End` events, because they may finish the current
+            // deserializer.
+            (true, _, _) => quote! {
+                *self.state__ = fallback.take().unwrap_or(#deserializer_state_ident::Next__);
+
+                return Ok(#element_handler_output::from_event_end(event, allow_any));
+            },
+        };
+
+        // Handler for `DeserializerArtifact::Data`
         let data_handler = match (represents_element, self.occurs, self.max_occurs) {
             (_, Occurs::None, _) => unreachable!(),
-            // Return instantly if we have received the expected value
+            // For groups: Return instantly if we have received the expected value
             (false, Occurs::Single | Occurs::Optional, _) => quote! {
                 *self.state__ = #deserializer_state_ident::Done__;
 
-                #element_handler_output::Break {
-                    event,
-                    allow_any,
-                }
+                Ok(#element_handler_output::break_(event, allow_any))
             },
-            // Finish the deserialization if the expected max value has been reached.
-            // Continue if not.
+            // For groups: Finish the deserialization if the expected max value
+            // has been reached, continue if not.
             (false, Occurs::DynamicList | Occurs::StaticList(_), MaxOccurs::Bounded(max)) => {
                 quote! {
                     if self.content.len() < #max {
                         *self.state__ = #deserializer_state_ident::Next__;
 
-                        #element_handler_output::from_event(event, allow_any)
+                        Ok(#element_handler_output::from_event(event, allow_any))
                     } else {
                         *self.state__ = #deserializer_state_ident::Done__;
 
-                        #element_handler_output::Break {
-                            event,
-                            allow_any,
-                        }
+                        Ok(#element_handler_output::break_(event, allow_any))
                     }
                 }
             }
-            // Value is unbound, continue in any case
+            // For groups: Continue if unbound.
+            // For elements: Continue always, the element is terminated by the
+            // end event.
             (_, _, _) => quote! {
                 *self.state__ = #deserializer_state_ident::Next__;
 
-                #element_handler_output::from_event(event, allow_any)
+                Ok(#element_handler_output::from_event(event, allow_any))
             },
         };
 
-        // Handler for `#deserializer_artifact::Deserializer`
+        // Handler for `DeserializerArtifact::Deserializer`
+        #[allow(clippy::match_bool)]
+        let break_or_end = match represents_element {
+            true => quote!(from_event_end),
+            false => quote!(break_),
+        };
         let deserializer_handler = match (self.occurs, self.max_occurs) {
             (Occurs::None, _) => unreachable!(),
-            // If we only expect one element we never initialize a new deserializer
-            // we only continue the deserialization process for `End` events (because
-            // they may finish this deserializer).
-            (Occurs::Single | Occurs::Optional, _) => quote! {
-                *self.state__ = #deserializer_state_ident::Content__(deserializer);
-
-                #element_handler_output::from_event_end(event, allow_any)
-            },
-            // If we expect multiple elements we only try to initialize a new
-            // deserializer if the maximum has not been reached yet.
-            // The `+1` is for the data that is contained in the yet unfinished
-            // deserializer.
-            (Occurs::DynamicList | Occurs::StaticList(_), MaxOccurs::Bounded(max)) => {
+            // If we only expect single content, we return to the parent.
+            (Occurs::Single | Occurs::Optional, _) => {
                 quote! {
-                    let can_have_more = self.content.len().saturating_add(1) < #max;
-                    let ret = if can_have_more {
-                        #element_handler_output::from_event(event, allow_any)
-                    } else {
-                        #element_handler_output::from_event_end(event, allow_any)
-                    };
+                    *self.state__ = #deserializer_state_ident::Content__(deserializer);
 
-                    match (can_have_more, &ret) {
-                        (true, #element_handler_output::Continue { .. })  => {
-                            fallback.get_or_insert(#deserializer_state_ident::Content__(deserializer));
-
-                            *self.state__ = #deserializer_state_ident::Next__;
-                        }
-                        (false, _ ) | (_, #element_handler_output::Break { .. }) => {
-                            *self.state__ = #deserializer_state_ident::Content__(deserializer);
-                        }
-                    }
-
-                    ret
+                    Ok(#element_handler_output::#break_or_end(event, allow_any))
                 }
             }
-            // Unbound, we can try a new deserializer in any case.
-            (Occurs::DynamicList | Occurs::StaticList(_), _) => quote! {
-                let ret = #element_handler_output::from_event(event, allow_any);
+            // We continue the deserialization if we have more space left, otherwise
+            // we return to the parent. The `max - 1` is space reserved in the result
+            // for the yet unfinished deserializer.
+            (Occurs::DynamicList | Occurs::StaticList(_), MaxOccurs::Bounded(max)) => {
+                assert!(max >= 2);
+                let max_minus_one = max - 1;
 
-                match &ret {
-                    #element_handler_output::Break { .. } => {
-                        *self.state__ = #deserializer_state_ident::Content__(deserializer);
-                    }
-                    #element_handler_output::Continue { .. } => {
-                        fallback.get_or_insert(#deserializer_state_ident::Content__(deserializer));
-
+                quote! {
+                    if self.content.len() < #max_minus_one {
+                        *fallback = Some(#deserializer_state_ident::Content__(deserializer));
                         *self.state__ = #deserializer_state_ident::Next__;
+
+                        Ok(#element_handler_output::from_event(event, allow_any))
+                    } else {
+                        *self.state__ = #deserializer_state_ident::Content__(deserializer);
+
+                        Ok(#element_handler_output::#break_or_end(event, allow_any))
                     }
                 }
+            }
+            // For unbound groups and elements, we try a new deserializer in case.
+            (Occurs::DynamicList | Occurs::StaticList(_), _) => quote! {
+                *fallback = Some(#deserializer_state_ident::Content__(deserializer));
+                *self.state__ = #deserializer_state_ident::Next__;
 
-                ret
+                Ok(#element_handler_output::from_event(event, allow_any))
             },
         };
 
@@ -2627,16 +2688,14 @@ impl ComplexDataContent<'_> {
                 } = output;
 
                 if artifact.is_none() {
-                    *self.state__ = fallback.take().unwrap_or(#deserializer_state_ident::Next__);
-
-                    return Ok(#element_handler_output::break_(event, allow_any));
+                    #none_handler
                 }
 
                 if let Some(fallback) = fallback.take() {
                     self.finish_state(helper, fallback)?;
                 }
 
-                Ok(match artifact {
+                match artifact {
                     #deserializer_artifact::None => unreachable!(),
                     #deserializer_artifact::Data(data) => {
                         self.store_content(data)?;
@@ -2646,7 +2705,7 @@ impl ComplexDataContent<'_> {
                     #deserializer_artifact::Deserializer(deserializer) => {
                         #deserializer_handler
                     }
-                })
+                }
             }
         }
     }
@@ -2932,7 +2991,11 @@ impl ComplexDataElement<'_> {
                 let option = resolve_build_in!(ctx, "::core::option::Option");
 
                 quote! {
-                    #variant_ident(#option<#target_type>, #option<<#target_type as #with_deserializer>::Deserializer>),
+                    #variant_ident(
+                        #option<#target_type>,
+                        #option<<#target_type as #with_deserializer>::Deserializer>,
+                        #option<<#target_type as #with_deserializer>::Deserializer>,
+                    ),
                 }
             }
             Occurs::DynamicList | Occurs::StaticList(_) => {
@@ -2940,7 +3003,11 @@ impl ComplexDataElement<'_> {
                 let option = resolve_build_in!(ctx, "::core::option::Option");
 
                 quote! {
-                    #variant_ident(#vec<#target_type>, #option<<#target_type as #with_deserializer>::Deserializer>),
+                    #variant_ident(
+                        #vec<#target_type>,
+                        #option<<#target_type as #with_deserializer>::Deserializer>,
+                        #option<<#target_type as #with_deserializer>::Deserializer>,
+                    ),
                 }
             }
             e => crate::unreachable!("{:?}", e),
@@ -2951,8 +3018,7 @@ impl ComplexDataElement<'_> {
         let default = resolve_build_in!(ctx, "::core::default::Default");
 
         let handler_ident = self.handler_ident();
-        let call_handler =
-            quote!(self.#handler_ident(helper, #default::default(), output, &mut *fallback));
+        let call_handler = quote!(self.#handler_ident(helper, #default::default(), None, output));
 
         self.deserializer_init_element(ctx, &call_handler)
     }
@@ -2969,8 +3035,7 @@ impl ComplexDataElement<'_> {
         let default = resolve_build_in!(ctx, "::core::default::Default");
 
         let handler_ident = self.handler_ident();
-        let call_handler =
-            quote!(self.#handler_ident(helper, #default::default(), output, &mut *fallback));
+        let call_handler = quote!(self.#handler_ident(helper, #default::default(), None, output));
 
         Some(self.deserializer_init_group(ctx, handle_any, &call_handler))
     }
@@ -2983,8 +3048,7 @@ impl ComplexDataElement<'_> {
         let default = resolve_build_in!(ctx, "::core::default::Default");
 
         let handler_ident = self.handler_ident();
-        let call_handler =
-            quote!(self.#handler_ident(helper, #default::default(), output, &mut *fallback));
+        let call_handler = quote!(self.#handler_ident(helper, #default::default(), None, output));
 
         Some(self.deserializer_init_group(ctx, false, &call_handler))
     }
@@ -2997,8 +3061,7 @@ impl ComplexDataElement<'_> {
         let default = resolve_build_in!(ctx, "::core::default::Default");
 
         let handler_ident = self.handler_ident();
-        let call_handler =
-            quote!(self.#handler_ident(helper, #default::default(), output, &mut *fallback));
+        let call_handler = quote!(self.#handler_ident(helper, #default::default(), None, output));
 
         Some(self.deserializer_init_group(ctx, false, &call_handler))
     }
@@ -3041,7 +3104,7 @@ impl ComplexDataElement<'_> {
 
     fn deserializer_enum_variant_finish(
         &self,
-        ctx: &Context<'_, '_>,
+        ctx: &mut Context<'_, '_>,
         type_ident: &Ident2,
         deserializer_ident: &Ident2,
     ) -> TokenStream {
@@ -3052,7 +3115,7 @@ impl ComplexDataElement<'_> {
         let convert = match self.occurs {
             Occurs::None => crate::unreachable!(),
             Occurs::Single => {
-                let value = if self.treat_as_group() {
+                let value = if ctx.is_defaultable_element(self.meta()) {
                     quote!(helper.finish_default(values)?)
                 } else {
                     quote!(helper.finish_element(#name, values)?)
@@ -3074,14 +3137,14 @@ impl ComplexDataElement<'_> {
 
                 if min == 0 {
                     quote!(values)
-                } else if self.treat_as_group() {
+                } else if ctx.is_defaultable_element(self.meta()) {
                     quote!(helper.finish_vec_default(#min, values)?)
                 } else {
                     quote!(helper.finish_vec(#min, #max, values)?)
                 }
             }
             Occurs::StaticList(sz) => {
-                let value = if self.treat_as_group() {
+                let value = if ctx.is_defaultable_element(self.meta()) {
                     quote!(helper.finish_arr_default::<_, #sz>(values)?)
                 } else {
                     quote!(helper.finish_arr::<_, #sz>(values)?)
@@ -3092,7 +3155,7 @@ impl ComplexDataElement<'_> {
         };
 
         quote! {
-            S::#variant_ident(mut values, deserializer) => {
+            S::#variant_ident(mut values, None, deserializer) => {
                 if let Some(deserializer) = deserializer {
                     let value = deserializer.finish(helper)?;
                     #deserializer_ident::#store_ident(&mut values, value)?;
@@ -3153,7 +3216,7 @@ impl ComplexDataElement<'_> {
     #[allow(clippy::too_many_lines)]
     fn deserializer_enum_variant_fn_handle(
         &self,
-        ctx: &Context<'_, '_>,
+        ctx: &mut Context<'_, '_>,
         represents_element: bool,
         deserializer_ident: &Ident2,
         deserializer_state_ident: &Ident2,
@@ -3166,9 +3229,11 @@ impl ComplexDataElement<'_> {
 
         let result = resolve_build_in!(ctx, "::core::result::Result");
         let option = resolve_build_in!(ctx, "::core::option::Option");
-        let default = resolve_build_in!(ctx, "::core::default::Default");
+        let usize_ = resolve_build_in!(ctx, "::core::primitive::usize");
 
         let error = resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::Error");
+        let with_deserializer =
+            resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::WithDeserializer");
         let deserialize_helper =
             resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializeHelper");
         let deserializer_output =
@@ -3177,6 +3242,21 @@ impl ComplexDataElement<'_> {
             resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializerArtifact");
         let element_handler_output =
             resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::ElementHandlerOutput");
+
+        #[allow(clippy::match_bool)]
+        let break_or_end = match represents_element {
+            true => quote!(from_event_end),
+            false => quote!(break_),
+        };
+
+        #[allow(clippy::if_same_then_else)]
+        let continue_or_return = if self.treat_as_text() {
+            quote!(from_event)
+        } else if self.treat_as_group() {
+            quote!(from_event)
+        } else {
+            quote!(return_to_root)
+        };
 
         let values = match self.occurs {
             Occurs::None => crate::unreachable!(),
@@ -3187,116 +3267,128 @@ impl ComplexDataElement<'_> {
                 quote!(#vec<#target_type>)
             }
         };
-        let fallback_to_init_check = match self.occurs {
-            Occurs::Single => Some(quote!(values.is_none())),
-            Occurs::DynamicList | Occurs::StaticList(_) if self.meta().min_occurs > 0 => {
-                Some(quote!(values.is_empty()))
-            }
-            _ => None,
-        };
-        let fallback_to_init = fallback_to_init_check.map(|values_are_empty| {
-            quote! {
-                None if #values_are_empty => {
+
+        // Handler for `DeserializerArtifact::None`: Should only be the
+        // case if we try to initialize a new deserializer.
+        let min = self.meta().min_occurs;
+        let is_defaultable = min == 0 || ctx.is_defaultable_element(self.meta());
+        let none_handler = match (is_defaultable, self.occurs) {
+            (_, Occurs::None) => unreachable!(),
+            // Single or optional element: This is only triggered by `find_suitable`,
+            // if the deserializer did not produce anything we continue/return.
+            (_, Occurs::Single | Occurs::Optional) => quote! {
+                return Ok(#element_handler_output::#continue_or_return(event, allow_any));
+            },
+            // Defaultable list of type (group or element): If the list and the
+            // fallback is empty, we called from `find_suitable`, so we continue/
+            // return. If we have a fallback or some values we called from
+            // `next` and break or end.
+            (true, Occurs::DynamicList | Occurs::StaticList(_)) => quote! {
+                if fallback.is_none() && values.is_empty() {
                     *self.state__ = #deserializer_state_ident::Init__;
-                    return Ok(#element_handler_output::from_event(event, allow_any));
-                },
-            }
-        });
-
-        // Handler for `#deserializer_artifact::Data`
-        let data_handler = match (represents_element, self.occurs, self.meta().max_occurs) {
-            (_, Occurs::None, _) => unreachable!(),
-            // Return instantly if we have received the expected value
-            (false, Occurs::Single | Occurs::Optional, _) => quote! {
-                let data = #deserializer_ident::finish_state(helper, #deserializer_state_ident::#variant_ident(values, None))?;
-                *self.state__ = #deserializer_state_ident::Done__(data);
-
-                #element_handler_output::Break {
-                    event,
-                    allow_any,
+                    return Ok(#element_handler_output::#continue_or_return(event, allow_any));
+                } else {
+                    *self.state__ = #deserializer_state_ident::#variant_ident(values, None, fallback);
+                    return Ok(#element_handler_output::#break_or_end(event, allow_any));
                 }
             },
-            // Finish the deserialization if the expected max value has been reached.
-            // Continue if not.
+            // Non-defaultable list of type (group or element): If the list and
+            // the fallback is empty, we called from `find_suitable`, so we
+            // continue/return. If we have a fallback or some values, we called
+            // from `next`, so we if the min bound of the list is fulfilled and
+            // continue or break/end
+            (false, Occurs::DynamicList | Occurs::StaticList(_)) => quote! {
+                if fallback.is_none() && values.is_empty() {
+                    *self.state__ = #deserializer_state_ident::Init__;
+                    return Ok(#element_handler_output::#continue_or_return(event, allow_any));
+                } else if values.len() + #usize_::from(fallback.is_some()) < #min {
+                    *self.state__ = #deserializer_state_ident::#variant_ident(values, None, fallback);
+                    return Ok(#element_handler_output::return_to_root(event, allow_any));
+                } else {
+                    *self.state__ = #deserializer_state_ident::#variant_ident(values, None, fallback);
+                    return Ok(#element_handler_output::#break_or_end(event, allow_any));
+                }
+            },
+        };
+
+        // Handler for `DeserializerArtifact::Data`
+        let data_handler = match (represents_element, self.occurs, self.meta().max_occurs) {
+            (_, Occurs::None, _) => unreachable!(),
+            // For groups: Return instantly if we have received the expected value
+            (false, Occurs::Single | Occurs::Optional, _) => quote! {
+                let data = #deserializer_ident::finish_state(helper, #deserializer_state_ident::#variant_ident(values, None, None))?;
+                *self.state__ = #deserializer_state_ident::Done__(data);
+
+                Ok(#element_handler_output::break_(event, allow_any))
+            },
+            // For bounded groups: Finish the deserialization if the expected max value
+            // has been reached, continue if not.
             (false, Occurs::DynamicList | Occurs::StaticList(_), MaxOccurs::Bounded(max)) => {
                 quote! {
                     if values.len() < #max {
-                        *self.state__ = #deserializer_state_ident::#variant_ident(values, None);
+                        *self.state__ = #deserializer_state_ident::#variant_ident(values, None, None);
 
-                        #element_handler_output::from_event(event, allow_any)
+                        Ok(#element_handler_output::from_event(event, allow_any))
                     } else {
-                        let data = #deserializer_ident::finish_state(helper, #deserializer_state_ident::#variant_ident(values, None))?;
+                        let data = #deserializer_ident::finish_state(helper, #deserializer_state_ident::#variant_ident(values, None, None))?;
                         *self.state__ = #deserializer_state_ident::Done__(data);
 
-                        #element_handler_output::Break {
-                            event,
-                            allow_any,
-                        }
+                        Ok(#element_handler_output::break_(event, allow_any))
                     }
                 }
             }
-            // Value is unbound, continue in any case
+            // For elements and unbounded groups, continue in any case
             (_, _, _) => quote! {
-                *self.state__ = #deserializer_state_ident::#variant_ident(values, None);
+                *self.state__ = #deserializer_state_ident::#variant_ident(values, None, None);
 
-                #element_handler_output::from_event(event, allow_any)
+                Ok(#element_handler_output::from_event(event, allow_any))
             },
         };
 
-        // Handler for `#deserializer_artifact::Deserializer`
+        // Handler for `DeserializerArtifact::Deserializer`
         let deserializer_handler = match (self.occurs, self.meta().max_occurs) {
             (Occurs::None, _) => unreachable!(),
-            // If we only expect one element we never initialize a new deserializer
-            // we only continue the deserialization process for `End` events (because
-            // they may finish this deserializer).
+            // If we only expect single content, we return to the parent.
             (Occurs::Single | Occurs::Optional, _) => quote! {
-                *self.state__ = #deserializer_state_ident::#variant_ident(values, Some(deserializer));
+                *self.state__ = #deserializer_state_ident::#variant_ident(values, None, Some(deserializer));
 
-                #element_handler_output::from_event_end(event, allow_any)
+                Ok(#element_handler_output::#break_or_end(event, allow_any))
             },
-            // If we expect multiple elements we only try to initialize a new
-            // deserializer if the maximum has not been reached yet.
-            // The `+1` is for the data that is contained in the yet unfinished
-            // deserializer.
+            // For bounded lists we continue the deserialization if we have more
+            // space left, otherwise we return to the parent. The `max - 1` is
+            // space reserved in the result for the yet unfinished deserializer.
             (Occurs::DynamicList | Occurs::StaticList(_), MaxOccurs::Bounded(max)) => {
+                assert!(max >= 2);
+                let max_minus_one = max - 1;
+
                 quote! {
-                    let can_have_more = values.len().saturating_add(1) < #max;
+                    let can_have_more = values.len() < #max_minus_one;
                     let ret = if can_have_more {
                         #element_handler_output::from_event(event, allow_any)
                     } else {
-                        #element_handler_output::from_event_end(event, allow_any)
+                        #element_handler_output::#break_or_end(event, allow_any)
                     };
 
-                    match (can_have_more, &ret) {
-                        (true, #element_handler_output::Continue { .. })  => {
-                            fallback.get_or_insert(#deserializer_state_ident::#variant_ident(#default::default(), Some(deserializer)));
-
-                            *self.state__ = #deserializer_state_ident::#variant_ident(values, None);
-                        }
-                        (false, _ ) | (_, #element_handler_output::Break { .. }) => {
-                            *self.state__ = #deserializer_state_ident::#variant_ident(values, Some(deserializer));
-                        }
+                    if can_have_more && ret.is_continue_start_or_empty() {
+                        *self.state__ = #deserializer_state_ident::#variant_ident(values, Some(deserializer), None);
+                    } else {
+                        *self.state__ = #deserializer_state_ident::#variant_ident(values, None, Some(deserializer));
                     }
 
-                    ret
+                    Ok(ret)
                 }
             }
-            // Unbound, we can try a new deserializer in any case.
+            // For unbound lists, we can try a new deserializer in any case.
             (Occurs::DynamicList | Occurs::StaticList(_), _) => quote! {
                 let ret = #element_handler_output::from_event(event, allow_any);
 
-                match &ret {
-                    #element_handler_output::Break { .. } => {
-                        *self.state__ = #deserializer_state_ident::#variant_ident(values, Some(deserializer));
-                    }
-                    #element_handler_output::Continue { .. } => {
-                        fallback.get_or_insert(#deserializer_state_ident::#variant_ident(#default::default(), Some(deserializer)));
-
-                        *self.state__ = #deserializer_state_ident::#variant_ident(values, None);
-                    }
+                if ret.is_continue_start_or_empty() {
+                    *self.state__ = #deserializer_state_ident::#variant_ident(values, Some(deserializer), None);
+                } else {
+                    *self.state__ = #deserializer_state_ident::#variant_ident(values, None, Some(deserializer));
                 }
 
-                ret
+                Ok(ret)
             },
         };
 
@@ -3305,8 +3397,8 @@ impl ComplexDataElement<'_> {
                 &mut self,
                 helper: &mut #deserialize_helper,
                 mut values: #values,
+                fallback: #option<<#target_type as #with_deserializer>::Deserializer>,
                 output: #deserializer_output<'de, #target_type>,
-                fallback: &mut #option<#deserializer_state_ident>,
             ) -> #result<#element_handler_output<'de>, #error> {
                 let #deserializer_output {
                     artifact,
@@ -3315,26 +3407,15 @@ impl ComplexDataElement<'_> {
                 } = output;
 
                 if artifact.is_none() {
-                    *self.state__ = match fallback.take() {
-                        #fallback_to_init
-                        None => #deserializer_state_ident::#variant_ident(values, None),
-                        Some(#deserializer_state_ident::#variant_ident(_, Some(deserializer))) => #deserializer_state_ident::#variant_ident(values, Some(deserializer)),
-                        _ => unreachable!(),
-                    };
-
-                    return Ok(#element_handler_output::break_(event, allow_any));
+                    #none_handler
                 }
 
-                match fallback.take() {
-                    None => (),
-                    Some(#deserializer_state_ident::#variant_ident(_, Some(deserializer))) => {
-                        let data = deserializer.finish(helper)?;
-                        #deserializer_ident::#store_ident(&mut values, data)?;
-                    }
-                    Some(_) => unreachable!(),
+                if let Some(deserializer) = fallback {
+                    let data = deserializer.finish(helper)?;
+                    #deserializer_ident::#store_ident(&mut values, data)?;
                 }
 
-                Ok(match artifact {
+                match artifact {
                     #deserializer_artifact::None => unreachable!(),
                     #deserializer_artifact::Data(data) => {
                         #deserializer_ident::#store_ident(&mut values, data)?;
@@ -3344,7 +3425,7 @@ impl ComplexDataElement<'_> {
                     #deserializer_artifact::Deserializer(deserializer) => {
                         #deserializer_handler
                     }
-                })
+                }
             }
         }
     }
@@ -3420,10 +3501,10 @@ impl ComplexDataElement<'_> {
             resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::ElementHandlerOutput");
 
         quote! {
-            (S::#variant_ident(values, #deserializer_matcher), #event_matcher) => {
+            (S::#variant_ident(values, fallback, #deserializer_matcher), #event_matcher) => {
                 let output = #output?;
 
-                match self.#handler_ident(helper, values, output, &mut fallback)? {
+                match self.#handler_ident(helper, values, fallback, output)? {
                     #element_handler_output::Break { event, allow_any } => break (event, allow_any),
                     #element_handler_output::Continue { event, .. } => event,
                 }
@@ -3535,14 +3616,14 @@ impl ComplexDataElement<'_> {
         }
     }
 
-    fn deserializer_struct_field_finish(&self, ctx: &Context<'_, '_>) -> TokenStream {
+    fn deserializer_struct_field_finish(&self, ctx: &mut Context<'_, '_>) -> TokenStream {
         let name = &self.s_name;
         let field_ident = &self.field_ident;
 
         let convert = match self.occurs {
             Occurs::None => crate::unreachable!(),
             Occurs::Single => {
-                let value = if self.treat_as_group() {
+                let value = if ctx.is_defaultable_element(self.meta()) {
                     quote!(helper.finish_default(self.#field_ident)?)
                 } else {
                     quote!(helper.finish_element(#name, self.#field_ident)?)
@@ -3564,14 +3645,14 @@ impl ComplexDataElement<'_> {
 
                 if min == 0 {
                     quote!(self.#field_ident)
-                } else if self.treat_as_group() {
+                } else if ctx.is_defaultable_element(self.meta()) {
                     quote!(helper.finish_vec_default(#min, self.#field_ident)?)
                 } else {
                     quote!(helper.finish_vec(#min, #max, self.#field_ident)?)
                 }
             }
             Occurs::StaticList(sz) => {
-                let value = if self.treat_as_group() {
+                let value = if ctx.is_defaultable_element(self.meta()) {
                     quote!(helper.finish_arr_default::<_, #sz>(self.#field_ident)?)
                 } else {
                     quote!(helper.finish_arr::<_, #sz>(self.#field_ident)?)
@@ -3658,6 +3739,15 @@ impl ComplexDataElement<'_> {
         let element_handler_output =
             resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::ElementHandlerOutput");
 
+        #[allow(clippy::if_same_then_else)]
+        let continue_or_return = if self.treat_as_text() {
+            quote!(from_event)
+        } else if self.treat_as_group() {
+            quote!(from_event)
+        } else {
+            quote!(return_to_root)
+        };
+
         quote! {
             fn #handler_ident<'de>(
                 &mut self,
@@ -3672,46 +3762,32 @@ impl ComplexDataElement<'_> {
                 } = output;
 
                 if artifact.is_none() {
-                    let ret = #element_handler_output::from_event(event, allow_any);
+                    *self.state__ = #deserializer_state_ident::Next__;
 
-                    *self.state__ = match ret {
-                        #element_handler_output::Continue { .. } => #deserializer_state_ident::Next__,
-                        #element_handler_output::Break { .. } => fallback.take().unwrap_or(#deserializer_state_ident::Next__),
-                    };
-
-                    return Ok(ret);
+                    return Ok(#element_handler_output::#continue_or_return(event, allow_any));
                 }
 
                 if let Some(fallback) = fallback.take() {
                     self.finish_state(helper, fallback)?;
                 }
 
-                Ok(match artifact {
+                match artifact {
                     #deserializer_artifact::None => unreachable!(),
                     #deserializer_artifact::Data(data) => {
                         self.#store_ident(data)?;
 
                         *self.state__ = #deserializer_state_ident::Next__;
 
-                        #element_handler_output::from_event(event, allow_any)
+                        Ok(#element_handler_output::from_event(event, allow_any))
                     }
                     #deserializer_artifact::Deserializer(deserializer) => {
-                        let ret = #element_handler_output::from_event(event, allow_any);
+                        fallback.get_or_insert(#deserializer_state_ident::#variant_ident(deserializer));
 
-                        match &ret {
-                            #element_handler_output::Continue { .. } => {
-                                fallback.get_or_insert(#deserializer_state_ident::#variant_ident(deserializer));
+                        *self.state__ = #deserializer_state_ident::Next__;
 
-                                *self.state__ = #deserializer_state_ident::Next__;
-                            }
-                            #element_handler_output::Break { .. } => {
-                                *self.state__ = #deserializer_state_ident::#variant_ident(deserializer);
-                            }
-                        }
-
-                        ret
+                        Ok(#element_handler_output::from_event(event, allow_any))
                     }
-                })
+                }
             }
         }
     }
@@ -3719,7 +3795,7 @@ impl ComplexDataElement<'_> {
     #[allow(clippy::too_many_lines)]
     fn deserializer_struct_field_fn_handle_sequence(
         &self,
-        ctx: &Context<'_, '_>,
+        ctx: &mut Context<'_, '_>,
         next: Option<&ComplexDataElement<'_>>,
         deserializer_state_ident: &Ident2,
     ) -> TokenStream {
@@ -3751,40 +3827,39 @@ impl ComplexDataElement<'_> {
             quote!(#deserializer_state_ident::Done__)
         };
 
-        // Handler for `#deserializer_artifact::None`: Should only be the
+        // Handler for `DeserializerArtifact::None`: Should only be the
         // case if we try to initialize a new deserializer.
-        let handler_none = match (self.occurs, self.meta().min_occurs) {
-            (Occurs::None, _) => unreachable!(),
+        let is_defaultable = ctx.is_defaultable_element(self.meta());
+        let handler_none = match (is_defaultable, self.occurs, self.meta().min_occurs) {
+            (_, Occurs::None, _) => unreachable!(),
             // If we do not expect any data we continue with the next state
-            (_, 0) | (Occurs::Optional, _) => quote! {
+            (_, _, 0) | (_, Occurs::Optional, _) => quote! {
                 fallback.get_or_insert(#deserializer_state_ident::#variant_ident(None));
 
                 *self.state__ = #next_state;
 
                 return Ok(#element_handler_output::from_event(event, allow_any));
             },
-            // If we got the expected data, we move on, otherwise we stay in the
-            // current state and break.
-            (Occurs::Single, _) => quote! {
-                if self.#field_ident.is_some() {
-                    fallback.get_or_insert(#deserializer_state_ident::#variant_ident(None));
+            // If this represents an mandatory element with non-defaultable content,
+            // we break, because we did not received the data yet.
+            (false, Occurs::Single, _) => quote! {
+                fallback.get_or_insert(#deserializer_state_ident::#variant_ident(None));
 
-                    *self.state__ = #next_state;
-
-                    return Ok(#element_handler_output::from_event(event, allow_any));
-                } else {
-                    *self.state__ = #deserializer_state_ident::#variant_ident(None);
-
+                if matches!(&fallback, Some(#deserializer_state_ident::Init__)) {
                     return Ok(#element_handler_output::break_(event, allow_any));
+                } else {
+                    return Ok(#element_handler_output::return_to_root(event, allow_any));
                 }
             },
-            // If we did not reach the expected amount of data, we stay in the
+            // If we did not reach the expected amount of elements, we stay in the
             // current state and break, otherwise we continue with the next state.
-            (Occurs::DynamicList | Occurs::StaticList(_), min) => quote! {
-                if self.#field_ident.len() < #min {
-                    *self.state__ = #deserializer_state_ident::#variant_ident(None);
-
+            (false, Occurs::DynamicList | Occurs::StaticList(_), min) => quote! {
+                if matches!(&fallback, Some(#deserializer_state_ident::Init__)) {
                     return Ok(#element_handler_output::break_(event, allow_any));
+                } else if self.#field_ident.len() < #min {
+                    fallback.get_or_insert(#deserializer_state_ident::#variant_ident(None));
+
+                    return Ok(#element_handler_output::return_to_root(event, allow_any));
                 } else {
                     fallback.get_or_insert(#deserializer_state_ident::#variant_ident(None));
 
@@ -3792,11 +3867,20 @@ impl ComplexDataElement<'_> {
 
                     return Ok(#element_handler_output::from_event(event, allow_any));
                 }
+            },
+            // If this is a group, we continue, because groups may be default constructed.
+            (true, _, _) => quote! {
+                fallback.get_or_insert(#deserializer_state_ident::#variant_ident(None));
+
+                *self.state__ = #next_state;
+
+                return Ok(#element_handler_output::from_event(event, allow_any));
             },
         };
 
-        // Handler for `#deserializer_artifact::Data`:
+        // Handler for `DeserializerArtifact::Data`:
         let data_handler = match (self.occurs, self.meta().max_occurs) {
+            (Occurs::None, _) => unreachable!(),
             // If we got some data we simple move one to the next element
             (Occurs::Single | Occurs::Optional, _) => quote! {
                 *self.state__ = #next_state;
@@ -3816,7 +3900,7 @@ impl ComplexDataElement<'_> {
             },
         };
 
-        // Handler for `#deserializer_artifact::Deserializer:
+        // Handler for `DeserializerArtifact::Deserializer:
         let deserializer_handler = match (self.occurs, self.meta().max_occurs) {
             // If we expect only one element we continue to the next state,
             // because the old yet unfinished deserializer already contains
@@ -3826,12 +3910,13 @@ impl ComplexDataElement<'_> {
             },
             // If we expect multiple elements we only try to initialize a new
             // deserializer if the maximum has not been reached yet.
-            // The `+1` is for the data that is contained in the yet unfinished
+            // The `max - 1` is for the data that is contained in the yet unfinished
             // deserializer.
             (Occurs::DynamicList | Occurs::StaticList(_), MaxOccurs::Bounded(max)) => {
+                assert!(max >= 2);
+                let max_minus_one = max - 1;
                 quote! {
-                    let can_have_more = self.#field_ident.len().saturating_add(1) < #max;
-                    if can_have_more {
+                    if self.#field_ident.len() < #max_minus_one {
                         *self.state__ = #deserializer_state_ident::#variant_ident(None);
                     } else {
                         *self.state__ = #next_state;
@@ -3865,32 +3950,23 @@ impl ComplexDataElement<'_> {
                     self.finish_state(helper, fallback)?;
                 }
 
-                Ok(match artifact {
+                match artifact {
                     #deserializer_artifact::None => unreachable!(),
                     #deserializer_artifact::Data(data) => {
                         self.#store_ident(data)?;
 
                         #data_handler
 
-                        #element_handler_output::from_event(event, allow_any)
+                        Ok(#element_handler_output::from_event(event, allow_any))
                     }
                     #deserializer_artifact::Deserializer(deserializer) => {
-                        let ret = #element_handler_output::from_event(event, allow_any);
+                        fallback.get_or_insert(#deserializer_state_ident::#variant_ident(Some(deserializer)));
 
-                        match &ret {
-                            #element_handler_output::Continue { .. } => {
-                                fallback.get_or_insert(#deserializer_state_ident::#variant_ident(Some(deserializer)));
+                        #deserializer_handler
 
-                                #deserializer_handler
-                            }
-                            #element_handler_output::Break { .. } => {
-                                *self.state__ = #deserializer_state_ident::#variant_ident(Some(deserializer));
-                            }
-                        }
-
-                        ret
+                        Ok(#element_handler_output::from_event(event, allow_any))
                     }
-                })
+                }
             }
         }
     }
@@ -4054,6 +4130,33 @@ impl Context<'_, '_> {
             tokens
         }
     }
+
+    fn set_content(&mut self, value: bool) {
+        self.values.get_or_create::<DefaultableCache>().content = value;
+    }
+
+    fn is_defaultable_type(&mut self) -> bool {
+        let cache = self.values.get_or_create::<DefaultableCache>();
+        let content = cache.content;
+        let defaultable = cache.get_defaultable(self.meta.types.meta.types, self.ident);
+
+        matches!(
+            (content, defaultable),
+            (true, Defaultable::Complete | Defaultable::Content) | (false, Defaultable::Complete)
+        )
+    }
+
+    fn has_defaultable_content(&mut self) -> bool {
+        self.values
+            .get_or_create::<DefaultableCache>()
+            .type_has_defaultable_content(self.meta.types.meta.types, self.ident)
+    }
+
+    fn is_defaultable_element(&mut self, el: &ElementMeta) -> bool {
+        self.values
+            .get_or_create::<DefaultableCache>()
+            .is_defaultable_element(self.meta.types.meta.types, el)
+    }
 }
 
 impl MaxOccurs {
@@ -4070,5 +4173,135 @@ fn boxed_deserializer_ident(is_boxed: bool, deserializer_ident: &Ident2) -> Iden
         deserializer_ident.clone()
     } else {
         format_ident!("Self")
+    }
+}
+
+#[derive(Default, Debug)]
+struct DefaultableCache {
+    cache: HashMap<Ident, Option<Defaultable>>,
+    content: bool,
+}
+
+#[derive(Default, Debug, Clone, Copy)]
+enum Defaultable {
+    #[default]
+    None,
+    Content,
+    Complete,
+}
+
+impl ValueKey for DefaultableCache {
+    type Type = Self;
+}
+
+impl DefaultableCache {
+    fn is_defaultable_type(&mut self, types: &MetaTypes, ident: &Ident) -> bool {
+        matches!(
+            self.get_defaultable_impl(types, ident),
+            Some(Defaultable::Complete)
+        )
+    }
+
+    fn type_has_defaultable_content(&mut self, types: &MetaTypes, ident: &Ident) -> bool {
+        matches!(
+            self.get_defaultable_impl(types, ident),
+            Some(Defaultable::Complete | Defaultable::Content)
+        )
+    }
+
+    fn is_defaultable_element(&mut self, types: &MetaTypes, el: &ElementMeta) -> bool {
+        if let ElementMetaVariant::Type {
+            type_,
+            mode: ElementMode::Group,
+        } = &el.variant
+        {
+            self.is_defaultable_type(types, type_)
+        } else {
+            false
+        }
+    }
+
+    fn get_defaultable(&mut self, types: &MetaTypes, ident: &Ident) -> Defaultable {
+        self.get_defaultable_impl(types, ident).unwrap_or_default()
+    }
+
+    fn get_defaultable_impl(&mut self, types: &MetaTypes, ident: &Ident) -> Option<Defaultable> {
+        let create = match self.cache.entry(ident.clone()) {
+            Entry::Vacant(e) => {
+                e.insert(None);
+
+                true
+            }
+            Entry::Occupied(_) => false,
+        };
+
+        let new_value = create.then(|| self.make_new_entry(types, ident));
+
+        match self.cache.entry(ident.clone()) {
+            Entry::Occupied(mut e) => {
+                if let Some(value) = new_value {
+                    e.insert(Some(value));
+                }
+
+                *e.into_mut()
+            }
+            Entry::Vacant(_) => unreachable!(),
+        }
+    }
+
+    fn make_new_entry(&mut self, types: &MetaTypes, ident: &Ident) -> Defaultable {
+        match types.get_variant(ident) {
+            None
+            | Some(
+                MetaTypeVariant::Union(_)
+                | MetaTypeVariant::BuildIn(_)
+                | MetaTypeVariant::Custom(_)
+                | MetaTypeVariant::Reference(_)
+                | MetaTypeVariant::Enumeration(_)
+                | MetaTypeVariant::Dynamic(_)
+                | MetaTypeVariant::SimpleType(_),
+            ) => Defaultable::None,
+            Some(MetaTypeVariant::All(x) | MetaTypeVariant::Sequence(x)) => {
+                let mut defaultable = Defaultable::Complete;
+
+                for el in &*x.elements {
+                    if el.min_occurs > 0 && !self.is_defaultable_element(types, el) {
+                        defaultable = Defaultable::None;
+                        break;
+                    }
+                }
+
+                defaultable
+            }
+            Some(MetaTypeVariant::Choice(x)) => {
+                let defaultable = x.elements.len() == 1
+                    && x.elements[0].min_occurs >= 1
+                    && matches!(
+                        &x.elements[0].variant,
+                        ElementMetaVariant::Type {
+                            mode: ElementMode::Group,
+                            ..
+                        }
+                    );
+
+                if defaultable {
+                    Defaultable::Complete
+                } else {
+                    Defaultable::None
+                }
+            }
+            Some(MetaTypeVariant::ComplexType(x)) => {
+                let is_defaultable = x
+                    .content
+                    .as_ref()
+                    .is_some_and(|ident| self.is_defaultable_type(types, ident));
+
+                if is_defaultable {
+                    Defaultable::Content
+                } else {
+                    Defaultable::None
+                }
+            }
+        }
     }
 }

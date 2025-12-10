@@ -13,7 +13,7 @@ use crate::models::{
     },
     meta::{
         AttributeMeta, AttributeMetaVariant, ComplexMeta, ElementMeta, ElementMetaVariant,
-        ElementMode, GroupMeta, MetaTypeVariant, MetaTypes,
+        ElementMode, GroupMeta, MetaType, MetaTypeVariant, MetaTypes,
     },
     schema::{
         xs::{FormChoiceType, Use},
@@ -626,7 +626,9 @@ impl<'types> ComplexDataElement<'types> {
                 let nillable = meta.nillable
                     && ctx.check_generator_flags(GeneratorFlags::NILLABLE_TYPE_SUPPORT);
 
-                if occurs == Occurs::Single && ctx.types.group_has_only_optional_elements(type_) {
+                if occurs == Occurs::Single
+                    && ctx.types.is_choice_with_optional_elements_only(type_)
+                {
                     occurs = Occurs::Optional;
                 }
 
@@ -843,7 +845,21 @@ impl Context<'_, '_> {
 }
 
 impl MetaTypes {
-    fn group_has_only_optional_elements(&self, ident: &Ident) -> bool {
+    fn is_choice_with_optional_elements_only(&self, ident: &Ident) -> bool {
+        fn check_type(types: &MetaTypes, ty: &MetaType) -> bool {
+            match &ty.variant {
+                MetaTypeVariant::Choice(gi) => gi
+                    .elements
+                    .iter()
+                    .any(|element| check_element(types, element)),
+                MetaTypeVariant::All(gi) | MetaTypeVariant::Sequence(gi) => gi
+                    .elements
+                    .iter()
+                    .all(|element| check_element(types, element)),
+                _ => false,
+            }
+        }
+
         fn check_element(types: &MetaTypes, element: &ElementMeta) -> bool {
             match &element.variant {
                 ElementMetaVariant::Any { .. } => element.min_occurs == 0,
@@ -855,25 +871,24 @@ impl MetaTypes {
                 ElementMetaVariant::Type {
                     mode: ElementMode::Group,
                     type_,
-                } => element.min_occurs == 0 || types.group_has_only_optional_elements(type_),
+                } => {
+                    element.min_occurs == 0
+                        || types
+                            .items
+                            .get(type_)
+                            .is_none_or(|ty| check_type(types, ty))
+                }
             }
         }
 
         let Some(ty) = self.items.get(ident) else {
             return false;
         };
-
-        match &ty.variant {
-            MetaTypeVariant::Choice(gi) => gi
-                .elements
-                .iter()
-                .any(|element| check_element(self, element)),
-            MetaTypeVariant::All(gi) | MetaTypeVariant::Sequence(gi) => gi
-                .elements
-                .iter()
-                .all(|element| check_element(self, element)),
-            _ => false,
+        if !matches!(&ty.variant, MetaTypeVariant::Choice(_)) {
+            return false;
         }
+
+        check_type(self, ty)
     }
 }
 

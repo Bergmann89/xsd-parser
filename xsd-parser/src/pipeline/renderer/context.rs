@@ -34,16 +34,30 @@ pub struct Context<'a, 'types> {
     /// Identifier of the data type that needs to be rendered.
     pub ident: &'a Ident,
 
+    /// Generic data storage for any type that implements [`ValueKey`].
+    pub values: Values,
+
     module: Mutex<&'a mut Module>,
 
     module_path: ModulePath,
     serialize_module_path: ModulePath,
     deserialize_module_path: ModulePath,
-
-    values: HashMap<TypeId, Box<dyn Any>>,
 }
 
+/// Cache that can store any value.
+///
+/// It uses a key type to identify the value inserted to the cache. The key type
+/// needs to implement [`ValueKey`].
+#[derive(Default, Debug)]
+pub struct Values(HashMap<TypeId, Box<dyn Any>>);
+
+/// Trait that represents a key of a certain type that can be stored in the
+/// [`Values`] cache.
 pub trait ValueKey: Any {
+    /// Actual value type that is stored in the [`Values`] cache.
+    ///
+    /// You can also use `Self` as type if you don't want to make use of a
+    /// separate key type.
     type Type: Any;
 }
 
@@ -128,7 +142,7 @@ impl<'a, 'types> Context<'a, 'types> {
     where
         K: ValueKey,
     {
-        self.values.insert(TypeId::of::<K>(), Box::new(value));
+        self.values.set::<K>(value);
     }
 
     /// Get the value that was stored for the specified key `K`.
@@ -139,7 +153,7 @@ impl<'a, 'types> Context<'a, 'types> {
         K: ValueKey,
         K::Type: Clone,
     {
-        self.get_ref::<K>().clone()
+        self.values.get::<K>()
     }
 
     /// Get a reference to the value that was stored for the specified key `K`.
@@ -149,11 +163,7 @@ impl<'a, 'types> Context<'a, 'types> {
     where
         K: ValueKey,
     {
-        self.values
-            .get(&TypeId::of::<K>())
-            .unwrap()
-            .downcast_ref::<K::Type>()
-            .unwrap()
+        self.values.get_ref::<K>()
     }
 
     /// Get a mutable reference to the value that was stored for the specified key `K`.
@@ -163,11 +173,7 @@ impl<'a, 'types> Context<'a, 'types> {
     where
         K: ValueKey,
     {
-        self.values
-            .get_mut(&TypeId::of::<K>())
-            .unwrap()
-            .downcast_mut::<K::Type>()
-            .unwrap()
+        self.values.get_mut::<K>()
     }
 
     /// Get a mutable reference to the value that was stored for the specified key `K`.
@@ -177,12 +183,7 @@ impl<'a, 'types> Context<'a, 'types> {
         K: ValueKey,
         K::Type: Default,
     {
-        match self.values.entry(TypeId::of::<K>()) {
-            Entry::Vacant(e) => e.insert(Box::new(<K::Type as Default>::default())),
-            Entry::Occupied(e) => e.into_mut(),
-        }
-        .downcast_mut::<K::Type>()
-        .unwrap()
+        self.values.get_or_create::<K>()
     }
 
     /// Extracts the value stored for the specified key `K`.
@@ -192,12 +193,7 @@ impl<'a, 'types> Context<'a, 'types> {
     where
         K: ValueKey,
     {
-        *self
-            .values
-            .remove(&TypeId::of::<K>())
-            .unwrap()
-            .downcast::<K::Type>()
-            .unwrap()
+        self.values.extract::<K>()
     }
 
     /// Removes any values for the specified key `K`.
@@ -205,7 +201,7 @@ impl<'a, 'types> Context<'a, 'types> {
     where
         K: ValueKey,
     {
-        self.values.remove(&TypeId::of::<K>());
+        self.values.unset::<K>();
     }
 
     /// Takes an iterator of usings (anything that implements `ToString`) and
@@ -333,7 +329,7 @@ impl<'a, 'types> Context<'a, 'types> {
             serialize_module_path,
             deserialize_module_path,
 
-            values: HashMap::new(),
+            values: Values::new(),
         }
     }
 
@@ -392,5 +388,102 @@ impl<'types> Deref for Context<'_, 'types> {
 
     fn deref(&self) -> &Self::Target {
         self.meta
+    }
+}
+
+/* Values */
+
+impl Values {
+    /// Create a new empty [`Values`] instance.
+    #[must_use]
+    pub fn new() -> Self {
+        Self::default()
+    }
+
+    /// Set a `value` for the specified key `K`.
+    pub fn set<K>(&mut self, value: K::Type)
+    where
+        K: ValueKey,
+    {
+        self.0.insert(TypeId::of::<K>(), Box::new(value));
+    }
+
+    /// Get the value that was stored for the specified key `K`.
+    ///
+    /// Panics if the key was not set before.
+    #[must_use]
+    pub fn get<K>(&self) -> K::Type
+    where
+        K: ValueKey,
+        K::Type: Clone,
+    {
+        self.get_ref::<K>().clone()
+    }
+
+    /// Get a reference to the value that was stored for the specified key `K`.
+    ///
+    /// Panics if the key was not set before.
+    #[must_use]
+    pub fn get_ref<K>(&self) -> &K::Type
+    where
+        K: ValueKey,
+    {
+        self.0
+            .get(&TypeId::of::<K>())
+            .unwrap()
+            .downcast_ref::<K::Type>()
+            .unwrap()
+    }
+
+    /// Get a mutable reference to the value that was stored for the specified key `K`.
+    ///
+    /// Panics if the key was not set before.
+    pub fn get_mut<K>(&mut self) -> &mut K::Type
+    where
+        K: ValueKey,
+    {
+        self.0
+            .get_mut(&TypeId::of::<K>())
+            .unwrap()
+            .downcast_mut::<K::Type>()
+            .unwrap()
+    }
+
+    /// Get a mutable reference to the value that was stored for the specified key `K`.
+    /// If no value is available a new one is created.
+    pub fn get_or_create<K>(&mut self) -> &mut K::Type
+    where
+        K: ValueKey,
+        K::Type: Default,
+    {
+        match self.0.entry(TypeId::of::<K>()) {
+            Entry::Vacant(e) => e.insert(Box::new(<K::Type as Default>::default())),
+            Entry::Occupied(e) => e.into_mut(),
+        }
+        .downcast_mut::<K::Type>()
+        .unwrap()
+    }
+
+    /// Extracts the value stored for the specified key `K`.
+    ///
+    /// Panics if the key was not set before.
+    pub fn extract<K>(&mut self) -> K::Type
+    where
+        K: ValueKey,
+    {
+        *self
+            .0
+            .remove(&TypeId::of::<K>())
+            .unwrap()
+            .downcast::<K::Type>()
+            .unwrap()
+    }
+
+    /// Removes any values for the specified key `K`.
+    pub fn unset<K>(&mut self)
+    where
+        K: ValueKey,
+    {
+        self.0.remove(&TypeId::of::<K>());
     }
 }

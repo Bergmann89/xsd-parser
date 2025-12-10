@@ -37,7 +37,7 @@ use crate::models::{
     meta::ModuleMeta,
 };
 
-pub use self::context::Context;
+pub use self::context::{Context, ValueKey, Values};
 pub use self::error::Error;
 pub use self::meta::MetaData;
 pub use self::steps::{

@@ -28,6 +28,7 @@ pub struct NestedSeqType {
 #[derive(Debug)]
 pub struct NestedSeqTypeContent {
     pub inner_choice: Option<NestedSeqInnerChoiceType>,
+    pub d: Option<xs::StringType>,
 }
 #[derive(Debug)]
 pub struct NestedSeqInnerChoiceType {
@@ -35,7 +36,7 @@ pub struct NestedSeqInnerChoiceType {
 }
 #[derive(Debug)]
 pub enum NestedSeqInnerChoiceTypeContent {
-    FinalSeq(Option<NestedSeqFinalSeqType>),
+    FinalSeq(NestedSeqFinalSeqType),
 }
 #[derive(Debug)]
 pub struct NestedSeqFinalSeqType {
