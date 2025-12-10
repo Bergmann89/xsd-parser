@@ -427,15 +427,14 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::SequenceTypeContent>,
             fallback: &mut Option<SequenceTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use SequenceTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = fallback
-                    .take()
-                    .unwrap_or(SequenceTypeDeserializerState::Next__);
+                *self.state__ = fallback.take().unwrap_or(S::Next__);
                 return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -445,11 +444,11 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_content(data)?;
-                    *self.state__ = SequenceTypeDeserializerState::Next__;
+                    *self.state__ = S::Next__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = SequenceTypeDeserializerState::Content__(deserializer);
+                    *self.state__ = S::Content__(deserializer);
                     Ok(ElementHandlerOutput::from_event_end(event, allow_any))
                 }
             }
@@ -581,14 +580,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::xs::StringType>,
             fallback: &mut Option<SequenceTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use SequenceTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(SequenceTypeContentDeserializerState::A(None));
-                *self.state__ = SequenceTypeContentDeserializerState::B(None);
+                fallback.get_or_insert(S::A(None));
+                *self.state__ = S::B(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -598,13 +598,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_a(data)?;
-                    *self.state__ = SequenceTypeContentDeserializerState::B(None);
+                    *self.state__ = S::B(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback
-                        .get_or_insert(SequenceTypeContentDeserializerState::A(Some(deserializer)));
-                    *self.state__ = SequenceTypeContentDeserializerState::B(None);
+                    fallback.get_or_insert(S::A(Some(deserializer)));
+                    *self.state__ = S::B(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -615,14 +614,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::xs::StringType>,
             fallback: &mut Option<SequenceTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use SequenceTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(SequenceTypeContentDeserializerState::B(None));
-                *self.state__ = SequenceTypeContentDeserializerState::C(None);
+                fallback.get_or_insert(S::B(None));
+                *self.state__ = S::C(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -632,13 +632,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_b(data)?;
-                    *self.state__ = SequenceTypeContentDeserializerState::C(None);
+                    *self.state__ = S::C(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback
-                        .get_or_insert(SequenceTypeContentDeserializerState::B(Some(deserializer)));
-                    *self.state__ = SequenceTypeContentDeserializerState::C(None);
+                    fallback.get_or_insert(S::B(Some(deserializer)));
+                    *self.state__ = S::C(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -649,14 +648,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::xs::StringType>,
             fallback: &mut Option<SequenceTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use SequenceTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(SequenceTypeContentDeserializerState::C(None));
-                *self.state__ = SequenceTypeContentDeserializerState::Done__;
+                fallback.get_or_insert(S::C(None));
+                *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -666,13 +666,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_c(data)?;
-                    *self.state__ = SequenceTypeContentDeserializerState::Done__;
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback
-                        .get_or_insert(SequenceTypeContentDeserializerState::C(Some(deserializer)));
-                    *self.state__ = SequenceTypeContentDeserializerState::Done__;
+                    fallback.get_or_insert(S::C(Some(deserializer)));
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -771,7 +770,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ = SequenceTypeContentDeserializerState::A(None);
+                        *self.state__ = S::A(None);
                         event
                     }
                     (S::A(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -909,15 +908,14 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::NestedSeqTypeContent>,
             fallback: &mut Option<NestedSeqTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use NestedSeqTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = fallback
-                    .take()
-                    .unwrap_or(NestedSeqTypeDeserializerState::Next__);
+                *self.state__ = fallback.take().unwrap_or(S::Next__);
                 return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -927,11 +925,11 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_content(data)?;
-                    *self.state__ = NestedSeqTypeDeserializerState::Next__;
+                    *self.state__ = S::Next__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = NestedSeqTypeDeserializerState::Content__(deserializer);
+                    *self.state__ = S::Content__(deserializer);
                     Ok(ElementHandlerOutput::from_event_end(event, allow_any))
                 }
             }
@@ -1063,14 +1061,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::NestedSeqInnerChoiceType>,
             fallback: &mut Option<NestedSeqTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use NestedSeqTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(NestedSeqTypeContentDeserializerState::InnerChoice(None));
-                *self.state__ = NestedSeqTypeContentDeserializerState::D(None);
+                fallback.get_or_insert(S::InnerChoice(None));
+                *self.state__ = S::D(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -1080,14 +1079,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_inner_choice(data)?;
-                    *self.state__ = NestedSeqTypeContentDeserializerState::D(None);
+                    *self.state__ = S::D(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(NestedSeqTypeContentDeserializerState::InnerChoice(
-                        Some(deserializer),
-                    ));
-                    *self.state__ = NestedSeqTypeContentDeserializerState::D(None);
+                    fallback.get_or_insert(S::InnerChoice(Some(deserializer)));
+                    *self.state__ = S::D(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -1098,14 +1095,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::xs::StringType>,
             fallback: &mut Option<NestedSeqTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use NestedSeqTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(NestedSeqTypeContentDeserializerState::D(None));
-                *self.state__ = NestedSeqTypeContentDeserializerState::Done__;
+                fallback.get_or_insert(S::D(None));
+                *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -1115,14 +1113,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_d(data)?;
-                    *self.state__ = NestedSeqTypeContentDeserializerState::Done__;
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(NestedSeqTypeContentDeserializerState::D(Some(
-                        deserializer,
-                    )));
-                    *self.state__ = NestedSeqTypeContentDeserializerState::Done__;
+                    fallback.get_or_insert(S::D(Some(deserializer)));
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -1207,7 +1203,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ = NestedSeqTypeContentDeserializerState::InnerChoice(None);
+                        *self.state__ = S::InnerChoice(None);
                         event
                     }
                     (S::InnerChoice(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -1311,15 +1307,14 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::NestedSeqInnerChoiceTypeContent>,
             fallback: &mut Option<NestedSeqInnerChoiceTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use NestedSeqInnerChoiceTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = fallback
-                    .take()
-                    .unwrap_or(NestedSeqInnerChoiceTypeDeserializerState::Next__);
+                *self.state__ = fallback.take().unwrap_or(S::Next__);
                 return Ok(ElementHandlerOutput::break_(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -1329,12 +1324,11 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_content(data)?;
-                    *self.state__ = NestedSeqInnerChoiceTypeDeserializerState::Done__;
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        NestedSeqInnerChoiceTypeDeserializerState::Content__(deserializer);
+                    *self.state__ = S::Content__(deserializer);
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
             }
@@ -1532,6 +1526,7 @@ pub mod quick_xml_deserialize {
             fallback: Option<<super::NestedSeqFinalSeqType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::NestedSeqFinalSeqType>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use NestedSeqInnerChoiceTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
@@ -1548,21 +1543,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_final_seq(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        NestedSeqInnerChoiceTypeContentDeserializerState::FinalSeq(
-                            values, None, None,
-                        ),
-                    )?;
-                    *self.state__ = NestedSeqInnerChoiceTypeContentDeserializerState::Done__(data);
+                    let data = Self::finish_state(helper, S::FinalSeq(values, None, None))?;
+                    *self.state__ = S::Done__(data);
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = NestedSeqInnerChoiceTypeContentDeserializerState::FinalSeq(
-                        values,
-                        None,
-                        Some(deserializer),
-                    );
+                    *self.state__ = S::FinalSeq(values, None, Some(deserializer));
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
             }
@@ -1714,15 +1700,14 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::NestedSeqFinalSeqTypeContent>,
             fallback: &mut Option<NestedSeqFinalSeqTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use NestedSeqFinalSeqTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = fallback
-                    .take()
-                    .unwrap_or(NestedSeqFinalSeqTypeDeserializerState::Next__);
+                *self.state__ = fallback.take().unwrap_or(S::Next__);
                 return Ok(ElementHandlerOutput::break_(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -1732,11 +1717,11 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_content(data)?;
-                    *self.state__ = NestedSeqFinalSeqTypeDeserializerState::Done__;
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = NestedSeqFinalSeqTypeDeserializerState::Content__(deserializer);
+                    *self.state__ = S::Content__(deserializer);
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
             }
@@ -1902,14 +1887,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::xs::StringType>,
             fallback: &mut Option<NestedSeqFinalSeqTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use NestedSeqFinalSeqTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(NestedSeqFinalSeqTypeContentDeserializerState::A(None));
-                *self.state__ = NestedSeqFinalSeqTypeContentDeserializerState::B(None);
+                fallback.get_or_insert(S::A(None));
+                *self.state__ = S::B(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -1919,14 +1905,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_a(data)?;
-                    *self.state__ = NestedSeqFinalSeqTypeContentDeserializerState::B(None);
+                    *self.state__ = S::B(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(NestedSeqFinalSeqTypeContentDeserializerState::A(Some(
-                        deserializer,
-                    )));
-                    *self.state__ = NestedSeqFinalSeqTypeContentDeserializerState::B(None);
+                    fallback.get_or_insert(S::A(Some(deserializer)));
+                    *self.state__ = S::B(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -1937,14 +1921,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::xs::StringType>,
             fallback: &mut Option<NestedSeqFinalSeqTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use NestedSeqFinalSeqTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(NestedSeqFinalSeqTypeContentDeserializerState::B(None));
-                *self.state__ = NestedSeqFinalSeqTypeContentDeserializerState::C(None);
+                fallback.get_or_insert(S::B(None));
+                *self.state__ = S::C(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -1954,14 +1939,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_b(data)?;
-                    *self.state__ = NestedSeqFinalSeqTypeContentDeserializerState::C(None);
+                    *self.state__ = S::C(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(NestedSeqFinalSeqTypeContentDeserializerState::B(Some(
-                        deserializer,
-                    )));
-                    *self.state__ = NestedSeqFinalSeqTypeContentDeserializerState::C(None);
+                    fallback.get_or_insert(S::B(Some(deserializer)));
+                    *self.state__ = S::C(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -1972,14 +1955,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::xs::StringType>,
             fallback: &mut Option<NestedSeqFinalSeqTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use NestedSeqFinalSeqTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(NestedSeqFinalSeqTypeContentDeserializerState::C(None));
-                *self.state__ = NestedSeqFinalSeqTypeContentDeserializerState::Done__;
+                fallback.get_or_insert(S::C(None));
+                *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -1989,14 +1973,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_c(data)?;
-                    *self.state__ = NestedSeqFinalSeqTypeContentDeserializerState::Done__;
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(NestedSeqFinalSeqTypeContentDeserializerState::C(Some(
-                        deserializer,
-                    )));
-                    *self.state__ = NestedSeqFinalSeqTypeContentDeserializerState::Done__;
+                    fallback.get_or_insert(S::C(Some(deserializer)));
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -2100,7 +2082,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ = NestedSeqFinalSeqTypeContentDeserializerState::A(None);
+                        *self.state__ = S::A(None);
                         event
                     }
                     (S::A(None), event @ (Event::Start(_) | Event::Empty(_))) => {

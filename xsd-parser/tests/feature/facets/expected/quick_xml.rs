@@ -289,13 +289,14 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::RootTypeContent>,
             fallback: &mut Option<RootTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use RootTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = fallback.take().unwrap_or(RootTypeDeserializerState::Next__);
+                *self.state__ = fallback.take().unwrap_or(S::Next__);
                 return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -305,12 +306,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_content(data)?;
-                    *self.state__ = RootTypeDeserializerState::Next__;
+                    *self.state__ = S::Next__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *fallback = Some(RootTypeDeserializerState::Content__(deserializer));
-                    *self.state__ = RootTypeDeserializerState::Next__;
+                    *fallback = Some(S::Content__(deserializer));
+                    *self.state__ = S::Next__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -523,6 +524,7 @@ pub mod quick_xml_deserialize {
             fallback: Option<<super::NegativeDecimalType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::NegativeDecimalType>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use RootTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
@@ -539,19 +541,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_negative_decimal(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        RootTypeContentDeserializerState::NegativeDecimal(values, None, None),
-                    )?;
-                    *self.state__ = RootTypeContentDeserializerState::Done__(data);
+                    let data = Self::finish_state(helper, S::NegativeDecimal(values, None, None))?;
+                    *self.state__ = S::Done__(data);
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = RootTypeContentDeserializerState::NegativeDecimal(
-                        values,
-                        None,
-                        Some(deserializer),
-                    );
+                    *self.state__ = S::NegativeDecimal(values, None, Some(deserializer));
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
             }
@@ -563,6 +558,7 @@ pub mod quick_xml_deserialize {
             fallback: Option<<super::PositiveDecimalType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::PositiveDecimalType>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use RootTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
@@ -579,19 +575,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_positive_decimal(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        RootTypeContentDeserializerState::PositiveDecimal(values, None, None),
-                    )?;
-                    *self.state__ = RootTypeContentDeserializerState::Done__(data);
+                    let data = Self::finish_state(helper, S::PositiveDecimal(values, None, None))?;
+                    *self.state__ = S::Done__(data);
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = RootTypeContentDeserializerState::PositiveDecimal(
-                        values,
-                        None,
-                        Some(deserializer),
-                    );
+                    *self.state__ = S::PositiveDecimal(values, None, Some(deserializer));
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
             }
@@ -603,6 +592,7 @@ pub mod quick_xml_deserialize {
             fallback: Option<<super::RestrictedStringType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::RestrictedStringType>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use RootTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
@@ -619,19 +609,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_restricted_string(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        RootTypeContentDeserializerState::RestrictedString(values, None, None),
-                    )?;
-                    *self.state__ = RootTypeContentDeserializerState::Done__(data);
+                    let data = Self::finish_state(helper, S::RestrictedString(values, None, None))?;
+                    *self.state__ = S::Done__(data);
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = RootTypeContentDeserializerState::RestrictedString(
-                        values,
-                        None,
-                        Some(deserializer),
-                    );
+                    *self.state__ = S::RestrictedString(values, None, Some(deserializer));
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
             }

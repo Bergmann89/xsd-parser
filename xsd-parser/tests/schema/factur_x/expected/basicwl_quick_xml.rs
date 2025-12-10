@@ -1209,19 +1209,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::ExchangedDocumentContextType>,
             fallback: &mut Option<CrossIndustryInvoiceTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use CrossIndustryInvoiceTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(
-                    CrossIndustryInvoiceTypeDeserializerState::ExchangedDocumentContext(None),
-                );
-                if matches!(
-                    &fallback,
-                    Some(CrossIndustryInvoiceTypeDeserializerState::Init__)
-                ) {
+                fallback.get_or_insert(S::ExchangedDocumentContext(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -1234,18 +1230,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_exchanged_document_context(data)?;
-                    *self.state__ =
-                        CrossIndustryInvoiceTypeDeserializerState::ExchangedDocument(None);
+                    *self.state__ = S::ExchangedDocument(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(
-                        CrossIndustryInvoiceTypeDeserializerState::ExchangedDocumentContext(Some(
-                            deserializer,
-                        )),
-                    );
-                    *self.state__ =
-                        CrossIndustryInvoiceTypeDeserializerState::ExchangedDocument(None);
+                    fallback.get_or_insert(S::ExchangedDocumentContext(Some(deserializer)));
+                    *self.state__ = S::ExchangedDocument(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -1256,19 +1246,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::ExchangedDocumentType>,
             fallback: &mut Option<CrossIndustryInvoiceTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use CrossIndustryInvoiceTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(
-                    CrossIndustryInvoiceTypeDeserializerState::ExchangedDocument(None),
-                );
-                if matches!(
-                    &fallback,
-                    Some(CrossIndustryInvoiceTypeDeserializerState::Init__)
-                ) {
+                fallback.get_or_insert(S::ExchangedDocument(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -1281,22 +1267,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_exchanged_document(data)?;
-                    *self.state__ =
-                        CrossIndustryInvoiceTypeDeserializerState::SupplyChainTradeTransaction(
-                            None,
-                        );
+                    *self.state__ = S::SupplyChainTradeTransaction(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(
-                        CrossIndustryInvoiceTypeDeserializerState::ExchangedDocument(Some(
-                            deserializer,
-                        )),
-                    );
-                    *self.state__ =
-                        CrossIndustryInvoiceTypeDeserializerState::SupplyChainTradeTransaction(
-                            None,
-                        );
+                    fallback.get_or_insert(S::ExchangedDocument(Some(deserializer)));
+                    *self.state__ = S::SupplyChainTradeTransaction(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -1307,19 +1283,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::SupplyChainTradeTransactionType>,
             fallback: &mut Option<CrossIndustryInvoiceTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use CrossIndustryInvoiceTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(
-                    CrossIndustryInvoiceTypeDeserializerState::SupplyChainTradeTransaction(None),
-                );
-                if matches!(
-                    &fallback,
-                    Some(CrossIndustryInvoiceTypeDeserializerState::Init__)
-                ) {
+                fallback.get_or_insert(S::SupplyChainTradeTransaction(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -1332,16 +1304,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_supply_chain_trade_transaction(data)?;
-                    *self.state__ = CrossIndustryInvoiceTypeDeserializerState::Done__;
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(
-                        CrossIndustryInvoiceTypeDeserializerState::SupplyChainTradeTransaction(
-                            Some(deserializer),
-                        ),
-                    );
-                    *self.state__ = CrossIndustryInvoiceTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::SupplyChainTradeTransaction(Some(deserializer)));
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -1425,10 +1393,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ =
-                            CrossIndustryInvoiceTypeDeserializerState::ExchangedDocumentContext(
-                                None,
-                            );
+                        *self.state__ = S::ExchangedDocumentContext(None);
                         event
                     }
                     (
@@ -1625,14 +1590,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::DocumentContextParameterType>,
             fallback: &mut Option<ExchangedDocumentContextTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use ExchangedDocumentContextTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback . get_or_insert (ExchangedDocumentContextTypeDeserializerState :: BusinessProcessSpecifiedDocumentContextParameter (None)) ;
-                * self . state__ = ExchangedDocumentContextTypeDeserializerState :: GuidelineSpecifiedDocumentContextParameter (None) ;
+                fallback.get_or_insert(S::BusinessProcessSpecifiedDocumentContextParameter(None));
+                *self.state__ = S::GuidelineSpecifiedDocumentContextParameter(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -1642,12 +1608,14 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_business_process_specified_document_context_parameter(data)?;
-                    * self . state__ = ExchangedDocumentContextTypeDeserializerState :: GuidelineSpecifiedDocumentContextParameter (None) ;
+                    *self.state__ = S::GuidelineSpecifiedDocumentContextParameter(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback . get_or_insert (ExchangedDocumentContextTypeDeserializerState :: BusinessProcessSpecifiedDocumentContextParameter (Some (deserializer))) ;
-                    * self . state__ = ExchangedDocumentContextTypeDeserializerState :: GuidelineSpecifiedDocumentContextParameter (None) ;
+                    fallback.get_or_insert(S::BusinessProcessSpecifiedDocumentContextParameter(
+                        Some(deserializer),
+                    ));
+                    *self.state__ = S::GuidelineSpecifiedDocumentContextParameter(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -1658,17 +1626,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::DocumentContextParameterType>,
             fallback: &mut Option<ExchangedDocumentContextTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use ExchangedDocumentContextTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback . get_or_insert (ExchangedDocumentContextTypeDeserializerState :: GuidelineSpecifiedDocumentContextParameter (None)) ;
-                if matches!(
-                    &fallback,
-                    Some(ExchangedDocumentContextTypeDeserializerState::Init__)
-                ) {
+                fallback.get_or_insert(S::GuidelineSpecifiedDocumentContextParameter(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -1681,12 +1647,14 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_guideline_specified_document_context_parameter(data)?;
-                    *self.state__ = ExchangedDocumentContextTypeDeserializerState::Done__;
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback . get_or_insert (ExchangedDocumentContextTypeDeserializerState :: GuidelineSpecifiedDocumentContextParameter (Some (deserializer))) ;
-                    *self.state__ = ExchangedDocumentContextTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::GuidelineSpecifiedDocumentContextParameter(Some(
+                        deserializer,
+                    )));
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -1761,7 +1729,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        * self . state__ = ExchangedDocumentContextTypeDeserializerState :: BusinessProcessSpecifiedDocumentContextParameter (None) ;
+                        *self.state__ = S::BusinessProcessSpecifiedDocumentContextParameter(None);
                         event
                     }
                     (
@@ -1941,17 +1909,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::IdType>,
             fallback: &mut Option<ExchangedDocumentTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use ExchangedDocumentTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(ExchangedDocumentTypeDeserializerState::Id(None));
-                if matches!(
-                    &fallback,
-                    Some(ExchangedDocumentTypeDeserializerState::Init__)
-                ) {
+                fallback.get_or_insert(S::Id(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -1964,14 +1930,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_id(data)?;
-                    *self.state__ = ExchangedDocumentTypeDeserializerState::TypeCode(None);
+                    *self.state__ = S::TypeCode(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(ExchangedDocumentTypeDeserializerState::Id(Some(
-                        deserializer,
-                    )));
-                    *self.state__ = ExchangedDocumentTypeDeserializerState::TypeCode(None);
+                    fallback.get_or_insert(S::Id(Some(deserializer)));
+                    *self.state__ = S::TypeCode(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -1982,17 +1946,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::DocumentCodeType>,
             fallback: &mut Option<ExchangedDocumentTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use ExchangedDocumentTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(ExchangedDocumentTypeDeserializerState::TypeCode(None));
-                if matches!(
-                    &fallback,
-                    Some(ExchangedDocumentTypeDeserializerState::Init__)
-                ) {
+                fallback.get_or_insert(S::TypeCode(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -2005,14 +1967,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_type_code(data)?;
-                    *self.state__ = ExchangedDocumentTypeDeserializerState::IssueDateTime(None);
+                    *self.state__ = S::IssueDateTime(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(ExchangedDocumentTypeDeserializerState::TypeCode(Some(
-                        deserializer,
-                    )));
-                    *self.state__ = ExchangedDocumentTypeDeserializerState::IssueDateTime(None);
+                    fallback.get_or_insert(S::TypeCode(Some(deserializer)));
+                    *self.state__ = S::IssueDateTime(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -2023,17 +1983,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::DateTimeType>,
             fallback: &mut Option<ExchangedDocumentTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use ExchangedDocumentTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(ExchangedDocumentTypeDeserializerState::IssueDateTime(None));
-                if matches!(
-                    &fallback,
-                    Some(ExchangedDocumentTypeDeserializerState::Init__)
-                ) {
+                fallback.get_or_insert(S::IssueDateTime(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -2046,14 +2004,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_issue_date_time(data)?;
-                    *self.state__ = ExchangedDocumentTypeDeserializerState::IncludedNote(None);
+                    *self.state__ = S::IncludedNote(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(ExchangedDocumentTypeDeserializerState::IssueDateTime(
-                        Some(deserializer),
-                    ));
-                    *self.state__ = ExchangedDocumentTypeDeserializerState::IncludedNote(None);
+                    fallback.get_or_insert(S::IssueDateTime(Some(deserializer)));
+                    *self.state__ = S::IncludedNote(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -2064,14 +2020,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::NoteType>,
             fallback: &mut Option<ExchangedDocumentTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use ExchangedDocumentTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(ExchangedDocumentTypeDeserializerState::IncludedNote(None));
-                *self.state__ = ExchangedDocumentTypeDeserializerState::Done__;
+                fallback.get_or_insert(S::IncludedNote(None));
+                *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -2081,14 +2038,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_included_note(data)?;
-                    *self.state__ = ExchangedDocumentTypeDeserializerState::IncludedNote(None);
+                    *self.state__ = S::IncludedNote(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(ExchangedDocumentTypeDeserializerState::IncludedNote(
-                        Some(deserializer),
-                    ));
-                    *self.state__ = ExchangedDocumentTypeDeserializerState::IncludedNote(None);
+                    fallback.get_or_insert(S::IncludedNote(Some(deserializer)));
+                    *self.state__ = S::IncludedNote(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -2174,7 +2129,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ = ExchangedDocumentTypeDeserializerState::Id(None);
+                        *self.state__ = S::Id(None);
                         event
                     }
                     (S::Id(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -2381,17 +2336,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::HeaderTradeAgreementType>,
             fallback: &mut Option<SupplyChainTradeTransactionTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use SupplyChainTradeTransactionTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback . get_or_insert (SupplyChainTradeTransactionTypeDeserializerState :: ApplicableHeaderTradeAgreement (None)) ;
-                if matches!(
-                    &fallback,
-                    Some(SupplyChainTradeTransactionTypeDeserializerState::Init__)
-                ) {
+                fallback.get_or_insert(S::ApplicableHeaderTradeAgreement(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -2404,12 +2357,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_applicable_header_trade_agreement(data)?;
-                    * self . state__ = SupplyChainTradeTransactionTypeDeserializerState :: ApplicableHeaderTradeDelivery (None) ;
+                    *self.state__ = S::ApplicableHeaderTradeDelivery(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback . get_or_insert (SupplyChainTradeTransactionTypeDeserializerState :: ApplicableHeaderTradeAgreement (Some (deserializer))) ;
-                    * self . state__ = SupplyChainTradeTransactionTypeDeserializerState :: ApplicableHeaderTradeDelivery (None) ;
+                    fallback.get_or_insert(S::ApplicableHeaderTradeAgreement(Some(deserializer)));
+                    *self.state__ = S::ApplicableHeaderTradeDelivery(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -2420,21 +2373,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::HeaderTradeDeliveryType>,
             fallback: &mut Option<SupplyChainTradeTransactionTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use SupplyChainTradeTransactionTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(
-                    SupplyChainTradeTransactionTypeDeserializerState::ApplicableHeaderTradeDelivery(
-                        None,
-                    ),
-                );
-                if matches!(
-                    &fallback,
-                    Some(SupplyChainTradeTransactionTypeDeserializerState::Init__)
-                ) {
+                fallback.get_or_insert(S::ApplicableHeaderTradeDelivery(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -2447,12 +2394,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_applicable_header_trade_delivery(data)?;
-                    * self . state__ = SupplyChainTradeTransactionTypeDeserializerState :: ApplicableHeaderTradeSettlement (None) ;
+                    *self.state__ = S::ApplicableHeaderTradeSettlement(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback . get_or_insert (SupplyChainTradeTransactionTypeDeserializerState :: ApplicableHeaderTradeDelivery (Some (deserializer))) ;
-                    * self . state__ = SupplyChainTradeTransactionTypeDeserializerState :: ApplicableHeaderTradeSettlement (None) ;
+                    fallback.get_or_insert(S::ApplicableHeaderTradeDelivery(Some(deserializer)));
+                    *self.state__ = S::ApplicableHeaderTradeSettlement(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -2463,17 +2410,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::HeaderTradeSettlementType>,
             fallback: &mut Option<SupplyChainTradeTransactionTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use SupplyChainTradeTransactionTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback . get_or_insert (SupplyChainTradeTransactionTypeDeserializerState :: ApplicableHeaderTradeSettlement (None)) ;
-                if matches!(
-                    &fallback,
-                    Some(SupplyChainTradeTransactionTypeDeserializerState::Init__)
-                ) {
+                fallback.get_or_insert(S::ApplicableHeaderTradeSettlement(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -2486,12 +2431,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_applicable_header_trade_settlement(data)?;
-                    *self.state__ = SupplyChainTradeTransactionTypeDeserializerState::Done__;
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback . get_or_insert (SupplyChainTradeTransactionTypeDeserializerState :: ApplicableHeaderTradeSettlement (Some (deserializer))) ;
-                    *self.state__ = SupplyChainTradeTransactionTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::ApplicableHeaderTradeSettlement(Some(deserializer)));
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -2579,7 +2524,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        * self . state__ = SupplyChainTradeTransactionTypeDeserializerState :: ApplicableHeaderTradeAgreement (None) ;
+                        *self.state__ = S::ApplicableHeaderTradeAgreement(None);
                         event
                     }
                     (
@@ -2749,17 +2694,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::IdType>,
             fallback: &mut Option<DocumentContextParameterTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use DocumentContextParameterTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(DocumentContextParameterTypeDeserializerState::Id(None));
-                if matches!(
-                    &fallback,
-                    Some(DocumentContextParameterTypeDeserializerState::Init__)
-                ) {
+                fallback.get_or_insert(S::Id(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -2772,14 +2715,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_id(data)?;
-                    *self.state__ = DocumentContextParameterTypeDeserializerState::Done__;
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(DocumentContextParameterTypeDeserializerState::Id(
-                        Some(deserializer),
-                    ));
-                    *self.state__ = DocumentContextParameterTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::Id(Some(deserializer)));
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -2831,7 +2772,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ = DocumentContextParameterTypeDeserializerState::Id(None);
+                        *self.state__ = S::Id(None);
                         event
                     }
                     (S::Id(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -3188,15 +3129,14 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::DateTimeTypeContent>,
             fallback: &mut Option<DateTimeTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use DateTimeTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = fallback
-                    .take()
-                    .unwrap_or(DateTimeTypeDeserializerState::Next__);
+                *self.state__ = fallback.take().unwrap_or(S::Next__);
                 return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -3206,11 +3146,11 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_content(data)?;
-                    *self.state__ = DateTimeTypeDeserializerState::Next__;
+                    *self.state__ = S::Next__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = DateTimeTypeDeserializerState::Content__(deserializer);
+                    *self.state__ = S::Content__(deserializer);
                     Ok(ElementHandlerOutput::from_event_end(event, allow_any))
                 }
             }
@@ -3358,6 +3298,7 @@ pub mod quick_xml_deserialize {
             >,
             output: DeserializerOutput<'de, super::DateTimeTypeDateTimeStringType>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use DateTimeTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
@@ -3374,19 +3315,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_date_time_string(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        DateTimeTypeContentDeserializerState::DateTimeString(values, None, None),
-                    )?;
-                    *self.state__ = DateTimeTypeContentDeserializerState::Done__(data);
+                    let data = Self::finish_state(helper, S::DateTimeString(values, None, None))?;
+                    *self.state__ = S::Done__(data);
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = DateTimeTypeContentDeserializerState::DateTimeString(
-                        values,
-                        None,
-                        Some(deserializer),
-                    );
+                    *self.state__ = S::DateTimeString(values, None, Some(deserializer));
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
             }
@@ -3561,14 +3495,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::TextType>,
             fallback: &mut Option<NoteTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use NoteTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(NoteTypeDeserializerState::Content(None));
-                if matches!(&fallback, Some(NoteTypeDeserializerState::Init__)) {
+                fallback.get_or_insert(S::Content(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -3581,12 +3516,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_content(data)?;
-                    *self.state__ = NoteTypeDeserializerState::SubjectCode(None);
+                    *self.state__ = S::SubjectCode(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(NoteTypeDeserializerState::Content(Some(deserializer)));
-                    *self.state__ = NoteTypeDeserializerState::SubjectCode(None);
+                    fallback.get_or_insert(S::Content(Some(deserializer)));
+                    *self.state__ = S::SubjectCode(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -3597,14 +3532,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::CodeType>,
             fallback: &mut Option<NoteTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use NoteTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(NoteTypeDeserializerState::SubjectCode(None));
-                *self.state__ = NoteTypeDeserializerState::Done__;
+                fallback.get_or_insert(S::SubjectCode(None));
+                *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -3614,13 +3550,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_subject_code(data)?;
-                    *self.state__ = NoteTypeDeserializerState::Done__;
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback
-                        .get_or_insert(NoteTypeDeserializerState::SubjectCode(Some(deserializer)));
-                    *self.state__ = NoteTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::SubjectCode(Some(deserializer)));
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -3682,7 +3617,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ = NoteTypeDeserializerState::Content(None);
+                        *self.state__ = S::Content(None);
                         event
                     }
                     (S::Content(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -3892,16 +3827,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::TextType>,
             fallback: &mut Option<HeaderTradeAgreementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use HeaderTradeAgreementTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(HeaderTradeAgreementTypeDeserializerState::BuyerReference(
-                    None,
-                ));
-                *self.state__ = HeaderTradeAgreementTypeDeserializerState::SellerTradeParty(None);
+                fallback.get_or_insert(S::BuyerReference(None));
+                *self.state__ = S::SellerTradeParty(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -3911,18 +3845,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_buyer_reference(data)?;
-                    *self.state__ =
-                        HeaderTradeAgreementTypeDeserializerState::SellerTradeParty(None);
+                    *self.state__ = S::SellerTradeParty(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(
-                        HeaderTradeAgreementTypeDeserializerState::BuyerReference(Some(
-                            deserializer,
-                        )),
-                    );
-                    *self.state__ =
-                        HeaderTradeAgreementTypeDeserializerState::SellerTradeParty(None);
+                    fallback.get_or_insert(S::BuyerReference(Some(deserializer)));
+                    *self.state__ = S::SellerTradeParty(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -3933,19 +3861,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::TradePartyType>,
             fallback: &mut Option<HeaderTradeAgreementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use HeaderTradeAgreementTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(
-                    HeaderTradeAgreementTypeDeserializerState::SellerTradeParty(None),
-                );
-                if matches!(
-                    &fallback,
-                    Some(HeaderTradeAgreementTypeDeserializerState::Init__)
-                ) {
+                fallback.get_or_insert(S::SellerTradeParty(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -3958,18 +3882,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_seller_trade_party(data)?;
-                    *self.state__ =
-                        HeaderTradeAgreementTypeDeserializerState::BuyerTradeParty(None);
+                    *self.state__ = S::BuyerTradeParty(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(
-                        HeaderTradeAgreementTypeDeserializerState::SellerTradeParty(Some(
-                            deserializer,
-                        )),
-                    );
-                    *self.state__ =
-                        HeaderTradeAgreementTypeDeserializerState::BuyerTradeParty(None);
+                    fallback.get_or_insert(S::SellerTradeParty(Some(deserializer)));
+                    *self.state__ = S::BuyerTradeParty(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -3980,19 +3898,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::TradePartyType>,
             fallback: &mut Option<HeaderTradeAgreementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use HeaderTradeAgreementTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(HeaderTradeAgreementTypeDeserializerState::BuyerTradeParty(
-                    None,
-                ));
-                if matches!(
-                    &fallback,
-                    Some(HeaderTradeAgreementTypeDeserializerState::Init__)
-                ) {
+                fallback.get_or_insert(S::BuyerTradeParty(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -4005,16 +3919,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_buyer_trade_party(data)?;
-                    * self . state__ = HeaderTradeAgreementTypeDeserializerState :: SellerTaxRepresentativeTradeParty (None) ;
+                    *self.state__ = S::SellerTaxRepresentativeTradeParty(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(
-                        HeaderTradeAgreementTypeDeserializerState::BuyerTradeParty(Some(
-                            deserializer,
-                        )),
-                    );
-                    * self . state__ = HeaderTradeAgreementTypeDeserializerState :: SellerTaxRepresentativeTradeParty (None) ;
+                    fallback.get_or_insert(S::BuyerTradeParty(Some(deserializer)));
+                    *self.state__ = S::SellerTaxRepresentativeTradeParty(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -4025,19 +3935,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::TradePartyType>,
             fallback: &mut Option<HeaderTradeAgreementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use HeaderTradeAgreementTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(
-                    HeaderTradeAgreementTypeDeserializerState::SellerTaxRepresentativeTradeParty(
-                        None,
-                    ),
-                );
-                *self.state__ =
-                    HeaderTradeAgreementTypeDeserializerState::BuyerOrderReferencedDocument(None);
+                fallback.get_or_insert(S::SellerTaxRepresentativeTradeParty(None));
+                *self.state__ = S::BuyerOrderReferencedDocument(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -4047,18 +3953,13 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_seller_tax_representative_trade_party(data)?;
-                    *self.state__ =
-                        HeaderTradeAgreementTypeDeserializerState::BuyerOrderReferencedDocument(
-                            None,
-                        );
+                    *self.state__ = S::BuyerOrderReferencedDocument(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback . get_or_insert (HeaderTradeAgreementTypeDeserializerState :: SellerTaxRepresentativeTradeParty (Some (deserializer))) ;
-                    *self.state__ =
-                        HeaderTradeAgreementTypeDeserializerState::BuyerOrderReferencedDocument(
-                            None,
-                        );
+                    fallback
+                        .get_or_insert(S::SellerTaxRepresentativeTradeParty(Some(deserializer)));
+                    *self.state__ = S::BuyerOrderReferencedDocument(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -4069,17 +3970,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::ReferencedDocumentType>,
             fallback: &mut Option<HeaderTradeAgreementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use HeaderTradeAgreementTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(
-                    HeaderTradeAgreementTypeDeserializerState::BuyerOrderReferencedDocument(None),
-                );
-                *self.state__ =
-                    HeaderTradeAgreementTypeDeserializerState::ContractReferencedDocument(None);
+                fallback.get_or_insert(S::BuyerOrderReferencedDocument(None));
+                *self.state__ = S::ContractReferencedDocument(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -4089,18 +3988,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_buyer_order_referenced_document(data)?;
-                    *self.state__ =
-                        HeaderTradeAgreementTypeDeserializerState::ContractReferencedDocument(None);
+                    *self.state__ = S::ContractReferencedDocument(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(
-                        HeaderTradeAgreementTypeDeserializerState::BuyerOrderReferencedDocument(
-                            Some(deserializer),
-                        ),
-                    );
-                    *self.state__ =
-                        HeaderTradeAgreementTypeDeserializerState::ContractReferencedDocument(None);
+                    fallback.get_or_insert(S::BuyerOrderReferencedDocument(Some(deserializer)));
+                    *self.state__ = S::ContractReferencedDocument(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -4111,16 +4004,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::ReferencedDocumentType>,
             fallback: &mut Option<HeaderTradeAgreementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use HeaderTradeAgreementTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(
-                    HeaderTradeAgreementTypeDeserializerState::ContractReferencedDocument(None),
-                );
-                *self.state__ = HeaderTradeAgreementTypeDeserializerState::Done__;
+                fallback.get_or_insert(S::ContractReferencedDocument(None));
+                *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -4130,16 +4022,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_contract_referenced_document(data)?;
-                    *self.state__ = HeaderTradeAgreementTypeDeserializerState::Done__;
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(
-                        HeaderTradeAgreementTypeDeserializerState::ContractReferencedDocument(
-                            Some(deserializer),
-                        ),
-                    );
-                    *self.state__ = HeaderTradeAgreementTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::ContractReferencedDocument(Some(deserializer)));
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -4263,8 +4151,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ =
-                            HeaderTradeAgreementTypeDeserializerState::BuyerReference(None);
+                        *self.state__ = S::BuyerReference(None);
                         event
                     }
                     (S::BuyerReference(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -4525,17 +4412,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::TradePartyType>,
             fallback: &mut Option<HeaderTradeDeliveryTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use HeaderTradeDeliveryTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(HeaderTradeDeliveryTypeDeserializerState::ShipToTradeParty(
-                    None,
-                ));
-                *self.state__ =
-                    HeaderTradeDeliveryTypeDeserializerState::ActualDeliverySupplyChainEvent(None);
+                fallback.get_or_insert(S::ShipToTradeParty(None));
+                *self.state__ = S::ActualDeliverySupplyChainEvent(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -4545,22 +4430,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_ship_to_trade_party(data)?;
-                    *self.state__ =
-                        HeaderTradeDeliveryTypeDeserializerState::ActualDeliverySupplyChainEvent(
-                            None,
-                        );
+                    *self.state__ = S::ActualDeliverySupplyChainEvent(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(
-                        HeaderTradeDeliveryTypeDeserializerState::ShipToTradeParty(Some(
-                            deserializer,
-                        )),
-                    );
-                    *self.state__ =
-                        HeaderTradeDeliveryTypeDeserializerState::ActualDeliverySupplyChainEvent(
-                            None,
-                        );
+                    fallback.get_or_insert(S::ShipToTradeParty(Some(deserializer)));
+                    *self.state__ = S::ActualDeliverySupplyChainEvent(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -4571,19 +4446,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::SupplyChainEventType>,
             fallback: &mut Option<HeaderTradeDeliveryTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use HeaderTradeDeliveryTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(
-                    HeaderTradeDeliveryTypeDeserializerState::ActualDeliverySupplyChainEvent(None),
-                );
-                *self.state__ =
-                    HeaderTradeDeliveryTypeDeserializerState::DespatchAdviceReferencedDocument(
-                        None,
-                    );
+                fallback.get_or_insert(S::ActualDeliverySupplyChainEvent(None));
+                *self.state__ = S::DespatchAdviceReferencedDocument(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -4593,22 +4464,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_actual_delivery_supply_chain_event(data)?;
-                    *self.state__ =
-                        HeaderTradeDeliveryTypeDeserializerState::DespatchAdviceReferencedDocument(
-                            None,
-                        );
+                    *self.state__ = S::DespatchAdviceReferencedDocument(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(
-                        HeaderTradeDeliveryTypeDeserializerState::ActualDeliverySupplyChainEvent(
-                            Some(deserializer),
-                        ),
-                    );
-                    *self.state__ =
-                        HeaderTradeDeliveryTypeDeserializerState::DespatchAdviceReferencedDocument(
-                            None,
-                        );
+                    fallback.get_or_insert(S::ActualDeliverySupplyChainEvent(Some(deserializer)));
+                    *self.state__ = S::DespatchAdviceReferencedDocument(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -4619,18 +4480,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::ReferencedDocumentType>,
             fallback: &mut Option<HeaderTradeDeliveryTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use HeaderTradeDeliveryTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(
-                    HeaderTradeDeliveryTypeDeserializerState::DespatchAdviceReferencedDocument(
-                        None,
-                    ),
-                );
-                *self.state__ = HeaderTradeDeliveryTypeDeserializerState::Done__;
+                fallback.get_or_insert(S::DespatchAdviceReferencedDocument(None));
+                *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -4640,16 +4498,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_despatch_advice_referenced_document(data)?;
-                    *self.state__ = HeaderTradeDeliveryTypeDeserializerState::Done__;
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(
-                        HeaderTradeDeliveryTypeDeserializerState::DespatchAdviceReferencedDocument(
-                            Some(deserializer),
-                        ),
-                    );
-                    *self.state__ = HeaderTradeDeliveryTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::DespatchAdviceReferencedDocument(Some(deserializer)));
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -4733,8 +4587,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ =
-                            HeaderTradeDeliveryTypeDeserializerState::ShipToTradeParty(None);
+                        *self.state__ = S::ShipToTradeParty(None);
                         event
                     }
                     (S::ShipToTradeParty(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -5065,16 +4918,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::IdType>,
             fallback: &mut Option<HeaderTradeSettlementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use HeaderTradeSettlementTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(
-                    HeaderTradeSettlementTypeDeserializerState::CreditorReferenceId(None),
-                );
-                *self.state__ = HeaderTradeSettlementTypeDeserializerState::PaymentReference(None);
+                fallback.get_or_insert(S::CreditorReferenceId(None));
+                *self.state__ = S::PaymentReference(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -5084,18 +4936,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_creditor_reference_id(data)?;
-                    *self.state__ =
-                        HeaderTradeSettlementTypeDeserializerState::PaymentReference(None);
+                    *self.state__ = S::PaymentReference(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(
-                        HeaderTradeSettlementTypeDeserializerState::CreditorReferenceId(Some(
-                            deserializer,
-                        )),
-                    );
-                    *self.state__ =
-                        HeaderTradeSettlementTypeDeserializerState::PaymentReference(None);
+                    fallback.get_or_insert(S::CreditorReferenceId(Some(deserializer)));
+                    *self.state__ = S::PaymentReference(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -5106,16 +4952,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::TextType>,
             fallback: &mut Option<HeaderTradeSettlementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use HeaderTradeSettlementTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(
-                    HeaderTradeSettlementTypeDeserializerState::PaymentReference(None),
-                );
-                *self.state__ = HeaderTradeSettlementTypeDeserializerState::TaxCurrencyCode(None);
+                fallback.get_or_insert(S::PaymentReference(None));
+                *self.state__ = S::TaxCurrencyCode(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -5125,18 +4970,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_payment_reference(data)?;
-                    *self.state__ =
-                        HeaderTradeSettlementTypeDeserializerState::TaxCurrencyCode(None);
+                    *self.state__ = S::TaxCurrencyCode(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(
-                        HeaderTradeSettlementTypeDeserializerState::PaymentReference(Some(
-                            deserializer,
-                        )),
-                    );
-                    *self.state__ =
-                        HeaderTradeSettlementTypeDeserializerState::TaxCurrencyCode(None);
+                    fallback.get_or_insert(S::PaymentReference(Some(deserializer)));
+                    *self.state__ = S::TaxCurrencyCode(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -5147,17 +4986,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::CurrencyCodeType>,
             fallback: &mut Option<HeaderTradeSettlementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use HeaderTradeSettlementTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(
-                    HeaderTradeSettlementTypeDeserializerState::TaxCurrencyCode(None),
-                );
-                *self.state__ =
-                    HeaderTradeSettlementTypeDeserializerState::InvoiceCurrencyCode(None);
+                fallback.get_or_insert(S::TaxCurrencyCode(None));
+                *self.state__ = S::InvoiceCurrencyCode(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -5167,18 +5004,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_tax_currency_code(data)?;
-                    *self.state__ =
-                        HeaderTradeSettlementTypeDeserializerState::InvoiceCurrencyCode(None);
+                    *self.state__ = S::InvoiceCurrencyCode(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(
-                        HeaderTradeSettlementTypeDeserializerState::TaxCurrencyCode(Some(
-                            deserializer,
-                        )),
-                    );
-                    *self.state__ =
-                        HeaderTradeSettlementTypeDeserializerState::InvoiceCurrencyCode(None);
+                    fallback.get_or_insert(S::TaxCurrencyCode(Some(deserializer)));
+                    *self.state__ = S::InvoiceCurrencyCode(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -5189,19 +5020,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::CurrencyCodeType>,
             fallback: &mut Option<HeaderTradeSettlementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use HeaderTradeSettlementTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(
-                    HeaderTradeSettlementTypeDeserializerState::InvoiceCurrencyCode(None),
-                );
-                if matches!(
-                    &fallback,
-                    Some(HeaderTradeSettlementTypeDeserializerState::Init__)
-                ) {
+                fallback.get_or_insert(S::InvoiceCurrencyCode(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -5214,18 +5041,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_invoice_currency_code(data)?;
-                    *self.state__ =
-                        HeaderTradeSettlementTypeDeserializerState::PayeeTradeParty(None);
+                    *self.state__ = S::PayeeTradeParty(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(
-                        HeaderTradeSettlementTypeDeserializerState::InvoiceCurrencyCode(Some(
-                            deserializer,
-                        )),
-                    );
-                    *self.state__ =
-                        HeaderTradeSettlementTypeDeserializerState::PayeeTradeParty(None);
+                    fallback.get_or_insert(S::InvoiceCurrencyCode(Some(deserializer)));
+                    *self.state__ = S::PayeeTradeParty(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -5236,16 +5057,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::TradePartyType>,
             fallback: &mut Option<HeaderTradeSettlementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use HeaderTradeSettlementTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(
-                    HeaderTradeSettlementTypeDeserializerState::PayeeTradeParty(None),
-                );
-                * self . state__ = HeaderTradeSettlementTypeDeserializerState :: SpecifiedTradeSettlementPaymentMeans (None) ;
+                fallback.get_or_insert(S::PayeeTradeParty(None));
+                *self.state__ = S::SpecifiedTradeSettlementPaymentMeans(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -5255,16 +5075,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_payee_trade_party(data)?;
-                    * self . state__ = HeaderTradeSettlementTypeDeserializerState :: SpecifiedTradeSettlementPaymentMeans (None) ;
+                    *self.state__ = S::SpecifiedTradeSettlementPaymentMeans(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(
-                        HeaderTradeSettlementTypeDeserializerState::PayeeTradeParty(Some(
-                            deserializer,
-                        )),
-                    );
-                    * self . state__ = HeaderTradeSettlementTypeDeserializerState :: SpecifiedTradeSettlementPaymentMeans (None) ;
+                    fallback.get_or_insert(S::PayeeTradeParty(Some(deserializer)));
+                    *self.state__ = S::SpecifiedTradeSettlementPaymentMeans(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -5275,15 +5091,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::TradeSettlementPaymentMeansType>,
             fallback: &mut Option<HeaderTradeSettlementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use HeaderTradeSettlementTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback . get_or_insert (HeaderTradeSettlementTypeDeserializerState :: SpecifiedTradeSettlementPaymentMeans (None)) ;
-                *self.state__ =
-                    HeaderTradeSettlementTypeDeserializerState::ApplicableTradeTax(None);
+                fallback.get_or_insert(S::SpecifiedTradeSettlementPaymentMeans(None));
+                *self.state__ = S::ApplicableTradeTax(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -5293,12 +5109,13 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_specified_trade_settlement_payment_means(data)?;
-                    * self . state__ = HeaderTradeSettlementTypeDeserializerState :: SpecifiedTradeSettlementPaymentMeans (None) ;
+                    *self.state__ = S::SpecifiedTradeSettlementPaymentMeans(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback . get_or_insert (HeaderTradeSettlementTypeDeserializerState :: SpecifiedTradeSettlementPaymentMeans (Some (deserializer))) ;
-                    * self . state__ = HeaderTradeSettlementTypeDeserializerState :: SpecifiedTradeSettlementPaymentMeans (None) ;
+                    fallback
+                        .get_or_insert(S::SpecifiedTradeSettlementPaymentMeans(Some(deserializer)));
+                    *self.state__ = S::SpecifiedTradeSettlementPaymentMeans(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -5309,28 +5126,21 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::TradeTaxType>,
             fallback: &mut Option<HeaderTradeSettlementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use HeaderTradeSettlementTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                if matches!(
-                    &fallback,
-                    Some(HeaderTradeSettlementTypeDeserializerState::Init__)
-                ) {
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else if self.applicable_trade_tax.len() < 1usize {
-                    fallback.get_or_insert(
-                        HeaderTradeSettlementTypeDeserializerState::ApplicableTradeTax(None),
-                    );
+                    fallback.get_or_insert(S::ApplicableTradeTax(None));
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 } else {
-                    fallback.get_or_insert(
-                        HeaderTradeSettlementTypeDeserializerState::ApplicableTradeTax(None),
-                    );
-                    *self.state__ =
-                        HeaderTradeSettlementTypeDeserializerState::BillingSpecifiedPeriod(None);
+                    fallback.get_or_insert(S::ApplicableTradeTax(None));
+                    *self.state__ = S::BillingSpecifiedPeriod(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
             }
@@ -5341,18 +5151,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_applicable_trade_tax(data)?;
-                    *self.state__ =
-                        HeaderTradeSettlementTypeDeserializerState::ApplicableTradeTax(None);
+                    *self.state__ = S::ApplicableTradeTax(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(
-                        HeaderTradeSettlementTypeDeserializerState::ApplicableTradeTax(Some(
-                            deserializer,
-                        )),
-                    );
-                    *self.state__ =
-                        HeaderTradeSettlementTypeDeserializerState::ApplicableTradeTax(None);
+                    fallback.get_or_insert(S::ApplicableTradeTax(Some(deserializer)));
+                    *self.state__ = S::ApplicableTradeTax(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -5363,17 +5167,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::SpecifiedPeriodType>,
             fallback: &mut Option<HeaderTradeSettlementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use HeaderTradeSettlementTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(
-                    HeaderTradeSettlementTypeDeserializerState::BillingSpecifiedPeriod(None),
-                );
-                *self.state__ =
-                    HeaderTradeSettlementTypeDeserializerState::SpecifiedTradeAllowanceCharge(None);
+                fallback.get_or_insert(S::BillingSpecifiedPeriod(None));
+                *self.state__ = S::SpecifiedTradeAllowanceCharge(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -5383,22 +5185,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_billing_specified_period(data)?;
-                    *self.state__ =
-                        HeaderTradeSettlementTypeDeserializerState::SpecifiedTradeAllowanceCharge(
-                            None,
-                        );
+                    *self.state__ = S::SpecifiedTradeAllowanceCharge(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(
-                        HeaderTradeSettlementTypeDeserializerState::BillingSpecifiedPeriod(Some(
-                            deserializer,
-                        )),
-                    );
-                    *self.state__ =
-                        HeaderTradeSettlementTypeDeserializerState::SpecifiedTradeAllowanceCharge(
-                            None,
-                        );
+                    fallback.get_or_insert(S::BillingSpecifiedPeriod(Some(deserializer)));
+                    *self.state__ = S::SpecifiedTradeAllowanceCharge(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -5409,17 +5201,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::TradeAllowanceChargeType>,
             fallback: &mut Option<HeaderTradeSettlementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use HeaderTradeSettlementTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(
-                    HeaderTradeSettlementTypeDeserializerState::SpecifiedTradeAllowanceCharge(None),
-                );
-                *self.state__ =
-                    HeaderTradeSettlementTypeDeserializerState::SpecifiedTradePaymentTerms(None);
+                fallback.get_or_insert(S::SpecifiedTradeAllowanceCharge(None));
+                *self.state__ = S::SpecifiedTradePaymentTerms(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -5429,22 +5219,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_specified_trade_allowance_charge(data)?;
-                    *self.state__ =
-                        HeaderTradeSettlementTypeDeserializerState::SpecifiedTradeAllowanceCharge(
-                            None,
-                        );
+                    *self.state__ = S::SpecifiedTradeAllowanceCharge(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(
-                        HeaderTradeSettlementTypeDeserializerState::SpecifiedTradeAllowanceCharge(
-                            Some(deserializer),
-                        ),
-                    );
-                    *self.state__ =
-                        HeaderTradeSettlementTypeDeserializerState::SpecifiedTradeAllowanceCharge(
-                            None,
-                        );
+                    fallback.get_or_insert(S::SpecifiedTradeAllowanceCharge(Some(deserializer)));
+                    *self.state__ = S::SpecifiedTradeAllowanceCharge(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -5455,16 +5235,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::TradePaymentTermsType>,
             fallback: &mut Option<HeaderTradeSettlementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use HeaderTradeSettlementTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(
-                    HeaderTradeSettlementTypeDeserializerState::SpecifiedTradePaymentTerms(None),
-                );
-                * self . state__ = HeaderTradeSettlementTypeDeserializerState :: SpecifiedTradeSettlementHeaderMonetarySummation (None) ;
+                fallback.get_or_insert(S::SpecifiedTradePaymentTerms(None));
+                *self.state__ = S::SpecifiedTradeSettlementHeaderMonetarySummation(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -5474,16 +5253,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_specified_trade_payment_terms(data)?;
-                    * self . state__ = HeaderTradeSettlementTypeDeserializerState :: SpecifiedTradeSettlementHeaderMonetarySummation (None) ;
+                    *self.state__ = S::SpecifiedTradeSettlementHeaderMonetarySummation(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(
-                        HeaderTradeSettlementTypeDeserializerState::SpecifiedTradePaymentTerms(
-                            Some(deserializer),
-                        ),
-                    );
-                    * self . state__ = HeaderTradeSettlementTypeDeserializerState :: SpecifiedTradeSettlementHeaderMonetarySummation (None) ;
+                    fallback.get_or_insert(S::SpecifiedTradePaymentTerms(Some(deserializer)));
+                    *self.state__ = S::SpecifiedTradeSettlementHeaderMonetarySummation(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -5494,17 +5269,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::TradeSettlementHeaderMonetarySummationType>,
             fallback: &mut Option<HeaderTradeSettlementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use HeaderTradeSettlementTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback . get_or_insert (HeaderTradeSettlementTypeDeserializerState :: SpecifiedTradeSettlementHeaderMonetarySummation (None)) ;
-                if matches!(
-                    &fallback,
-                    Some(HeaderTradeSettlementTypeDeserializerState::Init__)
-                ) {
+                fallback.get_or_insert(S::SpecifiedTradeSettlementHeaderMonetarySummation(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -5517,14 +5290,14 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_specified_trade_settlement_header_monetary_summation(data)?;
-                    *self.state__ =
-                        HeaderTradeSettlementTypeDeserializerState::InvoiceReferencedDocument(None);
+                    *self.state__ = S::InvoiceReferencedDocument(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback . get_or_insert (HeaderTradeSettlementTypeDeserializerState :: SpecifiedTradeSettlementHeaderMonetarySummation (Some (deserializer))) ;
-                    *self.state__ =
-                        HeaderTradeSettlementTypeDeserializerState::InvoiceReferencedDocument(None);
+                    fallback.get_or_insert(S::SpecifiedTradeSettlementHeaderMonetarySummation(
+                        Some(deserializer),
+                    ));
+                    *self.state__ = S::InvoiceReferencedDocument(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -5535,16 +5308,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::ReferencedDocumentType>,
             fallback: &mut Option<HeaderTradeSettlementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use HeaderTradeSettlementTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(
-                    HeaderTradeSettlementTypeDeserializerState::InvoiceReferencedDocument(None),
-                );
-                * self . state__ = HeaderTradeSettlementTypeDeserializerState :: ReceivableSpecifiedTradeAccountingAccount (None) ;
+                fallback.get_or_insert(S::InvoiceReferencedDocument(None));
+                *self.state__ = S::ReceivableSpecifiedTradeAccountingAccount(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -5554,18 +5326,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_invoice_referenced_document(data)?;
-                    *self.state__ =
-                        HeaderTradeSettlementTypeDeserializerState::InvoiceReferencedDocument(None);
+                    *self.state__ = S::InvoiceReferencedDocument(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(
-                        HeaderTradeSettlementTypeDeserializerState::InvoiceReferencedDocument(
-                            Some(deserializer),
-                        ),
-                    );
-                    *self.state__ =
-                        HeaderTradeSettlementTypeDeserializerState::InvoiceReferencedDocument(None);
+                    fallback.get_or_insert(S::InvoiceReferencedDocument(Some(deserializer)));
+                    *self.state__ = S::InvoiceReferencedDocument(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -5576,14 +5342,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::TradeAccountingAccountType>,
             fallback: &mut Option<HeaderTradeSettlementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use HeaderTradeSettlementTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback . get_or_insert (HeaderTradeSettlementTypeDeserializerState :: ReceivableSpecifiedTradeAccountingAccount (None)) ;
-                *self.state__ = HeaderTradeSettlementTypeDeserializerState::Done__;
+                fallback.get_or_insert(S::ReceivableSpecifiedTradeAccountingAccount(None));
+                *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -5593,12 +5360,14 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_receivable_specified_trade_accounting_account(data)?;
-                    *self.state__ = HeaderTradeSettlementTypeDeserializerState::Done__;
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback . get_or_insert (HeaderTradeSettlementTypeDeserializerState :: ReceivableSpecifiedTradeAccountingAccount (Some (deserializer))) ;
-                    *self.state__ = HeaderTradeSettlementTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::ReceivableSpecifiedTradeAccountingAccount(Some(
+                        deserializer,
+                    )));
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -5821,8 +5590,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ =
-                            HeaderTradeSettlementTypeDeserializerState::CreditorReferenceId(None);
+                        *self.state__ = S::CreditorReferenceId(None);
                         event
                     }
                     (S::CreditorReferenceId(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -6661,14 +6429,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::IdType>,
             fallback: &mut Option<TradePartyTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use TradePartyTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(TradePartyTypeDeserializerState::Id(None));
-                *self.state__ = TradePartyTypeDeserializerState::GlobalId(None);
+                fallback.get_or_insert(S::Id(None));
+                *self.state__ = S::GlobalId(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -6678,12 +6447,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_id(data)?;
-                    *self.state__ = TradePartyTypeDeserializerState::Id(None);
+                    *self.state__ = S::Id(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(TradePartyTypeDeserializerState::Id(Some(deserializer)));
-                    *self.state__ = TradePartyTypeDeserializerState::Id(None);
+                    fallback.get_or_insert(S::Id(Some(deserializer)));
+                    *self.state__ = S::Id(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -6694,14 +6463,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::IdType>,
             fallback: &mut Option<TradePartyTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use TradePartyTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(TradePartyTypeDeserializerState::GlobalId(None));
-                *self.state__ = TradePartyTypeDeserializerState::Name(None);
+                fallback.get_or_insert(S::GlobalId(None));
+                *self.state__ = S::Name(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -6711,14 +6481,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_global_id(data)?;
-                    *self.state__ = TradePartyTypeDeserializerState::GlobalId(None);
+                    *self.state__ = S::GlobalId(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(TradePartyTypeDeserializerState::GlobalId(Some(
-                        deserializer,
-                    )));
-                    *self.state__ = TradePartyTypeDeserializerState::GlobalId(None);
+                    fallback.get_or_insert(S::GlobalId(Some(deserializer)));
+                    *self.state__ = S::GlobalId(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -6729,14 +6497,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::TextType>,
             fallback: &mut Option<TradePartyTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use TradePartyTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(TradePartyTypeDeserializerState::Name(None));
-                *self.state__ = TradePartyTypeDeserializerState::SpecifiedLegalOrganization(None);
+                fallback.get_or_insert(S::Name(None));
+                *self.state__ = S::SpecifiedLegalOrganization(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -6746,15 +6515,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_name(data)?;
-                    *self.state__ =
-                        TradePartyTypeDeserializerState::SpecifiedLegalOrganization(None);
+                    *self.state__ = S::SpecifiedLegalOrganization(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback
-                        .get_or_insert(TradePartyTypeDeserializerState::Name(Some(deserializer)));
-                    *self.state__ =
-                        TradePartyTypeDeserializerState::SpecifiedLegalOrganization(None);
+                    fallback.get_or_insert(S::Name(Some(deserializer)));
+                    *self.state__ = S::SpecifiedLegalOrganization(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -6765,16 +6531,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::LegalOrganizationType>,
             fallback: &mut Option<TradePartyTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use TradePartyTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(
-                    TradePartyTypeDeserializerState::SpecifiedLegalOrganization(None),
-                );
-                *self.state__ = TradePartyTypeDeserializerState::PostalTradeAddress(None);
+                fallback.get_or_insert(S::SpecifiedLegalOrganization(None));
+                *self.state__ = S::PostalTradeAddress(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -6784,16 +6549,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_specified_legal_organization(data)?;
-                    *self.state__ = TradePartyTypeDeserializerState::PostalTradeAddress(None);
+                    *self.state__ = S::PostalTradeAddress(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(
-                        TradePartyTypeDeserializerState::SpecifiedLegalOrganization(Some(
-                            deserializer,
-                        )),
-                    );
-                    *self.state__ = TradePartyTypeDeserializerState::PostalTradeAddress(None);
+                    fallback.get_or_insert(S::SpecifiedLegalOrganization(Some(deserializer)));
+                    *self.state__ = S::PostalTradeAddress(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -6804,14 +6565,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::TradeAddressType>,
             fallback: &mut Option<TradePartyTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use TradePartyTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(TradePartyTypeDeserializerState::PostalTradeAddress(None));
-                *self.state__ = TradePartyTypeDeserializerState::UriUniversalCommunication(None);
+                fallback.get_or_insert(S::PostalTradeAddress(None));
+                *self.state__ = S::UriUniversalCommunication(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -6821,16 +6583,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_postal_trade_address(data)?;
-                    *self.state__ =
-                        TradePartyTypeDeserializerState::UriUniversalCommunication(None);
+                    *self.state__ = S::UriUniversalCommunication(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(TradePartyTypeDeserializerState::PostalTradeAddress(
-                        Some(deserializer),
-                    ));
-                    *self.state__ =
-                        TradePartyTypeDeserializerState::UriUniversalCommunication(None);
+                    fallback.get_or_insert(S::PostalTradeAddress(Some(deserializer)));
+                    *self.state__ = S::UriUniversalCommunication(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -6841,16 +6599,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::UniversalCommunicationType>,
             fallback: &mut Option<TradePartyTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use TradePartyTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(TradePartyTypeDeserializerState::UriUniversalCommunication(
-                    None,
-                ));
-                *self.state__ = TradePartyTypeDeserializerState::SpecifiedTaxRegistration(None);
+                fallback.get_or_insert(S::UriUniversalCommunication(None));
+                *self.state__ = S::SpecifiedTaxRegistration(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -6860,16 +6617,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_uri_universal_communication(data)?;
-                    *self.state__ = TradePartyTypeDeserializerState::SpecifiedTaxRegistration(None);
+                    *self.state__ = S::SpecifiedTaxRegistration(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(
-                        TradePartyTypeDeserializerState::UriUniversalCommunication(Some(
-                            deserializer,
-                        )),
-                    );
-                    *self.state__ = TradePartyTypeDeserializerState::SpecifiedTaxRegistration(None);
+                    fallback.get_or_insert(S::UriUniversalCommunication(Some(deserializer)));
+                    *self.state__ = S::SpecifiedTaxRegistration(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -6880,16 +6633,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::TaxRegistrationType>,
             fallback: &mut Option<TradePartyTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use TradePartyTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(TradePartyTypeDeserializerState::SpecifiedTaxRegistration(
-                    None,
-                ));
-                *self.state__ = TradePartyTypeDeserializerState::Done__;
+                fallback.get_or_insert(S::SpecifiedTaxRegistration(None));
+                *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -6900,24 +6652,18 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::Data(data) => {
                     self.store_specified_tax_registration(data)?;
                     if self.specified_tax_registration.len() < 2usize {
-                        *self.state__ =
-                            TradePartyTypeDeserializerState::SpecifiedTaxRegistration(None);
+                        *self.state__ = S::SpecifiedTaxRegistration(None);
                     } else {
-                        *self.state__ = TradePartyTypeDeserializerState::Done__;
+                        *self.state__ = S::Done__;
                     }
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(
-                        TradePartyTypeDeserializerState::SpecifiedTaxRegistration(Some(
-                            deserializer,
-                        )),
-                    );
+                    fallback.get_or_insert(S::SpecifiedTaxRegistration(Some(deserializer)));
                     if self.specified_tax_registration.len() < 1usize {
-                        *self.state__ =
-                            TradePartyTypeDeserializerState::SpecifiedTaxRegistration(None);
+                        *self.state__ = S::SpecifiedTaxRegistration(None);
                     } else {
-                        *self.state__ = TradePartyTypeDeserializerState::Done__;
+                        *self.state__ = S::Done__;
                     }
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
@@ -7052,7 +6798,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ = TradePartyTypeDeserializerState::Id(None);
+                        *self.state__ = S::Id(None);
                         event
                     }
                     (S::Id(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -7309,19 +7055,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::IdType>,
             fallback: &mut Option<ReferencedDocumentTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use ReferencedDocumentTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(ReferencedDocumentTypeDeserializerState::IssuerAssignedId(
-                    None,
-                ));
-                if matches!(
-                    &fallback,
-                    Some(ReferencedDocumentTypeDeserializerState::Init__)
-                ) {
+                fallback.get_or_insert(S::IssuerAssignedId(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -7334,18 +7076,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_issuer_assigned_id(data)?;
-                    *self.state__ =
-                        ReferencedDocumentTypeDeserializerState::FormattedIssueDateTime(None);
+                    *self.state__ = S::FormattedIssueDateTime(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(
-                        ReferencedDocumentTypeDeserializerState::IssuerAssignedId(Some(
-                            deserializer,
-                        )),
-                    );
-                    *self.state__ =
-                        ReferencedDocumentTypeDeserializerState::FormattedIssueDateTime(None);
+                    fallback.get_or_insert(S::IssuerAssignedId(Some(deserializer)));
+                    *self.state__ = S::FormattedIssueDateTime(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -7356,16 +7092,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::FormattedDateTimeType>,
             fallback: &mut Option<ReferencedDocumentTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use ReferencedDocumentTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(
-                    ReferencedDocumentTypeDeserializerState::FormattedIssueDateTime(None),
-                );
-                *self.state__ = ReferencedDocumentTypeDeserializerState::Done__;
+                fallback.get_or_insert(S::FormattedIssueDateTime(None));
+                *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -7375,16 +7110,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_formatted_issue_date_time(data)?;
-                    *self.state__ = ReferencedDocumentTypeDeserializerState::Done__;
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(
-                        ReferencedDocumentTypeDeserializerState::FormattedIssueDateTime(Some(
-                            deserializer,
-                        )),
-                    );
-                    *self.state__ = ReferencedDocumentTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::FormattedIssueDateTime(Some(deserializer)));
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -7450,8 +7181,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ =
-                            ReferencedDocumentTypeDeserializerState::IssuerAssignedId(None);
+                        *self.state__ = S::IssuerAssignedId(None);
                         event
                     }
                     (S::IssuerAssignedId(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -7585,19 +7315,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::DateTimeType>,
             fallback: &mut Option<SupplyChainEventTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use SupplyChainEventTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(SupplyChainEventTypeDeserializerState::OccurrenceDateTime(
-                    None,
-                ));
-                if matches!(
-                    &fallback,
-                    Some(SupplyChainEventTypeDeserializerState::Init__)
-                ) {
+                fallback.get_or_insert(S::OccurrenceDateTime(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -7610,16 +7336,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_occurrence_date_time(data)?;
-                    *self.state__ = SupplyChainEventTypeDeserializerState::Done__;
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(
-                        SupplyChainEventTypeDeserializerState::OccurrenceDateTime(Some(
-                            deserializer,
-                        )),
-                    );
-                    *self.state__ = SupplyChainEventTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::OccurrenceDateTime(Some(deserializer)));
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -7669,8 +7391,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ =
-                            SupplyChainEventTypeDeserializerState::OccurrenceDateTime(None);
+                        *self.state__ = S::OccurrenceDateTime(None);
                         event
                     }
                     (S::OccurrenceDateTime(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -7944,19 +7665,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::PaymentMeansCodeType>,
             fallback: &mut Option<TradeSettlementPaymentMeansTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use TradeSettlementPaymentMeansTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(TradeSettlementPaymentMeansTypeDeserializerState::TypeCode(
-                    None,
-                ));
-                if matches!(
-                    &fallback,
-                    Some(TradeSettlementPaymentMeansTypeDeserializerState::Init__)
-                ) {
+                fallback.get_or_insert(S::TypeCode(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -7969,16 +7686,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_type_code(data)?;
-                    * self . state__ = TradeSettlementPaymentMeansTypeDeserializerState :: PayerPartyDebtorFinancialAccount (None) ;
+                    *self.state__ = S::PayerPartyDebtorFinancialAccount(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(
-                        TradeSettlementPaymentMeansTypeDeserializerState::TypeCode(Some(
-                            deserializer,
-                        )),
-                    );
-                    * self . state__ = TradeSettlementPaymentMeansTypeDeserializerState :: PayerPartyDebtorFinancialAccount (None) ;
+                    fallback.get_or_insert(S::TypeCode(Some(deserializer)));
+                    *self.state__ = S::PayerPartyDebtorFinancialAccount(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -7989,14 +7702,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::DebtorFinancialAccountType>,
             fallback: &mut Option<TradeSettlementPaymentMeansTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use TradeSettlementPaymentMeansTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback . get_or_insert (TradeSettlementPaymentMeansTypeDeserializerState :: PayerPartyDebtorFinancialAccount (None)) ;
-                * self . state__ = TradeSettlementPaymentMeansTypeDeserializerState :: PayeePartyCreditorFinancialAccount (None) ;
+                fallback.get_or_insert(S::PayerPartyDebtorFinancialAccount(None));
+                *self.state__ = S::PayeePartyCreditorFinancialAccount(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -8006,12 +7720,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_payer_party_debtor_financial_account(data)?;
-                    * self . state__ = TradeSettlementPaymentMeansTypeDeserializerState :: PayeePartyCreditorFinancialAccount (None) ;
+                    *self.state__ = S::PayeePartyCreditorFinancialAccount(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback . get_or_insert (TradeSettlementPaymentMeansTypeDeserializerState :: PayerPartyDebtorFinancialAccount (Some (deserializer))) ;
-                    * self . state__ = TradeSettlementPaymentMeansTypeDeserializerState :: PayeePartyCreditorFinancialAccount (None) ;
+                    fallback.get_or_insert(S::PayerPartyDebtorFinancialAccount(Some(deserializer)));
+                    *self.state__ = S::PayeePartyCreditorFinancialAccount(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -8022,14 +7736,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::CreditorFinancialAccountType>,
             fallback: &mut Option<TradeSettlementPaymentMeansTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use TradeSettlementPaymentMeansTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback . get_or_insert (TradeSettlementPaymentMeansTypeDeserializerState :: PayeePartyCreditorFinancialAccount (None)) ;
-                *self.state__ = TradeSettlementPaymentMeansTypeDeserializerState::Done__;
+                fallback.get_or_insert(S::PayeePartyCreditorFinancialAccount(None));
+                *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -8039,12 +7754,13 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_payee_party_creditor_financial_account(data)?;
-                    *self.state__ = TradeSettlementPaymentMeansTypeDeserializerState::Done__;
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback . get_or_insert (TradeSettlementPaymentMeansTypeDeserializerState :: PayeePartyCreditorFinancialAccount (Some (deserializer))) ;
-                    *self.state__ = TradeSettlementPaymentMeansTypeDeserializerState::Done__;
+                    fallback
+                        .get_or_insert(S::PayeePartyCreditorFinancialAccount(Some(deserializer)));
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -8128,8 +7844,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ =
-                            TradeSettlementPaymentMeansTypeDeserializerState::TypeCode(None);
+                        *self.state__ = S::TypeCode(None);
                         event
                     }
                     (S::TypeCode(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -8398,14 +8113,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::AmountType>,
             fallback: &mut Option<TradeTaxTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use TradeTaxTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(TradeTaxTypeDeserializerState::CalculatedAmount(None));
-                *self.state__ = TradeTaxTypeDeserializerState::TypeCode(None);
+                fallback.get_or_insert(S::CalculatedAmount(None));
+                *self.state__ = S::TypeCode(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -8415,14 +8131,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_calculated_amount(data)?;
-                    *self.state__ = TradeTaxTypeDeserializerState::TypeCode(None);
+                    *self.state__ = S::TypeCode(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(TradeTaxTypeDeserializerState::CalculatedAmount(Some(
-                        deserializer,
-                    )));
-                    *self.state__ = TradeTaxTypeDeserializerState::TypeCode(None);
+                    fallback.get_or_insert(S::CalculatedAmount(Some(deserializer)));
+                    *self.state__ = S::TypeCode(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -8433,14 +8147,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::TaxTypeCodeType>,
             fallback: &mut Option<TradeTaxTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use TradeTaxTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(TradeTaxTypeDeserializerState::TypeCode(None));
-                if matches!(&fallback, Some(TradeTaxTypeDeserializerState::Init__)) {
+                fallback.get_or_insert(S::TypeCode(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -8453,13 +8168,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_type_code(data)?;
-                    *self.state__ = TradeTaxTypeDeserializerState::ExemptionReason(None);
+                    *self.state__ = S::ExemptionReason(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback
-                        .get_or_insert(TradeTaxTypeDeserializerState::TypeCode(Some(deserializer)));
-                    *self.state__ = TradeTaxTypeDeserializerState::ExemptionReason(None);
+                    fallback.get_or_insert(S::TypeCode(Some(deserializer)));
+                    *self.state__ = S::ExemptionReason(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -8470,14 +8184,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::TextType>,
             fallback: &mut Option<TradeTaxTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use TradeTaxTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(TradeTaxTypeDeserializerState::ExemptionReason(None));
-                *self.state__ = TradeTaxTypeDeserializerState::BasisAmount(None);
+                fallback.get_or_insert(S::ExemptionReason(None));
+                *self.state__ = S::BasisAmount(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -8487,14 +8202,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_exemption_reason(data)?;
-                    *self.state__ = TradeTaxTypeDeserializerState::BasisAmount(None);
+                    *self.state__ = S::BasisAmount(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(TradeTaxTypeDeserializerState::ExemptionReason(Some(
-                        deserializer,
-                    )));
-                    *self.state__ = TradeTaxTypeDeserializerState::BasisAmount(None);
+                    fallback.get_or_insert(S::ExemptionReason(Some(deserializer)));
+                    *self.state__ = S::BasisAmount(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -8505,14 +8218,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::AmountType>,
             fallback: &mut Option<TradeTaxTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use TradeTaxTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(TradeTaxTypeDeserializerState::BasisAmount(None));
-                *self.state__ = TradeTaxTypeDeserializerState::CategoryCode(None);
+                fallback.get_or_insert(S::BasisAmount(None));
+                *self.state__ = S::CategoryCode(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -8522,14 +8236,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_basis_amount(data)?;
-                    *self.state__ = TradeTaxTypeDeserializerState::CategoryCode(None);
+                    *self.state__ = S::CategoryCode(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(TradeTaxTypeDeserializerState::BasisAmount(Some(
-                        deserializer,
-                    )));
-                    *self.state__ = TradeTaxTypeDeserializerState::CategoryCode(None);
+                    fallback.get_or_insert(S::BasisAmount(Some(deserializer)));
+                    *self.state__ = S::CategoryCode(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -8540,14 +8252,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::TaxCategoryCodeType>,
             fallback: &mut Option<TradeTaxTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use TradeTaxTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(TradeTaxTypeDeserializerState::CategoryCode(None));
-                if matches!(&fallback, Some(TradeTaxTypeDeserializerState::Init__)) {
+                fallback.get_or_insert(S::CategoryCode(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -8560,14 +8273,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_category_code(data)?;
-                    *self.state__ = TradeTaxTypeDeserializerState::ExemptionReasonCode(None);
+                    *self.state__ = S::ExemptionReasonCode(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(TradeTaxTypeDeserializerState::CategoryCode(Some(
-                        deserializer,
-                    )));
-                    *self.state__ = TradeTaxTypeDeserializerState::ExemptionReasonCode(None);
+                    fallback.get_or_insert(S::CategoryCode(Some(deserializer)));
+                    *self.state__ = S::ExemptionReasonCode(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -8578,14 +8289,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::CodeType>,
             fallback: &mut Option<TradeTaxTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use TradeTaxTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(TradeTaxTypeDeserializerState::ExemptionReasonCode(None));
-                *self.state__ = TradeTaxTypeDeserializerState::DueDateTypeCode(None);
+                fallback.get_or_insert(S::ExemptionReasonCode(None));
+                *self.state__ = S::DueDateTypeCode(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -8595,14 +8307,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_exemption_reason_code(data)?;
-                    *self.state__ = TradeTaxTypeDeserializerState::DueDateTypeCode(None);
+                    *self.state__ = S::DueDateTypeCode(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(TradeTaxTypeDeserializerState::ExemptionReasonCode(
-                        Some(deserializer),
-                    ));
-                    *self.state__ = TradeTaxTypeDeserializerState::DueDateTypeCode(None);
+                    fallback.get_or_insert(S::ExemptionReasonCode(Some(deserializer)));
+                    *self.state__ = S::DueDateTypeCode(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -8613,14 +8323,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::TimeReferenceCodeType>,
             fallback: &mut Option<TradeTaxTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use TradeTaxTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(TradeTaxTypeDeserializerState::DueDateTypeCode(None));
-                *self.state__ = TradeTaxTypeDeserializerState::RateApplicablePercent(None);
+                fallback.get_or_insert(S::DueDateTypeCode(None));
+                *self.state__ = S::RateApplicablePercent(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -8630,14 +8341,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_due_date_type_code(data)?;
-                    *self.state__ = TradeTaxTypeDeserializerState::RateApplicablePercent(None);
+                    *self.state__ = S::RateApplicablePercent(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(TradeTaxTypeDeserializerState::DueDateTypeCode(Some(
-                        deserializer,
-                    )));
-                    *self.state__ = TradeTaxTypeDeserializerState::RateApplicablePercent(None);
+                    fallback.get_or_insert(S::DueDateTypeCode(Some(deserializer)));
+                    *self.state__ = S::RateApplicablePercent(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -8648,14 +8357,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::PercentType>,
             fallback: &mut Option<TradeTaxTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use TradeTaxTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(TradeTaxTypeDeserializerState::RateApplicablePercent(None));
-                *self.state__ = TradeTaxTypeDeserializerState::Done__;
+                fallback.get_or_insert(S::RateApplicablePercent(None));
+                *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -8665,14 +8375,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_rate_applicable_percent(data)?;
-                    *self.state__ = TradeTaxTypeDeserializerState::Done__;
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(TradeTaxTypeDeserializerState::RateApplicablePercent(
-                        Some(deserializer),
-                    ));
-                    *self.state__ = TradeTaxTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::RateApplicablePercent(Some(deserializer)));
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -8806,7 +8514,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ = TradeTaxTypeDeserializerState::CalculatedAmount(None);
+                        *self.state__ = S::CalculatedAmount(None);
                         event
                     }
                     (S::CalculatedAmount(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -9052,14 +8760,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::DateTimeType>,
             fallback: &mut Option<SpecifiedPeriodTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use SpecifiedPeriodTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(SpecifiedPeriodTypeDeserializerState::StartDateTime(None));
-                *self.state__ = SpecifiedPeriodTypeDeserializerState::EndDateTime(None);
+                fallback.get_or_insert(S::StartDateTime(None));
+                *self.state__ = S::EndDateTime(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -9069,14 +8778,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_start_date_time(data)?;
-                    *self.state__ = SpecifiedPeriodTypeDeserializerState::EndDateTime(None);
+                    *self.state__ = S::EndDateTime(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(SpecifiedPeriodTypeDeserializerState::StartDateTime(
-                        Some(deserializer),
-                    ));
-                    *self.state__ = SpecifiedPeriodTypeDeserializerState::EndDateTime(None);
+                    fallback.get_or_insert(S::StartDateTime(Some(deserializer)));
+                    *self.state__ = S::EndDateTime(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -9087,14 +8794,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::DateTimeType>,
             fallback: &mut Option<SpecifiedPeriodTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use SpecifiedPeriodTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(SpecifiedPeriodTypeDeserializerState::EndDateTime(None));
-                *self.state__ = SpecifiedPeriodTypeDeserializerState::Done__;
+                fallback.get_or_insert(S::EndDateTime(None));
+                *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -9104,14 +8812,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_end_date_time(data)?;
-                    *self.state__ = SpecifiedPeriodTypeDeserializerState::Done__;
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(SpecifiedPeriodTypeDeserializerState::EndDateTime(
-                        Some(deserializer),
-                    ));
-                    *self.state__ = SpecifiedPeriodTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::EndDateTime(Some(deserializer)));
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -9173,7 +8879,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ = SpecifiedPeriodTypeDeserializerState::StartDateTime(None);
+                        *self.state__ = S::StartDateTime(None);
                         event
                     }
                     (S::StartDateTime(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -9392,19 +9098,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::IndicatorType>,
             fallback: &mut Option<TradeAllowanceChargeTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use TradeAllowanceChargeTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(TradeAllowanceChargeTypeDeserializerState::ChargeIndicator(
-                    None,
-                ));
-                if matches!(
-                    &fallback,
-                    Some(TradeAllowanceChargeTypeDeserializerState::Init__)
-                ) {
+                fallback.get_or_insert(S::ChargeIndicator(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -9417,18 +9119,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_charge_indicator(data)?;
-                    *self.state__ =
-                        TradeAllowanceChargeTypeDeserializerState::CalculationPercent(None);
+                    *self.state__ = S::CalculationPercent(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(
-                        TradeAllowanceChargeTypeDeserializerState::ChargeIndicator(Some(
-                            deserializer,
-                        )),
-                    );
-                    *self.state__ =
-                        TradeAllowanceChargeTypeDeserializerState::CalculationPercent(None);
+                    fallback.get_or_insert(S::ChargeIndicator(Some(deserializer)));
+                    *self.state__ = S::CalculationPercent(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -9439,16 +9135,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::PercentType>,
             fallback: &mut Option<TradeAllowanceChargeTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use TradeAllowanceChargeTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(
-                    TradeAllowanceChargeTypeDeserializerState::CalculationPercent(None),
-                );
-                *self.state__ = TradeAllowanceChargeTypeDeserializerState::BasisAmount(None);
+                fallback.get_or_insert(S::CalculationPercent(None));
+                *self.state__ = S::BasisAmount(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -9458,16 +9153,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_calculation_percent(data)?;
-                    *self.state__ = TradeAllowanceChargeTypeDeserializerState::BasisAmount(None);
+                    *self.state__ = S::BasisAmount(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(
-                        TradeAllowanceChargeTypeDeserializerState::CalculationPercent(Some(
-                            deserializer,
-                        )),
-                    );
-                    *self.state__ = TradeAllowanceChargeTypeDeserializerState::BasisAmount(None);
+                    fallback.get_or_insert(S::CalculationPercent(Some(deserializer)));
+                    *self.state__ = S::BasisAmount(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -9478,15 +9169,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::AmountType>,
             fallback: &mut Option<TradeAllowanceChargeTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use TradeAllowanceChargeTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback
-                    .get_or_insert(TradeAllowanceChargeTypeDeserializerState::BasisAmount(None));
-                *self.state__ = TradeAllowanceChargeTypeDeserializerState::ActualAmount(None);
+                fallback.get_or_insert(S::BasisAmount(None));
+                *self.state__ = S::ActualAmount(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -9496,14 +9187,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_basis_amount(data)?;
-                    *self.state__ = TradeAllowanceChargeTypeDeserializerState::ActualAmount(None);
+                    *self.state__ = S::ActualAmount(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(TradeAllowanceChargeTypeDeserializerState::BasisAmount(
-                        Some(deserializer),
-                    ));
-                    *self.state__ = TradeAllowanceChargeTypeDeserializerState::ActualAmount(None);
+                    fallback.get_or_insert(S::BasisAmount(Some(deserializer)));
+                    *self.state__ = S::ActualAmount(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -9514,19 +9203,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::AmountType>,
             fallback: &mut Option<TradeAllowanceChargeTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use TradeAllowanceChargeTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(TradeAllowanceChargeTypeDeserializerState::ActualAmount(
-                    None,
-                ));
-                if matches!(
-                    &fallback,
-                    Some(TradeAllowanceChargeTypeDeserializerState::Init__)
-                ) {
+                fallback.get_or_insert(S::ActualAmount(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -9539,14 +9224,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_actual_amount(data)?;
-                    *self.state__ = TradeAllowanceChargeTypeDeserializerState::ReasonCode(None);
+                    *self.state__ = S::ReasonCode(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(
-                        TradeAllowanceChargeTypeDeserializerState::ActualAmount(Some(deserializer)),
-                    );
-                    *self.state__ = TradeAllowanceChargeTypeDeserializerState::ReasonCode(None);
+                    fallback.get_or_insert(S::ActualAmount(Some(deserializer)));
+                    *self.state__ = S::ReasonCode(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -9557,14 +9240,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::AllowanceChargeReasonCodeType>,
             fallback: &mut Option<TradeAllowanceChargeTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use TradeAllowanceChargeTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(TradeAllowanceChargeTypeDeserializerState::ReasonCode(None));
-                *self.state__ = TradeAllowanceChargeTypeDeserializerState::Reason(None);
+                fallback.get_or_insert(S::ReasonCode(None));
+                *self.state__ = S::Reason(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -9574,14 +9258,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_reason_code(data)?;
-                    *self.state__ = TradeAllowanceChargeTypeDeserializerState::Reason(None);
+                    *self.state__ = S::Reason(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(TradeAllowanceChargeTypeDeserializerState::ReasonCode(
-                        Some(deserializer),
-                    ));
-                    *self.state__ = TradeAllowanceChargeTypeDeserializerState::Reason(None);
+                    fallback.get_or_insert(S::ReasonCode(Some(deserializer)));
+                    *self.state__ = S::Reason(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -9592,14 +9274,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::TextType>,
             fallback: &mut Option<TradeAllowanceChargeTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use TradeAllowanceChargeTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(TradeAllowanceChargeTypeDeserializerState::Reason(None));
-                *self.state__ = TradeAllowanceChargeTypeDeserializerState::CategoryTradeTax(None);
+                fallback.get_or_insert(S::Reason(None));
+                *self.state__ = S::CategoryTradeTax(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -9609,16 +9292,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_reason(data)?;
-                    *self.state__ =
-                        TradeAllowanceChargeTypeDeserializerState::CategoryTradeTax(None);
+                    *self.state__ = S::CategoryTradeTax(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(TradeAllowanceChargeTypeDeserializerState::Reason(
-                        Some(deserializer),
-                    ));
-                    *self.state__ =
-                        TradeAllowanceChargeTypeDeserializerState::CategoryTradeTax(None);
+                    fallback.get_or_insert(S::Reason(Some(deserializer)));
+                    *self.state__ = S::CategoryTradeTax(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -9629,19 +9308,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::TradeTaxType>,
             fallback: &mut Option<TradeAllowanceChargeTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use TradeAllowanceChargeTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(
-                    TradeAllowanceChargeTypeDeserializerState::CategoryTradeTax(None),
-                );
-                if matches!(
-                    &fallback,
-                    Some(TradeAllowanceChargeTypeDeserializerState::Init__)
-                ) {
+                fallback.get_or_insert(S::CategoryTradeTax(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -9654,16 +9329,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_category_trade_tax(data)?;
-                    *self.state__ = TradeAllowanceChargeTypeDeserializerState::Done__;
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(
-                        TradeAllowanceChargeTypeDeserializerState::CategoryTradeTax(Some(
-                            deserializer,
-                        )),
-                    );
-                    *self.state__ = TradeAllowanceChargeTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::CategoryTradeTax(Some(deserializer)));
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -9787,8 +9458,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ =
-                            TradeAllowanceChargeTypeDeserializerState::ChargeIndicator(None);
+                        *self.state__ = S::ChargeIndicator(None);
                         event
                     }
                     (S::ChargeIndicator(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -10036,14 +9706,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::TextType>,
             fallback: &mut Option<TradePaymentTermsTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use TradePaymentTermsTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(TradePaymentTermsTypeDeserializerState::Description(None));
-                *self.state__ = TradePaymentTermsTypeDeserializerState::DueDateDateTime(None);
+                fallback.get_or_insert(S::Description(None));
+                *self.state__ = S::DueDateDateTime(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -10053,14 +9724,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_description(data)?;
-                    *self.state__ = TradePaymentTermsTypeDeserializerState::DueDateDateTime(None);
+                    *self.state__ = S::DueDateDateTime(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(TradePaymentTermsTypeDeserializerState::Description(
-                        Some(deserializer),
-                    ));
-                    *self.state__ = TradePaymentTermsTypeDeserializerState::DueDateDateTime(None);
+                    fallback.get_or_insert(S::Description(Some(deserializer)));
+                    *self.state__ = S::DueDateDateTime(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -10071,16 +9740,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::DateTimeType>,
             fallback: &mut Option<TradePaymentTermsTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use TradePaymentTermsTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(TradePaymentTermsTypeDeserializerState::DueDateDateTime(
-                    None,
-                ));
-                *self.state__ = TradePaymentTermsTypeDeserializerState::DirectDebitMandateId(None);
+                fallback.get_or_insert(S::DueDateDateTime(None));
+                *self.state__ = S::DirectDebitMandateId(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -10090,16 +9758,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_due_date_date_time(data)?;
-                    *self.state__ =
-                        TradePaymentTermsTypeDeserializerState::DirectDebitMandateId(None);
+                    *self.state__ = S::DirectDebitMandateId(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(
-                        TradePaymentTermsTypeDeserializerState::DueDateDateTime(Some(deserializer)),
-                    );
-                    *self.state__ =
-                        TradePaymentTermsTypeDeserializerState::DirectDebitMandateId(None);
+                    fallback.get_or_insert(S::DueDateDateTime(Some(deserializer)));
+                    *self.state__ = S::DirectDebitMandateId(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -10110,16 +9774,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::IdType>,
             fallback: &mut Option<TradePaymentTermsTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use TradePaymentTermsTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(
-                    TradePaymentTermsTypeDeserializerState::DirectDebitMandateId(None),
-                );
-                *self.state__ = TradePaymentTermsTypeDeserializerState::Done__;
+                fallback.get_or_insert(S::DirectDebitMandateId(None));
+                *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -10129,16 +9792,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_direct_debit_mandate_id(data)?;
-                    *self.state__ = TradePaymentTermsTypeDeserializerState::Done__;
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(
-                        TradePaymentTermsTypeDeserializerState::DirectDebitMandateId(Some(
-                            deserializer,
-                        )),
-                    );
-                    *self.state__ = TradePaymentTermsTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::DirectDebitMandateId(Some(deserializer)));
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -10212,7 +9871,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ = TradePaymentTermsTypeDeserializerState::Description(None);
+                        *self.state__ = S::Description(None);
                         event
                     }
                     (S::Description(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -10461,21 +10120,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::AmountType>,
             fallback: &mut Option<TradeSettlementHeaderMonetarySummationTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use TradeSettlementHeaderMonetarySummationTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(
-                    TradeSettlementHeaderMonetarySummationTypeDeserializerState::LineTotalAmount(
-                        None,
-                    ),
-                );
-                if matches!(
-                    &fallback,
-                    Some(TradeSettlementHeaderMonetarySummationTypeDeserializerState::Init__)
-                ) {
+                fallback.get_or_insert(S::LineTotalAmount(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -10488,12 +10141,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_line_total_amount(data)?;
-                    * self . state__ = TradeSettlementHeaderMonetarySummationTypeDeserializerState :: ChargeTotalAmount (None) ;
+                    *self.state__ = S::ChargeTotalAmount(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback . get_or_insert (TradeSettlementHeaderMonetarySummationTypeDeserializerState :: LineTotalAmount (Some (deserializer))) ;
-                    * self . state__ = TradeSettlementHeaderMonetarySummationTypeDeserializerState :: ChargeTotalAmount (None) ;
+                    fallback.get_or_insert(S::LineTotalAmount(Some(deserializer)));
+                    *self.state__ = S::ChargeTotalAmount(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -10504,18 +10157,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::AmountType>,
             fallback: &mut Option<TradeSettlementHeaderMonetarySummationTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use TradeSettlementHeaderMonetarySummationTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(
-                    TradeSettlementHeaderMonetarySummationTypeDeserializerState::ChargeTotalAmount(
-                        None,
-                    ),
-                );
-                * self . state__ = TradeSettlementHeaderMonetarySummationTypeDeserializerState :: AllowanceTotalAmount (None) ;
+                fallback.get_or_insert(S::ChargeTotalAmount(None));
+                *self.state__ = S::AllowanceTotalAmount(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -10525,12 +10175,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_charge_total_amount(data)?;
-                    * self . state__ = TradeSettlementHeaderMonetarySummationTypeDeserializerState :: AllowanceTotalAmount (None) ;
+                    *self.state__ = S::AllowanceTotalAmount(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback . get_or_insert (TradeSettlementHeaderMonetarySummationTypeDeserializerState :: ChargeTotalAmount (Some (deserializer))) ;
-                    * self . state__ = TradeSettlementHeaderMonetarySummationTypeDeserializerState :: AllowanceTotalAmount (None) ;
+                    fallback.get_or_insert(S::ChargeTotalAmount(Some(deserializer)));
+                    *self.state__ = S::AllowanceTotalAmount(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -10541,14 +10191,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::AmountType>,
             fallback: &mut Option<TradeSettlementHeaderMonetarySummationTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use TradeSettlementHeaderMonetarySummationTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback . get_or_insert (TradeSettlementHeaderMonetarySummationTypeDeserializerState :: AllowanceTotalAmount (None)) ;
-                * self . state__ = TradeSettlementHeaderMonetarySummationTypeDeserializerState :: TaxBasisTotalAmount (None) ;
+                fallback.get_or_insert(S::AllowanceTotalAmount(None));
+                *self.state__ = S::TaxBasisTotalAmount(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -10558,12 +10209,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_allowance_total_amount(data)?;
-                    * self . state__ = TradeSettlementHeaderMonetarySummationTypeDeserializerState :: TaxBasisTotalAmount (None) ;
+                    *self.state__ = S::TaxBasisTotalAmount(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback . get_or_insert (TradeSettlementHeaderMonetarySummationTypeDeserializerState :: AllowanceTotalAmount (Some (deserializer))) ;
-                    * self . state__ = TradeSettlementHeaderMonetarySummationTypeDeserializerState :: TaxBasisTotalAmount (None) ;
+                    fallback.get_or_insert(S::AllowanceTotalAmount(Some(deserializer)));
+                    *self.state__ = S::TaxBasisTotalAmount(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -10574,17 +10225,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::AmountType>,
             fallback: &mut Option<TradeSettlementHeaderMonetarySummationTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use TradeSettlementHeaderMonetarySummationTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback . get_or_insert (TradeSettlementHeaderMonetarySummationTypeDeserializerState :: TaxBasisTotalAmount (None)) ;
-                if matches!(
-                    &fallback,
-                    Some(TradeSettlementHeaderMonetarySummationTypeDeserializerState::Init__)
-                ) {
+                fallback.get_or_insert(S::TaxBasisTotalAmount(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -10597,18 +10246,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_tax_basis_total_amount(data)?;
-                    *self.state__ =
-                        TradeSettlementHeaderMonetarySummationTypeDeserializerState::TaxTotalAmount(
-                            None,
-                        );
+                    *self.state__ = S::TaxTotalAmount(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback . get_or_insert (TradeSettlementHeaderMonetarySummationTypeDeserializerState :: TaxBasisTotalAmount (Some (deserializer))) ;
-                    *self.state__ =
-                        TradeSettlementHeaderMonetarySummationTypeDeserializerState::TaxTotalAmount(
-                            None,
-                        );
+                    fallback.get_or_insert(S::TaxBasisTotalAmount(Some(deserializer)));
+                    *self.state__ = S::TaxTotalAmount(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -10619,21 +10262,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::AmountType>,
             fallback: &mut Option<TradeSettlementHeaderMonetarySummationTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use TradeSettlementHeaderMonetarySummationTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(
-                    TradeSettlementHeaderMonetarySummationTypeDeserializerState::TaxTotalAmount(
-                        None,
-                    ),
-                );
-                *self.state__ =
-                    TradeSettlementHeaderMonetarySummationTypeDeserializerState::GrandTotalAmount(
-                        None,
-                    );
+                fallback.get_or_insert(S::TaxTotalAmount(None));
+                *self.state__ = S::GrandTotalAmount(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -10644,22 +10281,18 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::Data(data) => {
                     self.store_tax_total_amount(data)?;
                     if self.tax_total_amount.len() < 2usize {
-                        * self . state__ = TradeSettlementHeaderMonetarySummationTypeDeserializerState :: TaxTotalAmount (None) ;
+                        *self.state__ = S::TaxTotalAmount(None);
                     } else {
-                        * self . state__ = TradeSettlementHeaderMonetarySummationTypeDeserializerState :: GrandTotalAmount (None) ;
+                        *self.state__ = S::GrandTotalAmount(None);
                     }
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(
-                        TradeSettlementHeaderMonetarySummationTypeDeserializerState::TaxTotalAmount(
-                            Some(deserializer),
-                        ),
-                    );
+                    fallback.get_or_insert(S::TaxTotalAmount(Some(deserializer)));
                     if self.tax_total_amount.len() < 1usize {
-                        * self . state__ = TradeSettlementHeaderMonetarySummationTypeDeserializerState :: TaxTotalAmount (None) ;
+                        *self.state__ = S::TaxTotalAmount(None);
                     } else {
-                        * self . state__ = TradeSettlementHeaderMonetarySummationTypeDeserializerState :: GrandTotalAmount (None) ;
+                        *self.state__ = S::GrandTotalAmount(None);
                     }
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
@@ -10671,21 +10304,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::AmountType>,
             fallback: &mut Option<TradeSettlementHeaderMonetarySummationTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use TradeSettlementHeaderMonetarySummationTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(
-                    TradeSettlementHeaderMonetarySummationTypeDeserializerState::GrandTotalAmount(
-                        None,
-                    ),
-                );
-                if matches!(
-                    &fallback,
-                    Some(TradeSettlementHeaderMonetarySummationTypeDeserializerState::Init__)
-                ) {
+                fallback.get_or_insert(S::GrandTotalAmount(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -10698,12 +10325,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_grand_total_amount(data)?;
-                    * self . state__ = TradeSettlementHeaderMonetarySummationTypeDeserializerState :: TotalPrepaidAmount (None) ;
+                    *self.state__ = S::TotalPrepaidAmount(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback . get_or_insert (TradeSettlementHeaderMonetarySummationTypeDeserializerState :: GrandTotalAmount (Some (deserializer))) ;
-                    * self . state__ = TradeSettlementHeaderMonetarySummationTypeDeserializerState :: TotalPrepaidAmount (None) ;
+                    fallback.get_or_insert(S::GrandTotalAmount(Some(deserializer)));
+                    *self.state__ = S::TotalPrepaidAmount(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -10714,21 +10341,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::AmountType>,
             fallback: &mut Option<TradeSettlementHeaderMonetarySummationTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use TradeSettlementHeaderMonetarySummationTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(
-                    TradeSettlementHeaderMonetarySummationTypeDeserializerState::TotalPrepaidAmount(
-                        None,
-                    ),
-                );
-                *self.state__ =
-                    TradeSettlementHeaderMonetarySummationTypeDeserializerState::DuePayableAmount(
-                        None,
-                    );
+                fallback.get_or_insert(S::TotalPrepaidAmount(None));
+                *self.state__ = S::DuePayableAmount(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -10738,12 +10359,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_total_prepaid_amount(data)?;
-                    * self . state__ = TradeSettlementHeaderMonetarySummationTypeDeserializerState :: DuePayableAmount (None) ;
+                    *self.state__ = S::DuePayableAmount(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback . get_or_insert (TradeSettlementHeaderMonetarySummationTypeDeserializerState :: TotalPrepaidAmount (Some (deserializer))) ;
-                    * self . state__ = TradeSettlementHeaderMonetarySummationTypeDeserializerState :: DuePayableAmount (None) ;
+                    fallback.get_or_insert(S::TotalPrepaidAmount(Some(deserializer)));
+                    *self.state__ = S::DuePayableAmount(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -10754,21 +10375,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::AmountType>,
             fallback: &mut Option<TradeSettlementHeaderMonetarySummationTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use TradeSettlementHeaderMonetarySummationTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(
-                    TradeSettlementHeaderMonetarySummationTypeDeserializerState::DuePayableAmount(
-                        None,
-                    ),
-                );
-                if matches!(
-                    &fallback,
-                    Some(TradeSettlementHeaderMonetarySummationTypeDeserializerState::Init__)
-                ) {
+                fallback.get_or_insert(S::DuePayableAmount(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -10781,14 +10396,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_due_payable_amount(data)?;
-                    *self.state__ =
-                        TradeSettlementHeaderMonetarySummationTypeDeserializerState::Done__;
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback . get_or_insert (TradeSettlementHeaderMonetarySummationTypeDeserializerState :: DuePayableAmount (Some (deserializer))) ;
-                    *self.state__ =
-                        TradeSettlementHeaderMonetarySummationTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::DuePayableAmount(Some(deserializer)));
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -10924,7 +10537,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        * self . state__ = TradeSettlementHeaderMonetarySummationTypeDeserializerState :: LineTotalAmount (None) ;
+                        *self.state__ = S::LineTotalAmount(None);
                         event
                     }
                     (S::LineTotalAmount(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -11161,17 +10774,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::IdType>,
             fallback: &mut Option<TradeAccountingAccountTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use TradeAccountingAccountTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(TradeAccountingAccountTypeDeserializerState::Id(None));
-                if matches!(
-                    &fallback,
-                    Some(TradeAccountingAccountTypeDeserializerState::Init__)
-                ) {
+                fallback.get_or_insert(S::Id(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -11184,14 +10795,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_id(data)?;
-                    *self.state__ = TradeAccountingAccountTypeDeserializerState::Done__;
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(TradeAccountingAccountTypeDeserializerState::Id(Some(
-                        deserializer,
-                    )));
-                    *self.state__ = TradeAccountingAccountTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::Id(Some(deserializer)));
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -11243,7 +10852,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ = TradeAccountingAccountTypeDeserializerState::Id(None);
+                        *self.state__ = S::Id(None);
                         event
                     }
                     (S::Id(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -11362,14 +10971,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::IdType>,
             fallback: &mut Option<LegalOrganizationTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use LegalOrganizationTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(LegalOrganizationTypeDeserializerState::Id(None));
-                *self.state__ = LegalOrganizationTypeDeserializerState::TradingBusinessName(None);
+                fallback.get_or_insert(S::Id(None));
+                *self.state__ = S::TradingBusinessName(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -11379,16 +10989,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_id(data)?;
-                    *self.state__ =
-                        LegalOrganizationTypeDeserializerState::TradingBusinessName(None);
+                    *self.state__ = S::TradingBusinessName(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(LegalOrganizationTypeDeserializerState::Id(Some(
-                        deserializer,
-                    )));
-                    *self.state__ =
-                        LegalOrganizationTypeDeserializerState::TradingBusinessName(None);
+                    fallback.get_or_insert(S::Id(Some(deserializer)));
+                    *self.state__ = S::TradingBusinessName(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -11399,16 +11005,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::TextType>,
             fallback: &mut Option<LegalOrganizationTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use LegalOrganizationTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(
-                    LegalOrganizationTypeDeserializerState::TradingBusinessName(None),
-                );
-                *self.state__ = LegalOrganizationTypeDeserializerState::Done__;
+                fallback.get_or_insert(S::TradingBusinessName(None));
+                *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -11418,16 +11023,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_trading_business_name(data)?;
-                    *self.state__ = LegalOrganizationTypeDeserializerState::Done__;
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(
-                        LegalOrganizationTypeDeserializerState::TradingBusinessName(Some(
-                            deserializer,
-                        )),
-                    );
-                    *self.state__ = LegalOrganizationTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::TradingBusinessName(Some(deserializer)));
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -11489,7 +11090,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ = LegalOrganizationTypeDeserializerState::Id(None);
+                        *self.state__ = S::Id(None);
                         event
                     }
                     (S::Id(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -11705,14 +11306,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::CodeType>,
             fallback: &mut Option<TradeAddressTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use TradeAddressTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(TradeAddressTypeDeserializerState::PostcodeCode(None));
-                *self.state__ = TradeAddressTypeDeserializerState::LineOne(None);
+                fallback.get_or_insert(S::PostcodeCode(None));
+                *self.state__ = S::LineOne(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -11722,14 +11324,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_postcode_code(data)?;
-                    *self.state__ = TradeAddressTypeDeserializerState::LineOne(None);
+                    *self.state__ = S::LineOne(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(TradeAddressTypeDeserializerState::PostcodeCode(Some(
-                        deserializer,
-                    )));
-                    *self.state__ = TradeAddressTypeDeserializerState::LineOne(None);
+                    fallback.get_or_insert(S::PostcodeCode(Some(deserializer)));
+                    *self.state__ = S::LineOne(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -11740,14 +11340,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::TextType>,
             fallback: &mut Option<TradeAddressTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use TradeAddressTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(TradeAddressTypeDeserializerState::LineOne(None));
-                *self.state__ = TradeAddressTypeDeserializerState::LineTwo(None);
+                fallback.get_or_insert(S::LineOne(None));
+                *self.state__ = S::LineTwo(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -11757,14 +11358,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_line_one(data)?;
-                    *self.state__ = TradeAddressTypeDeserializerState::LineTwo(None);
+                    *self.state__ = S::LineTwo(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(TradeAddressTypeDeserializerState::LineOne(Some(
-                        deserializer,
-                    )));
-                    *self.state__ = TradeAddressTypeDeserializerState::LineTwo(None);
+                    fallback.get_or_insert(S::LineOne(Some(deserializer)));
+                    *self.state__ = S::LineTwo(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -11775,14 +11374,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::TextType>,
             fallback: &mut Option<TradeAddressTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use TradeAddressTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(TradeAddressTypeDeserializerState::LineTwo(None));
-                *self.state__ = TradeAddressTypeDeserializerState::LineThree(None);
+                fallback.get_or_insert(S::LineTwo(None));
+                *self.state__ = S::LineThree(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -11792,14 +11392,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_line_two(data)?;
-                    *self.state__ = TradeAddressTypeDeserializerState::LineThree(None);
+                    *self.state__ = S::LineThree(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(TradeAddressTypeDeserializerState::LineTwo(Some(
-                        deserializer,
-                    )));
-                    *self.state__ = TradeAddressTypeDeserializerState::LineThree(None);
+                    fallback.get_or_insert(S::LineTwo(Some(deserializer)));
+                    *self.state__ = S::LineThree(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -11810,14 +11408,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::TextType>,
             fallback: &mut Option<TradeAddressTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use TradeAddressTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(TradeAddressTypeDeserializerState::LineThree(None));
-                *self.state__ = TradeAddressTypeDeserializerState::CityName(None);
+                fallback.get_or_insert(S::LineThree(None));
+                *self.state__ = S::CityName(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -11827,14 +11426,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_line_three(data)?;
-                    *self.state__ = TradeAddressTypeDeserializerState::CityName(None);
+                    *self.state__ = S::CityName(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(TradeAddressTypeDeserializerState::LineThree(Some(
-                        deserializer,
-                    )));
-                    *self.state__ = TradeAddressTypeDeserializerState::CityName(None);
+                    fallback.get_or_insert(S::LineThree(Some(deserializer)));
+                    *self.state__ = S::CityName(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -11845,14 +11442,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::TextType>,
             fallback: &mut Option<TradeAddressTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use TradeAddressTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(TradeAddressTypeDeserializerState::CityName(None));
-                *self.state__ = TradeAddressTypeDeserializerState::CountryId(None);
+                fallback.get_or_insert(S::CityName(None));
+                *self.state__ = S::CountryId(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -11862,14 +11460,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_city_name(data)?;
-                    *self.state__ = TradeAddressTypeDeserializerState::CountryId(None);
+                    *self.state__ = S::CountryId(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(TradeAddressTypeDeserializerState::CityName(Some(
-                        deserializer,
-                    )));
-                    *self.state__ = TradeAddressTypeDeserializerState::CountryId(None);
+                    fallback.get_or_insert(S::CityName(Some(deserializer)));
+                    *self.state__ = S::CountryId(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -11880,14 +11476,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::CountryIdType>,
             fallback: &mut Option<TradeAddressTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use TradeAddressTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(TradeAddressTypeDeserializerState::CountryId(None));
-                if matches!(&fallback, Some(TradeAddressTypeDeserializerState::Init__)) {
+                fallback.get_or_insert(S::CountryId(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -11900,14 +11497,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_country_id(data)?;
-                    *self.state__ = TradeAddressTypeDeserializerState::CountrySubDivisionName(None);
+                    *self.state__ = S::CountrySubDivisionName(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(TradeAddressTypeDeserializerState::CountryId(Some(
-                        deserializer,
-                    )));
-                    *self.state__ = TradeAddressTypeDeserializerState::CountrySubDivisionName(None);
+                    fallback.get_or_insert(S::CountryId(Some(deserializer)));
+                    *self.state__ = S::CountrySubDivisionName(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -11918,16 +11513,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::TextType>,
             fallback: &mut Option<TradeAddressTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use TradeAddressTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(TradeAddressTypeDeserializerState::CountrySubDivisionName(
-                    None,
-                ));
-                *self.state__ = TradeAddressTypeDeserializerState::Done__;
+                fallback.get_or_insert(S::CountrySubDivisionName(None));
+                *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -11937,16 +11531,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_country_sub_division_name(data)?;
-                    *self.state__ = TradeAddressTypeDeserializerState::Done__;
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(
-                        TradeAddressTypeDeserializerState::CountrySubDivisionName(Some(
-                            deserializer,
-                        )),
-                    );
-                    *self.state__ = TradeAddressTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::CountrySubDivisionName(Some(deserializer)));
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -12072,7 +11662,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ = TradeAddressTypeDeserializerState::PostcodeCode(None);
+                        *self.state__ = S::PostcodeCode(None);
                         event
                     }
                     (S::PostcodeCode(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -12293,17 +11883,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::IdType>,
             fallback: &mut Option<UniversalCommunicationTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use UniversalCommunicationTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(UniversalCommunicationTypeDeserializerState::Uriid(None));
-                if matches!(
-                    &fallback,
-                    Some(UniversalCommunicationTypeDeserializerState::Init__)
-                ) {
+                fallback.get_or_insert(S::Uriid(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -12316,14 +11904,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_uriid(data)?;
-                    *self.state__ = UniversalCommunicationTypeDeserializerState::Done__;
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(UniversalCommunicationTypeDeserializerState::Uriid(
-                        Some(deserializer),
-                    ));
-                    *self.state__ = UniversalCommunicationTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::Uriid(Some(deserializer)));
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -12375,7 +11961,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ = UniversalCommunicationTypeDeserializerState::Uriid(None);
+                        *self.state__ = S::Uriid(None);
                         event
                     }
                     (S::Uriid(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -12479,17 +12065,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::IdType>,
             fallback: &mut Option<TaxRegistrationTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use TaxRegistrationTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(TaxRegistrationTypeDeserializerState::Id(None));
-                if matches!(
-                    &fallback,
-                    Some(TaxRegistrationTypeDeserializerState::Init__)
-                ) {
+                fallback.get_or_insert(S::Id(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -12502,14 +12086,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_id(data)?;
-                    *self.state__ = TaxRegistrationTypeDeserializerState::Done__;
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(TaxRegistrationTypeDeserializerState::Id(Some(
-                        deserializer,
-                    )));
-                    *self.state__ = TaxRegistrationTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::Id(Some(deserializer)));
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -12559,7 +12141,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ = TaxRegistrationTypeDeserializerState::Id(None);
+                        *self.state__ = S::Id(None);
                         event
                     }
                     (S::Id(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -12674,18 +12256,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::FormattedDateTimeTypeDateTimeStringType>,
             fallback: &mut Option<FormattedDateTimeTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use FormattedDateTimeTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback
-                    .get_or_insert(FormattedDateTimeTypeDeserializerState::DateTimeString(None));
-                if matches!(
-                    &fallback,
-                    Some(FormattedDateTimeTypeDeserializerState::Init__)
-                ) {
+                fallback.get_or_insert(S::DateTimeString(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -12698,14 +12277,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_date_time_string(data)?;
-                    *self.state__ = FormattedDateTimeTypeDeserializerState::Done__;
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(FormattedDateTimeTypeDeserializerState::DateTimeString(
-                        Some(deserializer),
-                    ));
-                    *self.state__ = FormattedDateTimeTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::DateTimeString(Some(deserializer)));
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -12755,8 +12332,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ =
-                            FormattedDateTimeTypeDeserializerState::DateTimeString(None);
+                        *self.state__ = S::DateTimeString(None);
                         event
                     }
                     (S::DateTimeString(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -12987,17 +12563,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::IdType>,
             fallback: &mut Option<DebtorFinancialAccountTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use DebtorFinancialAccountTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(DebtorFinancialAccountTypeDeserializerState::Ibanid(None));
-                if matches!(
-                    &fallback,
-                    Some(DebtorFinancialAccountTypeDeserializerState::Init__)
-                ) {
+                fallback.get_or_insert(S::Ibanid(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -13010,14 +12584,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_ibanid(data)?;
-                    *self.state__ = DebtorFinancialAccountTypeDeserializerState::Done__;
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(DebtorFinancialAccountTypeDeserializerState::Ibanid(
-                        Some(deserializer),
-                    ));
-                    *self.state__ = DebtorFinancialAccountTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::Ibanid(Some(deserializer)));
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -13069,7 +12641,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ = DebtorFinancialAccountTypeDeserializerState::Ibanid(None);
+                        *self.state__ = S::Ibanid(None);
                         event
                     }
                     (S::Ibanid(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -13190,14 +12762,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::IdType>,
             fallback: &mut Option<CreditorFinancialAccountTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use CreditorFinancialAccountTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(CreditorFinancialAccountTypeDeserializerState::Ibanid(None));
-                *self.state__ = CreditorFinancialAccountTypeDeserializerState::ProprietaryId(None);
+                fallback.get_or_insert(S::Ibanid(None));
+                *self.state__ = S::ProprietaryId(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -13207,16 +12780,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_ibanid(data)?;
-                    *self.state__ =
-                        CreditorFinancialAccountTypeDeserializerState::ProprietaryId(None);
+                    *self.state__ = S::ProprietaryId(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(CreditorFinancialAccountTypeDeserializerState::Ibanid(
-                        Some(deserializer),
-                    ));
-                    *self.state__ =
-                        CreditorFinancialAccountTypeDeserializerState::ProprietaryId(None);
+                    fallback.get_or_insert(S::Ibanid(Some(deserializer)));
+                    *self.state__ = S::ProprietaryId(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -13227,16 +12796,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::IdType>,
             fallback: &mut Option<CreditorFinancialAccountTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use CreditorFinancialAccountTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(
-                    CreditorFinancialAccountTypeDeserializerState::ProprietaryId(None),
-                );
-                *self.state__ = CreditorFinancialAccountTypeDeserializerState::Done__;
+                fallback.get_or_insert(S::ProprietaryId(None));
+                *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -13246,16 +12814,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_proprietary_id(data)?;
-                    *self.state__ = CreditorFinancialAccountTypeDeserializerState::Done__;
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(
-                        CreditorFinancialAccountTypeDeserializerState::ProprietaryId(Some(
-                            deserializer,
-                        )),
-                    );
-                    *self.state__ = CreditorFinancialAccountTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::ProprietaryId(Some(deserializer)));
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -13319,7 +12883,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ = CreditorFinancialAccountTypeDeserializerState::Ibanid(None);
+                        *self.state__ = S::Ibanid(None);
                         event
                     }
                     (S::Ibanid(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -14063,15 +13627,14 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::IndicatorTypeContent>,
             fallback: &mut Option<IndicatorTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use IndicatorTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = fallback
-                    .take()
-                    .unwrap_or(IndicatorTypeDeserializerState::Next__);
+                *self.state__ = fallback.take().unwrap_or(S::Next__);
                 return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -14081,11 +13644,11 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_content(data)?;
-                    *self.state__ = IndicatorTypeDeserializerState::Next__;
+                    *self.state__ = S::Next__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = IndicatorTypeDeserializerState::Content__(deserializer);
+                    *self.state__ = S::Content__(deserializer);
                     Ok(ElementHandlerOutput::from_event_end(event, allow_any))
                 }
             }
@@ -14229,6 +13792,7 @@ pub mod quick_xml_deserialize {
             fallback: Option<<bool as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, bool>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use IndicatorTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
@@ -14245,19 +13809,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_indicator(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        IndicatorTypeContentDeserializerState::Indicator(values, None, None),
-                    )?;
-                    *self.state__ = IndicatorTypeContentDeserializerState::Done__(data);
+                    let data = Self::finish_state(helper, S::Indicator(values, None, None))?;
+                    *self.state__ = S::Done__(data);
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = IndicatorTypeContentDeserializerState::Indicator(
-                        values,
-                        None,
-                        Some(deserializer),
-                    );
+                    *self.state__ = S::Indicator(values, None, Some(deserializer));
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
             }

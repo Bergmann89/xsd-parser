@@ -304,14 +304,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<ComplexContentTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use ComplexContentTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(ComplexContentTypeDeserializerState::Content(None));
-                if matches!(&fallback, Some(ComplexContentTypeDeserializerState::Init__)) {
+                fallback.get_or_insert(S::Content(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -324,14 +325,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_content(data)?;
-                    *self.state__ = ComplexContentTypeDeserializerState::Done__;
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(ComplexContentTypeDeserializerState::Content(Some(
-                        deserializer,
-                    )));
-                    *self.state__ = ComplexContentTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::Content(Some(deserializer)));
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -381,7 +380,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ = ComplexContentTypeDeserializerState::Content(None);
+                        *self.state__ = S::Content(None);
                         event
                     }
                     (S::Content(None), event @ (Event::Start(_) | Event::Empty(_))) => {

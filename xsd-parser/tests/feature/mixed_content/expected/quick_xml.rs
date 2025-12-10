@@ -267,13 +267,14 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, Text>,
             fallback: &mut Option<MixedAllTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use MixedAllTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = MixedAllTypeDeserializerState::Next__;
+                *self.state__ = S::Next__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -283,12 +284,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_text_before(data)?;
-                    *self.state__ = MixedAllTypeDeserializerState::Next__;
+                    *self.state__ = S::Next__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(MixedAllTypeDeserializerState::TextBefore(deserializer));
-                    *self.state__ = MixedAllTypeDeserializerState::Next__;
+                    fallback.get_or_insert(S::TextBefore(deserializer));
+                    *self.state__ = S::Next__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -299,13 +300,14 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, Mixed<i32>>,
             fallback: &mut Option<MixedAllTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use MixedAllTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = MixedAllTypeDeserializerState::Next__;
+                *self.state__ = S::Next__;
                 return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -315,12 +317,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_fuu(data)?;
-                    *self.state__ = MixedAllTypeDeserializerState::Next__;
+                    *self.state__ = S::Next__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(MixedAllTypeDeserializerState::Fuu(deserializer));
-                    *self.state__ = MixedAllTypeDeserializerState::Next__;
+                    fallback.get_or_insert(S::Fuu(deserializer));
+                    *self.state__ = S::Next__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -331,13 +333,14 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, Mixed<String>>,
             fallback: &mut Option<MixedAllTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use MixedAllTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = MixedAllTypeDeserializerState::Next__;
+                *self.state__ = S::Next__;
                 return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -347,12 +350,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_bar(data)?;
-                    *self.state__ = MixedAllTypeDeserializerState::Next__;
+                    *self.state__ = S::Next__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(MixedAllTypeDeserializerState::Bar(deserializer));
-                    *self.state__ = MixedAllTypeDeserializerState::Next__;
+                    fallback.get_or_insert(S::Bar(deserializer));
+                    *self.state__ = S::Next__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -511,14 +514,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, Text>,
             fallback: &mut Option<MixedChoiceTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use MixedChoiceTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(MixedChoiceTypeDeserializerState::TextBefore(None));
-                *self.state__ = MixedChoiceTypeDeserializerState::Content(None);
+                fallback.get_or_insert(S::TextBefore(None));
+                *self.state__ = S::Content(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -528,14 +532,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_text_before(data)?;
-                    *self.state__ = MixedChoiceTypeDeserializerState::Content(None);
+                    *self.state__ = S::Content(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(MixedChoiceTypeDeserializerState::TextBefore(Some(
-                        deserializer,
-                    )));
-                    *self.state__ = MixedChoiceTypeDeserializerState::Content(None);
+                    fallback.get_or_insert(S::TextBefore(Some(deserializer)));
+                    *self.state__ = S::Content(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -546,14 +548,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::MixedChoiceTypeContent>,
             fallback: &mut Option<MixedChoiceTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use MixedChoiceTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(MixedChoiceTypeDeserializerState::Content(None));
-                if matches!(&fallback, Some(MixedChoiceTypeDeserializerState::Init__)) {
+                fallback.get_or_insert(S::Content(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -566,14 +569,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_content(data)?;
-                    *self.state__ = MixedChoiceTypeDeserializerState::Done__;
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(MixedChoiceTypeDeserializerState::Content(Some(
-                        deserializer,
-                    )));
-                    *self.state__ = MixedChoiceTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::Content(Some(deserializer)));
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -635,7 +636,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ = MixedChoiceTypeDeserializerState::TextBefore(None);
+                        *self.state__ = S::TextBefore(None);
                         event
                     }
                     (S::TextBefore(None), event) => {
@@ -800,6 +801,7 @@ pub mod quick_xml_deserialize {
             fallback: Option<<Mixed<i32> as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, Mixed<i32>>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use MixedChoiceTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
@@ -816,19 +818,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_fuu(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        MixedChoiceTypeContentDeserializerState::Fuu(values, None, None),
-                    )?;
-                    *self.state__ = MixedChoiceTypeContentDeserializerState::Done__(data);
+                    let data = Self::finish_state(helper, S::Fuu(values, None, None))?;
+                    *self.state__ = S::Done__(data);
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = MixedChoiceTypeContentDeserializerState::Fuu(
-                        values,
-                        None,
-                        Some(deserializer),
-                    );
+                    *self.state__ = S::Fuu(values, None, Some(deserializer));
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
             }
@@ -840,6 +835,7 @@ pub mod quick_xml_deserialize {
             fallback: Option<<Mixed<String> as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, Mixed<String>>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use MixedChoiceTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
@@ -856,19 +852,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_bar(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        MixedChoiceTypeContentDeserializerState::Bar(values, None, None),
-                    )?;
-                    *self.state__ = MixedChoiceTypeContentDeserializerState::Done__(data);
+                    let data = Self::finish_state(helper, S::Bar(values, None, None))?;
+                    *self.state__ = S::Done__(data);
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = MixedChoiceTypeContentDeserializerState::Bar(
-                        values,
-                        None,
-                        Some(deserializer),
-                    );
+                    *self.state__ = S::Bar(values, None, Some(deserializer));
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
             }
@@ -1049,15 +1038,14 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::MixedChoiceListTypeContent>,
             fallback: &mut Option<MixedChoiceListTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use MixedChoiceListTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = fallback
-                    .take()
-                    .unwrap_or(MixedChoiceListTypeDeserializerState::Next__);
+                *self.state__ = fallback.take().unwrap_or(S::Next__);
                 return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -1067,14 +1055,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_content(data)?;
-                    *self.state__ = MixedChoiceListTypeDeserializerState::Next__;
+                    *self.state__ = S::Next__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *fallback = Some(MixedChoiceListTypeDeserializerState::Content__(
-                        deserializer,
-                    ));
-                    *self.state__ = MixedChoiceListTypeDeserializerState::Next__;
+                    *fallback = Some(S::Content__(deserializer));
+                    *self.state__ = S::Next__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -1279,6 +1265,7 @@ pub mod quick_xml_deserialize {
             fallback: Option<<i32 as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, i32>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use MixedChoiceListTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
@@ -1295,19 +1282,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_fuu(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        MixedChoiceListTypeContentDeserializerState::Fuu(values, None, None),
-                    )?;
-                    *self.state__ = MixedChoiceListTypeContentDeserializerState::Done__(data);
+                    let data = Self::finish_state(helper, S::Fuu(values, None, None))?;
+                    *self.state__ = S::Done__(data);
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = MixedChoiceListTypeContentDeserializerState::Fuu(
-                        values,
-                        None,
-                        Some(deserializer),
-                    );
+                    *self.state__ = S::Fuu(values, None, Some(deserializer));
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
             }
@@ -1319,6 +1299,7 @@ pub mod quick_xml_deserialize {
             fallback: Option<<String as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, String>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use MixedChoiceListTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
@@ -1335,19 +1316,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_bar(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        MixedChoiceListTypeContentDeserializerState::Bar(values, None, None),
-                    )?;
-                    *self.state__ = MixedChoiceListTypeContentDeserializerState::Done__(data);
+                    let data = Self::finish_state(helper, S::Bar(values, None, None))?;
+                    *self.state__ = S::Done__(data);
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = MixedChoiceListTypeContentDeserializerState::Bar(
-                        values,
-                        None,
-                        Some(deserializer),
-                    );
+                    *self.state__ = S::Bar(values, None, Some(deserializer));
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
             }
@@ -1359,6 +1333,7 @@ pub mod quick_xml_deserialize {
             fallback: Option<<Text as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, Text>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use MixedChoiceListTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
@@ -1375,19 +1350,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_text(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        MixedChoiceListTypeContentDeserializerState::Text(values, None, None),
-                    )?;
-                    *self.state__ = MixedChoiceListTypeContentDeserializerState::Done__(data);
+                    let data = Self::finish_state(helper, S::Text(values, None, None))?;
+                    *self.state__ = S::Done__(data);
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = MixedChoiceListTypeContentDeserializerState::Text(
-                        values,
-                        None,
-                        Some(deserializer),
-                    );
+                    *self.state__ = S::Text(values, None, Some(deserializer));
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
             }
@@ -1651,14 +1619,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, Text>,
             fallback: &mut Option<MixedSequenceTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use MixedSequenceTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(MixedSequenceTypeDeserializerState::TextBefore(None));
-                *self.state__ = MixedSequenceTypeDeserializerState::Fuu(None);
+                fallback.get_or_insert(S::TextBefore(None));
+                *self.state__ = S::Fuu(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -1668,14 +1637,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_text_before(data)?;
-                    *self.state__ = MixedSequenceTypeDeserializerState::Fuu(None);
+                    *self.state__ = S::Fuu(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(MixedSequenceTypeDeserializerState::TextBefore(Some(
-                        deserializer,
-                    )));
-                    *self.state__ = MixedSequenceTypeDeserializerState::Fuu(None);
+                    fallback.get_or_insert(S::TextBefore(Some(deserializer)));
+                    *self.state__ = S::Fuu(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -1686,14 +1653,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, i32>,
             fallback: &mut Option<MixedSequenceTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use MixedSequenceTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(MixedSequenceTypeDeserializerState::Fuu(None));
-                if matches!(&fallback, Some(MixedSequenceTypeDeserializerState::Init__)) {
+                fallback.get_or_insert(S::Fuu(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -1706,13 +1674,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_fuu(data)?;
-                    *self.state__ = MixedSequenceTypeDeserializerState::TextAfterFuu(None);
+                    *self.state__ = S::TextAfterFuu(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback
-                        .get_or_insert(MixedSequenceTypeDeserializerState::Fuu(Some(deserializer)));
-                    *self.state__ = MixedSequenceTypeDeserializerState::TextAfterFuu(None);
+                    fallback.get_or_insert(S::Fuu(Some(deserializer)));
+                    *self.state__ = S::TextAfterFuu(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -1723,14 +1690,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, Text>,
             fallback: &mut Option<MixedSequenceTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use MixedSequenceTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(MixedSequenceTypeDeserializerState::TextAfterFuu(None));
-                *self.state__ = MixedSequenceTypeDeserializerState::Bar(None);
+                fallback.get_or_insert(S::TextAfterFuu(None));
+                *self.state__ = S::Bar(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -1740,14 +1708,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_text_after_fuu(data)?;
-                    *self.state__ = MixedSequenceTypeDeserializerState::Bar(None);
+                    *self.state__ = S::Bar(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(MixedSequenceTypeDeserializerState::TextAfterFuu(Some(
-                        deserializer,
-                    )));
-                    *self.state__ = MixedSequenceTypeDeserializerState::Bar(None);
+                    fallback.get_or_insert(S::TextAfterFuu(Some(deserializer)));
+                    *self.state__ = S::Bar(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -1758,14 +1724,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<MixedSequenceTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use MixedSequenceTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(MixedSequenceTypeDeserializerState::Bar(None));
-                if matches!(&fallback, Some(MixedSequenceTypeDeserializerState::Init__)) {
+                fallback.get_or_insert(S::Bar(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -1778,13 +1745,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_bar(data)?;
-                    *self.state__ = MixedSequenceTypeDeserializerState::TextAfterBar(None);
+                    *self.state__ = S::TextAfterBar(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback
-                        .get_or_insert(MixedSequenceTypeDeserializerState::Bar(Some(deserializer)));
-                    *self.state__ = MixedSequenceTypeDeserializerState::TextAfterBar(None);
+                    fallback.get_or_insert(S::Bar(Some(deserializer)));
+                    *self.state__ = S::TextAfterBar(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -1795,14 +1761,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, Text>,
             fallback: &mut Option<MixedSequenceTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use MixedSequenceTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(MixedSequenceTypeDeserializerState::TextAfterBar(None));
-                *self.state__ = MixedSequenceTypeDeserializerState::Done__;
+                fallback.get_or_insert(S::TextAfterBar(None));
+                *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -1812,14 +1779,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_text_after_bar(data)?;
-                    *self.state__ = MixedSequenceTypeDeserializerState::Done__;
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(MixedSequenceTypeDeserializerState::TextAfterBar(Some(
-                        deserializer,
-                    )));
-                    *self.state__ = MixedSequenceTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::TextAfterBar(Some(deserializer)));
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -1917,7 +1882,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ = MixedSequenceTypeDeserializerState::TextBefore(None);
+                        *self.state__ = S::TextBefore(None);
                         event
                     }
                     (S::TextBefore(None), event) => {

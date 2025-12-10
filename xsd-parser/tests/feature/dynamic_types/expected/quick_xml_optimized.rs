@@ -156,14 +156,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::Base>,
             fallback: &mut Option<ListTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use ListTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(ListTypeDeserializerState::Base(None));
-                *self.state__ = ListTypeDeserializerState::Done__;
+                fallback.get_or_insert(S::Base(None));
+                *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -173,12 +174,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_base(data)?;
-                    *self.state__ = ListTypeDeserializerState::Base(None);
+                    *self.state__ = S::Base(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(ListTypeDeserializerState::Base(Some(deserializer)));
-                    *self.state__ = ListTypeDeserializerState::Base(None);
+                    fallback.get_or_insert(S::Base(Some(deserializer)));
+                    *self.state__ = S::Base(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -228,7 +229,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ = ListTypeDeserializerState::Base(None);
+                        *self.state__ = S::Base(None);
                         event
                     }
                     (S::Base(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -372,6 +373,7 @@ pub mod quick_xml_deserialize {
             fallback: Option<<super::IntermediateType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::IntermediateType>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use BaseDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
@@ -388,16 +390,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_intermediate(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        BaseDeserializerState::Intermediate(values, None, None),
-                    )?;
-                    *self.state__ = BaseDeserializerState::Done__(data);
+                    let data = Self::finish_state(helper, S::Intermediate(values, None, None))?;
+                    *self.state__ = S::Done__(data);
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        BaseDeserializerState::Intermediate(values, None, Some(deserializer));
+                    *self.state__ = S::Intermediate(values, None, Some(deserializer));
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
             }
@@ -409,6 +407,7 @@ pub mod quick_xml_deserialize {
             fallback: Option<<super::FinalType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::FinalType>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use BaseDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
@@ -425,15 +424,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_final_(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        BaseDeserializerState::Final(values, None, None),
-                    )?;
-                    *self.state__ = BaseDeserializerState::Done__(data);
+                    let data = Self::finish_state(helper, S::Final(values, None, None))?;
+                    *self.state__ = S::Done__(data);
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = BaseDeserializerState::Final(values, None, Some(deserializer));
+                    *self.state__ = S::Final(values, None, Some(deserializer));
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
             }

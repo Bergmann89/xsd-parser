@@ -888,15 +888,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<DirectoryReqTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use DirectoryReqTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback
-                    .get_or_insert(DirectoryReqTypeDeserializerState::CreateDateTimestamp(None));
-                if matches!(&fallback, Some(DirectoryReqTypeDeserializerState::Init__)) {
+                fallback.get_or_insert(S::CreateDateTimestamp(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -909,14 +909,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_create_date_timestamp(data)?;
-                    *self.state__ = DirectoryReqTypeDeserializerState::Merchant(None);
+                    *self.state__ = S::Merchant(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(DirectoryReqTypeDeserializerState::CreateDateTimestamp(
-                        Some(deserializer),
-                    ));
-                    *self.state__ = DirectoryReqTypeDeserializerState::Merchant(None);
+                    fallback.get_or_insert(S::CreateDateTimestamp(Some(deserializer)));
+                    *self.state__ = S::Merchant(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -927,14 +925,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::DirectoryReqMerchantType>,
             fallback: &mut Option<DirectoryReqTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use DirectoryReqTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(DirectoryReqTypeDeserializerState::Merchant(None));
-                if matches!(&fallback, Some(DirectoryReqTypeDeserializerState::Init__)) {
+                fallback.get_or_insert(S::Merchant(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -947,14 +946,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_merchant(data)?;
-                    *self.state__ = DirectoryReqTypeDeserializerState::Signature(None);
+                    *self.state__ = S::Signature(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(DirectoryReqTypeDeserializerState::Merchant(Some(
-                        deserializer,
-                    )));
-                    *self.state__ = DirectoryReqTypeDeserializerState::Signature(None);
+                    fallback.get_or_insert(S::Merchant(Some(deserializer)));
+                    *self.state__ = S::Signature(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -965,14 +962,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::SignatureType>,
             fallback: &mut Option<DirectoryReqTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use DirectoryReqTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(DirectoryReqTypeDeserializerState::Signature(None));
-                if matches!(&fallback, Some(DirectoryReqTypeDeserializerState::Init__)) {
+                fallback.get_or_insert(S::Signature(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -985,14 +983,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_signature(data)?;
-                    *self.state__ = DirectoryReqTypeDeserializerState::Done__;
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(DirectoryReqTypeDeserializerState::Signature(Some(
-                        deserializer,
-                    )));
-                    *self.state__ = DirectoryReqTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::Signature(Some(deserializer)));
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -1066,8 +1062,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ =
-                            DirectoryReqTypeDeserializerState::CreateDateTimestamp(None);
+                        *self.state__ = S::CreateDateTimestamp(None);
                         event
                     }
                     (S::CreateDateTimestamp(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -1226,17 +1221,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<DirectoryReqMerchantTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use DirectoryReqMerchantTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(DirectoryReqMerchantTypeDeserializerState::MerchantId(None));
-                if matches!(
-                    &fallback,
-                    Some(DirectoryReqMerchantTypeDeserializerState::Init__)
-                ) {
+                fallback.get_or_insert(S::MerchantId(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -1249,14 +1242,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_merchant_id(data)?;
-                    *self.state__ = DirectoryReqMerchantTypeDeserializerState::SubId(None);
+                    *self.state__ = S::SubId(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(DirectoryReqMerchantTypeDeserializerState::MerchantId(
-                        Some(deserializer),
-                    ));
-                    *self.state__ = DirectoryReqMerchantTypeDeserializerState::SubId(None);
+                    fallback.get_or_insert(S::MerchantId(Some(deserializer)));
+                    *self.state__ = S::SubId(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -1267,17 +1258,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, usize>,
             fallback: &mut Option<DirectoryReqMerchantTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use DirectoryReqMerchantTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(DirectoryReqMerchantTypeDeserializerState::SubId(None));
-                if matches!(
-                    &fallback,
-                    Some(DirectoryReqMerchantTypeDeserializerState::Init__)
-                ) {
+                fallback.get_or_insert(S::SubId(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -1290,14 +1279,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_sub_id(data)?;
-                    *self.state__ = DirectoryReqMerchantTypeDeserializerState::Done__;
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(DirectoryReqMerchantTypeDeserializerState::SubId(Some(
-                        deserializer,
-                    )));
-                    *self.state__ = DirectoryReqMerchantTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::SubId(Some(deserializer)));
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -1361,7 +1348,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ = DirectoryReqMerchantTypeDeserializerState::MerchantId(None);
+                        *self.state__ = S::MerchantId(None);
                         event
                     }
                     (S::MerchantId(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -1535,14 +1522,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::SignedInfoType>,
             fallback: &mut Option<SignatureTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use SignatureTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(SignatureTypeDeserializerState::SignedInfo(None));
-                if matches!(&fallback, Some(SignatureTypeDeserializerState::Init__)) {
+                fallback.get_or_insert(S::SignedInfo(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -1555,14 +1543,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_signed_info(data)?;
-                    *self.state__ = SignatureTypeDeserializerState::SignatureValue(None);
+                    *self.state__ = S::SignatureValue(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(SignatureTypeDeserializerState::SignedInfo(Some(
-                        deserializer,
-                    )));
-                    *self.state__ = SignatureTypeDeserializerState::SignatureValue(None);
+                    fallback.get_or_insert(S::SignedInfo(Some(deserializer)));
+                    *self.state__ = S::SignatureValue(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -1573,14 +1559,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::SignatureValueType>,
             fallback: &mut Option<SignatureTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use SignatureTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(SignatureTypeDeserializerState::SignatureValue(None));
-                if matches!(&fallback, Some(SignatureTypeDeserializerState::Init__)) {
+                fallback.get_or_insert(S::SignatureValue(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -1593,14 +1580,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_signature_value(data)?;
-                    *self.state__ = SignatureTypeDeserializerState::KeyInfo(None);
+                    *self.state__ = S::KeyInfo(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(SignatureTypeDeserializerState::SignatureValue(Some(
-                        deserializer,
-                    )));
-                    *self.state__ = SignatureTypeDeserializerState::KeyInfo(None);
+                    fallback.get_or_insert(S::SignatureValue(Some(deserializer)));
+                    *self.state__ = S::KeyInfo(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -1611,14 +1596,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::KeyInfoType>,
             fallback: &mut Option<SignatureTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use SignatureTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(SignatureTypeDeserializerState::KeyInfo(None));
-                *self.state__ = SignatureTypeDeserializerState::Object(None);
+                fallback.get_or_insert(S::KeyInfo(None));
+                *self.state__ = S::Object(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -1628,13 +1614,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_key_info(data)?;
-                    *self.state__ = SignatureTypeDeserializerState::Object(None);
+                    *self.state__ = S::Object(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback
-                        .get_or_insert(SignatureTypeDeserializerState::KeyInfo(Some(deserializer)));
-                    *self.state__ = SignatureTypeDeserializerState::Object(None);
+                    fallback.get_or_insert(S::KeyInfo(Some(deserializer)));
+                    *self.state__ = S::Object(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -1645,14 +1630,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::ObjectType>,
             fallback: &mut Option<SignatureTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use SignatureTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(SignatureTypeDeserializerState::Object(None));
-                *self.state__ = SignatureTypeDeserializerState::Done__;
+                fallback.get_or_insert(S::Object(None));
+                *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -1662,13 +1648,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_object(data)?;
-                    *self.state__ = SignatureTypeDeserializerState::Object(None);
+                    *self.state__ = S::Object(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback
-                        .get_or_insert(SignatureTypeDeserializerState::Object(Some(deserializer)));
-                    *self.state__ = SignatureTypeDeserializerState::Object(None);
+                    fallback.get_or_insert(S::Object(Some(deserializer)));
+                    *self.state__ = S::Object(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -1754,7 +1739,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ = SignatureTypeDeserializerState::SignedInfo(None);
+                        *self.state__ = S::SignedInfo(None);
                         event
                     }
                     (S::SignedInfo(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -1957,16 +1942,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::CanonicalizationMethodType>,
             fallback: &mut Option<SignedInfoTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use SignedInfoTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(SignedInfoTypeDeserializerState::CanonicalizationMethod(
-                    None,
-                ));
-                if matches!(&fallback, Some(SignedInfoTypeDeserializerState::Init__)) {
+                fallback.get_or_insert(S::CanonicalizationMethod(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -1979,14 +1963,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_canonicalization_method(data)?;
-                    *self.state__ = SignedInfoTypeDeserializerState::SignatureMethod(None);
+                    *self.state__ = S::SignatureMethod(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(
-                        SignedInfoTypeDeserializerState::CanonicalizationMethod(Some(deserializer)),
-                    );
-                    *self.state__ = SignedInfoTypeDeserializerState::SignatureMethod(None);
+                    fallback.get_or_insert(S::CanonicalizationMethod(Some(deserializer)));
+                    *self.state__ = S::SignatureMethod(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -1997,14 +1979,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::SignatureMethodType>,
             fallback: &mut Option<SignedInfoTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use SignedInfoTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(SignedInfoTypeDeserializerState::SignatureMethod(None));
-                if matches!(&fallback, Some(SignedInfoTypeDeserializerState::Init__)) {
+                fallback.get_or_insert(S::SignatureMethod(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -2017,14 +2000,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_signature_method(data)?;
-                    *self.state__ = SignedInfoTypeDeserializerState::Reference(None);
+                    *self.state__ = S::Reference(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(SignedInfoTypeDeserializerState::SignatureMethod(Some(
-                        deserializer,
-                    )));
-                    *self.state__ = SignedInfoTypeDeserializerState::Reference(None);
+                    fallback.get_or_insert(S::SignatureMethod(Some(deserializer)));
+                    *self.state__ = S::Reference(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -2035,20 +2016,21 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::ReferenceType>,
             fallback: &mut Option<SignedInfoTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use SignedInfoTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                if matches!(&fallback, Some(SignedInfoTypeDeserializerState::Init__)) {
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else if self.reference.len() < 1usize {
-                    fallback.get_or_insert(SignedInfoTypeDeserializerState::Reference(None));
+                    fallback.get_or_insert(S::Reference(None));
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 } else {
-                    fallback.get_or_insert(SignedInfoTypeDeserializerState::Reference(None));
-                    *self.state__ = SignedInfoTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::Reference(None));
+                    *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
             }
@@ -2059,14 +2041,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_reference(data)?;
-                    *self.state__ = SignedInfoTypeDeserializerState::Reference(None);
+                    *self.state__ = S::Reference(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(SignedInfoTypeDeserializerState::Reference(Some(
-                        deserializer,
-                    )));
-                    *self.state__ = SignedInfoTypeDeserializerState::Reference(None);
+                    fallback.get_or_insert(S::Reference(Some(deserializer)));
+                    *self.state__ = S::Reference(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -2140,8 +2120,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ =
-                            SignedInfoTypeDeserializerState::CanonicalizationMethod(None);
+                        *self.state__ = S::CanonicalizationMethod(None);
                         event
                     }
                     (
@@ -2428,15 +2407,14 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::KeyInfoTypeContent>,
             fallback: &mut Option<KeyInfoTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use KeyInfoTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = fallback
-                    .take()
-                    .unwrap_or(KeyInfoTypeDeserializerState::Next__);
+                *self.state__ = fallback.take().unwrap_or(S::Next__);
                 return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -2446,12 +2424,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_content(data)?;
-                    *self.state__ = KeyInfoTypeDeserializerState::Next__;
+                    *self.state__ = S::Next__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *fallback = Some(KeyInfoTypeDeserializerState::Content__(deserializer));
-                    *self.state__ = KeyInfoTypeDeserializerState::Next__;
+                    *fallback = Some(S::Content__(deserializer));
+                    *self.state__ = S::Next__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -2789,6 +2767,7 @@ pub mod quick_xml_deserialize {
             fallback: Option<<String as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, String>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use KeyInfoTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
@@ -2805,19 +2784,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_key_name(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        KeyInfoTypeContentDeserializerState::KeyName(values, None, None),
-                    )?;
-                    *self.state__ = KeyInfoTypeContentDeserializerState::Done__(data);
+                    let data = Self::finish_state(helper, S::KeyName(values, None, None))?;
+                    *self.state__ = S::Done__(data);
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = KeyInfoTypeContentDeserializerState::KeyName(
-                        values,
-                        None,
-                        Some(deserializer),
-                    );
+                    *self.state__ = S::KeyName(values, None, Some(deserializer));
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
             }
@@ -2829,6 +2801,7 @@ pub mod quick_xml_deserialize {
             fallback: Option<<super::KeyValueType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::KeyValueType>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use KeyInfoTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
@@ -2845,19 +2818,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_key_value(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        KeyInfoTypeContentDeserializerState::KeyValue(values, None, None),
-                    )?;
-                    *self.state__ = KeyInfoTypeContentDeserializerState::Done__(data);
+                    let data = Self::finish_state(helper, S::KeyValue(values, None, None))?;
+                    *self.state__ = S::Done__(data);
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = KeyInfoTypeContentDeserializerState::KeyValue(
-                        values,
-                        None,
-                        Some(deserializer),
-                    );
+                    *self.state__ = S::KeyValue(values, None, Some(deserializer));
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
             }
@@ -2869,6 +2835,7 @@ pub mod quick_xml_deserialize {
             fallback: Option<<super::RetrievalMethodType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::RetrievalMethodType>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use KeyInfoTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
@@ -2885,19 +2852,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_retrieval_method(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        KeyInfoTypeContentDeserializerState::RetrievalMethod(values, None, None),
-                    )?;
-                    *self.state__ = KeyInfoTypeContentDeserializerState::Done__(data);
+                    let data = Self::finish_state(helper, S::RetrievalMethod(values, None, None))?;
+                    *self.state__ = S::Done__(data);
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = KeyInfoTypeContentDeserializerState::RetrievalMethod(
-                        values,
-                        None,
-                        Some(deserializer),
-                    );
+                    *self.state__ = S::RetrievalMethod(values, None, Some(deserializer));
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
             }
@@ -2909,6 +2869,7 @@ pub mod quick_xml_deserialize {
             fallback: Option<<super::X509DataType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::X509DataType>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use KeyInfoTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
@@ -2925,19 +2886,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_x509_data(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        KeyInfoTypeContentDeserializerState::X509Data(values, None, None),
-                    )?;
-                    *self.state__ = KeyInfoTypeContentDeserializerState::Done__(data);
+                    let data = Self::finish_state(helper, S::X509Data(values, None, None))?;
+                    *self.state__ = S::Done__(data);
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = KeyInfoTypeContentDeserializerState::X509Data(
-                        values,
-                        None,
-                        Some(deserializer),
-                    );
+                    *self.state__ = S::X509Data(values, None, Some(deserializer));
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
             }
@@ -2949,6 +2903,7 @@ pub mod quick_xml_deserialize {
             fallback: Option<<super::PgpDataType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::PgpDataType>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use KeyInfoTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
@@ -2965,19 +2920,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_pgp_data(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        KeyInfoTypeContentDeserializerState::PgpData(values, None, None),
-                    )?;
-                    *self.state__ = KeyInfoTypeContentDeserializerState::Done__(data);
+                    let data = Self::finish_state(helper, S::PgpData(values, None, None))?;
+                    *self.state__ = S::Done__(data);
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = KeyInfoTypeContentDeserializerState::PgpData(
-                        values,
-                        None,
-                        Some(deserializer),
-                    );
+                    *self.state__ = S::PgpData(values, None, Some(deserializer));
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
             }
@@ -2989,6 +2937,7 @@ pub mod quick_xml_deserialize {
             fallback: Option<<super::SpkiDataType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::SpkiDataType>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use KeyInfoTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
@@ -3005,19 +2954,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_spki_data(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        KeyInfoTypeContentDeserializerState::SpkiData(values, None, None),
-                    )?;
-                    *self.state__ = KeyInfoTypeContentDeserializerState::Done__(data);
+                    let data = Self::finish_state(helper, S::SpkiData(values, None, None))?;
+                    *self.state__ = S::Done__(data);
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = KeyInfoTypeContentDeserializerState::SpkiData(
-                        values,
-                        None,
-                        Some(deserializer),
-                    );
+                    *self.state__ = S::SpkiData(values, None, Some(deserializer));
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
             }
@@ -3029,6 +2971,7 @@ pub mod quick_xml_deserialize {
             fallback: Option<<String as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, String>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use KeyInfoTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
@@ -3045,19 +2988,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_mgmt_data(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        KeyInfoTypeContentDeserializerState::MgmtData(values, None, None),
-                    )?;
-                    *self.state__ = KeyInfoTypeContentDeserializerState::Done__(data);
+                    let data = Self::finish_state(helper, S::MgmtData(values, None, None))?;
+                    *self.state__ = S::Done__(data);
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = KeyInfoTypeContentDeserializerState::MgmtData(
-                        values,
-                        None,
-                        Some(deserializer),
-                    );
+                    *self.state__ = S::MgmtData(values, None, Some(deserializer));
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
             }
@@ -3575,15 +3511,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, i32>,
             fallback: &mut Option<SignatureMethodTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use SignatureMethodTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback
-                    .get_or_insert(SignatureMethodTypeDeserializerState::HmacOutputLength(None));
-                *self.state__ = SignatureMethodTypeDeserializerState::Done__;
+                fallback.get_or_insert(S::HmacOutputLength(None));
+                *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -3593,14 +3529,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_hmac_output_length(data)?;
-                    *self.state__ = SignatureMethodTypeDeserializerState::Done__;
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(SignatureMethodTypeDeserializerState::HmacOutputLength(
-                        Some(deserializer),
-                    ));
-                    *self.state__ = SignatureMethodTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::HmacOutputLength(Some(deserializer)));
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -3651,8 +3585,7 @@ pub mod quick_xml_deserialize {
                     (S::Init__, event) => {
                         allow_any_element = true;
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ =
-                            SignatureMethodTypeDeserializerState::HmacOutputLength(None);
+                        *self.state__ = S::HmacOutputLength(None);
                         event
                     }
                     (S::HmacOutputLength(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -3821,14 +3754,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::TransformsType>,
             fallback: &mut Option<ReferenceTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use ReferenceTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(ReferenceTypeDeserializerState::Transforms(None));
-                *self.state__ = ReferenceTypeDeserializerState::DigestMethod(None);
+                fallback.get_or_insert(S::Transforms(None));
+                *self.state__ = S::DigestMethod(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -3838,14 +3772,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_transforms(data)?;
-                    *self.state__ = ReferenceTypeDeserializerState::DigestMethod(None);
+                    *self.state__ = S::DigestMethod(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(ReferenceTypeDeserializerState::Transforms(Some(
-                        deserializer,
-                    )));
-                    *self.state__ = ReferenceTypeDeserializerState::DigestMethod(None);
+                    fallback.get_or_insert(S::Transforms(Some(deserializer)));
+                    *self.state__ = S::DigestMethod(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -3856,14 +3788,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::DigestMethodType>,
             fallback: &mut Option<ReferenceTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use ReferenceTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(ReferenceTypeDeserializerState::DigestMethod(None));
-                if matches!(&fallback, Some(ReferenceTypeDeserializerState::Init__)) {
+                fallback.get_or_insert(S::DigestMethod(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -3876,14 +3809,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_digest_method(data)?;
-                    *self.state__ = ReferenceTypeDeserializerState::DigestValue(None);
+                    *self.state__ = S::DigestValue(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(ReferenceTypeDeserializerState::DigestMethod(Some(
-                        deserializer,
-                    )));
-                    *self.state__ = ReferenceTypeDeserializerState::DigestValue(None);
+                    fallback.get_or_insert(S::DigestMethod(Some(deserializer)));
+                    *self.state__ = S::DigestValue(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -3894,14 +3825,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<ReferenceTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use ReferenceTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(ReferenceTypeDeserializerState::DigestValue(None));
-                if matches!(&fallback, Some(ReferenceTypeDeserializerState::Init__)) {
+                fallback.get_or_insert(S::DigestValue(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -3914,14 +3846,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_digest_value(data)?;
-                    *self.state__ = ReferenceTypeDeserializerState::Done__;
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(ReferenceTypeDeserializerState::DigestValue(Some(
-                        deserializer,
-                    )));
-                    *self.state__ = ReferenceTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::DigestValue(Some(deserializer)));
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -3995,7 +3925,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ = ReferenceTypeDeserializerState::Transforms(None);
+                        *self.state__ = S::Transforms(None);
                         event
                     }
                     (S::Transforms(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -4133,15 +4063,14 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::KeyValueTypeContent>,
             fallback: &mut Option<KeyValueTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use KeyValueTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = fallback
-                    .take()
-                    .unwrap_or(KeyValueTypeDeserializerState::Next__);
+                *self.state__ = fallback.take().unwrap_or(S::Next__);
                 return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -4151,11 +4080,11 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_content(data)?;
-                    *self.state__ = KeyValueTypeDeserializerState::Next__;
+                    *self.state__ = S::Next__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = KeyValueTypeDeserializerState::Content__(deserializer);
+                    *self.state__ = S::Content__(deserializer);
                     Ok(ElementHandlerOutput::from_event_end(event, allow_any))
                 }
             }
@@ -4332,6 +4261,7 @@ pub mod quick_xml_deserialize {
             fallback: Option<<super::DsaKeyValueType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::DsaKeyValueType>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use KeyValueTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
@@ -4348,19 +4278,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_dsa_key_value(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        KeyValueTypeContentDeserializerState::DsaKeyValue(values, None, None),
-                    )?;
-                    *self.state__ = KeyValueTypeContentDeserializerState::Done__(data);
+                    let data = Self::finish_state(helper, S::DsaKeyValue(values, None, None))?;
+                    *self.state__ = S::Done__(data);
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = KeyValueTypeContentDeserializerState::DsaKeyValue(
-                        values,
-                        None,
-                        Some(deserializer),
-                    );
+                    *self.state__ = S::DsaKeyValue(values, None, Some(deserializer));
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
             }
@@ -4372,6 +4295,7 @@ pub mod quick_xml_deserialize {
             fallback: Option<<super::RsaKeyValueType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::RsaKeyValueType>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use KeyValueTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
@@ -4388,19 +4312,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_rsa_key_value(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        KeyValueTypeContentDeserializerState::RsaKeyValue(values, None, None),
-                    )?;
-                    *self.state__ = KeyValueTypeContentDeserializerState::Done__(data);
+                    let data = Self::finish_state(helper, S::RsaKeyValue(values, None, None))?;
+                    *self.state__ = S::Done__(data);
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = KeyValueTypeContentDeserializerState::RsaKeyValue(
-                        values,
-                        None,
-                        Some(deserializer),
-                    );
+                    *self.state__ = S::RsaKeyValue(values, None, Some(deserializer));
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
             }
@@ -4608,14 +4525,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::TransformsType>,
             fallback: &mut Option<RetrievalMethodTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use RetrievalMethodTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(RetrievalMethodTypeDeserializerState::Transforms(None));
-                *self.state__ = RetrievalMethodTypeDeserializerState::Done__;
+                fallback.get_or_insert(S::Transforms(None));
+                *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -4625,14 +4543,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_transforms(data)?;
-                    *self.state__ = RetrievalMethodTypeDeserializerState::Done__;
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(RetrievalMethodTypeDeserializerState::Transforms(Some(
-                        deserializer,
-                    )));
-                    *self.state__ = RetrievalMethodTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::Transforms(Some(deserializer)));
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -4682,7 +4598,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ = RetrievalMethodTypeDeserializerState::Transforms(None);
+                        *self.state__ = S::Transforms(None);
                         event
                     }
                     (S::Transforms(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -4783,15 +4699,14 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::X509DataTypeContent>,
             fallback: &mut Option<X509DataTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use X509DataTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = fallback
-                    .take()
-                    .unwrap_or(X509DataTypeDeserializerState::Next__);
+                *self.state__ = fallback.take().unwrap_or(S::Next__);
                 return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -4801,12 +4716,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_content(data)?;
-                    *self.state__ = X509DataTypeDeserializerState::Next__;
+                    *self.state__ = S::Next__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *fallback = Some(X509DataTypeDeserializerState::Content__(deserializer));
-                    *self.state__ = X509DataTypeDeserializerState::Next__;
+                    *fallback = Some(S::Content__(deserializer));
+                    *self.state__ = S::Next__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -4920,17 +4835,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::X509DataContent43Type>,
             fallback: &mut Option<X509DataTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use X509DataTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(X509DataTypeContentDeserializerState::Content43(None));
-                if matches!(
-                    &fallback,
-                    Some(X509DataTypeContentDeserializerState::Init__)
-                ) {
+                fallback.get_or_insert(S::Content43(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -4943,14 +4856,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_content_43(data)?;
-                    *self.state__ = X509DataTypeContentDeserializerState::Done__;
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(X509DataTypeContentDeserializerState::Content43(Some(
-                        deserializer,
-                    )));
-                    *self.state__ = X509DataTypeContentDeserializerState::Done__;
+                    fallback.get_or_insert(S::Content43(Some(deserializer)));
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -5013,7 +4924,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ = X509DataTypeContentDeserializerState::Content43(None);
+                        *self.state__ = S::Content43(None);
                         event
                     }
                     (S::Content43(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -5112,15 +5023,14 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::PgpDataTypeContent>,
             fallback: &mut Option<PgpDataTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use PgpDataTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = fallback
-                    .take()
-                    .unwrap_or(PgpDataTypeDeserializerState::Next__);
+                *self.state__ = fallback.take().unwrap_or(S::Next__);
                 return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -5130,11 +5040,11 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_content(data)?;
-                    *self.state__ = PgpDataTypeDeserializerState::Next__;
+                    *self.state__ = S::Next__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = PgpDataTypeDeserializerState::Content__(deserializer);
+                    *self.state__ = S::Content__(deserializer);
                     Ok(ElementHandlerOutput::from_event_end(event, allow_any))
                 }
             }
@@ -5328,6 +5238,7 @@ pub mod quick_xml_deserialize {
             fallback: Option<<super::PgpDataContent47Type as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::PgpDataContent47Type>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use PgpDataTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
@@ -5344,19 +5255,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_content_47(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        PgpDataTypeContentDeserializerState::Content47(values, None, None),
-                    )?;
-                    *self.state__ = PgpDataTypeContentDeserializerState::Done__(data);
+                    let data = Self::finish_state(helper, S::Content47(values, None, None))?;
+                    *self.state__ = S::Done__(data);
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = PgpDataTypeContentDeserializerState::Content47(
-                        values,
-                        None,
-                        Some(deserializer),
-                    );
+                    *self.state__ = S::Content47(values, None, Some(deserializer));
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
             }
@@ -5368,6 +5272,7 @@ pub mod quick_xml_deserialize {
             fallback: Option<<super::PgpDataContent49Type as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::PgpDataContent49Type>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use PgpDataTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
@@ -5384,19 +5289,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_content_49(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        PgpDataTypeContentDeserializerState::Content49(values, None, None),
-                    )?;
-                    *self.state__ = PgpDataTypeContentDeserializerState::Done__(data);
+                    let data = Self::finish_state(helper, S::Content49(values, None, None))?;
+                    *self.state__ = S::Done__(data);
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = PgpDataTypeContentDeserializerState::Content49(
-                        values,
-                        None,
-                        Some(deserializer),
-                    );
+                    *self.state__ = S::Content49(values, None, Some(deserializer));
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
             }
@@ -5565,15 +5463,14 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::SpkiDataTypeContent>,
             fallback: &mut Option<SpkiDataTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use SpkiDataTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = fallback
-                    .take()
-                    .unwrap_or(SpkiDataTypeDeserializerState::Next__);
+                *self.state__ = fallback.take().unwrap_or(S::Next__);
                 return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -5583,12 +5480,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_content(data)?;
-                    *self.state__ = SpkiDataTypeDeserializerState::Next__;
+                    *self.state__ = S::Next__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *fallback = Some(SpkiDataTypeDeserializerState::Content__(deserializer));
-                    *self.state__ = SpkiDataTypeDeserializerState::Next__;
+                    *fallback = Some(S::Content__(deserializer));
+                    *self.state__ = S::Next__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -5702,17 +5599,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<SpkiDataTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use SpkiDataTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(SpkiDataTypeContentDeserializerState::SpkiSexp(None));
-                if matches!(
-                    &fallback,
-                    Some(SpkiDataTypeContentDeserializerState::Init__)
-                ) {
+                fallback.get_or_insert(S::SpkiSexp(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -5725,14 +5620,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_spki_sexp(data)?;
-                    *self.state__ = SpkiDataTypeContentDeserializerState::Done__;
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(SpkiDataTypeContentDeserializerState::SpkiSexp(Some(
-                        deserializer,
-                    )));
-                    *self.state__ = SpkiDataTypeContentDeserializerState::Done__;
+                    fallback.get_or_insert(S::SpkiSexp(Some(deserializer)));
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -5796,7 +5689,7 @@ pub mod quick_xml_deserialize {
                     (S::Init__, event) => {
                         allow_any_element = true;
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ = SpkiDataTypeContentDeserializerState::SpkiSexp(None);
+                        *self.state__ = S::SpkiSexp(None);
                         event
                     }
                     (S::SpkiSexp(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -5899,20 +5792,21 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::TransformType>,
             fallback: &mut Option<TransformsTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use TransformsTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                if matches!(&fallback, Some(TransformsTypeDeserializerState::Init__)) {
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else if self.transform.len() < 1usize {
-                    fallback.get_or_insert(TransformsTypeDeserializerState::Transform(None));
+                    fallback.get_or_insert(S::Transform(None));
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 } else {
-                    fallback.get_or_insert(TransformsTypeDeserializerState::Transform(None));
-                    *self.state__ = TransformsTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::Transform(None));
+                    *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
             }
@@ -5923,14 +5817,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_transform(data)?;
-                    *self.state__ = TransformsTypeDeserializerState::Transform(None);
+                    *self.state__ = S::Transform(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(TransformsTypeDeserializerState::Transform(Some(
-                        deserializer,
-                    )));
-                    *self.state__ = TransformsTypeDeserializerState::Transform(None);
+                    fallback.get_or_insert(S::Transform(Some(deserializer)));
+                    *self.state__ = S::Transform(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -5980,7 +5872,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ = TransformsTypeDeserializerState::Transform(None);
+                        *self.state__ = S::Transform(None);
                         event
                     }
                     (S::Transform(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -6229,14 +6121,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::DsaKeyValueContent60Type>,
             fallback: &mut Option<DsaKeyValueTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use DsaKeyValueTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(DsaKeyValueTypeDeserializerState::Content60(None));
-                *self.state__ = DsaKeyValueTypeDeserializerState::G(None);
+                fallback.get_or_insert(S::Content60(None));
+                *self.state__ = S::G(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -6246,14 +6139,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_content_60(data)?;
-                    *self.state__ = DsaKeyValueTypeDeserializerState::G(None);
+                    *self.state__ = S::G(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(DsaKeyValueTypeDeserializerState::Content60(Some(
-                        deserializer,
-                    )));
-                    *self.state__ = DsaKeyValueTypeDeserializerState::G(None);
+                    fallback.get_or_insert(S::Content60(Some(deserializer)));
+                    *self.state__ = S::G(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -6264,14 +6155,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<DsaKeyValueTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use DsaKeyValueTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(DsaKeyValueTypeDeserializerState::G(None));
-                *self.state__ = DsaKeyValueTypeDeserializerState::Y(None);
+                fallback.get_or_insert(S::G(None));
+                *self.state__ = S::Y(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -6281,12 +6173,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_g(data)?;
-                    *self.state__ = DsaKeyValueTypeDeserializerState::Y(None);
+                    *self.state__ = S::Y(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(DsaKeyValueTypeDeserializerState::G(Some(deserializer)));
-                    *self.state__ = DsaKeyValueTypeDeserializerState::Y(None);
+                    fallback.get_or_insert(S::G(Some(deserializer)));
+                    *self.state__ = S::Y(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -6297,14 +6189,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<DsaKeyValueTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use DsaKeyValueTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(DsaKeyValueTypeDeserializerState::Y(None));
-                if matches!(&fallback, Some(DsaKeyValueTypeDeserializerState::Init__)) {
+                fallback.get_or_insert(S::Y(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -6317,12 +6210,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_y(data)?;
-                    *self.state__ = DsaKeyValueTypeDeserializerState::J(None);
+                    *self.state__ = S::J(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(DsaKeyValueTypeDeserializerState::Y(Some(deserializer)));
-                    *self.state__ = DsaKeyValueTypeDeserializerState::J(None);
+                    fallback.get_or_insert(S::Y(Some(deserializer)));
+                    *self.state__ = S::J(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -6333,14 +6226,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<DsaKeyValueTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use DsaKeyValueTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(DsaKeyValueTypeDeserializerState::J(None));
-                *self.state__ = DsaKeyValueTypeDeserializerState::Content61(None);
+                fallback.get_or_insert(S::J(None));
+                *self.state__ = S::Content61(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -6350,12 +6244,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_j(data)?;
-                    *self.state__ = DsaKeyValueTypeDeserializerState::Content61(None);
+                    *self.state__ = S::Content61(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(DsaKeyValueTypeDeserializerState::J(Some(deserializer)));
-                    *self.state__ = DsaKeyValueTypeDeserializerState::Content61(None);
+                    fallback.get_or_insert(S::J(Some(deserializer)));
+                    *self.state__ = S::Content61(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -6366,14 +6260,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::DsaKeyValueContent61Type>,
             fallback: &mut Option<DsaKeyValueTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use DsaKeyValueTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(DsaKeyValueTypeDeserializerState::Content61(None));
-                *self.state__ = DsaKeyValueTypeDeserializerState::Done__;
+                fallback.get_or_insert(S::Content61(None));
+                *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -6383,14 +6278,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_content_61(data)?;
-                    *self.state__ = DsaKeyValueTypeDeserializerState::Done__;
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(DsaKeyValueTypeDeserializerState::Content61(Some(
-                        deserializer,
-                    )));
-                    *self.state__ = DsaKeyValueTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::Content61(Some(deserializer)));
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -6488,7 +6381,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ = DsaKeyValueTypeDeserializerState::Content60(None);
+                        *self.state__ = S::Content60(None);
                         event
                     }
                     (S::Content60(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -6677,14 +6570,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<RsaKeyValueTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use RsaKeyValueTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(RsaKeyValueTypeDeserializerState::Modulus(None));
-                if matches!(&fallback, Some(RsaKeyValueTypeDeserializerState::Init__)) {
+                fallback.get_or_insert(S::Modulus(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -6697,14 +6591,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_modulus(data)?;
-                    *self.state__ = RsaKeyValueTypeDeserializerState::Exponent(None);
+                    *self.state__ = S::Exponent(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(RsaKeyValueTypeDeserializerState::Modulus(Some(
-                        deserializer,
-                    )));
-                    *self.state__ = RsaKeyValueTypeDeserializerState::Exponent(None);
+                    fallback.get_or_insert(S::Modulus(Some(deserializer)));
+                    *self.state__ = S::Exponent(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -6715,14 +6607,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<RsaKeyValueTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use RsaKeyValueTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(RsaKeyValueTypeDeserializerState::Exponent(None));
-                if matches!(&fallback, Some(RsaKeyValueTypeDeserializerState::Init__)) {
+                fallback.get_or_insert(S::Exponent(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -6735,14 +6628,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_exponent(data)?;
-                    *self.state__ = RsaKeyValueTypeDeserializerState::Done__;
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(RsaKeyValueTypeDeserializerState::Exponent(Some(
-                        deserializer,
-                    )));
-                    *self.state__ = RsaKeyValueTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::Exponent(Some(deserializer)));
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -6804,7 +6695,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ = RsaKeyValueTypeDeserializerState::Modulus(None);
+                        *self.state__ = S::Modulus(None);
                         event
                     }
                     (S::Modulus(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -6915,13 +6806,14 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::X509DataContent43TypeContent>,
             fallback: &mut Option<X509DataContent43TypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use X509DataContent43TypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = X509DataContent43TypeDeserializerState::Init__;
+                *self.state__ = S::Init__;
                 return Ok(ElementHandlerOutput::break_(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -6931,11 +6823,11 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_content(data)?;
-                    *self.state__ = X509DataContent43TypeDeserializerState::Done__;
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = X509DataContent43TypeDeserializerState::Content__(deserializer);
+                    *self.state__ = S::Content__(deserializer);
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
             }
@@ -7236,6 +7128,7 @@ pub mod quick_xml_deserialize {
             fallback: Option<<super::X509IssuerSerialType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::X509IssuerSerialType>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use X509DataContent43TypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
@@ -7252,21 +7145,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_x509_issuer_serial(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        X509DataContent43TypeContentDeserializerState::X509IssuerSerial(
-                            values, None, None,
-                        ),
-                    )?;
-                    *self.state__ = X509DataContent43TypeContentDeserializerState::Done__(data);
+                    let data = Self::finish_state(helper, S::X509IssuerSerial(values, None, None))?;
+                    *self.state__ = S::Done__(data);
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = X509DataContent43TypeContentDeserializerState::X509IssuerSerial(
-                        values,
-                        None,
-                        Some(deserializer),
-                    );
+                    *self.state__ = S::X509IssuerSerial(values, None, Some(deserializer));
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
             }
@@ -7278,6 +7162,7 @@ pub mod quick_xml_deserialize {
             fallback: Option<<String as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, String>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use X509DataContent43TypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
@@ -7294,19 +7179,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_x509_ski(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        X509DataContent43TypeContentDeserializerState::X509Ski(values, None, None),
-                    )?;
-                    *self.state__ = X509DataContent43TypeContentDeserializerState::Done__(data);
+                    let data = Self::finish_state(helper, S::X509Ski(values, None, None))?;
+                    *self.state__ = S::Done__(data);
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = X509DataContent43TypeContentDeserializerState::X509Ski(
-                        values,
-                        None,
-                        Some(deserializer),
-                    );
+                    *self.state__ = S::X509Ski(values, None, Some(deserializer));
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
             }
@@ -7318,6 +7196,7 @@ pub mod quick_xml_deserialize {
             fallback: Option<<String as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, String>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use X509DataContent43TypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
@@ -7334,21 +7213,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_x509_subject_name(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        X509DataContent43TypeContentDeserializerState::X509SubjectName(
-                            values, None, None,
-                        ),
-                    )?;
-                    *self.state__ = X509DataContent43TypeContentDeserializerState::Done__(data);
+                    let data = Self::finish_state(helper, S::X509SubjectName(values, None, None))?;
+                    *self.state__ = S::Done__(data);
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = X509DataContent43TypeContentDeserializerState::X509SubjectName(
-                        values,
-                        None,
-                        Some(deserializer),
-                    );
+                    *self.state__ = S::X509SubjectName(values, None, Some(deserializer));
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
             }
@@ -7360,6 +7230,7 @@ pub mod quick_xml_deserialize {
             fallback: Option<<String as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, String>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use X509DataContent43TypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
@@ -7376,21 +7247,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_x509_certificate(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        X509DataContent43TypeContentDeserializerState::X509Certificate(
-                            values, None, None,
-                        ),
-                    )?;
-                    *self.state__ = X509DataContent43TypeContentDeserializerState::Done__(data);
+                    let data = Self::finish_state(helper, S::X509Certificate(values, None, None))?;
+                    *self.state__ = S::Done__(data);
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = X509DataContent43TypeContentDeserializerState::X509Certificate(
-                        values,
-                        None,
-                        Some(deserializer),
-                    );
+                    *self.state__ = S::X509Certificate(values, None, Some(deserializer));
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
             }
@@ -7402,6 +7264,7 @@ pub mod quick_xml_deserialize {
             fallback: Option<<String as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, String>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use X509DataContent43TypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
@@ -7418,19 +7281,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_x509_crl(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        X509DataContent43TypeContentDeserializerState::X509Crl(values, None, None),
-                    )?;
-                    *self.state__ = X509DataContent43TypeContentDeserializerState::Done__(data);
+                    let data = Self::finish_state(helper, S::X509Crl(values, None, None))?;
+                    *self.state__ = S::Done__(data);
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = X509DataContent43TypeContentDeserializerState::X509Crl(
-                        values,
-                        None,
-                        Some(deserializer),
-                    );
+                    *self.state__ = S::X509Crl(values, None, Some(deserializer));
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
             }
@@ -7700,17 +7556,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<PgpDataContent47TypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use PgpDataContent47TypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(PgpDataContent47TypeDeserializerState::PgpKeyId(None));
-                if matches!(
-                    &fallback,
-                    Some(PgpDataContent47TypeDeserializerState::Init__)
-                ) {
+                fallback.get_or_insert(S::PgpKeyId(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -7723,14 +7577,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_pgp_key_id(data)?;
-                    *self.state__ = PgpDataContent47TypeDeserializerState::PgpKeyPacket(None);
+                    *self.state__ = S::PgpKeyPacket(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(PgpDataContent47TypeDeserializerState::PgpKeyId(Some(
-                        deserializer,
-                    )));
-                    *self.state__ = PgpDataContent47TypeDeserializerState::PgpKeyPacket(None);
+                    fallback.get_or_insert(S::PgpKeyId(Some(deserializer)));
+                    *self.state__ = S::PgpKeyPacket(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -7741,14 +7593,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<PgpDataContent47TypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use PgpDataContent47TypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(PgpDataContent47TypeDeserializerState::PgpKeyPacket(None));
-                *self.state__ = PgpDataContent47TypeDeserializerState::Done__;
+                fallback.get_or_insert(S::PgpKeyPacket(None));
+                *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -7758,14 +7611,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_pgp_key_packet(data)?;
-                    *self.state__ = PgpDataContent47TypeDeserializerState::Done__;
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(PgpDataContent47TypeDeserializerState::PgpKeyPacket(
-                        Some(deserializer),
-                    ));
-                    *self.state__ = PgpDataContent47TypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::PgpKeyPacket(Some(deserializer)));
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -7842,7 +7693,7 @@ pub mod quick_xml_deserialize {
                     (S::Init__, event) => {
                         allow_any_element = true;
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ = PgpDataContent47TypeDeserializerState::PgpKeyId(None);
+                        *self.state__ = S::PgpKeyId(None);
                         event
                     }
                     (S::PgpKeyId(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -7955,17 +7806,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<PgpDataContent49TypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use PgpDataContent49TypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(PgpDataContent49TypeDeserializerState::PgpKeyPacket(None));
-                if matches!(
-                    &fallback,
-                    Some(PgpDataContent49TypeDeserializerState::Init__)
-                ) {
+                fallback.get_or_insert(S::PgpKeyPacket(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -7978,14 +7827,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_pgp_key_packet(data)?;
-                    *self.state__ = PgpDataContent49TypeDeserializerState::Done__;
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(PgpDataContent49TypeDeserializerState::PgpKeyPacket(
-                        Some(deserializer),
-                    ));
-                    *self.state__ = PgpDataContent49TypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::PgpKeyPacket(Some(deserializer)));
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -8049,7 +7896,7 @@ pub mod quick_xml_deserialize {
                     (S::Init__, event) => {
                         allow_any_element = true;
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ = PgpDataContent49TypeDeserializerState::PgpKeyPacket(None);
+                        *self.state__ = S::PgpKeyPacket(None);
                         event
                     }
                     (S::PgpKeyPacket(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -8159,15 +8006,14 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::TransformTypeContent>,
             fallback: &mut Option<TransformTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use TransformTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = fallback
-                    .take()
-                    .unwrap_or(TransformTypeDeserializerState::Next__);
+                *self.state__ = fallback.take().unwrap_or(S::Next__);
                 return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -8177,12 +8023,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_content(data)?;
-                    *self.state__ = TransformTypeDeserializerState::Next__;
+                    *self.state__ = S::Next__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *fallback = Some(TransformTypeDeserializerState::Content__(deserializer));
-                    *self.state__ = TransformTypeDeserializerState::Next__;
+                    *fallback = Some(S::Content__(deserializer));
+                    *self.state__ = S::Next__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -8327,6 +8173,7 @@ pub mod quick_xml_deserialize {
             fallback: Option<<String as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, String>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use TransformTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
@@ -8343,19 +8190,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_x_path(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        TransformTypeContentDeserializerState::XPath(values, None, None),
-                    )?;
-                    *self.state__ = TransformTypeContentDeserializerState::Done__(data);
+                    let data = Self::finish_state(helper, S::XPath(values, None, None))?;
+                    *self.state__ = S::Done__(data);
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = TransformTypeContentDeserializerState::XPath(
-                        values,
-                        None,
-                        Some(deserializer),
-                    );
+                    *self.state__ = S::XPath(values, None, Some(deserializer));
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
             }
@@ -8512,17 +8352,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<DsaKeyValueContent60TypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use DsaKeyValueContent60TypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(DsaKeyValueContent60TypeDeserializerState::P(None));
-                if matches!(
-                    &fallback,
-                    Some(DsaKeyValueContent60TypeDeserializerState::Init__)
-                ) {
+                fallback.get_or_insert(S::P(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -8535,14 +8373,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_p(data)?;
-                    *self.state__ = DsaKeyValueContent60TypeDeserializerState::Q(None);
+                    *self.state__ = S::Q(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(DsaKeyValueContent60TypeDeserializerState::P(Some(
-                        deserializer,
-                    )));
-                    *self.state__ = DsaKeyValueContent60TypeDeserializerState::Q(None);
+                    fallback.get_or_insert(S::P(Some(deserializer)));
+                    *self.state__ = S::Q(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -8553,17 +8389,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<DsaKeyValueContent60TypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use DsaKeyValueContent60TypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(DsaKeyValueContent60TypeDeserializerState::Q(None));
-                if matches!(
-                    &fallback,
-                    Some(DsaKeyValueContent60TypeDeserializerState::Init__)
-                ) {
+                fallback.get_or_insert(S::Q(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -8576,14 +8410,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_q(data)?;
-                    *self.state__ = DsaKeyValueContent60TypeDeserializerState::Done__;
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(DsaKeyValueContent60TypeDeserializerState::Q(Some(
-                        deserializer,
-                    )));
-                    *self.state__ = DsaKeyValueContent60TypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::Q(Some(deserializer)));
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -8664,7 +8496,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ = DsaKeyValueContent60TypeDeserializerState::P(None);
+                        *self.state__ = S::P(None);
                         event
                     }
                     (S::P(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -8787,17 +8619,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<DsaKeyValueContent61TypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use DsaKeyValueContent61TypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(DsaKeyValueContent61TypeDeserializerState::Seed(None));
-                if matches!(
-                    &fallback,
-                    Some(DsaKeyValueContent61TypeDeserializerState::Init__)
-                ) {
+                fallback.get_or_insert(S::Seed(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -8810,14 +8640,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_seed(data)?;
-                    *self.state__ = DsaKeyValueContent61TypeDeserializerState::PgenCounter(None);
+                    *self.state__ = S::PgenCounter(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(DsaKeyValueContent61TypeDeserializerState::Seed(Some(
-                        deserializer,
-                    )));
-                    *self.state__ = DsaKeyValueContent61TypeDeserializerState::PgenCounter(None);
+                    fallback.get_or_insert(S::Seed(Some(deserializer)));
+                    *self.state__ = S::PgenCounter(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -8828,18 +8656,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<DsaKeyValueContent61TypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use DsaKeyValueContent61TypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback
-                    .get_or_insert(DsaKeyValueContent61TypeDeserializerState::PgenCounter(None));
-                if matches!(
-                    &fallback,
-                    Some(DsaKeyValueContent61TypeDeserializerState::Init__)
-                ) {
+                fallback.get_or_insert(S::PgenCounter(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -8852,14 +8677,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_pgen_counter(data)?;
-                    *self.state__ = DsaKeyValueContent61TypeDeserializerState::Done__;
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(DsaKeyValueContent61TypeDeserializerState::PgenCounter(
-                        Some(deserializer),
-                    ));
-                    *self.state__ = DsaKeyValueContent61TypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::PgenCounter(Some(deserializer)));
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -8940,7 +8763,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ = DsaKeyValueContent61TypeDeserializerState::Seed(None);
+                        *self.state__ = S::Seed(None);
                         event
                     }
                     (S::Seed(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -9081,17 +8904,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<X509IssuerSerialTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use X509IssuerSerialTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(X509IssuerSerialTypeDeserializerState::X509IssuerName(None));
-                if matches!(
-                    &fallback,
-                    Some(X509IssuerSerialTypeDeserializerState::Init__)
-                ) {
+                fallback.get_or_insert(S::X509IssuerName(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -9104,14 +8925,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_x509_issuer_name(data)?;
-                    *self.state__ = X509IssuerSerialTypeDeserializerState::X509SerialNumber(None);
+                    *self.state__ = S::X509SerialNumber(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(X509IssuerSerialTypeDeserializerState::X509IssuerName(
-                        Some(deserializer),
-                    ));
-                    *self.state__ = X509IssuerSerialTypeDeserializerState::X509SerialNumber(None);
+                    fallback.get_or_insert(S::X509IssuerName(Some(deserializer)));
+                    *self.state__ = S::X509SerialNumber(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -9122,19 +8941,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, i32>,
             fallback: &mut Option<X509IssuerSerialTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use X509IssuerSerialTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(X509IssuerSerialTypeDeserializerState::X509SerialNumber(
-                    None,
-                ));
-                if matches!(
-                    &fallback,
-                    Some(X509IssuerSerialTypeDeserializerState::Init__)
-                ) {
+                fallback.get_or_insert(S::X509SerialNumber(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -9147,14 +8962,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_x509_serial_number(data)?;
-                    *self.state__ = X509IssuerSerialTypeDeserializerState::Done__;
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(
-                        X509IssuerSerialTypeDeserializerState::X509SerialNumber(Some(deserializer)),
-                    );
-                    *self.state__ = X509IssuerSerialTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::X509SerialNumber(Some(deserializer)));
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -9216,7 +9029,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ = X509IssuerSerialTypeDeserializerState::X509IssuerName(None);
+                        *self.state__ = S::X509IssuerName(None);
                         event
                     }
                     (S::X509IssuerName(None), event @ (Event::Start(_) | Event::Empty(_))) => {

@@ -112,13 +112,14 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::FooTypeContent>,
             fallback: &mut Option<FooTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use FooTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = fallback.take().unwrap_or(FooTypeDeserializerState::Next__);
+                *self.state__ = fallback.take().unwrap_or(S::Next__);
                 return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -128,11 +129,11 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_content(data)?;
-                    *self.state__ = FooTypeDeserializerState::Next__;
+                    *self.state__ = S::Next__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = FooTypeDeserializerState::Content__(deserializer);
+                    *self.state__ = S::Content__(deserializer);
                     Ok(ElementHandlerOutput::from_event_end(event, allow_any))
                 }
             }
@@ -354,6 +355,7 @@ pub mod quick_xml_deserialize {
             fallback: Option<<i32 as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, i32>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use FooTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
@@ -370,16 +372,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_once(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        FooTypeContentDeserializerState::Once(values, None, None),
-                    )?;
-                    *self.state__ = FooTypeContentDeserializerState::Done__(data);
+                    let data = Self::finish_state(helper, S::Once(values, None, None))?;
+                    *self.state__ = S::Done__(data);
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        FooTypeContentDeserializerState::Once(values, None, Some(deserializer));
+                    *self.state__ = S::Once(values, None, Some(deserializer));
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
             }
@@ -391,6 +389,7 @@ pub mod quick_xml_deserialize {
             fallback: Option<<i32 as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, i32>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use FooTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
@@ -407,16 +406,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_optional(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        FooTypeContentDeserializerState::Optional(values, None, None),
-                    )?;
-                    *self.state__ = FooTypeContentDeserializerState::Done__(data);
+                    let data = Self::finish_state(helper, S::Optional(values, None, None))?;
+                    *self.state__ = S::Done__(data);
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        FooTypeContentDeserializerState::Optional(values, None, Some(deserializer));
+                    *self.state__ = S::Optional(values, None, Some(deserializer));
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
             }
@@ -428,6 +423,7 @@ pub mod quick_xml_deserialize {
             fallback: Option<<i32 as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, i32>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use FooTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
@@ -444,19 +440,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_once_specify(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        FooTypeContentDeserializerState::OnceSpecify(values, None, None),
-                    )?;
-                    *self.state__ = FooTypeContentDeserializerState::Done__(data);
+                    let data = Self::finish_state(helper, S::OnceSpecify(values, None, None))?;
+                    *self.state__ = S::Done__(data);
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = FooTypeContentDeserializerState::OnceSpecify(
-                        values,
-                        None,
-                        Some(deserializer),
-                    );
+                    *self.state__ = S::OnceSpecify(values, None, Some(deserializer));
                     Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
             }
@@ -468,6 +457,7 @@ pub mod quick_xml_deserialize {
             fallback: Option<<i32 as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, i32>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use FooTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
@@ -475,15 +465,13 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 if fallback.is_none() && values.is_empty() {
-                    *self.state__ = FooTypeContentDeserializerState::Init__;
+                    *self.state__ = S::Init__;
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 } else if values.len() + usize::from(fallback.is_some()) < 2usize {
-                    *self.state__ =
-                        FooTypeContentDeserializerState::TwiceOrMore(values, None, fallback);
+                    *self.state__ = S::TwiceOrMore(values, None, fallback);
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 } else {
-                    *self.state__ =
-                        FooTypeContentDeserializerState::TwiceOrMore(values, None, fallback);
+                    *self.state__ = S::TwiceOrMore(values, None, fallback);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 }
             }
@@ -495,24 +483,15 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_twice_or_more(&mut values, data)?;
-                    *self.state__ =
-                        FooTypeContentDeserializerState::TwiceOrMore(values, None, None);
+                    *self.state__ = S::TwiceOrMore(values, None, None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
                     let ret = ElementHandlerOutput::from_event(event, allow_any);
                     if ret.is_continue_start_or_empty() {
-                        *self.state__ = FooTypeContentDeserializerState::TwiceOrMore(
-                            values,
-                            Some(deserializer),
-                            None,
-                        );
+                        *self.state__ = S::TwiceOrMore(values, Some(deserializer), None);
                     } else {
-                        *self.state__ = FooTypeContentDeserializerState::TwiceOrMore(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::TwiceOrMore(values, None, Some(deserializer));
                     }
                     Ok(ret)
                 }

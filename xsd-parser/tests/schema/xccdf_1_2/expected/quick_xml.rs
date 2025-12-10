@@ -4225,15 +4225,14 @@ pub mod cdf {
                 output: DeserializerOutput<'de, super::BenchmarkElementTypeContent>,
                 fallback: &mut Option<BenchmarkElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use BenchmarkElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state__ = fallback
-                        .take()
-                        .unwrap_or(BenchmarkElementTypeDeserializerState::Next__);
+                    *self.state__ = fallback.take().unwrap_or(S::Next__);
                     return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -4243,14 +4242,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state__ = BenchmarkElementTypeDeserializerState::Next__;
+                        *self.state__ = S::Next__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *fallback = Some(BenchmarkElementTypeDeserializerState::Content__(
-                            deserializer,
-                        ));
-                        *self.state__ = BenchmarkElementTypeDeserializerState::Next__;
+                        *fallback = Some(S::Content__(deserializer));
+                        *self.state__ = S::Next__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -4947,6 +4944,7 @@ pub mod cdf {
                 fallback: Option<<super::StatusElementType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::StatusElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use BenchmarkElementTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -4963,21 +4961,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_status(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            BenchmarkElementTypeContentDeserializerState::Status(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Status(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Status(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Status(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -4989,6 +4978,7 @@ pub mod cdf {
                 fallback: Option<<super::DcStatusType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::DcStatusType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use BenchmarkElementTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -5005,21 +4995,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_dc_status(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            BenchmarkElementTypeContentDeserializerState::DcStatus(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::DcStatus(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = BenchmarkElementTypeContentDeserializerState::DcStatus(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::DcStatus(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -5031,6 +5012,7 @@ pub mod cdf {
                 fallback: Option<<super::TextType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::TextType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use BenchmarkElementTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -5047,19 +5029,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_title(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            BenchmarkElementTypeContentDeserializerState::Title(values, None, None),
-                        )?;
-                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Title(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Title(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Title(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -5071,6 +5046,7 @@ pub mod cdf {
                 fallback: Option<<super::HtmlTextWithSubType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::HtmlTextWithSubType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use BenchmarkElementTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -5087,21 +5063,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_description(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            BenchmarkElementTypeContentDeserializerState::Description(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Description(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Description(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Description(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -5113,6 +5080,7 @@ pub mod cdf {
                 fallback: Option<<super::NoticeType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::NoticeType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use BenchmarkElementTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -5129,21 +5097,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_notice(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            BenchmarkElementTypeContentDeserializerState::Notice(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Notice(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Notice(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Notice(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -5155,6 +5114,7 @@ pub mod cdf {
                 fallback: Option<<super::HtmlTextWithSubType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::HtmlTextWithSubType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use BenchmarkElementTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -5171,21 +5131,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_front_matter(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            BenchmarkElementTypeContentDeserializerState::FrontMatter(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::FrontMatter(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = BenchmarkElementTypeContentDeserializerState::FrontMatter(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::FrontMatter(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -5197,6 +5148,7 @@ pub mod cdf {
                 fallback: Option<<super::HtmlTextWithSubType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::HtmlTextWithSubType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use BenchmarkElementTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -5213,21 +5165,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_rear_matter(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            BenchmarkElementTypeContentDeserializerState::RearMatter(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::RearMatter(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = BenchmarkElementTypeContentDeserializerState::RearMatter(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::RearMatter(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -5239,6 +5182,7 @@ pub mod cdf {
                 fallback: Option<<super::ReferenceType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::ReferenceType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use BenchmarkElementTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -5255,21 +5199,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_reference(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            BenchmarkElementTypeContentDeserializerState::Reference(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Reference(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Reference(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Reference(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -5281,6 +5216,7 @@ pub mod cdf {
                 fallback: Option<<super::PlainTextType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::PlainTextType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use BenchmarkElementTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -5297,21 +5233,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_plain_text(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            BenchmarkElementTypeContentDeserializerState::PlainText(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::PlainText(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = BenchmarkElementTypeContentDeserializerState::PlainText(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::PlainText(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -5323,6 +5250,7 @@ pub mod cdf {
                 fallback : Option << super :: super :: cpe :: PlatformSpecificationType as WithDeserializer > :: Deserializer >,
                 output: DeserializerOutput<'de, super::super::cpe::PlatformSpecificationType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use BenchmarkElementTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -5341,20 +5269,13 @@ pub mod cdf {
                         Self::store_platform_specification(&mut values, data)?;
                         let data = Self::finish_state(
                             helper,
-                            BenchmarkElementTypeContentDeserializerState::PlatformSpecification(
-                                values, None, None,
-                            ),
+                            S::PlatformSpecification(values, None, None),
                         )?;
-                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Done__(data);
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ =
-                            BenchmarkElementTypeContentDeserializerState::PlatformSpecification(
-                                values,
-                                None,
-                                Some(deserializer),
-                            );
+                        *self.state__ = S::PlatformSpecification(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -5366,6 +5287,7 @@ pub mod cdf {
                 fallback: Option<<super::Cpe2IdrefType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::Cpe2IdrefType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use BenchmarkElementTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -5382,21 +5304,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_platform(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            BenchmarkElementTypeContentDeserializerState::Platform(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Platform(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Platform(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Platform(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -5408,6 +5321,7 @@ pub mod cdf {
                 fallback: Option<<super::VersionType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::VersionType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use BenchmarkElementTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -5424,21 +5338,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_version(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            BenchmarkElementTypeContentDeserializerState::Version(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Version(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Version(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Version(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -5450,6 +5355,7 @@ pub mod cdf {
                 fallback: Option<<super::MetadataType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::MetadataType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use BenchmarkElementTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -5466,21 +5372,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_metadata(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            BenchmarkElementTypeContentDeserializerState::Metadata(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Metadata(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Metadata(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Metadata(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -5492,6 +5389,7 @@ pub mod cdf {
                 fallback: Option<<super::ModelElementType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::ModelElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use BenchmarkElementTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -5508,19 +5406,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_model(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            BenchmarkElementTypeContentDeserializerState::Model(values, None, None),
-                        )?;
-                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Model(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Model(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Model(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -5532,6 +5423,7 @@ pub mod cdf {
                 fallback: Option<<super::ProfileType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::ProfileType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use BenchmarkElementTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -5548,21 +5440,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_profile(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            BenchmarkElementTypeContentDeserializerState::Profile(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Profile(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Profile(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Profile(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -5574,6 +5457,7 @@ pub mod cdf {
                 fallback: Option<<super::ValueType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::ValueType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use BenchmarkElementTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -5590,19 +5474,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_value(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            BenchmarkElementTypeContentDeserializerState::Value(values, None, None),
-                        )?;
-                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Value(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Value(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Value(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -5614,6 +5491,7 @@ pub mod cdf {
                 fallback: Option<<super::GroupType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::GroupType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use BenchmarkElementTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -5630,19 +5508,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_group(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            BenchmarkElementTypeContentDeserializerState::Group(values, None, None),
-                        )?;
-                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Group(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Group(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Group(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -5654,6 +5525,7 @@ pub mod cdf {
                 fallback: Option<<super::RuleType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::RuleType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use BenchmarkElementTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -5670,19 +5542,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_rule(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            BenchmarkElementTypeContentDeserializerState::Rule(values, None, None),
-                        )?;
-                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Rule(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Rule(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Rule(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -5694,6 +5559,7 @@ pub mod cdf {
                 fallback: Option<<super::TestResultType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::TestResultType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use BenchmarkElementTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -5710,21 +5576,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_test_result(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            BenchmarkElementTypeContentDeserializerState::TestResult(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::TestResult(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = BenchmarkElementTypeContentDeserializerState::TestResult(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::TestResult(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -5736,6 +5593,7 @@ pub mod cdf {
                 fallback: Option<<super::SignatureType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::SignatureType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use BenchmarkElementTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -5752,21 +5610,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_signature(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            BenchmarkElementTypeContentDeserializerState::Signature(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Signature(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Signature(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Signature(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -6558,20 +6407,21 @@ pub mod cdf {
                 output: DeserializerOutput<'de, AnyElement>,
                 fallback: &mut Option<DcStatusTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use DcStatusTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    if matches!(&fallback, Some(DcStatusTypeDeserializerState::Init__)) {
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else if self.any.len() < 1usize {
-                        fallback.get_or_insert(DcStatusTypeDeserializerState::Any(None));
+                        fallback.get_or_insert(S::Any(None));
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                     } else {
-                        fallback.get_or_insert(DcStatusTypeDeserializerState::Any(None));
-                        *self.state__ = DcStatusTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::Any(None));
+                        *self.state__ = S::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                 }
@@ -6582,13 +6432,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_any(data)?;
-                        *self.state__ = DcStatusTypeDeserializerState::Any(None);
+                        *self.state__ = S::Any(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback
-                            .get_or_insert(DcStatusTypeDeserializerState::Any(Some(deserializer)));
-                        *self.state__ = DcStatusTypeDeserializerState::Any(None);
+                        fallback.get_or_insert(S::Any(Some(deserializer)));
+                        *self.state__ = S::Any(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -6640,7 +6489,7 @@ pub mod cdf {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ = DcStatusTypeDeserializerState::Any(None);
+                            *self.state__ = S::Any(None);
                             event
                         }
                         (S::Any(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -6904,15 +6753,14 @@ pub mod cdf {
                 output: DeserializerOutput<'de, super::HtmlTextWithSubTypeContent>,
                 fallback: &mut Option<HtmlTextWithSubTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use HtmlTextWithSubTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state__ = fallback
-                        .take()
-                        .unwrap_or(HtmlTextWithSubTypeDeserializerState::Next__);
+                    *self.state__ = fallback.take().unwrap_or(S::Next__);
                     return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -6922,14 +6770,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state__ = HtmlTextWithSubTypeDeserializerState::Next__;
+                        *self.state__ = S::Next__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *fallback = Some(HtmlTextWithSubTypeDeserializerState::Content__(
-                            deserializer,
-                        ));
-                        *self.state__ = HtmlTextWithSubTypeDeserializerState::Next__;
+                        *fallback = Some(S::Content__(deserializer));
+                        *self.state__ = S::Next__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -7144,6 +6990,7 @@ pub mod cdf {
                 fallback: Option<<super::SubType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::SubType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use HtmlTextWithSubTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -7160,19 +7007,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_sub(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            HtmlTextWithSubTypeContentDeserializerState::Sub(values, None, None),
-                        )?;
-                        *self.state__ = HtmlTextWithSubTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Sub(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = HtmlTextWithSubTypeContentDeserializerState::Sub(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Sub(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -7184,6 +7024,7 @@ pub mod cdf {
                 fallback: Option<<AnyElement as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, AnyElement>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use HtmlTextWithSubTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -7200,19 +7041,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_any(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            HtmlTextWithSubTypeContentDeserializerState::Any(values, None, None),
-                        )?;
-                        *self.state__ = HtmlTextWithSubTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Any(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = HtmlTextWithSubTypeContentDeserializerState::Any(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Any(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -7224,6 +7058,7 @@ pub mod cdf {
                 fallback: Option<<Text as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, Text>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use HtmlTextWithSubTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -7240,19 +7075,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_text(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            HtmlTextWithSubTypeContentDeserializerState::Text(values, None, None),
-                        )?;
-                        *self.state__ = HtmlTextWithSubTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Text(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = HtmlTextWithSubTypeContentDeserializerState::Text(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Text(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -7494,14 +7322,15 @@ pub mod cdf {
                 output: DeserializerOutput<'de, Text>,
                 fallback: &mut Option<NoticeTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use NoticeTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(NoticeTypeDeserializerState::TextBefore(None));
-                    *self.state__ = NoticeTypeDeserializerState::Any(None);
+                    fallback.get_or_insert(S::TextBefore(None));
+                    *self.state__ = S::Any(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -7511,14 +7340,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_text_before(data)?;
-                        *self.state__ = NoticeTypeDeserializerState::Any(None);
+                        *self.state__ = S::Any(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(NoticeTypeDeserializerState::TextBefore(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = NoticeTypeDeserializerState::Any(None);
+                        fallback.get_or_insert(S::TextBefore(Some(deserializer)));
+                        *self.state__ = S::Any(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -7529,14 +7356,15 @@ pub mod cdf {
                 output: DeserializerOutput<'de, Mixed<AnyElement>>,
                 fallback: &mut Option<NoticeTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use NoticeTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(NoticeTypeDeserializerState::Any(None));
-                    *self.state__ = NoticeTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::Any(None));
+                    *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -7546,13 +7374,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_any(data)?;
-                        *self.state__ = NoticeTypeDeserializerState::Any(None);
+                        *self.state__ = S::Any(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback
-                            .get_or_insert(NoticeTypeDeserializerState::Any(Some(deserializer)));
-                        *self.state__ = NoticeTypeDeserializerState::Any(None);
+                        fallback.get_or_insert(S::Any(Some(deserializer)));
+                        *self.state__ = S::Any(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -7616,7 +7443,7 @@ pub mod cdf {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ = NoticeTypeDeserializerState::TextBefore(None);
+                            *self.state__ = S::TextBefore(None);
                             event
                         }
                         (S::TextBefore(None), event) => {
@@ -7775,14 +7602,15 @@ pub mod cdf {
                 output: DeserializerOutput<'de, Text>,
                 fallback: &mut Option<ReferenceTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ReferenceTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(ReferenceTypeDeserializerState::TextBefore(None));
-                    *self.state__ = ReferenceTypeDeserializerState::Any(None);
+                    fallback.get_or_insert(S::TextBefore(None));
+                    *self.state__ = S::Any(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -7792,14 +7620,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_text_before(data)?;
-                        *self.state__ = ReferenceTypeDeserializerState::Any(None);
+                        *self.state__ = S::Any(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(ReferenceTypeDeserializerState::TextBefore(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = ReferenceTypeDeserializerState::Any(None);
+                        fallback.get_or_insert(S::TextBefore(Some(deserializer)));
+                        *self.state__ = S::Any(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -7810,14 +7636,15 @@ pub mod cdf {
                 output: DeserializerOutput<'de, Mixed<AnyElement>>,
                 fallback: &mut Option<ReferenceTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ReferenceTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(ReferenceTypeDeserializerState::Any(None));
-                    *self.state__ = ReferenceTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::Any(None));
+                    *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -7827,13 +7654,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_any(data)?;
-                        *self.state__ = ReferenceTypeDeserializerState::Any(None);
+                        *self.state__ = S::Any(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback
-                            .get_or_insert(ReferenceTypeDeserializerState::Any(Some(deserializer)));
-                        *self.state__ = ReferenceTypeDeserializerState::Any(None);
+                        fallback.get_or_insert(S::Any(Some(deserializer)));
+                        *self.state__ = S::Any(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -7897,7 +7723,7 @@ pub mod cdf {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ = ReferenceTypeDeserializerState::TextBefore(None);
+                            *self.state__ = S::TextBefore(None);
                             event
                         }
                         (S::TextBefore(None), event) => {
@@ -8381,20 +8207,21 @@ pub mod cdf {
                 output: DeserializerOutput<'de, AnyElement>,
                 fallback: &mut Option<MetadataTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use MetadataTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    if matches!(&fallback, Some(MetadataTypeDeserializerState::Init__)) {
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else if self.any.len() < 1usize {
-                        fallback.get_or_insert(MetadataTypeDeserializerState::Any(None));
+                        fallback.get_or_insert(S::Any(None));
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                     } else {
-                        fallback.get_or_insert(MetadataTypeDeserializerState::Any(None));
-                        *self.state__ = MetadataTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::Any(None));
+                        *self.state__ = S::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                 }
@@ -8405,13 +8232,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_any(data)?;
-                        *self.state__ = MetadataTypeDeserializerState::Any(None);
+                        *self.state__ = S::Any(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback
-                            .get_or_insert(MetadataTypeDeserializerState::Any(Some(deserializer)));
-                        *self.state__ = MetadataTypeDeserializerState::Any(None);
+                        fallback.get_or_insert(S::Any(Some(deserializer)));
+                        *self.state__ = S::Any(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -8463,7 +8289,7 @@ pub mod cdf {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ = MetadataTypeDeserializerState::Any(None);
+                            *self.state__ = S::Any(None);
                             event
                         }
                         (S::Any(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -8580,14 +8406,15 @@ pub mod cdf {
                 output: DeserializerOutput<'de, super::ParamType>,
                 fallback: &mut Option<ModelElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ModelElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(ModelElementTypeDeserializerState::Param(None));
-                    *self.state__ = ModelElementTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::Param(None));
+                    *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -8597,14 +8424,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_param(data)?;
-                        *self.state__ = ModelElementTypeDeserializerState::Param(None);
+                        *self.state__ = S::Param(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(ModelElementTypeDeserializerState::Param(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = ModelElementTypeDeserializerState::Param(None);
+                        fallback.get_or_insert(S::Param(Some(deserializer)));
+                        *self.state__ = S::Param(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -8654,7 +8479,7 @@ pub mod cdf {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ = ModelElementTypeDeserializerState::Param(None);
+                            *self.state__ = S::Param(None);
                             event
                         }
                         (S::Param(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -8817,15 +8642,14 @@ pub mod cdf {
                 output: DeserializerOutput<'de, super::ProfileTypeContent>,
                 fallback: &mut Option<ProfileTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ProfileTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state__ = fallback
-                        .take()
-                        .unwrap_or(ProfileTypeDeserializerState::Next__);
+                    *self.state__ = fallback.take().unwrap_or(S::Next__);
                     return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -8835,12 +8659,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state__ = ProfileTypeDeserializerState::Next__;
+                        *self.state__ = S::Next__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *fallback = Some(ProfileTypeDeserializerState::Content__(deserializer));
-                        *self.state__ = ProfileTypeDeserializerState::Next__;
+                        *fallback = Some(S::Content__(deserializer));
+                        *self.state__ = S::Next__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -9446,6 +9270,7 @@ pub mod cdf {
                 fallback: Option<<super::StatusElementType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::StatusElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ProfileTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -9462,19 +9287,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_status(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            ProfileTypeContentDeserializerState::Status(values, None, None),
-                        )?;
-                        *self.state__ = ProfileTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Status(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = ProfileTypeContentDeserializerState::Status(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Status(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -9486,6 +9304,7 @@ pub mod cdf {
                 fallback: Option<<super::DcStatusType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::DcStatusType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ProfileTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -9502,19 +9321,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_dc_status(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            ProfileTypeContentDeserializerState::DcStatus(values, None, None),
-                        )?;
-                        *self.state__ = ProfileTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::DcStatus(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = ProfileTypeContentDeserializerState::DcStatus(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::DcStatus(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -9526,6 +9338,7 @@ pub mod cdf {
                 fallback: Option<<super::VersionType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::VersionType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ProfileTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -9542,19 +9355,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_version(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            ProfileTypeContentDeserializerState::Version(values, None, None),
-                        )?;
-                        *self.state__ = ProfileTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Version(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = ProfileTypeContentDeserializerState::Version(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Version(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -9566,6 +9372,7 @@ pub mod cdf {
                 fallback: Option<<super::TextWithSubType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::TextWithSubType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ProfileTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -9582,19 +9389,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_title(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            ProfileTypeContentDeserializerState::Title(values, None, None),
-                        )?;
-                        *self.state__ = ProfileTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Title(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = ProfileTypeContentDeserializerState::Title(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Title(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -9606,6 +9406,7 @@ pub mod cdf {
                 fallback: Option<<super::HtmlTextWithSubType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::HtmlTextWithSubType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ProfileTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -9622,19 +9423,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_description(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            ProfileTypeContentDeserializerState::Description(values, None, None),
-                        )?;
-                        *self.state__ = ProfileTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Description(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = ProfileTypeContentDeserializerState::Description(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Description(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -9646,6 +9440,7 @@ pub mod cdf {
                 fallback: Option<<super::ReferenceType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::ReferenceType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ProfileTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -9662,19 +9457,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_reference(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            ProfileTypeContentDeserializerState::Reference(values, None, None),
-                        )?;
-                        *self.state__ = ProfileTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Reference(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = ProfileTypeContentDeserializerState::Reference(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Reference(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -9688,6 +9476,7 @@ pub mod cdf {
                 >,
                 output: DeserializerOutput<'de, super::OverrideableCpe2IdrefType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ProfileTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -9704,19 +9493,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_platform(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            ProfileTypeContentDeserializerState::Platform(values, None, None),
-                        )?;
-                        *self.state__ = ProfileTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Platform(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = ProfileTypeContentDeserializerState::Platform(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Platform(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -9728,6 +9510,7 @@ pub mod cdf {
                 fallback: Option<<super::ProfileSelectType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::ProfileSelectType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ProfileTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -9744,19 +9527,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_select(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            ProfileTypeContentDeserializerState::Select(values, None, None),
-                        )?;
-                        *self.state__ = ProfileTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Select(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = ProfileTypeContentDeserializerState::Select(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Select(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -9770,6 +9546,7 @@ pub mod cdf {
                 >,
                 output: DeserializerOutput<'de, super::ProfileSetComplexValueType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ProfileTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -9786,21 +9563,13 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_set_complex_value(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            ProfileTypeContentDeserializerState::SetComplexValue(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ = ProfileTypeContentDeserializerState::Done__(data);
+                        let data =
+                            Self::finish_state(helper, S::SetComplexValue(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = ProfileTypeContentDeserializerState::SetComplexValue(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::SetComplexValue(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -9812,6 +9581,7 @@ pub mod cdf {
                 fallback: Option<<super::ProfileSetValueType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::ProfileSetValueType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ProfileTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -9828,19 +9598,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_set_value(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            ProfileTypeContentDeserializerState::SetValue(values, None, None),
-                        )?;
-                        *self.state__ = ProfileTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::SetValue(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = ProfileTypeContentDeserializerState::SetValue(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::SetValue(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -9852,6 +9615,7 @@ pub mod cdf {
                 fallback: Option<<super::ProfileRefineValueType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::ProfileRefineValueType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ProfileTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -9868,19 +9632,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_refine_value(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            ProfileTypeContentDeserializerState::RefineValue(values, None, None),
-                        )?;
-                        *self.state__ = ProfileTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::RefineValue(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = ProfileTypeContentDeserializerState::RefineValue(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::RefineValue(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -9892,6 +9649,7 @@ pub mod cdf {
                 fallback: Option<<super::ProfileRefineRuleType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::ProfileRefineRuleType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ProfileTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -9908,19 +9666,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_refine_rule(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            ProfileTypeContentDeserializerState::RefineRule(values, None, None),
-                        )?;
-                        *self.state__ = ProfileTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::RefineRule(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = ProfileTypeContentDeserializerState::RefineRule(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::RefineRule(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -9932,6 +9683,7 @@ pub mod cdf {
                 fallback: Option<<super::MetadataType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::MetadataType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ProfileTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -9948,19 +9700,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_metadata(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            ProfileTypeContentDeserializerState::Metadata(values, None, None),
-                        )?;
-                        *self.state__ = ProfileTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Metadata(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = ProfileTypeContentDeserializerState::Metadata(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Metadata(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -9972,6 +9717,7 @@ pub mod cdf {
                 fallback: Option<<super::SignatureType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::SignatureType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ProfileTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -9988,19 +9734,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_signature(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            ProfileTypeContentDeserializerState::Signature(values, None, None),
-                        )?;
-                        *self.state__ = ProfileTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Signature(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = ProfileTypeContentDeserializerState::Signature(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Signature(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -10600,15 +10339,14 @@ pub mod cdf {
                 output: DeserializerOutput<'de, super::ValueTypeContent>,
                 fallback: &mut Option<ValueTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ValueTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state__ = fallback
-                        .take()
-                        .unwrap_or(ValueTypeDeserializerState::Next__);
+                    *self.state__ = fallback.take().unwrap_or(S::Next__);
                     return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -10618,12 +10356,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state__ = ValueTypeDeserializerState::Next__;
+                        *self.state__ = S::Next__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *fallback = Some(ValueTypeDeserializerState::Content__(deserializer));
-                        *self.state__ = ValueTypeDeserializerState::Next__;
+                        *fallback = Some(S::Content__(deserializer));
+                        *self.state__ = S::Next__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -11392,6 +11130,7 @@ pub mod cdf {
                 fallback: Option<<super::StatusElementType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::StatusElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ValueTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -11408,19 +11147,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_status(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            ValueTypeContentDeserializerState::Status(values, None, None),
-                        )?;
-                        *self.state__ = ValueTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Status(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = ValueTypeContentDeserializerState::Status(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Status(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -11432,6 +11164,7 @@ pub mod cdf {
                 fallback: Option<<super::DcStatusType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::DcStatusType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ValueTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -11448,19 +11181,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_dc_status(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            ValueTypeContentDeserializerState::DcStatus(values, None, None),
-                        )?;
-                        *self.state__ = ValueTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::DcStatus(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = ValueTypeContentDeserializerState::DcStatus(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::DcStatus(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -11472,6 +11198,7 @@ pub mod cdf {
                 fallback: Option<<super::VersionType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::VersionType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ValueTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -11488,19 +11215,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_version(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            ValueTypeContentDeserializerState::Version(values, None, None),
-                        )?;
-                        *self.state__ = ValueTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Version(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = ValueTypeContentDeserializerState::Version(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Version(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -11512,6 +11232,7 @@ pub mod cdf {
                 fallback: Option<<super::TextWithSubType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::TextWithSubType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ValueTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -11528,19 +11249,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_title(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            ValueTypeContentDeserializerState::Title(values, None, None),
-                        )?;
-                        *self.state__ = ValueTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Title(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = ValueTypeContentDeserializerState::Title(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Title(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -11552,6 +11266,7 @@ pub mod cdf {
                 fallback: Option<<super::HtmlTextWithSubType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::HtmlTextWithSubType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ValueTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -11568,19 +11283,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_description(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            ValueTypeContentDeserializerState::Description(values, None, None),
-                        )?;
-                        *self.state__ = ValueTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Description(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = ValueTypeContentDeserializerState::Description(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Description(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -11592,6 +11300,7 @@ pub mod cdf {
                 fallback: Option<<super::WarningType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::WarningType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ValueTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -11608,19 +11317,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_warning(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            ValueTypeContentDeserializerState::Warning(values, None, None),
-                        )?;
-                        *self.state__ = ValueTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Warning(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = ValueTypeContentDeserializerState::Warning(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Warning(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -11632,6 +11334,7 @@ pub mod cdf {
                 fallback: Option<<super::TextType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::TextType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ValueTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -11648,19 +11351,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_question(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            ValueTypeContentDeserializerState::Question(values, None, None),
-                        )?;
-                        *self.state__ = ValueTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Question(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = ValueTypeContentDeserializerState::Question(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Question(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -11672,6 +11368,7 @@ pub mod cdf {
                 fallback: Option<<super::ReferenceType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::ReferenceType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ValueTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -11688,19 +11385,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_reference(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            ValueTypeContentDeserializerState::Reference(values, None, None),
-                        )?;
-                        *self.state__ = ValueTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Reference(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = ValueTypeContentDeserializerState::Reference(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Reference(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -11712,6 +11402,7 @@ pub mod cdf {
                 fallback: Option<<super::MetadataType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::MetadataType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ValueTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -11728,19 +11419,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_metadata(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            ValueTypeContentDeserializerState::Metadata(values, None, None),
-                        )?;
-                        *self.state__ = ValueTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Metadata(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = ValueTypeContentDeserializerState::Metadata(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Metadata(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -11752,6 +11436,7 @@ pub mod cdf {
                 fallback: Option<<super::SelStringType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::SelStringType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ValueTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -11768,19 +11453,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_value(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            ValueTypeContentDeserializerState::Value(values, None, None),
-                        )?;
-                        *self.state__ = ValueTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Value(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = ValueTypeContentDeserializerState::Value(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Value(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -11792,6 +11470,7 @@ pub mod cdf {
                 fallback: Option<<super::SelComplexValueType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::SelComplexValueType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ValueTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -11808,19 +11487,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_complex_value(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            ValueTypeContentDeserializerState::ComplexValue(values, None, None),
-                        )?;
-                        *self.state__ = ValueTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::ComplexValue(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = ValueTypeContentDeserializerState::ComplexValue(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::ComplexValue(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -11832,6 +11504,7 @@ pub mod cdf {
                 fallback: Option<<super::SelStringType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::SelStringType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ValueTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -11848,19 +11521,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_default(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            ValueTypeContentDeserializerState::Default(values, None, None),
-                        )?;
-                        *self.state__ = ValueTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Default(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = ValueTypeContentDeserializerState::Default(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Default(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -11872,6 +11538,7 @@ pub mod cdf {
                 fallback: Option<<super::SelComplexValueType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::SelComplexValueType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ValueTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -11888,19 +11555,13 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_complex_default(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            ValueTypeContentDeserializerState::ComplexDefault(values, None, None),
-                        )?;
-                        *self.state__ = ValueTypeContentDeserializerState::Done__(data);
+                        let data =
+                            Self::finish_state(helper, S::ComplexDefault(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = ValueTypeContentDeserializerState::ComplexDefault(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::ComplexDefault(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -11912,6 +11573,7 @@ pub mod cdf {
                 fallback: Option<<super::SelStringType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::SelStringType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ValueTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -11928,19 +11590,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_match_(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            ValueTypeContentDeserializerState::Match(values, None, None),
-                        )?;
-                        *self.state__ = ValueTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Match(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = ValueTypeContentDeserializerState::Match(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Match(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -11952,6 +11607,7 @@ pub mod cdf {
                 fallback: Option<<super::SelNumType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::SelNumType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ValueTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -11968,19 +11624,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_lower_bound(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            ValueTypeContentDeserializerState::LowerBound(values, None, None),
-                        )?;
-                        *self.state__ = ValueTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::LowerBound(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = ValueTypeContentDeserializerState::LowerBound(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::LowerBound(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -11992,6 +11641,7 @@ pub mod cdf {
                 fallback: Option<<super::SelNumType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::SelNumType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ValueTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -12008,19 +11658,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_upper_bound(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            ValueTypeContentDeserializerState::UpperBound(values, None, None),
-                        )?;
-                        *self.state__ = ValueTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::UpperBound(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = ValueTypeContentDeserializerState::UpperBound(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::UpperBound(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -12032,6 +11675,7 @@ pub mod cdf {
                 fallback: Option<<super::SelChoicesType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::SelChoicesType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ValueTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -12048,19 +11692,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_choices(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            ValueTypeContentDeserializerState::Choices(values, None, None),
-                        )?;
-                        *self.state__ = ValueTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Choices(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = ValueTypeContentDeserializerState::Choices(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Choices(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -12072,6 +11709,7 @@ pub mod cdf {
                 fallback: Option<<super::UriRefType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::UriRefType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ValueTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -12088,19 +11726,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_source(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            ValueTypeContentDeserializerState::Source(values, None, None),
-                        )?;
-                        *self.state__ = ValueTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Source(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = ValueTypeContentDeserializerState::Source(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Source(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -12112,6 +11743,7 @@ pub mod cdf {
                 fallback: Option<<super::SignatureType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::SignatureType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ValueTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -12128,19 +11760,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_signature(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            ValueTypeContentDeserializerState::Signature(values, None, None),
-                        )?;
-                        *self.state__ = ValueTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Signature(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = ValueTypeContentDeserializerState::Signature(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Signature(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -12854,15 +12479,14 @@ pub mod cdf {
                 output: DeserializerOutput<'de, super::GroupTypeContent>,
                 fallback: &mut Option<GroupTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use GroupTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state__ = fallback
-                        .take()
-                        .unwrap_or(GroupTypeDeserializerState::Next__);
+                    *self.state__ = fallback.take().unwrap_or(S::Next__);
                     return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -12872,12 +12496,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state__ = GroupTypeDeserializerState::Next__;
+                        *self.state__ = S::Next__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *fallback = Some(GroupTypeDeserializerState::Content__(deserializer));
-                        *self.state__ = GroupTypeDeserializerState::Next__;
+                        *fallback = Some(S::Content__(deserializer));
+                        *self.state__ = S::Next__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -13569,6 +13193,7 @@ pub mod cdf {
                 fallback: Option<<super::StatusElementType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::StatusElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use GroupTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -13585,19 +13210,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_status(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            GroupTypeContentDeserializerState::Status(values, None, None),
-                        )?;
-                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Status(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = GroupTypeContentDeserializerState::Status(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Status(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -13609,6 +13227,7 @@ pub mod cdf {
                 fallback: Option<<super::DcStatusType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::DcStatusType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use GroupTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -13625,19 +13244,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_dc_status(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            GroupTypeContentDeserializerState::DcStatus(values, None, None),
-                        )?;
-                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::DcStatus(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = GroupTypeContentDeserializerState::DcStatus(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::DcStatus(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -13649,6 +13261,7 @@ pub mod cdf {
                 fallback: Option<<super::VersionType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::VersionType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use GroupTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -13665,19 +13278,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_version(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            GroupTypeContentDeserializerState::Version(values, None, None),
-                        )?;
-                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Version(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = GroupTypeContentDeserializerState::Version(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Version(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -13689,6 +13295,7 @@ pub mod cdf {
                 fallback: Option<<super::TextWithSubType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::TextWithSubType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use GroupTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -13705,19 +13312,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_title(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            GroupTypeContentDeserializerState::Title(values, None, None),
-                        )?;
-                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Title(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = GroupTypeContentDeserializerState::Title(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Title(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -13729,6 +13329,7 @@ pub mod cdf {
                 fallback: Option<<super::HtmlTextWithSubType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::HtmlTextWithSubType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use GroupTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -13745,19 +13346,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_description(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            GroupTypeContentDeserializerState::Description(values, None, None),
-                        )?;
-                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Description(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = GroupTypeContentDeserializerState::Description(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Description(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -13769,6 +13363,7 @@ pub mod cdf {
                 fallback: Option<<super::WarningType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::WarningType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use GroupTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -13785,19 +13380,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_warning(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            GroupTypeContentDeserializerState::Warning(values, None, None),
-                        )?;
-                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Warning(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = GroupTypeContentDeserializerState::Warning(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Warning(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -13809,6 +13397,7 @@ pub mod cdf {
                 fallback: Option<<super::TextType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::TextType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use GroupTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -13825,19 +13414,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_question(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            GroupTypeContentDeserializerState::Question(values, None, None),
-                        )?;
-                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Question(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = GroupTypeContentDeserializerState::Question(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Question(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -13849,6 +13431,7 @@ pub mod cdf {
                 fallback: Option<<super::ReferenceType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::ReferenceType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use GroupTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -13865,19 +13448,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_reference(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            GroupTypeContentDeserializerState::Reference(values, None, None),
-                        )?;
-                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Reference(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = GroupTypeContentDeserializerState::Reference(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Reference(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -13889,6 +13465,7 @@ pub mod cdf {
                 fallback: Option<<super::MetadataType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::MetadataType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use GroupTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -13905,19 +13482,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_metadata(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            GroupTypeContentDeserializerState::Metadata(values, None, None),
-                        )?;
-                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Metadata(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = GroupTypeContentDeserializerState::Metadata(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Metadata(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -13929,6 +13499,7 @@ pub mod cdf {
                 fallback: Option<<super::HtmlTextWithSubType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::HtmlTextWithSubType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use GroupTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -13945,19 +13516,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_rationale(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            GroupTypeContentDeserializerState::Rationale(values, None, None),
-                        )?;
-                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Rationale(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = GroupTypeContentDeserializerState::Rationale(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Rationale(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -13971,6 +13535,7 @@ pub mod cdf {
                 >,
                 output: DeserializerOutput<'de, super::OverrideableCpe2IdrefType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use GroupTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -13987,19 +13552,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_platform(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            GroupTypeContentDeserializerState::Platform(values, None, None),
-                        )?;
-                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Platform(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = GroupTypeContentDeserializerState::Platform(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Platform(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -14011,6 +13569,7 @@ pub mod cdf {
                 fallback: Option<<super::IdrefListType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::IdrefListType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use GroupTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -14027,19 +13586,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_requires(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            GroupTypeContentDeserializerState::Requires(values, None, None),
-                        )?;
-                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Requires(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = GroupTypeContentDeserializerState::Requires(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Requires(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -14051,6 +13603,7 @@ pub mod cdf {
                 fallback: Option<<super::IdrefType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::IdrefType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use GroupTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -14067,19 +13620,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_conflicts(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            GroupTypeContentDeserializerState::Conflicts(values, None, None),
-                        )?;
-                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Conflicts(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = GroupTypeContentDeserializerState::Conflicts(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Conflicts(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -14091,6 +13637,7 @@ pub mod cdf {
                 fallback: Option<<super::ValueType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::ValueType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use GroupTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -14107,19 +13654,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_value(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            GroupTypeContentDeserializerState::Value(values, None, None),
-                        )?;
-                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Value(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = GroupTypeContentDeserializerState::Value(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Value(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -14131,6 +13671,7 @@ pub mod cdf {
                 fallback: Option<<super::GroupType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::GroupType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use GroupTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -14147,19 +13688,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_group(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            GroupTypeContentDeserializerState::Group(values, None, None),
-                        )?;
-                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Group(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = GroupTypeContentDeserializerState::Group(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Group(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -14171,6 +13705,7 @@ pub mod cdf {
                 fallback: Option<<super::RuleType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::RuleType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use GroupTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -14187,19 +13722,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_rule(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            GroupTypeContentDeserializerState::Rule(values, None, None),
-                        )?;
-                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Rule(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = GroupTypeContentDeserializerState::Rule(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Rule(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -14211,6 +13739,7 @@ pub mod cdf {
                 fallback: Option<<super::SignatureType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::SignatureType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use GroupTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -14227,19 +13756,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_signature(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            GroupTypeContentDeserializerState::Signature(values, None, None),
-                        )?;
-                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Signature(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = GroupTypeContentDeserializerState::Signature(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Signature(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -14925,13 +14447,14 @@ pub mod cdf {
                 output: DeserializerOutput<'de, super::RuleTypeContent>,
                 fallback: &mut Option<RuleTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use RuleTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state__ = fallback.take().unwrap_or(RuleTypeDeserializerState::Next__);
+                    *self.state__ = fallback.take().unwrap_or(S::Next__);
                     return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -14941,12 +14464,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state__ = RuleTypeDeserializerState::Next__;
+                        *self.state__ = S::Next__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *fallback = Some(RuleTypeDeserializerState::Content__(deserializer));
-                        *self.state__ = RuleTypeDeserializerState::Next__;
+                        *fallback = Some(S::Content__(deserializer));
+                        *self.state__ = S::Next__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -15775,6 +15298,7 @@ pub mod cdf {
                 fallback: Option<<super::StatusElementType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::StatusElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use RuleTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -15791,19 +15315,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_status(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            RuleTypeContentDeserializerState::Status(values, None, None),
-                        )?;
-                        *self.state__ = RuleTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Status(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = RuleTypeContentDeserializerState::Status(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Status(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -15815,6 +15332,7 @@ pub mod cdf {
                 fallback: Option<<super::DcStatusType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::DcStatusType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use RuleTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -15831,19 +15349,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_dc_status(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            RuleTypeContentDeserializerState::DcStatus(values, None, None),
-                        )?;
-                        *self.state__ = RuleTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::DcStatus(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = RuleTypeContentDeserializerState::DcStatus(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::DcStatus(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -15855,6 +15366,7 @@ pub mod cdf {
                 fallback: Option<<super::VersionType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::VersionType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use RuleTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -15871,19 +15383,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_version(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            RuleTypeContentDeserializerState::Version(values, None, None),
-                        )?;
-                        *self.state__ = RuleTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Version(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = RuleTypeContentDeserializerState::Version(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Version(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -15895,6 +15400,7 @@ pub mod cdf {
                 fallback: Option<<super::TextWithSubType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::TextWithSubType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use RuleTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -15911,19 +15417,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_title(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            RuleTypeContentDeserializerState::Title(values, None, None),
-                        )?;
-                        *self.state__ = RuleTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Title(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = RuleTypeContentDeserializerState::Title(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Title(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -15935,6 +15434,7 @@ pub mod cdf {
                 fallback: Option<<super::HtmlTextWithSubType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::HtmlTextWithSubType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use RuleTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -15951,19 +15451,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_description(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            RuleTypeContentDeserializerState::Description(values, None, None),
-                        )?;
-                        *self.state__ = RuleTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Description(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = RuleTypeContentDeserializerState::Description(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Description(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -15975,6 +15468,7 @@ pub mod cdf {
                 fallback: Option<<super::WarningType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::WarningType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use RuleTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -15991,19 +15485,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_warning(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            RuleTypeContentDeserializerState::Warning(values, None, None),
-                        )?;
-                        *self.state__ = RuleTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Warning(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = RuleTypeContentDeserializerState::Warning(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Warning(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -16015,6 +15502,7 @@ pub mod cdf {
                 fallback: Option<<super::TextType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::TextType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use RuleTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -16031,19 +15519,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_question(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            RuleTypeContentDeserializerState::Question(values, None, None),
-                        )?;
-                        *self.state__ = RuleTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Question(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = RuleTypeContentDeserializerState::Question(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Question(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -16055,6 +15536,7 @@ pub mod cdf {
                 fallback: Option<<super::ReferenceType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::ReferenceType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use RuleTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -16071,19 +15553,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_reference(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            RuleTypeContentDeserializerState::Reference(values, None, None),
-                        )?;
-                        *self.state__ = RuleTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Reference(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = RuleTypeContentDeserializerState::Reference(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Reference(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -16095,6 +15570,7 @@ pub mod cdf {
                 fallback: Option<<super::MetadataType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::MetadataType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use RuleTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -16111,19 +15587,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_metadata(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            RuleTypeContentDeserializerState::Metadata(values, None, None),
-                        )?;
-                        *self.state__ = RuleTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Metadata(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = RuleTypeContentDeserializerState::Metadata(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Metadata(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -16135,6 +15604,7 @@ pub mod cdf {
                 fallback: Option<<super::HtmlTextWithSubType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::HtmlTextWithSubType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use RuleTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -16151,19 +15621,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_rationale(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            RuleTypeContentDeserializerState::Rationale(values, None, None),
-                        )?;
-                        *self.state__ = RuleTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Rationale(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = RuleTypeContentDeserializerState::Rationale(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Rationale(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -16177,6 +15640,7 @@ pub mod cdf {
                 >,
                 output: DeserializerOutput<'de, super::OverrideableCpe2IdrefType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use RuleTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -16193,19 +15657,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_platform(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            RuleTypeContentDeserializerState::Platform(values, None, None),
-                        )?;
-                        *self.state__ = RuleTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Platform(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = RuleTypeContentDeserializerState::Platform(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Platform(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -16217,6 +15674,7 @@ pub mod cdf {
                 fallback: Option<<super::IdrefListType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::IdrefListType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use RuleTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -16233,19 +15691,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_requires(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            RuleTypeContentDeserializerState::Requires(values, None, None),
-                        )?;
-                        *self.state__ = RuleTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Requires(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = RuleTypeContentDeserializerState::Requires(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Requires(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -16257,6 +15708,7 @@ pub mod cdf {
                 fallback: Option<<super::IdrefType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::IdrefType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use RuleTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -16273,19 +15725,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_conflicts(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            RuleTypeContentDeserializerState::Conflicts(values, None, None),
-                        )?;
-                        *self.state__ = RuleTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Conflicts(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = RuleTypeContentDeserializerState::Conflicts(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Conflicts(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -16297,6 +15742,7 @@ pub mod cdf {
                 fallback: Option<<super::IdentType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::IdentType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use RuleTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -16313,19 +15759,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_ident(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            RuleTypeContentDeserializerState::Ident(values, None, None),
-                        )?;
-                        *self.state__ = RuleTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Ident(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = RuleTypeContentDeserializerState::Ident(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Ident(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -16337,6 +15776,7 @@ pub mod cdf {
                 fallback: Option<<String as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, String>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use RuleTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -16353,19 +15793,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_impact_metric(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            RuleTypeContentDeserializerState::ImpactMetric(values, None, None),
-                        )?;
-                        *self.state__ = RuleTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::ImpactMetric(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = RuleTypeContentDeserializerState::ImpactMetric(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::ImpactMetric(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -16377,6 +15810,7 @@ pub mod cdf {
                 fallback: Option<<super::ProfileNoteType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::ProfileNoteType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use RuleTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -16393,19 +15827,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_profile_note(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            RuleTypeContentDeserializerState::ProfileNote(values, None, None),
-                        )?;
-                        *self.state__ = RuleTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::ProfileNote(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = RuleTypeContentDeserializerState::ProfileNote(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::ProfileNote(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -16417,6 +15844,7 @@ pub mod cdf {
                 fallback: Option<<super::FixTextType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::FixTextType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use RuleTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -16433,19 +15861,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_fixtext(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            RuleTypeContentDeserializerState::Fixtext(values, None, None),
-                        )?;
-                        *self.state__ = RuleTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Fixtext(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = RuleTypeContentDeserializerState::Fixtext(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Fixtext(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -16457,6 +15878,7 @@ pub mod cdf {
                 fallback: Option<<super::FixType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::FixType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use RuleTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -16473,16 +15895,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_fix(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            RuleTypeContentDeserializerState::Fix(values, None, None),
-                        )?;
-                        *self.state__ = RuleTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Fix(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ =
-                            RuleTypeContentDeserializerState::Fix(values, None, Some(deserializer));
+                        *self.state__ = S::Fix(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -16494,6 +15912,7 @@ pub mod cdf {
                 fallback: Option<<super::CheckType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::CheckType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use RuleTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -16510,19 +15929,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_check(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            RuleTypeContentDeserializerState::Check(values, None, None),
-                        )?;
-                        *self.state__ = RuleTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Check(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = RuleTypeContentDeserializerState::Check(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Check(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -16534,6 +15946,7 @@ pub mod cdf {
                 fallback: Option<<super::ComplexCheckType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::ComplexCheckType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use RuleTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -16550,19 +15963,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_complex_check(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            RuleTypeContentDeserializerState::ComplexCheck(values, None, None),
-                        )?;
-                        *self.state__ = RuleTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::ComplexCheck(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = RuleTypeContentDeserializerState::ComplexCheck(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::ComplexCheck(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -16574,6 +15980,7 @@ pub mod cdf {
                 fallback: Option<<super::SignatureType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::SignatureType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use RuleTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -16590,19 +15997,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_signature(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            RuleTypeContentDeserializerState::Signature(values, None, None),
-                        )?;
-                        *self.state__ = RuleTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Signature(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = RuleTypeContentDeserializerState::Signature(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Signature(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -17324,15 +16724,14 @@ pub mod cdf {
                 output: DeserializerOutput<'de, super::TestResultTypeContent>,
                 fallback: &mut Option<TestResultTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use TestResultTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state__ = fallback
-                        .take()
-                        .unwrap_or(TestResultTypeDeserializerState::Next__);
+                    *self.state__ = fallback.take().unwrap_or(S::Next__);
                     return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -17342,12 +16741,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state__ = TestResultTypeDeserializerState::Next__;
+                        *self.state__ = S::Next__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *fallback = Some(TestResultTypeDeserializerState::Content__(deserializer));
-                        *self.state__ = TestResultTypeDeserializerState::Next__;
+                        *fallback = Some(S::Content__(deserializer));
+                        *self.state__ = S::Next__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -18121,6 +17520,7 @@ pub mod cdf {
                 fallback: Option<<super::BenchmarkReferenceType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::BenchmarkReferenceType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use TestResultTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -18137,19 +17537,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_benchmark(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            TestResultTypeContentDeserializerState::Benchmark(values, None, None),
-                        )?;
-                        *self.state__ = TestResultTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Benchmark(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = TestResultTypeContentDeserializerState::Benchmark(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Benchmark(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -18161,6 +17554,7 @@ pub mod cdf {
                 fallback: Option<<super::TailoringReferenceType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::TailoringReferenceType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use TestResultTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -18177,21 +17571,13 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_tailoring_file(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            TestResultTypeContentDeserializerState::TailoringFile(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ = TestResultTypeContentDeserializerState::Done__(data);
+                        let data =
+                            Self::finish_state(helper, S::TailoringFile(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = TestResultTypeContentDeserializerState::TailoringFile(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::TailoringFile(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -18203,6 +17589,7 @@ pub mod cdf {
                 fallback: Option<<super::TextType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::TextType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use TestResultTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -18219,19 +17606,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_title(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            TestResultTypeContentDeserializerState::Title(values, None, None),
-                        )?;
-                        *self.state__ = TestResultTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Title(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = TestResultTypeContentDeserializerState::Title(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Title(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -18243,6 +17623,7 @@ pub mod cdf {
                 fallback: Option<<super::TextType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::TextType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use TestResultTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -18259,19 +17640,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_remark(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            TestResultTypeContentDeserializerState::Remark(values, None, None),
-                        )?;
-                        *self.state__ = TestResultTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Remark(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = TestResultTypeContentDeserializerState::Remark(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Remark(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -18283,6 +17657,7 @@ pub mod cdf {
                 fallback: Option<<String as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, String>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use TestResultTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -18299,21 +17674,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_organization(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            TestResultTypeContentDeserializerState::Organization(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ = TestResultTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Organization(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = TestResultTypeContentDeserializerState::Organization(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Organization(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -18325,6 +17691,7 @@ pub mod cdf {
                 fallback: Option<<super::IdentityType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::IdentityType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use TestResultTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -18341,19 +17708,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_identity(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            TestResultTypeContentDeserializerState::Identity(values, None, None),
-                        )?;
-                        *self.state__ = TestResultTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Identity(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = TestResultTypeContentDeserializerState::Identity(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Identity(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -18365,6 +17725,7 @@ pub mod cdf {
                 fallback: Option<<super::IdrefType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::IdrefType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use TestResultTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -18381,19 +17742,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_profile(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            TestResultTypeContentDeserializerState::Profile(values, None, None),
-                        )?;
-                        *self.state__ = TestResultTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Profile(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = TestResultTypeContentDeserializerState::Profile(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Profile(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -18405,6 +17759,7 @@ pub mod cdf {
                 fallback: Option<<String as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, String>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use TestResultTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -18421,19 +17776,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_target(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            TestResultTypeContentDeserializerState::Target(values, None, None),
-                        )?;
-                        *self.state__ = TestResultTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Target(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = TestResultTypeContentDeserializerState::Target(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Target(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -18445,6 +17793,7 @@ pub mod cdf {
                 fallback: Option<<String as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, String>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use TestResultTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -18461,21 +17810,13 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_target_address(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            TestResultTypeContentDeserializerState::TargetAddress(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ = TestResultTypeContentDeserializerState::Done__(data);
+                        let data =
+                            Self::finish_state(helper, S::TargetAddress(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = TestResultTypeContentDeserializerState::TargetAddress(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::TargetAddress(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -18487,6 +17828,7 @@ pub mod cdf {
                 fallback: Option<<super::TargetFactsType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::TargetFactsType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use TestResultTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -18503,19 +17845,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_target_facts(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            TestResultTypeContentDeserializerState::TargetFacts(values, None, None),
-                        )?;
-                        *self.state__ = TestResultTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::TargetFacts(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = TestResultTypeContentDeserializerState::TargetFacts(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::TargetFacts(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -18527,6 +17862,7 @@ pub mod cdf {
                 fallback: Option<<super::TargetIdRefType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::TargetIdRefType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use TestResultTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -18543,19 +17879,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_target_id_ref(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            TestResultTypeContentDeserializerState::TargetIdRef(values, None, None),
-                        )?;
-                        *self.state__ = TestResultTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::TargetIdRef(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = TestResultTypeContentDeserializerState::TargetIdRef(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::TargetIdRef(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -18567,6 +17896,7 @@ pub mod cdf {
                 fallback: Option<<AnyElement as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, AnyElement>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use TestResultTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -18583,19 +17913,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_any(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            TestResultTypeContentDeserializerState::Any(values, None, None),
-                        )?;
-                        *self.state__ = TestResultTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Any(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = TestResultTypeContentDeserializerState::Any(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Any(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -18607,6 +17930,7 @@ pub mod cdf {
                 fallback: Option<<super::Cpe2IdrefType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::Cpe2IdrefType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use TestResultTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -18623,19 +17947,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_platform(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            TestResultTypeContentDeserializerState::Platform(values, None, None),
-                        )?;
-                        *self.state__ = TestResultTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Platform(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = TestResultTypeContentDeserializerState::Platform(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Platform(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -18647,6 +17964,7 @@ pub mod cdf {
                 fallback: Option<<super::ProfileSetValueType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::ProfileSetValueType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use TestResultTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -18663,19 +17981,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_set_value(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            TestResultTypeContentDeserializerState::SetValue(values, None, None),
-                        )?;
-                        *self.state__ = TestResultTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::SetValue(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = TestResultTypeContentDeserializerState::SetValue(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::SetValue(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -18689,6 +18000,7 @@ pub mod cdf {
                 >,
                 output: DeserializerOutput<'de, super::ProfileSetComplexValueType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use TestResultTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -18705,21 +18017,13 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_set_complex_value(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            TestResultTypeContentDeserializerState::SetComplexValue(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ = TestResultTypeContentDeserializerState::Done__(data);
+                        let data =
+                            Self::finish_state(helper, S::SetComplexValue(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = TestResultTypeContentDeserializerState::SetComplexValue(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::SetComplexValue(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -18731,6 +18035,7 @@ pub mod cdf {
                 fallback: Option<<super::RuleResultType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::RuleResultType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use TestResultTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -18747,19 +18052,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_rule_result(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            TestResultTypeContentDeserializerState::RuleResult(values, None, None),
-                        )?;
-                        *self.state__ = TestResultTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::RuleResult(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = TestResultTypeContentDeserializerState::RuleResult(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::RuleResult(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -18771,6 +18069,7 @@ pub mod cdf {
                 fallback: Option<<super::ScoreType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::ScoreType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use TestResultTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -18787,19 +18086,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_score(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            TestResultTypeContentDeserializerState::Score(values, None, None),
-                        )?;
-                        *self.state__ = TestResultTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Score(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = TestResultTypeContentDeserializerState::Score(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Score(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -18811,6 +18103,7 @@ pub mod cdf {
                 fallback: Option<<super::MetadataType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::MetadataType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use TestResultTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -18827,19 +18120,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_metadata(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            TestResultTypeContentDeserializerState::Metadata(values, None, None),
-                        )?;
-                        *self.state__ = TestResultTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Metadata(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = TestResultTypeContentDeserializerState::Metadata(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Metadata(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -18851,6 +18137,7 @@ pub mod cdf {
                 fallback: Option<<super::SignatureType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::SignatureType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use TestResultTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -18867,19 +18154,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_signature(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            TestResultTypeContentDeserializerState::Signature(values, None, None),
-                        )?;
-                        *self.state__ = TestResultTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Signature(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = TestResultTypeContentDeserializerState::Signature(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Signature(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -19504,14 +18784,15 @@ pub mod cdf {
                 output: DeserializerOutput<'de, AnyElement>,
                 fallback: &mut Option<SignatureTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use SignatureTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(SignatureTypeDeserializerState::Any(None));
-                    if matches!(&fallback, Some(SignatureTypeDeserializerState::Init__)) {
+                    fallback.get_or_insert(S::Any(None));
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -19524,13 +18805,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_any(data)?;
-                        *self.state__ = SignatureTypeDeserializerState::Done__;
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback
-                            .get_or_insert(SignatureTypeDeserializerState::Any(Some(deserializer)));
-                        *self.state__ = SignatureTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::Any(Some(deserializer)));
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -19582,7 +18862,7 @@ pub mod cdf {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ = SignatureTypeDeserializerState::Any(None);
+                            *self.state__ = S::Any(None);
                             event
                         }
                         (S::Any(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -19936,14 +19216,15 @@ pub mod cdf {
                 output: DeserializerOutput<'de, Text>,
                 fallback: &mut Option<TextWithSubTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use TextWithSubTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(TextWithSubTypeDeserializerState::TextBefore(None));
-                    *self.state__ = TextWithSubTypeDeserializerState::Sub(None);
+                    fallback.get_or_insert(S::TextBefore(None));
+                    *self.state__ = S::Sub(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -19953,14 +19234,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_text_before(data)?;
-                        *self.state__ = TextWithSubTypeDeserializerState::Sub(None);
+                        *self.state__ = S::Sub(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(TextWithSubTypeDeserializerState::TextBefore(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = TextWithSubTypeDeserializerState::Sub(None);
+                        fallback.get_or_insert(S::TextBefore(Some(deserializer)));
+                        *self.state__ = S::Sub(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -19971,14 +19250,15 @@ pub mod cdf {
                 output: DeserializerOutput<'de, Mixed<super::SubType>>,
                 fallback: &mut Option<TextWithSubTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use TextWithSubTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(TextWithSubTypeDeserializerState::Sub(None));
-                    *self.state__ = TextWithSubTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::Sub(None));
+                    *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -19988,14 +19268,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_sub(data)?;
-                        *self.state__ = TextWithSubTypeDeserializerState::Sub(None);
+                        *self.state__ = S::Sub(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(TextWithSubTypeDeserializerState::Sub(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = TextWithSubTypeDeserializerState::Sub(None);
+                        fallback.get_or_insert(S::Sub(Some(deserializer)));
+                        *self.state__ = S::Sub(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -20057,7 +19335,7 @@ pub mod cdf {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ = TextWithSubTypeDeserializerState::TextBefore(None);
+                            *self.state__ = S::TextBefore(None);
                             event
                         }
                         (S::TextBefore(None), event) => {
@@ -20290,14 +19568,15 @@ pub mod cdf {
                 output: DeserializerOutput<'de, super::TextType>,
                 fallback: &mut Option<ProfileSelectTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ProfileSelectTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(ProfileSelectTypeDeserializerState::Remark(None));
-                    *self.state__ = ProfileSelectTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::Remark(None));
+                    *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -20307,14 +19586,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_remark(data)?;
-                        *self.state__ = ProfileSelectTypeDeserializerState::Remark(None);
+                        *self.state__ = S::Remark(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(ProfileSelectTypeDeserializerState::Remark(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = ProfileSelectTypeDeserializerState::Remark(None);
+                        fallback.get_or_insert(S::Remark(Some(deserializer)));
+                        *self.state__ = S::Remark(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -20364,7 +19641,7 @@ pub mod cdf {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ = ProfileSelectTypeDeserializerState::Remark(None);
+                            *self.state__ = S::Remark(None);
                             event
                         }
                         (S::Remark(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -20477,14 +19754,15 @@ pub mod cdf {
                 output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<ProfileSetComplexValueTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ProfileSetComplexValueTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(ProfileSetComplexValueTypeDeserializerState::Item(None));
-                    *self.state__ = ProfileSetComplexValueTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::Item(None));
+                    *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -20494,14 +19772,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_item(data)?;
-                        *self.state__ = ProfileSetComplexValueTypeDeserializerState::Item(None);
+                        *self.state__ = S::Item(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(ProfileSetComplexValueTypeDeserializerState::Item(
-                            Some(deserializer),
-                        ));
-                        *self.state__ = ProfileSetComplexValueTypeDeserializerState::Item(None);
+                        fallback.get_or_insert(S::Item(Some(deserializer)));
+                        *self.state__ = S::Item(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -20553,7 +19829,7 @@ pub mod cdf {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ = ProfileSetComplexValueTypeDeserializerState::Item(None);
+                            *self.state__ = S::Item(None);
                             event
                         }
                         (S::Item(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -20819,14 +20095,15 @@ pub mod cdf {
                 output: DeserializerOutput<'de, super::TextType>,
                 fallback: &mut Option<ProfileRefineValueTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ProfileRefineValueTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(ProfileRefineValueTypeDeserializerState::Remark(None));
-                    *self.state__ = ProfileRefineValueTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::Remark(None));
+                    *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -20836,14 +20113,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_remark(data)?;
-                        *self.state__ = ProfileRefineValueTypeDeserializerState::Remark(None);
+                        *self.state__ = S::Remark(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(ProfileRefineValueTypeDeserializerState::Remark(
-                            Some(deserializer),
-                        ));
-                        *self.state__ = ProfileRefineValueTypeDeserializerState::Remark(None);
+                        fallback.get_or_insert(S::Remark(Some(deserializer)));
+                        *self.state__ = S::Remark(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -20893,7 +20168,7 @@ pub mod cdf {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ = ProfileRefineValueTypeDeserializerState::Remark(None);
+                            *self.state__ = S::Remark(None);
                             event
                         }
                         (S::Remark(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -21041,14 +20316,15 @@ pub mod cdf {
                 output: DeserializerOutput<'de, super::TextType>,
                 fallback: &mut Option<ProfileRefineRuleTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ProfileRefineRuleTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(ProfileRefineRuleTypeDeserializerState::Remark(None));
-                    *self.state__ = ProfileRefineRuleTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::Remark(None));
+                    *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -21058,14 +20334,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_remark(data)?;
-                        *self.state__ = ProfileRefineRuleTypeDeserializerState::Remark(None);
+                        *self.state__ = S::Remark(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(ProfileRefineRuleTypeDeserializerState::Remark(
-                            Some(deserializer),
-                        ));
-                        *self.state__ = ProfileRefineRuleTypeDeserializerState::Remark(None);
+                        fallback.get_or_insert(S::Remark(Some(deserializer)));
+                        *self.state__ = S::Remark(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -21115,7 +20389,7 @@ pub mod cdf {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ = ProfileRefineRuleTypeDeserializerState::Remark(None);
+                            *self.state__ = S::Remark(None);
                             event
                         }
                         (S::Remark(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -21245,15 +20519,14 @@ pub mod cdf {
                 output: DeserializerOutput<'de, super::WarningTypeContent>,
                 fallback: &mut Option<WarningTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use WarningTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state__ = fallback
-                        .take()
-                        .unwrap_or(WarningTypeDeserializerState::Next__);
+                    *self.state__ = fallback.take().unwrap_or(S::Next__);
                     return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -21263,12 +20536,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state__ = WarningTypeDeserializerState::Next__;
+                        *self.state__ = S::Next__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *fallback = Some(WarningTypeDeserializerState::Content__(deserializer));
-                        *self.state__ = WarningTypeDeserializerState::Next__;
+                        *fallback = Some(S::Content__(deserializer));
+                        *self.state__ = S::Next__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -21480,6 +20753,7 @@ pub mod cdf {
                 fallback: Option<<super::SubType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::SubType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use WarningTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -21496,19 +20770,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_sub(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            WarningTypeContentDeserializerState::Sub(values, None, None),
-                        )?;
-                        *self.state__ = WarningTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Sub(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = WarningTypeContentDeserializerState::Sub(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Sub(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -21520,6 +20787,7 @@ pub mod cdf {
                 fallback: Option<<AnyElement as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, AnyElement>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use WarningTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -21536,19 +20804,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_any(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            WarningTypeContentDeserializerState::Any(values, None, None),
-                        )?;
-                        *self.state__ = WarningTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Any(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = WarningTypeContentDeserializerState::Any(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Any(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -21560,6 +20821,7 @@ pub mod cdf {
                 fallback: Option<<Text as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, Text>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use WarningTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -21576,19 +20838,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_text(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            WarningTypeContentDeserializerState::Text(values, None, None),
-                        )?;
-                        *self.state__ = WarningTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Text(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = WarningTypeContentDeserializerState::Text(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Text(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -21930,14 +21185,15 @@ pub mod cdf {
                 output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<SelComplexValueTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use SelComplexValueTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(SelComplexValueTypeDeserializerState::Item(None));
-                    *self.state__ = SelComplexValueTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::Item(None));
+                    *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -21947,14 +21203,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_item(data)?;
-                        *self.state__ = SelComplexValueTypeDeserializerState::Item(None);
+                        *self.state__ = S::Item(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(SelComplexValueTypeDeserializerState::Item(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = SelComplexValueTypeDeserializerState::Item(None);
+                        fallback.get_or_insert(S::Item(Some(deserializer)));
+                        *self.state__ = S::Item(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -22004,7 +21258,7 @@ pub mod cdf {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ = SelComplexValueTypeDeserializerState::Item(None);
+                            *self.state__ = S::Item(None);
                             event
                         }
                         (S::Item(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -22255,15 +21509,14 @@ pub mod cdf {
                 output: DeserializerOutput<'de, super::SelChoicesTypeContent>,
                 fallback: &mut Option<SelChoicesTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use SelChoicesTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state__ = fallback
-                        .take()
-                        .unwrap_or(SelChoicesTypeDeserializerState::Next__);
+                    *self.state__ = fallback.take().unwrap_or(S::Next__);
                     return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -22273,12 +21526,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state__ = SelChoicesTypeDeserializerState::Next__;
+                        *self.state__ = S::Next__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *fallback = Some(SelChoicesTypeDeserializerState::Content__(deserializer));
-                        *self.state__ = SelChoicesTypeDeserializerState::Next__;
+                        *fallback = Some(S::Content__(deserializer));
+                        *self.state__ = S::Next__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -22467,6 +21720,7 @@ pub mod cdf {
                 fallback: Option<<String as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, String>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use SelChoicesTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -22483,19 +21737,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_choice(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            SelChoicesTypeContentDeserializerState::Choice(values, None, None),
-                        )?;
-                        *self.state__ = SelChoicesTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Choice(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = SelChoicesTypeContentDeserializerState::Choice(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Choice(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -22507,6 +21754,7 @@ pub mod cdf {
                 fallback: Option<<super::ComplexValueType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::ComplexValueType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use SelChoicesTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -22523,21 +21771,13 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_complex_choice(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            SelChoicesTypeContentDeserializerState::ComplexChoice(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ = SelChoicesTypeContentDeserializerState::Done__(data);
+                        let data =
+                            Self::finish_state(helper, S::ComplexChoice(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = SelChoicesTypeContentDeserializerState::ComplexChoice(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::ComplexChoice(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -23094,15 +22334,14 @@ pub mod cdf {
                 output: DeserializerOutput<'de, super::ProfileNoteTypeContent>,
                 fallback: &mut Option<ProfileNoteTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ProfileNoteTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state__ = fallback
-                        .take()
-                        .unwrap_or(ProfileNoteTypeDeserializerState::Next__);
+                    *self.state__ = fallback.take().unwrap_or(S::Next__);
                     return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -23112,12 +22351,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state__ = ProfileNoteTypeDeserializerState::Next__;
+                        *self.state__ = S::Next__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *fallback = Some(ProfileNoteTypeDeserializerState::Content__(deserializer));
-                        *self.state__ = ProfileNoteTypeDeserializerState::Next__;
+                        *fallback = Some(S::Content__(deserializer));
+                        *self.state__ = S::Next__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -23331,6 +22570,7 @@ pub mod cdf {
                 fallback: Option<<super::SubType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::SubType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ProfileNoteTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -23347,19 +22587,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_sub(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            ProfileNoteTypeContentDeserializerState::Sub(values, None, None),
-                        )?;
-                        *self.state__ = ProfileNoteTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Sub(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = ProfileNoteTypeContentDeserializerState::Sub(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Sub(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -23371,6 +22604,7 @@ pub mod cdf {
                 fallback: Option<<AnyElement as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, AnyElement>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ProfileNoteTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -23387,19 +22621,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_any(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            ProfileNoteTypeContentDeserializerState::Any(values, None, None),
-                        )?;
-                        *self.state__ = ProfileNoteTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Any(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = ProfileNoteTypeContentDeserializerState::Any(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Any(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -23411,6 +22638,7 @@ pub mod cdf {
                 fallback: Option<<Text as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, Text>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ProfileNoteTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -23427,19 +22655,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_text(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            ProfileNoteTypeContentDeserializerState::Text(values, None, None),
-                        )?;
-                        *self.state__ = ProfileNoteTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Text(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = ProfileNoteTypeContentDeserializerState::Text(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Text(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -23694,15 +22915,14 @@ pub mod cdf {
                 output: DeserializerOutput<'de, super::FixTextTypeContent>,
                 fallback: &mut Option<FixTextTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use FixTextTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state__ = fallback
-                        .take()
-                        .unwrap_or(FixTextTypeDeserializerState::Next__);
+                    *self.state__ = fallback.take().unwrap_or(S::Next__);
                     return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -23712,12 +22932,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state__ = FixTextTypeDeserializerState::Next__;
+                        *self.state__ = S::Next__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *fallback = Some(FixTextTypeDeserializerState::Content__(deserializer));
-                        *self.state__ = FixTextTypeDeserializerState::Next__;
+                        *fallback = Some(S::Content__(deserializer));
+                        *self.state__ = S::Next__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -23933,6 +23153,7 @@ pub mod cdf {
                 fallback: Option<<super::SubType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::SubType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use FixTextTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -23949,19 +23170,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_sub(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            FixTextTypeContentDeserializerState::Sub(values, None, None),
-                        )?;
-                        *self.state__ = FixTextTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Sub(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = FixTextTypeContentDeserializerState::Sub(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Sub(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -23973,6 +23187,7 @@ pub mod cdf {
                 fallback: Option<<AnyElement as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, AnyElement>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use FixTextTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -23989,19 +23204,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_any(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            FixTextTypeContentDeserializerState::Any(values, None, None),
-                        )?;
-                        *self.state__ = FixTextTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Any(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = FixTextTypeContentDeserializerState::Any(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Any(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -24013,6 +23221,7 @@ pub mod cdf {
                 fallback: Option<<Text as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, Text>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use FixTextTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -24029,19 +23238,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_text(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            FixTextTypeContentDeserializerState::Text(values, None, None),
-                        )?;
-                        *self.state__ = FixTextTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Text(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = FixTextTypeContentDeserializerState::Text(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Text(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -24293,13 +23495,14 @@ pub mod cdf {
                 output: DeserializerOutput<'de, super::FixTypeContent>,
                 fallback: &mut Option<FixTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use FixTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state__ = fallback.take().unwrap_or(FixTypeDeserializerState::Next__);
+                    *self.state__ = fallback.take().unwrap_or(S::Next__);
                     return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -24309,12 +23512,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state__ = FixTypeDeserializerState::Next__;
+                        *self.state__ = S::Next__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *fallback = Some(FixTypeDeserializerState::Content__(deserializer));
-                        *self.state__ = FixTypeDeserializerState::Next__;
+                        *fallback = Some(S::Content__(deserializer));
+                        *self.state__ = S::Next__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -24528,6 +23731,7 @@ pub mod cdf {
                 fallback: Option<<super::SubType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::SubType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use FixTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -24544,16 +23748,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_sub(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            FixTypeContentDeserializerState::Sub(values, None, None),
-                        )?;
-                        *self.state__ = FixTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Sub(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ =
-                            FixTypeContentDeserializerState::Sub(values, None, Some(deserializer));
+                        *self.state__ = S::Sub(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -24565,6 +23765,7 @@ pub mod cdf {
                 fallback: Option<<super::InstanceFixType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::InstanceFixType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use FixTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -24581,19 +23782,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_instance(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            FixTypeContentDeserializerState::Instance(values, None, None),
-                        )?;
-                        *self.state__ = FixTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Instance(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = FixTypeContentDeserializerState::Instance(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Instance(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -24605,6 +23799,7 @@ pub mod cdf {
                 fallback: Option<<Text as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, Text>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use FixTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -24621,16 +23816,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_text(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            FixTypeContentDeserializerState::Text(values, None, None),
-                        )?;
-                        *self.state__ = FixTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Text(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ =
-                            FixTypeContentDeserializerState::Text(values, None, Some(deserializer));
+                        *self.state__ = S::Text(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -24920,14 +24111,15 @@ pub mod cdf {
                 output: DeserializerOutput<'de, super::CheckImportType>,
                 fallback: &mut Option<CheckTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CheckTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(CheckTypeDeserializerState::CheckImport(None));
-                    *self.state__ = CheckTypeDeserializerState::CheckExport(None);
+                    fallback.get_or_insert(S::CheckImport(None));
+                    *self.state__ = S::CheckExport(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -24937,14 +24129,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_check_import(data)?;
-                        *self.state__ = CheckTypeDeserializerState::CheckImport(None);
+                        *self.state__ = S::CheckImport(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CheckTypeDeserializerState::CheckImport(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = CheckTypeDeserializerState::CheckImport(None);
+                        fallback.get_or_insert(S::CheckImport(Some(deserializer)));
+                        *self.state__ = S::CheckImport(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -24955,14 +24145,15 @@ pub mod cdf {
                 output: DeserializerOutput<'de, super::CheckExportType>,
                 fallback: &mut Option<CheckTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CheckTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(CheckTypeDeserializerState::CheckExport(None));
-                    *self.state__ = CheckTypeDeserializerState::CheckContentRef(None);
+                    fallback.get_or_insert(S::CheckExport(None));
+                    *self.state__ = S::CheckContentRef(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -24972,14 +24163,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_check_export(data)?;
-                        *self.state__ = CheckTypeDeserializerState::CheckExport(None);
+                        *self.state__ = S::CheckExport(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CheckTypeDeserializerState::CheckExport(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = CheckTypeDeserializerState::CheckExport(None);
+                        fallback.get_or_insert(S::CheckExport(Some(deserializer)));
+                        *self.state__ = S::CheckExport(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -24990,14 +24179,15 @@ pub mod cdf {
                 output: DeserializerOutput<'de, super::CheckContentRefType>,
                 fallback: &mut Option<CheckTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CheckTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(CheckTypeDeserializerState::CheckContentRef(None));
-                    *self.state__ = CheckTypeDeserializerState::CheckContent(None);
+                    fallback.get_or_insert(S::CheckContentRef(None));
+                    *self.state__ = S::CheckContent(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -25007,14 +24197,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_check_content_ref(data)?;
-                        *self.state__ = CheckTypeDeserializerState::CheckContentRef(None);
+                        *self.state__ = S::CheckContentRef(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CheckTypeDeserializerState::CheckContentRef(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = CheckTypeDeserializerState::CheckContentRef(None);
+                        fallback.get_or_insert(S::CheckContentRef(Some(deserializer)));
+                        *self.state__ = S::CheckContentRef(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -25025,14 +24213,15 @@ pub mod cdf {
                 output: DeserializerOutput<'de, super::CheckContentType>,
                 fallback: &mut Option<CheckTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CheckTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(CheckTypeDeserializerState::CheckContent(None));
-                    *self.state__ = CheckTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::CheckContent(None));
+                    *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -25042,14 +24231,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_check_content(data)?;
-                        *self.state__ = CheckTypeDeserializerState::Done__;
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CheckTypeDeserializerState::CheckContent(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = CheckTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::CheckContent(Some(deserializer)));
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -25135,7 +24322,7 @@ pub mod cdf {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ = CheckTypeDeserializerState::CheckImport(None);
+                            *self.state__ = S::CheckImport(None);
                             event
                         }
                         (S::CheckImport(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -25310,15 +24497,14 @@ pub mod cdf {
                 output: DeserializerOutput<'de, super::ComplexCheckTypeContent>,
                 fallback: &mut Option<ComplexCheckTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ComplexCheckTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state__ = fallback
-                        .take()
-                        .unwrap_or(ComplexCheckTypeDeserializerState::Next__);
+                    *self.state__ = fallback.take().unwrap_or(S::Next__);
                     return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -25328,13 +24514,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state__ = ComplexCheckTypeDeserializerState::Next__;
+                        *self.state__ = S::Next__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *fallback =
-                            Some(ComplexCheckTypeDeserializerState::Content__(deserializer));
-                        *self.state__ = ComplexCheckTypeDeserializerState::Next__;
+                        *fallback = Some(S::Content__(deserializer));
+                        *self.state__ = S::Next__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -25522,6 +24707,7 @@ pub mod cdf {
                 fallback: Option<<super::CheckType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::CheckType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ComplexCheckTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -25538,19 +24724,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_check(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            ComplexCheckTypeContentDeserializerState::Check(values, None, None),
-                        )?;
-                        *self.state__ = ComplexCheckTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Check(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = ComplexCheckTypeContentDeserializerState::Check(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Check(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -25562,6 +24741,7 @@ pub mod cdf {
                 fallback: Option<<super::ComplexCheckType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::ComplexCheckType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ComplexCheckTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -25578,21 +24758,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_complex_check(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            ComplexCheckTypeContentDeserializerState::ComplexCheck(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ = ComplexCheckTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::ComplexCheck(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = ComplexCheckTypeContentDeserializerState::ComplexCheck(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::ComplexCheck(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -26117,14 +25288,15 @@ pub mod cdf {
                 output: DeserializerOutput<'de, super::FactType>,
                 fallback: &mut Option<TargetFactsTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use TargetFactsTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(TargetFactsTypeDeserializerState::Fact(None));
-                    *self.state__ = TargetFactsTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::Fact(None));
+                    *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -26134,14 +25306,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_fact(data)?;
-                        *self.state__ = TargetFactsTypeDeserializerState::Fact(None);
+                        *self.state__ = S::Fact(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(TargetFactsTypeDeserializerState::Fact(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = TargetFactsTypeDeserializerState::Fact(None);
+                        fallback.get_or_insert(S::Fact(Some(deserializer)));
+                        *self.state__ = S::Fact(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -26191,7 +25361,7 @@ pub mod cdf {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ = TargetFactsTypeDeserializerState::Fact(None);
+                            *self.state__ = S::Fact(None);
                             event
                         }
                         (S::Fact(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -26436,15 +25606,14 @@ pub mod cdf {
                 output: DeserializerOutput<'de, super::RuleResultTypeContent>,
                 fallback: &mut Option<RuleResultTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use RuleResultTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state__ = fallback
-                        .take()
-                        .unwrap_or(RuleResultTypeDeserializerState::Next__);
+                    *self.state__ = fallback.take().unwrap_or(S::Next__);
                     return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -26454,12 +25623,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state__ = RuleResultTypeDeserializerState::Next__;
+                        *self.state__ = S::Next__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *fallback = Some(RuleResultTypeDeserializerState::Content__(deserializer));
-                        *self.state__ = RuleResultTypeDeserializerState::Next__;
+                        *fallback = Some(S::Content__(deserializer));
+                        *self.state__ = S::Next__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -26883,6 +26052,7 @@ pub mod cdf {
                 fallback: Option<<super::ResultEnumType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::ResultEnumType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use RuleResultTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -26899,19 +26069,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_result(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            RuleResultTypeContentDeserializerState::Result(values, None, None),
-                        )?;
-                        *self.state__ = RuleResultTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Result(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = RuleResultTypeContentDeserializerState::Result(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Result(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -26923,6 +26086,7 @@ pub mod cdf {
                 fallback: Option<<super::OverrideType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::OverrideType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use RuleResultTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -26939,19 +26103,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_override_(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            RuleResultTypeContentDeserializerState::Override(values, None, None),
-                        )?;
-                        *self.state__ = RuleResultTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Override(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = RuleResultTypeContentDeserializerState::Override(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Override(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -26963,6 +26120,7 @@ pub mod cdf {
                 fallback: Option<<super::IdentType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::IdentType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use RuleResultTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -26979,19 +26137,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_ident(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            RuleResultTypeContentDeserializerState::Ident(values, None, None),
-                        )?;
-                        *self.state__ = RuleResultTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Ident(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = RuleResultTypeContentDeserializerState::Ident(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Ident(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -27003,6 +26154,7 @@ pub mod cdf {
                 fallback: Option<<super::MetadataType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::MetadataType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use RuleResultTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -27019,19 +26171,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_metadata(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            RuleResultTypeContentDeserializerState::Metadata(values, None, None),
-                        )?;
-                        *self.state__ = RuleResultTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Metadata(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = RuleResultTypeContentDeserializerState::Metadata(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Metadata(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -27043,6 +26188,7 @@ pub mod cdf {
                 fallback: Option<<super::MessageType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::MessageType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use RuleResultTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -27059,19 +26205,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_message(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            RuleResultTypeContentDeserializerState::Message(values, None, None),
-                        )?;
-                        *self.state__ = RuleResultTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Message(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = RuleResultTypeContentDeserializerState::Message(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Message(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -27083,6 +26222,7 @@ pub mod cdf {
                 fallback: Option<<super::InstanceResultType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::InstanceResultType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use RuleResultTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -27099,19 +26239,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_instance(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            RuleResultTypeContentDeserializerState::Instance(values, None, None),
-                        )?;
-                        *self.state__ = RuleResultTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Instance(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = RuleResultTypeContentDeserializerState::Instance(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Instance(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -27123,6 +26256,7 @@ pub mod cdf {
                 fallback: Option<<super::FixType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::FixType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use RuleResultTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -27139,19 +26273,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_fix(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            RuleResultTypeContentDeserializerState::Fix(values, None, None),
-                        )?;
-                        *self.state__ = RuleResultTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Fix(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = RuleResultTypeContentDeserializerState::Fix(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Fix(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -27163,6 +26290,7 @@ pub mod cdf {
                 fallback: Option<<super::CheckType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::CheckType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use RuleResultTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -27179,19 +26307,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_check(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            RuleResultTypeContentDeserializerState::Check(values, None, None),
-                        )?;
-                        *self.state__ = RuleResultTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Check(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = RuleResultTypeContentDeserializerState::Check(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Check(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -27203,6 +26324,7 @@ pub mod cdf {
                 fallback: Option<<super::ComplexCheckType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::ComplexCheckType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use RuleResultTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -27219,21 +26341,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_complex_check(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            RuleResultTypeContentDeserializerState::ComplexCheck(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ = RuleResultTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::ComplexCheck(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = RuleResultTypeContentDeserializerState::ComplexCheck(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::ComplexCheck(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -27736,14 +26849,15 @@ pub mod cdf {
                 output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<ComplexValueTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ComplexValueTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(ComplexValueTypeDeserializerState::Item(None));
-                    *self.state__ = ComplexValueTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::Item(None));
+                    *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -27753,14 +26867,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_item(data)?;
-                        *self.state__ = ComplexValueTypeDeserializerState::Item(None);
+                        *self.state__ = S::Item(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(ComplexValueTypeDeserializerState::Item(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = ComplexValueTypeDeserializerState::Item(None);
+                        fallback.get_or_insert(S::Item(Some(deserializer)));
+                        *self.state__ = S::Item(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -27810,7 +26922,7 @@ pub mod cdf {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ = ComplexValueTypeDeserializerState::Item(None);
+                            *self.state__ = S::Item(None);
                             event
                         }
                         (S::Item(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -28043,14 +27155,15 @@ pub mod cdf {
                 output: DeserializerOutput<'de, Text>,
                 fallback: &mut Option<CheckImportTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CheckImportTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(CheckImportTypeDeserializerState::TextBefore(None));
-                    *self.state__ = CheckImportTypeDeserializerState::Any(None);
+                    fallback.get_or_insert(S::TextBefore(None));
+                    *self.state__ = S::Any(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -28060,14 +27173,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_text_before(data)?;
-                        *self.state__ = CheckImportTypeDeserializerState::Any(None);
+                        *self.state__ = S::Any(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CheckImportTypeDeserializerState::TextBefore(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = CheckImportTypeDeserializerState::Any(None);
+                        fallback.get_or_insert(S::TextBefore(Some(deserializer)));
+                        *self.state__ = S::Any(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -28078,14 +27189,15 @@ pub mod cdf {
                 output: DeserializerOutput<'de, AnyElement>,
                 fallback: &mut Option<CheckImportTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CheckImportTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(CheckImportTypeDeserializerState::Any(None));
-                    *self.state__ = CheckImportTypeDeserializerState::TextAfterAny36(None);
+                    fallback.get_or_insert(S::Any(None));
+                    *self.state__ = S::TextAfterAny36(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -28095,14 +27207,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_any(data)?;
-                        *self.state__ = CheckImportTypeDeserializerState::TextAfterAny36(None);
+                        *self.state__ = S::TextAfterAny36(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CheckImportTypeDeserializerState::Any(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = CheckImportTypeDeserializerState::TextAfterAny36(None);
+                        fallback.get_or_insert(S::Any(Some(deserializer)));
+                        *self.state__ = S::TextAfterAny36(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -28113,14 +27223,15 @@ pub mod cdf {
                 output: DeserializerOutput<'de, Text>,
                 fallback: &mut Option<CheckImportTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CheckImportTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(CheckImportTypeDeserializerState::TextAfterAny36(None));
-                    *self.state__ = CheckImportTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::TextAfterAny36(None));
+                    *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -28130,14 +27241,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_text_after_any_36(data)?;
-                        *self.state__ = CheckImportTypeDeserializerState::Done__;
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CheckImportTypeDeserializerState::TextAfterAny36(
-                            Some(deserializer),
-                        ));
-                        *self.state__ = CheckImportTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::TextAfterAny36(Some(deserializer)));
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -28213,7 +27322,7 @@ pub mod cdf {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ = CheckImportTypeDeserializerState::TextBefore(None);
+                            *self.state__ = S::TextBefore(None);
                             event
                         }
                         (S::TextBefore(None), event) => {
@@ -28530,15 +27639,14 @@ pub mod cdf {
                 output: DeserializerOutput<'de, super::CheckContentTypeContent>,
                 fallback: &mut Option<CheckContentTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CheckContentTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state__ = fallback
-                        .take()
-                        .unwrap_or(CheckContentTypeDeserializerState::Next__);
+                    *self.state__ = fallback.take().unwrap_or(S::Next__);
                     return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -28548,13 +27656,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state__ = CheckContentTypeDeserializerState::Next__;
+                        *self.state__ = S::Next__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *fallback =
-                            Some(CheckContentTypeDeserializerState::Content__(deserializer));
-                        *self.state__ = CheckContentTypeDeserializerState::Next__;
+                        *fallback = Some(S::Content__(deserializer));
+                        *self.state__ = S::Next__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -28736,6 +27843,7 @@ pub mod cdf {
                 fallback: Option<<AnyElement as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, AnyElement>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CheckContentTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -28752,19 +27860,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_any(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CheckContentTypeContentDeserializerState::Any(values, None, None),
-                        )?;
-                        *self.state__ = CheckContentTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Any(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CheckContentTypeContentDeserializerState::Any(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Any(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -28776,6 +27877,7 @@ pub mod cdf {
                 fallback: Option<<Text as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, Text>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CheckContentTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -28792,19 +27894,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_text(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CheckContentTypeContentDeserializerState::Text(values, None, None),
-                        )?;
-                        *self.state__ = CheckContentTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Text(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CheckContentTypeContentDeserializerState::Text(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Text(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -29174,14 +28269,15 @@ pub mod cdf {
                 output: DeserializerOutput<'de, super::ResultEnumType>,
                 fallback: &mut Option<OverrideTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use OverrideTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(OverrideTypeDeserializerState::OldResult(None));
-                    if matches!(&fallback, Some(OverrideTypeDeserializerState::Init__)) {
+                    fallback.get_or_insert(S::OldResult(None));
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -29194,14 +28290,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_old_result(data)?;
-                        *self.state__ = OverrideTypeDeserializerState::NewResult(None);
+                        *self.state__ = S::NewResult(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(OverrideTypeDeserializerState::OldResult(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = OverrideTypeDeserializerState::NewResult(None);
+                        fallback.get_or_insert(S::OldResult(Some(deserializer)));
+                        *self.state__ = S::NewResult(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -29212,14 +28306,15 @@ pub mod cdf {
                 output: DeserializerOutput<'de, super::ResultEnumType>,
                 fallback: &mut Option<OverrideTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use OverrideTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(OverrideTypeDeserializerState::NewResult(None));
-                    if matches!(&fallback, Some(OverrideTypeDeserializerState::Init__)) {
+                    fallback.get_or_insert(S::NewResult(None));
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -29232,14 +28327,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_new_result(data)?;
-                        *self.state__ = OverrideTypeDeserializerState::Remark(None);
+                        *self.state__ = S::Remark(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(OverrideTypeDeserializerState::NewResult(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = OverrideTypeDeserializerState::Remark(None);
+                        fallback.get_or_insert(S::NewResult(Some(deserializer)));
+                        *self.state__ = S::Remark(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -29250,14 +28343,15 @@ pub mod cdf {
                 output: DeserializerOutput<'de, super::TextType>,
                 fallback: &mut Option<OverrideTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use OverrideTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(OverrideTypeDeserializerState::Remark(None));
-                    if matches!(&fallback, Some(OverrideTypeDeserializerState::Init__)) {
+                    fallback.get_or_insert(S::Remark(None));
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -29270,14 +28364,12 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_remark(data)?;
-                        *self.state__ = OverrideTypeDeserializerState::Done__;
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(OverrideTypeDeserializerState::Remark(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = OverrideTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::Remark(Some(deserializer)));
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -29351,7 +28443,7 @@ pub mod cdf {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ = OverrideTypeDeserializerState::OldResult(None);
+                            *self.state__ = S::OldResult(None);
                             event
                         }
                         (S::OldResult(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -36574,27 +35666,21 @@ pub mod cpe {
                 output: DeserializerOutput<'de, super::PlatformType>,
                 fallback: &mut Option<PlatformSpecificationTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use PlatformSpecificationTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    if matches!(
-                        &fallback,
-                        Some(PlatformSpecificationTypeDeserializerState::Init__)
-                    ) {
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else if self.platform.len() < 1usize {
-                        fallback.get_or_insert(
-                            PlatformSpecificationTypeDeserializerState::Platform(None),
-                        );
+                        fallback.get_or_insert(S::Platform(None));
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                     } else {
-                        fallback.get_or_insert(
-                            PlatformSpecificationTypeDeserializerState::Platform(None),
-                        );
-                        *self.state__ = PlatformSpecificationTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::Platform(None));
+                        *self.state__ = S::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                 }
@@ -36605,16 +35691,12 @@ pub mod cpe {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_platform(data)?;
-                        *self.state__ = PlatformSpecificationTypeDeserializerState::Platform(None);
+                        *self.state__ = S::Platform(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(
-                            PlatformSpecificationTypeDeserializerState::Platform(Some(
-                                deserializer,
-                            )),
-                        );
-                        *self.state__ = PlatformSpecificationTypeDeserializerState::Platform(None);
+                        fallback.get_or_insert(S::Platform(Some(deserializer)));
+                        *self.state__ = S::Platform(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -36666,8 +35748,7 @@ pub mod cpe {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ =
-                                PlatformSpecificationTypeDeserializerState::Platform(None);
+                            *self.state__ = S::Platform(None);
                             event
                         }
                         (S::Platform(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -36805,14 +35886,15 @@ pub mod cpe {
                 output: DeserializerOutput<'de, super::TextType>,
                 fallback: &mut Option<PlatformTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use PlatformTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(PlatformTypeDeserializerState::Title(None));
-                    *self.state__ = PlatformTypeDeserializerState::Remark(None);
+                    fallback.get_or_insert(S::Title(None));
+                    *self.state__ = S::Remark(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -36822,14 +35904,12 @@ pub mod cpe {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_title(data)?;
-                        *self.state__ = PlatformTypeDeserializerState::Title(None);
+                        *self.state__ = S::Title(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(PlatformTypeDeserializerState::Title(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = PlatformTypeDeserializerState::Title(None);
+                        fallback.get_or_insert(S::Title(Some(deserializer)));
+                        *self.state__ = S::Title(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -36840,14 +35920,15 @@ pub mod cpe {
                 output: DeserializerOutput<'de, super::TextType>,
                 fallback: &mut Option<PlatformTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use PlatformTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(PlatformTypeDeserializerState::Remark(None));
-                    *self.state__ = PlatformTypeDeserializerState::LogicalTest(None);
+                    fallback.get_or_insert(S::Remark(None));
+                    *self.state__ = S::LogicalTest(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -36857,14 +35938,12 @@ pub mod cpe {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_remark(data)?;
-                        *self.state__ = PlatformTypeDeserializerState::Remark(None);
+                        *self.state__ = S::Remark(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(PlatformTypeDeserializerState::Remark(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = PlatformTypeDeserializerState::Remark(None);
+                        fallback.get_or_insert(S::Remark(Some(deserializer)));
+                        *self.state__ = S::Remark(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -36875,14 +35954,15 @@ pub mod cpe {
                 output: DeserializerOutput<'de, super::LogicalTestType>,
                 fallback: &mut Option<PlatformTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use PlatformTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(PlatformTypeDeserializerState::LogicalTest(None));
-                    if matches!(&fallback, Some(PlatformTypeDeserializerState::Init__)) {
+                    fallback.get_or_insert(S::LogicalTest(None));
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -36895,14 +35975,12 @@ pub mod cpe {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_logical_test(data)?;
-                        *self.state__ = PlatformTypeDeserializerState::Done__;
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(PlatformTypeDeserializerState::LogicalTest(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = PlatformTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::LogicalTest(Some(deserializer)));
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -36976,7 +36054,7 @@ pub mod cpe {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ = PlatformTypeDeserializerState::Title(None);
+                            *self.state__ = S::Title(None);
                             event
                         }
                         (S::Title(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -37285,14 +36363,15 @@ pub mod cpe {
                 output: DeserializerOutput<'de, super::LogicalTestType>,
                 fallback: &mut Option<LogicalTestTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use LogicalTestTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(LogicalTestTypeDeserializerState::LogicalTest(None));
-                    *self.state__ = LogicalTestTypeDeserializerState::FactRef(None);
+                    fallback.get_or_insert(S::LogicalTest(None));
+                    *self.state__ = S::FactRef(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -37302,14 +36381,12 @@ pub mod cpe {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_logical_test(data)?;
-                        *self.state__ = LogicalTestTypeDeserializerState::LogicalTest(None);
+                        *self.state__ = S::LogicalTest(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(LogicalTestTypeDeserializerState::LogicalTest(
-                            Some(deserializer),
-                        ));
-                        *self.state__ = LogicalTestTypeDeserializerState::LogicalTest(None);
+                        fallback.get_or_insert(S::LogicalTest(Some(deserializer)));
+                        *self.state__ = S::LogicalTest(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -37320,14 +36397,15 @@ pub mod cpe {
                 output: DeserializerOutput<'de, super::CpeFactRefType>,
                 fallback: &mut Option<LogicalTestTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use LogicalTestTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(LogicalTestTypeDeserializerState::FactRef(None));
-                    *self.state__ = LogicalTestTypeDeserializerState::CheckFactRef(None);
+                    fallback.get_or_insert(S::FactRef(None));
+                    *self.state__ = S::CheckFactRef(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -37337,14 +36415,12 @@ pub mod cpe {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_fact_ref(data)?;
-                        *self.state__ = LogicalTestTypeDeserializerState::FactRef(None);
+                        *self.state__ = S::FactRef(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(LogicalTestTypeDeserializerState::FactRef(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = LogicalTestTypeDeserializerState::FactRef(None);
+                        fallback.get_or_insert(S::FactRef(Some(deserializer)));
+                        *self.state__ = S::FactRef(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -37355,14 +36431,15 @@ pub mod cpe {
                 output: DeserializerOutput<'de, super::CheckFactRefType>,
                 fallback: &mut Option<LogicalTestTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use LogicalTestTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(LogicalTestTypeDeserializerState::CheckFactRef(None));
-                    *self.state__ = LogicalTestTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::CheckFactRef(None));
+                    *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -37372,14 +36449,12 @@ pub mod cpe {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_check_fact_ref(data)?;
-                        *self.state__ = LogicalTestTypeDeserializerState::CheckFactRef(None);
+                        *self.state__ = S::CheckFactRef(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(LogicalTestTypeDeserializerState::CheckFactRef(
-                            Some(deserializer),
-                        ));
-                        *self.state__ = LogicalTestTypeDeserializerState::CheckFactRef(None);
+                        fallback.get_or_insert(S::CheckFactRef(Some(deserializer)));
+                        *self.state__ = S::CheckFactRef(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -37453,7 +36528,7 @@ pub mod cpe {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ = LogicalTestTypeDeserializerState::LogicalTest(None);
+                            *self.state__ = S::LogicalTest(None);
                             event
                         }
                         (S::LogicalTest(None), event @ (Event::Start(_) | Event::Empty(_))) => {

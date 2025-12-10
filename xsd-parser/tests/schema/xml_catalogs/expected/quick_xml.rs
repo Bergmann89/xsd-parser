@@ -499,15 +499,14 @@ pub mod er {
                 output: DeserializerOutput<'de, super::CatalogTypeContent>,
                 fallback: &mut Option<CatalogTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CatalogTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state__ = fallback
-                        .take()
-                        .unwrap_or(CatalogTypeDeserializerState::Next__);
+                    *self.state__ = fallback.take().unwrap_or(S::Next__);
                     return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -517,12 +516,12 @@ pub mod er {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state__ = CatalogTypeDeserializerState::Next__;
+                        *self.state__ = S::Next__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *fallback = Some(CatalogTypeDeserializerState::Content__(deserializer));
-                        *self.state__ = CatalogTypeDeserializerState::Next__;
+                        *fallback = Some(S::Content__(deserializer));
+                        *self.state__ = S::Next__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -1056,6 +1055,7 @@ pub mod er {
                 fallback: Option<<super::PublicType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::PublicType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CatalogTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -1072,19 +1072,12 @@ pub mod er {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_public(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CatalogTypeContentDeserializerState::Public(values, None, None),
-                        )?;
-                        *self.state__ = CatalogTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Public(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CatalogTypeContentDeserializerState::Public(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Public(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -1096,6 +1089,7 @@ pub mod er {
                 fallback: Option<<super::SystemType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::SystemType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CatalogTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -1112,19 +1106,12 @@ pub mod er {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_system(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CatalogTypeContentDeserializerState::System(values, None, None),
-                        )?;
-                        *self.state__ = CatalogTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::System(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CatalogTypeContentDeserializerState::System(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::System(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -1136,6 +1123,7 @@ pub mod er {
                 fallback: Option<<super::UriType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::UriType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CatalogTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -1152,19 +1140,12 @@ pub mod er {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_uri(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CatalogTypeContentDeserializerState::Uri(values, None, None),
-                        )?;
-                        *self.state__ = CatalogTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Uri(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CatalogTypeContentDeserializerState::Uri(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Uri(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -1176,6 +1157,7 @@ pub mod er {
                 fallback: Option<<super::RewriteSystemType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::RewriteSystemType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CatalogTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -1192,19 +1174,13 @@ pub mod er {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_rewrite_system(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CatalogTypeContentDeserializerState::RewriteSystem(values, None, None),
-                        )?;
-                        *self.state__ = CatalogTypeContentDeserializerState::Done__(data);
+                        let data =
+                            Self::finish_state(helper, S::RewriteSystem(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CatalogTypeContentDeserializerState::RewriteSystem(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::RewriteSystem(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -1216,6 +1192,7 @@ pub mod er {
                 fallback: Option<<super::RewriteUriType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::RewriteUriType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CatalogTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -1232,19 +1209,12 @@ pub mod er {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_rewrite_uri(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CatalogTypeContentDeserializerState::RewriteUri(values, None, None),
-                        )?;
-                        *self.state__ = CatalogTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::RewriteUri(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CatalogTypeContentDeserializerState::RewriteUri(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::RewriteUri(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -1256,6 +1226,7 @@ pub mod er {
                 fallback: Option<<super::UriSuffixType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::UriSuffixType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CatalogTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -1272,19 +1243,12 @@ pub mod er {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_uri_suffix(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CatalogTypeContentDeserializerState::UriSuffix(values, None, None),
-                        )?;
-                        *self.state__ = CatalogTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::UriSuffix(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CatalogTypeContentDeserializerState::UriSuffix(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::UriSuffix(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -1296,6 +1260,7 @@ pub mod er {
                 fallback: Option<<super::SystemSuffixType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::SystemSuffixType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CatalogTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -1312,19 +1277,12 @@ pub mod er {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_system_suffix(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CatalogTypeContentDeserializerState::SystemSuffix(values, None, None),
-                        )?;
-                        *self.state__ = CatalogTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::SystemSuffix(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CatalogTypeContentDeserializerState::SystemSuffix(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::SystemSuffix(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -1336,6 +1294,7 @@ pub mod er {
                 fallback: Option<<super::DelegatePublicType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::DelegatePublicType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CatalogTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -1352,19 +1311,13 @@ pub mod er {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_delegate_public(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CatalogTypeContentDeserializerState::DelegatePublic(values, None, None),
-                        )?;
-                        *self.state__ = CatalogTypeContentDeserializerState::Done__(data);
+                        let data =
+                            Self::finish_state(helper, S::DelegatePublic(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CatalogTypeContentDeserializerState::DelegatePublic(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::DelegatePublic(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -1376,6 +1329,7 @@ pub mod er {
                 fallback: Option<<super::DelegateSystemType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::DelegateSystemType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CatalogTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -1392,19 +1346,13 @@ pub mod er {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_delegate_system(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CatalogTypeContentDeserializerState::DelegateSystem(values, None, None),
-                        )?;
-                        *self.state__ = CatalogTypeContentDeserializerState::Done__(data);
+                        let data =
+                            Self::finish_state(helper, S::DelegateSystem(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CatalogTypeContentDeserializerState::DelegateSystem(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::DelegateSystem(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -1416,6 +1364,7 @@ pub mod er {
                 fallback: Option<<super::DelegateUriType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::DelegateUriType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CatalogTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -1432,19 +1381,12 @@ pub mod er {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_delegate_uri(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CatalogTypeContentDeserializerState::DelegateUri(values, None, None),
-                        )?;
-                        *self.state__ = CatalogTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::DelegateUri(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CatalogTypeContentDeserializerState::DelegateUri(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::DelegateUri(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -1456,6 +1398,7 @@ pub mod er {
                 fallback: Option<<super::NextCatalogType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::NextCatalogType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CatalogTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -1472,19 +1415,12 @@ pub mod er {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_next_catalog(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CatalogTypeContentDeserializerState::NextCatalog(values, None, None),
-                        )?;
-                        *self.state__ = CatalogTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::NextCatalog(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CatalogTypeContentDeserializerState::NextCatalog(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::NextCatalog(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -1496,6 +1432,7 @@ pub mod er {
                 fallback: Option<<super::GroupType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::GroupType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CatalogTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -1512,19 +1449,12 @@ pub mod er {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_group(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CatalogTypeContentDeserializerState::Group(values, None, None),
-                        )?;
-                        *self.state__ = CatalogTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Group(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CatalogTypeContentDeserializerState::Group(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Group(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -2283,15 +2213,14 @@ pub mod er {
                 output: DeserializerOutput<'de, super::GroupTypeContent>,
                 fallback: &mut Option<GroupTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use GroupTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state__ = fallback
-                        .take()
-                        .unwrap_or(GroupTypeDeserializerState::Next__);
+                    *self.state__ = fallback.take().unwrap_or(S::Next__);
                     return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -2301,12 +2230,12 @@ pub mod er {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state__ = GroupTypeDeserializerState::Next__;
+                        *self.state__ = S::Next__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *fallback = Some(GroupTypeDeserializerState::Content__(deserializer));
-                        *self.state__ = GroupTypeDeserializerState::Next__;
+                        *fallback = Some(S::Content__(deserializer));
+                        *self.state__ = S::Next__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -2803,6 +2732,7 @@ pub mod er {
                 fallback: Option<<super::PublicType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::PublicType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use GroupTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -2819,19 +2749,12 @@ pub mod er {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_public(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            GroupTypeContentDeserializerState::Public(values, None, None),
-                        )?;
-                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Public(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = GroupTypeContentDeserializerState::Public(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Public(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -2843,6 +2766,7 @@ pub mod er {
                 fallback: Option<<super::SystemType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::SystemType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use GroupTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -2859,19 +2783,12 @@ pub mod er {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_system(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            GroupTypeContentDeserializerState::System(values, None, None),
-                        )?;
-                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::System(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = GroupTypeContentDeserializerState::System(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::System(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -2883,6 +2800,7 @@ pub mod er {
                 fallback: Option<<super::UriType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::UriType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use GroupTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -2899,19 +2817,12 @@ pub mod er {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_uri(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            GroupTypeContentDeserializerState::Uri(values, None, None),
-                        )?;
-                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Uri(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = GroupTypeContentDeserializerState::Uri(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Uri(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -2923,6 +2834,7 @@ pub mod er {
                 fallback: Option<<super::RewriteSystemType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::RewriteSystemType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use GroupTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -2939,19 +2851,13 @@ pub mod er {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_rewrite_system(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            GroupTypeContentDeserializerState::RewriteSystem(values, None, None),
-                        )?;
-                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
+                        let data =
+                            Self::finish_state(helper, S::RewriteSystem(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = GroupTypeContentDeserializerState::RewriteSystem(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::RewriteSystem(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -2963,6 +2869,7 @@ pub mod er {
                 fallback: Option<<super::RewriteUriType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::RewriteUriType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use GroupTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -2979,19 +2886,12 @@ pub mod er {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_rewrite_uri(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            GroupTypeContentDeserializerState::RewriteUri(values, None, None),
-                        )?;
-                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::RewriteUri(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = GroupTypeContentDeserializerState::RewriteUri(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::RewriteUri(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -3003,6 +2903,7 @@ pub mod er {
                 fallback: Option<<super::UriSuffixType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::UriSuffixType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use GroupTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -3019,19 +2920,12 @@ pub mod er {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_uri_suffix(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            GroupTypeContentDeserializerState::UriSuffix(values, None, None),
-                        )?;
-                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::UriSuffix(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = GroupTypeContentDeserializerState::UriSuffix(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::UriSuffix(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -3043,6 +2937,7 @@ pub mod er {
                 fallback: Option<<super::SystemSuffixType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::SystemSuffixType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use GroupTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -3059,19 +2954,12 @@ pub mod er {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_system_suffix(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            GroupTypeContentDeserializerState::SystemSuffix(values, None, None),
-                        )?;
-                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::SystemSuffix(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = GroupTypeContentDeserializerState::SystemSuffix(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::SystemSuffix(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -3083,6 +2971,7 @@ pub mod er {
                 fallback: Option<<super::DelegatePublicType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::DelegatePublicType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use GroupTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -3099,19 +2988,13 @@ pub mod er {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_delegate_public(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            GroupTypeContentDeserializerState::DelegatePublic(values, None, None),
-                        )?;
-                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
+                        let data =
+                            Self::finish_state(helper, S::DelegatePublic(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = GroupTypeContentDeserializerState::DelegatePublic(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::DelegatePublic(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -3123,6 +3006,7 @@ pub mod er {
                 fallback: Option<<super::DelegateSystemType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::DelegateSystemType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use GroupTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -3139,19 +3023,13 @@ pub mod er {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_delegate_system(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            GroupTypeContentDeserializerState::DelegateSystem(values, None, None),
-                        )?;
-                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
+                        let data =
+                            Self::finish_state(helper, S::DelegateSystem(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = GroupTypeContentDeserializerState::DelegateSystem(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::DelegateSystem(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -3163,6 +3041,7 @@ pub mod er {
                 fallback: Option<<super::DelegateUriType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::DelegateUriType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use GroupTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -3179,19 +3058,12 @@ pub mod er {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_delegate_uri(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            GroupTypeContentDeserializerState::DelegateUri(values, None, None),
-                        )?;
-                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::DelegateUri(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = GroupTypeContentDeserializerState::DelegateUri(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::DelegateUri(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -3203,6 +3075,7 @@ pub mod er {
                 fallback: Option<<super::NextCatalogType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::NextCatalogType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use GroupTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -3219,19 +3092,12 @@ pub mod er {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_next_catalog(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            GroupTypeContentDeserializerState::NextCatalog(values, None, None),
-                        )?;
-                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::NextCatalog(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = GroupTypeContentDeserializerState::NextCatalog(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::NextCatalog(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }

@@ -101,14 +101,15 @@ pub mod other {
                 output: DeserializerOutput<'de, i32>,
                 fallback: &mut Option<BarTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use BarTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(BarTypeDeserializerState::B(None));
-                    if matches!(&fallback, Some(BarTypeDeserializerState::Init__)) {
+                    fallback.get_or_insert(S::B(None));
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -121,12 +122,12 @@ pub mod other {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_b(data)?;
-                        *self.state__ = BarTypeDeserializerState::C(None);
+                        *self.state__ = S::C(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(BarTypeDeserializerState::B(Some(deserializer)));
-                        *self.state__ = BarTypeDeserializerState::C(None);
+                        fallback.get_or_insert(S::B(Some(deserializer)));
+                        *self.state__ = S::C(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -137,14 +138,15 @@ pub mod other {
                 output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<BarTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use BarTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(BarTypeDeserializerState::C(None));
-                    if matches!(&fallback, Some(BarTypeDeserializerState::Init__)) {
+                    fallback.get_or_insert(S::C(None));
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -157,12 +159,12 @@ pub mod other {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_c(data)?;
-                        *self.state__ = BarTypeDeserializerState::Done__;
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(BarTypeDeserializerState::C(Some(deserializer)));
-                        *self.state__ = BarTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::C(Some(deserializer)));
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -224,7 +226,7 @@ pub mod other {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ = BarTypeDeserializerState::B(None);
+                            *self.state__ = S::B(None);
                             event
                         }
                         (S::B(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -468,14 +470,15 @@ pub mod tns {
                 output: DeserializerOutput<'de, f32>,
                 fallback: &mut Option<FooTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use FooTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(FooTypeDeserializerState::A(None));
-                    if matches!(&fallback, Some(FooTypeDeserializerState::Init__)) {
+                    fallback.get_or_insert(S::A(None));
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -488,12 +491,12 @@ pub mod tns {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_a(data)?;
-                        *self.state__ = FooTypeDeserializerState::B(None);
+                        *self.state__ = S::B(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(FooTypeDeserializerState::A(Some(deserializer)));
-                        *self.state__ = FooTypeDeserializerState::B(None);
+                        fallback.get_or_insert(S::A(Some(deserializer)));
+                        *self.state__ = S::B(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -504,14 +507,15 @@ pub mod tns {
                 output: DeserializerOutput<'de, super::super::other::BarType>,
                 fallback: &mut Option<FooTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use FooTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(FooTypeDeserializerState::B(None));
-                    if matches!(&fallback, Some(FooTypeDeserializerState::Init__)) {
+                    fallback.get_or_insert(S::B(None));
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -524,12 +528,12 @@ pub mod tns {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_b(data)?;
-                        *self.state__ = FooTypeDeserializerState::Done__;
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(FooTypeDeserializerState::B(Some(deserializer)));
-                        *self.state__ = FooTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::B(Some(deserializer)));
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -591,7 +595,7 @@ pub mod tns {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ = FooTypeDeserializerState::A(None);
+                            *self.state__ = S::A(None);
                             event
                         }
                         (S::A(None), event @ (Event::Start(_) | Event::Empty(_))) => {

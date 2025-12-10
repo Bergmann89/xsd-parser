@@ -172,14 +172,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<ShiporderTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use ShiporderTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(ShiporderTypeDeserializerState::Orderperson(None));
-                if matches!(&fallback, Some(ShiporderTypeDeserializerState::Init__)) {
+                fallback.get_or_insert(S::Orderperson(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -192,14 +193,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_orderperson(data)?;
-                    *self.state__ = ShiporderTypeDeserializerState::Shipto(None);
+                    *self.state__ = S::Shipto(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(ShiporderTypeDeserializerState::Orderperson(Some(
-                        deserializer,
-                    )));
-                    *self.state__ = ShiporderTypeDeserializerState::Shipto(None);
+                    fallback.get_or_insert(S::Orderperson(Some(deserializer)));
+                    *self.state__ = S::Shipto(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -210,14 +209,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::ShiporderShiptoType>,
             fallback: &mut Option<ShiporderTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use ShiporderTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(ShiporderTypeDeserializerState::Shipto(None));
-                if matches!(&fallback, Some(ShiporderTypeDeserializerState::Init__)) {
+                fallback.get_or_insert(S::Shipto(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -230,13 +230,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_shipto(data)?;
-                    *self.state__ = ShiporderTypeDeserializerState::Item(None);
+                    *self.state__ = S::Item(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback
-                        .get_or_insert(ShiporderTypeDeserializerState::Shipto(Some(deserializer)));
-                    *self.state__ = ShiporderTypeDeserializerState::Item(None);
+                    fallback.get_or_insert(S::Shipto(Some(deserializer)));
+                    *self.state__ = S::Item(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -247,20 +246,21 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::ShiporderItemType>,
             fallback: &mut Option<ShiporderTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use ShiporderTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                if matches!(&fallback, Some(ShiporderTypeDeserializerState::Init__)) {
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else if self.item.len() < 1usize {
-                    fallback.get_or_insert(ShiporderTypeDeserializerState::Item(None));
+                    fallback.get_or_insert(S::Item(None));
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 } else {
-                    fallback.get_or_insert(ShiporderTypeDeserializerState::Item(None));
-                    *self.state__ = ShiporderTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::Item(None));
+                    *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
             }
@@ -271,13 +271,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_item(data)?;
-                    *self.state__ = ShiporderTypeDeserializerState::Item(None);
+                    *self.state__ = S::Item(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback
-                        .get_or_insert(ShiporderTypeDeserializerState::Item(Some(deserializer)));
-                    *self.state__ = ShiporderTypeDeserializerState::Item(None);
+                    fallback.get_or_insert(S::Item(Some(deserializer)));
+                    *self.state__ = S::Item(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -351,7 +350,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ = ShiporderTypeDeserializerState::Orderperson(None);
+                        *self.state__ = S::Orderperson(None);
                         event
                     }
                     (S::Orderperson(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -522,17 +521,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<ShiporderShiptoTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use ShiporderShiptoTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(ShiporderShiptoTypeDeserializerState::Name(None));
-                if matches!(
-                    &fallback,
-                    Some(ShiporderShiptoTypeDeserializerState::Init__)
-                ) {
+                fallback.get_or_insert(S::Name(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -545,14 +542,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_name(data)?;
-                    *self.state__ = ShiporderShiptoTypeDeserializerState::Address(None);
+                    *self.state__ = S::Address(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(ShiporderShiptoTypeDeserializerState::Name(Some(
-                        deserializer,
-                    )));
-                    *self.state__ = ShiporderShiptoTypeDeserializerState::Address(None);
+                    fallback.get_or_insert(S::Name(Some(deserializer)));
+                    *self.state__ = S::Address(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -563,17 +558,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<ShiporderShiptoTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use ShiporderShiptoTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(ShiporderShiptoTypeDeserializerState::Address(None));
-                if matches!(
-                    &fallback,
-                    Some(ShiporderShiptoTypeDeserializerState::Init__)
-                ) {
+                fallback.get_or_insert(S::Address(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -586,14 +579,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_address(data)?;
-                    *self.state__ = ShiporderShiptoTypeDeserializerState::City(None);
+                    *self.state__ = S::City(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(ShiporderShiptoTypeDeserializerState::Address(Some(
-                        deserializer,
-                    )));
-                    *self.state__ = ShiporderShiptoTypeDeserializerState::City(None);
+                    fallback.get_or_insert(S::Address(Some(deserializer)));
+                    *self.state__ = S::City(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -604,17 +595,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<ShiporderShiptoTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use ShiporderShiptoTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(ShiporderShiptoTypeDeserializerState::City(None));
-                if matches!(
-                    &fallback,
-                    Some(ShiporderShiptoTypeDeserializerState::Init__)
-                ) {
+                fallback.get_or_insert(S::City(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -627,14 +616,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_city(data)?;
-                    *self.state__ = ShiporderShiptoTypeDeserializerState::Country(None);
+                    *self.state__ = S::Country(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(ShiporderShiptoTypeDeserializerState::City(Some(
-                        deserializer,
-                    )));
-                    *self.state__ = ShiporderShiptoTypeDeserializerState::Country(None);
+                    fallback.get_or_insert(S::City(Some(deserializer)));
+                    *self.state__ = S::Country(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -645,17 +632,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<ShiporderShiptoTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use ShiporderShiptoTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(ShiporderShiptoTypeDeserializerState::Country(None));
-                if matches!(
-                    &fallback,
-                    Some(ShiporderShiptoTypeDeserializerState::Init__)
-                ) {
+                fallback.get_or_insert(S::Country(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -668,14 +653,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_country(data)?;
-                    *self.state__ = ShiporderShiptoTypeDeserializerState::Done__;
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(ShiporderShiptoTypeDeserializerState::Country(Some(
-                        deserializer,
-                    )));
-                    *self.state__ = ShiporderShiptoTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::Country(Some(deserializer)));
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -761,7 +744,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ = ShiporderShiptoTypeDeserializerState::Name(None);
+                        *self.state__ = S::Name(None);
                         event
                     }
                     (S::Name(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -944,14 +927,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<ShiporderItemTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use ShiporderItemTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(ShiporderItemTypeDeserializerState::Title(None));
-                if matches!(&fallback, Some(ShiporderItemTypeDeserializerState::Init__)) {
+                fallback.get_or_insert(S::Title(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -964,14 +948,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_title(data)?;
-                    *self.state__ = ShiporderItemTypeDeserializerState::Note(None);
+                    *self.state__ = S::Note(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(ShiporderItemTypeDeserializerState::Title(Some(
-                        deserializer,
-                    )));
-                    *self.state__ = ShiporderItemTypeDeserializerState::Note(None);
+                    fallback.get_or_insert(S::Title(Some(deserializer)));
+                    *self.state__ = S::Note(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -982,14 +964,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<ShiporderItemTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use ShiporderItemTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(ShiporderItemTypeDeserializerState::Note(None));
-                *self.state__ = ShiporderItemTypeDeserializerState::Quantity(None);
+                fallback.get_or_insert(S::Note(None));
+                *self.state__ = S::Quantity(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -999,14 +982,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_note(data)?;
-                    *self.state__ = ShiporderItemTypeDeserializerState::Quantity(None);
+                    *self.state__ = S::Quantity(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(ShiporderItemTypeDeserializerState::Note(Some(
-                        deserializer,
-                    )));
-                    *self.state__ = ShiporderItemTypeDeserializerState::Quantity(None);
+                    fallback.get_or_insert(S::Note(Some(deserializer)));
+                    *self.state__ = S::Quantity(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -1017,14 +998,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, usize>,
             fallback: &mut Option<ShiporderItemTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use ShiporderItemTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(ShiporderItemTypeDeserializerState::Quantity(None));
-                if matches!(&fallback, Some(ShiporderItemTypeDeserializerState::Init__)) {
+                fallback.get_or_insert(S::Quantity(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -1037,14 +1019,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_quantity(data)?;
-                    *self.state__ = ShiporderItemTypeDeserializerState::Price(None);
+                    *self.state__ = S::Price(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(ShiporderItemTypeDeserializerState::Quantity(Some(
-                        deserializer,
-                    )));
-                    *self.state__ = ShiporderItemTypeDeserializerState::Price(None);
+                    fallback.get_or_insert(S::Quantity(Some(deserializer)));
+                    *self.state__ = S::Price(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -1055,14 +1035,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, f64>,
             fallback: &mut Option<ShiporderItemTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use ShiporderItemTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(ShiporderItemTypeDeserializerState::Price(None));
-                if matches!(&fallback, Some(ShiporderItemTypeDeserializerState::Init__)) {
+                fallback.get_or_insert(S::Price(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -1075,14 +1056,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_price(data)?;
-                    *self.state__ = ShiporderItemTypeDeserializerState::Done__;
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(ShiporderItemTypeDeserializerState::Price(Some(
-                        deserializer,
-                    )));
-                    *self.state__ = ShiporderItemTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::Price(Some(deserializer)));
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -1168,7 +1147,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ = ShiporderItemTypeDeserializerState::Title(None);
+                        *self.state__ = S::Title(None);
                         event
                     }
                     (S::Title(None), event @ (Event::Start(_) | Event::Empty(_))) => {

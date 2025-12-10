@@ -156,14 +156,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::Inner1Type>,
             fallback: &mut Option<FooTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use FooTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(FooTypeDeserializerState::Inner1(None));
-                if matches!(&fallback, Some(FooTypeDeserializerState::Init__)) {
+                fallback.get_or_insert(S::Inner1(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -176,12 +177,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_inner_1(data)?;
-                    *self.state__ = FooTypeDeserializerState::Inner2(None);
+                    *self.state__ = S::Inner2(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(FooTypeDeserializerState::Inner1(Some(deserializer)));
-                    *self.state__ = FooTypeDeserializerState::Inner2(None);
+                    fallback.get_or_insert(S::Inner1(Some(deserializer)));
+                    *self.state__ = S::Inner2(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -192,14 +193,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::Inner2Type>,
             fallback: &mut Option<FooTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use FooTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(FooTypeDeserializerState::Inner2(None));
-                if matches!(&fallback, Some(FooTypeDeserializerState::Init__)) {
+                fallback.get_or_insert(S::Inner2(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -212,12 +214,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_inner_2(data)?;
-                    *self.state__ = FooTypeDeserializerState::Done__;
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(FooTypeDeserializerState::Inner2(Some(deserializer)));
-                    *self.state__ = FooTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::Inner2(Some(deserializer)));
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -279,7 +281,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ = FooTypeDeserializerState::Inner1(None);
+                        *self.state__ = S::Inner1(None);
                         event
                     }
                     (S::Inner1(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -395,14 +397,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<Inner1TypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use Inner1TypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(Inner1TypeDeserializerState::A(None));
-                if matches!(&fallback, Some(Inner1TypeDeserializerState::Init__)) {
+                fallback.get_or_insert(S::A(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -415,12 +418,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_a(data)?;
-                    *self.state__ = Inner1TypeDeserializerState::Done__;
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(Inner1TypeDeserializerState::A(Some(deserializer)));
-                    *self.state__ = Inner1TypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::A(Some(deserializer)));
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -470,7 +473,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ = Inner1TypeDeserializerState::A(None);
+                        *self.state__ = S::A(None);
                         event
                     }
                     (S::A(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -568,14 +571,15 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<Inner2TypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use Inner2TypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(Inner2TypeDeserializerState::B(None));
-                if matches!(&fallback, Some(Inner2TypeDeserializerState::Init__)) {
+                fallback.get_or_insert(S::B(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -588,12 +592,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_b(data)?;
-                    *self.state__ = Inner2TypeDeserializerState::Done__;
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(Inner2TypeDeserializerState::B(Some(deserializer)));
-                    *self.state__ = Inner2TypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::B(Some(deserializer)));
+                    *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
@@ -643,7 +647,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ = Inner2TypeDeserializerState::B(None);
+                        *self.state__ = S::B(None);
                         event
                     }
                     (S::B(None), event @ (Event::Start(_) | Event::Empty(_))) => {

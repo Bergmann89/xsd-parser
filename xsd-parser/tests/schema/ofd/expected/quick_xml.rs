@@ -114,14 +114,15 @@ pub mod annotations {
                 output: DeserializerOutput<'de, super::AnnotationsPageXElementType>,
                 fallback: &mut Option<AnnotationsXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use AnnotationsXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(AnnotationsXElementTypeDeserializerState::Page(None));
-                    *self.state__ = AnnotationsXElementTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::Page(None));
+                    *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -131,14 +132,12 @@ pub mod annotations {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_page(data)?;
-                        *self.state__ = AnnotationsXElementTypeDeserializerState::Page(None);
+                        *self.state__ = S::Page(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(AnnotationsXElementTypeDeserializerState::Page(
-                            Some(deserializer),
-                        ));
-                        *self.state__ = AnnotationsXElementTypeDeserializerState::Page(None);
+                        fallback.get_or_insert(S::Page(Some(deserializer)));
+                        *self.state__ = S::Page(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -190,7 +189,7 @@ pub mod annotations {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ = AnnotationsXElementTypeDeserializerState::Page(None);
+                            *self.state__ = S::Page(None);
                             event
                         }
                         (S::Page(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -306,18 +305,15 @@ pub mod annotations {
                 output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<AnnotationsPageXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use AnnotationsPageXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback
-                        .get_or_insert(AnnotationsPageXElementTypeDeserializerState::FileLoc(None));
-                    if matches!(
-                        &fallback,
-                        Some(AnnotationsPageXElementTypeDeserializerState::Init__)
-                    ) {
+                    fallback.get_or_insert(S::FileLoc(None));
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -330,16 +326,12 @@ pub mod annotations {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_file_loc(data)?;
-                        *self.state__ = AnnotationsPageXElementTypeDeserializerState::Done__;
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(
-                            AnnotationsPageXElementTypeDeserializerState::FileLoc(Some(
-                                deserializer,
-                            )),
-                        );
-                        *self.state__ = AnnotationsPageXElementTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::FileLoc(Some(deserializer)));
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -391,8 +383,7 @@ pub mod annotations {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ =
-                                AnnotationsPageXElementTypeDeserializerState::FileLoc(None);
+                            *self.state__ = S::FileLoc(None);
                             event
                         }
                         (S::FileLoc(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -831,23 +822,21 @@ pub mod annotion {
                 output: DeserializerOutput<'de, super::PageAnnotAnnotXElementType>,
                 fallback: &mut Option<PageAnnotXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use PageAnnotXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    if matches!(
-                        &fallback,
-                        Some(PageAnnotXElementTypeDeserializerState::Init__)
-                    ) {
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else if self.annot.len() < 1usize {
-                        fallback.get_or_insert(PageAnnotXElementTypeDeserializerState::Annot(None));
+                        fallback.get_or_insert(S::Annot(None));
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                     } else {
-                        fallback.get_or_insert(PageAnnotXElementTypeDeserializerState::Annot(None));
-                        *self.state__ = PageAnnotXElementTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::Annot(None));
+                        *self.state__ = S::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                 }
@@ -858,14 +847,12 @@ pub mod annotion {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_annot(data)?;
-                        *self.state__ = PageAnnotXElementTypeDeserializerState::Annot(None);
+                        *self.state__ = S::Annot(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(PageAnnotXElementTypeDeserializerState::Annot(
-                            Some(deserializer),
-                        ));
-                        *self.state__ = PageAnnotXElementTypeDeserializerState::Annot(None);
+                        fallback.get_or_insert(S::Annot(Some(deserializer)));
+                        *self.state__ = S::Annot(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -915,7 +902,7 @@ pub mod annotion {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ = PageAnnotXElementTypeDeserializerState::Annot(None);
+                            *self.state__ = S::Annot(None);
                             event
                         }
                         (S::Annot(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -1155,15 +1142,15 @@ pub mod annotion {
                 output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<PageAnnotAnnotXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use PageAnnotAnnotXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback
-                        .get_or_insert(PageAnnotAnnotXElementTypeDeserializerState::Remark(None));
-                    *self.state__ = PageAnnotAnnotXElementTypeDeserializerState::Parameters(None);
+                    fallback.get_or_insert(S::Remark(None));
+                    *self.state__ = S::Parameters(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -1173,16 +1160,12 @@ pub mod annotion {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_remark(data)?;
-                        *self.state__ =
-                            PageAnnotAnnotXElementTypeDeserializerState::Parameters(None);
+                        *self.state__ = S::Parameters(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(
-                            PageAnnotAnnotXElementTypeDeserializerState::Remark(Some(deserializer)),
-                        );
-                        *self.state__ =
-                            PageAnnotAnnotXElementTypeDeserializerState::Parameters(None);
+                        fallback.get_or_insert(S::Remark(Some(deserializer)));
+                        *self.state__ = S::Parameters(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -1193,16 +1176,15 @@ pub mod annotion {
                 output: DeserializerOutput<'de, super::PageAnnotAnnotParametersXElementType>,
                 fallback: &mut Option<PageAnnotAnnotXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use PageAnnotAnnotXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(
-                        PageAnnotAnnotXElementTypeDeserializerState::Parameters(None),
-                    );
-                    *self.state__ = PageAnnotAnnotXElementTypeDeserializerState::Appearance(None);
+                    fallback.get_or_insert(S::Parameters(None));
+                    *self.state__ = S::Appearance(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -1212,18 +1194,12 @@ pub mod annotion {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_parameters(data)?;
-                        *self.state__ =
-                            PageAnnotAnnotXElementTypeDeserializerState::Appearance(None);
+                        *self.state__ = S::Appearance(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(
-                            PageAnnotAnnotXElementTypeDeserializerState::Parameters(Some(
-                                deserializer,
-                            )),
-                        );
-                        *self.state__ =
-                            PageAnnotAnnotXElementTypeDeserializerState::Appearance(None);
+                        fallback.get_or_insert(S::Parameters(Some(deserializer)));
+                        *self.state__ = S::Appearance(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -1234,19 +1210,15 @@ pub mod annotion {
                 output: DeserializerOutput<'de, super::PageAnnotAnnotAppearanceXElementType>,
                 fallback: &mut Option<PageAnnotAnnotXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use PageAnnotAnnotXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(
-                        PageAnnotAnnotXElementTypeDeserializerState::Appearance(None),
-                    );
-                    if matches!(
-                        &fallback,
-                        Some(PageAnnotAnnotXElementTypeDeserializerState::Init__)
-                    ) {
+                    fallback.get_or_insert(S::Appearance(None));
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -1259,16 +1231,12 @@ pub mod annotion {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_appearance(data)?;
-                        *self.state__ = PageAnnotAnnotXElementTypeDeserializerState::Done__;
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(
-                            PageAnnotAnnotXElementTypeDeserializerState::Appearance(Some(
-                                deserializer,
-                            )),
-                        );
-                        *self.state__ = PageAnnotAnnotXElementTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::Appearance(Some(deserializer)));
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -1344,8 +1312,7 @@ pub mod annotion {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ =
-                                PageAnnotAnnotXElementTypeDeserializerState::Remark(None);
+                            *self.state__ = S::Remark(None);
                             event
                         }
                         (S::Remark(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -1498,28 +1465,21 @@ pub mod annotion {
                 >,
                 fallback: &mut Option<PageAnnotAnnotParametersXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use PageAnnotAnnotParametersXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    if matches!(
-                        &fallback,
-                        Some(PageAnnotAnnotParametersXElementTypeDeserializerState::Init__)
-                    ) {
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else if self.parameter.len() < 1usize {
-                        fallback.get_or_insert(
-                            PageAnnotAnnotParametersXElementTypeDeserializerState::Parameter(None),
-                        );
+                        fallback.get_or_insert(S::Parameter(None));
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                     } else {
-                        fallback.get_or_insert(
-                            PageAnnotAnnotParametersXElementTypeDeserializerState::Parameter(None),
-                        );
-                        *self.state__ =
-                            PageAnnotAnnotParametersXElementTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::Parameter(None));
+                        *self.state__ = S::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                 }
@@ -1530,18 +1490,12 @@ pub mod annotion {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_parameter(data)?;
-                        *self.state__ =
-                            PageAnnotAnnotParametersXElementTypeDeserializerState::Parameter(None);
+                        *self.state__ = S::Parameter(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(
-                            PageAnnotAnnotParametersXElementTypeDeserializerState::Parameter(Some(
-                                deserializer,
-                            )),
-                        );
-                        *self.state__ =
-                            PageAnnotAnnotParametersXElementTypeDeserializerState::Parameter(None);
+                        fallback.get_or_insert(S::Parameter(Some(deserializer)));
+                        *self.state__ = S::Parameter(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -1593,10 +1547,7 @@ pub mod annotion {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ =
-                                PageAnnotAnnotParametersXElementTypeDeserializerState::Parameter(
-                                    None,
-                                );
+                            *self.state__ = S::Parameter(None);
                             event
                         }
                         (S::Parameter(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -1709,15 +1660,14 @@ pub mod annotion {
                 output: DeserializerOutput<'de, super::PageAnnotAnnotAppearanceXElementTypeContent>,
                 fallback: &mut Option<PageAnnotAnnotAppearanceXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use PageAnnotAnnotAppearanceXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state__ = fallback
-                        .take()
-                        .unwrap_or(PageAnnotAnnotAppearanceXElementTypeDeserializerState::Next__);
+                    *self.state__ = fallback.take().unwrap_or(S::Next__);
                     return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -1727,18 +1677,12 @@ pub mod annotion {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state__ =
-                            PageAnnotAnnotAppearanceXElementTypeDeserializerState::Next__;
+                        *self.state__ = S::Next__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *fallback = Some(
-                            PageAnnotAnnotAppearanceXElementTypeDeserializerState::Content__(
-                                deserializer,
-                            ),
-                        );
-                        *self.state__ =
-                            PageAnnotAnnotAppearanceXElementTypeDeserializerState::Next__;
+                        *fallback = Some(S::Content__(deserializer));
+                        *self.state__ = S::Next__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -2013,6 +1957,7 @@ pub mod annotion {
                     super::super::page::CtPageBlockTextObjectXElementType,
                 >,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use PageAnnotAnnotAppearanceXElementTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -2029,15 +1974,12 @@ pub mod annotion {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_text_object(&mut values, data)?;
-                        let data = Self :: finish_state (helper , PageAnnotAnnotAppearanceXElementTypeContentDeserializerState :: TextObject (values , None , None)) ? ;
-                        *self.state__ =
-                            PageAnnotAnnotAppearanceXElementTypeContentDeserializerState::Done__(
-                                data,
-                            );
+                        let data = Self::finish_state(helper, S::TextObject(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        * self . state__ = PageAnnotAnnotAppearanceXElementTypeContentDeserializerState :: TextObject (values , None , Some (deserializer)) ;
+                        *self.state__ = S::TextObject(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -2052,6 +1994,7 @@ pub mod annotion {
                     super::super::page::CtPageBlockPathObjectXElementType,
                 >,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use PageAnnotAnnotAppearanceXElementTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -2068,15 +2011,12 @@ pub mod annotion {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_path_object(&mut values, data)?;
-                        let data = Self :: finish_state (helper , PageAnnotAnnotAppearanceXElementTypeContentDeserializerState :: PathObject (values , None , None)) ? ;
-                        *self.state__ =
-                            PageAnnotAnnotAppearanceXElementTypeContentDeserializerState::Done__(
-                                data,
-                            );
+                        let data = Self::finish_state(helper, S::PathObject(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        * self . state__ = PageAnnotAnnotAppearanceXElementTypeContentDeserializerState :: PathObject (values , None , Some (deserializer)) ;
+                        *self.state__ = S::PathObject(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -2091,6 +2031,7 @@ pub mod annotion {
                     super::super::page::CtPageBlockImageObjectXElementType,
                 >,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use PageAnnotAnnotAppearanceXElementTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -2107,15 +2048,12 @@ pub mod annotion {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_image_object(&mut values, data)?;
-                        let data = Self :: finish_state (helper , PageAnnotAnnotAppearanceXElementTypeContentDeserializerState :: ImageObject (values , None , None)) ? ;
-                        *self.state__ =
-                            PageAnnotAnnotAppearanceXElementTypeContentDeserializerState::Done__(
-                                data,
-                            );
+                        let data = Self::finish_state(helper, S::ImageObject(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        * self . state__ = PageAnnotAnnotAppearanceXElementTypeContentDeserializerState :: ImageObject (values , None , Some (deserializer)) ;
+                        *self.state__ = S::ImageObject(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -2130,6 +2068,7 @@ pub mod annotion {
                     super::super::page::CtPageBlockCompositeObjectXElementType,
                 >,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use PageAnnotAnnotAppearanceXElementTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -2146,15 +2085,13 @@ pub mod annotion {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_composite_object(&mut values, data)?;
-                        let data = Self :: finish_state (helper , PageAnnotAnnotAppearanceXElementTypeContentDeserializerState :: CompositeObject (values , None , None)) ? ;
-                        *self.state__ =
-                            PageAnnotAnnotAppearanceXElementTypeContentDeserializerState::Done__(
-                                data,
-                            );
+                        let data =
+                            Self::finish_state(helper, S::CompositeObject(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        * self . state__ = PageAnnotAnnotAppearanceXElementTypeContentDeserializerState :: CompositeObject (values , None , Some (deserializer)) ;
+                        *self.state__ = S::CompositeObject(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -2169,6 +2106,7 @@ pub mod annotion {
                     super::super::page::CtPageBlockPageBlockXElementType,
                 >,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use PageAnnotAnnotAppearanceXElementTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -2185,25 +2123,12 @@ pub mod annotion {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_page_block(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            PageAnnotAnnotAppearanceXElementTypeContentDeserializerState::PageBlock(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ =
-                            PageAnnotAnnotAppearanceXElementTypeContentDeserializerState::Done__(
-                                data,
-                            );
+                        let data = Self::finish_state(helper, S::PageBlock(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ =
-                            PageAnnotAnnotAppearanceXElementTypeContentDeserializerState::PageBlock(
-                                values,
-                                None,
-                                Some(deserializer),
-                            );
+                        *self.state__ = S::PageBlock(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -2928,15 +2853,15 @@ pub mod attachments {
                 output: DeserializerOutput<'de, super::CtAttachmentXType>,
                 fallback: &mut Option<AttachmentsXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use AttachmentsXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback
-                        .get_or_insert(AttachmentsXElementTypeDeserializerState::Attachment(None));
-                    *self.state__ = AttachmentsXElementTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::Attachment(None));
+                    *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -2946,16 +2871,12 @@ pub mod attachments {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_attachment(data)?;
-                        *self.state__ = AttachmentsXElementTypeDeserializerState::Attachment(None);
+                        *self.state__ = S::Attachment(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(
-                            AttachmentsXElementTypeDeserializerState::Attachment(Some(
-                                deserializer,
-                            )),
-                        );
-                        *self.state__ = AttachmentsXElementTypeDeserializerState::Attachment(None);
+                        fallback.get_or_insert(S::Attachment(Some(deserializer)));
+                        *self.state__ = S::Attachment(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -3007,8 +2928,7 @@ pub mod attachments {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ =
-                                AttachmentsXElementTypeDeserializerState::Attachment(None);
+                            *self.state__ = S::Attachment(None);
                             event
                         }
                         (S::Attachment(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -3182,14 +3102,15 @@ pub mod attachments {
                 output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<CtAttachmentXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtAttachmentXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(CtAttachmentXTypeDeserializerState::FileLoc(None));
-                    if matches!(&fallback, Some(CtAttachmentXTypeDeserializerState::Init__)) {
+                    fallback.get_or_insert(S::FileLoc(None));
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -3202,14 +3123,12 @@ pub mod attachments {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_file_loc(data)?;
-                        *self.state__ = CtAttachmentXTypeDeserializerState::Done__;
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CtAttachmentXTypeDeserializerState::FileLoc(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = CtAttachmentXTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::FileLoc(Some(deserializer)));
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -3259,7 +3178,7 @@ pub mod attachments {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ = CtAttachmentXTypeDeserializerState::FileLoc(None);
+                            *self.state__ = S::FileLoc(None);
                             event
                         }
                         (S::FileLoc(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -3585,15 +3504,15 @@ pub mod custom_tags {
                 output: DeserializerOutput<'de, super::CustomTagsCustomTagXElementType>,
                 fallback: &mut Option<CustomTagsXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CustomTagsXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback
-                        .get_or_insert(CustomTagsXElementTypeDeserializerState::CustomTag(None));
-                    *self.state__ = CustomTagsXElementTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::CustomTag(None));
+                    *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -3603,14 +3522,12 @@ pub mod custom_tags {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_custom_tag(data)?;
-                        *self.state__ = CustomTagsXElementTypeDeserializerState::CustomTag(None);
+                        *self.state__ = S::CustomTag(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CustomTagsXElementTypeDeserializerState::CustomTag(
-                            Some(deserializer),
-                        ));
-                        *self.state__ = CustomTagsXElementTypeDeserializerState::CustomTag(None);
+                        fallback.get_or_insert(S::CustomTag(Some(deserializer)));
+                        *self.state__ = S::CustomTag(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -3660,8 +3577,7 @@ pub mod custom_tags {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ =
-                                CustomTagsXElementTypeDeserializerState::CustomTag(None);
+                            *self.state__ = S::CustomTag(None);
                             event
                         }
                         (S::CustomTag(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -3795,16 +3711,15 @@ pub mod custom_tags {
                 output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<CustomTagsCustomTagXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CustomTagsCustomTagXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(
-                        CustomTagsCustomTagXElementTypeDeserializerState::SchemaLoc(None),
-                    );
-                    *self.state__ = CustomTagsCustomTagXElementTypeDeserializerState::FileLoc(None);
+                    fallback.get_or_insert(S::SchemaLoc(None));
+                    *self.state__ = S::FileLoc(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -3814,18 +3729,12 @@ pub mod custom_tags {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_schema_loc(data)?;
-                        *self.state__ =
-                            CustomTagsCustomTagXElementTypeDeserializerState::FileLoc(None);
+                        *self.state__ = S::FileLoc(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(
-                            CustomTagsCustomTagXElementTypeDeserializerState::SchemaLoc(Some(
-                                deserializer,
-                            )),
-                        );
-                        *self.state__ =
-                            CustomTagsCustomTagXElementTypeDeserializerState::FileLoc(None);
+                        fallback.get_or_insert(S::SchemaLoc(Some(deserializer)));
+                        *self.state__ = S::FileLoc(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -3836,19 +3745,15 @@ pub mod custom_tags {
                 output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<CustomTagsCustomTagXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CustomTagsCustomTagXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(
-                        CustomTagsCustomTagXElementTypeDeserializerState::FileLoc(None),
-                    );
-                    if matches!(
-                        &fallback,
-                        Some(CustomTagsCustomTagXElementTypeDeserializerState::Init__)
-                    ) {
+                    fallback.get_or_insert(S::FileLoc(None));
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -3861,16 +3766,12 @@ pub mod custom_tags {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_file_loc(data)?;
-                        *self.state__ = CustomTagsCustomTagXElementTypeDeserializerState::Done__;
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(
-                            CustomTagsCustomTagXElementTypeDeserializerState::FileLoc(Some(
-                                deserializer,
-                            )),
-                        );
-                        *self.state__ = CustomTagsCustomTagXElementTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::FileLoc(Some(deserializer)));
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -3934,8 +3835,7 @@ pub mod custom_tags {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ =
-                                CustomTagsCustomTagXElementTypeDeserializerState::SchemaLoc(None);
+                            *self.state__ = S::SchemaLoc(None);
                             event
                         }
                         (S::SchemaLoc(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -4783,15 +4683,14 @@ pub mod definition {
                 output: DeserializerOutput<'de, super::CtActionXTypeContent>,
                 fallback: &mut Option<CtActionXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtActionXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state__ = fallback
-                        .take()
-                        .unwrap_or(CtActionXTypeDeserializerState::Next__);
+                    *self.state__ = fallback.take().unwrap_or(S::Next__);
                     return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -4801,17 +4700,16 @@ pub mod definition {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state__ = CtActionXTypeDeserializerState::Next__;
+                        *self.state__ = S::Next__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
                         if self.content.len() < 1usize {
-                            *fallback =
-                                Some(CtActionXTypeDeserializerState::Content__(deserializer));
-                            *self.state__ = CtActionXTypeDeserializerState::Next__;
+                            *fallback = Some(S::Content__(deserializer));
+                            *self.state__ = S::Next__;
                             Ok(ElementHandlerOutput::from_event(event, allow_any))
                         } else {
-                            *self.state__ = CtActionXTypeDeserializerState::Content__(deserializer);
+                            *self.state__ = S::Content__(deserializer);
                             Ok(ElementHandlerOutput::from_event_end(event, allow_any))
                         }
                     }
@@ -5136,6 +5034,7 @@ pub mod definition {
                 fallback: Option<<super::CtRegionXType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::CtRegionXType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtActionXTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -5152,19 +5051,12 @@ pub mod definition {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_region(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CtActionXTypeContentDeserializerState::Region(values, None, None),
-                        )?;
-                        *self.state__ = CtActionXTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Region(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CtActionXTypeContentDeserializerState::Region(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Region(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -5178,6 +5070,7 @@ pub mod definition {
                 >,
                 output: DeserializerOutput<'de, super::CtActionGotoXElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtActionXTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -5194,19 +5087,12 @@ pub mod definition {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_goto(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CtActionXTypeContentDeserializerState::Goto(values, None, None),
-                        )?;
-                        *self.state__ = CtActionXTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Goto(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CtActionXTypeContentDeserializerState::Goto(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Goto(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -5220,6 +5106,7 @@ pub mod definition {
                 >,
                 output: DeserializerOutput<'de, super::CtActionUriXElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtActionXTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -5236,19 +5123,12 @@ pub mod definition {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_uri(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CtActionXTypeContentDeserializerState::Uri(values, None, None),
-                        )?;
-                        *self.state__ = CtActionXTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Uri(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CtActionXTypeContentDeserializerState::Uri(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Uri(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -5262,6 +5142,7 @@ pub mod definition {
                 >,
                 output: DeserializerOutput<'de, super::CtActionGotoAxElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtActionXTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -5278,19 +5159,12 @@ pub mod definition {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_goto_a(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CtActionXTypeContentDeserializerState::GotoA(values, None, None),
-                        )?;
-                        *self.state__ = CtActionXTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::GotoA(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CtActionXTypeContentDeserializerState::GotoA(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::GotoA(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -5304,6 +5178,7 @@ pub mod definition {
                 >,
                 output: DeserializerOutput<'de, super::CtActionSoundXElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtActionXTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -5320,19 +5195,12 @@ pub mod definition {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_sound(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CtActionXTypeContentDeserializerState::Sound(values, None, None),
-                        )?;
-                        *self.state__ = CtActionXTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Sound(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CtActionXTypeContentDeserializerState::Sound(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Sound(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -5346,6 +5214,7 @@ pub mod definition {
                 >,
                 output: DeserializerOutput<'de, super::CtActionMovieXElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtActionXTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -5362,19 +5231,12 @@ pub mod definition {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_movie(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CtActionXTypeContentDeserializerState::Movie(values, None, None),
-                        )?;
-                        *self.state__ = CtActionXTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Movie(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CtActionXTypeContentDeserializerState::Movie(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Movie(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -5840,14 +5702,15 @@ pub mod definition {
                 output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<CtPageAreaXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtPageAreaXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(CtPageAreaXTypeDeserializerState::PhysicalBox(None));
-                    if matches!(&fallback, Some(CtPageAreaXTypeDeserializerState::Init__)) {
+                    fallback.get_or_insert(S::PhysicalBox(None));
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -5860,14 +5723,12 @@ pub mod definition {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_physical_box(data)?;
-                        *self.state__ = CtPageAreaXTypeDeserializerState::ApplicationBox(None);
+                        *self.state__ = S::ApplicationBox(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CtPageAreaXTypeDeserializerState::PhysicalBox(
-                            Some(deserializer),
-                        ));
-                        *self.state__ = CtPageAreaXTypeDeserializerState::ApplicationBox(None);
+                        fallback.get_or_insert(S::PhysicalBox(Some(deserializer)));
+                        *self.state__ = S::ApplicationBox(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -5878,14 +5739,15 @@ pub mod definition {
                 output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<CtPageAreaXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtPageAreaXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(CtPageAreaXTypeDeserializerState::ApplicationBox(None));
-                    *self.state__ = CtPageAreaXTypeDeserializerState::ContentBox(None);
+                    fallback.get_or_insert(S::ApplicationBox(None));
+                    *self.state__ = S::ContentBox(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -5895,14 +5757,12 @@ pub mod definition {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_application_box(data)?;
-                        *self.state__ = CtPageAreaXTypeDeserializerState::ContentBox(None);
+                        *self.state__ = S::ContentBox(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CtPageAreaXTypeDeserializerState::ApplicationBox(
-                            Some(deserializer),
-                        ));
-                        *self.state__ = CtPageAreaXTypeDeserializerState::ContentBox(None);
+                        fallback.get_or_insert(S::ApplicationBox(Some(deserializer)));
+                        *self.state__ = S::ContentBox(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -5913,14 +5773,15 @@ pub mod definition {
                 output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<CtPageAreaXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtPageAreaXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(CtPageAreaXTypeDeserializerState::ContentBox(None));
-                    *self.state__ = CtPageAreaXTypeDeserializerState::BleedBox(None);
+                    fallback.get_or_insert(S::ContentBox(None));
+                    *self.state__ = S::BleedBox(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -5930,14 +5791,12 @@ pub mod definition {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content_box(data)?;
-                        *self.state__ = CtPageAreaXTypeDeserializerState::BleedBox(None);
+                        *self.state__ = S::BleedBox(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CtPageAreaXTypeDeserializerState::ContentBox(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = CtPageAreaXTypeDeserializerState::BleedBox(None);
+                        fallback.get_or_insert(S::ContentBox(Some(deserializer)));
+                        *self.state__ = S::BleedBox(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -5948,14 +5807,15 @@ pub mod definition {
                 output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<CtPageAreaXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtPageAreaXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(CtPageAreaXTypeDeserializerState::BleedBox(None));
-                    *self.state__ = CtPageAreaXTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::BleedBox(None));
+                    *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -5965,14 +5825,12 @@ pub mod definition {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_bleed_box(data)?;
-                        *self.state__ = CtPageAreaXTypeDeserializerState::Done__;
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CtPageAreaXTypeDeserializerState::BleedBox(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = CtPageAreaXTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::BleedBox(Some(deserializer)));
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -6058,7 +5916,7 @@ pub mod definition {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ = CtPageAreaXTypeDeserializerState::PhysicalBox(None);
+                            *self.state__ = S::PhysicalBox(None);
                             event
                         }
                         (S::PhysicalBox(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -6213,20 +6071,21 @@ pub mod definition {
                 output: DeserializerOutput<'de, super::CtRegionAreaXElementType>,
                 fallback: &mut Option<CtRegionXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtRegionXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    if matches!(&fallback, Some(CtRegionXTypeDeserializerState::Init__)) {
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else if self.area.len() < 1usize {
-                        fallback.get_or_insert(CtRegionXTypeDeserializerState::Area(None));
+                        fallback.get_or_insert(S::Area(None));
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                     } else {
-                        fallback.get_or_insert(CtRegionXTypeDeserializerState::Area(None));
-                        *self.state__ = CtRegionXTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::Area(None));
+                        *self.state__ = S::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                 }
@@ -6237,14 +6096,12 @@ pub mod definition {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_area(data)?;
-                        *self.state__ = CtRegionXTypeDeserializerState::Area(None);
+                        *self.state__ = S::Area(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CtRegionXTypeDeserializerState::Area(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = CtRegionXTypeDeserializerState::Area(None);
+                        fallback.get_or_insert(S::Area(Some(deserializer)));
+                        *self.state__ = S::Area(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -6294,7 +6151,7 @@ pub mod definition {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ = CtRegionXTypeDeserializerState::Area(None);
+                            *self.state__ = S::Area(None);
                             event
                         }
                         (S::Area(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -6465,6 +6322,7 @@ pub mod definition {
                 fallback: Option<<super::CtDestXType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::CtDestXType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtActionGotoXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -6481,16 +6339,11 @@ pub mod definition {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_dest(&mut values, data)?;
-                        *self.state__ =
-                            CtActionGotoXElementTypeDeserializerState::Dest(values, None, None);
+                        *self.state__ = S::Dest(values, None, None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CtActionGotoXElementTypeDeserializerState::Dest(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Dest(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::from_event_end(event, allow_any))
                     }
                 }
@@ -6504,6 +6357,7 @@ pub mod definition {
                 >,
                 output: DeserializerOutput<'de, super::CtActionGotoBookmarkXElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtActionGotoXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -6520,16 +6374,11 @@ pub mod definition {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_bookmark(&mut values, data)?;
-                        *self.state__ =
-                            CtActionGotoXElementTypeDeserializerState::Bookmark(values, None, None);
+                        *self.state__ = S::Bookmark(values, None, None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CtActionGotoXElementTypeDeserializerState::Bookmark(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Bookmark(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::from_event_end(event, allow_any))
                     }
                 }
@@ -7105,15 +6954,14 @@ pub mod definition {
                 output: DeserializerOutput<'de, super::CtRegionAreaXElementTypeContent>,
                 fallback: &mut Option<CtRegionAreaXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtRegionAreaXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state__ = fallback
-                        .take()
-                        .unwrap_or(CtRegionAreaXElementTypeDeserializerState::Next__);
+                    *self.state__ = fallback.take().unwrap_or(S::Next__);
                     return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -7123,14 +6971,12 @@ pub mod definition {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state__ = CtRegionAreaXElementTypeDeserializerState::Next__;
+                        *self.state__ = S::Next__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *fallback = Some(CtRegionAreaXElementTypeDeserializerState::Content__(
-                            deserializer,
-                        ));
-                        *self.state__ = CtRegionAreaXElementTypeDeserializerState::Next__;
+                        *fallback = Some(S::Content__(deserializer));
+                        *self.state__ = S::Next__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -7430,6 +7276,7 @@ pub mod definition {
                 >,
                 output: DeserializerOutput<'de, super::CtRegionAreaLineXElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtRegionAreaXElementTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -7446,22 +7293,12 @@ pub mod definition {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_move_(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CtRegionAreaXElementTypeContentDeserializerState::Move(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ =
-                            CtRegionAreaXElementTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Move(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CtRegionAreaXElementTypeContentDeserializerState::Move(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Move(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -7475,6 +7312,7 @@ pub mod definition {
                 >,
                 output: DeserializerOutput<'de, super::CtRegionAreaLineXElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtRegionAreaXElementTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -7491,22 +7329,12 @@ pub mod definition {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_line(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CtRegionAreaXElementTypeContentDeserializerState::Line(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ =
-                            CtRegionAreaXElementTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Line(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CtRegionAreaXElementTypeContentDeserializerState::Line(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Line(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -7518,6 +7346,7 @@ pub mod definition {
                 fallback : Option << super :: CtRegionAreaOuadraticBezierXElementType as WithDeserializer > :: Deserializer >,
                 output: DeserializerOutput<'de, super::CtRegionAreaOuadraticBezierXElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtRegionAreaXElementTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -7534,23 +7363,13 @@ pub mod definition {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_ouadratic_bezier(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CtRegionAreaXElementTypeContentDeserializerState::OuadraticBezier(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ =
-                            CtRegionAreaXElementTypeContentDeserializerState::Done__(data);
+                        let data =
+                            Self::finish_state(helper, S::OuadraticBezier(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ =
-                            CtRegionAreaXElementTypeContentDeserializerState::OuadraticBezier(
-                                values,
-                                None,
-                                Some(deserializer),
-                            );
+                        *self.state__ = S::OuadraticBezier(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -7564,6 +7383,7 @@ pub mod definition {
                 >,
                 output: DeserializerOutput<'de, super::CtRegionAreaCubicBezierXElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtRegionAreaXElementTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -7580,23 +7400,12 @@ pub mod definition {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_cubic_bezier(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CtRegionAreaXElementTypeContentDeserializerState::CubicBezier(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ =
-                            CtRegionAreaXElementTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::CubicBezier(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ =
-                            CtRegionAreaXElementTypeContentDeserializerState::CubicBezier(
-                                values,
-                                None,
-                                Some(deserializer),
-                            );
+                        *self.state__ = S::CubicBezier(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -7610,6 +7419,7 @@ pub mod definition {
                 >,
                 output: DeserializerOutput<'de, super::CtRegionAreaArcXElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtRegionAreaXElementTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -7626,22 +7436,12 @@ pub mod definition {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_arc(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CtRegionAreaXElementTypeContentDeserializerState::Arc(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ =
-                            CtRegionAreaXElementTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Arc(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CtRegionAreaXElementTypeContentDeserializerState::Arc(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Arc(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -7653,6 +7453,7 @@ pub mod definition {
                 fallback: Option<<AnyElement as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, AnyElement>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtRegionAreaXElementTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -7669,22 +7470,12 @@ pub mod definition {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_close(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CtRegionAreaXElementTypeContentDeserializerState::Close(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ =
-                            CtRegionAreaXElementTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Close(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CtRegionAreaXElementTypeContentDeserializerState::Close(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Close(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -10224,14 +10015,15 @@ pub mod document {
                 output: DeserializerOutput<'de, super::super::definition::CtDestXType>,
                 fallback: &mut Option<CtBookmarkXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtBookmarkXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(CtBookmarkXTypeDeserializerState::Dest(None));
-                    if matches!(&fallback, Some(CtBookmarkXTypeDeserializerState::Init__)) {
+                    fallback.get_or_insert(S::Dest(None));
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -10244,14 +10036,12 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_dest(data)?;
-                        *self.state__ = CtBookmarkXTypeDeserializerState::Done__;
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CtBookmarkXTypeDeserializerState::Dest(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = CtBookmarkXTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::Dest(Some(deserializer)));
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -10301,7 +10091,7 @@ pub mod document {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ = CtBookmarkXTypeDeserializerState::Dest(None);
+                            *self.state__ = S::Dest(None);
                             event
                         }
                         (S::Dest(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -10450,14 +10240,15 @@ pub mod document {
                 >,
                 fallback: &mut Option<CtOutlineElemXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtOutlineElemXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(CtOutlineElemXTypeDeserializerState::Actions(None));
-                    *self.state__ = CtOutlineElemXTypeDeserializerState::OutlineElem(None);
+                    fallback.get_or_insert(S::Actions(None));
+                    *self.state__ = S::OutlineElem(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -10467,14 +10258,12 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_actions(data)?;
-                        *self.state__ = CtOutlineElemXTypeDeserializerState::OutlineElem(None);
+                        *self.state__ = S::OutlineElem(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CtOutlineElemXTypeDeserializerState::Actions(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = CtOutlineElemXTypeDeserializerState::OutlineElem(None);
+                        fallback.get_or_insert(S::Actions(Some(deserializer)));
+                        *self.state__ = S::OutlineElem(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -10485,14 +10274,15 @@ pub mod document {
                 output: DeserializerOutput<'de, super::CtOutlineElemXType>,
                 fallback: &mut Option<CtOutlineElemXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtOutlineElemXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(CtOutlineElemXTypeDeserializerState::OutlineElem(None));
-                    *self.state__ = CtOutlineElemXTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::OutlineElem(None));
+                    *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -10502,14 +10292,12 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_outline_elem(data)?;
-                        *self.state__ = CtOutlineElemXTypeDeserializerState::OutlineElem(None);
+                        *self.state__ = S::OutlineElem(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CtOutlineElemXTypeDeserializerState::OutlineElem(
-                            Some(deserializer),
-                        ));
-                        *self.state__ = CtOutlineElemXTypeDeserializerState::OutlineElem(None);
+                        fallback.get_or_insert(S::OutlineElem(Some(deserializer)));
+                        *self.state__ = S::OutlineElem(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -10571,7 +10359,7 @@ pub mod document {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ = CtOutlineElemXTypeDeserializerState::Actions(None);
+                            *self.state__ = S::Actions(None);
                             event
                         }
                         (S::Actions(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -10811,14 +10599,15 @@ pub mod document {
                 output: DeserializerOutput<'de, bool>,
                 fallback: &mut Option<CtPermissionXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtPermissionXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(CtPermissionXTypeDeserializerState::Edit(None));
-                    *self.state__ = CtPermissionXTypeDeserializerState::Annot(None);
+                    fallback.get_or_insert(S::Edit(None));
+                    *self.state__ = S::Annot(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -10828,14 +10617,12 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_edit(data)?;
-                        *self.state__ = CtPermissionXTypeDeserializerState::Annot(None);
+                        *self.state__ = S::Annot(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CtPermissionXTypeDeserializerState::Edit(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = CtPermissionXTypeDeserializerState::Annot(None);
+                        fallback.get_or_insert(S::Edit(Some(deserializer)));
+                        *self.state__ = S::Annot(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -10846,14 +10633,15 @@ pub mod document {
                 output: DeserializerOutput<'de, bool>,
                 fallback: &mut Option<CtPermissionXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtPermissionXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(CtPermissionXTypeDeserializerState::Annot(None));
-                    *self.state__ = CtPermissionXTypeDeserializerState::Export(None);
+                    fallback.get_or_insert(S::Annot(None));
+                    *self.state__ = S::Export(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -10863,14 +10651,12 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_annot(data)?;
-                        *self.state__ = CtPermissionXTypeDeserializerState::Export(None);
+                        *self.state__ = S::Export(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CtPermissionXTypeDeserializerState::Annot(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = CtPermissionXTypeDeserializerState::Export(None);
+                        fallback.get_or_insert(S::Annot(Some(deserializer)));
+                        *self.state__ = S::Export(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -10881,14 +10667,15 @@ pub mod document {
                 output: DeserializerOutput<'de, bool>,
                 fallback: &mut Option<CtPermissionXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtPermissionXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(CtPermissionXTypeDeserializerState::Export(None));
-                    *self.state__ = CtPermissionXTypeDeserializerState::Signature(None);
+                    fallback.get_or_insert(S::Export(None));
+                    *self.state__ = S::Signature(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -10898,14 +10685,12 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_export(data)?;
-                        *self.state__ = CtPermissionXTypeDeserializerState::Signature(None);
+                        *self.state__ = S::Signature(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CtPermissionXTypeDeserializerState::Export(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = CtPermissionXTypeDeserializerState::Signature(None);
+                        fallback.get_or_insert(S::Export(Some(deserializer)));
+                        *self.state__ = S::Signature(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -10916,14 +10701,15 @@ pub mod document {
                 output: DeserializerOutput<'de, bool>,
                 fallback: &mut Option<CtPermissionXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtPermissionXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(CtPermissionXTypeDeserializerState::Signature(None));
-                    *self.state__ = CtPermissionXTypeDeserializerState::Watermark(None);
+                    fallback.get_or_insert(S::Signature(None));
+                    *self.state__ = S::Watermark(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -10933,14 +10719,12 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_signature(data)?;
-                        *self.state__ = CtPermissionXTypeDeserializerState::Watermark(None);
+                        *self.state__ = S::Watermark(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CtPermissionXTypeDeserializerState::Signature(
-                            Some(deserializer),
-                        ));
-                        *self.state__ = CtPermissionXTypeDeserializerState::Watermark(None);
+                        fallback.get_or_insert(S::Signature(Some(deserializer)));
+                        *self.state__ = S::Watermark(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -10951,14 +10735,15 @@ pub mod document {
                 output: DeserializerOutput<'de, bool>,
                 fallback: &mut Option<CtPermissionXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtPermissionXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(CtPermissionXTypeDeserializerState::Watermark(None));
-                    *self.state__ = CtPermissionXTypeDeserializerState::PrintScreen(None);
+                    fallback.get_or_insert(S::Watermark(None));
+                    *self.state__ = S::PrintScreen(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -10968,14 +10753,12 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_watermark(data)?;
-                        *self.state__ = CtPermissionXTypeDeserializerState::PrintScreen(None);
+                        *self.state__ = S::PrintScreen(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CtPermissionXTypeDeserializerState::Watermark(
-                            Some(deserializer),
-                        ));
-                        *self.state__ = CtPermissionXTypeDeserializerState::PrintScreen(None);
+                        fallback.get_or_insert(S::Watermark(Some(deserializer)));
+                        *self.state__ = S::PrintScreen(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -10986,14 +10769,15 @@ pub mod document {
                 output: DeserializerOutput<'de, bool>,
                 fallback: &mut Option<CtPermissionXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtPermissionXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(CtPermissionXTypeDeserializerState::PrintScreen(None));
-                    *self.state__ = CtPermissionXTypeDeserializerState::Print(None);
+                    fallback.get_or_insert(S::PrintScreen(None));
+                    *self.state__ = S::Print(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -11003,14 +10787,12 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_print_screen(data)?;
-                        *self.state__ = CtPermissionXTypeDeserializerState::Print(None);
+                        *self.state__ = S::Print(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CtPermissionXTypeDeserializerState::PrintScreen(
-                            Some(deserializer),
-                        ));
-                        *self.state__ = CtPermissionXTypeDeserializerState::Print(None);
+                        fallback.get_or_insert(S::PrintScreen(Some(deserializer)));
+                        *self.state__ = S::Print(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -11021,14 +10803,15 @@ pub mod document {
                 output: DeserializerOutput<'de, super::CtPermissionPrintXElementType>,
                 fallback: &mut Option<CtPermissionXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtPermissionXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(CtPermissionXTypeDeserializerState::Print(None));
-                    *self.state__ = CtPermissionXTypeDeserializerState::ValidPeriod(None);
+                    fallback.get_or_insert(S::Print(None));
+                    *self.state__ = S::ValidPeriod(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -11038,14 +10821,12 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_print(data)?;
-                        *self.state__ = CtPermissionXTypeDeserializerState::ValidPeriod(None);
+                        *self.state__ = S::ValidPeriod(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CtPermissionXTypeDeserializerState::Print(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = CtPermissionXTypeDeserializerState::ValidPeriod(None);
+                        fallback.get_or_insert(S::Print(Some(deserializer)));
+                        *self.state__ = S::ValidPeriod(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -11056,14 +10837,15 @@ pub mod document {
                 output: DeserializerOutput<'de, super::CtPermissionValidPeriodXElementType>,
                 fallback: &mut Option<CtPermissionXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtPermissionXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(CtPermissionXTypeDeserializerState::ValidPeriod(None));
-                    *self.state__ = CtPermissionXTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::ValidPeriod(None));
+                    *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -11073,14 +10855,12 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_valid_period(data)?;
-                        *self.state__ = CtPermissionXTypeDeserializerState::Done__;
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CtPermissionXTypeDeserializerState::ValidPeriod(
-                            Some(deserializer),
-                        ));
-                        *self.state__ = CtPermissionXTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::ValidPeriod(Some(deserializer)));
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -11214,7 +10994,7 @@ pub mod document {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ = CtPermissionXTypeDeserializerState::Edit(None);
+                            *self.state__ = S::Edit(None);
                             event
                         }
                         (S::Edit(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -11442,15 +11222,14 @@ pub mod document {
                 output: DeserializerOutput<'de, super::CtVPreferencesXTypeContent>,
                 fallback: &mut Option<CtVPreferencesXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtVPreferencesXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state__ = fallback
-                        .take()
-                        .unwrap_or(CtVPreferencesXTypeDeserializerState::Next__);
+                    *self.state__ = fallback.take().unwrap_or(S::Next__);
                     return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -11460,19 +11239,16 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state__ = CtVPreferencesXTypeDeserializerState::Next__;
+                        *self.state__ = S::Next__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
                         if self.content.len() < 6usize {
-                            *fallback = Some(CtVPreferencesXTypeDeserializerState::Content__(
-                                deserializer,
-                            ));
-                            *self.state__ = CtVPreferencesXTypeDeserializerState::Next__;
+                            *fallback = Some(S::Content__(deserializer));
+                            *self.state__ = S::Next__;
                             Ok(ElementHandlerOutput::from_event(event, allow_any))
                         } else {
-                            *self.state__ =
-                                CtVPreferencesXTypeDeserializerState::Content__(deserializer);
+                            *self.state__ = S::Content__(deserializer);
                             Ok(ElementHandlerOutput::from_event_end(event, allow_any))
                         }
                     }
@@ -11871,6 +11647,7 @@ pub mod document {
                 >,
                 output: DeserializerOutput<'de, super::CtVPreferencesPageModeXElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtVPreferencesXTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -11887,21 +11664,12 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_page_mode(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CtVPreferencesXTypeContentDeserializerState::PageMode(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ = CtVPreferencesXTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::PageMode(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CtVPreferencesXTypeContentDeserializerState::PageMode(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::PageMode(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -11915,6 +11683,7 @@ pub mod document {
                 >,
                 output: DeserializerOutput<'de, super::CtVPreferencesPageLayoutXElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtVPreferencesXTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -11931,21 +11700,12 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_page_layout(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CtVPreferencesXTypeContentDeserializerState::PageLayout(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ = CtVPreferencesXTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::PageLayout(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CtVPreferencesXTypeContentDeserializerState::PageLayout(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::PageLayout(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -11959,6 +11719,7 @@ pub mod document {
                 >,
                 output: DeserializerOutput<'de, super::CtVPreferencesTabDisplayXElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtVPreferencesXTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -11975,21 +11736,12 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_tab_display(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CtVPreferencesXTypeContentDeserializerState::TabDisplay(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ = CtVPreferencesXTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::TabDisplay(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CtVPreferencesXTypeContentDeserializerState::TabDisplay(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::TabDisplay(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -12001,6 +11753,7 @@ pub mod document {
                 fallback: Option<<bool as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, bool>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtVPreferencesXTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -12017,21 +11770,12 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_hide_toolbar(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CtVPreferencesXTypeContentDeserializerState::HideToolbar(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ = CtVPreferencesXTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::HideToolbar(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CtVPreferencesXTypeContentDeserializerState::HideToolbar(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::HideToolbar(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -12043,6 +11787,7 @@ pub mod document {
                 fallback: Option<<bool as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, bool>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtVPreferencesXTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -12059,21 +11804,12 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_hide_menubar(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CtVPreferencesXTypeContentDeserializerState::HideMenubar(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ = CtVPreferencesXTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::HideMenubar(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CtVPreferencesXTypeContentDeserializerState::HideMenubar(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::HideMenubar(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -12085,6 +11821,7 @@ pub mod document {
                 fallback: Option<<bool as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, bool>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtVPreferencesXTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -12101,21 +11838,12 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_hide_window_ui(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CtVPreferencesXTypeContentDeserializerState::HideWindowUi(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ = CtVPreferencesXTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::HideWindowUi(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CtVPreferencesXTypeContentDeserializerState::HideWindowUi(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::HideWindowUi(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -12129,6 +11857,7 @@ pub mod document {
                 >,
                 output: DeserializerOutput<'de, super::CtVPreferencesZoomModeXElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtVPreferencesXTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -12145,21 +11874,12 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_zoom_mode(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CtVPreferencesXTypeContentDeserializerState::ZoomMode(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ = CtVPreferencesXTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::ZoomMode(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CtVPreferencesXTypeContentDeserializerState::ZoomMode(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::ZoomMode(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -12171,6 +11891,7 @@ pub mod document {
                 fallback: Option<<f64 as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, f64>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtVPreferencesXTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -12187,19 +11908,12 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_zoom(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CtVPreferencesXTypeContentDeserializerState::Zoom(values, None, None),
-                        )?;
-                        *self.state__ = CtVPreferencesXTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Zoom(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CtVPreferencesXTypeContentDeserializerState::Zoom(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Zoom(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -12700,17 +12414,15 @@ pub mod document {
                 output: DeserializerOutput<'de, super::DocumentCommonDataXElementType>,
                 fallback: &mut Option<DocumentXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use DocumentXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(DocumentXElementTypeDeserializerState::CommonData(None));
-                    if matches!(
-                        &fallback,
-                        Some(DocumentXElementTypeDeserializerState::Init__)
-                    ) {
+                    fallback.get_or_insert(S::CommonData(None));
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -12723,14 +12435,12 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_common_data(data)?;
-                        *self.state__ = DocumentXElementTypeDeserializerState::Pages(None);
+                        *self.state__ = S::Pages(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(DocumentXElementTypeDeserializerState::CommonData(
-                            Some(deserializer),
-                        ));
-                        *self.state__ = DocumentXElementTypeDeserializerState::Pages(None);
+                        fallback.get_or_insert(S::CommonData(Some(deserializer)));
+                        *self.state__ = S::Pages(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -12741,17 +12451,15 @@ pub mod document {
                 output: DeserializerOutput<'de, super::DocumentPagesXElementType>,
                 fallback: &mut Option<DocumentXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use DocumentXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(DocumentXElementTypeDeserializerState::Pages(None));
-                    if matches!(
-                        &fallback,
-                        Some(DocumentXElementTypeDeserializerState::Init__)
-                    ) {
+                    fallback.get_or_insert(S::Pages(None));
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -12764,14 +12472,12 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_pages(data)?;
-                        *self.state__ = DocumentXElementTypeDeserializerState::Outlines(None);
+                        *self.state__ = S::Outlines(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(DocumentXElementTypeDeserializerState::Pages(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = DocumentXElementTypeDeserializerState::Outlines(None);
+                        fallback.get_or_insert(S::Pages(Some(deserializer)));
+                        *self.state__ = S::Outlines(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -12782,14 +12488,15 @@ pub mod document {
                 output: DeserializerOutput<'de, super::DocumentOutlinesXElementType>,
                 fallback: &mut Option<DocumentXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use DocumentXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(DocumentXElementTypeDeserializerState::Outlines(None));
-                    *self.state__ = DocumentXElementTypeDeserializerState::Permissions(None);
+                    fallback.get_or_insert(S::Outlines(None));
+                    *self.state__ = S::Permissions(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -12799,14 +12506,12 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_outlines(data)?;
-                        *self.state__ = DocumentXElementTypeDeserializerState::Permissions(None);
+                        *self.state__ = S::Permissions(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(DocumentXElementTypeDeserializerState::Outlines(
-                            Some(deserializer),
-                        ));
-                        *self.state__ = DocumentXElementTypeDeserializerState::Permissions(None);
+                        fallback.get_or_insert(S::Outlines(Some(deserializer)));
+                        *self.state__ = S::Permissions(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -12817,15 +12522,15 @@ pub mod document {
                 output: DeserializerOutput<'de, super::CtPermissionXType>,
                 fallback: &mut Option<DocumentXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use DocumentXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback
-                        .get_or_insert(DocumentXElementTypeDeserializerState::Permissions(None));
-                    *self.state__ = DocumentXElementTypeDeserializerState::Actions(None);
+                    fallback.get_or_insert(S::Permissions(None));
+                    *self.state__ = S::Actions(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -12835,14 +12540,12 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_permissions(data)?;
-                        *self.state__ = DocumentXElementTypeDeserializerState::Actions(None);
+                        *self.state__ = S::Actions(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(DocumentXElementTypeDeserializerState::Permissions(
-                            Some(deserializer),
-                        ));
-                        *self.state__ = DocumentXElementTypeDeserializerState::Actions(None);
+                        fallback.get_or_insert(S::Permissions(Some(deserializer)));
+                        *self.state__ = S::Actions(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -12856,14 +12559,15 @@ pub mod document {
                 >,
                 fallback: &mut Option<DocumentXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use DocumentXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(DocumentXElementTypeDeserializerState::Actions(None));
-                    *self.state__ = DocumentXElementTypeDeserializerState::VPreferences(None);
+                    fallback.get_or_insert(S::Actions(None));
+                    *self.state__ = S::VPreferences(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -12873,14 +12577,12 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_actions(data)?;
-                        *self.state__ = DocumentXElementTypeDeserializerState::VPreferences(None);
+                        *self.state__ = S::VPreferences(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(DocumentXElementTypeDeserializerState::Actions(
-                            Some(deserializer),
-                        ));
-                        *self.state__ = DocumentXElementTypeDeserializerState::VPreferences(None);
+                        fallback.get_or_insert(S::Actions(Some(deserializer)));
+                        *self.state__ = S::VPreferences(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -12891,15 +12593,15 @@ pub mod document {
                 output: DeserializerOutput<'de, super::CtVPreferencesXType>,
                 fallback: &mut Option<DocumentXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use DocumentXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback
-                        .get_or_insert(DocumentXElementTypeDeserializerState::VPreferences(None));
-                    *self.state__ = DocumentXElementTypeDeserializerState::Bookmarks(None);
+                    fallback.get_or_insert(S::VPreferences(None));
+                    *self.state__ = S::Bookmarks(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -12909,14 +12611,12 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_v_preferences(data)?;
-                        *self.state__ = DocumentXElementTypeDeserializerState::Bookmarks(None);
+                        *self.state__ = S::Bookmarks(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(
-                            DocumentXElementTypeDeserializerState::VPreferences(Some(deserializer)),
-                        );
-                        *self.state__ = DocumentXElementTypeDeserializerState::Bookmarks(None);
+                        fallback.get_or_insert(S::VPreferences(Some(deserializer)));
+                        *self.state__ = S::Bookmarks(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -12927,14 +12627,15 @@ pub mod document {
                 output: DeserializerOutput<'de, super::DocumentBookmarksXElementType>,
                 fallback: &mut Option<DocumentXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use DocumentXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(DocumentXElementTypeDeserializerState::Bookmarks(None));
-                    *self.state__ = DocumentXElementTypeDeserializerState::Annotations(None);
+                    fallback.get_or_insert(S::Bookmarks(None));
+                    *self.state__ = S::Annotations(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -12944,14 +12645,12 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_bookmarks(data)?;
-                        *self.state__ = DocumentXElementTypeDeserializerState::Annotations(None);
+                        *self.state__ = S::Annotations(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(DocumentXElementTypeDeserializerState::Bookmarks(
-                            Some(deserializer),
-                        ));
-                        *self.state__ = DocumentXElementTypeDeserializerState::Annotations(None);
+                        fallback.get_or_insert(S::Bookmarks(Some(deserializer)));
+                        *self.state__ = S::Annotations(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -12962,15 +12661,15 @@ pub mod document {
                 output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<DocumentXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use DocumentXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback
-                        .get_or_insert(DocumentXElementTypeDeserializerState::Annotations(None));
-                    *self.state__ = DocumentXElementTypeDeserializerState::CustomTags(None);
+                    fallback.get_or_insert(S::Annotations(None));
+                    *self.state__ = S::CustomTags(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -12980,14 +12679,12 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_annotations(data)?;
-                        *self.state__ = DocumentXElementTypeDeserializerState::CustomTags(None);
+                        *self.state__ = S::CustomTags(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(DocumentXElementTypeDeserializerState::Annotations(
-                            Some(deserializer),
-                        ));
-                        *self.state__ = DocumentXElementTypeDeserializerState::CustomTags(None);
+                        fallback.get_or_insert(S::Annotations(Some(deserializer)));
+                        *self.state__ = S::CustomTags(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -12998,14 +12695,15 @@ pub mod document {
                 output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<DocumentXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use DocumentXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(DocumentXElementTypeDeserializerState::CustomTags(None));
-                    *self.state__ = DocumentXElementTypeDeserializerState::Attachments(None);
+                    fallback.get_or_insert(S::CustomTags(None));
+                    *self.state__ = S::Attachments(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -13015,14 +12713,12 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_custom_tags(data)?;
-                        *self.state__ = DocumentXElementTypeDeserializerState::Attachments(None);
+                        *self.state__ = S::Attachments(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(DocumentXElementTypeDeserializerState::CustomTags(
-                            Some(deserializer),
-                        ));
-                        *self.state__ = DocumentXElementTypeDeserializerState::Attachments(None);
+                        fallback.get_or_insert(S::CustomTags(Some(deserializer)));
+                        *self.state__ = S::Attachments(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -13033,15 +12729,15 @@ pub mod document {
                 output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<DocumentXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use DocumentXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback
-                        .get_or_insert(DocumentXElementTypeDeserializerState::Attachments(None));
-                    *self.state__ = DocumentXElementTypeDeserializerState::Extensions(None);
+                    fallback.get_or_insert(S::Attachments(None));
+                    *self.state__ = S::Extensions(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -13051,14 +12747,12 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_attachments(data)?;
-                        *self.state__ = DocumentXElementTypeDeserializerState::Extensions(None);
+                        *self.state__ = S::Extensions(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(DocumentXElementTypeDeserializerState::Attachments(
-                            Some(deserializer),
-                        ));
-                        *self.state__ = DocumentXElementTypeDeserializerState::Extensions(None);
+                        fallback.get_or_insert(S::Attachments(Some(deserializer)));
+                        *self.state__ = S::Extensions(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -13069,14 +12763,15 @@ pub mod document {
                 output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<DocumentXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use DocumentXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(DocumentXElementTypeDeserializerState::Extensions(None));
-                    *self.state__ = DocumentXElementTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::Extensions(None));
+                    *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -13086,14 +12781,12 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_extensions(data)?;
-                        *self.state__ = DocumentXElementTypeDeserializerState::Done__;
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(DocumentXElementTypeDeserializerState::Extensions(
-                            Some(deserializer),
-                        ));
-                        *self.state__ = DocumentXElementTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::Extensions(Some(deserializer)));
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -13263,7 +12956,7 @@ pub mod document {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ = DocumentXElementTypeDeserializerState::CommonData(None);
+                            *self.state__ = S::CommonData(None);
                             event
                         }
                         (S::CommonData(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -13792,19 +13485,15 @@ pub mod document {
                 output: DeserializerOutput<'de, u32>,
                 fallback: &mut Option<DocumentCommonDataXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use DocumentCommonDataXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(
-                        DocumentCommonDataXElementTypeDeserializerState::MaxUnitId(None),
-                    );
-                    if matches!(
-                        &fallback,
-                        Some(DocumentCommonDataXElementTypeDeserializerState::Init__)
-                    ) {
+                    fallback.get_or_insert(S::MaxUnitId(None));
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -13817,18 +13506,12 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_max_unit_id(data)?;
-                        *self.state__ =
-                            DocumentCommonDataXElementTypeDeserializerState::PageArea(None);
+                        *self.state__ = S::PageArea(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(
-                            DocumentCommonDataXElementTypeDeserializerState::MaxUnitId(Some(
-                                deserializer,
-                            )),
-                        );
-                        *self.state__ =
-                            DocumentCommonDataXElementTypeDeserializerState::PageArea(None);
+                        fallback.get_or_insert(S::MaxUnitId(Some(deserializer)));
+                        *self.state__ = S::PageArea(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -13839,19 +13522,15 @@ pub mod document {
                 output: DeserializerOutput<'de, super::super::definition::CtPageAreaXType>,
                 fallback: &mut Option<DocumentCommonDataXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use DocumentCommonDataXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(
-                        DocumentCommonDataXElementTypeDeserializerState::PageArea(None),
-                    );
-                    if matches!(
-                        &fallback,
-                        Some(DocumentCommonDataXElementTypeDeserializerState::Init__)
-                    ) {
+                    fallback.get_or_insert(S::PageArea(None));
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -13864,18 +13543,12 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_page_area(data)?;
-                        *self.state__ =
-                            DocumentCommonDataXElementTypeDeserializerState::PublicRes(None);
+                        *self.state__ = S::PublicRes(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(
-                            DocumentCommonDataXElementTypeDeserializerState::PageArea(Some(
-                                deserializer,
-                            )),
-                        );
-                        *self.state__ =
-                            DocumentCommonDataXElementTypeDeserializerState::PublicRes(None);
+                        fallback.get_or_insert(S::PageArea(Some(deserializer)));
+                        *self.state__ = S::PublicRes(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -13886,17 +13559,15 @@ pub mod document {
                 output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<DocumentCommonDataXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use DocumentCommonDataXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(
-                        DocumentCommonDataXElementTypeDeserializerState::PublicRes(None),
-                    );
-                    *self.state__ =
-                        DocumentCommonDataXElementTypeDeserializerState::DocumentRes(None);
+                    fallback.get_or_insert(S::PublicRes(None));
+                    *self.state__ = S::DocumentRes(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -13906,18 +13577,12 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_public_res(data)?;
-                        *self.state__ =
-                            DocumentCommonDataXElementTypeDeserializerState::PublicRes(None);
+                        *self.state__ = S::PublicRes(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(
-                            DocumentCommonDataXElementTypeDeserializerState::PublicRes(Some(
-                                deserializer,
-                            )),
-                        );
-                        *self.state__ =
-                            DocumentCommonDataXElementTypeDeserializerState::PublicRes(None);
+                        fallback.get_or_insert(S::PublicRes(Some(deserializer)));
+                        *self.state__ = S::PublicRes(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -13928,17 +13593,15 @@ pub mod document {
                 output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<DocumentCommonDataXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use DocumentCommonDataXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(
-                        DocumentCommonDataXElementTypeDeserializerState::DocumentRes(None),
-                    );
-                    *self.state__ =
-                        DocumentCommonDataXElementTypeDeserializerState::TemplatePage(None);
+                    fallback.get_or_insert(S::DocumentRes(None));
+                    *self.state__ = S::TemplatePage(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -13948,18 +13611,12 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_document_res(data)?;
-                        *self.state__ =
-                            DocumentCommonDataXElementTypeDeserializerState::DocumentRes(None);
+                        *self.state__ = S::DocumentRes(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(
-                            DocumentCommonDataXElementTypeDeserializerState::DocumentRes(Some(
-                                deserializer,
-                            )),
-                        );
-                        *self.state__ =
-                            DocumentCommonDataXElementTypeDeserializerState::DocumentRes(None);
+                        fallback.get_or_insert(S::DocumentRes(Some(deserializer)));
+                        *self.state__ = S::DocumentRes(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -13970,17 +13627,15 @@ pub mod document {
                 output: DeserializerOutput<'de, super::DocumentCommonDataTemplatePageXElementType>,
                 fallback: &mut Option<DocumentCommonDataXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use DocumentCommonDataXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(
-                        DocumentCommonDataXElementTypeDeserializerState::TemplatePage(None),
-                    );
-                    *self.state__ =
-                        DocumentCommonDataXElementTypeDeserializerState::DefaultCs(None);
+                    fallback.get_or_insert(S::TemplatePage(None));
+                    *self.state__ = S::DefaultCs(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -13990,18 +13645,12 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_template_page(data)?;
-                        *self.state__ =
-                            DocumentCommonDataXElementTypeDeserializerState::TemplatePage(None);
+                        *self.state__ = S::TemplatePage(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(
-                            DocumentCommonDataXElementTypeDeserializerState::TemplatePage(Some(
-                                deserializer,
-                            )),
-                        );
-                        *self.state__ =
-                            DocumentCommonDataXElementTypeDeserializerState::TemplatePage(None);
+                        fallback.get_or_insert(S::TemplatePage(Some(deserializer)));
+                        *self.state__ = S::TemplatePage(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -14012,16 +13661,15 @@ pub mod document {
                 output: DeserializerOutput<'de, u32>,
                 fallback: &mut Option<DocumentCommonDataXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use DocumentCommonDataXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(
-                        DocumentCommonDataXElementTypeDeserializerState::DefaultCs(None),
-                    );
-                    *self.state__ = DocumentCommonDataXElementTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::DefaultCs(None));
+                    *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -14031,16 +13679,12 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_default_cs(data)?;
-                        *self.state__ = DocumentCommonDataXElementTypeDeserializerState::Done__;
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(
-                            DocumentCommonDataXElementTypeDeserializerState::DefaultCs(Some(
-                                deserializer,
-                            )),
-                        );
-                        *self.state__ = DocumentCommonDataXElementTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::DefaultCs(Some(deserializer)));
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -14152,8 +13796,7 @@ pub mod document {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ =
-                                DocumentCommonDataXElementTypeDeserializerState::MaxUnitId(None);
+                            *self.state__ = S::MaxUnitId(None);
                             event
                         }
                         (S::MaxUnitId(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -14347,25 +13990,21 @@ pub mod document {
                 output: DeserializerOutput<'de, super::DocumentPagesPageXElementType>,
                 fallback: &mut Option<DocumentPagesXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use DocumentPagesXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    if matches!(
-                        &fallback,
-                        Some(DocumentPagesXElementTypeDeserializerState::Init__)
-                    ) {
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else if self.page.len() < 1usize {
-                        fallback
-                            .get_or_insert(DocumentPagesXElementTypeDeserializerState::Page(None));
+                        fallback.get_or_insert(S::Page(None));
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                     } else {
-                        fallback
-                            .get_or_insert(DocumentPagesXElementTypeDeserializerState::Page(None));
-                        *self.state__ = DocumentPagesXElementTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::Page(None));
+                        *self.state__ = S::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                 }
@@ -14376,14 +14015,12 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_page(data)?;
-                        *self.state__ = DocumentPagesXElementTypeDeserializerState::Page(None);
+                        *self.state__ = S::Page(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(DocumentPagesXElementTypeDeserializerState::Page(
-                            Some(deserializer),
-                        ));
-                        *self.state__ = DocumentPagesXElementTypeDeserializerState::Page(None);
+                        fallback.get_or_insert(S::Page(Some(deserializer)));
+                        *self.state__ = S::Page(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -14435,7 +14072,7 @@ pub mod document {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ = DocumentPagesXElementTypeDeserializerState::Page(None);
+                            *self.state__ = S::Page(None);
                             event
                         }
                         (S::Page(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -14541,27 +14178,21 @@ pub mod document {
                 output: DeserializerOutput<'de, super::CtOutlineElemXType>,
                 fallback: &mut Option<DocumentOutlinesXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use DocumentOutlinesXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    if matches!(
-                        &fallback,
-                        Some(DocumentOutlinesXElementTypeDeserializerState::Init__)
-                    ) {
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else if self.outline_elem.len() < 1usize {
-                        fallback.get_or_insert(
-                            DocumentOutlinesXElementTypeDeserializerState::OutlineElem(None),
-                        );
+                        fallback.get_or_insert(S::OutlineElem(None));
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                     } else {
-                        fallback.get_or_insert(
-                            DocumentOutlinesXElementTypeDeserializerState::OutlineElem(None),
-                        );
-                        *self.state__ = DocumentOutlinesXElementTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::OutlineElem(None));
+                        *self.state__ = S::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                 }
@@ -14572,18 +14203,12 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_outline_elem(data)?;
-                        *self.state__ =
-                            DocumentOutlinesXElementTypeDeserializerState::OutlineElem(None);
+                        *self.state__ = S::OutlineElem(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(
-                            DocumentOutlinesXElementTypeDeserializerState::OutlineElem(Some(
-                                deserializer,
-                            )),
-                        );
-                        *self.state__ =
-                            DocumentOutlinesXElementTypeDeserializerState::OutlineElem(None);
+                        fallback.get_or_insert(S::OutlineElem(Some(deserializer)));
+                        *self.state__ = S::OutlineElem(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -14635,8 +14260,7 @@ pub mod document {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ =
-                                DocumentOutlinesXElementTypeDeserializerState::OutlineElem(None);
+                            *self.state__ = S::OutlineElem(None);
                             event
                         }
                         (S::OutlineElem(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -14739,27 +14363,21 @@ pub mod document {
                 output: DeserializerOutput<'de, super::CtBookmarkXType>,
                 fallback: &mut Option<DocumentBookmarksXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use DocumentBookmarksXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    if matches!(
-                        &fallback,
-                        Some(DocumentBookmarksXElementTypeDeserializerState::Init__)
-                    ) {
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else if self.bookmark.len() < 1usize {
-                        fallback.get_or_insert(
-                            DocumentBookmarksXElementTypeDeserializerState::Bookmark(None),
-                        );
+                        fallback.get_or_insert(S::Bookmark(None));
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                     } else {
-                        fallback.get_or_insert(
-                            DocumentBookmarksXElementTypeDeserializerState::Bookmark(None),
-                        );
-                        *self.state__ = DocumentBookmarksXElementTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::Bookmark(None));
+                        *self.state__ = S::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                 }
@@ -14770,18 +14388,12 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_bookmark(data)?;
-                        *self.state__ =
-                            DocumentBookmarksXElementTypeDeserializerState::Bookmark(None);
+                        *self.state__ = S::Bookmark(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(
-                            DocumentBookmarksXElementTypeDeserializerState::Bookmark(Some(
-                                deserializer,
-                            )),
-                        );
-                        *self.state__ =
-                            DocumentBookmarksXElementTypeDeserializerState::Bookmark(None);
+                        fallback.get_or_insert(S::Bookmark(Some(deserializer)));
+                        *self.state__ = S::Bookmark(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -14833,8 +14445,7 @@ pub mod document {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ =
-                                DocumentBookmarksXElementTypeDeserializerState::Bookmark(None);
+                            *self.state__ = S::Bookmark(None);
                             event
                         }
                         (S::Bookmark(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -16682,15 +16293,14 @@ pub mod extensions {
                 output: DeserializerOutput<'de, super::CtExtensionXTypeContent>,
                 fallback: &mut Option<CtExtensionXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtExtensionXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state__ = fallback
-                        .take()
-                        .unwrap_or(CtExtensionXTypeDeserializerState::Next__);
+                    *self.state__ = fallback.take().unwrap_or(S::Next__);
                     return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -16700,13 +16310,12 @@ pub mod extensions {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state__ = CtExtensionXTypeDeserializerState::Next__;
+                        *self.state__ = S::Next__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *fallback =
-                            Some(CtExtensionXTypeDeserializerState::Content__(deserializer));
-                        *self.state__ = CtExtensionXTypeDeserializerState::Next__;
+                        *fallback = Some(S::Content__(deserializer));
+                        *self.state__ = S::Next__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -16926,6 +16535,7 @@ pub mod extensions {
                 >,
                 output: DeserializerOutput<'de, super::CtExtensionPropertyXElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtExtensionXTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -16942,19 +16552,12 @@ pub mod extensions {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_property(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CtExtensionXTypeContentDeserializerState::Property(values, None, None),
-                        )?;
-                        *self.state__ = CtExtensionXTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Property(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CtExtensionXTypeContentDeserializerState::Property(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Property(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -16966,6 +16569,7 @@ pub mod extensions {
                 fallback: Option<<AnyElement as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, AnyElement>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtExtensionXTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -16982,19 +16586,12 @@ pub mod extensions {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_data(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CtExtensionXTypeContentDeserializerState::Data(values, None, None),
-                        )?;
-                        *self.state__ = CtExtensionXTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Data(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CtExtensionXTypeContentDeserializerState::Data(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Data(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -17006,6 +16603,7 @@ pub mod extensions {
                 fallback: Option<<String as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, String>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtExtensionXTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -17022,21 +16620,12 @@ pub mod extensions {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_extend_data(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CtExtensionXTypeContentDeserializerState::ExtendData(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ = CtExtensionXTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::ExtendData(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CtExtensionXTypeContentDeserializerState::ExtendData(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::ExtendData(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -17248,27 +16837,21 @@ pub mod extensions {
                 output: DeserializerOutput<'de, super::CtExtensionXType>,
                 fallback: &mut Option<ExtensionsXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ExtensionsXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    if matches!(
-                        &fallback,
-                        Some(ExtensionsXElementTypeDeserializerState::Init__)
-                    ) {
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else if self.extension.len() < 1usize {
-                        fallback.get_or_insert(ExtensionsXElementTypeDeserializerState::Extension(
-                            None,
-                        ));
+                        fallback.get_or_insert(S::Extension(None));
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                     } else {
-                        fallback.get_or_insert(ExtensionsXElementTypeDeserializerState::Extension(
-                            None,
-                        ));
-                        *self.state__ = ExtensionsXElementTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::Extension(None));
+                        *self.state__ = S::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                 }
@@ -17279,14 +16862,12 @@ pub mod extensions {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_extension(data)?;
-                        *self.state__ = ExtensionsXElementTypeDeserializerState::Extension(None);
+                        *self.state__ = S::Extension(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(ExtensionsXElementTypeDeserializerState::Extension(
-                            Some(deserializer),
-                        ));
-                        *self.state__ = ExtensionsXElementTypeDeserializerState::Extension(None);
+                        fallback.get_or_insert(S::Extension(Some(deserializer)));
+                        *self.state__ = S::Extension(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -17336,8 +16917,7 @@ pub mod extensions {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ =
-                                ExtensionsXElementTypeDeserializerState::Extension(None);
+                            *self.state__ = S::Extension(None);
                             event
                         }
                         (S::Extension(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -18321,14 +17901,15 @@ pub mod ofd {
                 output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<CtDocInfoXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtDocInfoXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(CtDocInfoXTypeDeserializerState::DocId(None));
-                    if matches!(&fallback, Some(CtDocInfoXTypeDeserializerState::Init__)) {
+                    fallback.get_or_insert(S::DocId(None));
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -18341,14 +17922,12 @@ pub mod ofd {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_doc_id(data)?;
-                        *self.state__ = CtDocInfoXTypeDeserializerState::Title(None);
+                        *self.state__ = S::Title(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CtDocInfoXTypeDeserializerState::DocId(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = CtDocInfoXTypeDeserializerState::Title(None);
+                        fallback.get_or_insert(S::DocId(Some(deserializer)));
+                        *self.state__ = S::Title(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -18359,14 +17938,15 @@ pub mod ofd {
                 output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<CtDocInfoXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtDocInfoXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(CtDocInfoXTypeDeserializerState::Title(None));
-                    *self.state__ = CtDocInfoXTypeDeserializerState::Author(None);
+                    fallback.get_or_insert(S::Title(None));
+                    *self.state__ = S::Author(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -18376,14 +17956,12 @@ pub mod ofd {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_title(data)?;
-                        *self.state__ = CtDocInfoXTypeDeserializerState::Author(None);
+                        *self.state__ = S::Author(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CtDocInfoXTypeDeserializerState::Title(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = CtDocInfoXTypeDeserializerState::Author(None);
+                        fallback.get_or_insert(S::Title(Some(deserializer)));
+                        *self.state__ = S::Author(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -18394,14 +17972,15 @@ pub mod ofd {
                 output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<CtDocInfoXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtDocInfoXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(CtDocInfoXTypeDeserializerState::Author(None));
-                    *self.state__ = CtDocInfoXTypeDeserializerState::Subject(None);
+                    fallback.get_or_insert(S::Author(None));
+                    *self.state__ = S::Subject(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -18411,14 +17990,12 @@ pub mod ofd {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_author(data)?;
-                        *self.state__ = CtDocInfoXTypeDeserializerState::Subject(None);
+                        *self.state__ = S::Subject(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CtDocInfoXTypeDeserializerState::Author(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = CtDocInfoXTypeDeserializerState::Subject(None);
+                        fallback.get_or_insert(S::Author(Some(deserializer)));
+                        *self.state__ = S::Subject(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -18429,14 +18006,15 @@ pub mod ofd {
                 output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<CtDocInfoXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtDocInfoXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(CtDocInfoXTypeDeserializerState::Subject(None));
-                    *self.state__ = CtDocInfoXTypeDeserializerState::Abstract(None);
+                    fallback.get_or_insert(S::Subject(None));
+                    *self.state__ = S::Abstract(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -18446,14 +18024,12 @@ pub mod ofd {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_subject(data)?;
-                        *self.state__ = CtDocInfoXTypeDeserializerState::Abstract(None);
+                        *self.state__ = S::Abstract(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CtDocInfoXTypeDeserializerState::Subject(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = CtDocInfoXTypeDeserializerState::Abstract(None);
+                        fallback.get_or_insert(S::Subject(Some(deserializer)));
+                        *self.state__ = S::Abstract(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -18464,14 +18040,15 @@ pub mod ofd {
                 output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<CtDocInfoXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtDocInfoXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(CtDocInfoXTypeDeserializerState::Abstract(None));
-                    *self.state__ = CtDocInfoXTypeDeserializerState::CreationDate(None);
+                    fallback.get_or_insert(S::Abstract(None));
+                    *self.state__ = S::CreationDate(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -18481,14 +18058,12 @@ pub mod ofd {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_abstract_(data)?;
-                        *self.state__ = CtDocInfoXTypeDeserializerState::CreationDate(None);
+                        *self.state__ = S::CreationDate(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CtDocInfoXTypeDeserializerState::Abstract(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = CtDocInfoXTypeDeserializerState::CreationDate(None);
+                        fallback.get_or_insert(S::Abstract(Some(deserializer)));
+                        *self.state__ = S::CreationDate(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -18499,14 +18074,15 @@ pub mod ofd {
                 output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<CtDocInfoXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtDocInfoXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(CtDocInfoXTypeDeserializerState::CreationDate(None));
-                    *self.state__ = CtDocInfoXTypeDeserializerState::ModDate(None);
+                    fallback.get_or_insert(S::CreationDate(None));
+                    *self.state__ = S::ModDate(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -18516,14 +18092,12 @@ pub mod ofd {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_creation_date(data)?;
-                        *self.state__ = CtDocInfoXTypeDeserializerState::ModDate(None);
+                        *self.state__ = S::ModDate(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CtDocInfoXTypeDeserializerState::CreationDate(
-                            Some(deserializer),
-                        ));
-                        *self.state__ = CtDocInfoXTypeDeserializerState::ModDate(None);
+                        fallback.get_or_insert(S::CreationDate(Some(deserializer)));
+                        *self.state__ = S::ModDate(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -18534,14 +18108,15 @@ pub mod ofd {
                 output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<CtDocInfoXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtDocInfoXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(CtDocInfoXTypeDeserializerState::ModDate(None));
-                    *self.state__ = CtDocInfoXTypeDeserializerState::DocUsage(None);
+                    fallback.get_or_insert(S::ModDate(None));
+                    *self.state__ = S::DocUsage(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -18551,14 +18126,12 @@ pub mod ofd {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_mod_date(data)?;
-                        *self.state__ = CtDocInfoXTypeDeserializerState::DocUsage(None);
+                        *self.state__ = S::DocUsage(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CtDocInfoXTypeDeserializerState::ModDate(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = CtDocInfoXTypeDeserializerState::DocUsage(None);
+                        fallback.get_or_insert(S::ModDate(Some(deserializer)));
+                        *self.state__ = S::DocUsage(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -18569,14 +18142,15 @@ pub mod ofd {
                 output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<CtDocInfoXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtDocInfoXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(CtDocInfoXTypeDeserializerState::DocUsage(None));
-                    *self.state__ = CtDocInfoXTypeDeserializerState::Cover(None);
+                    fallback.get_or_insert(S::DocUsage(None));
+                    *self.state__ = S::Cover(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -18586,14 +18160,12 @@ pub mod ofd {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_doc_usage(data)?;
-                        *self.state__ = CtDocInfoXTypeDeserializerState::Cover(None);
+                        *self.state__ = S::Cover(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CtDocInfoXTypeDeserializerState::DocUsage(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = CtDocInfoXTypeDeserializerState::Cover(None);
+                        fallback.get_or_insert(S::DocUsage(Some(deserializer)));
+                        *self.state__ = S::Cover(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -18604,14 +18176,15 @@ pub mod ofd {
                 output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<CtDocInfoXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtDocInfoXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(CtDocInfoXTypeDeserializerState::Cover(None));
-                    *self.state__ = CtDocInfoXTypeDeserializerState::Keywords(None);
+                    fallback.get_or_insert(S::Cover(None));
+                    *self.state__ = S::Keywords(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -18621,14 +18194,12 @@ pub mod ofd {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_cover(data)?;
-                        *self.state__ = CtDocInfoXTypeDeserializerState::Keywords(None);
+                        *self.state__ = S::Keywords(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CtDocInfoXTypeDeserializerState::Cover(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = CtDocInfoXTypeDeserializerState::Keywords(None);
+                        fallback.get_or_insert(S::Cover(Some(deserializer)));
+                        *self.state__ = S::Keywords(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -18639,14 +18210,15 @@ pub mod ofd {
                 output: DeserializerOutput<'de, super::CtDocInfoKeywordsXElementType>,
                 fallback: &mut Option<CtDocInfoXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtDocInfoXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(CtDocInfoXTypeDeserializerState::Keywords(None));
-                    *self.state__ = CtDocInfoXTypeDeserializerState::Creator(None);
+                    fallback.get_or_insert(S::Keywords(None));
+                    *self.state__ = S::Creator(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -18656,14 +18228,12 @@ pub mod ofd {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_keywords(data)?;
-                        *self.state__ = CtDocInfoXTypeDeserializerState::Creator(None);
+                        *self.state__ = S::Creator(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CtDocInfoXTypeDeserializerState::Keywords(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = CtDocInfoXTypeDeserializerState::Creator(None);
+                        fallback.get_or_insert(S::Keywords(Some(deserializer)));
+                        *self.state__ = S::Creator(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -18674,14 +18244,15 @@ pub mod ofd {
                 output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<CtDocInfoXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtDocInfoXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(CtDocInfoXTypeDeserializerState::Creator(None));
-                    *self.state__ = CtDocInfoXTypeDeserializerState::CreatorVersion(None);
+                    fallback.get_or_insert(S::Creator(None));
+                    *self.state__ = S::CreatorVersion(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -18691,14 +18262,12 @@ pub mod ofd {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_creator(data)?;
-                        *self.state__ = CtDocInfoXTypeDeserializerState::CreatorVersion(None);
+                        *self.state__ = S::CreatorVersion(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CtDocInfoXTypeDeserializerState::Creator(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = CtDocInfoXTypeDeserializerState::CreatorVersion(None);
+                        fallback.get_or_insert(S::Creator(Some(deserializer)));
+                        *self.state__ = S::CreatorVersion(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -18709,14 +18278,15 @@ pub mod ofd {
                 output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<CtDocInfoXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtDocInfoXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(CtDocInfoXTypeDeserializerState::CreatorVersion(None));
-                    *self.state__ = CtDocInfoXTypeDeserializerState::CustomDatas(None);
+                    fallback.get_or_insert(S::CreatorVersion(None));
+                    *self.state__ = S::CustomDatas(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -18726,14 +18296,12 @@ pub mod ofd {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_creator_version(data)?;
-                        *self.state__ = CtDocInfoXTypeDeserializerState::CustomDatas(None);
+                        *self.state__ = S::CustomDatas(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CtDocInfoXTypeDeserializerState::CreatorVersion(
-                            Some(deserializer),
-                        ));
-                        *self.state__ = CtDocInfoXTypeDeserializerState::CustomDatas(None);
+                        fallback.get_or_insert(S::CreatorVersion(Some(deserializer)));
+                        *self.state__ = S::CustomDatas(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -18744,14 +18312,15 @@ pub mod ofd {
                 output: DeserializerOutput<'de, super::CtDocInfoCustomDatasXElementType>,
                 fallback: &mut Option<CtDocInfoXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtDocInfoXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(CtDocInfoXTypeDeserializerState::CustomDatas(None));
-                    *self.state__ = CtDocInfoXTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::CustomDatas(None));
+                    *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -18761,14 +18330,12 @@ pub mod ofd {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_custom_datas(data)?;
-                        *self.state__ = CtDocInfoXTypeDeserializerState::Done__;
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CtDocInfoXTypeDeserializerState::CustomDatas(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = CtDocInfoXTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::CustomDatas(Some(deserializer)));
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -18962,7 +18529,7 @@ pub mod ofd {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ = CtDocInfoXTypeDeserializerState::DocId(None);
+                            *self.state__ = S::DocId(None);
                             event
                         }
                         (S::DocId(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -19304,20 +18871,21 @@ pub mod ofd {
                 output: DeserializerOutput<'de, super::OfdDocBodyXElementType>,
                 fallback: &mut Option<OfdXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use OfdXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    if matches!(&fallback, Some(OfdXElementTypeDeserializerState::Init__)) {
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else if self.doc_body.len() < 1usize {
-                        fallback.get_or_insert(OfdXElementTypeDeserializerState::DocBody(None));
+                        fallback.get_or_insert(S::DocBody(None));
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                     } else {
-                        fallback.get_or_insert(OfdXElementTypeDeserializerState::DocBody(None));
-                        *self.state__ = OfdXElementTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::DocBody(None));
+                        *self.state__ = S::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                 }
@@ -19328,14 +18896,12 @@ pub mod ofd {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_doc_body(data)?;
-                        *self.state__ = OfdXElementTypeDeserializerState::DocBody(None);
+                        *self.state__ = S::DocBody(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(OfdXElementTypeDeserializerState::DocBody(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = OfdXElementTypeDeserializerState::DocBody(None);
+                        fallback.get_or_insert(S::DocBody(Some(deserializer)));
+                        *self.state__ = S::DocBody(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -19385,7 +18951,7 @@ pub mod ofd {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ = OfdXElementTypeDeserializerState::DocBody(None);
+                            *self.state__ = S::DocBody(None);
                             event
                         }
                         (S::DocBody(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -19490,27 +19056,21 @@ pub mod ofd {
                 output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<CtDocInfoKeywordsXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtDocInfoKeywordsXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    if matches!(
-                        &fallback,
-                        Some(CtDocInfoKeywordsXElementTypeDeserializerState::Init__)
-                    ) {
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else if self.keyword.len() < 1usize {
-                        fallback.get_or_insert(
-                            CtDocInfoKeywordsXElementTypeDeserializerState::Keyword(None),
-                        );
+                        fallback.get_or_insert(S::Keyword(None));
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                     } else {
-                        fallback.get_or_insert(
-                            CtDocInfoKeywordsXElementTypeDeserializerState::Keyword(None),
-                        );
-                        *self.state__ = CtDocInfoKeywordsXElementTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::Keyword(None));
+                        *self.state__ = S::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                 }
@@ -19521,18 +19081,12 @@ pub mod ofd {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_keyword(data)?;
-                        *self.state__ =
-                            CtDocInfoKeywordsXElementTypeDeserializerState::Keyword(None);
+                        *self.state__ = S::Keyword(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(
-                            CtDocInfoKeywordsXElementTypeDeserializerState::Keyword(Some(
-                                deserializer,
-                            )),
-                        );
-                        *self.state__ =
-                            CtDocInfoKeywordsXElementTypeDeserializerState::Keyword(None);
+                        fallback.get_or_insert(S::Keyword(Some(deserializer)));
+                        *self.state__ = S::Keyword(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -19584,8 +19138,7 @@ pub mod ofd {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ =
-                                CtDocInfoKeywordsXElementTypeDeserializerState::Keyword(None);
+                            *self.state__ = S::Keyword(None);
                             event
                         }
                         (S::Keyword(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -19687,27 +19240,21 @@ pub mod ofd {
                 output: DeserializerOutput<'de, super::CtDocInfoCustomDatasCustomDataXElementType>,
                 fallback: &mut Option<CtDocInfoCustomDatasXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtDocInfoCustomDatasXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    if matches!(
-                        &fallback,
-                        Some(CtDocInfoCustomDatasXElementTypeDeserializerState::Init__)
-                    ) {
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else if self.custom_data.len() < 1usize {
-                        fallback.get_or_insert(
-                            CtDocInfoCustomDatasXElementTypeDeserializerState::CustomData(None),
-                        );
+                        fallback.get_or_insert(S::CustomData(None));
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                     } else {
-                        fallback.get_or_insert(
-                            CtDocInfoCustomDatasXElementTypeDeserializerState::CustomData(None),
-                        );
-                        *self.state__ = CtDocInfoCustomDatasXElementTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::CustomData(None));
+                        *self.state__ = S::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                 }
@@ -19718,18 +19265,12 @@ pub mod ofd {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_custom_data(data)?;
-                        *self.state__ =
-                            CtDocInfoCustomDatasXElementTypeDeserializerState::CustomData(None);
+                        *self.state__ = S::CustomData(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(
-                            CtDocInfoCustomDatasXElementTypeDeserializerState::CustomData(Some(
-                                deserializer,
-                            )),
-                        );
-                        *self.state__ =
-                            CtDocInfoCustomDatasXElementTypeDeserializerState::CustomData(None);
+                        fallback.get_or_insert(S::CustomData(Some(deserializer)));
+                        *self.state__ = S::CustomData(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -19781,8 +19322,7 @@ pub mod ofd {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ =
-                                CtDocInfoCustomDatasXElementTypeDeserializerState::CustomData(None);
+                            *self.state__ = S::CustomData(None);
                             event
                         }
                         (S::CustomData(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -19940,17 +19480,15 @@ pub mod ofd {
                 output: DeserializerOutput<'de, super::CtDocInfoXType>,
                 fallback: &mut Option<OfdDocBodyXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use OfdDocBodyXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(OfdDocBodyXElementTypeDeserializerState::DocInfo(None));
-                    if matches!(
-                        &fallback,
-                        Some(OfdDocBodyXElementTypeDeserializerState::Init__)
-                    ) {
+                    fallback.get_or_insert(S::DocInfo(None));
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -19963,14 +19501,12 @@ pub mod ofd {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_doc_info(data)?;
-                        *self.state__ = OfdDocBodyXElementTypeDeserializerState::DocRoot(None);
+                        *self.state__ = S::DocRoot(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(OfdDocBodyXElementTypeDeserializerState::DocInfo(
-                            Some(deserializer),
-                        ));
-                        *self.state__ = OfdDocBodyXElementTypeDeserializerState::DocRoot(None);
+                        fallback.get_or_insert(S::DocInfo(Some(deserializer)));
+                        *self.state__ = S::DocRoot(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -19981,17 +19517,15 @@ pub mod ofd {
                 output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<OfdDocBodyXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use OfdDocBodyXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(OfdDocBodyXElementTypeDeserializerState::DocRoot(None));
-                    if matches!(
-                        &fallback,
-                        Some(OfdDocBodyXElementTypeDeserializerState::Init__)
-                    ) {
+                    fallback.get_or_insert(S::DocRoot(None));
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -20004,14 +19538,12 @@ pub mod ofd {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_doc_root(data)?;
-                        *self.state__ = OfdDocBodyXElementTypeDeserializerState::Versions(None);
+                        *self.state__ = S::Versions(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(OfdDocBodyXElementTypeDeserializerState::DocRoot(
-                            Some(deserializer),
-                        ));
-                        *self.state__ = OfdDocBodyXElementTypeDeserializerState::Versions(None);
+                        fallback.get_or_insert(S::DocRoot(Some(deserializer)));
+                        *self.state__ = S::Versions(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -20022,14 +19554,15 @@ pub mod ofd {
                 output: DeserializerOutput<'de, super::OfdDocBodyVersionsXElementType>,
                 fallback: &mut Option<OfdDocBodyXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use OfdDocBodyXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(OfdDocBodyXElementTypeDeserializerState::Versions(None));
-                    *self.state__ = OfdDocBodyXElementTypeDeserializerState::Signatures(None);
+                    fallback.get_or_insert(S::Versions(None));
+                    *self.state__ = S::Signatures(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -20039,14 +19572,12 @@ pub mod ofd {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_versions(data)?;
-                        *self.state__ = OfdDocBodyXElementTypeDeserializerState::Signatures(None);
+                        *self.state__ = S::Signatures(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(OfdDocBodyXElementTypeDeserializerState::Versions(
-                            Some(deserializer),
-                        ));
-                        *self.state__ = OfdDocBodyXElementTypeDeserializerState::Signatures(None);
+                        fallback.get_or_insert(S::Versions(Some(deserializer)));
+                        *self.state__ = S::Signatures(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -20057,15 +19588,15 @@ pub mod ofd {
                 output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<OfdDocBodyXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use OfdDocBodyXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback
-                        .get_or_insert(OfdDocBodyXElementTypeDeserializerState::Signatures(None));
-                    *self.state__ = OfdDocBodyXElementTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::Signatures(None));
+                    *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -20075,14 +19606,12 @@ pub mod ofd {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_signatures(data)?;
-                        *self.state__ = OfdDocBodyXElementTypeDeserializerState::Done__;
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(
-                            OfdDocBodyXElementTypeDeserializerState::Signatures(Some(deserializer)),
-                        );
-                        *self.state__ = OfdDocBodyXElementTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::Signatures(Some(deserializer)));
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -20168,7 +19697,7 @@ pub mod ofd {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ = OfdDocBodyXElementTypeDeserializerState::DocInfo(None);
+                            *self.state__ = S::DocInfo(None);
                             event
                         }
                         (S::DocInfo(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -20470,27 +19999,21 @@ pub mod ofd {
                 output: DeserializerOutput<'de, super::OfdDocBodyVersionsVersionXElementType>,
                 fallback: &mut Option<OfdDocBodyVersionsXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use OfdDocBodyVersionsXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    if matches!(
-                        &fallback,
-                        Some(OfdDocBodyVersionsXElementTypeDeserializerState::Init__)
-                    ) {
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else if self.version.len() < 1usize {
-                        fallback.get_or_insert(
-                            OfdDocBodyVersionsXElementTypeDeserializerState::Version(None),
-                        );
+                        fallback.get_or_insert(S::Version(None));
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                     } else {
-                        fallback.get_or_insert(
-                            OfdDocBodyVersionsXElementTypeDeserializerState::Version(None),
-                        );
-                        *self.state__ = OfdDocBodyVersionsXElementTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::Version(None));
+                        *self.state__ = S::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                 }
@@ -20501,18 +20024,12 @@ pub mod ofd {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_version(data)?;
-                        *self.state__ =
-                            OfdDocBodyVersionsXElementTypeDeserializerState::Version(None);
+                        *self.state__ = S::Version(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(
-                            OfdDocBodyVersionsXElementTypeDeserializerState::Version(Some(
-                                deserializer,
-                            )),
-                        );
-                        *self.state__ =
-                            OfdDocBodyVersionsXElementTypeDeserializerState::Version(None);
+                        fallback.get_or_insert(S::Version(Some(deserializer)));
+                        *self.state__ = S::Version(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -20564,8 +20081,7 @@ pub mod ofd {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ =
-                                OfdDocBodyVersionsXElementTypeDeserializerState::Version(None);
+                            *self.state__ = S::Version(None);
                             event
                         }
                         (S::Version(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -23575,20 +23091,21 @@ pub mod page {
                 output: DeserializerOutput<'de, super::CtAxialShdSegmentXElementType>,
                 fallback: &mut Option<CtAxialShdXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtAxialShdXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    if matches!(&fallback, Some(CtAxialShdXTypeDeserializerState::Init__)) {
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else if self.segment.len() < 2usize {
-                        fallback.get_or_insert(CtAxialShdXTypeDeserializerState::Segment(None));
+                        fallback.get_or_insert(S::Segment(None));
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                     } else {
-                        fallback.get_or_insert(CtAxialShdXTypeDeserializerState::Segment(None));
-                        *self.state__ = CtAxialShdXTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::Segment(None));
+                        *self.state__ = S::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                 }
@@ -23599,14 +23116,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_segment(data)?;
-                        *self.state__ = CtAxialShdXTypeDeserializerState::Segment(None);
+                        *self.state__ = S::Segment(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CtAxialShdXTypeDeserializerState::Segment(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = CtAxialShdXTypeDeserializerState::Segment(None);
+                        fallback.get_or_insert(S::Segment(Some(deserializer)));
+                        *self.state__ = S::Segment(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -23656,7 +23171,7 @@ pub mod page {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ = CtAxialShdXTypeDeserializerState::Segment(None);
+                            *self.state__ = S::Segment(None);
                             event
                         }
                         (S::Segment(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -23798,14 +23313,15 @@ pub mod page {
                 output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<CtCgTransformXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtCgTransformXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(CtCgTransformXTypeDeserializerState::Glyphs(None));
-                    *self.state__ = CtCgTransformXTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::Glyphs(None));
+                    *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -23815,14 +23331,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_glyphs(data)?;
-                        *self.state__ = CtCgTransformXTypeDeserializerState::Done__;
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CtCgTransformXTypeDeserializerState::Glyphs(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = CtCgTransformXTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::Glyphs(Some(deserializer)));
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -23872,7 +23386,7 @@ pub mod page {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ = CtCgTransformXTypeDeserializerState::Glyphs(None);
+                            *self.state__ = S::Glyphs(None);
                             event
                         }
                         (S::Glyphs(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -23976,20 +23490,21 @@ pub mod page {
                 output: DeserializerOutput<'de, super::CtClipAreaXElementType>,
                 fallback: &mut Option<CtClipXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtClipXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    if matches!(&fallback, Some(CtClipXTypeDeserializerState::Init__)) {
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else if self.area.len() < 1usize {
-                        fallback.get_or_insert(CtClipXTypeDeserializerState::Area(None));
+                        fallback.get_or_insert(S::Area(None));
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                     } else {
-                        fallback.get_or_insert(CtClipXTypeDeserializerState::Area(None));
-                        *self.state__ = CtClipXTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::Area(None));
+                        *self.state__ = S::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                 }
@@ -24000,13 +23515,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_area(data)?;
-                        *self.state__ = CtClipXTypeDeserializerState::Area(None);
+                        *self.state__ = S::Area(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback
-                            .get_or_insert(CtClipXTypeDeserializerState::Area(Some(deserializer)));
-                        *self.state__ = CtClipXTypeDeserializerState::Area(None);
+                        fallback.get_or_insert(S::Area(Some(deserializer)));
+                        *self.state__ = S::Area(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -24056,7 +23570,7 @@ pub mod page {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ = CtClipXTypeDeserializerState::Area(None);
+                            *self.state__ = S::Area(None);
                             event
                         }
                         (S::Area(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -24189,15 +23703,14 @@ pub mod page {
                 output: DeserializerOutput<'de, super::CtColorXTypeContent>,
                 fallback: &mut Option<CtColorXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtColorXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state__ = fallback
-                        .take()
-                        .unwrap_or(CtColorXTypeDeserializerState::Next__);
+                    *self.state__ = fallback.take().unwrap_or(S::Next__);
                     return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -24207,11 +23720,11 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state__ = CtColorXTypeDeserializerState::Next__;
+                        *self.state__ = S::Next__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CtColorXTypeDeserializerState::Content__(deserializer);
+                        *self.state__ = S::Content__(deserializer);
                         Ok(ElementHandlerOutput::from_event_end(event, allow_any))
                     }
                 }
@@ -24505,6 +24018,7 @@ pub mod page {
                 fallback: Option<<super::CtPatternXType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::CtPatternXType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtColorXTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -24521,19 +24035,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_pattern(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CtColorXTypeContentDeserializerState::Pattern(values, None, None),
-                        )?;
-                        *self.state__ = CtColorXTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Pattern(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CtColorXTypeContentDeserializerState::Pattern(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Pattern(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -24545,6 +24052,7 @@ pub mod page {
                 fallback: Option<<super::CtAxialShdXType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::CtAxialShdXType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtColorXTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -24561,19 +24069,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_axial_shd(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CtColorXTypeContentDeserializerState::AxialShd(values, None, None),
-                        )?;
-                        *self.state__ = CtColorXTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::AxialShd(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CtColorXTypeContentDeserializerState::AxialShd(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::AxialShd(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -24585,6 +24086,7 @@ pub mod page {
                 fallback: Option<<super::CtRadialShdXType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::CtRadialShdXType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtColorXTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -24601,19 +24103,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_radial_shd(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CtColorXTypeContentDeserializerState::RadialShd(values, None, None),
-                        )?;
-                        *self.state__ = CtColorXTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::RadialShd(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CtColorXTypeContentDeserializerState::RadialShd(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::RadialShd(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -24625,6 +24120,7 @@ pub mod page {
                 fallback: Option<<super::CtGouraudShdXType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::CtGouraudShdXType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtColorXTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -24641,19 +24137,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_gouraud_shd(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CtColorXTypeContentDeserializerState::GouraudShd(values, None, None),
-                        )?;
-                        *self.state__ = CtColorXTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::GouraudShd(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CtColorXTypeContentDeserializerState::GouraudShd(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::GouraudShd(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -24665,6 +24154,7 @@ pub mod page {
                 fallback: Option<<super::CtLaGouraudShdXType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::CtLaGouraudShdXType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtColorXTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -24681,19 +24171,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_la_gourand_shd(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CtColorXTypeContentDeserializerState::LaGourandShd(values, None, None),
-                        )?;
-                        *self.state__ = CtColorXTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::LaGourandShd(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CtColorXTypeContentDeserializerState::LaGourandShd(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::LaGourandShd(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -25093,14 +24576,15 @@ pub mod page {
                 output: DeserializerOutput<'de, super::CtGraphicUnitActionsXElementType>,
                 fallback: &mut Option<CtCompositeXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtCompositeXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(CtCompositeXTypeDeserializerState::Actions(None));
-                    *self.state__ = CtCompositeXTypeDeserializerState::Clips(None);
+                    fallback.get_or_insert(S::Actions(None));
+                    *self.state__ = S::Clips(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -25110,14 +24594,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_actions(data)?;
-                        *self.state__ = CtCompositeXTypeDeserializerState::Clips(None);
+                        *self.state__ = S::Clips(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CtCompositeXTypeDeserializerState::Actions(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = CtCompositeXTypeDeserializerState::Clips(None);
+                        fallback.get_or_insert(S::Actions(Some(deserializer)));
+                        *self.state__ = S::Clips(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -25128,14 +24610,15 @@ pub mod page {
                 output: DeserializerOutput<'de, super::CtGraphicUnitClipsXElementType>,
                 fallback: &mut Option<CtCompositeXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtCompositeXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(CtCompositeXTypeDeserializerState::Clips(None));
-                    *self.state__ = CtCompositeXTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::Clips(None));
+                    *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -25145,14 +24628,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_clips(data)?;
-                        *self.state__ = CtCompositeXTypeDeserializerState::Done__;
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CtCompositeXTypeDeserializerState::Clips(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = CtCompositeXTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::Clips(Some(deserializer)));
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -25214,7 +24695,7 @@ pub mod page {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ = CtCompositeXTypeDeserializerState::Actions(None);
+                            *self.state__ = S::Actions(None);
                             event
                         }
                         (S::Actions(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -25376,20 +24857,21 @@ pub mod page {
                 output: DeserializerOutput<'de, super::CtGouraudShdPointXElementType>,
                 fallback: &mut Option<CtGouraudShdXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtGouraudShdXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    if matches!(&fallback, Some(CtGouraudShdXTypeDeserializerState::Init__)) {
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else if self.point.len() < 3usize {
-                        fallback.get_or_insert(CtGouraudShdXTypeDeserializerState::Point(None));
+                        fallback.get_or_insert(S::Point(None));
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                     } else {
-                        fallback.get_or_insert(CtGouraudShdXTypeDeserializerState::Point(None));
-                        *self.state__ = CtGouraudShdXTypeDeserializerState::BackColor(None);
+                        fallback.get_or_insert(S::Point(None));
+                        *self.state__ = S::BackColor(None);
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                 }
@@ -25400,14 +24882,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_point(data)?;
-                        *self.state__ = CtGouraudShdXTypeDeserializerState::Point(None);
+                        *self.state__ = S::Point(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CtGouraudShdXTypeDeserializerState::Point(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = CtGouraudShdXTypeDeserializerState::Point(None);
+                        fallback.get_or_insert(S::Point(Some(deserializer)));
+                        *self.state__ = S::Point(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -25418,14 +24898,15 @@ pub mod page {
                 output: DeserializerOutput<'de, super::CtColorXType>,
                 fallback: &mut Option<CtGouraudShdXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtGouraudShdXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(CtGouraudShdXTypeDeserializerState::BackColor(None));
-                    *self.state__ = CtGouraudShdXTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::BackColor(None));
+                    *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -25435,14 +24916,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_back_color(data)?;
-                        *self.state__ = CtGouraudShdXTypeDeserializerState::Done__;
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CtGouraudShdXTypeDeserializerState::BackColor(
-                            Some(deserializer),
-                        ));
-                        *self.state__ = CtGouraudShdXTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::BackColor(Some(deserializer)));
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -25504,7 +24983,7 @@ pub mod page {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ = CtGouraudShdXTypeDeserializerState::Point(None);
+                            *self.state__ = S::Point(None);
                             event
                         }
                         (S::Point(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -25758,14 +25237,15 @@ pub mod page {
                 output: DeserializerOutput<'de, super::CtGraphicUnitActionsXElementType>,
                 fallback: &mut Option<CtGraphicUnitXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtGraphicUnitXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(CtGraphicUnitXTypeDeserializerState::Actions(None));
-                    *self.state__ = CtGraphicUnitXTypeDeserializerState::Clips(None);
+                    fallback.get_or_insert(S::Actions(None));
+                    *self.state__ = S::Clips(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -25775,14 +25255,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_actions(data)?;
-                        *self.state__ = CtGraphicUnitXTypeDeserializerState::Clips(None);
+                        *self.state__ = S::Clips(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CtGraphicUnitXTypeDeserializerState::Actions(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = CtGraphicUnitXTypeDeserializerState::Clips(None);
+                        fallback.get_or_insert(S::Actions(Some(deserializer)));
+                        *self.state__ = S::Clips(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -25793,14 +25271,15 @@ pub mod page {
                 output: DeserializerOutput<'de, super::CtGraphicUnitClipsXElementType>,
                 fallback: &mut Option<CtGraphicUnitXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtGraphicUnitXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(CtGraphicUnitXTypeDeserializerState::Clips(None));
-                    *self.state__ = CtGraphicUnitXTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::Clips(None));
+                    *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -25810,14 +25289,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_clips(data)?;
-                        *self.state__ = CtGraphicUnitXTypeDeserializerState::Done__;
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CtGraphicUnitXTypeDeserializerState::Clips(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = CtGraphicUnitXTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::Clips(Some(deserializer)));
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -25879,7 +25356,7 @@ pub mod page {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ = CtGraphicUnitXTypeDeserializerState::Actions(None);
+                            *self.state__ = S::Actions(None);
                             event
                         }
                         (S::Actions(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -26186,14 +25663,15 @@ pub mod page {
                 output: DeserializerOutput<'de, super::CtGraphicUnitActionsXElementType>,
                 fallback: &mut Option<CtImageXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtImageXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(CtImageXTypeDeserializerState::Actions(None));
-                    *self.state__ = CtImageXTypeDeserializerState::Clips(None);
+                    fallback.get_or_insert(S::Actions(None));
+                    *self.state__ = S::Clips(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -26203,14 +25681,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_actions(data)?;
-                        *self.state__ = CtImageXTypeDeserializerState::Clips(None);
+                        *self.state__ = S::Clips(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CtImageXTypeDeserializerState::Actions(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = CtImageXTypeDeserializerState::Clips(None);
+                        fallback.get_or_insert(S::Actions(Some(deserializer)));
+                        *self.state__ = S::Clips(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -26221,14 +25697,15 @@ pub mod page {
                 output: DeserializerOutput<'de, super::CtGraphicUnitClipsXElementType>,
                 fallback: &mut Option<CtImageXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtImageXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(CtImageXTypeDeserializerState::Clips(None));
-                    *self.state__ = CtImageXTypeDeserializerState::Border(None);
+                    fallback.get_or_insert(S::Clips(None));
+                    *self.state__ = S::Border(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -26238,14 +25715,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_clips(data)?;
-                        *self.state__ = CtImageXTypeDeserializerState::Border(None);
+                        *self.state__ = S::Border(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CtImageXTypeDeserializerState::Clips(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = CtImageXTypeDeserializerState::Border(None);
+                        fallback.get_or_insert(S::Clips(Some(deserializer)));
+                        *self.state__ = S::Border(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -26256,14 +25731,15 @@ pub mod page {
                 output: DeserializerOutput<'de, super::CtImageBorderXElementType>,
                 fallback: &mut Option<CtImageXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtImageXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(CtImageXTypeDeserializerState::Border(None));
-                    *self.state__ = CtImageXTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::Border(None));
+                    *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -26273,14 +25749,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_border(data)?;
-                        *self.state__ = CtImageXTypeDeserializerState::Done__;
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CtImageXTypeDeserializerState::Border(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = CtImageXTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::Border(Some(deserializer)));
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -26354,7 +25828,7 @@ pub mod page {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ = CtImageXTypeDeserializerState::Actions(None);
+                            *self.state__ = S::Actions(None);
                             event
                         }
                         (S::Actions(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -26548,23 +26022,21 @@ pub mod page {
                 output: DeserializerOutput<'de, super::CtLaGouraudShdPointXElementType>,
                 fallback: &mut Option<CtLaGouraudShdXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtLaGouraudShdXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    if matches!(
-                        &fallback,
-                        Some(CtLaGouraudShdXTypeDeserializerState::Init__)
-                    ) {
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else if self.point.len() < 4usize {
-                        fallback.get_or_insert(CtLaGouraudShdXTypeDeserializerState::Point(None));
+                        fallback.get_or_insert(S::Point(None));
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                     } else {
-                        fallback.get_or_insert(CtLaGouraudShdXTypeDeserializerState::Point(None));
-                        *self.state__ = CtLaGouraudShdXTypeDeserializerState::BackColor(None);
+                        fallback.get_or_insert(S::Point(None));
+                        *self.state__ = S::BackColor(None);
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                 }
@@ -26575,14 +26047,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_point(data)?;
-                        *self.state__ = CtLaGouraudShdXTypeDeserializerState::Point(None);
+                        *self.state__ = S::Point(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CtLaGouraudShdXTypeDeserializerState::Point(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = CtLaGouraudShdXTypeDeserializerState::Point(None);
+                        fallback.get_or_insert(S::Point(Some(deserializer)));
+                        *self.state__ = S::Point(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -26593,14 +26063,15 @@ pub mod page {
                 output: DeserializerOutput<'de, super::CtColorXType>,
                 fallback: &mut Option<CtLaGouraudShdXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtLaGouraudShdXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(CtLaGouraudShdXTypeDeserializerState::BackColor(None));
-                    *self.state__ = CtLaGouraudShdXTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::BackColor(None));
+                    *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -26610,14 +26081,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_back_color(data)?;
-                        *self.state__ = CtLaGouraudShdXTypeDeserializerState::Done__;
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CtLaGouraudShdXTypeDeserializerState::BackColor(
-                            Some(deserializer),
-                        ));
-                        *self.state__ = CtLaGouraudShdXTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::BackColor(Some(deserializer)));
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -26679,7 +26148,7 @@ pub mod page {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ = CtLaGouraudShdXTypeDeserializerState::Point(None);
+                            *self.state__ = S::Point(None);
                             event
                         }
                         (S::Point(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -26816,15 +26285,14 @@ pub mod page {
                 output: DeserializerOutput<'de, super::CtLayerXTypeContent>,
                 fallback: &mut Option<CtLayerXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtLayerXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state__ = fallback
-                        .take()
-                        .unwrap_or(CtLayerXTypeDeserializerState::Next__);
+                    *self.state__ = fallback.take().unwrap_or(S::Next__);
                     return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -26834,12 +26302,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state__ = CtLayerXTypeDeserializerState::Next__;
+                        *self.state__ = S::Next__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *fallback = Some(CtLayerXTypeDeserializerState::Content__(deserializer));
-                        *self.state__ = CtLayerXTypeDeserializerState::Next__;
+                        *fallback = Some(S::Content__(deserializer));
+                        *self.state__ = S::Next__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -27112,6 +26580,7 @@ pub mod page {
                 >,
                 output: DeserializerOutput<'de, super::CtPageBlockTextObjectXElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtLayerXTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -27128,19 +26597,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_text_object(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CtLayerXTypeContentDeserializerState::TextObject(values, None, None),
-                        )?;
-                        *self.state__ = CtLayerXTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::TextObject(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CtLayerXTypeContentDeserializerState::TextObject(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::TextObject(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -27154,6 +26616,7 @@ pub mod page {
                 >,
                 output: DeserializerOutput<'de, super::CtPageBlockPathObjectXElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtLayerXTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -27170,19 +26633,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_path_object(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CtLayerXTypeContentDeserializerState::PathObject(values, None, None),
-                        )?;
-                        *self.state__ = CtLayerXTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::PathObject(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CtLayerXTypeContentDeserializerState::PathObject(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::PathObject(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -27196,6 +26652,7 @@ pub mod page {
                 >,
                 output: DeserializerOutput<'de, super::CtPageBlockImageObjectXElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtLayerXTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -27212,19 +26669,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_image_object(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CtLayerXTypeContentDeserializerState::ImageObject(values, None, None),
-                        )?;
-                        *self.state__ = CtLayerXTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::ImageObject(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CtLayerXTypeContentDeserializerState::ImageObject(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::ImageObject(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -27236,6 +26686,7 @@ pub mod page {
                 fallback : Option << super :: CtPageBlockCompositeObjectXElementType as WithDeserializer > :: Deserializer >,
                 output: DeserializerOutput<'de, super::CtPageBlockCompositeObjectXElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtLayerXTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -27252,21 +26703,13 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_composite_object(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CtLayerXTypeContentDeserializerState::CompositeObject(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ = CtLayerXTypeContentDeserializerState::Done__(data);
+                        let data =
+                            Self::finish_state(helper, S::CompositeObject(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CtLayerXTypeContentDeserializerState::CompositeObject(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::CompositeObject(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -27280,6 +26723,7 @@ pub mod page {
                 >,
                 output: DeserializerOutput<'de, super::CtPageBlockPageBlockXElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtLayerXTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -27296,19 +26740,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_page_block(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CtLayerXTypeContentDeserializerState::PageBlock(values, None, None),
-                        )?;
-                        *self.state__ = CtLayerXTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::PageBlock(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CtLayerXTypeContentDeserializerState::PageBlock(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::PageBlock(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -27566,15 +27003,14 @@ pub mod page {
                 output: DeserializerOutput<'de, super::CtPageBlockXTypeContent>,
                 fallback: &mut Option<CtPageBlockXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtPageBlockXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state__ = fallback
-                        .take()
-                        .unwrap_or(CtPageBlockXTypeDeserializerState::Next__);
+                    *self.state__ = fallback.take().unwrap_or(S::Next__);
                     return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -27584,13 +27020,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state__ = CtPageBlockXTypeDeserializerState::Next__;
+                        *self.state__ = S::Next__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *fallback =
-                            Some(CtPageBlockXTypeDeserializerState::Content__(deserializer));
-                        *self.state__ = CtPageBlockXTypeDeserializerState::Next__;
+                        *fallback = Some(S::Content__(deserializer));
+                        *self.state__ = S::Next__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -27865,6 +27300,7 @@ pub mod page {
                 >,
                 output: DeserializerOutput<'de, super::CtPageBlockTextObjectXElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtPageBlockXTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -27881,21 +27317,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_text_object(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CtPageBlockXTypeContentDeserializerState::TextObject(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ = CtPageBlockXTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::TextObject(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CtPageBlockXTypeContentDeserializerState::TextObject(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::TextObject(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -27909,6 +27336,7 @@ pub mod page {
                 >,
                 output: DeserializerOutput<'de, super::CtPageBlockPathObjectXElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtPageBlockXTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -27925,21 +27353,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_path_object(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CtPageBlockXTypeContentDeserializerState::PathObject(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ = CtPageBlockXTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::PathObject(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CtPageBlockXTypeContentDeserializerState::PathObject(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::PathObject(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -27953,6 +27372,7 @@ pub mod page {
                 >,
                 output: DeserializerOutput<'de, super::CtPageBlockImageObjectXElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtPageBlockXTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -27969,21 +27389,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_image_object(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CtPageBlockXTypeContentDeserializerState::ImageObject(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ = CtPageBlockXTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::ImageObject(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CtPageBlockXTypeContentDeserializerState::ImageObject(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::ImageObject(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -27995,6 +27406,7 @@ pub mod page {
                 fallback : Option << super :: CtPageBlockCompositeObjectXElementType as WithDeserializer > :: Deserializer >,
                 output: DeserializerOutput<'de, super::CtPageBlockCompositeObjectXElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtPageBlockXTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -28011,21 +27423,13 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_composite_object(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CtPageBlockXTypeContentDeserializerState::CompositeObject(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ = CtPageBlockXTypeContentDeserializerState::Done__(data);
+                        let data =
+                            Self::finish_state(helper, S::CompositeObject(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CtPageBlockXTypeContentDeserializerState::CompositeObject(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::CompositeObject(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -28039,6 +27443,7 @@ pub mod page {
                 >,
                 output: DeserializerOutput<'de, super::CtPageBlockPageBlockXElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtPageBlockXTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -28055,19 +27460,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_page_block(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CtPageBlockXTypeContentDeserializerState::PageBlock(values, None, None),
-                        )?;
-                        *self.state__ = CtPageBlockXTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::PageBlock(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CtPageBlockXTypeContentDeserializerState::PageBlock(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::PageBlock(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -28531,14 +27929,15 @@ pub mod page {
                 output: DeserializerOutput<'de, super::CtGraphicUnitActionsXElementType>,
                 fallback: &mut Option<CtPathXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtPathXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(CtPathXTypeDeserializerState::Actions(None));
-                    *self.state__ = CtPathXTypeDeserializerState::Clips(None);
+                    fallback.get_or_insert(S::Actions(None));
+                    *self.state__ = S::Clips(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -28548,14 +27947,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_actions(data)?;
-                        *self.state__ = CtPathXTypeDeserializerState::Clips(None);
+                        *self.state__ = S::Clips(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CtPathXTypeDeserializerState::Actions(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = CtPathXTypeDeserializerState::Clips(None);
+                        fallback.get_or_insert(S::Actions(Some(deserializer)));
+                        *self.state__ = S::Clips(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -28566,14 +27963,15 @@ pub mod page {
                 output: DeserializerOutput<'de, super::CtGraphicUnitClipsXElementType>,
                 fallback: &mut Option<CtPathXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtPathXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(CtPathXTypeDeserializerState::Clips(None));
-                    *self.state__ = CtPathXTypeDeserializerState::StrokeColor(None);
+                    fallback.get_or_insert(S::Clips(None));
+                    *self.state__ = S::StrokeColor(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -28583,13 +27981,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_clips(data)?;
-                        *self.state__ = CtPathXTypeDeserializerState::StrokeColor(None);
+                        *self.state__ = S::StrokeColor(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback
-                            .get_or_insert(CtPathXTypeDeserializerState::Clips(Some(deserializer)));
-                        *self.state__ = CtPathXTypeDeserializerState::StrokeColor(None);
+                        fallback.get_or_insert(S::Clips(Some(deserializer)));
+                        *self.state__ = S::StrokeColor(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -28600,14 +27997,15 @@ pub mod page {
                 output: DeserializerOutput<'de, super::CtColorXType>,
                 fallback: &mut Option<CtPathXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtPathXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(CtPathXTypeDeserializerState::StrokeColor(None));
-                    *self.state__ = CtPathXTypeDeserializerState::FillColor(None);
+                    fallback.get_or_insert(S::StrokeColor(None));
+                    *self.state__ = S::FillColor(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -28617,14 +28015,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_stroke_color(data)?;
-                        *self.state__ = CtPathXTypeDeserializerState::FillColor(None);
+                        *self.state__ = S::FillColor(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CtPathXTypeDeserializerState::StrokeColor(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = CtPathXTypeDeserializerState::FillColor(None);
+                        fallback.get_or_insert(S::StrokeColor(Some(deserializer)));
+                        *self.state__ = S::FillColor(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -28635,14 +28031,15 @@ pub mod page {
                 output: DeserializerOutput<'de, super::CtColorXType>,
                 fallback: &mut Option<CtPathXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtPathXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(CtPathXTypeDeserializerState::FillColor(None));
-                    *self.state__ = CtPathXTypeDeserializerState::AbbreviatedData(None);
+                    fallback.get_or_insert(S::FillColor(None));
+                    *self.state__ = S::AbbreviatedData(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -28652,14 +28049,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_fill_color(data)?;
-                        *self.state__ = CtPathXTypeDeserializerState::AbbreviatedData(None);
+                        *self.state__ = S::AbbreviatedData(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CtPathXTypeDeserializerState::FillColor(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = CtPathXTypeDeserializerState::AbbreviatedData(None);
+                        fallback.get_or_insert(S::FillColor(Some(deserializer)));
+                        *self.state__ = S::AbbreviatedData(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -28670,14 +28065,15 @@ pub mod page {
                 output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<CtPathXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtPathXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(CtPathXTypeDeserializerState::AbbreviatedData(None));
-                    if matches!(&fallback, Some(CtPathXTypeDeserializerState::Init__)) {
+                    fallback.get_or_insert(S::AbbreviatedData(None));
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -28690,14 +28086,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_abbreviated_data(data)?;
-                        *self.state__ = CtPathXTypeDeserializerState::Done__;
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CtPathXTypeDeserializerState::AbbreviatedData(
-                            Some(deserializer),
-                        ));
-                        *self.state__ = CtPathXTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::AbbreviatedData(Some(deserializer)));
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -28795,7 +28189,7 @@ pub mod page {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ = CtPathXTypeDeserializerState::Actions(None);
+                            *self.state__ = S::Actions(None);
                             event
                         }
                         (S::Actions(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -29053,14 +28447,15 @@ pub mod page {
                 output: DeserializerOutput<'de, super::CtPatternCellContentXElementType>,
                 fallback: &mut Option<CtPatternXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtPatternXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(CtPatternXTypeDeserializerState::CellContent(None));
-                    if matches!(&fallback, Some(CtPatternXTypeDeserializerState::Init__)) {
+                    fallback.get_or_insert(S::CellContent(None));
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -29073,14 +28468,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_cell_content(data)?;
-                        *self.state__ = CtPatternXTypeDeserializerState::Done__;
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CtPatternXTypeDeserializerState::CellContent(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = CtPatternXTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::CellContent(Some(deserializer)));
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -29130,7 +28523,7 @@ pub mod page {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ = CtPatternXTypeDeserializerState::CellContent(None);
+                            *self.state__ = S::CellContent(None);
                             event
                         }
                         (S::CellContent(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -29324,20 +28717,21 @@ pub mod page {
                 output: DeserializerOutput<'de, super::CtAxialShdSegmentXElementType>,
                 fallback: &mut Option<CtRadialShdXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtRadialShdXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    if matches!(&fallback, Some(CtRadialShdXTypeDeserializerState::Init__)) {
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else if self.seqment.len() < 2usize {
-                        fallback.get_or_insert(CtRadialShdXTypeDeserializerState::Seqment(None));
+                        fallback.get_or_insert(S::Seqment(None));
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                     } else {
-                        fallback.get_or_insert(CtRadialShdXTypeDeserializerState::Seqment(None));
-                        *self.state__ = CtRadialShdXTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::Seqment(None));
+                        *self.state__ = S::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                 }
@@ -29348,14 +28742,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_seqment(data)?;
-                        *self.state__ = CtRadialShdXTypeDeserializerState::Seqment(None);
+                        *self.state__ = S::Seqment(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CtRadialShdXTypeDeserializerState::Seqment(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = CtRadialShdXTypeDeserializerState::Seqment(None);
+                        fallback.get_or_insert(S::Seqment(Some(deserializer)));
+                        *self.state__ = S::Seqment(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -29405,7 +28797,7 @@ pub mod page {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ = CtRadialShdXTypeDeserializerState::Seqment(None);
+                            *self.state__ = S::Seqment(None);
                             event
                         }
                         (S::Seqment(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -29688,15 +29080,14 @@ pub mod page {
                 output: DeserializerOutput<'de, super::CtTextXTypeContent>,
                 fallback: &mut Option<CtTextXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtTextXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state__ = fallback
-                        .take()
-                        .unwrap_or(CtTextXTypeDeserializerState::Next__);
+                    *self.state__ = fallback.take().unwrap_or(S::Next__);
                     return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -29706,12 +29097,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state__ = CtTextXTypeDeserializerState::Next__;
+                        *self.state__ = S::Next__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *fallback = Some(CtTextXTypeDeserializerState::Content__(deserializer));
-                        *self.state__ = CtTextXTypeDeserializerState::Next__;
+                        *fallback = Some(S::Content__(deserializer));
+                        *self.state__ = S::Next__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -30058,6 +29449,7 @@ pub mod page {
                 >,
                 output: DeserializerOutput<'de, super::CtGraphicUnitActionsXElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtTextXTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -30074,19 +29466,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_actions(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CtTextXTypeContentDeserializerState::Actions(values, None, None),
-                        )?;
-                        *self.state__ = CtTextXTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Actions(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CtTextXTypeContentDeserializerState::Actions(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Actions(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -30100,6 +29485,7 @@ pub mod page {
                 >,
                 output: DeserializerOutput<'de, super::CtGraphicUnitClipsXElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtTextXTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -30116,19 +29502,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_clips(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CtTextXTypeContentDeserializerState::Clips(values, None, None),
-                        )?;
-                        *self.state__ = CtTextXTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Clips(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CtTextXTypeContentDeserializerState::Clips(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Clips(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -30140,6 +29519,7 @@ pub mod page {
                 fallback: Option<<super::CtColorXType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::CtColorXType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtTextXTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -30156,19 +29536,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_fill_color(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CtTextXTypeContentDeserializerState::FillColor(values, None, None),
-                        )?;
-                        *self.state__ = CtTextXTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::FillColor(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CtTextXTypeContentDeserializerState::FillColor(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::FillColor(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -30180,6 +29553,7 @@ pub mod page {
                 fallback: Option<<super::CtColorXType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::CtColorXType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtTextXTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -30196,19 +29570,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_stroke_color(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CtTextXTypeContentDeserializerState::StrokeColor(values, None, None),
-                        )?;
-                        *self.state__ = CtTextXTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::StrokeColor(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CtTextXTypeContentDeserializerState::StrokeColor(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::StrokeColor(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -30220,6 +29587,7 @@ pub mod page {
                 fallback: Option<<super::CtCgTransformXType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::CtCgTransformXType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtTextXTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -30236,19 +29604,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_cg_transform(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CtTextXTypeContentDeserializerState::CgTransform(values, None, None),
-                        )?;
-                        *self.state__ = CtTextXTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::CgTransform(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CtTextXTypeContentDeserializerState::CgTransform(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::CgTransform(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -30262,6 +29623,7 @@ pub mod page {
                 >,
                 output: DeserializerOutput<'de, super::CtTextTextCodeXElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtTextXTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -30278,19 +29640,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_text_code(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CtTextXTypeContentDeserializerState::TextCode(values, None, None),
-                        )?;
-                        *self.state__ = CtTextXTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::TextCode(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CtTextXTypeContentDeserializerState::TextCode(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::TextCode(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -30644,14 +29999,15 @@ pub mod page {
                 output: DeserializerOutput<'de, super::PageTemplateXElementType>,
                 fallback: &mut Option<PageXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use PageXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(PageXElementTypeDeserializerState::Template(None));
-                    *self.state__ = PageXElementTypeDeserializerState::PageRes(None);
+                    fallback.get_or_insert(S::Template(None));
+                    *self.state__ = S::PageRes(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -30661,14 +30017,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_template(data)?;
-                        *self.state__ = PageXElementTypeDeserializerState::Template(None);
+                        *self.state__ = S::Template(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(PageXElementTypeDeserializerState::Template(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = PageXElementTypeDeserializerState::Template(None);
+                        fallback.get_or_insert(S::Template(Some(deserializer)));
+                        *self.state__ = S::Template(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -30679,14 +30033,15 @@ pub mod page {
                 output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<PageXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use PageXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(PageXElementTypeDeserializerState::PageRes(None));
-                    *self.state__ = PageXElementTypeDeserializerState::Area(None);
+                    fallback.get_or_insert(S::PageRes(None));
+                    *self.state__ = S::Area(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -30696,14 +30051,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_page_res(data)?;
-                        *self.state__ = PageXElementTypeDeserializerState::PageRes(None);
+                        *self.state__ = S::PageRes(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(PageXElementTypeDeserializerState::PageRes(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = PageXElementTypeDeserializerState::PageRes(None);
+                        fallback.get_or_insert(S::PageRes(Some(deserializer)));
+                        *self.state__ = S::PageRes(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -30714,14 +30067,15 @@ pub mod page {
                 output: DeserializerOutput<'de, super::super::definition::CtPageAreaXType>,
                 fallback: &mut Option<PageXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use PageXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(PageXElementTypeDeserializerState::Area(None));
-                    *self.state__ = PageXElementTypeDeserializerState::Content(None);
+                    fallback.get_or_insert(S::Area(None));
+                    *self.state__ = S::Content(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -30731,14 +30085,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_area(data)?;
-                        *self.state__ = PageXElementTypeDeserializerState::Content(None);
+                        *self.state__ = S::Content(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(PageXElementTypeDeserializerState::Area(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = PageXElementTypeDeserializerState::Content(None);
+                        fallback.get_or_insert(S::Area(Some(deserializer)));
+                        *self.state__ = S::Content(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -30749,14 +30101,15 @@ pub mod page {
                 output: DeserializerOutput<'de, super::PageContentXElementType>,
                 fallback: &mut Option<PageXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use PageXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(PageXElementTypeDeserializerState::Content(None));
-                    *self.state__ = PageXElementTypeDeserializerState::Actions(None);
+                    fallback.get_or_insert(S::Content(None));
+                    *self.state__ = S::Actions(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -30766,14 +30119,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state__ = PageXElementTypeDeserializerState::Actions(None);
+                        *self.state__ = S::Actions(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(PageXElementTypeDeserializerState::Content(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = PageXElementTypeDeserializerState::Actions(None);
+                        fallback.get_or_insert(S::Content(Some(deserializer)));
+                        *self.state__ = S::Actions(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -30784,14 +30135,15 @@ pub mod page {
                 output: DeserializerOutput<'de, super::CtGraphicUnitActionsXElementType>,
                 fallback: &mut Option<PageXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use PageXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(PageXElementTypeDeserializerState::Actions(None));
-                    *self.state__ = PageXElementTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::Actions(None));
+                    *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -30801,14 +30153,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_actions(data)?;
-                        *self.state__ = PageXElementTypeDeserializerState::Done__;
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(PageXElementTypeDeserializerState::Actions(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = PageXElementTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::Actions(Some(deserializer)));
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -30906,7 +30256,7 @@ pub mod page {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ = PageXElementTypeDeserializerState::Template(None);
+                            *self.state__ = S::Template(None);
                             event
                         }
                         (S::Template(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -31096,18 +30446,15 @@ pub mod page {
                 output: DeserializerOutput<'de, super::CtColorXType>,
                 fallback: &mut Option<CtAxialShdSegmentXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtAxialShdSegmentXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback
-                        .get_or_insert(CtAxialShdSegmentXElementTypeDeserializerState::Color(None));
-                    if matches!(
-                        &fallback,
-                        Some(CtAxialShdSegmentXElementTypeDeserializerState::Init__)
-                    ) {
+                    fallback.get_or_insert(S::Color(None));
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -31120,16 +30467,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_color(data)?;
-                        *self.state__ = CtAxialShdSegmentXElementTypeDeserializerState::Done__;
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(
-                            CtAxialShdSegmentXElementTypeDeserializerState::Color(Some(
-                                deserializer,
-                            )),
-                        );
-                        *self.state__ = CtAxialShdSegmentXElementTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::Color(Some(deserializer)));
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -31181,8 +30524,7 @@ pub mod page {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ =
-                                CtAxialShdSegmentXElementTypeDeserializerState::Color(None);
+                            *self.state__ = S::Color(None);
                             event
                         }
                         (S::Color(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -31306,15 +30648,14 @@ pub mod page {
                 output: DeserializerOutput<'de, super::CtClipAreaXElementTypeContent>,
                 fallback: &mut Option<CtClipAreaXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtClipAreaXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state__ = fallback
-                        .take()
-                        .unwrap_or(CtClipAreaXElementTypeDeserializerState::Next__);
+                    *self.state__ = fallback.take().unwrap_or(S::Next__);
                     return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -31324,12 +30665,11 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state__ = CtClipAreaXElementTypeDeserializerState::Next__;
+                        *self.state__ = S::Next__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ =
-                            CtClipAreaXElementTypeDeserializerState::Content__(deserializer);
+                        *self.state__ = S::Content__(deserializer);
                         Ok(ElementHandlerOutput::from_event_end(event, allow_any))
                     }
                 }
@@ -31512,6 +30852,7 @@ pub mod page {
                 fallback: Option<<super::CtPathXType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::CtPathXType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtClipAreaXElementTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -31528,22 +30869,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_path(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CtClipAreaXElementTypeContentDeserializerState::Path(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ =
-                            CtClipAreaXElementTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Path(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CtClipAreaXElementTypeContentDeserializerState::Path(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Path(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -31555,6 +30886,7 @@ pub mod page {
                 fallback: Option<<super::CtTextXType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::CtTextXType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtClipAreaXElementTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -31571,22 +30903,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_text(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CtClipAreaXElementTypeContentDeserializerState::Text(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ =
-                            CtClipAreaXElementTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Text(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CtClipAreaXElementTypeContentDeserializerState::Text(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Text(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -31777,27 +31099,21 @@ pub mod page {
                 output: DeserializerOutput<'de, super::super::definition::CtActionXType>,
                 fallback: &mut Option<CtGraphicUnitActionsXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtGraphicUnitActionsXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    if matches!(
-                        &fallback,
-                        Some(CtGraphicUnitActionsXElementTypeDeserializerState::Init__)
-                    ) {
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else if self.action.len() < 1usize {
-                        fallback.get_or_insert(
-                            CtGraphicUnitActionsXElementTypeDeserializerState::Action(None),
-                        );
+                        fallback.get_or_insert(S::Action(None));
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                     } else {
-                        fallback.get_or_insert(
-                            CtGraphicUnitActionsXElementTypeDeserializerState::Action(None),
-                        );
-                        *self.state__ = CtGraphicUnitActionsXElementTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::Action(None));
+                        *self.state__ = S::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                 }
@@ -31808,18 +31124,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_action(data)?;
-                        *self.state__ =
-                            CtGraphicUnitActionsXElementTypeDeserializerState::Action(None);
+                        *self.state__ = S::Action(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(
-                            CtGraphicUnitActionsXElementTypeDeserializerState::Action(Some(
-                                deserializer,
-                            )),
-                        );
-                        *self.state__ =
-                            CtGraphicUnitActionsXElementTypeDeserializerState::Action(None);
+                        fallback.get_or_insert(S::Action(Some(deserializer)));
+                        *self.state__ = S::Action(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -31871,8 +31181,7 @@ pub mod page {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ =
-                                CtGraphicUnitActionsXElementTypeDeserializerState::Action(None);
+                            *self.state__ = S::Action(None);
                             event
                         }
                         (S::Action(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -31973,27 +31282,21 @@ pub mod page {
                 output: DeserializerOutput<'de, super::CtClipXType>,
                 fallback: &mut Option<CtGraphicUnitClipsXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtGraphicUnitClipsXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    if matches!(
-                        &fallback,
-                        Some(CtGraphicUnitClipsXElementTypeDeserializerState::Init__)
-                    ) {
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else if self.clip.len() < 1usize {
-                        fallback.get_or_insert(
-                            CtGraphicUnitClipsXElementTypeDeserializerState::Clip(None),
-                        );
+                        fallback.get_or_insert(S::Clip(None));
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                     } else {
-                        fallback.get_or_insert(
-                            CtGraphicUnitClipsXElementTypeDeserializerState::Clip(None),
-                        );
-                        *self.state__ = CtGraphicUnitClipsXElementTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::Clip(None));
+                        *self.state__ = S::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                 }
@@ -32004,16 +31307,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_clip(data)?;
-                        *self.state__ = CtGraphicUnitClipsXElementTypeDeserializerState::Clip(None);
+                        *self.state__ = S::Clip(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(
-                            CtGraphicUnitClipsXElementTypeDeserializerState::Clip(Some(
-                                deserializer,
-                            )),
-                        );
-                        *self.state__ = CtGraphicUnitClipsXElementTypeDeserializerState::Clip(None);
+                        fallback.get_or_insert(S::Clip(Some(deserializer)));
+                        *self.state__ = S::Clip(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -32065,8 +31364,7 @@ pub mod page {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ =
-                                CtGraphicUnitClipsXElementTypeDeserializerState::Clip(None);
+                            *self.state__ = S::Clip(None);
                             event
                         }
                         (S::Clip(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -32200,18 +31498,15 @@ pub mod page {
                 output: DeserializerOutput<'de, super::CtColorXType>,
                 fallback: &mut Option<CtGouraudShdPointXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtGouraudShdPointXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback
-                        .get_or_insert(CtGouraudShdPointXElementTypeDeserializerState::Color(None));
-                    if matches!(
-                        &fallback,
-                        Some(CtGouraudShdPointXElementTypeDeserializerState::Init__)
-                    ) {
+                    fallback.get_or_insert(S::Color(None));
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -32224,16 +31519,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_color(data)?;
-                        *self.state__ = CtGouraudShdPointXElementTypeDeserializerState::Done__;
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(
-                            CtGouraudShdPointXElementTypeDeserializerState::Color(Some(
-                                deserializer,
-                            )),
-                        );
-                        *self.state__ = CtGouraudShdPointXElementTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::Color(Some(deserializer)));
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -32285,8 +31576,7 @@ pub mod page {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ =
-                                CtGouraudShdPointXElementTypeDeserializerState::Color(None);
+                            *self.state__ = S::Color(None);
                             event
                         }
                         (S::Color(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -32453,16 +31743,15 @@ pub mod page {
                 output: DeserializerOutput<'de, super::CtColorXType>,
                 fallback: &mut Option<CtImageBorderXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtImageBorderXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(
-                        CtImageBorderXElementTypeDeserializerState::BorderColor(None),
-                    );
-                    *self.state__ = CtImageBorderXElementTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::BorderColor(None));
+                    *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -32472,16 +31761,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_border_color(data)?;
-                        *self.state__ = CtImageBorderXElementTypeDeserializerState::Done__;
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(
-                            CtImageBorderXElementTypeDeserializerState::BorderColor(Some(
-                                deserializer,
-                            )),
-                        );
-                        *self.state__ = CtImageBorderXElementTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::BorderColor(Some(deserializer)));
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -32533,8 +31818,7 @@ pub mod page {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ =
-                                CtImageBorderXElementTypeDeserializerState::BorderColor(None);
+                            *self.state__ = S::BorderColor(None);
                             event
                         }
                         (S::BorderColor(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -32665,19 +31949,15 @@ pub mod page {
                 output: DeserializerOutput<'de, super::CtColorXType>,
                 fallback: &mut Option<CtLaGouraudShdPointXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtLaGouraudShdPointXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(
-                        CtLaGouraudShdPointXElementTypeDeserializerState::Color(None),
-                    );
-                    if matches!(
-                        &fallback,
-                        Some(CtLaGouraudShdPointXElementTypeDeserializerState::Init__)
-                    ) {
+                    fallback.get_or_insert(S::Color(None));
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -32690,16 +31970,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_color(data)?;
-                        *self.state__ = CtLaGouraudShdPointXElementTypeDeserializerState::Done__;
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(
-                            CtLaGouraudShdPointXElementTypeDeserializerState::Color(Some(
-                                deserializer,
-                            )),
-                        );
-                        *self.state__ = CtLaGouraudShdPointXElementTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::Color(Some(deserializer)));
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -32751,8 +32027,7 @@ pub mod page {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ =
-                                CtLaGouraudShdPointXElementTypeDeserializerState::Color(None);
+                            *self.state__ = S::Color(None);
                             event
                         }
                         (S::Color(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -33057,15 +32332,14 @@ pub mod page {
                 output: DeserializerOutput<'de, super::CtPageBlockTextObjectXElementTypeContent>,
                 fallback: &mut Option<CtPageBlockTextObjectXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtPageBlockTextObjectXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state__ = fallback
-                        .take()
-                        .unwrap_or(CtPageBlockTextObjectXElementTypeDeserializerState::Next__);
+                    *self.state__ = fallback.take().unwrap_or(S::Next__);
                     return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -33075,16 +32349,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state__ = CtPageBlockTextObjectXElementTypeDeserializerState::Next__;
+                        *self.state__ = S::Next__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *fallback = Some(
-                            CtPageBlockTextObjectXElementTypeDeserializerState::Content__(
-                                deserializer,
-                            ),
-                        );
-                        *self.state__ = CtPageBlockTextObjectXElementTypeDeserializerState::Next__;
+                        *fallback = Some(S::Content__(deserializer));
+                        *self.state__ = S::Next__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -33439,6 +32709,7 @@ pub mod page {
                 >,
                 output: DeserializerOutput<'de, super::CtGraphicUnitActionsXElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtPageBlockTextObjectXElementTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -33455,23 +32726,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_actions(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CtPageBlockTextObjectXElementTypeContentDeserializerState::Actions(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ =
-                            CtPageBlockTextObjectXElementTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Actions(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ =
-                            CtPageBlockTextObjectXElementTypeContentDeserializerState::Actions(
-                                values,
-                                None,
-                                Some(deserializer),
-                            );
+                        *self.state__ = S::Actions(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -33485,6 +32745,7 @@ pub mod page {
                 >,
                 output: DeserializerOutput<'de, super::CtGraphicUnitClipsXElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtPageBlockTextObjectXElementTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -33501,23 +32762,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_clips(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CtPageBlockTextObjectXElementTypeContentDeserializerState::Clips(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ =
-                            CtPageBlockTextObjectXElementTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Clips(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ =
-                            CtPageBlockTextObjectXElementTypeContentDeserializerState::Clips(
-                                values,
-                                None,
-                                Some(deserializer),
-                            );
+                        *self.state__ = S::Clips(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -33529,6 +32779,7 @@ pub mod page {
                 fallback: Option<<super::CtColorXType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::CtColorXType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtPageBlockTextObjectXElementTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -33545,23 +32796,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_fill_color(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CtPageBlockTextObjectXElementTypeContentDeserializerState::FillColor(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ =
-                            CtPageBlockTextObjectXElementTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::FillColor(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ =
-                            CtPageBlockTextObjectXElementTypeContentDeserializerState::FillColor(
-                                values,
-                                None,
-                                Some(deserializer),
-                            );
+                        *self.state__ = S::FillColor(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -33573,6 +32813,7 @@ pub mod page {
                 fallback: Option<<super::CtColorXType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::CtColorXType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtPageBlockTextObjectXElementTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -33589,23 +32830,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_stroke_color(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CtPageBlockTextObjectXElementTypeContentDeserializerState::StrokeColor(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ =
-                            CtPageBlockTextObjectXElementTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::StrokeColor(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ =
-                            CtPageBlockTextObjectXElementTypeContentDeserializerState::StrokeColor(
-                                values,
-                                None,
-                                Some(deserializer),
-                            );
+                        *self.state__ = S::StrokeColor(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -33617,6 +32847,7 @@ pub mod page {
                 fallback: Option<<super::CtCgTransformXType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::CtCgTransformXType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtPageBlockTextObjectXElementTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -33633,23 +32864,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_cg_transform(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CtPageBlockTextObjectXElementTypeContentDeserializerState::CgTransform(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ =
-                            CtPageBlockTextObjectXElementTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::CgTransform(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ =
-                            CtPageBlockTextObjectXElementTypeContentDeserializerState::CgTransform(
-                                values,
-                                None,
-                                Some(deserializer),
-                            );
+                        *self.state__ = S::CgTransform(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -33663,6 +32883,7 @@ pub mod page {
                 >,
                 output: DeserializerOutput<'de, super::CtTextTextCodeXElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtPageBlockTextObjectXElementTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -33679,23 +32900,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_text_code(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CtPageBlockTextObjectXElementTypeContentDeserializerState::TextCode(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ =
-                            CtPageBlockTextObjectXElementTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::TextCode(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ =
-                            CtPageBlockTextObjectXElementTypeContentDeserializerState::TextCode(
-                                values,
-                                None,
-                                Some(deserializer),
-                            );
+                        *self.state__ = S::TextCode(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -34207,16 +33417,15 @@ pub mod page {
                 output: DeserializerOutput<'de, super::CtGraphicUnitActionsXElementType>,
                 fallback: &mut Option<CtPageBlockPathObjectXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtPageBlockPathObjectXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(
-                        CtPageBlockPathObjectXElementTypeDeserializerState::Actions(None),
-                    );
-                    *self.state__ = CtPageBlockPathObjectXElementTypeDeserializerState::Clips(None);
+                    fallback.get_or_insert(S::Actions(None));
+                    *self.state__ = S::Clips(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -34226,18 +33435,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_actions(data)?;
-                        *self.state__ =
-                            CtPageBlockPathObjectXElementTypeDeserializerState::Clips(None);
+                        *self.state__ = S::Clips(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(
-                            CtPageBlockPathObjectXElementTypeDeserializerState::Actions(Some(
-                                deserializer,
-                            )),
-                        );
-                        *self.state__ =
-                            CtPageBlockPathObjectXElementTypeDeserializerState::Clips(None);
+                        fallback.get_or_insert(S::Actions(Some(deserializer)));
+                        *self.state__ = S::Clips(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -34248,17 +33451,15 @@ pub mod page {
                 output: DeserializerOutput<'de, super::CtGraphicUnitClipsXElementType>,
                 fallback: &mut Option<CtPageBlockPathObjectXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtPageBlockPathObjectXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(
-                        CtPageBlockPathObjectXElementTypeDeserializerState::Clips(None),
-                    );
-                    *self.state__ =
-                        CtPageBlockPathObjectXElementTypeDeserializerState::StrokeColor(None);
+                    fallback.get_or_insert(S::Clips(None));
+                    *self.state__ = S::StrokeColor(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -34268,18 +33469,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_clips(data)?;
-                        *self.state__ =
-                            CtPageBlockPathObjectXElementTypeDeserializerState::StrokeColor(None);
+                        *self.state__ = S::StrokeColor(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(
-                            CtPageBlockPathObjectXElementTypeDeserializerState::Clips(Some(
-                                deserializer,
-                            )),
-                        );
-                        *self.state__ =
-                            CtPageBlockPathObjectXElementTypeDeserializerState::StrokeColor(None);
+                        fallback.get_or_insert(S::Clips(Some(deserializer)));
+                        *self.state__ = S::StrokeColor(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -34290,17 +33485,15 @@ pub mod page {
                 output: DeserializerOutput<'de, super::CtColorXType>,
                 fallback: &mut Option<CtPageBlockPathObjectXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtPageBlockPathObjectXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(
-                        CtPageBlockPathObjectXElementTypeDeserializerState::StrokeColor(None),
-                    );
-                    *self.state__ =
-                        CtPageBlockPathObjectXElementTypeDeserializerState::FillColor(None);
+                    fallback.get_or_insert(S::StrokeColor(None));
+                    *self.state__ = S::FillColor(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -34310,18 +33503,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_stroke_color(data)?;
-                        *self.state__ =
-                            CtPageBlockPathObjectXElementTypeDeserializerState::FillColor(None);
+                        *self.state__ = S::FillColor(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(
-                            CtPageBlockPathObjectXElementTypeDeserializerState::StrokeColor(Some(
-                                deserializer,
-                            )),
-                        );
-                        *self.state__ =
-                            CtPageBlockPathObjectXElementTypeDeserializerState::FillColor(None);
+                        fallback.get_or_insert(S::StrokeColor(Some(deserializer)));
+                        *self.state__ = S::FillColor(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -34332,17 +33519,15 @@ pub mod page {
                 output: DeserializerOutput<'de, super::CtColorXType>,
                 fallback: &mut Option<CtPageBlockPathObjectXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtPageBlockPathObjectXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(
-                        CtPageBlockPathObjectXElementTypeDeserializerState::FillColor(None),
-                    );
-                    *self.state__ =
-                        CtPageBlockPathObjectXElementTypeDeserializerState::AbbreviatedData(None);
+                    fallback.get_or_insert(S::FillColor(None));
+                    *self.state__ = S::AbbreviatedData(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -34352,22 +33537,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_fill_color(data)?;
-                        *self.state__ =
-                            CtPageBlockPathObjectXElementTypeDeserializerState::AbbreviatedData(
-                                None,
-                            );
+                        *self.state__ = S::AbbreviatedData(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(
-                            CtPageBlockPathObjectXElementTypeDeserializerState::FillColor(Some(
-                                deserializer,
-                            )),
-                        );
-                        *self.state__ =
-                            CtPageBlockPathObjectXElementTypeDeserializerState::AbbreviatedData(
-                                None,
-                            );
+                        fallback.get_or_insert(S::FillColor(Some(deserializer)));
+                        *self.state__ = S::AbbreviatedData(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -34378,19 +33553,15 @@ pub mod page {
                 output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<CtPageBlockPathObjectXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtPageBlockPathObjectXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(
-                        CtPageBlockPathObjectXElementTypeDeserializerState::AbbreviatedData(None),
-                    );
-                    if matches!(
-                        &fallback,
-                        Some(CtPageBlockPathObjectXElementTypeDeserializerState::Init__)
-                    ) {
+                    fallback.get_or_insert(S::AbbreviatedData(None));
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -34403,16 +33574,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_abbreviated_data(data)?;
-                        *self.state__ = CtPageBlockPathObjectXElementTypeDeserializerState::Done__;
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(
-                            CtPageBlockPathObjectXElementTypeDeserializerState::AbbreviatedData(
-                                Some(deserializer),
-                            ),
-                        );
-                        *self.state__ = CtPageBlockPathObjectXElementTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::AbbreviatedData(Some(deserializer)));
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -34512,8 +33679,7 @@ pub mod page {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ =
-                                CtPageBlockPathObjectXElementTypeDeserializerState::Actions(None);
+                            *self.state__ = S::Actions(None);
                             event
                         }
                         (S::Actions(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -34894,17 +34060,15 @@ pub mod page {
                 output: DeserializerOutput<'de, super::CtGraphicUnitActionsXElementType>,
                 fallback: &mut Option<CtPageBlockImageObjectXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtPageBlockImageObjectXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(
-                        CtPageBlockImageObjectXElementTypeDeserializerState::Actions(None),
-                    );
-                    *self.state__ =
-                        CtPageBlockImageObjectXElementTypeDeserializerState::Clips(None);
+                    fallback.get_or_insert(S::Actions(None));
+                    *self.state__ = S::Clips(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -34914,18 +34078,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_actions(data)?;
-                        *self.state__ =
-                            CtPageBlockImageObjectXElementTypeDeserializerState::Clips(None);
+                        *self.state__ = S::Clips(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(
-                            CtPageBlockImageObjectXElementTypeDeserializerState::Actions(Some(
-                                deserializer,
-                            )),
-                        );
-                        *self.state__ =
-                            CtPageBlockImageObjectXElementTypeDeserializerState::Clips(None);
+                        fallback.get_or_insert(S::Actions(Some(deserializer)));
+                        *self.state__ = S::Clips(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -34936,17 +34094,15 @@ pub mod page {
                 output: DeserializerOutput<'de, super::CtGraphicUnitClipsXElementType>,
                 fallback: &mut Option<CtPageBlockImageObjectXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtPageBlockImageObjectXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(
-                        CtPageBlockImageObjectXElementTypeDeserializerState::Clips(None),
-                    );
-                    *self.state__ =
-                        CtPageBlockImageObjectXElementTypeDeserializerState::Border(None);
+                    fallback.get_or_insert(S::Clips(None));
+                    *self.state__ = S::Border(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -34956,18 +34112,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_clips(data)?;
-                        *self.state__ =
-                            CtPageBlockImageObjectXElementTypeDeserializerState::Border(None);
+                        *self.state__ = S::Border(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(
-                            CtPageBlockImageObjectXElementTypeDeserializerState::Clips(Some(
-                                deserializer,
-                            )),
-                        );
-                        *self.state__ =
-                            CtPageBlockImageObjectXElementTypeDeserializerState::Border(None);
+                        fallback.get_or_insert(S::Clips(Some(deserializer)));
+                        *self.state__ = S::Border(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -34978,16 +34128,15 @@ pub mod page {
                 output: DeserializerOutput<'de, super::CtImageBorderXElementType>,
                 fallback: &mut Option<CtPageBlockImageObjectXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtPageBlockImageObjectXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(
-                        CtPageBlockImageObjectXElementTypeDeserializerState::Border(None),
-                    );
-                    *self.state__ = CtPageBlockImageObjectXElementTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::Border(None));
+                    *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -34997,16 +34146,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_border(data)?;
-                        *self.state__ = CtPageBlockImageObjectXElementTypeDeserializerState::Done__;
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(
-                            CtPageBlockImageObjectXElementTypeDeserializerState::Border(Some(
-                                deserializer,
-                            )),
-                        );
-                        *self.state__ = CtPageBlockImageObjectXElementTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::Border(Some(deserializer)));
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -35082,8 +34227,7 @@ pub mod page {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ =
-                                CtPageBlockImageObjectXElementTypeDeserializerState::Actions(None);
+                            *self.state__ = S::Actions(None);
                             event
                         }
                         (S::Actions(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -35399,17 +34543,15 @@ pub mod page {
                 output: DeserializerOutput<'de, super::CtGraphicUnitActionsXElementType>,
                 fallback: &mut Option<CtPageBlockCompositeObjectXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtPageBlockCompositeObjectXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(
-                        CtPageBlockCompositeObjectXElementTypeDeserializerState::Actions(None),
-                    );
-                    *self.state__ =
-                        CtPageBlockCompositeObjectXElementTypeDeserializerState::Clips(None);
+                    fallback.get_or_insert(S::Actions(None));
+                    *self.state__ = S::Clips(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -35419,18 +34561,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_actions(data)?;
-                        *self.state__ =
-                            CtPageBlockCompositeObjectXElementTypeDeserializerState::Clips(None);
+                        *self.state__ = S::Clips(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(
-                            CtPageBlockCompositeObjectXElementTypeDeserializerState::Actions(Some(
-                                deserializer,
-                            )),
-                        );
-                        *self.state__ =
-                            CtPageBlockCompositeObjectXElementTypeDeserializerState::Clips(None);
+                        fallback.get_or_insert(S::Actions(Some(deserializer)));
+                        *self.state__ = S::Clips(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -35441,16 +34577,15 @@ pub mod page {
                 output: DeserializerOutput<'de, super::CtGraphicUnitClipsXElementType>,
                 fallback: &mut Option<CtPageBlockCompositeObjectXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtPageBlockCompositeObjectXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(
-                        CtPageBlockCompositeObjectXElementTypeDeserializerState::Clips(None),
-                    );
-                    *self.state__ = CtPageBlockCompositeObjectXElementTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::Clips(None));
+                    *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -35460,18 +34595,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_clips(data)?;
-                        *self.state__ =
-                            CtPageBlockCompositeObjectXElementTypeDeserializerState::Done__;
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(
-                            CtPageBlockCompositeObjectXElementTypeDeserializerState::Clips(Some(
-                                deserializer,
-                            )),
-                        );
-                        *self.state__ =
-                            CtPageBlockCompositeObjectXElementTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::Clips(Some(deserializer)));
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -35537,10 +34666,7 @@ pub mod page {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ =
-                                CtPageBlockCompositeObjectXElementTypeDeserializerState::Actions(
-                                    None,
-                                );
+                            *self.state__ = S::Actions(None);
                             event
                         }
                         (S::Actions(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -35688,15 +34814,14 @@ pub mod page {
                 output: DeserializerOutput<'de, super::CtPageBlockPageBlockXElementTypeContent>,
                 fallback: &mut Option<CtPageBlockPageBlockXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtPageBlockPageBlockXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state__ = fallback
-                        .take()
-                        .unwrap_or(CtPageBlockPageBlockXElementTypeDeserializerState::Next__);
+                    *self.state__ = fallback.take().unwrap_or(S::Next__);
                     return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -35706,16 +34831,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state__ = CtPageBlockPageBlockXElementTypeDeserializerState::Next__;
+                        *self.state__ = S::Next__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *fallback = Some(
-                            CtPageBlockPageBlockXElementTypeDeserializerState::Content__(
-                                deserializer,
-                            ),
-                        );
-                        *self.state__ = CtPageBlockPageBlockXElementTypeDeserializerState::Next__;
+                        *fallback = Some(S::Content__(deserializer));
+                        *self.state__ = S::Next__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -35992,6 +35113,7 @@ pub mod page {
                 >,
                 output: DeserializerOutput<'de, super::CtPageBlockTextObjectXElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtPageBlockPageBlockXElementTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -36008,23 +35130,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_text_object(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CtPageBlockPageBlockXElementTypeContentDeserializerState::TextObject(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ =
-                            CtPageBlockPageBlockXElementTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::TextObject(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ =
-                            CtPageBlockPageBlockXElementTypeContentDeserializerState::TextObject(
-                                values,
-                                None,
-                                Some(deserializer),
-                            );
+                        *self.state__ = S::TextObject(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -36038,6 +35149,7 @@ pub mod page {
                 >,
                 output: DeserializerOutput<'de, super::CtPageBlockPathObjectXElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtPageBlockPageBlockXElementTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -36054,23 +35166,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_path_object(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CtPageBlockPageBlockXElementTypeContentDeserializerState::PathObject(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ =
-                            CtPageBlockPageBlockXElementTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::PathObject(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ =
-                            CtPageBlockPageBlockXElementTypeContentDeserializerState::PathObject(
-                                values,
-                                None,
-                                Some(deserializer),
-                            );
+                        *self.state__ = S::PathObject(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -36084,6 +35185,7 @@ pub mod page {
                 >,
                 output: DeserializerOutput<'de, super::CtPageBlockImageObjectXElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtPageBlockPageBlockXElementTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -36100,23 +35202,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_image_object(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CtPageBlockPageBlockXElementTypeContentDeserializerState::ImageObject(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ =
-                            CtPageBlockPageBlockXElementTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::ImageObject(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ =
-                            CtPageBlockPageBlockXElementTypeContentDeserializerState::ImageObject(
-                                values,
-                                None,
-                                Some(deserializer),
-                            );
+                        *self.state__ = S::ImageObject(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -36128,6 +35219,7 @@ pub mod page {
                 fallback : Option << super :: CtPageBlockCompositeObjectXElementType as WithDeserializer > :: Deserializer >,
                 output: DeserializerOutput<'de, super::CtPageBlockCompositeObjectXElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtPageBlockPageBlockXElementTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -36144,13 +35236,13 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_composite_object(&mut values, data)?;
-                        let data = Self :: finish_state (helper , CtPageBlockPageBlockXElementTypeContentDeserializerState :: CompositeObject (values , None , None)) ? ;
-                        *self.state__ =
-                            CtPageBlockPageBlockXElementTypeContentDeserializerState::Done__(data);
+                        let data =
+                            Self::finish_state(helper, S::CompositeObject(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        * self . state__ = CtPageBlockPageBlockXElementTypeContentDeserializerState :: CompositeObject (values , None , Some (deserializer)) ;
+                        *self.state__ = S::CompositeObject(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -36164,6 +35256,7 @@ pub mod page {
                 >,
                 output: DeserializerOutput<'de, super::CtPageBlockPageBlockXElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtPageBlockPageBlockXElementTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -36180,23 +35273,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_page_block(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CtPageBlockPageBlockXElementTypeContentDeserializerState::PageBlock(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ =
-                            CtPageBlockPageBlockXElementTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::PageBlock(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ =
-                            CtPageBlockPageBlockXElementTypeContentDeserializerState::PageBlock(
-                                values,
-                                None,
-                                Some(deserializer),
-                            );
+                        *self.state__ = S::PageBlock(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -36477,15 +35559,14 @@ pub mod page {
                 output: DeserializerOutput<'de, super::CtPatternCellContentXElementTypeContent>,
                 fallback: &mut Option<CtPatternCellContentXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtPatternCellContentXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state__ = fallback
-                        .take()
-                        .unwrap_or(CtPatternCellContentXElementTypeDeserializerState::Next__);
+                    *self.state__ = fallback.take().unwrap_or(S::Next__);
                     return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -36495,16 +35576,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state__ = CtPatternCellContentXElementTypeDeserializerState::Next__;
+                        *self.state__ = S::Next__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *fallback = Some(
-                            CtPatternCellContentXElementTypeDeserializerState::Content__(
-                                deserializer,
-                            ),
-                        );
-                        *self.state__ = CtPatternCellContentXElementTypeDeserializerState::Next__;
+                        *fallback = Some(S::Content__(deserializer));
+                        *self.state__ = S::Next__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -36781,6 +35858,7 @@ pub mod page {
                 >,
                 output: DeserializerOutput<'de, super::CtPageBlockTextObjectXElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtPatternCellContentXElementTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -36797,23 +35875,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_text_object(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CtPatternCellContentXElementTypeContentDeserializerState::TextObject(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ =
-                            CtPatternCellContentXElementTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::TextObject(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ =
-                            CtPatternCellContentXElementTypeContentDeserializerState::TextObject(
-                                values,
-                                None,
-                                Some(deserializer),
-                            );
+                        *self.state__ = S::TextObject(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -36827,6 +35894,7 @@ pub mod page {
                 >,
                 output: DeserializerOutput<'de, super::CtPageBlockPathObjectXElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtPatternCellContentXElementTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -36843,23 +35911,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_path_object(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CtPatternCellContentXElementTypeContentDeserializerState::PathObject(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ =
-                            CtPatternCellContentXElementTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::PathObject(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ =
-                            CtPatternCellContentXElementTypeContentDeserializerState::PathObject(
-                                values,
-                                None,
-                                Some(deserializer),
-                            );
+                        *self.state__ = S::PathObject(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -36873,6 +35930,7 @@ pub mod page {
                 >,
                 output: DeserializerOutput<'de, super::CtPageBlockImageObjectXElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtPatternCellContentXElementTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -36889,23 +35947,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_image_object(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CtPatternCellContentXElementTypeContentDeserializerState::ImageObject(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ =
-                            CtPatternCellContentXElementTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::ImageObject(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ =
-                            CtPatternCellContentXElementTypeContentDeserializerState::ImageObject(
-                                values,
-                                None,
-                                Some(deserializer),
-                            );
+                        *self.state__ = S::ImageObject(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -36917,6 +35964,7 @@ pub mod page {
                 fallback : Option << super :: CtPageBlockCompositeObjectXElementType as WithDeserializer > :: Deserializer >,
                 output: DeserializerOutput<'de, super::CtPageBlockCompositeObjectXElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtPatternCellContentXElementTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -36933,13 +35981,13 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_composite_object(&mut values, data)?;
-                        let data = Self :: finish_state (helper , CtPatternCellContentXElementTypeContentDeserializerState :: CompositeObject (values , None , None)) ? ;
-                        *self.state__ =
-                            CtPatternCellContentXElementTypeContentDeserializerState::Done__(data);
+                        let data =
+                            Self::finish_state(helper, S::CompositeObject(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        * self . state__ = CtPatternCellContentXElementTypeContentDeserializerState :: CompositeObject (values , None , Some (deserializer)) ;
+                        *self.state__ = S::CompositeObject(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -36953,6 +36001,7 @@ pub mod page {
                 >,
                 output: DeserializerOutput<'de, super::CtPageBlockPageBlockXElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtPatternCellContentXElementTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -36969,23 +36018,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_page_block(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CtPatternCellContentXElementTypeContentDeserializerState::PageBlock(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ =
-                            CtPatternCellContentXElementTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::PageBlock(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ =
-                            CtPatternCellContentXElementTypeContentDeserializerState::PageBlock(
-                                values,
-                                None,
-                                Some(deserializer),
-                            );
+                        *self.state__ = S::PageBlock(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -37515,25 +36553,21 @@ pub mod page {
                 output: DeserializerOutput<'de, super::PageContentLayerXElementType>,
                 fallback: &mut Option<PageContentXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use PageContentXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    if matches!(
-                        &fallback,
-                        Some(PageContentXElementTypeDeserializerState::Init__)
-                    ) {
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else if self.layer.len() < 1usize {
-                        fallback
-                            .get_or_insert(PageContentXElementTypeDeserializerState::Layer(None));
+                        fallback.get_or_insert(S::Layer(None));
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                     } else {
-                        fallback
-                            .get_or_insert(PageContentXElementTypeDeserializerState::Layer(None));
-                        *self.state__ = PageContentXElementTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::Layer(None));
+                        *self.state__ = S::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                 }
@@ -37544,14 +36578,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_layer(data)?;
-                        *self.state__ = PageContentXElementTypeDeserializerState::Layer(None);
+                        *self.state__ = S::Layer(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(PageContentXElementTypeDeserializerState::Layer(
-                            Some(deserializer),
-                        ));
-                        *self.state__ = PageContentXElementTypeDeserializerState::Layer(None);
+                        fallback.get_or_insert(S::Layer(Some(deserializer)));
+                        *self.state__ = S::Layer(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -37603,7 +36635,7 @@ pub mod page {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ = PageContentXElementTypeDeserializerState::Layer(None);
+                            *self.state__ = S::Layer(None);
                             event
                         }
                         (S::Layer(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -37735,15 +36767,14 @@ pub mod page {
                 output: DeserializerOutput<'de, super::PageContentLayerXElementTypeContent>,
                 fallback: &mut Option<PageContentLayerXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use PageContentLayerXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state__ = fallback
-                        .take()
-                        .unwrap_or(PageContentLayerXElementTypeDeserializerState::Next__);
+                    *self.state__ = fallback.take().unwrap_or(S::Next__);
                     return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -37753,14 +36784,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state__ = PageContentLayerXElementTypeDeserializerState::Next__;
+                        *self.state__ = S::Next__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *fallback = Some(PageContentLayerXElementTypeDeserializerState::Content__(
-                            deserializer,
-                        ));
-                        *self.state__ = PageContentLayerXElementTypeDeserializerState::Next__;
+                        *fallback = Some(S::Content__(deserializer));
+                        *self.state__ = S::Next__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -38037,6 +37066,7 @@ pub mod page {
                 >,
                 output: DeserializerOutput<'de, super::CtPageBlockTextObjectXElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use PageContentLayerXElementTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -38053,23 +37083,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_text_object(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            PageContentLayerXElementTypeContentDeserializerState::TextObject(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ =
-                            PageContentLayerXElementTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::TextObject(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ =
-                            PageContentLayerXElementTypeContentDeserializerState::TextObject(
-                                values,
-                                None,
-                                Some(deserializer),
-                            );
+                        *self.state__ = S::TextObject(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -38083,6 +37102,7 @@ pub mod page {
                 >,
                 output: DeserializerOutput<'de, super::CtPageBlockPathObjectXElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use PageContentLayerXElementTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -38099,23 +37119,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_path_object(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            PageContentLayerXElementTypeContentDeserializerState::PathObject(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ =
-                            PageContentLayerXElementTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::PathObject(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ =
-                            PageContentLayerXElementTypeContentDeserializerState::PathObject(
-                                values,
-                                None,
-                                Some(deserializer),
-                            );
+                        *self.state__ = S::PathObject(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -38129,6 +37138,7 @@ pub mod page {
                 >,
                 output: DeserializerOutput<'de, super::CtPageBlockImageObjectXElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use PageContentLayerXElementTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -38145,23 +37155,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_image_object(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            PageContentLayerXElementTypeContentDeserializerState::ImageObject(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ =
-                            PageContentLayerXElementTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::ImageObject(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ =
-                            PageContentLayerXElementTypeContentDeserializerState::ImageObject(
-                                values,
-                                None,
-                                Some(deserializer),
-                            );
+                        *self.state__ = S::ImageObject(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -38173,6 +37172,7 @@ pub mod page {
                 fallback : Option << super :: CtPageBlockCompositeObjectXElementType as WithDeserializer > :: Deserializer >,
                 output: DeserializerOutput<'de, super::CtPageBlockCompositeObjectXElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use PageContentLayerXElementTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -38189,23 +37189,13 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_composite_object(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            PageContentLayerXElementTypeContentDeserializerState::CompositeObject(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ =
-                            PageContentLayerXElementTypeContentDeserializerState::Done__(data);
+                        let data =
+                            Self::finish_state(helper, S::CompositeObject(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ =
-                            PageContentLayerXElementTypeContentDeserializerState::CompositeObject(
-                                values,
-                                None,
-                                Some(deserializer),
-                            );
+                        *self.state__ = S::CompositeObject(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -38219,6 +37209,7 @@ pub mod page {
                 >,
                 output: DeserializerOutput<'de, super::CtPageBlockPageBlockXElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use PageContentLayerXElementTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -38235,23 +37226,12 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_page_block(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            PageContentLayerXElementTypeContentDeserializerState::PageBlock(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ =
-                            PageContentLayerXElementTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::PageBlock(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ =
-                            PageContentLayerXElementTypeContentDeserializerState::PageBlock(
-                                values,
-                                None,
-                                Some(deserializer),
-                            );
+                        *self.state__ = S::PageBlock(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -43072,14 +42052,15 @@ pub mod res {
                 output: DeserializerOutput<'de, super::CtColorSpacePaletteXElementType>,
                 fallback: &mut Option<CtColorSpaceXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtColorSpaceXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(CtColorSpaceXTypeDeserializerState::Palette(None));
-                    *self.state__ = CtColorSpaceXTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::Palette(None));
+                    *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -43089,14 +42070,12 @@ pub mod res {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_palette(data)?;
-                        *self.state__ = CtColorSpaceXTypeDeserializerState::Done__;
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CtColorSpaceXTypeDeserializerState::Palette(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = CtColorSpaceXTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::Palette(Some(deserializer)));
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -43146,7 +42125,7 @@ pub mod res {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ = CtColorSpaceXTypeDeserializerState::Palette(None);
+                            *self.state__ = S::Palette(None);
                             event
                         }
                         (S::Palette(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -43341,14 +42320,15 @@ pub mod res {
                 output: DeserializerOutput<'de, super::super::page::CtColorXType>,
                 fallback: &mut Option<CtDrawParamXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtDrawParamXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(CtDrawParamXTypeDeserializerState::FillColor(None));
-                    *self.state__ = CtDrawParamXTypeDeserializerState::StrokeColor(None);
+                    fallback.get_or_insert(S::FillColor(None));
+                    *self.state__ = S::StrokeColor(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -43358,14 +42338,12 @@ pub mod res {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_fill_color(data)?;
-                        *self.state__ = CtDrawParamXTypeDeserializerState::StrokeColor(None);
+                        *self.state__ = S::StrokeColor(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CtDrawParamXTypeDeserializerState::FillColor(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = CtDrawParamXTypeDeserializerState::StrokeColor(None);
+                        fallback.get_or_insert(S::FillColor(Some(deserializer)));
+                        *self.state__ = S::StrokeColor(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -43376,14 +42354,15 @@ pub mod res {
                 output: DeserializerOutput<'de, super::super::page::CtColorXType>,
                 fallback: &mut Option<CtDrawParamXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtDrawParamXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(CtDrawParamXTypeDeserializerState::StrokeColor(None));
-                    *self.state__ = CtDrawParamXTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::StrokeColor(None));
+                    *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -43393,14 +42372,12 @@ pub mod res {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_stroke_color(data)?;
-                        *self.state__ = CtDrawParamXTypeDeserializerState::Done__;
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CtDrawParamXTypeDeserializerState::StrokeColor(
-                            Some(deserializer),
-                        ));
-                        *self.state__ = CtDrawParamXTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::StrokeColor(Some(deserializer)));
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -43462,7 +42439,7 @@ pub mod res {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ = CtDrawParamXTypeDeserializerState::FillColor(None);
+                            *self.state__ = S::FillColor(None);
                             event
                         }
                         (S::FillColor(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -43655,14 +42632,15 @@ pub mod res {
                 output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<CtFontXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtFontXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(CtFontXTypeDeserializerState::FontFile(None));
-                    *self.state__ = CtFontXTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::FontFile(None));
+                    *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -43672,14 +42650,12 @@ pub mod res {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_font_file(data)?;
-                        *self.state__ = CtFontXTypeDeserializerState::Done__;
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CtFontXTypeDeserializerState::FontFile(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = CtFontXTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::FontFile(Some(deserializer)));
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -43729,7 +42705,7 @@ pub mod res {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ = CtFontXTypeDeserializerState::FontFile(None);
+                            *self.state__ = S::FontFile(None);
                             event
                         }
                         (S::FontFile(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -43859,14 +42835,15 @@ pub mod res {
                 output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<CtMultiMediaXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtMultiMediaXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(CtMultiMediaXTypeDeserializerState::MediaFile(None));
-                    if matches!(&fallback, Some(CtMultiMediaXTypeDeserializerState::Init__)) {
+                    fallback.get_or_insert(S::MediaFile(None));
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -43879,14 +42856,12 @@ pub mod res {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_media_file(data)?;
-                        *self.state__ = CtMultiMediaXTypeDeserializerState::Done__;
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CtMultiMediaXTypeDeserializerState::MediaFile(
-                            Some(deserializer),
-                        ));
-                        *self.state__ = CtMultiMediaXTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::MediaFile(Some(deserializer)));
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -43936,7 +42911,7 @@ pub mod res {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ = CtMultiMediaXTypeDeserializerState::MediaFile(None);
+                            *self.state__ = S::MediaFile(None);
                             event
                         }
                         (S::MediaFile(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -44099,14 +43074,15 @@ pub mod res {
                 output: DeserializerOutput<'de, u32>,
                 fallback: &mut Option<CtVectorGxTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtVectorGxTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(CtVectorGxTypeDeserializerState::Thumbnail(None));
-                    *self.state__ = CtVectorGxTypeDeserializerState::Substitution(None);
+                    fallback.get_or_insert(S::Thumbnail(None));
+                    *self.state__ = S::Substitution(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -44116,14 +43092,12 @@ pub mod res {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_thumbnail(data)?;
-                        *self.state__ = CtVectorGxTypeDeserializerState::Substitution(None);
+                        *self.state__ = S::Substitution(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CtVectorGxTypeDeserializerState::Thumbnail(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = CtVectorGxTypeDeserializerState::Substitution(None);
+                        fallback.get_or_insert(S::Thumbnail(Some(deserializer)));
+                        *self.state__ = S::Substitution(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -44134,14 +43108,15 @@ pub mod res {
                 output: DeserializerOutput<'de, u32>,
                 fallback: &mut Option<CtVectorGxTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtVectorGxTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(CtVectorGxTypeDeserializerState::Substitution(None));
-                    *self.state__ = CtVectorGxTypeDeserializerState::Content(None);
+                    fallback.get_or_insert(S::Substitution(None));
+                    *self.state__ = S::Content(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -44151,14 +43126,12 @@ pub mod res {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_substitution(data)?;
-                        *self.state__ = CtVectorGxTypeDeserializerState::Content(None);
+                        *self.state__ = S::Content(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CtVectorGxTypeDeserializerState::Substitution(
-                            Some(deserializer),
-                        ));
-                        *self.state__ = CtVectorGxTypeDeserializerState::Content(None);
+                        fallback.get_or_insert(S::Substitution(Some(deserializer)));
+                        *self.state__ = S::Content(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -44169,14 +43142,15 @@ pub mod res {
                 output: DeserializerOutput<'de, super::super::page::CtPageBlockXType>,
                 fallback: &mut Option<CtVectorGxTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtVectorGxTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(CtVectorGxTypeDeserializerState::Content(None));
-                    if matches!(&fallback, Some(CtVectorGxTypeDeserializerState::Init__)) {
+                    fallback.get_or_insert(S::Content(None));
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -44189,14 +43163,12 @@ pub mod res {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state__ = CtVectorGxTypeDeserializerState::Done__;
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(CtVectorGxTypeDeserializerState::Content(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = CtVectorGxTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::Content(Some(deserializer)));
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -44270,7 +43242,7 @@ pub mod res {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ = CtVectorGxTypeDeserializerState::Thumbnail(None);
+                            *self.state__ = S::Thumbnail(None);
                             event
                         }
                         (S::Thumbnail(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -44418,15 +43390,14 @@ pub mod res {
                 output: DeserializerOutput<'de, super::ResXElementTypeContent>,
                 fallback: &mut Option<ResXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ResXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state__ = fallback
-                        .take()
-                        .unwrap_or(ResXElementTypeDeserializerState::Next__);
+                    *self.state__ = fallback.take().unwrap_or(S::Next__);
                     return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -44436,12 +43407,12 @@ pub mod res {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state__ = ResXElementTypeDeserializerState::Next__;
+                        *self.state__ = S::Next__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *fallback = Some(ResXElementTypeDeserializerState::Content__(deserializer));
-                        *self.state__ = ResXElementTypeDeserializerState::Next__;
+                        *fallback = Some(S::Content__(deserializer));
+                        *self.state__ = S::Next__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -44743,6 +43714,7 @@ pub mod res {
                 >,
                 output: DeserializerOutput<'de, super::ResColorSpacesXElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ResXElementTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -44759,21 +43731,12 @@ pub mod res {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_color_spaces(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            ResXElementTypeContentDeserializerState::ColorSpaces(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ = ResXElementTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::ColorSpaces(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = ResXElementTypeContentDeserializerState::ColorSpaces(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::ColorSpaces(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -44787,6 +43750,7 @@ pub mod res {
                 >,
                 output: DeserializerOutput<'de, super::ResDrawParamsXElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ResXElementTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -44803,19 +43767,12 @@ pub mod res {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_draw_params(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            ResXElementTypeContentDeserializerState::DrawParams(values, None, None),
-                        )?;
-                        *self.state__ = ResXElementTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::DrawParams(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = ResXElementTypeContentDeserializerState::DrawParams(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::DrawParams(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -44827,6 +43784,7 @@ pub mod res {
                 fallback: Option<<super::ResFontsXElementType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::ResFontsXElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ResXElementTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -44843,19 +43801,12 @@ pub mod res {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_fonts(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            ResXElementTypeContentDeserializerState::Fonts(values, None, None),
-                        )?;
-                        *self.state__ = ResXElementTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Fonts(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = ResXElementTypeContentDeserializerState::Fonts(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Fonts(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -44869,6 +43820,7 @@ pub mod res {
                 >,
                 output: DeserializerOutput<'de, super::ResMultiMediasXElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ResXElementTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -44885,21 +43837,12 @@ pub mod res {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_multi_medias(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            ResXElementTypeContentDeserializerState::MultiMedias(
-                                values, None, None,
-                            ),
-                        )?;
-                        *self.state__ = ResXElementTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::MultiMedias(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = ResXElementTypeContentDeserializerState::MultiMedias(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::MultiMedias(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -44913,6 +43856,7 @@ pub mod res {
                 >,
                 output: DeserializerOutput<'de, super::ResCompositeGraphicUnitsXElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ResXElementTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -44931,20 +43875,13 @@ pub mod res {
                         Self::store_composite_graphic_units(&mut values, data)?;
                         let data = Self::finish_state(
                             helper,
-                            ResXElementTypeContentDeserializerState::CompositeGraphicUnits(
-                                values, None, None,
-                            ),
+                            S::CompositeGraphicUnits(values, None, None),
                         )?;
-                        *self.state__ = ResXElementTypeContentDeserializerState::Done__(data);
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ =
-                            ResXElementTypeContentDeserializerState::CompositeGraphicUnits(
-                                values,
-                                None,
-                                Some(deserializer),
-                            );
+                        *self.state__ = S::CompositeGraphicUnits(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -45208,27 +44145,21 @@ pub mod res {
                 output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<CtColorSpacePaletteXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtColorSpacePaletteXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    if matches!(
-                        &fallback,
-                        Some(CtColorSpacePaletteXElementTypeDeserializerState::Init__)
-                    ) {
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else if self.cv.len() < 1usize {
-                        fallback.get_or_insert(
-                            CtColorSpacePaletteXElementTypeDeserializerState::Cv(None),
-                        );
+                        fallback.get_or_insert(S::Cv(None));
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                     } else {
-                        fallback.get_or_insert(
-                            CtColorSpacePaletteXElementTypeDeserializerState::Cv(None),
-                        );
-                        *self.state__ = CtColorSpacePaletteXElementTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::Cv(None));
+                        *self.state__ = S::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                 }
@@ -45239,16 +44170,12 @@ pub mod res {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_cv(data)?;
-                        *self.state__ = CtColorSpacePaletteXElementTypeDeserializerState::Cv(None);
+                        *self.state__ = S::Cv(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(
-                            CtColorSpacePaletteXElementTypeDeserializerState::Cv(Some(
-                                deserializer,
-                            )),
-                        );
-                        *self.state__ = CtColorSpacePaletteXElementTypeDeserializerState::Cv(None);
+                        fallback.get_or_insert(S::Cv(Some(deserializer)));
+                        *self.state__ = S::Cv(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -45300,8 +44227,7 @@ pub mod res {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ =
-                                CtColorSpacePaletteXElementTypeDeserializerState::Cv(None);
+                            *self.state__ = S::Cv(None);
                             event
                         }
                         (S::Cv(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -45411,27 +44337,21 @@ pub mod res {
                 output: DeserializerOutput<'de, super::ResColorSpacesColorSpaceXElementType>,
                 fallback: &mut Option<ResColorSpacesXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ResColorSpacesXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    if matches!(
-                        &fallback,
-                        Some(ResColorSpacesXElementTypeDeserializerState::Init__)
-                    ) {
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else if self.color_space.len() < 1usize {
-                        fallback.get_or_insert(
-                            ResColorSpacesXElementTypeDeserializerState::ColorSpace(None),
-                        );
+                        fallback.get_or_insert(S::ColorSpace(None));
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                     } else {
-                        fallback.get_or_insert(
-                            ResColorSpacesXElementTypeDeserializerState::ColorSpace(None),
-                        );
-                        *self.state__ = ResColorSpacesXElementTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::ColorSpace(None));
+                        *self.state__ = S::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                 }
@@ -45442,18 +44362,12 @@ pub mod res {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_color_space(data)?;
-                        *self.state__ =
-                            ResColorSpacesXElementTypeDeserializerState::ColorSpace(None);
+                        *self.state__ = S::ColorSpace(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(
-                            ResColorSpacesXElementTypeDeserializerState::ColorSpace(Some(
-                                deserializer,
-                            )),
-                        );
-                        *self.state__ =
-                            ResColorSpacesXElementTypeDeserializerState::ColorSpace(None);
+                        fallback.get_or_insert(S::ColorSpace(Some(deserializer)));
+                        *self.state__ = S::ColorSpace(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -45505,8 +44419,7 @@ pub mod res {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ =
-                                ResColorSpacesXElementTypeDeserializerState::ColorSpace(None);
+                            *self.state__ = S::ColorSpace(None);
                             event
                         }
                         (S::ColorSpace(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -45616,27 +44529,21 @@ pub mod res {
                 output: DeserializerOutput<'de, super::ResDrawParamsDrawParamXElementType>,
                 fallback: &mut Option<ResDrawParamsXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ResDrawParamsXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    if matches!(
-                        &fallback,
-                        Some(ResDrawParamsXElementTypeDeserializerState::Init__)
-                    ) {
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else if self.draw_param.len() < 1usize {
-                        fallback.get_or_insert(
-                            ResDrawParamsXElementTypeDeserializerState::DrawParam(None),
-                        );
+                        fallback.get_or_insert(S::DrawParam(None));
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                     } else {
-                        fallback.get_or_insert(
-                            ResDrawParamsXElementTypeDeserializerState::DrawParam(None),
-                        );
-                        *self.state__ = ResDrawParamsXElementTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::DrawParam(None));
+                        *self.state__ = S::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                 }
@@ -45647,16 +44554,12 @@ pub mod res {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_draw_param(data)?;
-                        *self.state__ = ResDrawParamsXElementTypeDeserializerState::DrawParam(None);
+                        *self.state__ = S::DrawParam(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(
-                            ResDrawParamsXElementTypeDeserializerState::DrawParam(Some(
-                                deserializer,
-                            )),
-                        );
-                        *self.state__ = ResDrawParamsXElementTypeDeserializerState::DrawParam(None);
+                        fallback.get_or_insert(S::DrawParam(Some(deserializer)));
+                        *self.state__ = S::DrawParam(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -45708,8 +44611,7 @@ pub mod res {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ =
-                                ResDrawParamsXElementTypeDeserializerState::DrawParam(None);
+                            *self.state__ = S::DrawParam(None);
                             event
                         }
                         (S::DrawParam(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -45810,23 +44712,21 @@ pub mod res {
                 output: DeserializerOutput<'de, super::ResFontsFontXElementType>,
                 fallback: &mut Option<ResFontsXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ResFontsXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    if matches!(
-                        &fallback,
-                        Some(ResFontsXElementTypeDeserializerState::Init__)
-                    ) {
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else if self.font.len() < 1usize {
-                        fallback.get_or_insert(ResFontsXElementTypeDeserializerState::Font(None));
+                        fallback.get_or_insert(S::Font(None));
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                     } else {
-                        fallback.get_or_insert(ResFontsXElementTypeDeserializerState::Font(None));
-                        *self.state__ = ResFontsXElementTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::Font(None));
+                        *self.state__ = S::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                 }
@@ -45837,14 +44737,12 @@ pub mod res {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_font(data)?;
-                        *self.state__ = ResFontsXElementTypeDeserializerState::Font(None);
+                        *self.state__ = S::Font(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(ResFontsXElementTypeDeserializerState::Font(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = ResFontsXElementTypeDeserializerState::Font(None);
+                        fallback.get_or_insert(S::Font(Some(deserializer)));
+                        *self.state__ = S::Font(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -45894,7 +44792,7 @@ pub mod res {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ = ResFontsXElementTypeDeserializerState::Font(None);
+                            *self.state__ = S::Font(None);
                             event
                         }
                         (S::Font(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -46004,27 +44902,21 @@ pub mod res {
                 output: DeserializerOutput<'de, super::ResMultiMediasMultiMediaXElementType>,
                 fallback: &mut Option<ResMultiMediasXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ResMultiMediasXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    if matches!(
-                        &fallback,
-                        Some(ResMultiMediasXElementTypeDeserializerState::Init__)
-                    ) {
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else if self.multi_media.len() < 1usize {
-                        fallback.get_or_insert(
-                            ResMultiMediasXElementTypeDeserializerState::MultiMedia(None),
-                        );
+                        fallback.get_or_insert(S::MultiMedia(None));
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                     } else {
-                        fallback.get_or_insert(
-                            ResMultiMediasXElementTypeDeserializerState::MultiMedia(None),
-                        );
-                        *self.state__ = ResMultiMediasXElementTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::MultiMedia(None));
+                        *self.state__ = S::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                 }
@@ -46035,18 +44927,12 @@ pub mod res {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_multi_media(data)?;
-                        *self.state__ =
-                            ResMultiMediasXElementTypeDeserializerState::MultiMedia(None);
+                        *self.state__ = S::MultiMedia(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(
-                            ResMultiMediasXElementTypeDeserializerState::MultiMedia(Some(
-                                deserializer,
-                            )),
-                        );
-                        *self.state__ =
-                            ResMultiMediasXElementTypeDeserializerState::MultiMedia(None);
+                        fallback.get_or_insert(S::MultiMedia(Some(deserializer)));
+                        *self.state__ = S::MultiMedia(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -46098,8 +44984,7 @@ pub mod res {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ =
-                                ResMultiMediasXElementTypeDeserializerState::MultiMedia(None);
+                            *self.state__ = S::MultiMedia(None);
                             event
                         }
                         (S::MultiMedia(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -46207,24 +45092,21 @@ pub mod res {
                 >,
                 fallback: &mut Option<ResCompositeGraphicUnitsXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ResCompositeGraphicUnitsXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    if matches!(
-                        &fallback,
-                        Some(ResCompositeGraphicUnitsXElementTypeDeserializerState::Init__)
-                    ) {
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else if self.composite_graphic_unit.len() < 1usize {
-                        fallback . get_or_insert (ResCompositeGraphicUnitsXElementTypeDeserializerState :: CompositeGraphicUnit (None)) ;
+                        fallback.get_or_insert(S::CompositeGraphicUnit(None));
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                     } else {
-                        fallback . get_or_insert (ResCompositeGraphicUnitsXElementTypeDeserializerState :: CompositeGraphicUnit (None)) ;
-                        *self.state__ =
-                            ResCompositeGraphicUnitsXElementTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::CompositeGraphicUnit(None));
+                        *self.state__ = S::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                 }
@@ -46235,12 +45117,12 @@ pub mod res {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_composite_graphic_unit(data)?;
-                        * self . state__ = ResCompositeGraphicUnitsXElementTypeDeserializerState :: CompositeGraphicUnit (None) ;
+                        *self.state__ = S::CompositeGraphicUnit(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback . get_or_insert (ResCompositeGraphicUnitsXElementTypeDeserializerState :: CompositeGraphicUnit (Some (deserializer))) ;
-                        * self . state__ = ResCompositeGraphicUnitsXElementTypeDeserializerState :: CompositeGraphicUnit (None) ;
+                        fallback.get_or_insert(S::CompositeGraphicUnit(Some(deserializer)));
+                        *self.state__ = S::CompositeGraphicUnit(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -46296,7 +45178,7 @@ pub mod res {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            * self . state__ = ResCompositeGraphicUnitsXElementTypeDeserializerState :: CompositeGraphicUnit (None) ;
+                            *self.state__ = S::CompositeGraphicUnit(None);
                             event
                         }
                         (
@@ -46462,16 +45344,15 @@ pub mod res {
                 output: DeserializerOutput<'de, super::CtColorSpacePaletteXElementType>,
                 fallback: &mut Option<ResColorSpacesColorSpaceXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ResColorSpacesColorSpaceXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(
-                        ResColorSpacesColorSpaceXElementTypeDeserializerState::Palette(None),
-                    );
-                    *self.state__ = ResColorSpacesColorSpaceXElementTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::Palette(None));
+                    *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -46481,18 +45362,12 @@ pub mod res {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_palette(data)?;
-                        *self.state__ =
-                            ResColorSpacesColorSpaceXElementTypeDeserializerState::Done__;
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(
-                            ResColorSpacesColorSpaceXElementTypeDeserializerState::Palette(Some(
-                                deserializer,
-                            )),
-                        );
-                        *self.state__ =
-                            ResColorSpacesColorSpaceXElementTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::Palette(Some(deserializer)));
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -46544,10 +45419,7 @@ pub mod res {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ =
-                                ResColorSpacesColorSpaceXElementTypeDeserializerState::Palette(
-                                    None,
-                                );
+                            *self.state__ = S::Palette(None);
                             event
                         }
                         (S::Palette(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -46755,17 +45627,15 @@ pub mod res {
                 output: DeserializerOutput<'de, super::super::page::CtColorXType>,
                 fallback: &mut Option<ResDrawParamsDrawParamXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ResDrawParamsDrawParamXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(
-                        ResDrawParamsDrawParamXElementTypeDeserializerState::FillColor(None),
-                    );
-                    *self.state__ =
-                        ResDrawParamsDrawParamXElementTypeDeserializerState::StrokeColor(None);
+                    fallback.get_or_insert(S::FillColor(None));
+                    *self.state__ = S::StrokeColor(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -46775,18 +45645,12 @@ pub mod res {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_fill_color(data)?;
-                        *self.state__ =
-                            ResDrawParamsDrawParamXElementTypeDeserializerState::StrokeColor(None);
+                        *self.state__ = S::StrokeColor(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(
-                            ResDrawParamsDrawParamXElementTypeDeserializerState::FillColor(Some(
-                                deserializer,
-                            )),
-                        );
-                        *self.state__ =
-                            ResDrawParamsDrawParamXElementTypeDeserializerState::StrokeColor(None);
+                        fallback.get_or_insert(S::FillColor(Some(deserializer)));
+                        *self.state__ = S::StrokeColor(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -46797,16 +45661,15 @@ pub mod res {
                 output: DeserializerOutput<'de, super::super::page::CtColorXType>,
                 fallback: &mut Option<ResDrawParamsDrawParamXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ResDrawParamsDrawParamXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(
-                        ResDrawParamsDrawParamXElementTypeDeserializerState::StrokeColor(None),
-                    );
-                    *self.state__ = ResDrawParamsDrawParamXElementTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::StrokeColor(None));
+                    *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -46816,16 +45679,12 @@ pub mod res {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_stroke_color(data)?;
-                        *self.state__ = ResDrawParamsDrawParamXElementTypeDeserializerState::Done__;
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(
-                            ResDrawParamsDrawParamXElementTypeDeserializerState::StrokeColor(Some(
-                                deserializer,
-                            )),
-                        );
-                        *self.state__ = ResDrawParamsDrawParamXElementTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::StrokeColor(Some(deserializer)));
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -46889,10 +45748,7 @@ pub mod res {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ =
-                                ResDrawParamsDrawParamXElementTypeDeserializerState::FillColor(
-                                    None,
-                                );
+                            *self.state__ = S::FillColor(None);
                             event
                         }
                         (S::FillColor(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -47095,15 +45951,15 @@ pub mod res {
                 output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<ResFontsFontXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ResFontsFontXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback
-                        .get_or_insert(ResFontsFontXElementTypeDeserializerState::FontFile(None));
-                    *self.state__ = ResFontsFontXElementTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::FontFile(None));
+                    *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -47113,14 +45969,12 @@ pub mod res {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_font_file(data)?;
-                        *self.state__ = ResFontsFontXElementTypeDeserializerState::Done__;
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(
-                            ResFontsFontXElementTypeDeserializerState::FontFile(Some(deserializer)),
-                        );
-                        *self.state__ = ResFontsFontXElementTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::FontFile(Some(deserializer)));
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -47172,8 +46026,7 @@ pub mod res {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ =
-                                ResFontsFontXElementTypeDeserializerState::FontFile(None);
+                            *self.state__ = S::FontFile(None);
                             event
                         }
                         (S::FontFile(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -47317,19 +46170,15 @@ pub mod res {
                 output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<ResMultiMediasMultiMediaXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ResMultiMediasMultiMediaXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(
-                        ResMultiMediasMultiMediaXElementTypeDeserializerState::MediaFile(None),
-                    );
-                    if matches!(
-                        &fallback,
-                        Some(ResMultiMediasMultiMediaXElementTypeDeserializerState::Init__)
-                    ) {
+                    fallback.get_or_insert(S::MediaFile(None));
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -47342,18 +46191,12 @@ pub mod res {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_media_file(data)?;
-                        *self.state__ =
-                            ResMultiMediasMultiMediaXElementTypeDeserializerState::Done__;
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(
-                            ResMultiMediasMultiMediaXElementTypeDeserializerState::MediaFile(Some(
-                                deserializer,
-                            )),
-                        );
-                        *self.state__ =
-                            ResMultiMediasMultiMediaXElementTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::MediaFile(Some(deserializer)));
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -47405,10 +46248,7 @@ pub mod res {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ =
-                                ResMultiMediasMultiMediaXElementTypeDeserializerState::MediaFile(
-                                    None,
-                                );
+                            *self.state__ = S::MediaFile(None);
                             event
                         }
                         (S::MediaFile(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -47574,14 +46414,15 @@ pub mod res {
                     ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState,
                 >,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback . get_or_insert (ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState :: Thumbnail (None)) ;
-                    * self . state__ = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState :: Substitution (None) ;
+                    fallback.get_or_insert(S::Thumbnail(None));
+                    *self.state__ = S::Substitution(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -47591,12 +46432,12 @@ pub mod res {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_thumbnail(data)?;
-                        * self . state__ = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState :: Substitution (None) ;
+                        *self.state__ = S::Substitution(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback . get_or_insert (ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState :: Thumbnail (Some (deserializer))) ;
-                        * self . state__ = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState :: Substitution (None) ;
+                        fallback.get_or_insert(S::Thumbnail(Some(deserializer)));
+                        *self.state__ = S::Substitution(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -47609,14 +46450,15 @@ pub mod res {
                     ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState,
                 >,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback . get_or_insert (ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState :: Substitution (None)) ;
-                    * self . state__ = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState :: Content (None) ;
+                    fallback.get_or_insert(S::Substitution(None));
+                    *self.state__ = S::Content(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -47626,12 +46468,12 @@ pub mod res {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_substitution(data)?;
-                        * self . state__ = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState :: Content (None) ;
+                        *self.state__ = S::Content(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback . get_or_insert (ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState :: Substitution (Some (deserializer))) ;
-                        * self . state__ = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState :: Content (None) ;
+                        fallback.get_or_insert(S::Substitution(Some(deserializer)));
+                        *self.state__ = S::Content(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -47644,14 +46486,19 @@ pub mod res {
                     ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState,
                 >,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback . get_or_insert (ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState :: Content (None)) ;
-                    if matches ! (& fallback , Some (ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState :: Init__)) { return Ok (ElementHandlerOutput :: break_ (event , allow_any)) ; } else { return Ok (ElementHandlerOutput :: return_to_root (event , allow_any)) ; }
+                    fallback.get_or_insert(S::Content(None));
+                    if matches!(&fallback, Some(S::Init__)) {
+                        return Ok(ElementHandlerOutput::break_(event, allow_any));
+                    } else {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                 }
                 if let Some(fallback) = fallback.take() {
                     self.finish_state(helper, fallback)?;
@@ -47660,12 +46507,12 @@ pub mod res {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        * self . state__ = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState :: Done__ ;
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback . get_or_insert (ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState :: Content (Some (deserializer))) ;
-                        * self . state__ = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState :: Done__ ;
+                        fallback.get_or_insert(S::Content(Some(deserializer)));
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -47747,7 +46594,7 @@ pub mod res {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            * self . state__ = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState :: Thumbnail (None) ;
+                            *self.state__ = S::Thumbnail(None);
                             event
                         }
                         (S::Thumbnail(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -49521,18 +48368,15 @@ pub mod signature {
                 output: DeserializerOutput<'de, super::SianatureSiqnedInfoXElementType>,
                 fallback: &mut Option<SianatureXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use SianatureXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback
-                        .get_or_insert(SianatureXElementTypeDeserializerState::SiqnedInfo(None));
-                    if matches!(
-                        &fallback,
-                        Some(SianatureXElementTypeDeserializerState::Init__)
-                    ) {
+                    fallback.get_or_insert(S::SiqnedInfo(None));
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -49545,14 +48389,12 @@ pub mod signature {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_siqned_info(data)?;
-                        *self.state__ = SianatureXElementTypeDeserializerState::SignedValue(None);
+                        *self.state__ = S::SignedValue(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(SianatureXElementTypeDeserializerState::SiqnedInfo(
-                            Some(deserializer),
-                        ));
-                        *self.state__ = SianatureXElementTypeDeserializerState::SignedValue(None);
+                        fallback.get_or_insert(S::SiqnedInfo(Some(deserializer)));
+                        *self.state__ = S::SignedValue(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -49563,18 +48405,15 @@ pub mod signature {
                 output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<SianatureXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use SianatureXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback
-                        .get_or_insert(SianatureXElementTypeDeserializerState::SignedValue(None));
-                    if matches!(
-                        &fallback,
-                        Some(SianatureXElementTypeDeserializerState::Init__)
-                    ) {
+                    fallback.get_or_insert(S::SignedValue(None));
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -49587,14 +48426,12 @@ pub mod signature {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_signed_value(data)?;
-                        *self.state__ = SianatureXElementTypeDeserializerState::Done__;
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(
-                            SianatureXElementTypeDeserializerState::SignedValue(Some(deserializer)),
-                        );
-                        *self.state__ = SianatureXElementTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::SignedValue(Some(deserializer)));
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -49656,8 +48493,7 @@ pub mod signature {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ =
-                                SianatureXElementTypeDeserializerState::SiqnedInfo(None);
+                            *self.state__ = S::SiqnedInfo(None);
                             event
                         }
                         (S::SiqnedInfo(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -49852,19 +48688,15 @@ pub mod signature {
                 output: DeserializerOutput<'de, super::SianatureSiqnedInfoProviderXElementType>,
                 fallback: &mut Option<SianatureSiqnedInfoXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use SianatureSiqnedInfoXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(
-                        SianatureSiqnedInfoXElementTypeDeserializerState::Provider(None),
-                    );
-                    if matches!(
-                        &fallback,
-                        Some(SianatureSiqnedInfoXElementTypeDeserializerState::Init__)
-                    ) {
+                    fallback.get_or_insert(S::Provider(None));
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -49877,18 +48709,12 @@ pub mod signature {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_provider(data)?;
-                        *self.state__ =
-                            SianatureSiqnedInfoXElementTypeDeserializerState::SignatureMethod(None);
+                        *self.state__ = S::SignatureMethod(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(
-                            SianatureSiqnedInfoXElementTypeDeserializerState::Provider(Some(
-                                deserializer,
-                            )),
-                        );
-                        *self.state__ =
-                            SianatureSiqnedInfoXElementTypeDeserializerState::SignatureMethod(None);
+                        fallback.get_or_insert(S::Provider(Some(deserializer)));
+                        *self.state__ = S::SignatureMethod(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -49899,17 +48725,15 @@ pub mod signature {
                 output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<SianatureSiqnedInfoXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use SianatureSiqnedInfoXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(
-                        SianatureSiqnedInfoXElementTypeDeserializerState::SignatureMethod(None),
-                    );
-                    *self.state__ =
-                        SianatureSiqnedInfoXElementTypeDeserializerState::SianatureDateTime(None);
+                    fallback.get_or_insert(S::SignatureMethod(None));
+                    *self.state__ = S::SianatureDateTime(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -49919,22 +48743,12 @@ pub mod signature {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_signature_method(data)?;
-                        *self.state__ =
-                            SianatureSiqnedInfoXElementTypeDeserializerState::SianatureDateTime(
-                                None,
-                            );
+                        *self.state__ = S::SianatureDateTime(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(
-                            SianatureSiqnedInfoXElementTypeDeserializerState::SignatureMethod(
-                                Some(deserializer),
-                            ),
-                        );
-                        *self.state__ =
-                            SianatureSiqnedInfoXElementTypeDeserializerState::SianatureDateTime(
-                                None,
-                            );
+                        fallback.get_or_insert(S::SignatureMethod(Some(deserializer)));
+                        *self.state__ = S::SianatureDateTime(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -49945,17 +48759,15 @@ pub mod signature {
                 output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<SianatureSiqnedInfoXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use SianatureSiqnedInfoXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(
-                        SianatureSiqnedInfoXElementTypeDeserializerState::SianatureDateTime(None),
-                    );
-                    *self.state__ =
-                        SianatureSiqnedInfoXElementTypeDeserializerState::References(None);
+                    fallback.get_or_insert(S::SianatureDateTime(None));
+                    *self.state__ = S::References(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -49965,18 +48777,12 @@ pub mod signature {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_sianature_date_time(data)?;
-                        *self.state__ =
-                            SianatureSiqnedInfoXElementTypeDeserializerState::References(None);
+                        *self.state__ = S::References(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(
-                            SianatureSiqnedInfoXElementTypeDeserializerState::SianatureDateTime(
-                                Some(deserializer),
-                            ),
-                        );
-                        *self.state__ =
-                            SianatureSiqnedInfoXElementTypeDeserializerState::References(None);
+                        fallback.get_or_insert(S::SianatureDateTime(Some(deserializer)));
+                        *self.state__ = S::References(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -49987,19 +48793,15 @@ pub mod signature {
                 output: DeserializerOutput<'de, super::SianatureSiqnedInfoReferencesXElementType>,
                 fallback: &mut Option<SianatureSiqnedInfoXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use SianatureSiqnedInfoXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(
-                        SianatureSiqnedInfoXElementTypeDeserializerState::References(None),
-                    );
-                    if matches!(
-                        &fallback,
-                        Some(SianatureSiqnedInfoXElementTypeDeserializerState::Init__)
-                    ) {
+                    fallback.get_or_insert(S::References(None));
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -50012,18 +48814,12 @@ pub mod signature {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_references(data)?;
-                        *self.state__ =
-                            SianatureSiqnedInfoXElementTypeDeserializerState::StampAnnot(None);
+                        *self.state__ = S::StampAnnot(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(
-                            SianatureSiqnedInfoXElementTypeDeserializerState::References(Some(
-                                deserializer,
-                            )),
-                        );
-                        *self.state__ =
-                            SianatureSiqnedInfoXElementTypeDeserializerState::StampAnnot(None);
+                        fallback.get_or_insert(S::References(Some(deserializer)));
+                        *self.state__ = S::StampAnnot(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -50034,16 +48830,15 @@ pub mod signature {
                 output: DeserializerOutput<'de, super::SianatureSiqnedInfoStampAnnotXElementType>,
                 fallback: &mut Option<SianatureSiqnedInfoXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use SianatureSiqnedInfoXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(
-                        SianatureSiqnedInfoXElementTypeDeserializerState::StampAnnot(None),
-                    );
-                    *self.state__ = SianatureSiqnedInfoXElementTypeDeserializerState::Seal(None);
+                    fallback.get_or_insert(S::StampAnnot(None));
+                    *self.state__ = S::Seal(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -50053,18 +48848,12 @@ pub mod signature {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_stamp_annot(data)?;
-                        *self.state__ =
-                            SianatureSiqnedInfoXElementTypeDeserializerState::StampAnnot(None);
+                        *self.state__ = S::StampAnnot(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(
-                            SianatureSiqnedInfoXElementTypeDeserializerState::StampAnnot(Some(
-                                deserializer,
-                            )),
-                        );
-                        *self.state__ =
-                            SianatureSiqnedInfoXElementTypeDeserializerState::StampAnnot(None);
+                        fallback.get_or_insert(S::StampAnnot(Some(deserializer)));
+                        *self.state__ = S::StampAnnot(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -50075,16 +48864,15 @@ pub mod signature {
                 output: DeserializerOutput<'de, super::SianatureSiqnedInfoSealXElementType>,
                 fallback: &mut Option<SianatureSiqnedInfoXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use SianatureSiqnedInfoXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(SianatureSiqnedInfoXElementTypeDeserializerState::Seal(
-                        None,
-                    ));
-                    *self.state__ = SianatureSiqnedInfoXElementTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::Seal(None));
+                    *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -50094,16 +48882,12 @@ pub mod signature {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_seal(data)?;
-                        *self.state__ = SianatureSiqnedInfoXElementTypeDeserializerState::Done__;
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(
-                            SianatureSiqnedInfoXElementTypeDeserializerState::Seal(Some(
-                                deserializer,
-                            )),
-                        );
-                        *self.state__ = SianatureSiqnedInfoXElementTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::Seal(Some(deserializer)));
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -50215,8 +48999,7 @@ pub mod signature {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ =
-                                SianatureSiqnedInfoXElementTypeDeserializerState::Provider(None);
+                            *self.state__ = S::Provider(None);
                             event
                         }
                         (S::Provider(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -50534,32 +49317,21 @@ pub mod signature {
                 >,
                 fallback: &mut Option<SianatureSiqnedInfoReferencesXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use SianatureSiqnedInfoReferencesXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    if matches!(
-                        &fallback,
-                        Some(SianatureSiqnedInfoReferencesXElementTypeDeserializerState::Init__)
-                    ) {
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else if self.reference.len() < 1usize {
-                        fallback.get_or_insert(
-                            SianatureSiqnedInfoReferencesXElementTypeDeserializerState::Reference(
-                                None,
-                            ),
-                        );
+                        fallback.get_or_insert(S::Reference(None));
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                     } else {
-                        fallback.get_or_insert(
-                            SianatureSiqnedInfoReferencesXElementTypeDeserializerState::Reference(
-                                None,
-                            ),
-                        );
-                        *self.state__ =
-                            SianatureSiqnedInfoReferencesXElementTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::Reference(None));
+                        *self.state__ = S::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                 }
@@ -50570,22 +49342,12 @@ pub mod signature {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_reference(data)?;
-                        *self.state__ =
-                            SianatureSiqnedInfoReferencesXElementTypeDeserializerState::Reference(
-                                None,
-                            );
+                        *self.state__ = S::Reference(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(
-                            SianatureSiqnedInfoReferencesXElementTypeDeserializerState::Reference(
-                                Some(deserializer),
-                            ),
-                        );
-                        *self.state__ =
-                            SianatureSiqnedInfoReferencesXElementTypeDeserializerState::Reference(
-                                None,
-                            );
+                        fallback.get_or_insert(S::Reference(Some(deserializer)));
+                        *self.state__ = S::Reference(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -50639,7 +49401,7 @@ pub mod signature {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            * self . state__ = SianatureSiqnedInfoReferencesXElementTypeDeserializerState :: Reference (None) ;
+                            *self.state__ = S::Reference(None);
                             event
                         }
                         (S::Reference(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -50863,19 +49625,15 @@ pub mod signature {
                 output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<SianatureSiqnedInfoSealXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use SianatureSiqnedInfoSealXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(
-                        SianatureSiqnedInfoSealXElementTypeDeserializerState::BaseLoc(None),
-                    );
-                    if matches!(
-                        &fallback,
-                        Some(SianatureSiqnedInfoSealXElementTypeDeserializerState::Init__)
-                    ) {
+                    fallback.get_or_insert(S::BaseLoc(None));
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -50888,18 +49646,12 @@ pub mod signature {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_base_loc(data)?;
-                        *self.state__ =
-                            SianatureSiqnedInfoSealXElementTypeDeserializerState::Done__;
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(
-                            SianatureSiqnedInfoSealXElementTypeDeserializerState::BaseLoc(Some(
-                                deserializer,
-                            )),
-                        );
-                        *self.state__ =
-                            SianatureSiqnedInfoSealXElementTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::BaseLoc(Some(deserializer)));
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -50951,8 +49703,7 @@ pub mod signature {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ =
-                                SianatureSiqnedInfoSealXElementTypeDeserializerState::BaseLoc(None);
+                            *self.state__ = S::BaseLoc(None);
                             event
                         }
                         (S::BaseLoc(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -51075,14 +49826,19 @@ pub mod signature {
                     SianatureSiqnedInfoReferencesReferenceXElementTypeDeserializerState,
                 >,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use SianatureSiqnedInfoReferencesReferenceXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback . get_or_insert (SianatureSiqnedInfoReferencesReferenceXElementTypeDeserializerState :: CheckValue (None)) ;
-                    if matches ! (& fallback , Some (SianatureSiqnedInfoReferencesReferenceXElementTypeDeserializerState :: Init__)) { return Ok (ElementHandlerOutput :: break_ (event , allow_any)) ; } else { return Ok (ElementHandlerOutput :: return_to_root (event , allow_any)) ; }
+                    fallback.get_or_insert(S::CheckValue(None));
+                    if matches!(&fallback, Some(S::Init__)) {
+                        return Ok(ElementHandlerOutput::break_(event, allow_any));
+                    } else {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                 }
                 if let Some(fallback) = fallback.take() {
                     self.finish_state(helper, fallback)?;
@@ -51091,12 +49847,12 @@ pub mod signature {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_check_value(data)?;
-                        * self . state__ = SianatureSiqnedInfoReferencesReferenceXElementTypeDeserializerState :: Done__ ;
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback . get_or_insert (SianatureSiqnedInfoReferencesReferenceXElementTypeDeserializerState :: CheckValue (Some (deserializer))) ;
-                        * self . state__ = SianatureSiqnedInfoReferencesReferenceXElementTypeDeserializerState :: Done__ ;
+                        fallback.get_or_insert(S::CheckValue(Some(deserializer)));
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -51150,7 +49906,7 @@ pub mod signature {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            * self . state__ = SianatureSiqnedInfoReferencesReferenceXElementTypeDeserializerState :: CheckValue (None) ;
+                            *self.state__ = S::CheckValue(None);
                             event
                         }
                         (S::CheckValue(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -51833,15 +50589,15 @@ pub mod signatures {
                 output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<SiqnaturesXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use SiqnaturesXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback
-                        .get_or_insert(SiqnaturesXElementTypeDeserializerState::MaxSignId(None));
-                    *self.state__ = SiqnaturesXElementTypeDeserializerState::Signature(None);
+                    fallback.get_or_insert(S::MaxSignId(None));
+                    *self.state__ = S::Signature(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -51851,14 +50607,12 @@ pub mod signatures {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_max_sign_id(data)?;
-                        *self.state__ = SiqnaturesXElementTypeDeserializerState::Signature(None);
+                        *self.state__ = S::Signature(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(SiqnaturesXElementTypeDeserializerState::MaxSignId(
-                            Some(deserializer),
-                        ));
-                        *self.state__ = SiqnaturesXElementTypeDeserializerState::Signature(None);
+                        fallback.get_or_insert(S::MaxSignId(Some(deserializer)));
+                        *self.state__ = S::Signature(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -51869,15 +50623,15 @@ pub mod signatures {
                 output: DeserializerOutput<'de, super::SiqnaturesSignatureXElementType>,
                 fallback: &mut Option<SiqnaturesXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use SiqnaturesXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback
-                        .get_or_insert(SiqnaturesXElementTypeDeserializerState::Signature(None));
-                    *self.state__ = SiqnaturesXElementTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::Signature(None));
+                    *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -51887,14 +50641,12 @@ pub mod signatures {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_signature(data)?;
-                        *self.state__ = SiqnaturesXElementTypeDeserializerState::Signature(None);
+                        *self.state__ = S::Signature(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(SiqnaturesXElementTypeDeserializerState::Signature(
-                            Some(deserializer),
-                        ));
-                        *self.state__ = SiqnaturesXElementTypeDeserializerState::Signature(None);
+                        fallback.get_or_insert(S::Signature(Some(deserializer)));
+                        *self.state__ = S::Signature(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -51956,8 +50708,7 @@ pub mod signatures {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ =
-                                SiqnaturesXElementTypeDeserializerState::MaxSignId(None);
+                            *self.state__ = S::MaxSignId(None);
                             event
                         }
                         (S::MaxSignId(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -52463,17 +51214,15 @@ pub mod version {
                 output: DeserializerOutput<'de, super::DocVersionFileListXElementType>,
                 fallback: &mut Option<DocVersionXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use DocVersionXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(DocVersionXElementTypeDeserializerState::FileList(None));
-                    if matches!(
-                        &fallback,
-                        Some(DocVersionXElementTypeDeserializerState::Init__)
-                    ) {
+                    fallback.get_or_insert(S::FileList(None));
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -52486,14 +51235,12 @@ pub mod version {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_file_list(data)?;
-                        *self.state__ = DocVersionXElementTypeDeserializerState::DocRoot(None);
+                        *self.state__ = S::DocRoot(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(DocVersionXElementTypeDeserializerState::FileList(
-                            Some(deserializer),
-                        ));
-                        *self.state__ = DocVersionXElementTypeDeserializerState::DocRoot(None);
+                        fallback.get_or_insert(S::FileList(Some(deserializer)));
+                        *self.state__ = S::DocRoot(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -52504,17 +51251,15 @@ pub mod version {
                 output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<DocVersionXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use DocVersionXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(DocVersionXElementTypeDeserializerState::DocRoot(None));
-                    if matches!(
-                        &fallback,
-                        Some(DocVersionXElementTypeDeserializerState::Init__)
-                    ) {
+                    fallback.get_or_insert(S::DocRoot(None));
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -52527,14 +51272,12 @@ pub mod version {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_doc_root(data)?;
-                        *self.state__ = DocVersionXElementTypeDeserializerState::Done__;
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(DocVersionXElementTypeDeserializerState::DocRoot(
-                            Some(deserializer),
-                        ));
-                        *self.state__ = DocVersionXElementTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::DocRoot(Some(deserializer)));
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -52596,7 +51339,7 @@ pub mod version {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ = DocVersionXElementTypeDeserializerState::FileList(None);
+                            *self.state__ = S::FileList(None);
                             event
                         }
                         (S::FileList(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -52726,27 +51469,21 @@ pub mod version {
                 output: DeserializerOutput<'de, super::DocVersionFileListFileXElementType>,
                 fallback: &mut Option<DocVersionFileListXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use DocVersionFileListXElementTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    if matches!(
-                        &fallback,
-                        Some(DocVersionFileListXElementTypeDeserializerState::Init__)
-                    ) {
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else if self.file.len() < 1usize {
-                        fallback.get_or_insert(
-                            DocVersionFileListXElementTypeDeserializerState::File(None),
-                        );
+                        fallback.get_or_insert(S::File(None));
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                     } else {
-                        fallback.get_or_insert(
-                            DocVersionFileListXElementTypeDeserializerState::File(None),
-                        );
-                        *self.state__ = DocVersionFileListXElementTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::File(None));
+                        *self.state__ = S::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                 }
@@ -52757,16 +51494,12 @@ pub mod version {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_file(data)?;
-                        *self.state__ = DocVersionFileListXElementTypeDeserializerState::File(None);
+                        *self.state__ = S::File(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(
-                            DocVersionFileListXElementTypeDeserializerState::File(Some(
-                                deserializer,
-                            )),
-                        );
-                        *self.state__ = DocVersionFileListXElementTypeDeserializerState::File(None);
+                        fallback.get_or_insert(S::File(Some(deserializer)));
+                        *self.state__ = S::File(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -52818,8 +51551,7 @@ pub mod version {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ =
-                                DocVersionFileListXElementTypeDeserializerState::File(None);
+                            *self.state__ = S::File(None);
                             event
                         }
                         (S::File(None), event @ (Event::Start(_) | Event::Empty(_))) => {

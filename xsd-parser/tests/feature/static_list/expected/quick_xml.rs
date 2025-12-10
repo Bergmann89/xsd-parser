@@ -106,13 +106,14 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, i32>,
             fallback: &mut Option<ArrayTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use ArrayTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = ArrayTypeDeserializerState::Next__;
+                *self.state__ = S::Next__;
                 return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -122,12 +123,12 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_item(data)?;
-                    *self.state__ = ArrayTypeDeserializerState::Next__;
+                    *self.state__ = S::Next__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(ArrayTypeDeserializerState::Item(deserializer));
-                    *self.state__ = ArrayTypeDeserializerState::Next__;
+                    fallback.get_or_insert(S::Item(deserializer));
+                    *self.state__ = S::Next__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }

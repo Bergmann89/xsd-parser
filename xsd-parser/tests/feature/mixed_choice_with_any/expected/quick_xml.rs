@@ -165,14 +165,15 @@ pub mod tns {
                 output: DeserializerOutput<'de, super::ContainerType>,
                 fallback: &mut Option<RootTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use RootTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(RootTypeDeserializerState::Container(None));
-                    if matches!(&fallback, Some(RootTypeDeserializerState::Init__)) {
+                    fallback.get_or_insert(S::Container(None));
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
@@ -185,14 +186,12 @@ pub mod tns {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_container(data)?;
-                        *self.state__ = RootTypeDeserializerState::Done__;
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(RootTypeDeserializerState::Container(Some(
-                            deserializer,
-                        )));
-                        *self.state__ = RootTypeDeserializerState::Done__;
+                        fallback.get_or_insert(S::Container(Some(deserializer)));
+                        *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -242,7 +241,7 @@ pub mod tns {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ = RootTypeDeserializerState::Container(None);
+                            *self.state__ = S::Container(None);
                             event
                         }
                         (S::Container(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -335,15 +334,14 @@ pub mod tns {
                 output: DeserializerOutput<'de, super::ContainerTypeContent>,
                 fallback: &mut Option<ContainerTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ContainerTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state__ = fallback
-                        .take()
-                        .unwrap_or(ContainerTypeDeserializerState::Next__);
+                    *self.state__ = fallback.take().unwrap_or(S::Next__);
                     return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -353,12 +351,12 @@ pub mod tns {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state__ = ContainerTypeDeserializerState::Next__;
+                        *self.state__ = S::Next__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *fallback = Some(ContainerTypeDeserializerState::Content__(deserializer));
-                        *self.state__ = ContainerTypeDeserializerState::Next__;
+                        *fallback = Some(S::Content__(deserializer));
+                        *self.state__ = S::Next__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
@@ -540,6 +538,7 @@ pub mod tns {
                 fallback: Option<<super::KnownType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::KnownType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ContainerTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -556,19 +555,12 @@ pub mod tns {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_known(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            ContainerTypeContentDeserializerState::Known(values, None, None),
-                        )?;
-                        *self.state__ = ContainerTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Known(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = ContainerTypeContentDeserializerState::Known(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Known(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
@@ -580,6 +572,7 @@ pub mod tns {
                 fallback: Option<<Text as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, Text>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use ContainerTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -596,19 +589,12 @@ pub mod tns {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_text(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            ContainerTypeContentDeserializerState::Text(values, None, None),
-                        )?;
-                        *self.state__ = ContainerTypeContentDeserializerState::Done__(data);
+                        let data = Self::finish_state(helper, S::Text(values, None, None))?;
+                        *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = ContainerTypeContentDeserializerState::Text(
-                            values,
-                            None,
-                            Some(deserializer),
-                        );
+                        *self.state__ = S::Text(values, None, Some(deserializer));
                         Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                 }
