@@ -778,8 +778,8 @@ impl ComplexDataEnum<'_> {
     }
 
     fn render_serializer(&self, ctx: &mut Context<'_, '_>) {
-        self.render_with_serializer(ctx, !self.is_content);
-        self.render_serializer_type(ctx, !self.is_content);
+        self.render_with_serializer(ctx, !self.is_content());
+        self.render_serializer_type(ctx, !self.is_content());
         self.render_serializer_state_type(ctx);
         self.render_serializer_impl(ctx);
     }
@@ -838,7 +838,7 @@ impl ComplexDataEnum<'_> {
             let init = element.render_serializer_enum_state_init(
                 ctx,
                 &self.serializer_state_ident,
-                !self.is_content,
+                !self.is_content(),
             );
 
             quote! {

@@ -206,7 +206,7 @@ pub mod quick_xml_deserialize {
             Ok(super::FooType {
                 value: self.value,
                 another_value: self.another_value,
-                content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                content: helper.finish_content(self.content)?,
             })
         }
     }

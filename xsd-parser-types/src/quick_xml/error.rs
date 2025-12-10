@@ -153,13 +153,13 @@ pub enum Kind {
     /// Insufficient size.
     ///
     /// The element or attribute contains less items then expected.
-    #[error("Insufficient size (min={min}, max={max}, actual={actual})")]
+    #[error("Insufficient size (min={min}, max={max:?}, actual={actual})")]
     InsufficientSize {
         /// Smallest expected index.
         min: usize,
 
         /// Largest expected index.
-        max: usize,
+        max: Option<usize>,
 
         /// Actual index.
         actual: usize,

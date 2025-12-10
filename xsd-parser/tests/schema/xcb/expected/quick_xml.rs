@@ -1249,40 +1249,32 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::XcbTypeContent>,
             fallback: &mut Option<XcbTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use XcbTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = fallback.take().unwrap_or(XcbTypeDeserializerState::Next__);
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                *self.state__ = fallback.take().unwrap_or(S::Next__);
+                return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
                 self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_content(data)?;
-                    *self.state__ = XcbTypeDeserializerState::Next__;
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::Next__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Break { .. } => {
-                            *self.state__ = XcbTypeDeserializerState::Content__(deserializer);
-                        }
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback
-                                .get_or_insert(XcbTypeDeserializerState::Content__(deserializer));
-                            *self.state__ = XcbTypeDeserializerState::Next__;
-                        }
-                    }
-                    ret
+                    *fallback = Some(S::Content__(deserializer));
+                    *self.state__ = S::Next__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
     }
     impl<'de> Deserializer<'de, super::XcbType> for XcbTypeDeserializer {
@@ -1323,9 +1315,7 @@ pub mod quick_xml_deserialize {
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
                         let output =
-                            <super::XcbTypeContent as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::XcbTypeContent as WithDeserializer>::init(helper, event)?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -1335,6 +1325,9 @@ pub mod quick_xml_deserialize {
                     }
                 }
             };
+            if let Some(fallback) = fallback {
+                *self.state__ = fallback;
+            }
             let artifact = DeserializerArtifact::Deserializer(self);
             Ok(DeserializerOutput {
                 artifact,
@@ -1352,7 +1345,7 @@ pub mod quick_xml_deserialize {
                 extension_multiword: self.extension_multiword,
                 major_version: self.major_version,
                 minor_version: self.minor_version,
-                content: self.content,
+                content: helper.finish_vec(0usize, None, self.content)?,
             })
         }
     }
@@ -1366,49 +1359,61 @@ pub mod quick_xml_deserialize {
         Request(
             Option<super::RequestType>,
             Option<<super::RequestType as WithDeserializer>::Deserializer>,
+            Option<<super::RequestType as WithDeserializer>::Deserializer>,
         ),
         Event(
             Option<super::EventType>,
+            Option<<super::EventType as WithDeserializer>::Deserializer>,
             Option<<super::EventType as WithDeserializer>::Deserializer>,
         ),
         Eventcopy(
             Option<super::PacketStructCopyType>,
             Option<<super::PacketStructCopyType as WithDeserializer>::Deserializer>,
+            Option<<super::PacketStructCopyType as WithDeserializer>::Deserializer>,
         ),
         Error(
             Option<super::PacketStructType>,
+            Option<<super::PacketStructType as WithDeserializer>::Deserializer>,
             Option<<super::PacketStructType as WithDeserializer>::Deserializer>,
         ),
         Errorcopy(
             Option<super::PacketStructCopyType>,
             Option<<super::PacketStructCopyType as WithDeserializer>::Deserializer>,
+            Option<<super::PacketStructCopyType as WithDeserializer>::Deserializer>,
         ),
         Struct(
             Option<super::StructType>,
+            Option<<super::StructType as WithDeserializer>::Deserializer>,
             Option<<super::StructType as WithDeserializer>::Deserializer>,
         ),
         Union(
             Option<super::StructType>,
             Option<<super::StructType as WithDeserializer>::Deserializer>,
+            Option<<super::StructType as WithDeserializer>::Deserializer>,
         ),
         Xidtype(
             Option<super::XidtypeType>,
+            Option<<super::XidtypeType as WithDeserializer>::Deserializer>,
             Option<<super::XidtypeType as WithDeserializer>::Deserializer>,
         ),
         Xidunion(
             Option<super::XidunionType>,
             Option<<super::XidunionType as WithDeserializer>::Deserializer>,
+            Option<<super::XidunionType as WithDeserializer>::Deserializer>,
         ),
         Enum(
             Option<super::EnumType>,
+            Option<<super::EnumType as WithDeserializer>::Deserializer>,
             Option<<super::EnumType as WithDeserializer>::Deserializer>,
         ),
         Typedef(
             Option<super::TypedefType>,
             Option<<super::TypedefType as WithDeserializer>::Deserializer>,
+            Option<<super::TypedefType as WithDeserializer>::Deserializer>,
         ),
         Import(
             Option<String>,
+            Option<<String as WithDeserializer>::Deserializer>,
             Option<<String as WithDeserializer>::Deserializer>,
         ),
         Done__(super::XcbTypeContent),
@@ -1419,96 +1424,61 @@ pub mod quick_xml_deserialize {
             &mut self,
             helper: &mut DeserializeHelper,
             event: Event<'de>,
-            fallback: &mut Option<XcbTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if x.name().local_name().as_ref() == b"request" {
-                    let output = <super::RequestType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
-                    return self.handle_request(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::RequestType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_request(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"event" {
-                    let output =
-                        <super::EventType as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_event(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::EventType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_event(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"eventcopy" {
                     let output =
-                        <super::PacketStructCopyType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
-                    return self.handle_eventcopy(
-                        helper,
-                        Default::default(),
-                        output,
-                        &mut *fallback,
-                    );
+                        <super::PacketStructCopyType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_eventcopy(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"error" {
-                    let output = <super::PacketStructType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
-                    return self.handle_error(helper, Default::default(), output, &mut *fallback);
+                    let output =
+                        <super::PacketStructType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_error(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"errorcopy" {
                     let output =
-                        <super::PacketStructCopyType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
-                    return self.handle_errorcopy(
-                        helper,
-                        Default::default(),
-                        output,
-                        &mut *fallback,
-                    );
+                        <super::PacketStructCopyType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_errorcopy(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"struct" {
-                    let output =
-                        <super::StructType as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_struct_(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::StructType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_struct_(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"union" {
-                    let output =
-                        <super::StructType as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_union_(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::StructType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_union_(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"xidtype" {
-                    let output = <super::XidtypeType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
-                    return self.handle_xidtype(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::XidtypeType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_xidtype(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"xidunion" {
-                    let output = <super::XidunionType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
-                    return self.handle_xidunion(
-                        helper,
-                        Default::default(),
-                        output,
-                        &mut *fallback,
-                    );
+                    let output = <super::XidunionType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_xidunion(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"enum" {
-                    let output =
-                        <super::EnumType as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_enum_(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::EnumType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_enum_(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"typedef" {
-                    let output = <super::TypedefType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
-                    return self.handle_typedef(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::TypedefType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_typedef(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"import" {
-                    let output = <String as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_import(helper, Default::default(), output, &mut *fallback);
+                    let output = <String as WithDeserializer>::init(helper, event)?;
+                    return self.handle_import(helper, Default::default(), None, output);
                 }
             }
-            *self.state__ = fallback
-                .take()
-                .unwrap_or(XcbTypeContentDeserializerState::Init__);
+            *self.state__ = XcbTypeContentDeserializerState::Init__;
             Ok(ElementHandlerOutput::return_to_parent(event, false))
         }
         fn finish_state(
@@ -1517,117 +1487,117 @@ pub mod quick_xml_deserialize {
         ) -> Result<super::XcbTypeContent, Error> {
             use XcbTypeContentDeserializerState as S;
             match state {
-                S::Unknown__ => unreachable!(),
                 S::Init__ => Err(ErrorKind::MissingContent.into()),
-                S::Request(mut values, deserializer) => {
+                S::Request(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_request(&mut values, value)?;
                     }
-                    Ok(super::XcbTypeContent::Request(values.ok_or_else(|| {
-                        ErrorKind::MissingElement("request".into())
-                    })?))
+                    Ok(super::XcbTypeContent::Request(
+                        helper.finish_element("request", values)?,
+                    ))
                 }
-                S::Event(mut values, deserializer) => {
+                S::Event(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_event(&mut values, value)?;
                     }
-                    Ok(super::XcbTypeContent::Event(values.ok_or_else(|| {
-                        ErrorKind::MissingElement("event".into())
-                    })?))
+                    Ok(super::XcbTypeContent::Event(
+                        helper.finish_element("event", values)?,
+                    ))
                 }
-                S::Eventcopy(mut values, deserializer) => {
+                S::Eventcopy(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_eventcopy(&mut values, value)?;
                     }
-                    Ok(super::XcbTypeContent::Eventcopy(values.ok_or_else(
-                        || ErrorKind::MissingElement("eventcopy".into()),
-                    )?))
+                    Ok(super::XcbTypeContent::Eventcopy(
+                        helper.finish_element("eventcopy", values)?,
+                    ))
                 }
-                S::Error(mut values, deserializer) => {
+                S::Error(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_error(&mut values, value)?;
                     }
-                    Ok(super::XcbTypeContent::Error(values.ok_or_else(|| {
-                        ErrorKind::MissingElement("error".into())
-                    })?))
+                    Ok(super::XcbTypeContent::Error(
+                        helper.finish_element("error", values)?,
+                    ))
                 }
-                S::Errorcopy(mut values, deserializer) => {
+                S::Errorcopy(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_errorcopy(&mut values, value)?;
                     }
-                    Ok(super::XcbTypeContent::Errorcopy(values.ok_or_else(
-                        || ErrorKind::MissingElement("errorcopy".into()),
-                    )?))
+                    Ok(super::XcbTypeContent::Errorcopy(
+                        helper.finish_element("errorcopy", values)?,
+                    ))
                 }
-                S::Struct(mut values, deserializer) => {
+                S::Struct(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_struct_(&mut values, value)?;
                     }
-                    Ok(super::XcbTypeContent::Struct(values.ok_or_else(|| {
-                        ErrorKind::MissingElement("struct".into())
-                    })?))
+                    Ok(super::XcbTypeContent::Struct(
+                        helper.finish_element("struct", values)?,
+                    ))
                 }
-                S::Union(mut values, deserializer) => {
+                S::Union(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_union_(&mut values, value)?;
                     }
-                    Ok(super::XcbTypeContent::Union(values.ok_or_else(|| {
-                        ErrorKind::MissingElement("union".into())
-                    })?))
+                    Ok(super::XcbTypeContent::Union(
+                        helper.finish_element("union", values)?,
+                    ))
                 }
-                S::Xidtype(mut values, deserializer) => {
+                S::Xidtype(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_xidtype(&mut values, value)?;
                     }
-                    Ok(super::XcbTypeContent::Xidtype(values.ok_or_else(|| {
-                        ErrorKind::MissingElement("xidtype".into())
-                    })?))
+                    Ok(super::XcbTypeContent::Xidtype(
+                        helper.finish_element("xidtype", values)?,
+                    ))
                 }
-                S::Xidunion(mut values, deserializer) => {
+                S::Xidunion(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_xidunion(&mut values, value)?;
                     }
-                    Ok(super::XcbTypeContent::Xidunion(values.ok_or_else(
-                        || ErrorKind::MissingElement("xidunion".into()),
-                    )?))
+                    Ok(super::XcbTypeContent::Xidunion(
+                        helper.finish_element("xidunion", values)?,
+                    ))
                 }
-                S::Enum(mut values, deserializer) => {
+                S::Enum(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_enum_(&mut values, value)?;
                     }
                     Ok(super::XcbTypeContent::Enum(
-                        values.ok_or_else(|| ErrorKind::MissingElement("enum".into()))?,
+                        helper.finish_element("enum", values)?,
                     ))
                 }
-                S::Typedef(mut values, deserializer) => {
+                S::Typedef(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_typedef(&mut values, value)?;
                     }
-                    Ok(super::XcbTypeContent::Typedef(values.ok_or_else(|| {
-                        ErrorKind::MissingElement("typedef".into())
-                    })?))
+                    Ok(super::XcbTypeContent::Typedef(
+                        helper.finish_element("typedef", values)?,
+                    ))
                 }
-                S::Import(mut values, deserializer) => {
+                S::Import(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_import(&mut values, value)?;
                     }
-                    Ok(super::XcbTypeContent::Import(values.ok_or_else(|| {
-                        ErrorKind::MissingElement("import".into())
-                    })?))
+                    Ok(super::XcbTypeContent::Import(
+                        helper.finish_element("import", values)?,
+                    ))
                 }
                 S::Done__(data) => Ok(data),
+                _ => unreachable!(),
             }
         }
         fn store_request(
@@ -1773,625 +1743,409 @@ pub mod quick_xml_deserialize {
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::RequestType>,
+            fallback: Option<<super::RequestType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::RequestType>,
-            fallback: &mut Option<XcbTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use XcbTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = XcbTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => XcbTypeContentDeserializerState::Request(values, None),
-                    Some(XcbTypeContentDeserializerState::Request(_, Some(deserializer))) => {
-                        XcbTypeContentDeserializerState::Request(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(XcbTypeContentDeserializerState::Request(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_request(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_request(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_request(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        XcbTypeContentDeserializerState::Request(values, None),
-                    )?;
-                    *self.state__ = XcbTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Request(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        XcbTypeContentDeserializerState::Request(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Request(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_event<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::EventType>,
+            fallback: Option<<super::EventType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::EventType>,
-            fallback: &mut Option<XcbTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use XcbTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = XcbTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => XcbTypeContentDeserializerState::Event(values, None),
-                    Some(XcbTypeContentDeserializerState::Event(_, Some(deserializer))) => {
-                        XcbTypeContentDeserializerState::Event(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(XcbTypeContentDeserializerState::Event(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_event(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_event(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_event(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        XcbTypeContentDeserializerState::Event(values, None),
-                    )?;
-                    *self.state__ = XcbTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Event(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        XcbTypeContentDeserializerState::Event(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Event(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_eventcopy<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::PacketStructCopyType>,
+            fallback: Option<<super::PacketStructCopyType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::PacketStructCopyType>,
-            fallback: &mut Option<XcbTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use XcbTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = XcbTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => XcbTypeContentDeserializerState::Eventcopy(values, None),
-                    Some(XcbTypeContentDeserializerState::Eventcopy(_, Some(deserializer))) => {
-                        XcbTypeContentDeserializerState::Eventcopy(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(XcbTypeContentDeserializerState::Eventcopy(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_eventcopy(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_eventcopy(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_eventcopy(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        XcbTypeContentDeserializerState::Eventcopy(values, None),
-                    )?;
-                    *self.state__ = XcbTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Eventcopy(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        XcbTypeContentDeserializerState::Eventcopy(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Eventcopy(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_error<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::PacketStructType>,
+            fallback: Option<<super::PacketStructType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::PacketStructType>,
-            fallback: &mut Option<XcbTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use XcbTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = XcbTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => XcbTypeContentDeserializerState::Error(values, None),
-                    Some(XcbTypeContentDeserializerState::Error(_, Some(deserializer))) => {
-                        XcbTypeContentDeserializerState::Error(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(XcbTypeContentDeserializerState::Error(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_error(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_error(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_error(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        XcbTypeContentDeserializerState::Error(values, None),
-                    )?;
-                    *self.state__ = XcbTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Error(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        XcbTypeContentDeserializerState::Error(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Error(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_errorcopy<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::PacketStructCopyType>,
+            fallback: Option<<super::PacketStructCopyType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::PacketStructCopyType>,
-            fallback: &mut Option<XcbTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use XcbTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = XcbTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => XcbTypeContentDeserializerState::Errorcopy(values, None),
-                    Some(XcbTypeContentDeserializerState::Errorcopy(_, Some(deserializer))) => {
-                        XcbTypeContentDeserializerState::Errorcopy(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(XcbTypeContentDeserializerState::Errorcopy(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_errorcopy(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_errorcopy(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_errorcopy(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        XcbTypeContentDeserializerState::Errorcopy(values, None),
-                    )?;
-                    *self.state__ = XcbTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Errorcopy(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        XcbTypeContentDeserializerState::Errorcopy(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Errorcopy(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_struct_<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::StructType>,
+            fallback: Option<<super::StructType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::StructType>,
-            fallback: &mut Option<XcbTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use XcbTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = XcbTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => XcbTypeContentDeserializerState::Struct(values, None),
-                    Some(XcbTypeContentDeserializerState::Struct(_, Some(deserializer))) => {
-                        XcbTypeContentDeserializerState::Struct(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(XcbTypeContentDeserializerState::Struct(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_struct_(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_struct_(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_struct_(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        XcbTypeContentDeserializerState::Struct(values, None),
-                    )?;
-                    *self.state__ = XcbTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Struct(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        XcbTypeContentDeserializerState::Struct(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Struct(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_union_<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::StructType>,
+            fallback: Option<<super::StructType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::StructType>,
-            fallback: &mut Option<XcbTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use XcbTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = XcbTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => XcbTypeContentDeserializerState::Union(values, None),
-                    Some(XcbTypeContentDeserializerState::Union(_, Some(deserializer))) => {
-                        XcbTypeContentDeserializerState::Union(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(XcbTypeContentDeserializerState::Union(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_union_(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_union_(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_union_(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        XcbTypeContentDeserializerState::Union(values, None),
-                    )?;
-                    *self.state__ = XcbTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Union(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        XcbTypeContentDeserializerState::Union(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Union(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_xidtype<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::XidtypeType>,
+            fallback: Option<<super::XidtypeType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::XidtypeType>,
-            fallback: &mut Option<XcbTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use XcbTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = XcbTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => XcbTypeContentDeserializerState::Xidtype(values, None),
-                    Some(XcbTypeContentDeserializerState::Xidtype(_, Some(deserializer))) => {
-                        XcbTypeContentDeserializerState::Xidtype(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(XcbTypeContentDeserializerState::Xidtype(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_xidtype(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_xidtype(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_xidtype(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        XcbTypeContentDeserializerState::Xidtype(values, None),
-                    )?;
-                    *self.state__ = XcbTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Xidtype(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        XcbTypeContentDeserializerState::Xidtype(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Xidtype(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_xidunion<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::XidunionType>,
+            fallback: Option<<super::XidunionType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::XidunionType>,
-            fallback: &mut Option<XcbTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use XcbTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = XcbTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => XcbTypeContentDeserializerState::Xidunion(values, None),
-                    Some(XcbTypeContentDeserializerState::Xidunion(_, Some(deserializer))) => {
-                        XcbTypeContentDeserializerState::Xidunion(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(XcbTypeContentDeserializerState::Xidunion(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_xidunion(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_xidunion(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_xidunion(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        XcbTypeContentDeserializerState::Xidunion(values, None),
-                    )?;
-                    *self.state__ = XcbTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Xidunion(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        XcbTypeContentDeserializerState::Xidunion(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Xidunion(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_enum_<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::EnumType>,
+            fallback: Option<<super::EnumType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::EnumType>,
-            fallback: &mut Option<XcbTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use XcbTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = XcbTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => XcbTypeContentDeserializerState::Enum(values, None),
-                    Some(XcbTypeContentDeserializerState::Enum(_, Some(deserializer))) => {
-                        XcbTypeContentDeserializerState::Enum(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(XcbTypeContentDeserializerState::Enum(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_enum_(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_enum_(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_enum_(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        XcbTypeContentDeserializerState::Enum(values, None),
-                    )?;
-                    *self.state__ = XcbTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Enum(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        XcbTypeContentDeserializerState::Enum(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Enum(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_typedef<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::TypedefType>,
+            fallback: Option<<super::TypedefType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::TypedefType>,
-            fallback: &mut Option<XcbTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use XcbTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = XcbTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => XcbTypeContentDeserializerState::Typedef(values, None),
-                    Some(XcbTypeContentDeserializerState::Typedef(_, Some(deserializer))) => {
-                        XcbTypeContentDeserializerState::Typedef(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(XcbTypeContentDeserializerState::Typedef(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_typedef(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_typedef(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_typedef(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        XcbTypeContentDeserializerState::Typedef(values, None),
-                    )?;
-                    *self.state__ = XcbTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Typedef(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        XcbTypeContentDeserializerState::Typedef(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Typedef(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_import<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<String>,
+            fallback: Option<<String as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, String>,
-            fallback: &mut Option<XcbTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use XcbTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = XcbTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => XcbTypeContentDeserializerState::Import(values, None),
-                    Some(XcbTypeContentDeserializerState::Import(_, Some(deserializer))) => {
-                        XcbTypeContentDeserializerState::Import(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(XcbTypeContentDeserializerState::Import(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_import(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_import(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_import(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        XcbTypeContentDeserializerState::Import(values, None),
-                    )?;
-                    *self.state__ = XcbTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Import(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        XcbTypeContentDeserializerState::Import(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Import(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
     }
     impl<'de> Deserializer<'de, super::XcbTypeContent> for XcbTypeContentDeserializer {
@@ -2420,113 +2174,112 @@ pub mod quick_xml_deserialize {
         ) -> DeserializerResult<'de, super::XcbTypeContent> {
             use XcbTypeContentDeserializerState as S;
             let mut event = event;
-            let mut fallback = None;
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
-                    (S::Request(values, Some(deserializer)), event) => {
+                    (S::Request(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_request(helper, values, output, &mut fallback)? {
+                        match self.handle_request(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Event(values, Some(deserializer)), event) => {
+                    (S::Event(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_event(helper, values, output, &mut fallback)? {
+                        match self.handle_event(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Eventcopy(values, Some(deserializer)), event) => {
+                    (S::Eventcopy(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_eventcopy(helper, values, output, &mut fallback)? {
+                        match self.handle_eventcopy(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Error(values, Some(deserializer)), event) => {
+                    (S::Error(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_error(helper, values, output, &mut fallback)? {
+                        match self.handle_error(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Errorcopy(values, Some(deserializer)), event) => {
+                    (S::Errorcopy(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_errorcopy(helper, values, output, &mut fallback)? {
+                        match self.handle_errorcopy(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Struct(values, Some(deserializer)), event) => {
+                    (S::Struct(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_struct_(helper, values, output, &mut fallback)? {
+                        match self.handle_struct_(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Union(values, Some(deserializer)), event) => {
+                    (S::Union(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_union_(helper, values, output, &mut fallback)? {
+                        match self.handle_union_(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Xidtype(values, Some(deserializer)), event) => {
+                    (S::Xidtype(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_xidtype(helper, values, output, &mut fallback)? {
+                        match self.handle_xidtype(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Xidunion(values, Some(deserializer)), event) => {
+                    (S::Xidunion(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_xidunion(helper, values, output, &mut fallback)? {
+                        match self.handle_xidunion(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Enum(values, Some(deserializer)), event) => {
+                    (S::Enum(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_enum_(helper, values, output, &mut fallback)? {
+                        match self.handle_enum_(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Typedef(values, Some(deserializer)), event) => {
+                    (S::Typedef(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_typedef(helper, values, output, &mut fallback)? {
+                        match self.handle_typedef(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Import(values, Some(deserializer)), event) => {
+                    (S::Import(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_import(helper, values, output, &mut fallback)? {
+                        match self.handle_import(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
@@ -2542,139 +2295,175 @@ pub mod quick_xml_deserialize {
                             allow_any: false,
                         });
                     }
-                    (S::Init__, event) => match self.find_suitable(helper, event, &mut fallback)? {
+                    (S::Init__, event) => match self.find_suitable(helper, event)? {
                         ElementHandlerOutput::Break { event, allow_any } => {
                             break (event, allow_any)
                         }
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
-                    (S::Request(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Request(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"request", true)?;
-                        match self.handle_request(helper, values, output, &mut fallback)? {
+                        match self.handle_request(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Event(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Event(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"event", true)?;
-                        match self.handle_event(helper, values, output, &mut fallback)? {
+                        match self.handle_event(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Eventcopy(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Eventcopy(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"eventcopy", false)?;
-                        match self.handle_eventcopy(helper, values, output, &mut fallback)? {
+                        match self.handle_eventcopy(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Error(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Error(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"error", true)?;
-                        match self.handle_error(helper, values, output, &mut fallback)? {
+                        match self.handle_error(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Errorcopy(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Errorcopy(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"errorcopy", false)?;
-                        match self.handle_errorcopy(helper, values, output, &mut fallback)? {
+                        match self.handle_errorcopy(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Struct(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Struct(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"struct", true)?;
-                        match self.handle_struct_(helper, values, output, &mut fallback)? {
+                        match self.handle_struct_(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Union(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Union(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"union", true)?;
-                        match self.handle_union_(helper, values, output, &mut fallback)? {
+                        match self.handle_union_(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Xidtype(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Xidtype(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"xidtype", false)?;
-                        match self.handle_xidtype(helper, values, output, &mut fallback)? {
+                        match self.handle_xidtype(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Xidunion(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Xidunion(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"xidunion", false)?;
-                        match self.handle_xidunion(helper, values, output, &mut fallback)? {
+                        match self.handle_xidunion(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Enum(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Enum(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"enum", false)?;
-                        match self.handle_enum_(helper, values, output, &mut fallback)? {
+                        match self.handle_enum_(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Typedef(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Typedef(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"typedef", false)?;
-                        match self.handle_typedef(helper, values, output, &mut fallback)? {
+                        match self.handle_typedef(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Import(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Import(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"import", false)?;
-                        match self.handle_import(helper, values, output, &mut fallback)? {
+                        match self.handle_import(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (s @ S::Done__(_), event) => {
-                        *self.state__ = s;
+                    (state @ S::Done__(_), event) => {
+                        *self.state__ = state;
                         break (DeserializerEvent::Continue(event), false);
                     }
                     (state, event) => {
                         *self.state__ = state;
-                        break (DeserializerEvent::Break(event), false);
+                        break (DeserializerEvent::Continue(event), false);
                     }
                 }
             };
@@ -2760,43 +2549,32 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::RequestTypeContent>,
             fallback: &mut Option<RequestTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use RequestTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = fallback
-                    .take()
-                    .unwrap_or(RequestTypeDeserializerState::Next__);
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                *self.state__ = fallback.take().unwrap_or(S::Next__);
+                return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
                 self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_content(data)?;
-                    *self.state__ = RequestTypeDeserializerState::Next__;
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::Next__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Break { .. } => {
-                            *self.state__ = RequestTypeDeserializerState::Content__(deserializer);
-                        }
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback.get_or_insert(RequestTypeDeserializerState::Content__(
-                                deserializer,
-                            ));
-                            *self.state__ = RequestTypeDeserializerState::Next__;
-                        }
-                    }
-                    ret
+                    *fallback = Some(S::Content__(deserializer));
+                    *self.state__ = S::Next__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
     }
     impl<'de> Deserializer<'de, super::RequestType> for RequestTypeDeserializer {
@@ -2837,9 +2615,7 @@ pub mod quick_xml_deserialize {
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
                         let output =
-                            <super::RequestTypeContent as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::RequestTypeContent as WithDeserializer>::init(helper, event)?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -2849,6 +2625,9 @@ pub mod quick_xml_deserialize {
                     }
                 }
             };
+            if let Some(fallback) = fallback {
+                *self.state__ = fallback;
+            }
             let artifact = DeserializerArtifact::Deserializer(self);
             Ok(DeserializerOutput {
                 artifact,
@@ -2863,7 +2642,7 @@ pub mod quick_xml_deserialize {
                 name: self.name,
                 opcode: self.opcode,
                 combine_adjacent: self.combine_adjacent,
-                content: self.content,
+                content: helper.finish_vec(0usize, None, self.content)?,
             })
         }
     }
@@ -2877,37 +2656,46 @@ pub mod quick_xml_deserialize {
         Pad(
             Option<super::PadType>,
             Option<<super::PadType as WithDeserializer>::Deserializer>,
+            Option<<super::PadType as WithDeserializer>::Deserializer>,
         ),
         Field(
             Option<super::VarType>,
+            Option<<super::VarType as WithDeserializer>::Deserializer>,
             Option<<super::VarType as WithDeserializer>::Deserializer>,
         ),
         List(
             Option<super::ListType>,
             Option<<super::ListType as WithDeserializer>::Deserializer>,
+            Option<<super::ListType as WithDeserializer>::Deserializer>,
         ),
         Fd(
             Option<super::AnyType>,
+            Option<<super::AnyType as WithDeserializer>::Deserializer>,
             Option<<super::AnyType as WithDeserializer>::Deserializer>,
         ),
         Exprfield(
             Option<super::ExprfieldType>,
             Option<<super::ExprfieldType as WithDeserializer>::Deserializer>,
+            Option<<super::ExprfieldType as WithDeserializer>::Deserializer>,
         ),
         Valueparam(
             Option<super::ValueparamType>,
+            Option<<super::ValueparamType as WithDeserializer>::Deserializer>,
             Option<<super::ValueparamType as WithDeserializer>::Deserializer>,
         ),
         Switch(
             Option<super::SwitchexprType>,
             Option<<super::SwitchexprType as WithDeserializer>::Deserializer>,
+            Option<<super::SwitchexprType as WithDeserializer>::Deserializer>,
         ),
         Reply(
             Option<super::RequestReplyType>,
             Option<<super::RequestReplyType as WithDeserializer>::Deserializer>,
+            Option<<super::RequestReplyType as WithDeserializer>::Deserializer>,
         ),
         Doc(
             Option<super::DocType>,
+            Option<<super::DocType as WithDeserializer>::Deserializer>,
             Option<<super::DocType as WithDeserializer>::Deserializer>,
         ),
         Done__(super::RequestTypeContent),
@@ -2918,72 +2706,47 @@ pub mod quick_xml_deserialize {
             &mut self,
             helper: &mut DeserializeHelper,
             event: Event<'de>,
-            fallback: &mut Option<RequestTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if x.name().local_name().as_ref() == b"pad" {
-                    let output =
-                        <super::PadType as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_pad(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::PadType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_pad(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"field" {
-                    let output =
-                        <super::VarType as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_field(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::VarType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_field(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"list" {
-                    let output =
-                        <super::ListType as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_list(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::ListType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_list(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"fd" {
-                    let output =
-                        <super::AnyType as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_fd(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::AnyType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_fd(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"exprfield" {
-                    let output = <super::ExprfieldType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
-                    return self.handle_exprfield(
-                        helper,
-                        Default::default(),
-                        output,
-                        &mut *fallback,
-                    );
+                    let output = <super::ExprfieldType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_exprfield(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"valueparam" {
-                    let output = <super::ValueparamType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
-                    return self.handle_valueparam(
-                        helper,
-                        Default::default(),
-                        output,
-                        &mut *fallback,
-                    );
+                    let output = <super::ValueparamType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_valueparam(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"switch" {
-                    let output = <super::SwitchexprType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
-                    return self.handle_switch(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::SwitchexprType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_switch(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"reply" {
-                    let output = <super::RequestReplyType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
-                    return self.handle_reply(helper, Default::default(), output, &mut *fallback);
+                    let output =
+                        <super::RequestReplyType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_reply(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"doc" {
-                    let output =
-                        <super::DocType as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_doc(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::DocType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_doc(helper, Default::default(), None, output);
                 }
             }
-            *self.state__ = fallback
-                .take()
-                .unwrap_or(RequestTypeContentDeserializerState::Init__);
+            *self.state__ = RequestTypeContentDeserializerState::Init__;
             Ok(ElementHandlerOutput::return_to_parent(event, false))
         }
         fn finish_state(
@@ -2992,90 +2755,90 @@ pub mod quick_xml_deserialize {
         ) -> Result<super::RequestTypeContent, Error> {
             use RequestTypeContentDeserializerState as S;
             match state {
-                S::Unknown__ => unreachable!(),
                 S::Init__ => Err(ErrorKind::MissingContent.into()),
-                S::Pad(mut values, deserializer) => {
+                S::Pad(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_pad(&mut values, value)?;
                     }
                     Ok(super::RequestTypeContent::Pad(
-                        values.ok_or_else(|| ErrorKind::MissingElement("pad".into()))?,
+                        helper.finish_element("pad", values)?,
                     ))
                 }
-                S::Field(mut values, deserializer) => {
+                S::Field(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_field(&mut values, value)?;
                     }
-                    Ok(super::RequestTypeContent::Field(values.ok_or_else(
-                        || ErrorKind::MissingElement("field".into()),
-                    )?))
+                    Ok(super::RequestTypeContent::Field(
+                        helper.finish_element("field", values)?,
+                    ))
                 }
-                S::List(mut values, deserializer) => {
+                S::List(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_list(&mut values, value)?;
                     }
                     Ok(super::RequestTypeContent::List(
-                        values.ok_or_else(|| ErrorKind::MissingElement("list".into()))?,
+                        helper.finish_element("list", values)?,
                     ))
                 }
-                S::Fd(mut values, deserializer) => {
+                S::Fd(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_fd(&mut values, value)?;
                     }
                     Ok(super::RequestTypeContent::Fd(
-                        values.ok_or_else(|| ErrorKind::MissingElement("fd".into()))?,
+                        helper.finish_element("fd", values)?,
                     ))
                 }
-                S::Exprfield(mut values, deserializer) => {
+                S::Exprfield(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_exprfield(&mut values, value)?;
                     }
-                    Ok(super::RequestTypeContent::Exprfield(values.ok_or_else(
-                        || ErrorKind::MissingElement("exprfield".into()),
-                    )?))
+                    Ok(super::RequestTypeContent::Exprfield(
+                        helper.finish_element("exprfield", values)?,
+                    ))
                 }
-                S::Valueparam(mut values, deserializer) => {
+                S::Valueparam(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_valueparam(&mut values, value)?;
                     }
-                    Ok(super::RequestTypeContent::Valueparam(values.ok_or_else(
-                        || ErrorKind::MissingElement("valueparam".into()),
-                    )?))
+                    Ok(super::RequestTypeContent::Valueparam(
+                        helper.finish_element("valueparam", values)?,
+                    ))
                 }
-                S::Switch(mut values, deserializer) => {
+                S::Switch(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_switch(&mut values, value)?;
                     }
-                    Ok(super::RequestTypeContent::Switch(values.ok_or_else(
-                        || ErrorKind::MissingElement("switch".into()),
-                    )?))
+                    Ok(super::RequestTypeContent::Switch(
+                        helper.finish_element("switch", values)?,
+                    ))
                 }
-                S::Reply(mut values, deserializer) => {
+                S::Reply(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_reply(&mut values, value)?;
                     }
-                    Ok(super::RequestTypeContent::Reply(values.ok_or_else(
-                        || ErrorKind::MissingElement("reply".into()),
-                    )?))
+                    Ok(super::RequestTypeContent::Reply(
+                        helper.finish_element("reply", values)?,
+                    ))
                 }
-                S::Doc(mut values, deserializer) => {
+                S::Doc(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_doc(&mut values, value)?;
                     }
                     Ok(super::RequestTypeContent::Doc(
-                        values.ok_or_else(|| ErrorKind::MissingElement("doc".into()))?,
+                        helper.finish_element("doc", values)?,
                     ))
                 }
                 S::Done__(data) => Ok(data),
+                _ => unreachable!(),
             }
         }
         fn store_pad(
@@ -3182,472 +2945,307 @@ pub mod quick_xml_deserialize {
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::PadType>,
+            fallback: Option<<super::PadType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::PadType>,
-            fallback: &mut Option<RequestTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use RequestTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = RequestTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => RequestTypeContentDeserializerState::Pad(values, None),
-                    Some(RequestTypeContentDeserializerState::Pad(_, Some(deserializer))) => {
-                        RequestTypeContentDeserializerState::Pad(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(RequestTypeContentDeserializerState::Pad(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_pad(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_pad(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_pad(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        RequestTypeContentDeserializerState::Pad(values, None),
-                    )?;
-                    *self.state__ = RequestTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Pad(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        RequestTypeContentDeserializerState::Pad(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Pad(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_field<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::VarType>,
+            fallback: Option<<super::VarType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::VarType>,
-            fallback: &mut Option<RequestTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use RequestTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = RequestTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => RequestTypeContentDeserializerState::Field(values, None),
-                    Some(RequestTypeContentDeserializerState::Field(_, Some(deserializer))) => {
-                        RequestTypeContentDeserializerState::Field(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(RequestTypeContentDeserializerState::Field(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_field(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_field(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_field(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        RequestTypeContentDeserializerState::Field(values, None),
-                    )?;
-                    *self.state__ = RequestTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Field(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        RequestTypeContentDeserializerState::Field(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Field(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_list<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::ListType>,
+            fallback: Option<<super::ListType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::ListType>,
-            fallback: &mut Option<RequestTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use RequestTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = RequestTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => RequestTypeContentDeserializerState::List(values, None),
-                    Some(RequestTypeContentDeserializerState::List(_, Some(deserializer))) => {
-                        RequestTypeContentDeserializerState::List(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(RequestTypeContentDeserializerState::List(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_list(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_list(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_list(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        RequestTypeContentDeserializerState::List(values, None),
-                    )?;
-                    *self.state__ = RequestTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::List(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        RequestTypeContentDeserializerState::List(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::List(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_fd<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::AnyType>,
+            fallback: Option<<super::AnyType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::AnyType>,
-            fallback: &mut Option<RequestTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use RequestTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = RequestTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => RequestTypeContentDeserializerState::Fd(values, None),
-                    Some(RequestTypeContentDeserializerState::Fd(_, Some(deserializer))) => {
-                        RequestTypeContentDeserializerState::Fd(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(RequestTypeContentDeserializerState::Fd(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_fd(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_fd(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_fd(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        RequestTypeContentDeserializerState::Fd(values, None),
-                    )?;
-                    *self.state__ = RequestTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Fd(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        RequestTypeContentDeserializerState::Fd(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Fd(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_exprfield<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::ExprfieldType>,
+            fallback: Option<<super::ExprfieldType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::ExprfieldType>,
-            fallback: &mut Option<RequestTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use RequestTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = RequestTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => RequestTypeContentDeserializerState::Exprfield(values, None),
-                    Some(RequestTypeContentDeserializerState::Exprfield(_, Some(deserializer))) => {
-                        RequestTypeContentDeserializerState::Exprfield(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(RequestTypeContentDeserializerState::Exprfield(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_exprfield(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_exprfield(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_exprfield(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        RequestTypeContentDeserializerState::Exprfield(values, None),
-                    )?;
-                    *self.state__ = RequestTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Exprfield(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        RequestTypeContentDeserializerState::Exprfield(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Exprfield(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_valueparam<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::ValueparamType>,
+            fallback: Option<<super::ValueparamType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::ValueparamType>,
-            fallback: &mut Option<RequestTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use RequestTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = RequestTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => RequestTypeContentDeserializerState::Valueparam(values, None),
-                    Some(RequestTypeContentDeserializerState::Valueparam(
-                        _,
-                        Some(deserializer),
-                    )) => {
-                        RequestTypeContentDeserializerState::Valueparam(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(RequestTypeContentDeserializerState::Valueparam(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_valueparam(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_valueparam(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_valueparam(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        RequestTypeContentDeserializerState::Valueparam(values, None),
-                    )?;
-                    *self.state__ = RequestTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Valueparam(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        RequestTypeContentDeserializerState::Valueparam(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Valueparam(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_switch<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::SwitchexprType>,
+            fallback: Option<<super::SwitchexprType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::SwitchexprType>,
-            fallback: &mut Option<RequestTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use RequestTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = RequestTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => RequestTypeContentDeserializerState::Switch(values, None),
-                    Some(RequestTypeContentDeserializerState::Switch(_, Some(deserializer))) => {
-                        RequestTypeContentDeserializerState::Switch(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(RequestTypeContentDeserializerState::Switch(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_switch(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_switch(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_switch(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        RequestTypeContentDeserializerState::Switch(values, None),
-                    )?;
-                    *self.state__ = RequestTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Switch(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        RequestTypeContentDeserializerState::Switch(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Switch(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_reply<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::RequestReplyType>,
+            fallback: Option<<super::RequestReplyType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::RequestReplyType>,
-            fallback: &mut Option<RequestTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use RequestTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = RequestTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => RequestTypeContentDeserializerState::Reply(values, None),
-                    Some(RequestTypeContentDeserializerState::Reply(_, Some(deserializer))) => {
-                        RequestTypeContentDeserializerState::Reply(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(RequestTypeContentDeserializerState::Reply(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_reply(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_reply(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_reply(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        RequestTypeContentDeserializerState::Reply(values, None),
-                    )?;
-                    *self.state__ = RequestTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Reply(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        RequestTypeContentDeserializerState::Reply(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Reply(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_doc<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::DocType>,
+            fallback: Option<<super::DocType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::DocType>,
-            fallback: &mut Option<RequestTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use RequestTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = RequestTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => RequestTypeContentDeserializerState::Doc(values, None),
-                    Some(RequestTypeContentDeserializerState::Doc(_, Some(deserializer))) => {
-                        RequestTypeContentDeserializerState::Doc(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(RequestTypeContentDeserializerState::Doc(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_doc(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_doc(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_doc(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        RequestTypeContentDeserializerState::Doc(values, None),
-                    )?;
-                    *self.state__ = RequestTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Doc(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        RequestTypeContentDeserializerState::Doc(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Doc(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
     }
     impl<'de> Deserializer<'de, super::RequestTypeContent> for RequestTypeContentDeserializer {
@@ -3676,86 +3274,85 @@ pub mod quick_xml_deserialize {
         ) -> DeserializerResult<'de, super::RequestTypeContent> {
             use RequestTypeContentDeserializerState as S;
             let mut event = event;
-            let mut fallback = None;
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
-                    (S::Pad(values, Some(deserializer)), event) => {
+                    (S::Pad(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_pad(helper, values, output, &mut fallback)? {
+                        match self.handle_pad(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Field(values, Some(deserializer)), event) => {
+                    (S::Field(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_field(helper, values, output, &mut fallback)? {
+                        match self.handle_field(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::List(values, Some(deserializer)), event) => {
+                    (S::List(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_list(helper, values, output, &mut fallback)? {
+                        match self.handle_list(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Fd(values, Some(deserializer)), event) => {
+                    (S::Fd(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_fd(helper, values, output, &mut fallback)? {
+                        match self.handle_fd(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Exprfield(values, Some(deserializer)), event) => {
+                    (S::Exprfield(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_exprfield(helper, values, output, &mut fallback)? {
+                        match self.handle_exprfield(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Valueparam(values, Some(deserializer)), event) => {
+                    (S::Valueparam(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_valueparam(helper, values, output, &mut fallback)? {
+                        match self.handle_valueparam(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Switch(values, Some(deserializer)), event) => {
+                    (S::Switch(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_switch(helper, values, output, &mut fallback)? {
+                        match self.handle_switch(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Reply(values, Some(deserializer)), event) => {
+                    (S::Reply(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_reply(helper, values, output, &mut fallback)? {
+                        match self.handle_reply(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Doc(values, Some(deserializer)), event) => {
+                    (S::Doc(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_doc(helper, values, output, &mut fallback)? {
+                        match self.handle_doc(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
@@ -3771,113 +3368,140 @@ pub mod quick_xml_deserialize {
                             allow_any: false,
                         });
                     }
-                    (S::Init__, event) => match self.find_suitable(helper, event, &mut fallback)? {
+                    (S::Init__, event) => match self.find_suitable(helper, event)? {
                         ElementHandlerOutput::Break { event, allow_any } => {
                             break (event, allow_any)
                         }
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
-                    (S::Pad(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Pad(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"pad", false)?;
-                        match self.handle_pad(helper, values, output, &mut fallback)? {
+                        match self.handle_pad(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Field(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Field(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"field", false)?;
-                        match self.handle_field(helper, values, output, &mut fallback)? {
+                        match self.handle_field(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::List(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::List(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"list", false)?;
-                        match self.handle_list(helper, values, output, &mut fallback)? {
+                        match self.handle_list(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Fd(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Fd(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"fd", true)?;
-                        match self.handle_fd(helper, values, output, &mut fallback)? {
+                        match self.handle_fd(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Exprfield(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Exprfield(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"exprfield", false)?;
-                        match self.handle_exprfield(helper, values, output, &mut fallback)? {
+                        match self.handle_exprfield(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Valueparam(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Valueparam(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
                             None,
                             b"valueparam",
                             false,
                         )?;
-                        match self.handle_valueparam(helper, values, output, &mut fallback)? {
+                        match self.handle_valueparam(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Switch(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Switch(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"switch", true)?;
-                        match self.handle_switch(helper, values, output, &mut fallback)? {
+                        match self.handle_switch(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Reply(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Reply(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"reply", true)?;
-                        match self.handle_reply(helper, values, output, &mut fallback)? {
+                        match self.handle_reply(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Doc(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Doc(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"doc", false)?;
-                        match self.handle_doc(helper, values, output, &mut fallback)? {
+                        match self.handle_doc(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (s @ S::Done__(_), event) => {
-                        *self.state__ = s;
+                    (state @ S::Done__(_), event) => {
+                        *self.state__ = state;
                         break (DeserializerEvent::Continue(event), false);
                     }
                     (state, event) => {
                         *self.state__ = state;
-                        break (DeserializerEvent::Break(event), false);
+                        break (DeserializerEvent::Continue(event), false);
                     }
                 }
             };
@@ -3971,42 +3595,32 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::EventTypeContent>,
             fallback: &mut Option<EventTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use EventTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = fallback
-                    .take()
-                    .unwrap_or(EventTypeDeserializerState::Next__);
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                *self.state__ = fallback.take().unwrap_or(S::Next__);
+                return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
                 self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_content(data)?;
-                    *self.state__ = EventTypeDeserializerState::Next__;
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::Next__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Break { .. } => {
-                            *self.state__ = EventTypeDeserializerState::Content__(deserializer);
-                        }
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback
-                                .get_or_insert(EventTypeDeserializerState::Content__(deserializer));
-                            *self.state__ = EventTypeDeserializerState::Next__;
-                        }
-                    }
-                    ret
+                    *fallback = Some(S::Content__(deserializer));
+                    *self.state__ = S::Next__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
     }
     impl<'de> Deserializer<'de, super::EventType> for EventTypeDeserializer {
@@ -4047,9 +3661,7 @@ pub mod quick_xml_deserialize {
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
                         let output =
-                            <super::EventTypeContent as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::EventTypeContent as WithDeserializer>::init(helper, event)?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -4059,6 +3671,9 @@ pub mod quick_xml_deserialize {
                     }
                 }
             };
+            if let Some(fallback) = fallback {
+                *self.state__ = fallback;
+            }
             let artifact = DeserializerArtifact::Deserializer(self);
             Ok(DeserializerOutput {
                 artifact,
@@ -4074,7 +3689,7 @@ pub mod quick_xml_deserialize {
                 number: self.number,
                 no_sequence_number: self.no_sequence_number,
                 xge: self.xge,
-                content: self.content,
+                content: helper.finish_vec(0usize, None, self.content)?,
             })
         }
     }
@@ -4088,21 +3703,26 @@ pub mod quick_xml_deserialize {
         Pad(
             Option<super::PadType>,
             Option<<super::PadType as WithDeserializer>::Deserializer>,
+            Option<<super::PadType as WithDeserializer>::Deserializer>,
         ),
         Field(
             Option<super::VarType>,
+            Option<<super::VarType as WithDeserializer>::Deserializer>,
             Option<<super::VarType as WithDeserializer>::Deserializer>,
         ),
         List(
             Option<super::ListType>,
             Option<<super::ListType as WithDeserializer>::Deserializer>,
+            Option<<super::ListType as WithDeserializer>::Deserializer>,
         ),
         Fd(
             Option<super::AnyType>,
             Option<<super::AnyType as WithDeserializer>::Deserializer>,
+            Option<<super::AnyType as WithDeserializer>::Deserializer>,
         ),
         Doc(
             Option<super::DocType>,
+            Option<<super::DocType as WithDeserializer>::Deserializer>,
             Option<<super::DocType as WithDeserializer>::Deserializer>,
         ),
         Done__(super::EventTypeContent),
@@ -4113,38 +3733,30 @@ pub mod quick_xml_deserialize {
             &mut self,
             helper: &mut DeserializeHelper,
             event: Event<'de>,
-            fallback: &mut Option<EventTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if x.name().local_name().as_ref() == b"pad" {
-                    let output =
-                        <super::PadType as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_pad(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::PadType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_pad(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"field" {
-                    let output =
-                        <super::VarType as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_field(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::VarType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_field(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"list" {
-                    let output =
-                        <super::ListType as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_list(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::ListType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_list(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"fd" {
-                    let output =
-                        <super::AnyType as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_fd(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::AnyType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_fd(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"doc" {
-                    let output =
-                        <super::DocType as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_doc(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::DocType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_doc(helper, Default::default(), None, output);
                 }
             }
-            *self.state__ = fallback
-                .take()
-                .unwrap_or(EventTypeContentDeserializerState::Init__);
+            *self.state__ = EventTypeContentDeserializerState::Init__;
             Ok(ElementHandlerOutput::return_to_parent(event, false))
         }
         fn finish_state(
@@ -4153,54 +3765,54 @@ pub mod quick_xml_deserialize {
         ) -> Result<super::EventTypeContent, Error> {
             use EventTypeContentDeserializerState as S;
             match state {
-                S::Unknown__ => unreachable!(),
                 S::Init__ => Err(ErrorKind::MissingContent.into()),
-                S::Pad(mut values, deserializer) => {
+                S::Pad(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_pad(&mut values, value)?;
                     }
                     Ok(super::EventTypeContent::Pad(
-                        values.ok_or_else(|| ErrorKind::MissingElement("pad".into()))?,
+                        helper.finish_element("pad", values)?,
                     ))
                 }
-                S::Field(mut values, deserializer) => {
+                S::Field(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_field(&mut values, value)?;
                     }
-                    Ok(super::EventTypeContent::Field(values.ok_or_else(|| {
-                        ErrorKind::MissingElement("field".into())
-                    })?))
+                    Ok(super::EventTypeContent::Field(
+                        helper.finish_element("field", values)?,
+                    ))
                 }
-                S::List(mut values, deserializer) => {
+                S::List(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_list(&mut values, value)?;
                     }
                     Ok(super::EventTypeContent::List(
-                        values.ok_or_else(|| ErrorKind::MissingElement("list".into()))?,
+                        helper.finish_element("list", values)?,
                     ))
                 }
-                S::Fd(mut values, deserializer) => {
+                S::Fd(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_fd(&mut values, value)?;
                     }
                     Ok(super::EventTypeContent::Fd(
-                        values.ok_or_else(|| ErrorKind::MissingElement("fd".into()))?,
+                        helper.finish_element("fd", values)?,
                     ))
                 }
-                S::Doc(mut values, deserializer) => {
+                S::Doc(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_doc(&mut values, value)?;
                     }
                     Ok(super::EventTypeContent::Doc(
-                        values.ok_or_else(|| ErrorKind::MissingElement("doc".into()))?,
+                        helper.finish_element("doc", values)?,
                     ))
                 }
                 S::Done__(data) => Ok(data),
+                _ => unreachable!(),
             }
         }
         fn store_pad(
@@ -4259,261 +3871,171 @@ pub mod quick_xml_deserialize {
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::PadType>,
+            fallback: Option<<super::PadType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::PadType>,
-            fallback: &mut Option<EventTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use EventTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = EventTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => EventTypeContentDeserializerState::Pad(values, None),
-                    Some(EventTypeContentDeserializerState::Pad(_, Some(deserializer))) => {
-                        EventTypeContentDeserializerState::Pad(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(EventTypeContentDeserializerState::Pad(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_pad(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_pad(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_pad(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        EventTypeContentDeserializerState::Pad(values, None),
-                    )?;
-                    *self.state__ = EventTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Pad(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        EventTypeContentDeserializerState::Pad(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Pad(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_field<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::VarType>,
+            fallback: Option<<super::VarType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::VarType>,
-            fallback: &mut Option<EventTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use EventTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = EventTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => EventTypeContentDeserializerState::Field(values, None),
-                    Some(EventTypeContentDeserializerState::Field(_, Some(deserializer))) => {
-                        EventTypeContentDeserializerState::Field(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(EventTypeContentDeserializerState::Field(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_field(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_field(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_field(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        EventTypeContentDeserializerState::Field(values, None),
-                    )?;
-                    *self.state__ = EventTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Field(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        EventTypeContentDeserializerState::Field(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Field(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_list<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::ListType>,
+            fallback: Option<<super::ListType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::ListType>,
-            fallback: &mut Option<EventTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use EventTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = EventTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => EventTypeContentDeserializerState::List(values, None),
-                    Some(EventTypeContentDeserializerState::List(_, Some(deserializer))) => {
-                        EventTypeContentDeserializerState::List(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(EventTypeContentDeserializerState::List(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_list(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_list(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_list(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        EventTypeContentDeserializerState::List(values, None),
-                    )?;
-                    *self.state__ = EventTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::List(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        EventTypeContentDeserializerState::List(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::List(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_fd<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::AnyType>,
+            fallback: Option<<super::AnyType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::AnyType>,
-            fallback: &mut Option<EventTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use EventTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = EventTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => EventTypeContentDeserializerState::Fd(values, None),
-                    Some(EventTypeContentDeserializerState::Fd(_, Some(deserializer))) => {
-                        EventTypeContentDeserializerState::Fd(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(EventTypeContentDeserializerState::Fd(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_fd(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_fd(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_fd(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        EventTypeContentDeserializerState::Fd(values, None),
-                    )?;
-                    *self.state__ = EventTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Fd(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        EventTypeContentDeserializerState::Fd(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Fd(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_doc<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::DocType>,
+            fallback: Option<<super::DocType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::DocType>,
-            fallback: &mut Option<EventTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use EventTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = EventTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => EventTypeContentDeserializerState::Doc(values, None),
-                    Some(EventTypeContentDeserializerState::Doc(_, Some(deserializer))) => {
-                        EventTypeContentDeserializerState::Doc(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(EventTypeContentDeserializerState::Doc(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_doc(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_doc(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_doc(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        EventTypeContentDeserializerState::Doc(values, None),
-                    )?;
-                    *self.state__ = EventTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Doc(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        EventTypeContentDeserializerState::Doc(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Doc(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
     }
     impl<'de> Deserializer<'de, super::EventTypeContent> for EventTypeContentDeserializer {
@@ -4542,50 +4064,49 @@ pub mod quick_xml_deserialize {
         ) -> DeserializerResult<'de, super::EventTypeContent> {
             use EventTypeContentDeserializerState as S;
             let mut event = event;
-            let mut fallback = None;
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
-                    (S::Pad(values, Some(deserializer)), event) => {
+                    (S::Pad(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_pad(helper, values, output, &mut fallback)? {
+                        match self.handle_pad(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Field(values, Some(deserializer)), event) => {
+                    (S::Field(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_field(helper, values, output, &mut fallback)? {
+                        match self.handle_field(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::List(values, Some(deserializer)), event) => {
+                    (S::List(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_list(helper, values, output, &mut fallback)? {
+                        match self.handle_list(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Fd(values, Some(deserializer)), event) => {
+                    (S::Fd(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_fd(helper, values, output, &mut fallback)? {
+                        match self.handle_fd(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Doc(values, Some(deserializer)), event) => {
+                    (S::Doc(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_doc(helper, values, output, &mut fallback)? {
+                        match self.handle_doc(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
@@ -4601,69 +4122,84 @@ pub mod quick_xml_deserialize {
                             allow_any: false,
                         });
                     }
-                    (S::Init__, event) => match self.find_suitable(helper, event, &mut fallback)? {
+                    (S::Init__, event) => match self.find_suitable(helper, event)? {
                         ElementHandlerOutput::Break { event, allow_any } => {
                             break (event, allow_any)
                         }
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
-                    (S::Pad(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Pad(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"pad", false)?;
-                        match self.handle_pad(helper, values, output, &mut fallback)? {
+                        match self.handle_pad(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Field(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Field(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"field", false)?;
-                        match self.handle_field(helper, values, output, &mut fallback)? {
+                        match self.handle_field(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::List(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::List(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"list", false)?;
-                        match self.handle_list(helper, values, output, &mut fallback)? {
+                        match self.handle_list(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Fd(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Fd(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"fd", true)?;
-                        match self.handle_fd(helper, values, output, &mut fallback)? {
+                        match self.handle_fd(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Doc(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Doc(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"doc", false)?;
-                        match self.handle_doc(helper, values, output, &mut fallback)? {
+                        match self.handle_doc(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (s @ S::Done__(_), event) => {
-                        *self.state__ = s;
+                    (state @ S::Done__(_), event) => {
+                        *self.state__ = state;
                         break (DeserializerEvent::Continue(event), false);
                     }
                     (state, event) => {
                         *self.state__ = state;
-                        break (DeserializerEvent::Break(event), false);
+                        break (DeserializerEvent::Continue(event), false);
                     }
                 }
             };
@@ -4829,44 +4365,32 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::PacketStructTypeContent>,
             fallback: &mut Option<PacketStructTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use PacketStructTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = fallback
-                    .take()
-                    .unwrap_or(PacketStructTypeDeserializerState::Next__);
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                *self.state__ = fallback.take().unwrap_or(S::Next__);
+                return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
                 self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_content(data)?;
-                    *self.state__ = PacketStructTypeDeserializerState::Next__;
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::Next__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Break { .. } => {
-                            *self.state__ =
-                                PacketStructTypeDeserializerState::Content__(deserializer);
-                        }
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback.get_or_insert(PacketStructTypeDeserializerState::Content__(
-                                deserializer,
-                            ));
-                            *self.state__ = PacketStructTypeDeserializerState::Next__;
-                        }
-                    }
-                    ret
+                    *fallback = Some(S::Content__(deserializer));
+                    *self.state__ = S::Next__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
     }
     impl<'de> Deserializer<'de, super::PacketStructType> for PacketStructTypeDeserializer {
@@ -4906,7 +4430,9 @@ pub mod quick_xml_deserialize {
                     }
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
-                        let output = < super :: PacketStructTypeContent as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output = <super::PacketStructTypeContent as WithDeserializer>::init(
+                            helper, event,
+                        )?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -4916,6 +4442,9 @@ pub mod quick_xml_deserialize {
                     }
                 }
             };
+            if let Some(fallback) = fallback {
+                *self.state__ = fallback;
+            }
             let artifact = DeserializerArtifact::Deserializer(self);
             Ok(DeserializerOutput {
                 artifact,
@@ -4935,7 +4464,7 @@ pub mod quick_xml_deserialize {
             Ok(super::PacketStructType {
                 name: self.name,
                 number: self.number,
-                content: self.content,
+                content: helper.finish_vec(0usize, None, self.content)?,
             })
         }
     }
@@ -4949,17 +4478,21 @@ pub mod quick_xml_deserialize {
         Pad(
             Option<super::PadType>,
             Option<<super::PadType as WithDeserializer>::Deserializer>,
+            Option<<super::PadType as WithDeserializer>::Deserializer>,
         ),
         Field(
             Option<super::VarType>,
+            Option<<super::VarType as WithDeserializer>::Deserializer>,
             Option<<super::VarType as WithDeserializer>::Deserializer>,
         ),
         List(
             Option<super::ListType>,
             Option<<super::ListType as WithDeserializer>::Deserializer>,
+            Option<<super::ListType as WithDeserializer>::Deserializer>,
         ),
         Fd(
             Option<super::AnyType>,
+            Option<<super::AnyType as WithDeserializer>::Deserializer>,
             Option<<super::AnyType as WithDeserializer>::Deserializer>,
         ),
         Done__(super::PacketStructTypeContent),
@@ -4970,33 +4503,26 @@ pub mod quick_xml_deserialize {
             &mut self,
             helper: &mut DeserializeHelper,
             event: Event<'de>,
-            fallback: &mut Option<PacketStructTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if x.name().local_name().as_ref() == b"pad" {
-                    let output =
-                        <super::PadType as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_pad(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::PadType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_pad(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"field" {
-                    let output =
-                        <super::VarType as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_field(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::VarType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_field(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"list" {
-                    let output =
-                        <super::ListType as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_list(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::ListType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_list(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"fd" {
-                    let output =
-                        <super::AnyType as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_fd(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::AnyType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_fd(helper, Default::default(), None, output);
                 }
             }
-            *self.state__ = fallback
-                .take()
-                .unwrap_or(PacketStructTypeContentDeserializerState::Init__);
+            *self.state__ = PacketStructTypeContentDeserializerState::Init__;
             Ok(ElementHandlerOutput::return_to_parent(event, false))
         }
         fn finish_state(
@@ -5005,45 +4531,45 @@ pub mod quick_xml_deserialize {
         ) -> Result<super::PacketStructTypeContent, Error> {
             use PacketStructTypeContentDeserializerState as S;
             match state {
-                S::Unknown__ => unreachable!(),
                 S::Init__ => Err(ErrorKind::MissingContent.into()),
-                S::Pad(mut values, deserializer) => {
+                S::Pad(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_pad(&mut values, value)?;
                     }
                     Ok(super::PacketStructTypeContent::Pad(
-                        values.ok_or_else(|| ErrorKind::MissingElement("pad".into()))?,
+                        helper.finish_element("pad", values)?,
                     ))
                 }
-                S::Field(mut values, deserializer) => {
+                S::Field(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_field(&mut values, value)?;
                     }
-                    Ok(super::PacketStructTypeContent::Field(values.ok_or_else(
-                        || ErrorKind::MissingElement("field".into()),
-                    )?))
+                    Ok(super::PacketStructTypeContent::Field(
+                        helper.finish_element("field", values)?,
+                    ))
                 }
-                S::List(mut values, deserializer) => {
+                S::List(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_list(&mut values, value)?;
                     }
                     Ok(super::PacketStructTypeContent::List(
-                        values.ok_or_else(|| ErrorKind::MissingElement("list".into()))?,
+                        helper.finish_element("list", values)?,
                     ))
                 }
-                S::Fd(mut values, deserializer) => {
+                S::Fd(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_fd(&mut values, value)?;
                     }
                     Ok(super::PacketStructTypeContent::Fd(
-                        values.ok_or_else(|| ErrorKind::MissingElement("fd".into()))?,
+                        helper.finish_element("fd", values)?,
                     ))
                 }
                 S::Done__(data) => Ok(data),
+                _ => unreachable!(),
             }
         }
         fn store_pad(
@@ -5092,212 +4618,137 @@ pub mod quick_xml_deserialize {
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::PadType>,
+            fallback: Option<<super::PadType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::PadType>,
-            fallback: &mut Option<PacketStructTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use PacketStructTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = PacketStructTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => PacketStructTypeContentDeserializerState::Pad(values, None),
-                    Some(PacketStructTypeContentDeserializerState::Pad(_, Some(deserializer))) => {
-                        PacketStructTypeContentDeserializerState::Pad(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(PacketStructTypeContentDeserializerState::Pad(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_pad(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_pad(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_pad(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        PacketStructTypeContentDeserializerState::Pad(values, None),
-                    )?;
-                    *self.state__ = PacketStructTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Pad(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        PacketStructTypeContentDeserializerState::Pad(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Pad(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_field<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::VarType>,
+            fallback: Option<<super::VarType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::VarType>,
-            fallback: &mut Option<PacketStructTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use PacketStructTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = PacketStructTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => PacketStructTypeContentDeserializerState::Field(values, None),
-                    Some(PacketStructTypeContentDeserializerState::Field(
-                        _,
-                        Some(deserializer),
-                    )) => {
-                        PacketStructTypeContentDeserializerState::Field(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(PacketStructTypeContentDeserializerState::Field(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_field(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_field(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_field(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        PacketStructTypeContentDeserializerState::Field(values, None),
-                    )?;
-                    *self.state__ = PacketStructTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Field(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        PacketStructTypeContentDeserializerState::Field(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Field(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_list<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::ListType>,
+            fallback: Option<<super::ListType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::ListType>,
-            fallback: &mut Option<PacketStructTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use PacketStructTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = PacketStructTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => PacketStructTypeContentDeserializerState::List(values, None),
-                    Some(PacketStructTypeContentDeserializerState::List(_, Some(deserializer))) => {
-                        PacketStructTypeContentDeserializerState::List(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(PacketStructTypeContentDeserializerState::List(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_list(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_list(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_list(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        PacketStructTypeContentDeserializerState::List(values, None),
-                    )?;
-                    *self.state__ = PacketStructTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::List(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        PacketStructTypeContentDeserializerState::List(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::List(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_fd<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::AnyType>,
+            fallback: Option<<super::AnyType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::AnyType>,
-            fallback: &mut Option<PacketStructTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use PacketStructTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = PacketStructTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => PacketStructTypeContentDeserializerState::Fd(values, None),
-                    Some(PacketStructTypeContentDeserializerState::Fd(_, Some(deserializer))) => {
-                        PacketStructTypeContentDeserializerState::Fd(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(PacketStructTypeContentDeserializerState::Fd(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_fd(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_fd(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_fd(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        PacketStructTypeContentDeserializerState::Fd(values, None),
-                    )?;
-                    *self.state__ = PacketStructTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Fd(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        PacketStructTypeContentDeserializerState::Fd(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Fd(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
     }
     impl<'de> Deserializer<'de, super::PacketStructTypeContent>
@@ -5331,41 +4782,40 @@ pub mod quick_xml_deserialize {
         ) -> DeserializerResult<'de, super::PacketStructTypeContent> {
             use PacketStructTypeContentDeserializerState as S;
             let mut event = event;
-            let mut fallback = None;
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
-                    (S::Pad(values, Some(deserializer)), event) => {
+                    (S::Pad(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_pad(helper, values, output, &mut fallback)? {
+                        match self.handle_pad(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Field(values, Some(deserializer)), event) => {
+                    (S::Field(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_field(helper, values, output, &mut fallback)? {
+                        match self.handle_field(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::List(values, Some(deserializer)), event) => {
+                    (S::List(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_list(helper, values, output, &mut fallback)? {
+                        match self.handle_list(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Fd(values, Some(deserializer)), event) => {
+                    (S::Fd(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_fd(helper, values, output, &mut fallback)? {
+                        match self.handle_fd(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
@@ -5381,59 +4831,71 @@ pub mod quick_xml_deserialize {
                             allow_any: false,
                         });
                     }
-                    (S::Init__, event) => match self.find_suitable(helper, event, &mut fallback)? {
+                    (S::Init__, event) => match self.find_suitable(helper, event)? {
                         ElementHandlerOutput::Break { event, allow_any } => {
                             break (event, allow_any)
                         }
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
-                    (S::Pad(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Pad(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"pad", false)?;
-                        match self.handle_pad(helper, values, output, &mut fallback)? {
+                        match self.handle_pad(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Field(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Field(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"field", false)?;
-                        match self.handle_field(helper, values, output, &mut fallback)? {
+                        match self.handle_field(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::List(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::List(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"list", false)?;
-                        match self.handle_list(helper, values, output, &mut fallback)? {
+                        match self.handle_list(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Fd(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Fd(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"fd", true)?;
-                        match self.handle_fd(helper, values, output, &mut fallback)? {
+                        match self.handle_fd(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (s @ S::Done__(_), event) => {
-                        *self.state__ = s;
+                    (state @ S::Done__(_), event) => {
+                        *self.state__ = state;
                         break (DeserializerEvent::Continue(event), false);
                     }
                     (state, event) => {
                         *self.state__ = state;
-                        break (DeserializerEvent::Break(event), false);
+                        break (DeserializerEvent::Continue(event), false);
                     }
                 }
             };
@@ -5508,43 +4970,32 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::StructTypeContent>,
             fallback: &mut Option<StructTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use StructTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = fallback
-                    .take()
-                    .unwrap_or(StructTypeDeserializerState::Next__);
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                *self.state__ = fallback.take().unwrap_or(S::Next__);
+                return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
                 self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_content(data)?;
-                    *self.state__ = StructTypeDeserializerState::Next__;
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::Next__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Break { .. } => {
-                            *self.state__ = StructTypeDeserializerState::Content__(deserializer);
-                        }
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback.get_or_insert(StructTypeDeserializerState::Content__(
-                                deserializer,
-                            ));
-                            *self.state__ = StructTypeDeserializerState::Next__;
-                        }
-                    }
-                    ret
+                    *fallback = Some(S::Content__(deserializer));
+                    *self.state__ = S::Next__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
     }
     impl<'de> Deserializer<'de, super::StructType> for StructTypeDeserializer {
@@ -5585,9 +5036,7 @@ pub mod quick_xml_deserialize {
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
                         let output =
-                            <super::StructTypeContent as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::StructTypeContent as WithDeserializer>::init(helper, event)?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -5597,6 +5046,9 @@ pub mod quick_xml_deserialize {
                     }
                 }
             };
+            if let Some(fallback) = fallback {
+                *self.state__ = fallback;
+            }
             let artifact = DeserializerArtifact::Deserializer(self);
             Ok(DeserializerOutput {
                 artifact,
@@ -5609,7 +5061,7 @@ pub mod quick_xml_deserialize {
             self.finish_state(helper, state)?;
             Ok(super::StructType {
                 name: self.name,
-                content: self.content,
+                content: helper.finish_vec(1usize, None, self.content)?,
             })
         }
     }
@@ -5623,21 +5075,26 @@ pub mod quick_xml_deserialize {
         Pad(
             Option<super::PadType>,
             Option<<super::PadType as WithDeserializer>::Deserializer>,
+            Option<<super::PadType as WithDeserializer>::Deserializer>,
         ),
         Field(
             Option<super::VarType>,
+            Option<<super::VarType as WithDeserializer>::Deserializer>,
             Option<<super::VarType as WithDeserializer>::Deserializer>,
         ),
         List(
             Option<super::ListType>,
             Option<<super::ListType as WithDeserializer>::Deserializer>,
+            Option<<super::ListType as WithDeserializer>::Deserializer>,
         ),
         Fd(
             Option<super::AnyType>,
             Option<<super::AnyType as WithDeserializer>::Deserializer>,
+            Option<<super::AnyType as WithDeserializer>::Deserializer>,
         ),
         Switch(
             Option<super::SwitchexprType>,
+            Option<<super::SwitchexprType as WithDeserializer>::Deserializer>,
             Option<<super::SwitchexprType as WithDeserializer>::Deserializer>,
         ),
         Done__(super::StructTypeContent),
@@ -5648,39 +5105,30 @@ pub mod quick_xml_deserialize {
             &mut self,
             helper: &mut DeserializeHelper,
             event: Event<'de>,
-            fallback: &mut Option<StructTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if x.name().local_name().as_ref() == b"pad" {
-                    let output =
-                        <super::PadType as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_pad(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::PadType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_pad(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"field" {
-                    let output =
-                        <super::VarType as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_field(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::VarType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_field(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"list" {
-                    let output =
-                        <super::ListType as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_list(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::ListType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_list(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"fd" {
-                    let output =
-                        <super::AnyType as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_fd(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::AnyType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_fd(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"switch" {
-                    let output = <super::SwitchexprType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
-                    return self.handle_switch(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::SwitchexprType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_switch(helper, Default::default(), None, output);
                 }
             }
-            *self.state__ = fallback
-                .take()
-                .unwrap_or(StructTypeContentDeserializerState::Init__);
+            *self.state__ = StructTypeContentDeserializerState::Init__;
             Ok(ElementHandlerOutput::return_to_parent(event, false))
         }
         fn finish_state(
@@ -5689,54 +5137,54 @@ pub mod quick_xml_deserialize {
         ) -> Result<super::StructTypeContent, Error> {
             use StructTypeContentDeserializerState as S;
             match state {
-                S::Unknown__ => unreachable!(),
                 S::Init__ => Err(ErrorKind::MissingContent.into()),
-                S::Pad(mut values, deserializer) => {
+                S::Pad(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_pad(&mut values, value)?;
                     }
                     Ok(super::StructTypeContent::Pad(
-                        values.ok_or_else(|| ErrorKind::MissingElement("pad".into()))?,
+                        helper.finish_element("pad", values)?,
                     ))
                 }
-                S::Field(mut values, deserializer) => {
+                S::Field(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_field(&mut values, value)?;
                     }
-                    Ok(super::StructTypeContent::Field(values.ok_or_else(
-                        || ErrorKind::MissingElement("field".into()),
-                    )?))
+                    Ok(super::StructTypeContent::Field(
+                        helper.finish_element("field", values)?,
+                    ))
                 }
-                S::List(mut values, deserializer) => {
+                S::List(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_list(&mut values, value)?;
                     }
                     Ok(super::StructTypeContent::List(
-                        values.ok_or_else(|| ErrorKind::MissingElement("list".into()))?,
+                        helper.finish_element("list", values)?,
                     ))
                 }
-                S::Fd(mut values, deserializer) => {
+                S::Fd(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_fd(&mut values, value)?;
                     }
                     Ok(super::StructTypeContent::Fd(
-                        values.ok_or_else(|| ErrorKind::MissingElement("fd".into()))?,
+                        helper.finish_element("fd", values)?,
                     ))
                 }
-                S::Switch(mut values, deserializer) => {
+                S::Switch(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_switch(&mut values, value)?;
                     }
-                    Ok(super::StructTypeContent::Switch(values.ok_or_else(
-                        || ErrorKind::MissingElement("switch".into()),
-                    )?))
+                    Ok(super::StructTypeContent::Switch(
+                        helper.finish_element("switch", values)?,
+                    ))
                 }
                 S::Done__(data) => Ok(data),
+                _ => unreachable!(),
             }
         }
         fn store_pad(
@@ -5797,261 +5245,171 @@ pub mod quick_xml_deserialize {
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::PadType>,
+            fallback: Option<<super::PadType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::PadType>,
-            fallback: &mut Option<StructTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use StructTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = StructTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => StructTypeContentDeserializerState::Pad(values, None),
-                    Some(StructTypeContentDeserializerState::Pad(_, Some(deserializer))) => {
-                        StructTypeContentDeserializerState::Pad(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(StructTypeContentDeserializerState::Pad(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_pad(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_pad(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_pad(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        StructTypeContentDeserializerState::Pad(values, None),
-                    )?;
-                    *self.state__ = StructTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Pad(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        StructTypeContentDeserializerState::Pad(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Pad(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_field<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::VarType>,
+            fallback: Option<<super::VarType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::VarType>,
-            fallback: &mut Option<StructTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use StructTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = StructTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => StructTypeContentDeserializerState::Field(values, None),
-                    Some(StructTypeContentDeserializerState::Field(_, Some(deserializer))) => {
-                        StructTypeContentDeserializerState::Field(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(StructTypeContentDeserializerState::Field(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_field(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_field(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_field(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        StructTypeContentDeserializerState::Field(values, None),
-                    )?;
-                    *self.state__ = StructTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Field(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        StructTypeContentDeserializerState::Field(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Field(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_list<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::ListType>,
+            fallback: Option<<super::ListType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::ListType>,
-            fallback: &mut Option<StructTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use StructTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = StructTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => StructTypeContentDeserializerState::List(values, None),
-                    Some(StructTypeContentDeserializerState::List(_, Some(deserializer))) => {
-                        StructTypeContentDeserializerState::List(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(StructTypeContentDeserializerState::List(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_list(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_list(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_list(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        StructTypeContentDeserializerState::List(values, None),
-                    )?;
-                    *self.state__ = StructTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::List(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        StructTypeContentDeserializerState::List(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::List(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_fd<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::AnyType>,
+            fallback: Option<<super::AnyType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::AnyType>,
-            fallback: &mut Option<StructTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use StructTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = StructTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => StructTypeContentDeserializerState::Fd(values, None),
-                    Some(StructTypeContentDeserializerState::Fd(_, Some(deserializer))) => {
-                        StructTypeContentDeserializerState::Fd(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(StructTypeContentDeserializerState::Fd(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_fd(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_fd(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_fd(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        StructTypeContentDeserializerState::Fd(values, None),
-                    )?;
-                    *self.state__ = StructTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Fd(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        StructTypeContentDeserializerState::Fd(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Fd(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_switch<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::SwitchexprType>,
+            fallback: Option<<super::SwitchexprType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::SwitchexprType>,
-            fallback: &mut Option<StructTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use StructTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = StructTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => StructTypeContentDeserializerState::Switch(values, None),
-                    Some(StructTypeContentDeserializerState::Switch(_, Some(deserializer))) => {
-                        StructTypeContentDeserializerState::Switch(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(StructTypeContentDeserializerState::Switch(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_switch(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_switch(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_switch(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        StructTypeContentDeserializerState::Switch(values, None),
-                    )?;
-                    *self.state__ = StructTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Switch(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        StructTypeContentDeserializerState::Switch(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Switch(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
     }
     impl<'de> Deserializer<'de, super::StructTypeContent> for StructTypeContentDeserializer {
@@ -6080,50 +5438,49 @@ pub mod quick_xml_deserialize {
         ) -> DeserializerResult<'de, super::StructTypeContent> {
             use StructTypeContentDeserializerState as S;
             let mut event = event;
-            let mut fallback = None;
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
-                    (S::Pad(values, Some(deserializer)), event) => {
+                    (S::Pad(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_pad(helper, values, output, &mut fallback)? {
+                        match self.handle_pad(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Field(values, Some(deserializer)), event) => {
+                    (S::Field(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_field(helper, values, output, &mut fallback)? {
+                        match self.handle_field(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::List(values, Some(deserializer)), event) => {
+                    (S::List(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_list(helper, values, output, &mut fallback)? {
+                        match self.handle_list(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Fd(values, Some(deserializer)), event) => {
+                    (S::Fd(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_fd(helper, values, output, &mut fallback)? {
+                        match self.handle_fd(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Switch(values, Some(deserializer)), event) => {
+                    (S::Switch(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_switch(helper, values, output, &mut fallback)? {
+                        match self.handle_switch(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
@@ -6139,69 +5496,84 @@ pub mod quick_xml_deserialize {
                             allow_any: false,
                         });
                     }
-                    (S::Init__, event) => match self.find_suitable(helper, event, &mut fallback)? {
+                    (S::Init__, event) => match self.find_suitable(helper, event)? {
                         ElementHandlerOutput::Break { event, allow_any } => {
                             break (event, allow_any)
                         }
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
-                    (S::Pad(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Pad(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"pad", false)?;
-                        match self.handle_pad(helper, values, output, &mut fallback)? {
+                        match self.handle_pad(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Field(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Field(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"field", false)?;
-                        match self.handle_field(helper, values, output, &mut fallback)? {
+                        match self.handle_field(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::List(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::List(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"list", false)?;
-                        match self.handle_list(helper, values, output, &mut fallback)? {
+                        match self.handle_list(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Fd(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Fd(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"fd", true)?;
-                        match self.handle_fd(helper, values, output, &mut fallback)? {
+                        match self.handle_fd(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Switch(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Switch(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"switch", true)?;
-                        match self.handle_switch(helper, values, output, &mut fallback)? {
+                        match self.handle_switch(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (s @ S::Done__(_), event) => {
-                        *self.state__ = s;
+                    (state @ S::Done__(_), event) => {
+                        *self.state__ = state;
                         break (DeserializerEvent::Continue(event), false);
                     }
                     (state, event) => {
                         *self.state__ = state;
-                        break (DeserializerEvent::Break(event), false);
+                        break (DeserializerEvent::Continue(event), false);
                     }
                 }
             };
@@ -6344,47 +5716,40 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<XidunionTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use XidunionTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                if self.type_.len() < 1usize {
-                    *self.state__ = XidunionTypeDeserializerState::Type(None);
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
+                } else if self.type_.len() < 1usize {
+                    fallback.get_or_insert(S::Type(None));
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 } else {
-                    fallback.get_or_insert(XidunionTypeDeserializerState::Type(None));
-                    *self.state__ = XidunionTypeDeserializerState::Done__;
+                    fallback.get_or_insert(S::Type(None));
+                    *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
             }
             if let Some(fallback) = fallback.take() {
                 self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_type_(data)?;
-                    *self.state__ = XidunionTypeDeserializerState::Type(None);
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::Type(None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback.get_or_insert(XidunionTypeDeserializerState::Type(Some(
-                                deserializer,
-                            )));
-                            *self.state__ = XidunionTypeDeserializerState::Type(None);
-                        }
-                        ElementHandlerOutput::Break { .. } => {
-                            *self.state__ = XidunionTypeDeserializerState::Type(Some(deserializer));
-                        }
-                    }
-                    ret
+                    fallback.get_or_insert(S::Type(Some(deserializer)));
+                    *self.state__ = S::Type(None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
     }
     impl<'de> Deserializer<'de, super::XidunionType> for XidunionTypeDeserializer {
@@ -6431,7 +5796,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ = XidunionTypeDeserializerState::Type(None);
+                        *self.state__ = S::Type(None);
                         event
                     }
                     (S::Type(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -6448,7 +5813,7 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Done__, event) => {
-                        fallback.get_or_insert(S::Done__);
+                        *self.state__ = S::Done__;
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
                     (state, event) => {
@@ -6471,7 +5836,7 @@ pub mod quick_xml_deserialize {
             self.finish_state(helper, state)?;
             Ok(super::XidunionType {
                 name: self.name,
-                type_: self.type_,
+                type_: helper.finish_vec(1usize, None, self.type_)?,
             })
         }
     }
@@ -6528,40 +5893,32 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::EnumTypeContent>,
             fallback: &mut Option<EnumTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use EnumTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = fallback.take().unwrap_or(EnumTypeDeserializerState::Next__);
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                *self.state__ = fallback.take().unwrap_or(S::Next__);
+                return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
                 self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_content(data)?;
-                    *self.state__ = EnumTypeDeserializerState::Next__;
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::Next__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Break { .. } => {
-                            *self.state__ = EnumTypeDeserializerState::Content__(deserializer);
-                        }
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback
-                                .get_or_insert(EnumTypeDeserializerState::Content__(deserializer));
-                            *self.state__ = EnumTypeDeserializerState::Next__;
-                        }
-                    }
-                    ret
+                    *fallback = Some(S::Content__(deserializer));
+                    *self.state__ = S::Next__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
     }
     impl<'de> Deserializer<'de, super::EnumType> for EnumTypeDeserializer {
@@ -6602,9 +5959,7 @@ pub mod quick_xml_deserialize {
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
                         let output =
-                            <super::EnumTypeContent as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::EnumTypeContent as WithDeserializer>::init(helper, event)?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -6614,6 +5969,9 @@ pub mod quick_xml_deserialize {
                     }
                 }
             };
+            if let Some(fallback) = fallback {
+                *self.state__ = fallback;
+            }
             let artifact = DeserializerArtifact::Deserializer(self);
             Ok(DeserializerOutput {
                 artifact,
@@ -6626,7 +5984,7 @@ pub mod quick_xml_deserialize {
             self.finish_state(helper, state)?;
             Ok(super::EnumType {
                 name: self.name,
-                content: self.content,
+                content: helper.finish_vec(1usize, None, self.content)?,
             })
         }
     }
@@ -6678,48 +6036,36 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::EnumItemType>,
             fallback: &mut Option<EnumTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use EnumTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                if self.item.is_some() {
-                    fallback.get_or_insert(EnumTypeContentDeserializerState::Item(None));
-                    *self.state__ = EnumTypeContentDeserializerState::Doc(None);
-                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                } else {
-                    *self.state__ = EnumTypeContentDeserializerState::Item(None);
+                fallback.get_or_insert(S::Item(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
+                } else {
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 }
             }
             if let Some(fallback) = fallback.take() {
                 self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_item(data)?;
-                    *self.state__ = EnumTypeContentDeserializerState::Doc(None);
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::Doc(None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback.get_or_insert(EnumTypeContentDeserializerState::Item(Some(
-                                deserializer,
-                            )));
-                            *self.state__ = EnumTypeContentDeserializerState::Doc(None);
-                        }
-                        ElementHandlerOutput::Break { .. } => {
-                            *self.state__ =
-                                EnumTypeContentDeserializerState::Item(Some(deserializer));
-                        }
-                    }
-                    ret
+                    fallback.get_or_insert(S::Item(Some(deserializer)));
+                    *self.state__ = S::Doc(None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_doc<'de>(
             &mut self,
@@ -6727,43 +6073,33 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::DocType>,
             fallback: &mut Option<EnumTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use EnumTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(EnumTypeContentDeserializerState::Doc(None));
-                *self.state__ = EnumTypeContentDeserializerState::Done__;
+                fallback.get_or_insert(S::Doc(None));
+                *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
                 self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_doc(data)?;
-                    *self.state__ = EnumTypeContentDeserializerState::Done__;
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::Done__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback.get_or_insert(EnumTypeContentDeserializerState::Doc(Some(
-                                deserializer,
-                            )));
-                            *self.state__ = EnumTypeContentDeserializerState::Done__;
-                        }
-                        ElementHandlerOutput::Break { .. } => {
-                            *self.state__ =
-                                EnumTypeContentDeserializerState::Doc(Some(deserializer));
-                        }
-                    }
-                    ret
+                    fallback.get_or_insert(S::Doc(Some(deserializer)));
+                    *self.state__ = S::Done__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
     }
     impl<'de> Deserializer<'de, super::EnumTypeContent> for EnumTypeContentDeserializer {
@@ -6836,7 +6172,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ = EnumTypeContentDeserializerState::Item(None);
+                        *self.state__ = S::Item(None);
                         event
                     }
                     (S::Item(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -6866,7 +6202,7 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Done__, event) => {
-                        fallback.get_or_insert(S::Done__);
+                        *self.state__ = S::Done__;
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
                     (state, event) => {
@@ -6894,9 +6230,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::EnumTypeContent {
-                item: self
-                    .item
-                    .ok_or_else(|| ErrorKind::MissingElement("item".into()))?,
+                item: helper.finish_element("item", self.item)?,
                 doc: self.doc,
             })
         }
@@ -7226,30 +6560,31 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::ListTypeContent>,
             fallback: &mut Option<ListTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use ListTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = fallback.take().unwrap_or(ListTypeDeserializerState::Next__);
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                *self.state__ = fallback.take().unwrap_or(S::Next__);
+                return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
                 self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_content(data)?;
-                    *self.state__ = ListTypeDeserializerState::Next__;
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::Next__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = ListTypeDeserializerState::Content__(deserializer);
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Content__(deserializer);
+                    Ok(ElementHandlerOutput::from_event_end(event, allow_any))
                 }
-            })
+            }
         }
     }
     impl<'de> Deserializer<'de, super::ListType> for ListTypeDeserializer {
@@ -7290,9 +6625,7 @@ pub mod quick_xml_deserialize {
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
                         let output =
-                            <super::ListTypeContent as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::ListTypeContent as WithDeserializer>::init(helper, event)?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -7302,6 +6635,9 @@ pub mod quick_xml_deserialize {
                     }
                 }
             };
+            if let Some(fallback) = fallback {
+                *self.state__ = fallback;
+            }
             let artifact = DeserializerArtifact::Deserializer(self);
             Ok(DeserializerOutput {
                 artifact,
@@ -7332,32 +6668,43 @@ pub mod quick_xml_deserialize {
         Op(
             Option<super::OpType>,
             Option<<super::OpType as WithDeserializer>::Deserializer>,
+            Option<<super::OpType as WithDeserializer>::Deserializer>,
         ),
         Unop(
             Option<super::UnopType>,
+            Option<<super::UnopType as WithDeserializer>::Deserializer>,
             Option<<super::UnopType as WithDeserializer>::Deserializer>,
         ),
         Fieldref(
             Option<String>,
             Option<<String as WithDeserializer>::Deserializer>,
+            Option<<String as WithDeserializer>::Deserializer>,
         ),
         Enumref(
             Option<super::EnumrefType>,
+            Option<<super::EnumrefType as WithDeserializer>::Deserializer>,
             Option<<super::EnumrefType as WithDeserializer>::Deserializer>,
         ),
         Popcount(
             Option<super::PopcountType>,
             Option<<super::PopcountType as WithDeserializer>::Deserializer>,
+            Option<<super::PopcountType as WithDeserializer>::Deserializer>,
         ),
         Sumof(
             Option<super::SumofType>,
+            Option<<super::SumofType as WithDeserializer>::Deserializer>,
             Option<<super::SumofType as WithDeserializer>::Deserializer>,
         ),
         Value(
             Option<super::DecOrHexIntegerType>,
             Option<<super::DecOrHexIntegerType as WithDeserializer>::Deserializer>,
+            Option<<super::DecOrHexIntegerType as WithDeserializer>::Deserializer>,
         ),
-        Bit(Option<i32>, Option<<i32 as WithDeserializer>::Deserializer>),
+        Bit(
+            Option<i32>,
+            Option<<i32 as WithDeserializer>::Deserializer>,
+            Option<<i32 as WithDeserializer>::Deserializer>,
+        ),
         Done__(super::ListTypeContent),
         Unknown__,
     }
@@ -7366,65 +6713,43 @@ pub mod quick_xml_deserialize {
             &mut self,
             helper: &mut DeserializeHelper,
             event: Event<'de>,
-            fallback: &mut Option<ListTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if x.name().local_name().as_ref() == b"op" {
-                    let output =
-                        <super::OpType as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_op(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::OpType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_op(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"unop" {
-                    let output =
-                        <super::UnopType as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_unop(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::UnopType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_unop(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"fieldref" {
-                    let output = <String as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_fieldref(
-                        helper,
-                        Default::default(),
-                        output,
-                        &mut *fallback,
-                    );
+                    let output = <String as WithDeserializer>::init(helper, event)?;
+                    return self.handle_fieldref(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"enumref" {
-                    let output = <super::EnumrefType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
-                    return self.handle_enumref(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::EnumrefType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_enumref(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"popcount" {
-                    let output = <super::PopcountType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
-                    return self.handle_popcount(
-                        helper,
-                        Default::default(),
-                        output,
-                        &mut *fallback,
-                    );
+                    let output = <super::PopcountType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_popcount(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"sumof" {
-                    let output =
-                        <super::SumofType as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_sumof(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::SumofType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_sumof(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"value" {
                     let output =
-                        <super::DecOrHexIntegerType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
-                    return self.handle_value(helper, Default::default(), output, &mut *fallback);
+                        <super::DecOrHexIntegerType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_value(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"bit" {
-                    let output = <i32 as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_bit(helper, Default::default(), output, &mut *fallback);
+                    let output = <i32 as WithDeserializer>::init(helper, event)?;
+                    return self.handle_bit(helper, Default::default(), None, output);
                 }
             }
-            *self.state__ = fallback
-                .take()
-                .unwrap_or(ListTypeContentDeserializerState::Init__);
+            *self.state__ = ListTypeContentDeserializerState::Init__;
             Ok(ElementHandlerOutput::return_to_parent(event, false))
         }
         fn finish_state(
@@ -7433,81 +6758,81 @@ pub mod quick_xml_deserialize {
         ) -> Result<super::ListTypeContent, Error> {
             use ListTypeContentDeserializerState as S;
             match state {
-                S::Unknown__ => unreachable!(),
                 S::Init__ => Err(ErrorKind::MissingContent.into()),
-                S::Op(mut values, deserializer) => {
+                S::Op(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_op(&mut values, value)?;
                     }
                     Ok(super::ListTypeContent::Op(
-                        values.ok_or_else(|| ErrorKind::MissingElement("op".into()))?,
+                        helper.finish_element("op", values)?,
                     ))
                 }
-                S::Unop(mut values, deserializer) => {
+                S::Unop(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_unop(&mut values, value)?;
                     }
                     Ok(super::ListTypeContent::Unop(
-                        values.ok_or_else(|| ErrorKind::MissingElement("unop".into()))?,
+                        helper.finish_element("unop", values)?,
                     ))
                 }
-                S::Fieldref(mut values, deserializer) => {
+                S::Fieldref(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_fieldref(&mut values, value)?;
                     }
-                    Ok(super::ListTypeContent::Fieldref(values.ok_or_else(
-                        || ErrorKind::MissingElement("fieldref".into()),
-                    )?))
+                    Ok(super::ListTypeContent::Fieldref(
+                        helper.finish_element("fieldref", values)?,
+                    ))
                 }
-                S::Enumref(mut values, deserializer) => {
+                S::Enumref(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_enumref(&mut values, value)?;
                     }
-                    Ok(super::ListTypeContent::Enumref(values.ok_or_else(
-                        || ErrorKind::MissingElement("enumref".into()),
-                    )?))
+                    Ok(super::ListTypeContent::Enumref(
+                        helper.finish_element("enumref", values)?,
+                    ))
                 }
-                S::Popcount(mut values, deserializer) => {
+                S::Popcount(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_popcount(&mut values, value)?;
                     }
-                    Ok(super::ListTypeContent::Popcount(values.ok_or_else(
-                        || ErrorKind::MissingElement("popcount".into()),
-                    )?))
+                    Ok(super::ListTypeContent::Popcount(
+                        helper.finish_element("popcount", values)?,
+                    ))
                 }
-                S::Sumof(mut values, deserializer) => {
+                S::Sumof(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_sumof(&mut values, value)?;
                     }
-                    Ok(super::ListTypeContent::Sumof(values.ok_or_else(|| {
-                        ErrorKind::MissingElement("sumof".into())
-                    })?))
+                    Ok(super::ListTypeContent::Sumof(
+                        helper.finish_element("sumof", values)?,
+                    ))
                 }
-                S::Value(mut values, deserializer) => {
+                S::Value(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_value(&mut values, value)?;
                     }
-                    Ok(super::ListTypeContent::Value(values.ok_or_else(|| {
-                        ErrorKind::MissingElement("value".into())
-                    })?))
+                    Ok(super::ListTypeContent::Value(
+                        helper.finish_element("value", values)?,
+                    ))
                 }
-                S::Bit(mut values, deserializer) => {
+                S::Bit(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_bit(&mut values, value)?;
                     }
                     Ok(super::ListTypeContent::Bit(
-                        values.ok_or_else(|| ErrorKind::MissingElement("bit".into()))?,
+                        helper.finish_element("bit", values)?,
                     ))
                 }
                 S::Done__(data) => Ok(data),
+                _ => unreachable!(),
             }
         }
         fn store_op(values: &mut Option<super::OpType>, value: super::OpType) -> Result<(), Error> {
@@ -7595,417 +6920,273 @@ pub mod quick_xml_deserialize {
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::OpType>,
+            fallback: Option<<super::OpType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::OpType>,
-            fallback: &mut Option<ListTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use ListTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = ListTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => ListTypeContentDeserializerState::Op(values, None),
-                    Some(ListTypeContentDeserializerState::Op(_, Some(deserializer))) => {
-                        ListTypeContentDeserializerState::Op(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(ListTypeContentDeserializerState::Op(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_op(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_op(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_op(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        ListTypeContentDeserializerState::Op(values, None),
-                    )?;
-                    *self.state__ = ListTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Op(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        ListTypeContentDeserializerState::Op(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Op(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_unop<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::UnopType>,
+            fallback: Option<<super::UnopType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::UnopType>,
-            fallback: &mut Option<ListTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use ListTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = ListTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => ListTypeContentDeserializerState::Unop(values, None),
-                    Some(ListTypeContentDeserializerState::Unop(_, Some(deserializer))) => {
-                        ListTypeContentDeserializerState::Unop(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(ListTypeContentDeserializerState::Unop(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_unop(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_unop(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_unop(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        ListTypeContentDeserializerState::Unop(values, None),
-                    )?;
-                    *self.state__ = ListTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Unop(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        ListTypeContentDeserializerState::Unop(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Unop(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_fieldref<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<String>,
+            fallback: Option<<String as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, String>,
-            fallback: &mut Option<ListTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use ListTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = ListTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => ListTypeContentDeserializerState::Fieldref(values, None),
-                    Some(ListTypeContentDeserializerState::Fieldref(_, Some(deserializer))) => {
-                        ListTypeContentDeserializerState::Fieldref(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(ListTypeContentDeserializerState::Fieldref(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_fieldref(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_fieldref(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_fieldref(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        ListTypeContentDeserializerState::Fieldref(values, None),
-                    )?;
-                    *self.state__ = ListTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Fieldref(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        ListTypeContentDeserializerState::Fieldref(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Fieldref(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_enumref<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::EnumrefType>,
+            fallback: Option<<super::EnumrefType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::EnumrefType>,
-            fallback: &mut Option<ListTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use ListTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = ListTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => ListTypeContentDeserializerState::Enumref(values, None),
-                    Some(ListTypeContentDeserializerState::Enumref(_, Some(deserializer))) => {
-                        ListTypeContentDeserializerState::Enumref(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(ListTypeContentDeserializerState::Enumref(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_enumref(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_enumref(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_enumref(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        ListTypeContentDeserializerState::Enumref(values, None),
-                    )?;
-                    *self.state__ = ListTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Enumref(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        ListTypeContentDeserializerState::Enumref(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Enumref(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_popcount<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::PopcountType>,
+            fallback: Option<<super::PopcountType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::PopcountType>,
-            fallback: &mut Option<ListTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use ListTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = ListTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => ListTypeContentDeserializerState::Popcount(values, None),
-                    Some(ListTypeContentDeserializerState::Popcount(_, Some(deserializer))) => {
-                        ListTypeContentDeserializerState::Popcount(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(ListTypeContentDeserializerState::Popcount(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_popcount(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_popcount(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_popcount(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        ListTypeContentDeserializerState::Popcount(values, None),
-                    )?;
-                    *self.state__ = ListTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Popcount(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        ListTypeContentDeserializerState::Popcount(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Popcount(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_sumof<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::SumofType>,
+            fallback: Option<<super::SumofType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::SumofType>,
-            fallback: &mut Option<ListTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use ListTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = ListTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => ListTypeContentDeserializerState::Sumof(values, None),
-                    Some(ListTypeContentDeserializerState::Sumof(_, Some(deserializer))) => {
-                        ListTypeContentDeserializerState::Sumof(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(ListTypeContentDeserializerState::Sumof(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_sumof(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_sumof(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_sumof(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        ListTypeContentDeserializerState::Sumof(values, None),
-                    )?;
-                    *self.state__ = ListTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Sumof(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        ListTypeContentDeserializerState::Sumof(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Sumof(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_value<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::DecOrHexIntegerType>,
+            fallback: Option<<super::DecOrHexIntegerType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::DecOrHexIntegerType>,
-            fallback: &mut Option<ListTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use ListTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = ListTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => ListTypeContentDeserializerState::Value(values, None),
-                    Some(ListTypeContentDeserializerState::Value(_, Some(deserializer))) => {
-                        ListTypeContentDeserializerState::Value(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(ListTypeContentDeserializerState::Value(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_value(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_value(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_value(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        ListTypeContentDeserializerState::Value(values, None),
-                    )?;
-                    *self.state__ = ListTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Value(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        ListTypeContentDeserializerState::Value(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Value(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_bit<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<i32>,
+            fallback: Option<<i32 as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, i32>,
-            fallback: &mut Option<ListTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use ListTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = ListTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => ListTypeContentDeserializerState::Bit(values, None),
-                    Some(ListTypeContentDeserializerState::Bit(_, Some(deserializer))) => {
-                        ListTypeContentDeserializerState::Bit(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(ListTypeContentDeserializerState::Bit(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_bit(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_bit(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_bit(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        ListTypeContentDeserializerState::Bit(values, None),
-                    )?;
-                    *self.state__ = ListTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Bit(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        ListTypeContentDeserializerState::Bit(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Bit(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
     }
     impl<'de> Deserializer<'de, super::ListTypeContent> for ListTypeContentDeserializer {
@@ -8034,77 +7215,76 @@ pub mod quick_xml_deserialize {
         ) -> DeserializerResult<'de, super::ListTypeContent> {
             use ListTypeContentDeserializerState as S;
             let mut event = event;
-            let mut fallback = None;
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
-                    (S::Op(values, Some(deserializer)), event) => {
+                    (S::Op(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_op(helper, values, output, &mut fallback)? {
+                        match self.handle_op(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Unop(values, Some(deserializer)), event) => {
+                    (S::Unop(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_unop(helper, values, output, &mut fallback)? {
+                        match self.handle_unop(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Fieldref(values, Some(deserializer)), event) => {
+                    (S::Fieldref(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_fieldref(helper, values, output, &mut fallback)? {
+                        match self.handle_fieldref(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Enumref(values, Some(deserializer)), event) => {
+                    (S::Enumref(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_enumref(helper, values, output, &mut fallback)? {
+                        match self.handle_enumref(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Popcount(values, Some(deserializer)), event) => {
+                    (S::Popcount(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_popcount(helper, values, output, &mut fallback)? {
+                        match self.handle_popcount(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Sumof(values, Some(deserializer)), event) => {
+                    (S::Sumof(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_sumof(helper, values, output, &mut fallback)? {
+                        match self.handle_sumof(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Value(values, Some(deserializer)), event) => {
+                    (S::Value(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_value(helper, values, output, &mut fallback)? {
+                        match self.handle_value(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Bit(values, Some(deserializer)), event) => {
+                    (S::Bit(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_bit(helper, values, output, &mut fallback)? {
+                        match self.handle_bit(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
@@ -8120,99 +7300,123 @@ pub mod quick_xml_deserialize {
                             allow_any: false,
                         });
                     }
-                    (S::Init__, event) => match self.find_suitable(helper, event, &mut fallback)? {
+                    (S::Init__, event) => match self.find_suitable(helper, event)? {
                         ElementHandlerOutput::Break { event, allow_any } => {
                             break (event, allow_any)
                         }
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
-                    (S::Op(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Op(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"op", false)?;
-                        match self.handle_op(helper, values, output, &mut fallback)? {
+                        match self.handle_op(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Unop(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Unop(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"unop", false)?;
-                        match self.handle_unop(helper, values, output, &mut fallback)? {
+                        match self.handle_unop(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Fieldref(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Fieldref(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"fieldref", false)?;
-                        match self.handle_fieldref(helper, values, output, &mut fallback)? {
+                        match self.handle_fieldref(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Enumref(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Enumref(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"enumref", false)?;
-                        match self.handle_enumref(helper, values, output, &mut fallback)? {
+                        match self.handle_enumref(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Popcount(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Popcount(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"popcount", false)?;
-                        match self.handle_popcount(helper, values, output, &mut fallback)? {
+                        match self.handle_popcount(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Sumof(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Sumof(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"sumof", false)?;
-                        match self.handle_sumof(helper, values, output, &mut fallback)? {
+                        match self.handle_sumof(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Value(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Value(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"value", false)?;
-                        match self.handle_value(helper, values, output, &mut fallback)? {
+                        match self.handle_value(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Bit(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Bit(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"bit", false)?;
-                        match self.handle_bit(helper, values, output, &mut fallback)? {
+                        match self.handle_bit(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (s @ S::Done__(_), event) => {
-                        *self.state__ = s;
+                    (state @ S::Done__(_), event) => {
+                        *self.state__ = state;
                         break (DeserializerEvent::Continue(event), false);
                     }
                     (state, event) => {
                         *self.state__ = state;
-                        break (DeserializerEvent::Break(event), false);
+                        break (DeserializerEvent::Continue(event), false);
                     }
                 }
             };
@@ -8371,32 +7575,31 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::ExprfieldTypeContent>,
             fallback: &mut Option<ExprfieldTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use ExprfieldTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = fallback
-                    .take()
-                    .unwrap_or(ExprfieldTypeDeserializerState::Next__);
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                *self.state__ = fallback.take().unwrap_or(S::Next__);
+                return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
                 self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_content(data)?;
-                    *self.state__ = ExprfieldTypeDeserializerState::Next__;
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::Next__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = ExprfieldTypeDeserializerState::Content__(deserializer);
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Content__(deserializer);
+                    Ok(ElementHandlerOutput::from_event_end(event, allow_any))
                 }
-            })
+            }
         }
     }
     impl<'de> Deserializer<'de, super::ExprfieldType> for ExprfieldTypeDeserializer {
@@ -8437,9 +7640,7 @@ pub mod quick_xml_deserialize {
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
                         let output =
-                            <super::ExprfieldTypeContent as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::ExprfieldTypeContent as WithDeserializer>::init(helper, event)?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -8449,6 +7650,9 @@ pub mod quick_xml_deserialize {
                     }
                 }
             };
+            if let Some(fallback) = fallback {
+                *self.state__ = fallback;
+            }
             let artifact = DeserializerArtifact::Deserializer(self);
             Ok(DeserializerOutput {
                 artifact,
@@ -8468,7 +7672,7 @@ pub mod quick_xml_deserialize {
                 enum_: self.enum_,
                 altenum: self.altenum,
                 mask: self.mask,
-                content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                content: helper.finish_content(self.content)?,
             })
         }
     }
@@ -8482,32 +7686,43 @@ pub mod quick_xml_deserialize {
         Op(
             Option<super::OpType>,
             Option<<super::OpType as WithDeserializer>::Deserializer>,
+            Option<<super::OpType as WithDeserializer>::Deserializer>,
         ),
         Unop(
             Option<super::UnopType>,
+            Option<<super::UnopType as WithDeserializer>::Deserializer>,
             Option<<super::UnopType as WithDeserializer>::Deserializer>,
         ),
         Fieldref(
             Option<String>,
             Option<<String as WithDeserializer>::Deserializer>,
+            Option<<String as WithDeserializer>::Deserializer>,
         ),
         Enumref(
             Option<super::EnumrefType>,
+            Option<<super::EnumrefType as WithDeserializer>::Deserializer>,
             Option<<super::EnumrefType as WithDeserializer>::Deserializer>,
         ),
         Popcount(
             Option<super::PopcountType>,
             Option<<super::PopcountType as WithDeserializer>::Deserializer>,
+            Option<<super::PopcountType as WithDeserializer>::Deserializer>,
         ),
         Sumof(
             Option<super::SumofType>,
+            Option<<super::SumofType as WithDeserializer>::Deserializer>,
             Option<<super::SumofType as WithDeserializer>::Deserializer>,
         ),
         Value(
             Option<super::DecOrHexIntegerType>,
             Option<<super::DecOrHexIntegerType as WithDeserializer>::Deserializer>,
+            Option<<super::DecOrHexIntegerType as WithDeserializer>::Deserializer>,
         ),
-        Bit(Option<i32>, Option<<i32 as WithDeserializer>::Deserializer>),
+        Bit(
+            Option<i32>,
+            Option<<i32 as WithDeserializer>::Deserializer>,
+            Option<<i32 as WithDeserializer>::Deserializer>,
+        ),
         Done__(super::ExprfieldTypeContent),
         Unknown__,
     }
@@ -8516,65 +7731,43 @@ pub mod quick_xml_deserialize {
             &mut self,
             helper: &mut DeserializeHelper,
             event: Event<'de>,
-            fallback: &mut Option<ExprfieldTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if x.name().local_name().as_ref() == b"op" {
-                    let output =
-                        <super::OpType as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_op(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::OpType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_op(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"unop" {
-                    let output =
-                        <super::UnopType as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_unop(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::UnopType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_unop(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"fieldref" {
-                    let output = <String as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_fieldref(
-                        helper,
-                        Default::default(),
-                        output,
-                        &mut *fallback,
-                    );
+                    let output = <String as WithDeserializer>::init(helper, event)?;
+                    return self.handle_fieldref(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"enumref" {
-                    let output = <super::EnumrefType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
-                    return self.handle_enumref(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::EnumrefType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_enumref(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"popcount" {
-                    let output = <super::PopcountType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
-                    return self.handle_popcount(
-                        helper,
-                        Default::default(),
-                        output,
-                        &mut *fallback,
-                    );
+                    let output = <super::PopcountType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_popcount(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"sumof" {
-                    let output =
-                        <super::SumofType as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_sumof(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::SumofType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_sumof(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"value" {
                     let output =
-                        <super::DecOrHexIntegerType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
-                    return self.handle_value(helper, Default::default(), output, &mut *fallback);
+                        <super::DecOrHexIntegerType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_value(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"bit" {
-                    let output = <i32 as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_bit(helper, Default::default(), output, &mut *fallback);
+                    let output = <i32 as WithDeserializer>::init(helper, event)?;
+                    return self.handle_bit(helper, Default::default(), None, output);
                 }
             }
-            *self.state__ = fallback
-                .take()
-                .unwrap_or(ExprfieldTypeContentDeserializerState::Init__);
+            *self.state__ = ExprfieldTypeContentDeserializerState::Init__;
             Ok(ElementHandlerOutput::return_to_parent(event, false))
         }
         fn finish_state(
@@ -8583,81 +7776,81 @@ pub mod quick_xml_deserialize {
         ) -> Result<super::ExprfieldTypeContent, Error> {
             use ExprfieldTypeContentDeserializerState as S;
             match state {
-                S::Unknown__ => unreachable!(),
                 S::Init__ => Err(ErrorKind::MissingContent.into()),
-                S::Op(mut values, deserializer) => {
+                S::Op(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_op(&mut values, value)?;
                     }
                     Ok(super::ExprfieldTypeContent::Op(
-                        values.ok_or_else(|| ErrorKind::MissingElement("op".into()))?,
+                        helper.finish_element("op", values)?,
                     ))
                 }
-                S::Unop(mut values, deserializer) => {
+                S::Unop(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_unop(&mut values, value)?;
                     }
                     Ok(super::ExprfieldTypeContent::Unop(
-                        values.ok_or_else(|| ErrorKind::MissingElement("unop".into()))?,
+                        helper.finish_element("unop", values)?,
                     ))
                 }
-                S::Fieldref(mut values, deserializer) => {
+                S::Fieldref(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_fieldref(&mut values, value)?;
                     }
-                    Ok(super::ExprfieldTypeContent::Fieldref(values.ok_or_else(
-                        || ErrorKind::MissingElement("fieldref".into()),
-                    )?))
+                    Ok(super::ExprfieldTypeContent::Fieldref(
+                        helper.finish_element("fieldref", values)?,
+                    ))
                 }
-                S::Enumref(mut values, deserializer) => {
+                S::Enumref(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_enumref(&mut values, value)?;
                     }
-                    Ok(super::ExprfieldTypeContent::Enumref(values.ok_or_else(
-                        || ErrorKind::MissingElement("enumref".into()),
-                    )?))
+                    Ok(super::ExprfieldTypeContent::Enumref(
+                        helper.finish_element("enumref", values)?,
+                    ))
                 }
-                S::Popcount(mut values, deserializer) => {
+                S::Popcount(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_popcount(&mut values, value)?;
                     }
-                    Ok(super::ExprfieldTypeContent::Popcount(values.ok_or_else(
-                        || ErrorKind::MissingElement("popcount".into()),
-                    )?))
+                    Ok(super::ExprfieldTypeContent::Popcount(
+                        helper.finish_element("popcount", values)?,
+                    ))
                 }
-                S::Sumof(mut values, deserializer) => {
+                S::Sumof(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_sumof(&mut values, value)?;
                     }
-                    Ok(super::ExprfieldTypeContent::Sumof(values.ok_or_else(
-                        || ErrorKind::MissingElement("sumof".into()),
-                    )?))
+                    Ok(super::ExprfieldTypeContent::Sumof(
+                        helper.finish_element("sumof", values)?,
+                    ))
                 }
-                S::Value(mut values, deserializer) => {
+                S::Value(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_value(&mut values, value)?;
                     }
-                    Ok(super::ExprfieldTypeContent::Value(values.ok_or_else(
-                        || ErrorKind::MissingElement("value".into()),
-                    )?))
+                    Ok(super::ExprfieldTypeContent::Value(
+                        helper.finish_element("value", values)?,
+                    ))
                 }
-                S::Bit(mut values, deserializer) => {
+                S::Bit(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_bit(&mut values, value)?;
                     }
                     Ok(super::ExprfieldTypeContent::Bit(
-                        values.ok_or_else(|| ErrorKind::MissingElement("bit".into()))?,
+                        helper.finish_element("bit", values)?,
                     ))
                 }
                 S::Done__(data) => Ok(data),
+                _ => unreachable!(),
             }
         }
         fn store_op(values: &mut Option<super::OpType>, value: super::OpType) -> Result<(), Error> {
@@ -8745,423 +7938,273 @@ pub mod quick_xml_deserialize {
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::OpType>,
+            fallback: Option<<super::OpType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::OpType>,
-            fallback: &mut Option<ExprfieldTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use ExprfieldTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = ExprfieldTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => ExprfieldTypeContentDeserializerState::Op(values, None),
-                    Some(ExprfieldTypeContentDeserializerState::Op(_, Some(deserializer))) => {
-                        ExprfieldTypeContentDeserializerState::Op(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(ExprfieldTypeContentDeserializerState::Op(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_op(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_op(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_op(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        ExprfieldTypeContentDeserializerState::Op(values, None),
-                    )?;
-                    *self.state__ = ExprfieldTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Op(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        ExprfieldTypeContentDeserializerState::Op(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Op(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_unop<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::UnopType>,
+            fallback: Option<<super::UnopType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::UnopType>,
-            fallback: &mut Option<ExprfieldTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use ExprfieldTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = ExprfieldTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => ExprfieldTypeContentDeserializerState::Unop(values, None),
-                    Some(ExprfieldTypeContentDeserializerState::Unop(_, Some(deserializer))) => {
-                        ExprfieldTypeContentDeserializerState::Unop(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(ExprfieldTypeContentDeserializerState::Unop(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_unop(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_unop(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_unop(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        ExprfieldTypeContentDeserializerState::Unop(values, None),
-                    )?;
-                    *self.state__ = ExprfieldTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Unop(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        ExprfieldTypeContentDeserializerState::Unop(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Unop(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_fieldref<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<String>,
+            fallback: Option<<String as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, String>,
-            fallback: &mut Option<ExprfieldTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use ExprfieldTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = ExprfieldTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => ExprfieldTypeContentDeserializerState::Fieldref(values, None),
-                    Some(ExprfieldTypeContentDeserializerState::Fieldref(
-                        _,
-                        Some(deserializer),
-                    )) => {
-                        ExprfieldTypeContentDeserializerState::Fieldref(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(ExprfieldTypeContentDeserializerState::Fieldref(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_fieldref(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_fieldref(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_fieldref(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        ExprfieldTypeContentDeserializerState::Fieldref(values, None),
-                    )?;
-                    *self.state__ = ExprfieldTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Fieldref(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        ExprfieldTypeContentDeserializerState::Fieldref(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Fieldref(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_enumref<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::EnumrefType>,
+            fallback: Option<<super::EnumrefType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::EnumrefType>,
-            fallback: &mut Option<ExprfieldTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use ExprfieldTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = ExprfieldTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => ExprfieldTypeContentDeserializerState::Enumref(values, None),
-                    Some(ExprfieldTypeContentDeserializerState::Enumref(_, Some(deserializer))) => {
-                        ExprfieldTypeContentDeserializerState::Enumref(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(ExprfieldTypeContentDeserializerState::Enumref(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_enumref(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_enumref(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_enumref(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        ExprfieldTypeContentDeserializerState::Enumref(values, None),
-                    )?;
-                    *self.state__ = ExprfieldTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Enumref(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        ExprfieldTypeContentDeserializerState::Enumref(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Enumref(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_popcount<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::PopcountType>,
+            fallback: Option<<super::PopcountType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::PopcountType>,
-            fallback: &mut Option<ExprfieldTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use ExprfieldTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = ExprfieldTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => ExprfieldTypeContentDeserializerState::Popcount(values, None),
-                    Some(ExprfieldTypeContentDeserializerState::Popcount(
-                        _,
-                        Some(deserializer),
-                    )) => {
-                        ExprfieldTypeContentDeserializerState::Popcount(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(ExprfieldTypeContentDeserializerState::Popcount(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_popcount(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_popcount(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_popcount(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        ExprfieldTypeContentDeserializerState::Popcount(values, None),
-                    )?;
-                    *self.state__ = ExprfieldTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Popcount(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        ExprfieldTypeContentDeserializerState::Popcount(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Popcount(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_sumof<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::SumofType>,
+            fallback: Option<<super::SumofType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::SumofType>,
-            fallback: &mut Option<ExprfieldTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use ExprfieldTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = ExprfieldTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => ExprfieldTypeContentDeserializerState::Sumof(values, None),
-                    Some(ExprfieldTypeContentDeserializerState::Sumof(_, Some(deserializer))) => {
-                        ExprfieldTypeContentDeserializerState::Sumof(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(ExprfieldTypeContentDeserializerState::Sumof(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_sumof(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_sumof(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_sumof(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        ExprfieldTypeContentDeserializerState::Sumof(values, None),
-                    )?;
-                    *self.state__ = ExprfieldTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Sumof(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        ExprfieldTypeContentDeserializerState::Sumof(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Sumof(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_value<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::DecOrHexIntegerType>,
+            fallback: Option<<super::DecOrHexIntegerType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::DecOrHexIntegerType>,
-            fallback: &mut Option<ExprfieldTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use ExprfieldTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = ExprfieldTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => ExprfieldTypeContentDeserializerState::Value(values, None),
-                    Some(ExprfieldTypeContentDeserializerState::Value(_, Some(deserializer))) => {
-                        ExprfieldTypeContentDeserializerState::Value(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(ExprfieldTypeContentDeserializerState::Value(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_value(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_value(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_value(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        ExprfieldTypeContentDeserializerState::Value(values, None),
-                    )?;
-                    *self.state__ = ExprfieldTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Value(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        ExprfieldTypeContentDeserializerState::Value(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Value(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_bit<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<i32>,
+            fallback: Option<<i32 as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, i32>,
-            fallback: &mut Option<ExprfieldTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use ExprfieldTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = ExprfieldTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => ExprfieldTypeContentDeserializerState::Bit(values, None),
-                    Some(ExprfieldTypeContentDeserializerState::Bit(_, Some(deserializer))) => {
-                        ExprfieldTypeContentDeserializerState::Bit(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(ExprfieldTypeContentDeserializerState::Bit(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_bit(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_bit(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_bit(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        ExprfieldTypeContentDeserializerState::Bit(values, None),
-                    )?;
-                    *self.state__ = ExprfieldTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Bit(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        ExprfieldTypeContentDeserializerState::Bit(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Bit(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
     }
     impl<'de> Deserializer<'de, super::ExprfieldTypeContent> for ExprfieldTypeContentDeserializer {
@@ -9190,77 +8233,76 @@ pub mod quick_xml_deserialize {
         ) -> DeserializerResult<'de, super::ExprfieldTypeContent> {
             use ExprfieldTypeContentDeserializerState as S;
             let mut event = event;
-            let mut fallback = None;
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
-                    (S::Op(values, Some(deserializer)), event) => {
+                    (S::Op(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_op(helper, values, output, &mut fallback)? {
+                        match self.handle_op(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Unop(values, Some(deserializer)), event) => {
+                    (S::Unop(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_unop(helper, values, output, &mut fallback)? {
+                        match self.handle_unop(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Fieldref(values, Some(deserializer)), event) => {
+                    (S::Fieldref(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_fieldref(helper, values, output, &mut fallback)? {
+                        match self.handle_fieldref(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Enumref(values, Some(deserializer)), event) => {
+                    (S::Enumref(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_enumref(helper, values, output, &mut fallback)? {
+                        match self.handle_enumref(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Popcount(values, Some(deserializer)), event) => {
+                    (S::Popcount(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_popcount(helper, values, output, &mut fallback)? {
+                        match self.handle_popcount(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Sumof(values, Some(deserializer)), event) => {
+                    (S::Sumof(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_sumof(helper, values, output, &mut fallback)? {
+                        match self.handle_sumof(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Value(values, Some(deserializer)), event) => {
+                    (S::Value(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_value(helper, values, output, &mut fallback)? {
+                        match self.handle_value(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Bit(values, Some(deserializer)), event) => {
+                    (S::Bit(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_bit(helper, values, output, &mut fallback)? {
+                        match self.handle_bit(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
@@ -9276,99 +8318,123 @@ pub mod quick_xml_deserialize {
                             allow_any: false,
                         });
                     }
-                    (S::Init__, event) => match self.find_suitable(helper, event, &mut fallback)? {
+                    (S::Init__, event) => match self.find_suitable(helper, event)? {
                         ElementHandlerOutput::Break { event, allow_any } => {
                             break (event, allow_any)
                         }
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
-                    (S::Op(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Op(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"op", false)?;
-                        match self.handle_op(helper, values, output, &mut fallback)? {
+                        match self.handle_op(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Unop(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Unop(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"unop", false)?;
-                        match self.handle_unop(helper, values, output, &mut fallback)? {
+                        match self.handle_unop(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Fieldref(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Fieldref(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"fieldref", false)?;
-                        match self.handle_fieldref(helper, values, output, &mut fallback)? {
+                        match self.handle_fieldref(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Enumref(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Enumref(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"enumref", false)?;
-                        match self.handle_enumref(helper, values, output, &mut fallback)? {
+                        match self.handle_enumref(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Popcount(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Popcount(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"popcount", false)?;
-                        match self.handle_popcount(helper, values, output, &mut fallback)? {
+                        match self.handle_popcount(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Sumof(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Sumof(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"sumof", false)?;
-                        match self.handle_sumof(helper, values, output, &mut fallback)? {
+                        match self.handle_sumof(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Value(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Value(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"value", false)?;
-                        match self.handle_value(helper, values, output, &mut fallback)? {
+                        match self.handle_value(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Bit(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Bit(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"bit", false)?;
-                        match self.handle_bit(helper, values, output, &mut fallback)? {
+                        match self.handle_bit(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (s @ S::Done__(_), event) => {
-                        *self.state__ = s;
+                    (state @ S::Done__(_), event) => {
+                        *self.state__ = state;
                         break (DeserializerEvent::Continue(event), false);
                     }
                     (state, event) => {
                         *self.state__ = state;
-                        break (DeserializerEvent::Break(event), false);
+                        break (DeserializerEvent::Continue(event), false);
                     }
                 }
             };
@@ -9535,44 +8601,32 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::SwitchexprTypeContent>,
             fallback: &mut Option<SwitchexprTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use SwitchexprTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = fallback
-                    .take()
-                    .unwrap_or(SwitchexprTypeDeserializerState::Next__);
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                *self.state__ = fallback.take().unwrap_or(S::Next__);
+                return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
                 self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_content(data)?;
-                    *self.state__ = SwitchexprTypeDeserializerState::Next__;
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::Next__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Break { .. } => {
-                            *self.state__ =
-                                SwitchexprTypeDeserializerState::Content__(deserializer);
-                        }
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback.get_or_insert(SwitchexprTypeDeserializerState::Content__(
-                                deserializer,
-                            ));
-                            *self.state__ = SwitchexprTypeDeserializerState::Next__;
-                        }
-                    }
-                    ret
+                    *fallback = Some(S::Content__(deserializer));
+                    *self.state__ = S::Next__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
     }
     impl<'de> Deserializer<'de, super::SwitchexprType> for SwitchexprTypeDeserializer {
@@ -9612,10 +8666,9 @@ pub mod quick_xml_deserialize {
                     }
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
-                        let output =
-                            <super::SwitchexprTypeContent as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                        let output = <super::SwitchexprTypeContent as WithDeserializer>::init(
+                            helper, event,
+                        )?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -9625,6 +8678,9 @@ pub mod quick_xml_deserialize {
                     }
                 }
             };
+            if let Some(fallback) = fallback {
+                *self.state__ = fallback;
+            }
             let artifact = DeserializerArtifact::Deserializer(self);
             Ok(DeserializerOutput {
                 artifact,
@@ -9643,7 +8699,7 @@ pub mod quick_xml_deserialize {
             self.finish_state(helper, state)?;
             Ok(super::SwitchexprType {
                 name: self.name,
-                content: self.content,
+                content: helper.finish_vec(2usize, None, self.content)?,
             })
         }
     }
@@ -9657,50 +8713,66 @@ pub mod quick_xml_deserialize {
         Op(
             Option<super::OpType>,
             Option<<super::OpType as WithDeserializer>::Deserializer>,
+            Option<<super::OpType as WithDeserializer>::Deserializer>,
         ),
         Unop(
             Option<super::UnopType>,
+            Option<<super::UnopType as WithDeserializer>::Deserializer>,
             Option<<super::UnopType as WithDeserializer>::Deserializer>,
         ),
         Fieldref(
             Option<String>,
             Option<<String as WithDeserializer>::Deserializer>,
+            Option<<String as WithDeserializer>::Deserializer>,
         ),
         Enumref(
             Option<super::EnumrefType>,
+            Option<<super::EnumrefType as WithDeserializer>::Deserializer>,
             Option<<super::EnumrefType as WithDeserializer>::Deserializer>,
         ),
         Popcount(
             Option<super::PopcountType>,
             Option<<super::PopcountType as WithDeserializer>::Deserializer>,
+            Option<<super::PopcountType as WithDeserializer>::Deserializer>,
         ),
         Sumof(
             Option<super::SumofType>,
+            Option<<super::SumofType as WithDeserializer>::Deserializer>,
             Option<<super::SumofType as WithDeserializer>::Deserializer>,
         ),
         Value(
             Option<super::DecOrHexIntegerType>,
             Option<<super::DecOrHexIntegerType as WithDeserializer>::Deserializer>,
+            Option<<super::DecOrHexIntegerType as WithDeserializer>::Deserializer>,
         ),
-        Bit(Option<i32>, Option<<i32 as WithDeserializer>::Deserializer>),
+        Bit(
+            Option<i32>,
+            Option<<i32 as WithDeserializer>::Deserializer>,
+            Option<<i32 as WithDeserializer>::Deserializer>,
+        ),
         Bitcase(
             Option<super::CaseexprType>,
+            Option<<super::CaseexprType as WithDeserializer>::Deserializer>,
             Option<<super::CaseexprType as WithDeserializer>::Deserializer>,
         ),
         Pad(
             Option<super::PadType>,
             Option<<super::PadType as WithDeserializer>::Deserializer>,
+            Option<<super::PadType as WithDeserializer>::Deserializer>,
         ),
         Field(
             Option<super::VarType>,
+            Option<<super::VarType as WithDeserializer>::Deserializer>,
             Option<<super::VarType as WithDeserializer>::Deserializer>,
         ),
         List(
             Option<super::ListType>,
             Option<<super::ListType as WithDeserializer>::Deserializer>,
+            Option<<super::ListType as WithDeserializer>::Deserializer>,
         ),
         Fd(
             Option<super::AnyType>,
+            Option<<super::AnyType as WithDeserializer>::Deserializer>,
             Option<<super::AnyType as WithDeserializer>::Deserializer>,
         ),
         Done__(super::SwitchexprTypeContent),
@@ -9711,91 +8783,63 @@ pub mod quick_xml_deserialize {
             &mut self,
             helper: &mut DeserializeHelper,
             event: Event<'de>,
-            fallback: &mut Option<SwitchexprTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if x.name().local_name().as_ref() == b"op" {
-                    let output =
-                        <super::OpType as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_op(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::OpType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_op(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"unop" {
-                    let output =
-                        <super::UnopType as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_unop(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::UnopType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_unop(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"fieldref" {
-                    let output = <String as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_fieldref(
-                        helper,
-                        Default::default(),
-                        output,
-                        &mut *fallback,
-                    );
+                    let output = <String as WithDeserializer>::init(helper, event)?;
+                    return self.handle_fieldref(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"enumref" {
-                    let output = <super::EnumrefType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
-                    return self.handle_enumref(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::EnumrefType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_enumref(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"popcount" {
-                    let output = <super::PopcountType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
-                    return self.handle_popcount(
-                        helper,
-                        Default::default(),
-                        output,
-                        &mut *fallback,
-                    );
+                    let output = <super::PopcountType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_popcount(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"sumof" {
-                    let output =
-                        <super::SumofType as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_sumof(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::SumofType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_sumof(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"value" {
                     let output =
-                        <super::DecOrHexIntegerType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
-                    return self.handle_value(helper, Default::default(), output, &mut *fallback);
+                        <super::DecOrHexIntegerType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_value(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"bit" {
-                    let output = <i32 as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_bit(helper, Default::default(), output, &mut *fallback);
+                    let output = <i32 as WithDeserializer>::init(helper, event)?;
+                    return self.handle_bit(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"bitcase" {
-                    let output = <super::CaseexprType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
-                    return self.handle_bitcase(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::CaseexprType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_bitcase(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"pad" {
-                    let output =
-                        <super::PadType as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_pad(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::PadType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_pad(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"field" {
-                    let output =
-                        <super::VarType as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_field(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::VarType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_field(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"list" {
-                    let output =
-                        <super::ListType as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_list(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::ListType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_list(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"fd" {
-                    let output =
-                        <super::AnyType as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_fd(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::AnyType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_fd(helper, Default::default(), None, output);
                 }
             }
-            *self.state__ = fallback
-                .take()
-                .unwrap_or(SwitchexprTypeContentDeserializerState::Init__);
+            *self.state__ = SwitchexprTypeContentDeserializerState::Init__;
             Ok(ElementHandlerOutput::return_to_parent(event, false))
         }
         fn finish_state(
@@ -9804,126 +8848,126 @@ pub mod quick_xml_deserialize {
         ) -> Result<super::SwitchexprTypeContent, Error> {
             use SwitchexprTypeContentDeserializerState as S;
             match state {
-                S::Unknown__ => unreachable!(),
                 S::Init__ => Err(ErrorKind::MissingContent.into()),
-                S::Op(mut values, deserializer) => {
+                S::Op(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_op(&mut values, value)?;
                     }
                     Ok(super::SwitchexprTypeContent::Op(
-                        values.ok_or_else(|| ErrorKind::MissingElement("op".into()))?,
+                        helper.finish_element("op", values)?,
                     ))
                 }
-                S::Unop(mut values, deserializer) => {
+                S::Unop(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_unop(&mut values, value)?;
                     }
                     Ok(super::SwitchexprTypeContent::Unop(
-                        values.ok_or_else(|| ErrorKind::MissingElement("unop".into()))?,
+                        helper.finish_element("unop", values)?,
                     ))
                 }
-                S::Fieldref(mut values, deserializer) => {
+                S::Fieldref(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_fieldref(&mut values, value)?;
                     }
-                    Ok(super::SwitchexprTypeContent::Fieldref(values.ok_or_else(
-                        || ErrorKind::MissingElement("fieldref".into()),
-                    )?))
+                    Ok(super::SwitchexprTypeContent::Fieldref(
+                        helper.finish_element("fieldref", values)?,
+                    ))
                 }
-                S::Enumref(mut values, deserializer) => {
+                S::Enumref(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_enumref(&mut values, value)?;
                     }
-                    Ok(super::SwitchexprTypeContent::Enumref(values.ok_or_else(
-                        || ErrorKind::MissingElement("enumref".into()),
-                    )?))
+                    Ok(super::SwitchexprTypeContent::Enumref(
+                        helper.finish_element("enumref", values)?,
+                    ))
                 }
-                S::Popcount(mut values, deserializer) => {
+                S::Popcount(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_popcount(&mut values, value)?;
                     }
-                    Ok(super::SwitchexprTypeContent::Popcount(values.ok_or_else(
-                        || ErrorKind::MissingElement("popcount".into()),
-                    )?))
+                    Ok(super::SwitchexprTypeContent::Popcount(
+                        helper.finish_element("popcount", values)?,
+                    ))
                 }
-                S::Sumof(mut values, deserializer) => {
+                S::Sumof(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_sumof(&mut values, value)?;
                     }
-                    Ok(super::SwitchexprTypeContent::Sumof(values.ok_or_else(
-                        || ErrorKind::MissingElement("sumof".into()),
-                    )?))
+                    Ok(super::SwitchexprTypeContent::Sumof(
+                        helper.finish_element("sumof", values)?,
+                    ))
                 }
-                S::Value(mut values, deserializer) => {
+                S::Value(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_value(&mut values, value)?;
                     }
-                    Ok(super::SwitchexprTypeContent::Value(values.ok_or_else(
-                        || ErrorKind::MissingElement("value".into()),
-                    )?))
+                    Ok(super::SwitchexprTypeContent::Value(
+                        helper.finish_element("value", values)?,
+                    ))
                 }
-                S::Bit(mut values, deserializer) => {
+                S::Bit(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_bit(&mut values, value)?;
                     }
                     Ok(super::SwitchexprTypeContent::Bit(
-                        values.ok_or_else(|| ErrorKind::MissingElement("bit".into()))?,
+                        helper.finish_element("bit", values)?,
                     ))
                 }
-                S::Bitcase(mut values, deserializer) => {
+                S::Bitcase(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_bitcase(&mut values, value)?;
                     }
-                    Ok(super::SwitchexprTypeContent::Bitcase(values.ok_or_else(
-                        || ErrorKind::MissingElement("bitcase".into()),
-                    )?))
+                    Ok(super::SwitchexprTypeContent::Bitcase(
+                        helper.finish_element("bitcase", values)?,
+                    ))
                 }
-                S::Pad(mut values, deserializer) => {
+                S::Pad(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_pad(&mut values, value)?;
                     }
                     Ok(super::SwitchexprTypeContent::Pad(
-                        values.ok_or_else(|| ErrorKind::MissingElement("pad".into()))?,
+                        helper.finish_element("pad", values)?,
                     ))
                 }
-                S::Field(mut values, deserializer) => {
+                S::Field(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_field(&mut values, value)?;
                     }
-                    Ok(super::SwitchexprTypeContent::Field(values.ok_or_else(
-                        || ErrorKind::MissingElement("field".into()),
-                    )?))
+                    Ok(super::SwitchexprTypeContent::Field(
+                        helper.finish_element("field", values)?,
+                    ))
                 }
-                S::List(mut values, deserializer) => {
+                S::List(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_list(&mut values, value)?;
                     }
                     Ok(super::SwitchexprTypeContent::List(
-                        values.ok_or_else(|| ErrorKind::MissingElement("list".into()))?,
+                        helper.finish_element("list", values)?,
                     ))
                 }
-                S::Fd(mut values, deserializer) => {
+                S::Fd(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_fd(&mut values, value)?;
                     }
                     Ok(super::SwitchexprTypeContent::Fd(
-                        values.ok_or_else(|| ErrorKind::MissingElement("fd".into()))?,
+                        helper.finish_element("fd", values)?,
                     ))
                 }
                 S::Done__(data) => Ok(data),
+                _ => unreachable!(),
             }
         }
         fn store_op(values: &mut Option<super::OpType>, value: super::OpType) -> Result<(), Error> {
@@ -10065,693 +9109,443 @@ pub mod quick_xml_deserialize {
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::OpType>,
+            fallback: Option<<super::OpType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::OpType>,
-            fallback: &mut Option<SwitchexprTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use SwitchexprTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = SwitchexprTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => SwitchexprTypeContentDeserializerState::Op(values, None),
-                    Some(SwitchexprTypeContentDeserializerState::Op(_, Some(deserializer))) => {
-                        SwitchexprTypeContentDeserializerState::Op(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(SwitchexprTypeContentDeserializerState::Op(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_op(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_op(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_op(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        SwitchexprTypeContentDeserializerState::Op(values, None),
-                    )?;
-                    *self.state__ = SwitchexprTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Op(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        SwitchexprTypeContentDeserializerState::Op(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Op(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_unop<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::UnopType>,
+            fallback: Option<<super::UnopType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::UnopType>,
-            fallback: &mut Option<SwitchexprTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use SwitchexprTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = SwitchexprTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => SwitchexprTypeContentDeserializerState::Unop(values, None),
-                    Some(SwitchexprTypeContentDeserializerState::Unop(_, Some(deserializer))) => {
-                        SwitchexprTypeContentDeserializerState::Unop(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(SwitchexprTypeContentDeserializerState::Unop(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_unop(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_unop(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_unop(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        SwitchexprTypeContentDeserializerState::Unop(values, None),
-                    )?;
-                    *self.state__ = SwitchexprTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Unop(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        SwitchexprTypeContentDeserializerState::Unop(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Unop(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_fieldref<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<String>,
+            fallback: Option<<String as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, String>,
-            fallback: &mut Option<SwitchexprTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use SwitchexprTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = SwitchexprTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => SwitchexprTypeContentDeserializerState::Fieldref(values, None),
-                    Some(SwitchexprTypeContentDeserializerState::Fieldref(
-                        _,
-                        Some(deserializer),
-                    )) => {
-                        SwitchexprTypeContentDeserializerState::Fieldref(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(SwitchexprTypeContentDeserializerState::Fieldref(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_fieldref(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_fieldref(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_fieldref(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        SwitchexprTypeContentDeserializerState::Fieldref(values, None),
-                    )?;
-                    *self.state__ = SwitchexprTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Fieldref(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = SwitchexprTypeContentDeserializerState::Fieldref(
-                        values,
-                        Some(deserializer),
-                    );
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Fieldref(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_enumref<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::EnumrefType>,
+            fallback: Option<<super::EnumrefType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::EnumrefType>,
-            fallback: &mut Option<SwitchexprTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use SwitchexprTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = SwitchexprTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => SwitchexprTypeContentDeserializerState::Enumref(values, None),
-                    Some(SwitchexprTypeContentDeserializerState::Enumref(
-                        _,
-                        Some(deserializer),
-                    )) => {
-                        SwitchexprTypeContentDeserializerState::Enumref(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(SwitchexprTypeContentDeserializerState::Enumref(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_enumref(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_enumref(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_enumref(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        SwitchexprTypeContentDeserializerState::Enumref(values, None),
-                    )?;
-                    *self.state__ = SwitchexprTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Enumref(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        SwitchexprTypeContentDeserializerState::Enumref(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Enumref(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_popcount<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::PopcountType>,
+            fallback: Option<<super::PopcountType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::PopcountType>,
-            fallback: &mut Option<SwitchexprTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use SwitchexprTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = SwitchexprTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => SwitchexprTypeContentDeserializerState::Popcount(values, None),
-                    Some(SwitchexprTypeContentDeserializerState::Popcount(
-                        _,
-                        Some(deserializer),
-                    )) => {
-                        SwitchexprTypeContentDeserializerState::Popcount(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(SwitchexprTypeContentDeserializerState::Popcount(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_popcount(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_popcount(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_popcount(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        SwitchexprTypeContentDeserializerState::Popcount(values, None),
-                    )?;
-                    *self.state__ = SwitchexprTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Popcount(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = SwitchexprTypeContentDeserializerState::Popcount(
-                        values,
-                        Some(deserializer),
-                    );
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Popcount(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_sumof<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::SumofType>,
+            fallback: Option<<super::SumofType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::SumofType>,
-            fallback: &mut Option<SwitchexprTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use SwitchexprTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = SwitchexprTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => SwitchexprTypeContentDeserializerState::Sumof(values, None),
-                    Some(SwitchexprTypeContentDeserializerState::Sumof(_, Some(deserializer))) => {
-                        SwitchexprTypeContentDeserializerState::Sumof(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(SwitchexprTypeContentDeserializerState::Sumof(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_sumof(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_sumof(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_sumof(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        SwitchexprTypeContentDeserializerState::Sumof(values, None),
-                    )?;
-                    *self.state__ = SwitchexprTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Sumof(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        SwitchexprTypeContentDeserializerState::Sumof(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Sumof(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_value<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::DecOrHexIntegerType>,
+            fallback: Option<<super::DecOrHexIntegerType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::DecOrHexIntegerType>,
-            fallback: &mut Option<SwitchexprTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use SwitchexprTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = SwitchexprTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => SwitchexprTypeContentDeserializerState::Value(values, None),
-                    Some(SwitchexprTypeContentDeserializerState::Value(_, Some(deserializer))) => {
-                        SwitchexprTypeContentDeserializerState::Value(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(SwitchexprTypeContentDeserializerState::Value(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_value(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_value(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_value(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        SwitchexprTypeContentDeserializerState::Value(values, None),
-                    )?;
-                    *self.state__ = SwitchexprTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Value(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        SwitchexprTypeContentDeserializerState::Value(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Value(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_bit<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<i32>,
+            fallback: Option<<i32 as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, i32>,
-            fallback: &mut Option<SwitchexprTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use SwitchexprTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = SwitchexprTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => SwitchexprTypeContentDeserializerState::Bit(values, None),
-                    Some(SwitchexprTypeContentDeserializerState::Bit(_, Some(deserializer))) => {
-                        SwitchexprTypeContentDeserializerState::Bit(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(SwitchexprTypeContentDeserializerState::Bit(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_bit(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_bit(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_bit(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        SwitchexprTypeContentDeserializerState::Bit(values, None),
-                    )?;
-                    *self.state__ = SwitchexprTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Bit(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        SwitchexprTypeContentDeserializerState::Bit(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Bit(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_bitcase<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::CaseexprType>,
+            fallback: Option<<super::CaseexprType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::CaseexprType>,
-            fallback: &mut Option<SwitchexprTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use SwitchexprTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = SwitchexprTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => SwitchexprTypeContentDeserializerState::Bitcase(values, None),
-                    Some(SwitchexprTypeContentDeserializerState::Bitcase(
-                        _,
-                        Some(deserializer),
-                    )) => {
-                        SwitchexprTypeContentDeserializerState::Bitcase(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(SwitchexprTypeContentDeserializerState::Bitcase(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_bitcase(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_bitcase(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_bitcase(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        SwitchexprTypeContentDeserializerState::Bitcase(values, None),
-                    )?;
-                    *self.state__ = SwitchexprTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Bitcase(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        SwitchexprTypeContentDeserializerState::Bitcase(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Bitcase(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_pad<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::PadType>,
+            fallback: Option<<super::PadType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::PadType>,
-            fallback: &mut Option<SwitchexprTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use SwitchexprTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = SwitchexprTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => SwitchexprTypeContentDeserializerState::Pad(values, None),
-                    Some(SwitchexprTypeContentDeserializerState::Pad(_, Some(deserializer))) => {
-                        SwitchexprTypeContentDeserializerState::Pad(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(SwitchexprTypeContentDeserializerState::Pad(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_pad(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_pad(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_pad(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        SwitchexprTypeContentDeserializerState::Pad(values, None),
-                    )?;
-                    *self.state__ = SwitchexprTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Pad(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        SwitchexprTypeContentDeserializerState::Pad(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Pad(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_field<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::VarType>,
+            fallback: Option<<super::VarType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::VarType>,
-            fallback: &mut Option<SwitchexprTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use SwitchexprTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = SwitchexprTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => SwitchexprTypeContentDeserializerState::Field(values, None),
-                    Some(SwitchexprTypeContentDeserializerState::Field(_, Some(deserializer))) => {
-                        SwitchexprTypeContentDeserializerState::Field(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(SwitchexprTypeContentDeserializerState::Field(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_field(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_field(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_field(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        SwitchexprTypeContentDeserializerState::Field(values, None),
-                    )?;
-                    *self.state__ = SwitchexprTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Field(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        SwitchexprTypeContentDeserializerState::Field(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Field(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_list<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::ListType>,
+            fallback: Option<<super::ListType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::ListType>,
-            fallback: &mut Option<SwitchexprTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use SwitchexprTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = SwitchexprTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => SwitchexprTypeContentDeserializerState::List(values, None),
-                    Some(SwitchexprTypeContentDeserializerState::List(_, Some(deserializer))) => {
-                        SwitchexprTypeContentDeserializerState::List(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(SwitchexprTypeContentDeserializerState::List(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_list(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_list(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_list(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        SwitchexprTypeContentDeserializerState::List(values, None),
-                    )?;
-                    *self.state__ = SwitchexprTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::List(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        SwitchexprTypeContentDeserializerState::List(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::List(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_fd<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::AnyType>,
+            fallback: Option<<super::AnyType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::AnyType>,
-            fallback: &mut Option<SwitchexprTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use SwitchexprTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = SwitchexprTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => SwitchexprTypeContentDeserializerState::Fd(values, None),
-                    Some(SwitchexprTypeContentDeserializerState::Fd(_, Some(deserializer))) => {
-                        SwitchexprTypeContentDeserializerState::Fd(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(SwitchexprTypeContentDeserializerState::Fd(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_fd(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_fd(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_fd(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        SwitchexprTypeContentDeserializerState::Fd(values, None),
-                    )?;
-                    *self.state__ = SwitchexprTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Fd(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        SwitchexprTypeContentDeserializerState::Fd(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Fd(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
     }
     impl<'de> Deserializer<'de, super::SwitchexprTypeContent> for SwitchexprTypeContentDeserializer {
@@ -10780,122 +9574,121 @@ pub mod quick_xml_deserialize {
         ) -> DeserializerResult<'de, super::SwitchexprTypeContent> {
             use SwitchexprTypeContentDeserializerState as S;
             let mut event = event;
-            let mut fallback = None;
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
-                    (S::Op(values, Some(deserializer)), event) => {
+                    (S::Op(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_op(helper, values, output, &mut fallback)? {
+                        match self.handle_op(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Unop(values, Some(deserializer)), event) => {
+                    (S::Unop(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_unop(helper, values, output, &mut fallback)? {
+                        match self.handle_unop(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Fieldref(values, Some(deserializer)), event) => {
+                    (S::Fieldref(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_fieldref(helper, values, output, &mut fallback)? {
+                        match self.handle_fieldref(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Enumref(values, Some(deserializer)), event) => {
+                    (S::Enumref(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_enumref(helper, values, output, &mut fallback)? {
+                        match self.handle_enumref(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Popcount(values, Some(deserializer)), event) => {
+                    (S::Popcount(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_popcount(helper, values, output, &mut fallback)? {
+                        match self.handle_popcount(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Sumof(values, Some(deserializer)), event) => {
+                    (S::Sumof(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_sumof(helper, values, output, &mut fallback)? {
+                        match self.handle_sumof(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Value(values, Some(deserializer)), event) => {
+                    (S::Value(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_value(helper, values, output, &mut fallback)? {
+                        match self.handle_value(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Bit(values, Some(deserializer)), event) => {
+                    (S::Bit(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_bit(helper, values, output, &mut fallback)? {
+                        match self.handle_bit(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Bitcase(values, Some(deserializer)), event) => {
+                    (S::Bitcase(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_bitcase(helper, values, output, &mut fallback)? {
+                        match self.handle_bitcase(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Pad(values, Some(deserializer)), event) => {
+                    (S::Pad(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_pad(helper, values, output, &mut fallback)? {
+                        match self.handle_pad(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Field(values, Some(deserializer)), event) => {
+                    (S::Field(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_field(helper, values, output, &mut fallback)? {
+                        match self.handle_field(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::List(values, Some(deserializer)), event) => {
+                    (S::List(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_list(helper, values, output, &mut fallback)? {
+                        match self.handle_list(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Fd(values, Some(deserializer)), event) => {
+                    (S::Fd(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_fd(helper, values, output, &mut fallback)? {
+                        match self.handle_fd(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
@@ -10911,149 +9704,188 @@ pub mod quick_xml_deserialize {
                             allow_any: false,
                         });
                     }
-                    (S::Init__, event) => match self.find_suitable(helper, event, &mut fallback)? {
+                    (S::Init__, event) => match self.find_suitable(helper, event)? {
                         ElementHandlerOutput::Break { event, allow_any } => {
                             break (event, allow_any)
                         }
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
-                    (S::Op(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Op(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"op", false)?;
-                        match self.handle_op(helper, values, output, &mut fallback)? {
+                        match self.handle_op(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Unop(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Unop(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"unop", false)?;
-                        match self.handle_unop(helper, values, output, &mut fallback)? {
+                        match self.handle_unop(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Fieldref(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Fieldref(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"fieldref", false)?;
-                        match self.handle_fieldref(helper, values, output, &mut fallback)? {
+                        match self.handle_fieldref(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Enumref(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Enumref(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"enumref", false)?;
-                        match self.handle_enumref(helper, values, output, &mut fallback)? {
+                        match self.handle_enumref(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Popcount(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Popcount(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"popcount", false)?;
-                        match self.handle_popcount(helper, values, output, &mut fallback)? {
+                        match self.handle_popcount(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Sumof(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Sumof(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"sumof", false)?;
-                        match self.handle_sumof(helper, values, output, &mut fallback)? {
+                        match self.handle_sumof(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Value(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Value(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"value", false)?;
-                        match self.handle_value(helper, values, output, &mut fallback)? {
+                        match self.handle_value(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Bit(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Bit(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"bit", false)?;
-                        match self.handle_bit(helper, values, output, &mut fallback)? {
+                        match self.handle_bit(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Bitcase(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Bitcase(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"bitcase", true)?;
-                        match self.handle_bitcase(helper, values, output, &mut fallback)? {
+                        match self.handle_bitcase(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Pad(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Pad(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"pad", false)?;
-                        match self.handle_pad(helper, values, output, &mut fallback)? {
+                        match self.handle_pad(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Field(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Field(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"field", false)?;
-                        match self.handle_field(helper, values, output, &mut fallback)? {
+                        match self.handle_field(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::List(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::List(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"list", false)?;
-                        match self.handle_list(helper, values, output, &mut fallback)? {
+                        match self.handle_list(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Fd(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Fd(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"fd", true)?;
-                        match self.handle_fd(helper, values, output, &mut fallback)? {
+                        match self.handle_fd(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (s @ S::Done__(_), event) => {
-                        *self.state__ = s;
+                    (state @ S::Done__(_), event) => {
+                        *self.state__ = state;
                         break (DeserializerEvent::Continue(event), false);
                     }
                     (state, event) => {
                         *self.state__ = state;
-                        break (DeserializerEvent::Break(event), false);
+                        break (DeserializerEvent::Continue(event), false);
                     }
                 }
             };
@@ -11121,44 +9953,32 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::RequestReplyTypeContent>,
             fallback: &mut Option<RequestReplyTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use RequestReplyTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = fallback
-                    .take()
-                    .unwrap_or(RequestReplyTypeDeserializerState::Next__);
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                *self.state__ = fallback.take().unwrap_or(S::Next__);
+                return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
                 self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_content(data)?;
-                    *self.state__ = RequestReplyTypeDeserializerState::Next__;
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::Next__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Break { .. } => {
-                            *self.state__ =
-                                RequestReplyTypeDeserializerState::Content__(deserializer);
-                        }
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback.get_or_insert(RequestReplyTypeDeserializerState::Content__(
-                                deserializer,
-                            ));
-                            *self.state__ = RequestReplyTypeDeserializerState::Next__;
-                        }
-                    }
-                    ret
+                    *fallback = Some(S::Content__(deserializer));
+                    *self.state__ = S::Next__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
     }
     impl<'de> Deserializer<'de, super::RequestReplyType> for RequestReplyTypeDeserializer {
@@ -11198,7 +10018,9 @@ pub mod quick_xml_deserialize {
                     }
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
-                        let output = < super :: RequestReplyTypeContent as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                        let output = <super::RequestReplyTypeContent as WithDeserializer>::init(
+                            helper, event,
+                        )?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -11208,6 +10030,9 @@ pub mod quick_xml_deserialize {
                     }
                 }
             };
+            if let Some(fallback) = fallback {
+                *self.state__ = fallback;
+            }
             let artifact = DeserializerArtifact::Deserializer(self);
             Ok(DeserializerOutput {
                 artifact,
@@ -11225,7 +10050,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::RequestReplyType {
-                content: self.content,
+                content: helper.finish_vec(1usize, None, self.content)?,
             })
         }
     }
@@ -11239,29 +10064,36 @@ pub mod quick_xml_deserialize {
         Pad(
             Option<super::PadType>,
             Option<<super::PadType as WithDeserializer>::Deserializer>,
+            Option<<super::PadType as WithDeserializer>::Deserializer>,
         ),
         Field(
             Option<super::VarType>,
+            Option<<super::VarType as WithDeserializer>::Deserializer>,
             Option<<super::VarType as WithDeserializer>::Deserializer>,
         ),
         List(
             Option<super::ListType>,
             Option<<super::ListType as WithDeserializer>::Deserializer>,
+            Option<<super::ListType as WithDeserializer>::Deserializer>,
         ),
         Fd(
             Option<super::AnyType>,
+            Option<<super::AnyType as WithDeserializer>::Deserializer>,
             Option<<super::AnyType as WithDeserializer>::Deserializer>,
         ),
         Valueparam(
             Option<super::ValueparamType>,
             Option<<super::ValueparamType as WithDeserializer>::Deserializer>,
+            Option<<super::ValueparamType as WithDeserializer>::Deserializer>,
         ),
         Switch(
             Option<super::SwitchexprType>,
             Option<<super::SwitchexprType as WithDeserializer>::Deserializer>,
+            Option<<super::SwitchexprType as WithDeserializer>::Deserializer>,
         ),
         Doc(
             Option<super::DocType>,
+            Option<<super::DocType as WithDeserializer>::Deserializer>,
             Option<<super::DocType as WithDeserializer>::Deserializer>,
         ),
         Done__(super::RequestReplyTypeContent),
@@ -11272,55 +10104,38 @@ pub mod quick_xml_deserialize {
             &mut self,
             helper: &mut DeserializeHelper,
             event: Event<'de>,
-            fallback: &mut Option<RequestReplyTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if x.name().local_name().as_ref() == b"pad" {
-                    let output =
-                        <super::PadType as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_pad(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::PadType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_pad(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"field" {
-                    let output =
-                        <super::VarType as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_field(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::VarType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_field(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"list" {
-                    let output =
-                        <super::ListType as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_list(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::ListType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_list(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"fd" {
-                    let output =
-                        <super::AnyType as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_fd(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::AnyType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_fd(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"valueparam" {
-                    let output = <super::ValueparamType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
-                    return self.handle_valueparam(
-                        helper,
-                        Default::default(),
-                        output,
-                        &mut *fallback,
-                    );
+                    let output = <super::ValueparamType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_valueparam(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"switch" {
-                    let output = <super::SwitchexprType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
-                    return self.handle_switch(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::SwitchexprType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_switch(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"doc" {
-                    let output =
-                        <super::DocType as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_doc(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::DocType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_doc(helper, Default::default(), None, output);
                 }
             }
-            *self.state__ = fallback
-                .take()
-                .unwrap_or(RequestReplyTypeContentDeserializerState::Init__);
+            *self.state__ = RequestReplyTypeContentDeserializerState::Init__;
             Ok(ElementHandlerOutput::return_to_parent(event, false))
         }
         fn finish_state(
@@ -11329,72 +10144,72 @@ pub mod quick_xml_deserialize {
         ) -> Result<super::RequestReplyTypeContent, Error> {
             use RequestReplyTypeContentDeserializerState as S;
             match state {
-                S::Unknown__ => unreachable!(),
                 S::Init__ => Err(ErrorKind::MissingContent.into()),
-                S::Pad(mut values, deserializer) => {
+                S::Pad(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_pad(&mut values, value)?;
                     }
                     Ok(super::RequestReplyTypeContent::Pad(
-                        values.ok_or_else(|| ErrorKind::MissingElement("pad".into()))?,
+                        helper.finish_element("pad", values)?,
                     ))
                 }
-                S::Field(mut values, deserializer) => {
+                S::Field(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_field(&mut values, value)?;
                     }
-                    Ok(super::RequestReplyTypeContent::Field(values.ok_or_else(
-                        || ErrorKind::MissingElement("field".into()),
-                    )?))
+                    Ok(super::RequestReplyTypeContent::Field(
+                        helper.finish_element("field", values)?,
+                    ))
                 }
-                S::List(mut values, deserializer) => {
+                S::List(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_list(&mut values, value)?;
                     }
                     Ok(super::RequestReplyTypeContent::List(
-                        values.ok_or_else(|| ErrorKind::MissingElement("list".into()))?,
+                        helper.finish_element("list", values)?,
                     ))
                 }
-                S::Fd(mut values, deserializer) => {
+                S::Fd(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_fd(&mut values, value)?;
                     }
                     Ok(super::RequestReplyTypeContent::Fd(
-                        values.ok_or_else(|| ErrorKind::MissingElement("fd".into()))?,
+                        helper.finish_element("fd", values)?,
                     ))
                 }
-                S::Valueparam(mut values, deserializer) => {
+                S::Valueparam(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_valueparam(&mut values, value)?;
                     }
                     Ok(super::RequestReplyTypeContent::Valueparam(
-                        values.ok_or_else(|| ErrorKind::MissingElement("valueparam".into()))?,
+                        helper.finish_element("valueparam", values)?,
                     ))
                 }
-                S::Switch(mut values, deserializer) => {
+                S::Switch(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_switch(&mut values, value)?;
                     }
-                    Ok(super::RequestReplyTypeContent::Switch(values.ok_or_else(
-                        || ErrorKind::MissingElement("switch".into()),
-                    )?))
+                    Ok(super::RequestReplyTypeContent::Switch(
+                        helper.finish_element("switch", values)?,
+                    ))
                 }
-                S::Doc(mut values, deserializer) => {
+                S::Doc(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_doc(&mut values, value)?;
                     }
                     Ok(super::RequestReplyTypeContent::Doc(
-                        values.ok_or_else(|| ErrorKind::MissingElement("doc".into()))?,
+                        helper.finish_element("doc", values)?,
                     ))
                 }
                 S::Done__(data) => Ok(data),
+                _ => unreachable!(),
             }
         }
         fn store_pad(
@@ -11477,382 +10292,239 @@ pub mod quick_xml_deserialize {
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::PadType>,
+            fallback: Option<<super::PadType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::PadType>,
-            fallback: &mut Option<RequestReplyTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use RequestReplyTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = RequestReplyTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => RequestReplyTypeContentDeserializerState::Pad(values, None),
-                    Some(RequestReplyTypeContentDeserializerState::Pad(_, Some(deserializer))) => {
-                        RequestReplyTypeContentDeserializerState::Pad(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(RequestReplyTypeContentDeserializerState::Pad(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_pad(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_pad(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_pad(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        RequestReplyTypeContentDeserializerState::Pad(values, None),
-                    )?;
-                    *self.state__ = RequestReplyTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Pad(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        RequestReplyTypeContentDeserializerState::Pad(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Pad(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_field<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::VarType>,
+            fallback: Option<<super::VarType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::VarType>,
-            fallback: &mut Option<RequestReplyTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use RequestReplyTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = RequestReplyTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => RequestReplyTypeContentDeserializerState::Field(values, None),
-                    Some(RequestReplyTypeContentDeserializerState::Field(
-                        _,
-                        Some(deserializer),
-                    )) => {
-                        RequestReplyTypeContentDeserializerState::Field(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(RequestReplyTypeContentDeserializerState::Field(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_field(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_field(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_field(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        RequestReplyTypeContentDeserializerState::Field(values, None),
-                    )?;
-                    *self.state__ = RequestReplyTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Field(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        RequestReplyTypeContentDeserializerState::Field(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Field(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_list<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::ListType>,
+            fallback: Option<<super::ListType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::ListType>,
-            fallback: &mut Option<RequestReplyTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use RequestReplyTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = RequestReplyTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => RequestReplyTypeContentDeserializerState::List(values, None),
-                    Some(RequestReplyTypeContentDeserializerState::List(_, Some(deserializer))) => {
-                        RequestReplyTypeContentDeserializerState::List(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(RequestReplyTypeContentDeserializerState::List(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_list(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_list(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_list(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        RequestReplyTypeContentDeserializerState::List(values, None),
-                    )?;
-                    *self.state__ = RequestReplyTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::List(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        RequestReplyTypeContentDeserializerState::List(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::List(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_fd<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::AnyType>,
+            fallback: Option<<super::AnyType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::AnyType>,
-            fallback: &mut Option<RequestReplyTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use RequestReplyTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = RequestReplyTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => RequestReplyTypeContentDeserializerState::Fd(values, None),
-                    Some(RequestReplyTypeContentDeserializerState::Fd(_, Some(deserializer))) => {
-                        RequestReplyTypeContentDeserializerState::Fd(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(RequestReplyTypeContentDeserializerState::Fd(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_fd(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_fd(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_fd(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        RequestReplyTypeContentDeserializerState::Fd(values, None),
-                    )?;
-                    *self.state__ = RequestReplyTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Fd(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        RequestReplyTypeContentDeserializerState::Fd(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Fd(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_valueparam<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::ValueparamType>,
+            fallback: Option<<super::ValueparamType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::ValueparamType>,
-            fallback: &mut Option<RequestReplyTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use RequestReplyTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = RequestReplyTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => RequestReplyTypeContentDeserializerState::Valueparam(values, None),
-                    Some(RequestReplyTypeContentDeserializerState::Valueparam(
-                        _,
-                        Some(deserializer),
-                    )) => RequestReplyTypeContentDeserializerState::Valueparam(
-                        values,
-                        Some(deserializer),
-                    ),
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(RequestReplyTypeContentDeserializerState::Valueparam(
-                    _,
-                    Some(deserializer),
-                )) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_valueparam(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_valueparam(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_valueparam(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        RequestReplyTypeContentDeserializerState::Valueparam(values, None),
-                    )?;
-                    *self.state__ = RequestReplyTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Valueparam(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = RequestReplyTypeContentDeserializerState::Valueparam(
-                        values,
-                        Some(deserializer),
-                    );
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Valueparam(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_switch<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::SwitchexprType>,
+            fallback: Option<<super::SwitchexprType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::SwitchexprType>,
-            fallback: &mut Option<RequestReplyTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use RequestReplyTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = RequestReplyTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => RequestReplyTypeContentDeserializerState::Switch(values, None),
-                    Some(RequestReplyTypeContentDeserializerState::Switch(
-                        _,
-                        Some(deserializer),
-                    )) => {
-                        RequestReplyTypeContentDeserializerState::Switch(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(RequestReplyTypeContentDeserializerState::Switch(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_switch(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_switch(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_switch(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        RequestReplyTypeContentDeserializerState::Switch(values, None),
-                    )?;
-                    *self.state__ = RequestReplyTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Switch(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = RequestReplyTypeContentDeserializerState::Switch(
-                        values,
-                        Some(deserializer),
-                    );
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Switch(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_doc<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::DocType>,
+            fallback: Option<<super::DocType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::DocType>,
-            fallback: &mut Option<RequestReplyTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use RequestReplyTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = RequestReplyTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => RequestReplyTypeContentDeserializerState::Doc(values, None),
-                    Some(RequestReplyTypeContentDeserializerState::Doc(_, Some(deserializer))) => {
-                        RequestReplyTypeContentDeserializerState::Doc(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(RequestReplyTypeContentDeserializerState::Doc(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_doc(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_doc(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_doc(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        RequestReplyTypeContentDeserializerState::Doc(values, None),
-                    )?;
-                    *self.state__ = RequestReplyTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Doc(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        RequestReplyTypeContentDeserializerState::Doc(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Doc(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
     }
     impl<'de> Deserializer<'de, super::RequestReplyTypeContent>
@@ -11886,68 +10558,67 @@ pub mod quick_xml_deserialize {
         ) -> DeserializerResult<'de, super::RequestReplyTypeContent> {
             use RequestReplyTypeContentDeserializerState as S;
             let mut event = event;
-            let mut fallback = None;
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
-                    (S::Pad(values, Some(deserializer)), event) => {
+                    (S::Pad(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_pad(helper, values, output, &mut fallback)? {
+                        match self.handle_pad(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Field(values, Some(deserializer)), event) => {
+                    (S::Field(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_field(helper, values, output, &mut fallback)? {
+                        match self.handle_field(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::List(values, Some(deserializer)), event) => {
+                    (S::List(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_list(helper, values, output, &mut fallback)? {
+                        match self.handle_list(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Fd(values, Some(deserializer)), event) => {
+                    (S::Fd(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_fd(helper, values, output, &mut fallback)? {
+                        match self.handle_fd(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Valueparam(values, Some(deserializer)), event) => {
+                    (S::Valueparam(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_valueparam(helper, values, output, &mut fallback)? {
+                        match self.handle_valueparam(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Switch(values, Some(deserializer)), event) => {
+                    (S::Switch(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_switch(helper, values, output, &mut fallback)? {
+                        match self.handle_switch(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Doc(values, Some(deserializer)), event) => {
+                    (S::Doc(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_doc(helper, values, output, &mut fallback)? {
+                        match self.handle_doc(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
@@ -11963,93 +10634,114 @@ pub mod quick_xml_deserialize {
                             allow_any: false,
                         });
                     }
-                    (S::Init__, event) => match self.find_suitable(helper, event, &mut fallback)? {
+                    (S::Init__, event) => match self.find_suitable(helper, event)? {
                         ElementHandlerOutput::Break { event, allow_any } => {
                             break (event, allow_any)
                         }
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
-                    (S::Pad(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Pad(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"pad", false)?;
-                        match self.handle_pad(helper, values, output, &mut fallback)? {
+                        match self.handle_pad(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Field(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Field(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"field", false)?;
-                        match self.handle_field(helper, values, output, &mut fallback)? {
+                        match self.handle_field(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::List(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::List(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"list", false)?;
-                        match self.handle_list(helper, values, output, &mut fallback)? {
+                        match self.handle_list(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Fd(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Fd(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"fd", true)?;
-                        match self.handle_fd(helper, values, output, &mut fallback)? {
+                        match self.handle_fd(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Valueparam(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Valueparam(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
                             None,
                             b"valueparam",
                             false,
                         )?;
-                        match self.handle_valueparam(helper, values, output, &mut fallback)? {
+                        match self.handle_valueparam(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Switch(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Switch(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"switch", true)?;
-                        match self.handle_switch(helper, values, output, &mut fallback)? {
+                        match self.handle_switch(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Doc(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Doc(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"doc", false)?;
-                        match self.handle_doc(helper, values, output, &mut fallback)? {
+                        match self.handle_doc(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (s @ S::Done__(_), event) => {
-                        *self.state__ = s;
+                    (state @ S::Done__(_), event) => {
+                        *self.state__ = state;
                         break (DeserializerEvent::Continue(event), false);
                     }
                     (state, event) => {
                         *self.state__ = state;
-                        break (DeserializerEvent::Break(event), false);
+                        break (DeserializerEvent::Continue(event), false);
                     }
                 }
             };
@@ -12117,40 +10809,32 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::DocTypeContent>,
             fallback: &mut Option<DocTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use DocTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = fallback.take().unwrap_or(DocTypeDeserializerState::Next__);
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                *self.state__ = fallback.take().unwrap_or(S::Next__);
+                return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
                 self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_content(data)?;
-                    *self.state__ = DocTypeDeserializerState::Next__;
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::Next__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Break { .. } => {
-                            *self.state__ = DocTypeDeserializerState::Content__(deserializer);
-                        }
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback
-                                .get_or_insert(DocTypeDeserializerState::Content__(deserializer));
-                            *self.state__ = DocTypeDeserializerState::Next__;
-                        }
-                    }
-                    ret
+                    *fallback = Some(S::Content__(deserializer));
+                    *self.state__ = S::Next__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
     }
     impl<'de> Deserializer<'de, super::DocType> for DocTypeDeserializer {
@@ -12191,9 +10875,7 @@ pub mod quick_xml_deserialize {
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
                         let output =
-                            <super::DocTypeContent as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::DocTypeContent as WithDeserializer>::init(helper, event)?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -12203,6 +10885,9 @@ pub mod quick_xml_deserialize {
                     }
                 }
             };
+            if let Some(fallback) = fallback {
+                *self.state__ = fallback;
+            }
             let artifact = DeserializerArtifact::Deserializer(self);
             Ok(DeserializerOutput {
                 artifact,
@@ -12214,7 +10899,7 @@ pub mod quick_xml_deserialize {
             let state = replace(&mut *self.state__, DocTypeDeserializerState::Unknown__);
             self.finish_state(helper, state)?;
             Ok(super::DocType {
-                content: self.content,
+                content: helper.finish_vec(0usize, None, self.content)?,
             })
         }
     }
@@ -12228,25 +10913,31 @@ pub mod quick_xml_deserialize {
         Brief(
             Option<String>,
             Option<<String as WithDeserializer>::Deserializer>,
+            Option<<String as WithDeserializer>::Deserializer>,
         ),
         Description(
             Option<String>,
+            Option<<String as WithDeserializer>::Deserializer>,
             Option<<String as WithDeserializer>::Deserializer>,
         ),
         Example(
             Option<String>,
             Option<<String as WithDeserializer>::Deserializer>,
+            Option<<String as WithDeserializer>::Deserializer>,
         ),
         Field(
             Option<super::FieldType>,
+            Option<<super::FieldType as WithDeserializer>::Deserializer>,
             Option<<super::FieldType as WithDeserializer>::Deserializer>,
         ),
         Error(
             Option<super::ErrorType>,
             Option<<super::ErrorType as WithDeserializer>::Deserializer>,
+            Option<<super::ErrorType as WithDeserializer>::Deserializer>,
         ),
         See(
             Option<super::SeeType>,
+            Option<<super::SeeType as WithDeserializer>::Deserializer>,
             Option<<super::SeeType as WithDeserializer>::Deserializer>,
         ),
         Done__(super::DocTypeContent),
@@ -12257,45 +10948,34 @@ pub mod quick_xml_deserialize {
             &mut self,
             helper: &mut DeserializeHelper,
             event: Event<'de>,
-            fallback: &mut Option<DocTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if x.name().local_name().as_ref() == b"brief" {
-                    let output = <String as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_brief(helper, Default::default(), output, &mut *fallback);
+                    let output = <String as WithDeserializer>::init(helper, event)?;
+                    return self.handle_brief(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"description" {
-                    let output = <String as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_description(
-                        helper,
-                        Default::default(),
-                        output,
-                        &mut *fallback,
-                    );
+                    let output = <String as WithDeserializer>::init(helper, event)?;
+                    return self.handle_description(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"example" {
-                    let output = <String as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_example(helper, Default::default(), output, &mut *fallback);
+                    let output = <String as WithDeserializer>::init(helper, event)?;
+                    return self.handle_example(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"field" {
-                    let output =
-                        <super::FieldType as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_field(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::FieldType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_field(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"error" {
-                    let output =
-                        <super::ErrorType as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_error(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::ErrorType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_error(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"see" {
-                    let output =
-                        <super::SeeType as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_see(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::SeeType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_see(helper, Default::default(), None, output);
                 }
             }
-            *self.state__ = fallback
-                .take()
-                .unwrap_or(DocTypeContentDeserializerState::Init__);
+            *self.state__ = DocTypeContentDeserializerState::Init__;
             Ok(ElementHandlerOutput::return_to_parent(event, false))
         }
         fn finish_state(
@@ -12304,63 +10984,63 @@ pub mod quick_xml_deserialize {
         ) -> Result<super::DocTypeContent, Error> {
             use DocTypeContentDeserializerState as S;
             match state {
-                S::Unknown__ => unreachable!(),
                 S::Init__ => Err(ErrorKind::MissingContent.into()),
-                S::Brief(mut values, deserializer) => {
+                S::Brief(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_brief(&mut values, value)?;
                     }
-                    Ok(super::DocTypeContent::Brief(values.ok_or_else(|| {
-                        ErrorKind::MissingElement("brief".into())
-                    })?))
+                    Ok(super::DocTypeContent::Brief(
+                        helper.finish_element("brief", values)?,
+                    ))
                 }
-                S::Description(mut values, deserializer) => {
+                S::Description(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_description(&mut values, value)?;
                     }
-                    Ok(super::DocTypeContent::Description(values.ok_or_else(
-                        || ErrorKind::MissingElement("description".into()),
-                    )?))
+                    Ok(super::DocTypeContent::Description(
+                        helper.finish_element("description", values)?,
+                    ))
                 }
-                S::Example(mut values, deserializer) => {
+                S::Example(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_example(&mut values, value)?;
                     }
-                    Ok(super::DocTypeContent::Example(values.ok_or_else(|| {
-                        ErrorKind::MissingElement("example".into())
-                    })?))
+                    Ok(super::DocTypeContent::Example(
+                        helper.finish_element("example", values)?,
+                    ))
                 }
-                S::Field(mut values, deserializer) => {
+                S::Field(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_field(&mut values, value)?;
                     }
-                    Ok(super::DocTypeContent::Field(values.ok_or_else(|| {
-                        ErrorKind::MissingElement("field".into())
-                    })?))
+                    Ok(super::DocTypeContent::Field(
+                        helper.finish_element("field", values)?,
+                    ))
                 }
-                S::Error(mut values, deserializer) => {
+                S::Error(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_error(&mut values, value)?;
                     }
-                    Ok(super::DocTypeContent::Error(values.ok_or_else(|| {
-                        ErrorKind::MissingElement("error".into())
-                    })?))
+                    Ok(super::DocTypeContent::Error(
+                        helper.finish_element("error", values)?,
+                    ))
                 }
-                S::See(mut values, deserializer) => {
+                S::See(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_see(&mut values, value)?;
                     }
                     Ok(super::DocTypeContent::See(
-                        values.ok_or_else(|| ErrorKind::MissingElement("see".into()))?,
+                        helper.finish_element("see", values)?,
                     ))
                 }
                 S::Done__(data) => Ok(data),
+                _ => unreachable!(),
             }
         }
         fn store_brief(values: &mut Option<String>, value: String) -> Result<(), Error> {
@@ -12428,313 +11108,205 @@ pub mod quick_xml_deserialize {
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<String>,
+            fallback: Option<<String as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, String>,
-            fallback: &mut Option<DocTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use DocTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = DocTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => DocTypeContentDeserializerState::Brief(values, None),
-                    Some(DocTypeContentDeserializerState::Brief(_, Some(deserializer))) => {
-                        DocTypeContentDeserializerState::Brief(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(DocTypeContentDeserializerState::Brief(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_brief(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_brief(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_brief(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        DocTypeContentDeserializerState::Brief(values, None),
-                    )?;
-                    *self.state__ = DocTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Brief(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        DocTypeContentDeserializerState::Brief(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Brief(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_description<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<String>,
+            fallback: Option<<String as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, String>,
-            fallback: &mut Option<DocTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use DocTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = DocTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => DocTypeContentDeserializerState::Description(values, None),
-                    Some(DocTypeContentDeserializerState::Description(_, Some(deserializer))) => {
-                        DocTypeContentDeserializerState::Description(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(DocTypeContentDeserializerState::Description(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_description(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_description(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_description(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        DocTypeContentDeserializerState::Description(values, None),
-                    )?;
-                    *self.state__ = DocTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Description(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        DocTypeContentDeserializerState::Description(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Description(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_example<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<String>,
+            fallback: Option<<String as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, String>,
-            fallback: &mut Option<DocTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use DocTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = DocTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => DocTypeContentDeserializerState::Example(values, None),
-                    Some(DocTypeContentDeserializerState::Example(_, Some(deserializer))) => {
-                        DocTypeContentDeserializerState::Example(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(DocTypeContentDeserializerState::Example(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_example(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_example(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_example(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        DocTypeContentDeserializerState::Example(values, None),
-                    )?;
-                    *self.state__ = DocTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Example(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        DocTypeContentDeserializerState::Example(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Example(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_field<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::FieldType>,
+            fallback: Option<<super::FieldType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::FieldType>,
-            fallback: &mut Option<DocTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use DocTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = DocTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => DocTypeContentDeserializerState::Field(values, None),
-                    Some(DocTypeContentDeserializerState::Field(_, Some(deserializer))) => {
-                        DocTypeContentDeserializerState::Field(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(DocTypeContentDeserializerState::Field(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_field(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_field(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_field(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        DocTypeContentDeserializerState::Field(values, None),
-                    )?;
-                    *self.state__ = DocTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Field(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        DocTypeContentDeserializerState::Field(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Field(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_error<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::ErrorType>,
+            fallback: Option<<super::ErrorType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::ErrorType>,
-            fallback: &mut Option<DocTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use DocTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = DocTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => DocTypeContentDeserializerState::Error(values, None),
-                    Some(DocTypeContentDeserializerState::Error(_, Some(deserializer))) => {
-                        DocTypeContentDeserializerState::Error(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(DocTypeContentDeserializerState::Error(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_error(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_error(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_error(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        DocTypeContentDeserializerState::Error(values, None),
-                    )?;
-                    *self.state__ = DocTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Error(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        DocTypeContentDeserializerState::Error(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Error(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_see<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::SeeType>,
+            fallback: Option<<super::SeeType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::SeeType>,
-            fallback: &mut Option<DocTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use DocTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = DocTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => DocTypeContentDeserializerState::See(values, None),
-                    Some(DocTypeContentDeserializerState::See(_, Some(deserializer))) => {
-                        DocTypeContentDeserializerState::See(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(DocTypeContentDeserializerState::See(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_see(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_see(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_see(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        DocTypeContentDeserializerState::See(values, None),
-                    )?;
-                    *self.state__ = DocTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::See(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        DocTypeContentDeserializerState::See(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::See(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
     }
     impl<'de> Deserializer<'de, super::DocTypeContent> for DocTypeContentDeserializer {
@@ -12763,59 +11335,58 @@ pub mod quick_xml_deserialize {
         ) -> DeserializerResult<'de, super::DocTypeContent> {
             use DocTypeContentDeserializerState as S;
             let mut event = event;
-            let mut fallback = None;
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
-                    (S::Brief(values, Some(deserializer)), event) => {
+                    (S::Brief(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_brief(helper, values, output, &mut fallback)? {
+                        match self.handle_brief(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Description(values, Some(deserializer)), event) => {
+                    (S::Description(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_description(helper, values, output, &mut fallback)? {
+                        match self.handle_description(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Example(values, Some(deserializer)), event) => {
+                    (S::Example(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_example(helper, values, output, &mut fallback)? {
+                        match self.handle_example(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Field(values, Some(deserializer)), event) => {
+                    (S::Field(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_field(helper, values, output, &mut fallback)? {
+                        match self.handle_field(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Error(values, Some(deserializer)), event) => {
+                    (S::Error(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_error(helper, values, output, &mut fallback)? {
+                        match self.handle_error(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::See(values, Some(deserializer)), event) => {
+                    (S::See(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_see(helper, values, output, &mut fallback)? {
+                        match self.handle_see(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
@@ -12831,78 +11402,96 @@ pub mod quick_xml_deserialize {
                             allow_any: false,
                         });
                     }
-                    (S::Init__, event) => match self.find_suitable(helper, event, &mut fallback)? {
+                    (S::Init__, event) => match self.find_suitable(helper, event)? {
                         ElementHandlerOutput::Break { event, allow_any } => {
                             break (event, allow_any)
                         }
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
-                    (S::Brief(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Brief(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"brief", false)?;
-                        match self.handle_brief(helper, values, output, &mut fallback)? {
+                        match self.handle_brief(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Description(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Description(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
                             None,
                             b"description",
                             false,
                         )?;
-                        match self.handle_description(helper, values, output, &mut fallback)? {
+                        match self.handle_description(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Example(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Example(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"example", false)?;
-                        match self.handle_example(helper, values, output, &mut fallback)? {
+                        match self.handle_example(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Field(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Field(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"field", false)?;
-                        match self.handle_field(helper, values, output, &mut fallback)? {
+                        match self.handle_field(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Error(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Error(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"error", false)?;
-                        match self.handle_error(helper, values, output, &mut fallback)? {
+                        match self.handle_error(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::See(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::See(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"see", false)?;
-                        match self.handle_see(helper, values, output, &mut fallback)? {
+                        match self.handle_see(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (s @ S::Done__(_), event) => {
-                        *self.state__ = s;
+                    (state @ S::Done__(_), event) => {
+                        *self.state__ = state;
                         break (DeserializerEvent::Continue(event), false);
                     }
                     (state, Event::Text(_) | Event::CData(_)) => {
@@ -12911,7 +11500,7 @@ pub mod quick_xml_deserialize {
                     }
                     (state, event) => {
                         *self.state__ = state;
-                        break (DeserializerEvent::Break(event), false);
+                        break (DeserializerEvent::Continue(event), false);
                     }
                 }
             };
@@ -12986,32 +11575,31 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::EnumItemTypeContent>,
             fallback: &mut Option<EnumItemTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use EnumItemTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = fallback
-                    .take()
-                    .unwrap_or(EnumItemTypeDeserializerState::Next__);
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                *self.state__ = fallback.take().unwrap_or(S::Next__);
+                return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
                 self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_content(data)?;
-                    *self.state__ = EnumItemTypeDeserializerState::Next__;
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::Next__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = EnumItemTypeDeserializerState::Content__(deserializer);
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Content__(deserializer);
+                    Ok(ElementHandlerOutput::from_event_end(event, allow_any))
                 }
-            })
+            }
         }
     }
     impl<'de> Deserializer<'de, super::EnumItemType> for EnumItemTypeDeserializer {
@@ -13052,9 +11640,7 @@ pub mod quick_xml_deserialize {
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
                         let output =
-                            <super::EnumItemTypeContent as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::EnumItemTypeContent as WithDeserializer>::init(helper, event)?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -13064,6 +11650,9 @@ pub mod quick_xml_deserialize {
                     }
                 }
             };
+            if let Some(fallback) = fallback {
+                *self.state__ = fallback;
+            }
             let artifact = DeserializerArtifact::Deserializer(self);
             Ok(DeserializerOutput {
                 artifact,
@@ -13076,7 +11665,7 @@ pub mod quick_xml_deserialize {
             self.finish_state(helper, state)?;
             Ok(super::EnumItemType {
                 name: self.name,
-                content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                content: helper.finish_content(self.content)?,
             })
         }
     }
@@ -13090,8 +11679,13 @@ pub mod quick_xml_deserialize {
         Value(
             Option<super::DecOrHexIntegerType>,
             Option<<super::DecOrHexIntegerType as WithDeserializer>::Deserializer>,
+            Option<<super::DecOrHexIntegerType as WithDeserializer>::Deserializer>,
         ),
-        Bit(Option<i32>, Option<<i32 as WithDeserializer>::Deserializer>),
+        Bit(
+            Option<i32>,
+            Option<<i32 as WithDeserializer>::Deserializer>,
+            Option<<i32 as WithDeserializer>::Deserializer>,
+        ),
         Done__(super::EnumItemTypeContent),
         Unknown__,
     }
@@ -13100,24 +11694,19 @@ pub mod quick_xml_deserialize {
             &mut self,
             helper: &mut DeserializeHelper,
             event: Event<'de>,
-            fallback: &mut Option<EnumItemTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if x.name().local_name().as_ref() == b"value" {
                     let output =
-                        <super::DecOrHexIntegerType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
-                    return self.handle_value(helper, Default::default(), output, &mut *fallback);
+                        <super::DecOrHexIntegerType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_value(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"bit" {
-                    let output = <i32 as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_bit(helper, Default::default(), output, &mut *fallback);
+                    let output = <i32 as WithDeserializer>::init(helper, event)?;
+                    return self.handle_bit(helper, Default::default(), None, output);
                 }
             }
-            *self.state__ = fallback
-                .take()
-                .unwrap_or(EnumItemTypeContentDeserializerState::Init__);
+            *self.state__ = EnumItemTypeContentDeserializerState::Init__;
             Ok(ElementHandlerOutput::return_to_parent(event, false))
         }
         fn finish_state(
@@ -13126,27 +11715,27 @@ pub mod quick_xml_deserialize {
         ) -> Result<super::EnumItemTypeContent, Error> {
             use EnumItemTypeContentDeserializerState as S;
             match state {
-                S::Unknown__ => unreachable!(),
                 S::Init__ => Err(ErrorKind::MissingContent.into()),
-                S::Value(mut values, deserializer) => {
+                S::Value(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_value(&mut values, value)?;
                     }
-                    Ok(super::EnumItemTypeContent::Value(values.ok_or_else(
-                        || ErrorKind::MissingElement("value".into()),
-                    )?))
+                    Ok(super::EnumItemTypeContent::Value(
+                        helper.finish_element("value", values)?,
+                    ))
                 }
-                S::Bit(mut values, deserializer) => {
+                S::Bit(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_bit(&mut values, value)?;
                     }
                     Ok(super::EnumItemTypeContent::Bit(
-                        values.ok_or_else(|| ErrorKind::MissingElement("bit".into()))?,
+                        helper.finish_element("bit", values)?,
                     ))
                 }
                 S::Done__(data) => Ok(data),
+                _ => unreachable!(),
             }
         }
         fn store_value(
@@ -13172,105 +11761,69 @@ pub mod quick_xml_deserialize {
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::DecOrHexIntegerType>,
+            fallback: Option<<super::DecOrHexIntegerType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::DecOrHexIntegerType>,
-            fallback: &mut Option<EnumItemTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use EnumItemTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = EnumItemTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => EnumItemTypeContentDeserializerState::Value(values, None),
-                    Some(EnumItemTypeContentDeserializerState::Value(_, Some(deserializer))) => {
-                        EnumItemTypeContentDeserializerState::Value(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(EnumItemTypeContentDeserializerState::Value(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_value(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_value(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_value(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        EnumItemTypeContentDeserializerState::Value(values, None),
-                    )?;
-                    *self.state__ = EnumItemTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Value(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        EnumItemTypeContentDeserializerState::Value(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Value(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_bit<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<i32>,
+            fallback: Option<<i32 as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, i32>,
-            fallback: &mut Option<EnumItemTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use EnumItemTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = EnumItemTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => EnumItemTypeContentDeserializerState::Bit(values, None),
-                    Some(EnumItemTypeContentDeserializerState::Bit(_, Some(deserializer))) => {
-                        EnumItemTypeContentDeserializerState::Bit(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(EnumItemTypeContentDeserializerState::Bit(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_bit(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_bit(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_bit(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        EnumItemTypeContentDeserializerState::Bit(values, None),
-                    )?;
-                    *self.state__ = EnumItemTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Bit(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        EnumItemTypeContentDeserializerState::Bit(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Bit(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
     }
     impl<'de> Deserializer<'de, super::EnumItemTypeContent> for EnumItemTypeContentDeserializer {
@@ -13299,23 +11852,22 @@ pub mod quick_xml_deserialize {
         ) -> DeserializerResult<'de, super::EnumItemTypeContent> {
             use EnumItemTypeContentDeserializerState as S;
             let mut event = event;
-            let mut fallback = None;
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
-                    (S::Value(values, Some(deserializer)), event) => {
+                    (S::Value(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_value(helper, values, output, &mut fallback)? {
+                        match self.handle_value(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Bit(values, Some(deserializer)), event) => {
+                    (S::Bit(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_bit(helper, values, output, &mut fallback)? {
+                        match self.handle_bit(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
@@ -13331,39 +11883,45 @@ pub mod quick_xml_deserialize {
                             allow_any: false,
                         });
                     }
-                    (S::Init__, event) => match self.find_suitable(helper, event, &mut fallback)? {
+                    (S::Init__, event) => match self.find_suitable(helper, event)? {
                         ElementHandlerOutput::Break { event, allow_any } => {
                             break (event, allow_any)
                         }
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
-                    (S::Value(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Value(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"value", false)?;
-                        match self.handle_value(helper, values, output, &mut fallback)? {
+                        match self.handle_value(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Bit(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Bit(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"bit", false)?;
-                        match self.handle_bit(helper, values, output, &mut fallback)? {
+                        match self.handle_bit(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (s @ S::Done__(_), event) => {
-                        *self.state__ = s;
+                    (state @ S::Done__(_), event) => {
+                        *self.state__ = state;
                         break (DeserializerEvent::Continue(event), false);
                     }
                     (state, event) => {
                         *self.state__ = state;
-                        break (DeserializerEvent::Break(event), false);
+                        break (DeserializerEvent::Continue(event), false);
                     }
                 }
             };
@@ -13438,45 +11996,37 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::OpTypeContent>,
             fallback: &mut Option<OpTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use OpTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = fallback.take().unwrap_or(OpTypeDeserializerState::Next__);
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                *self.state__ = fallback.take().unwrap_or(S::Next__);
+                return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
                 self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_content(data)?;
-                    *self.state__ = OpTypeDeserializerState::Next__;
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::Next__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let can_have_more = self.content.len().saturating_add(1) < 2usize;
-                    let ret = if can_have_more {
-                        ElementHandlerOutput::from_event(event, allow_any)
+                    if self.content.len() < 1usize {
+                        *fallback = Some(S::Content__(deserializer));
+                        *self.state__ = S::Next__;
+                        Ok(ElementHandlerOutput::from_event(event, allow_any))
                     } else {
-                        ElementHandlerOutput::from_event_end(event, allow_any)
-                    };
-                    match (can_have_more, &ret) {
-                        (true, ElementHandlerOutput::Continue { .. }) => {
-                            fallback
-                                .get_or_insert(OpTypeDeserializerState::Content__(deserializer));
-                            *self.state__ = OpTypeDeserializerState::Next__;
-                        }
-                        (false, _) | (_, ElementHandlerOutput::Break { .. }) => {
-                            *self.state__ = OpTypeDeserializerState::Content__(deserializer);
-                        }
+                        *self.state__ = S::Content__(deserializer);
+                        Ok(ElementHandlerOutput::from_event_end(event, allow_any))
                     }
-                    ret
                 }
-            })
+            }
         }
     }
     impl<'de> Deserializer<'de, super::OpType> for OpTypeDeserializer {
@@ -13517,9 +12067,7 @@ pub mod quick_xml_deserialize {
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
                         let output =
-                            <super::OpTypeContent as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::OpTypeContent as WithDeserializer>::init(helper, event)?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -13529,6 +12077,9 @@ pub mod quick_xml_deserialize {
                     }
                 }
             };
+            if let Some(fallback) = fallback {
+                *self.state__ = fallback;
+            }
             let artifact = DeserializerArtifact::Deserializer(self);
             Ok(DeserializerOutput {
                 artifact,
@@ -13541,13 +12092,7 @@ pub mod quick_xml_deserialize {
             self.finish_state(helper, state)?;
             Ok(super::OpType {
                 op: self.op,
-                content: self.content.try_into().map_err(|vec: Vec<_>| {
-                    ErrorKind::InsufficientSize {
-                        min: 2usize,
-                        max: 2usize,
-                        actual: vec.len(),
-                    }
-                })?,
+                content: helper.finish_arr::<_, 2usize>(self.content)?,
             })
         }
     }
@@ -13561,32 +12106,43 @@ pub mod quick_xml_deserialize {
         Op(
             Option<super::OpType>,
             Option<<super::OpType as WithDeserializer>::Deserializer>,
+            Option<<super::OpType as WithDeserializer>::Deserializer>,
         ),
         Unop(
             Option<super::UnopType>,
+            Option<<super::UnopType as WithDeserializer>::Deserializer>,
             Option<<super::UnopType as WithDeserializer>::Deserializer>,
         ),
         Fieldref(
             Option<String>,
             Option<<String as WithDeserializer>::Deserializer>,
+            Option<<String as WithDeserializer>::Deserializer>,
         ),
         Enumref(
             Option<super::EnumrefType>,
+            Option<<super::EnumrefType as WithDeserializer>::Deserializer>,
             Option<<super::EnumrefType as WithDeserializer>::Deserializer>,
         ),
         Popcount(
             Option<super::PopcountType>,
             Option<<super::PopcountType as WithDeserializer>::Deserializer>,
+            Option<<super::PopcountType as WithDeserializer>::Deserializer>,
         ),
         Sumof(
             Option<super::SumofType>,
+            Option<<super::SumofType as WithDeserializer>::Deserializer>,
             Option<<super::SumofType as WithDeserializer>::Deserializer>,
         ),
         Value(
             Option<super::DecOrHexIntegerType>,
             Option<<super::DecOrHexIntegerType as WithDeserializer>::Deserializer>,
+            Option<<super::DecOrHexIntegerType as WithDeserializer>::Deserializer>,
         ),
-        Bit(Option<i32>, Option<<i32 as WithDeserializer>::Deserializer>),
+        Bit(
+            Option<i32>,
+            Option<<i32 as WithDeserializer>::Deserializer>,
+            Option<<i32 as WithDeserializer>::Deserializer>,
+        ),
         Done__(super::OpTypeContent),
         Unknown__,
     }
@@ -13595,65 +12151,43 @@ pub mod quick_xml_deserialize {
             &mut self,
             helper: &mut DeserializeHelper,
             event: Event<'de>,
-            fallback: &mut Option<OpTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if x.name().local_name().as_ref() == b"op" {
-                    let output =
-                        <super::OpType as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_op(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::OpType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_op(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"unop" {
-                    let output =
-                        <super::UnopType as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_unop(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::UnopType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_unop(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"fieldref" {
-                    let output = <String as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_fieldref(
-                        helper,
-                        Default::default(),
-                        output,
-                        &mut *fallback,
-                    );
+                    let output = <String as WithDeserializer>::init(helper, event)?;
+                    return self.handle_fieldref(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"enumref" {
-                    let output = <super::EnumrefType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
-                    return self.handle_enumref(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::EnumrefType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_enumref(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"popcount" {
-                    let output = <super::PopcountType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
-                    return self.handle_popcount(
-                        helper,
-                        Default::default(),
-                        output,
-                        &mut *fallback,
-                    );
+                    let output = <super::PopcountType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_popcount(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"sumof" {
-                    let output =
-                        <super::SumofType as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_sumof(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::SumofType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_sumof(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"value" {
                     let output =
-                        <super::DecOrHexIntegerType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
-                    return self.handle_value(helper, Default::default(), output, &mut *fallback);
+                        <super::DecOrHexIntegerType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_value(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"bit" {
-                    let output = <i32 as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_bit(helper, Default::default(), output, &mut *fallback);
+                    let output = <i32 as WithDeserializer>::init(helper, event)?;
+                    return self.handle_bit(helper, Default::default(), None, output);
                 }
             }
-            *self.state__ = fallback
-                .take()
-                .unwrap_or(OpTypeContentDeserializerState::Init__);
+            *self.state__ = OpTypeContentDeserializerState::Init__;
             Ok(ElementHandlerOutput::return_to_parent(event, false))
         }
         fn finish_state(
@@ -13662,81 +12196,81 @@ pub mod quick_xml_deserialize {
         ) -> Result<super::OpTypeContent, Error> {
             use OpTypeContentDeserializerState as S;
             match state {
-                S::Unknown__ => unreachable!(),
                 S::Init__ => Err(ErrorKind::MissingContent.into()),
-                S::Op(mut values, deserializer) => {
+                S::Op(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_op(&mut values, value)?;
                     }
                     Ok(super::OpTypeContent::Op(Box::new(
-                        values.ok_or_else(|| ErrorKind::MissingElement("op".into()))?,
+                        helper.finish_element("op", values)?,
                     )))
                 }
-                S::Unop(mut values, deserializer) => {
+                S::Unop(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_unop(&mut values, value)?;
                     }
                     Ok(super::OpTypeContent::Unop(
-                        values.ok_or_else(|| ErrorKind::MissingElement("unop".into()))?,
+                        helper.finish_element("unop", values)?,
                     ))
                 }
-                S::Fieldref(mut values, deserializer) => {
+                S::Fieldref(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_fieldref(&mut values, value)?;
                     }
-                    Ok(super::OpTypeContent::Fieldref(values.ok_or_else(|| {
-                        ErrorKind::MissingElement("fieldref".into())
-                    })?))
+                    Ok(super::OpTypeContent::Fieldref(
+                        helper.finish_element("fieldref", values)?,
+                    ))
                 }
-                S::Enumref(mut values, deserializer) => {
+                S::Enumref(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_enumref(&mut values, value)?;
                     }
-                    Ok(super::OpTypeContent::Enumref(values.ok_or_else(|| {
-                        ErrorKind::MissingElement("enumref".into())
-                    })?))
+                    Ok(super::OpTypeContent::Enumref(
+                        helper.finish_element("enumref", values)?,
+                    ))
                 }
-                S::Popcount(mut values, deserializer) => {
+                S::Popcount(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_popcount(&mut values, value)?;
                     }
-                    Ok(super::OpTypeContent::Popcount(values.ok_or_else(|| {
-                        ErrorKind::MissingElement("popcount".into())
-                    })?))
+                    Ok(super::OpTypeContent::Popcount(
+                        helper.finish_element("popcount", values)?,
+                    ))
                 }
-                S::Sumof(mut values, deserializer) => {
+                S::Sumof(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_sumof(&mut values, value)?;
                     }
-                    Ok(super::OpTypeContent::Sumof(values.ok_or_else(|| {
-                        ErrorKind::MissingElement("sumof".into())
-                    })?))
+                    Ok(super::OpTypeContent::Sumof(
+                        helper.finish_element("sumof", values)?,
+                    ))
                 }
-                S::Value(mut values, deserializer) => {
+                S::Value(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_value(&mut values, value)?;
                     }
-                    Ok(super::OpTypeContent::Value(values.ok_or_else(|| {
-                        ErrorKind::MissingElement("value".into())
-                    })?))
+                    Ok(super::OpTypeContent::Value(
+                        helper.finish_element("value", values)?,
+                    ))
                 }
-                S::Bit(mut values, deserializer) => {
+                S::Bit(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_bit(&mut values, value)?;
                     }
                     Ok(super::OpTypeContent::Bit(
-                        values.ok_or_else(|| ErrorKind::MissingElement("bit".into()))?,
+                        helper.finish_element("bit", values)?,
                     ))
                 }
                 S::Done__(data) => Ok(data),
+                _ => unreachable!(),
             }
         }
         fn store_op(values: &mut Option<super::OpType>, value: super::OpType) -> Result<(), Error> {
@@ -13824,415 +12358,273 @@ pub mod quick_xml_deserialize {
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::OpType>,
+            fallback: Option<<super::OpType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::OpType>,
-            fallback: &mut Option<OpTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use OpTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = OpTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => OpTypeContentDeserializerState::Op(values, None),
-                    Some(OpTypeContentDeserializerState::Op(_, Some(deserializer))) => {
-                        OpTypeContentDeserializerState::Op(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(OpTypeContentDeserializerState::Op(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_op(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_op(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_op(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        OpTypeContentDeserializerState::Op(values, None),
-                    )?;
-                    *self.state__ = OpTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Op(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = OpTypeContentDeserializerState::Op(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Op(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_unop<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::UnopType>,
+            fallback: Option<<super::UnopType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::UnopType>,
-            fallback: &mut Option<OpTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use OpTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = OpTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => OpTypeContentDeserializerState::Unop(values, None),
-                    Some(OpTypeContentDeserializerState::Unop(_, Some(deserializer))) => {
-                        OpTypeContentDeserializerState::Unop(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(OpTypeContentDeserializerState::Unop(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_unop(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_unop(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_unop(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        OpTypeContentDeserializerState::Unop(values, None),
-                    )?;
-                    *self.state__ = OpTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Unop(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        OpTypeContentDeserializerState::Unop(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Unop(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_fieldref<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<String>,
+            fallback: Option<<String as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, String>,
-            fallback: &mut Option<OpTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use OpTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = OpTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => OpTypeContentDeserializerState::Fieldref(values, None),
-                    Some(OpTypeContentDeserializerState::Fieldref(_, Some(deserializer))) => {
-                        OpTypeContentDeserializerState::Fieldref(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(OpTypeContentDeserializerState::Fieldref(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_fieldref(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_fieldref(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_fieldref(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        OpTypeContentDeserializerState::Fieldref(values, None),
-                    )?;
-                    *self.state__ = OpTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Fieldref(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        OpTypeContentDeserializerState::Fieldref(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Fieldref(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_enumref<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::EnumrefType>,
+            fallback: Option<<super::EnumrefType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::EnumrefType>,
-            fallback: &mut Option<OpTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use OpTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = OpTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => OpTypeContentDeserializerState::Enumref(values, None),
-                    Some(OpTypeContentDeserializerState::Enumref(_, Some(deserializer))) => {
-                        OpTypeContentDeserializerState::Enumref(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(OpTypeContentDeserializerState::Enumref(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_enumref(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_enumref(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_enumref(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        OpTypeContentDeserializerState::Enumref(values, None),
-                    )?;
-                    *self.state__ = OpTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Enumref(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        OpTypeContentDeserializerState::Enumref(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Enumref(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_popcount<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::PopcountType>,
+            fallback: Option<<super::PopcountType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::PopcountType>,
-            fallback: &mut Option<OpTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use OpTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = OpTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => OpTypeContentDeserializerState::Popcount(values, None),
-                    Some(OpTypeContentDeserializerState::Popcount(_, Some(deserializer))) => {
-                        OpTypeContentDeserializerState::Popcount(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(OpTypeContentDeserializerState::Popcount(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_popcount(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_popcount(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_popcount(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        OpTypeContentDeserializerState::Popcount(values, None),
-                    )?;
-                    *self.state__ = OpTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Popcount(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        OpTypeContentDeserializerState::Popcount(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Popcount(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_sumof<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::SumofType>,
+            fallback: Option<<super::SumofType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::SumofType>,
-            fallback: &mut Option<OpTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use OpTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = OpTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => OpTypeContentDeserializerState::Sumof(values, None),
-                    Some(OpTypeContentDeserializerState::Sumof(_, Some(deserializer))) => {
-                        OpTypeContentDeserializerState::Sumof(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(OpTypeContentDeserializerState::Sumof(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_sumof(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_sumof(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_sumof(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        OpTypeContentDeserializerState::Sumof(values, None),
-                    )?;
-                    *self.state__ = OpTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Sumof(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        OpTypeContentDeserializerState::Sumof(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Sumof(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_value<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::DecOrHexIntegerType>,
+            fallback: Option<<super::DecOrHexIntegerType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::DecOrHexIntegerType>,
-            fallback: &mut Option<OpTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use OpTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = OpTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => OpTypeContentDeserializerState::Value(values, None),
-                    Some(OpTypeContentDeserializerState::Value(_, Some(deserializer))) => {
-                        OpTypeContentDeserializerState::Value(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(OpTypeContentDeserializerState::Value(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_value(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_value(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_value(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        OpTypeContentDeserializerState::Value(values, None),
-                    )?;
-                    *self.state__ = OpTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Value(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        OpTypeContentDeserializerState::Value(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Value(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_bit<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<i32>,
+            fallback: Option<<i32 as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, i32>,
-            fallback: &mut Option<OpTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use OpTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = OpTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => OpTypeContentDeserializerState::Bit(values, None),
-                    Some(OpTypeContentDeserializerState::Bit(_, Some(deserializer))) => {
-                        OpTypeContentDeserializerState::Bit(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(OpTypeContentDeserializerState::Bit(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_bit(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_bit(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_bit(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        OpTypeContentDeserializerState::Bit(values, None),
-                    )?;
-                    *self.state__ = OpTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Bit(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = OpTypeContentDeserializerState::Bit(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Bit(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
     }
     impl<'de> Deserializer<'de, super::OpTypeContent> for OpTypeContentDeserializer {
@@ -14261,77 +12653,76 @@ pub mod quick_xml_deserialize {
         ) -> DeserializerResult<'de, super::OpTypeContent> {
             use OpTypeContentDeserializerState as S;
             let mut event = event;
-            let mut fallback = None;
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
-                    (S::Op(values, Some(deserializer)), event) => {
+                    (S::Op(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_op(helper, values, output, &mut fallback)? {
+                        match self.handle_op(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Unop(values, Some(deserializer)), event) => {
+                    (S::Unop(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_unop(helper, values, output, &mut fallback)? {
+                        match self.handle_unop(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Fieldref(values, Some(deserializer)), event) => {
+                    (S::Fieldref(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_fieldref(helper, values, output, &mut fallback)? {
+                        match self.handle_fieldref(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Enumref(values, Some(deserializer)), event) => {
+                    (S::Enumref(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_enumref(helper, values, output, &mut fallback)? {
+                        match self.handle_enumref(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Popcount(values, Some(deserializer)), event) => {
+                    (S::Popcount(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_popcount(helper, values, output, &mut fallback)? {
+                        match self.handle_popcount(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Sumof(values, Some(deserializer)), event) => {
+                    (S::Sumof(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_sumof(helper, values, output, &mut fallback)? {
+                        match self.handle_sumof(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Value(values, Some(deserializer)), event) => {
+                    (S::Value(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_value(helper, values, output, &mut fallback)? {
+                        match self.handle_value(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Bit(values, Some(deserializer)), event) => {
+                    (S::Bit(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_bit(helper, values, output, &mut fallback)? {
+                        match self.handle_bit(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
@@ -14347,99 +12738,123 @@ pub mod quick_xml_deserialize {
                             allow_any: false,
                         });
                     }
-                    (S::Init__, event) => match self.find_suitable(helper, event, &mut fallback)? {
+                    (S::Init__, event) => match self.find_suitable(helper, event)? {
                         ElementHandlerOutput::Break { event, allow_any } => {
                             break (event, allow_any)
                         }
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
-                    (S::Op(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Op(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"op", false)?;
-                        match self.handle_op(helper, values, output, &mut fallback)? {
+                        match self.handle_op(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Unop(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Unop(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"unop", false)?;
-                        match self.handle_unop(helper, values, output, &mut fallback)? {
+                        match self.handle_unop(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Fieldref(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Fieldref(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"fieldref", false)?;
-                        match self.handle_fieldref(helper, values, output, &mut fallback)? {
+                        match self.handle_fieldref(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Enumref(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Enumref(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"enumref", false)?;
-                        match self.handle_enumref(helper, values, output, &mut fallback)? {
+                        match self.handle_enumref(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Popcount(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Popcount(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"popcount", false)?;
-                        match self.handle_popcount(helper, values, output, &mut fallback)? {
+                        match self.handle_popcount(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Sumof(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Sumof(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"sumof", false)?;
-                        match self.handle_sumof(helper, values, output, &mut fallback)? {
+                        match self.handle_sumof(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Value(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Value(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"value", false)?;
-                        match self.handle_value(helper, values, output, &mut fallback)? {
+                        match self.handle_value(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Bit(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Bit(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"bit", false)?;
-                        match self.handle_bit(helper, values, output, &mut fallback)? {
+                        match self.handle_bit(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (s @ S::Done__(_), event) => {
-                        *self.state__ = s;
+                    (state @ S::Done__(_), event) => {
+                        *self.state__ = state;
                         break (DeserializerEvent::Continue(event), false);
                     }
                     (state, event) => {
                         *self.state__ = state;
-                        break (DeserializerEvent::Break(event), false);
+                        break (DeserializerEvent::Continue(event), false);
                     }
                 }
             };
@@ -14514,30 +12929,31 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::UnopTypeContent>,
             fallback: &mut Option<UnopTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use UnopTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = fallback.take().unwrap_or(UnopTypeDeserializerState::Next__);
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                *self.state__ = fallback.take().unwrap_or(S::Next__);
+                return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
                 self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_content(data)?;
-                    *self.state__ = UnopTypeDeserializerState::Next__;
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::Next__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = UnopTypeDeserializerState::Content__(deserializer);
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Content__(deserializer);
+                    Ok(ElementHandlerOutput::from_event_end(event, allow_any))
                 }
-            })
+            }
         }
     }
     impl<'de> Deserializer<'de, super::UnopType> for UnopTypeDeserializer {
@@ -14578,9 +12994,7 @@ pub mod quick_xml_deserialize {
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
                         let output =
-                            <super::UnopTypeContent as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::UnopTypeContent as WithDeserializer>::init(helper, event)?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -14590,6 +13004,9 @@ pub mod quick_xml_deserialize {
                     }
                 }
             };
+            if let Some(fallback) = fallback {
+                *self.state__ = fallback;
+            }
             let artifact = DeserializerArtifact::Deserializer(self);
             Ok(DeserializerOutput {
                 artifact,
@@ -14602,7 +13019,7 @@ pub mod quick_xml_deserialize {
             self.finish_state(helper, state)?;
             Ok(super::UnopType {
                 op: self.op,
-                content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                content: helper.finish_content(self.content)?,
             })
         }
     }
@@ -14616,32 +13033,43 @@ pub mod quick_xml_deserialize {
         Op(
             Option<super::OpType>,
             Option<<super::OpType as WithDeserializer>::Deserializer>,
+            Option<<super::OpType as WithDeserializer>::Deserializer>,
         ),
         Unop(
             Option<super::UnopType>,
+            Option<<super::UnopType as WithDeserializer>::Deserializer>,
             Option<<super::UnopType as WithDeserializer>::Deserializer>,
         ),
         Fieldref(
             Option<String>,
             Option<<String as WithDeserializer>::Deserializer>,
+            Option<<String as WithDeserializer>::Deserializer>,
         ),
         Enumref(
             Option<super::EnumrefType>,
+            Option<<super::EnumrefType as WithDeserializer>::Deserializer>,
             Option<<super::EnumrefType as WithDeserializer>::Deserializer>,
         ),
         Popcount(
             Option<super::PopcountType>,
             Option<<super::PopcountType as WithDeserializer>::Deserializer>,
+            Option<<super::PopcountType as WithDeserializer>::Deserializer>,
         ),
         Sumof(
             Option<super::SumofType>,
+            Option<<super::SumofType as WithDeserializer>::Deserializer>,
             Option<<super::SumofType as WithDeserializer>::Deserializer>,
         ),
         Value(
             Option<super::DecOrHexIntegerType>,
             Option<<super::DecOrHexIntegerType as WithDeserializer>::Deserializer>,
+            Option<<super::DecOrHexIntegerType as WithDeserializer>::Deserializer>,
         ),
-        Bit(Option<i32>, Option<<i32 as WithDeserializer>::Deserializer>),
+        Bit(
+            Option<i32>,
+            Option<<i32 as WithDeserializer>::Deserializer>,
+            Option<<i32 as WithDeserializer>::Deserializer>,
+        ),
         Done__(super::UnopTypeContent),
         Unknown__,
     }
@@ -14650,65 +13078,43 @@ pub mod quick_xml_deserialize {
             &mut self,
             helper: &mut DeserializeHelper,
             event: Event<'de>,
-            fallback: &mut Option<UnopTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if x.name().local_name().as_ref() == b"op" {
-                    let output =
-                        <super::OpType as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_op(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::OpType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_op(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"unop" {
-                    let output =
-                        <super::UnopType as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_unop(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::UnopType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_unop(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"fieldref" {
-                    let output = <String as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_fieldref(
-                        helper,
-                        Default::default(),
-                        output,
-                        &mut *fallback,
-                    );
+                    let output = <String as WithDeserializer>::init(helper, event)?;
+                    return self.handle_fieldref(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"enumref" {
-                    let output = <super::EnumrefType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
-                    return self.handle_enumref(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::EnumrefType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_enumref(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"popcount" {
-                    let output = <super::PopcountType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
-                    return self.handle_popcount(
-                        helper,
-                        Default::default(),
-                        output,
-                        &mut *fallback,
-                    );
+                    let output = <super::PopcountType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_popcount(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"sumof" {
-                    let output =
-                        <super::SumofType as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_sumof(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::SumofType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_sumof(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"value" {
                     let output =
-                        <super::DecOrHexIntegerType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
-                    return self.handle_value(helper, Default::default(), output, &mut *fallback);
+                        <super::DecOrHexIntegerType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_value(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"bit" {
-                    let output = <i32 as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_bit(helper, Default::default(), output, &mut *fallback);
+                    let output = <i32 as WithDeserializer>::init(helper, event)?;
+                    return self.handle_bit(helper, Default::default(), None, output);
                 }
             }
-            *self.state__ = fallback
-                .take()
-                .unwrap_or(UnopTypeContentDeserializerState::Init__);
+            *self.state__ = UnopTypeContentDeserializerState::Init__;
             Ok(ElementHandlerOutput::return_to_parent(event, false))
         }
         fn finish_state(
@@ -14717,81 +13123,81 @@ pub mod quick_xml_deserialize {
         ) -> Result<super::UnopTypeContent, Error> {
             use UnopTypeContentDeserializerState as S;
             match state {
-                S::Unknown__ => unreachable!(),
                 S::Init__ => Err(ErrorKind::MissingContent.into()),
-                S::Op(mut values, deserializer) => {
+                S::Op(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_op(&mut values, value)?;
                     }
                     Ok(super::UnopTypeContent::Op(Box::new(
-                        values.ok_or_else(|| ErrorKind::MissingElement("op".into()))?,
+                        helper.finish_element("op", values)?,
                     )))
                 }
-                S::Unop(mut values, deserializer) => {
+                S::Unop(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_unop(&mut values, value)?;
                     }
-                    Ok(super::UnopTypeContent::Unop(Box::new(values.ok_or_else(
-                        || ErrorKind::MissingElement("unop".into()),
-                    )?)))
+                    Ok(super::UnopTypeContent::Unop(Box::new(
+                        helper.finish_element("unop", values)?,
+                    )))
                 }
-                S::Fieldref(mut values, deserializer) => {
+                S::Fieldref(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_fieldref(&mut values, value)?;
                     }
-                    Ok(super::UnopTypeContent::Fieldref(values.ok_or_else(
-                        || ErrorKind::MissingElement("fieldref".into()),
-                    )?))
+                    Ok(super::UnopTypeContent::Fieldref(
+                        helper.finish_element("fieldref", values)?,
+                    ))
                 }
-                S::Enumref(mut values, deserializer) => {
+                S::Enumref(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_enumref(&mut values, value)?;
                     }
-                    Ok(super::UnopTypeContent::Enumref(values.ok_or_else(
-                        || ErrorKind::MissingElement("enumref".into()),
-                    )?))
+                    Ok(super::UnopTypeContent::Enumref(
+                        helper.finish_element("enumref", values)?,
+                    ))
                 }
-                S::Popcount(mut values, deserializer) => {
+                S::Popcount(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_popcount(&mut values, value)?;
                     }
-                    Ok(super::UnopTypeContent::Popcount(values.ok_or_else(
-                        || ErrorKind::MissingElement("popcount".into()),
-                    )?))
+                    Ok(super::UnopTypeContent::Popcount(
+                        helper.finish_element("popcount", values)?,
+                    ))
                 }
-                S::Sumof(mut values, deserializer) => {
+                S::Sumof(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_sumof(&mut values, value)?;
                     }
-                    Ok(super::UnopTypeContent::Sumof(values.ok_or_else(|| {
-                        ErrorKind::MissingElement("sumof".into())
-                    })?))
+                    Ok(super::UnopTypeContent::Sumof(
+                        helper.finish_element("sumof", values)?,
+                    ))
                 }
-                S::Value(mut values, deserializer) => {
+                S::Value(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_value(&mut values, value)?;
                     }
-                    Ok(super::UnopTypeContent::Value(values.ok_or_else(|| {
-                        ErrorKind::MissingElement("value".into())
-                    })?))
+                    Ok(super::UnopTypeContent::Value(
+                        helper.finish_element("value", values)?,
+                    ))
                 }
-                S::Bit(mut values, deserializer) => {
+                S::Bit(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_bit(&mut values, value)?;
                     }
                     Ok(super::UnopTypeContent::Bit(
-                        values.ok_or_else(|| ErrorKind::MissingElement("bit".into()))?,
+                        helper.finish_element("bit", values)?,
                     ))
                 }
                 S::Done__(data) => Ok(data),
+                _ => unreachable!(),
             }
         }
         fn store_op(values: &mut Option<super::OpType>, value: super::OpType) -> Result<(), Error> {
@@ -14879,417 +13285,273 @@ pub mod quick_xml_deserialize {
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::OpType>,
+            fallback: Option<<super::OpType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::OpType>,
-            fallback: &mut Option<UnopTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use UnopTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = UnopTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => UnopTypeContentDeserializerState::Op(values, None),
-                    Some(UnopTypeContentDeserializerState::Op(_, Some(deserializer))) => {
-                        UnopTypeContentDeserializerState::Op(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(UnopTypeContentDeserializerState::Op(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_op(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_op(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_op(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        UnopTypeContentDeserializerState::Op(values, None),
-                    )?;
-                    *self.state__ = UnopTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Op(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        UnopTypeContentDeserializerState::Op(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Op(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_unop<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::UnopType>,
+            fallback: Option<<super::UnopType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::UnopType>,
-            fallback: &mut Option<UnopTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use UnopTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = UnopTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => UnopTypeContentDeserializerState::Unop(values, None),
-                    Some(UnopTypeContentDeserializerState::Unop(_, Some(deserializer))) => {
-                        UnopTypeContentDeserializerState::Unop(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(UnopTypeContentDeserializerState::Unop(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_unop(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_unop(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_unop(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        UnopTypeContentDeserializerState::Unop(values, None),
-                    )?;
-                    *self.state__ = UnopTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Unop(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        UnopTypeContentDeserializerState::Unop(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Unop(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_fieldref<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<String>,
+            fallback: Option<<String as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, String>,
-            fallback: &mut Option<UnopTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use UnopTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = UnopTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => UnopTypeContentDeserializerState::Fieldref(values, None),
-                    Some(UnopTypeContentDeserializerState::Fieldref(_, Some(deserializer))) => {
-                        UnopTypeContentDeserializerState::Fieldref(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(UnopTypeContentDeserializerState::Fieldref(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_fieldref(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_fieldref(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_fieldref(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        UnopTypeContentDeserializerState::Fieldref(values, None),
-                    )?;
-                    *self.state__ = UnopTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Fieldref(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        UnopTypeContentDeserializerState::Fieldref(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Fieldref(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_enumref<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::EnumrefType>,
+            fallback: Option<<super::EnumrefType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::EnumrefType>,
-            fallback: &mut Option<UnopTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use UnopTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = UnopTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => UnopTypeContentDeserializerState::Enumref(values, None),
-                    Some(UnopTypeContentDeserializerState::Enumref(_, Some(deserializer))) => {
-                        UnopTypeContentDeserializerState::Enumref(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(UnopTypeContentDeserializerState::Enumref(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_enumref(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_enumref(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_enumref(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        UnopTypeContentDeserializerState::Enumref(values, None),
-                    )?;
-                    *self.state__ = UnopTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Enumref(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        UnopTypeContentDeserializerState::Enumref(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Enumref(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_popcount<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::PopcountType>,
+            fallback: Option<<super::PopcountType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::PopcountType>,
-            fallback: &mut Option<UnopTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use UnopTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = UnopTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => UnopTypeContentDeserializerState::Popcount(values, None),
-                    Some(UnopTypeContentDeserializerState::Popcount(_, Some(deserializer))) => {
-                        UnopTypeContentDeserializerState::Popcount(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(UnopTypeContentDeserializerState::Popcount(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_popcount(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_popcount(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_popcount(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        UnopTypeContentDeserializerState::Popcount(values, None),
-                    )?;
-                    *self.state__ = UnopTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Popcount(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        UnopTypeContentDeserializerState::Popcount(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Popcount(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_sumof<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::SumofType>,
+            fallback: Option<<super::SumofType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::SumofType>,
-            fallback: &mut Option<UnopTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use UnopTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = UnopTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => UnopTypeContentDeserializerState::Sumof(values, None),
-                    Some(UnopTypeContentDeserializerState::Sumof(_, Some(deserializer))) => {
-                        UnopTypeContentDeserializerState::Sumof(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(UnopTypeContentDeserializerState::Sumof(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_sumof(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_sumof(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_sumof(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        UnopTypeContentDeserializerState::Sumof(values, None),
-                    )?;
-                    *self.state__ = UnopTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Sumof(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        UnopTypeContentDeserializerState::Sumof(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Sumof(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_value<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::DecOrHexIntegerType>,
+            fallback: Option<<super::DecOrHexIntegerType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::DecOrHexIntegerType>,
-            fallback: &mut Option<UnopTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use UnopTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = UnopTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => UnopTypeContentDeserializerState::Value(values, None),
-                    Some(UnopTypeContentDeserializerState::Value(_, Some(deserializer))) => {
-                        UnopTypeContentDeserializerState::Value(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(UnopTypeContentDeserializerState::Value(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_value(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_value(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_value(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        UnopTypeContentDeserializerState::Value(values, None),
-                    )?;
-                    *self.state__ = UnopTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Value(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        UnopTypeContentDeserializerState::Value(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Value(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_bit<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<i32>,
+            fallback: Option<<i32 as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, i32>,
-            fallback: &mut Option<UnopTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use UnopTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = UnopTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => UnopTypeContentDeserializerState::Bit(values, None),
-                    Some(UnopTypeContentDeserializerState::Bit(_, Some(deserializer))) => {
-                        UnopTypeContentDeserializerState::Bit(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(UnopTypeContentDeserializerState::Bit(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_bit(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_bit(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_bit(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        UnopTypeContentDeserializerState::Bit(values, None),
-                    )?;
-                    *self.state__ = UnopTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Bit(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        UnopTypeContentDeserializerState::Bit(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Bit(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
     }
     impl<'de> Deserializer<'de, super::UnopTypeContent> for UnopTypeContentDeserializer {
@@ -15318,77 +13580,76 @@ pub mod quick_xml_deserialize {
         ) -> DeserializerResult<'de, super::UnopTypeContent> {
             use UnopTypeContentDeserializerState as S;
             let mut event = event;
-            let mut fallback = None;
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
-                    (S::Op(values, Some(deserializer)), event) => {
+                    (S::Op(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_op(helper, values, output, &mut fallback)? {
+                        match self.handle_op(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Unop(values, Some(deserializer)), event) => {
+                    (S::Unop(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_unop(helper, values, output, &mut fallback)? {
+                        match self.handle_unop(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Fieldref(values, Some(deserializer)), event) => {
+                    (S::Fieldref(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_fieldref(helper, values, output, &mut fallback)? {
+                        match self.handle_fieldref(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Enumref(values, Some(deserializer)), event) => {
+                    (S::Enumref(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_enumref(helper, values, output, &mut fallback)? {
+                        match self.handle_enumref(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Popcount(values, Some(deserializer)), event) => {
+                    (S::Popcount(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_popcount(helper, values, output, &mut fallback)? {
+                        match self.handle_popcount(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Sumof(values, Some(deserializer)), event) => {
+                    (S::Sumof(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_sumof(helper, values, output, &mut fallback)? {
+                        match self.handle_sumof(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Value(values, Some(deserializer)), event) => {
+                    (S::Value(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_value(helper, values, output, &mut fallback)? {
+                        match self.handle_value(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Bit(values, Some(deserializer)), event) => {
+                    (S::Bit(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_bit(helper, values, output, &mut fallback)? {
+                        match self.handle_bit(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
@@ -15404,99 +13665,123 @@ pub mod quick_xml_deserialize {
                             allow_any: false,
                         });
                     }
-                    (S::Init__, event) => match self.find_suitable(helper, event, &mut fallback)? {
+                    (S::Init__, event) => match self.find_suitable(helper, event)? {
                         ElementHandlerOutput::Break { event, allow_any } => {
                             break (event, allow_any)
                         }
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
-                    (S::Op(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Op(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"op", false)?;
-                        match self.handle_op(helper, values, output, &mut fallback)? {
+                        match self.handle_op(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Unop(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Unop(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"unop", false)?;
-                        match self.handle_unop(helper, values, output, &mut fallback)? {
+                        match self.handle_unop(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Fieldref(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Fieldref(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"fieldref", false)?;
-                        match self.handle_fieldref(helper, values, output, &mut fallback)? {
+                        match self.handle_fieldref(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Enumref(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Enumref(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"enumref", false)?;
-                        match self.handle_enumref(helper, values, output, &mut fallback)? {
+                        match self.handle_enumref(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Popcount(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Popcount(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"popcount", false)?;
-                        match self.handle_popcount(helper, values, output, &mut fallback)? {
+                        match self.handle_popcount(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Sumof(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Sumof(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"sumof", false)?;
-                        match self.handle_sumof(helper, values, output, &mut fallback)? {
+                        match self.handle_sumof(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Value(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Value(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"value", false)?;
-                        match self.handle_value(helper, values, output, &mut fallback)? {
+                        match self.handle_value(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Bit(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Bit(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"bit", false)?;
-                        match self.handle_bit(helper, values, output, &mut fallback)? {
+                        match self.handle_bit(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (s @ S::Done__(_), event) => {
-                        *self.state__ = s;
+                    (state @ S::Done__(_), event) => {
+                        *self.state__ = state;
                         break (DeserializerEvent::Continue(event), false);
                     }
                     (state, event) => {
                         *self.state__ = state;
-                        break (DeserializerEvent::Break(event), false);
+                        break (DeserializerEvent::Continue(event), false);
                     }
                 }
             };
@@ -15638,7 +13923,7 @@ pub mod quick_xml_deserialize {
             self.finish_state(helper, state)?;
             Ok(super::EnumrefType {
                 ref_: self.ref_,
-                content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                content: helper.finish_content(self.content)?,
             })
         }
     }
@@ -15652,32 +13937,43 @@ pub mod quick_xml_deserialize {
         Op(
             Option<super::OpType>,
             Option<<super::OpType as WithDeserializer>::Deserializer>,
+            Option<<super::OpType as WithDeserializer>::Deserializer>,
         ),
         Unop(
             Option<super::UnopType>,
+            Option<<super::UnopType as WithDeserializer>::Deserializer>,
             Option<<super::UnopType as WithDeserializer>::Deserializer>,
         ),
         Fieldref(
             Option<String>,
             Option<<String as WithDeserializer>::Deserializer>,
+            Option<<String as WithDeserializer>::Deserializer>,
         ),
         Enumref(
             Option<super::EnumrefType>,
+            Option<<super::EnumrefType as WithDeserializer>::Deserializer>,
             Option<<super::EnumrefType as WithDeserializer>::Deserializer>,
         ),
         Popcount(
             Option<super::PopcountType>,
             Option<<super::PopcountType as WithDeserializer>::Deserializer>,
+            Option<<super::PopcountType as WithDeserializer>::Deserializer>,
         ),
         Sumof(
             Option<super::SumofType>,
+            Option<<super::SumofType as WithDeserializer>::Deserializer>,
             Option<<super::SumofType as WithDeserializer>::Deserializer>,
         ),
         Value(
             Option<super::DecOrHexIntegerType>,
             Option<<super::DecOrHexIntegerType as WithDeserializer>::Deserializer>,
+            Option<<super::DecOrHexIntegerType as WithDeserializer>::Deserializer>,
         ),
-        Bit(Option<i32>, Option<<i32 as WithDeserializer>::Deserializer>),
+        Bit(
+            Option<i32>,
+            Option<<i32 as WithDeserializer>::Deserializer>,
+            Option<<i32 as WithDeserializer>::Deserializer>,
+        ),
         Done__(super::PopcountType),
         Unknown__,
     }
@@ -15686,65 +13982,43 @@ pub mod quick_xml_deserialize {
             &mut self,
             helper: &mut DeserializeHelper,
             event: Event<'de>,
-            fallback: &mut Option<PopcountTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if x.name().local_name().as_ref() == b"op" {
-                    let output =
-                        <super::OpType as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_op(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::OpType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_op(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"unop" {
-                    let output =
-                        <super::UnopType as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_unop(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::UnopType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_unop(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"fieldref" {
-                    let output = <String as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_fieldref(
-                        helper,
-                        Default::default(),
-                        output,
-                        &mut *fallback,
-                    );
+                    let output = <String as WithDeserializer>::init(helper, event)?;
+                    return self.handle_fieldref(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"enumref" {
-                    let output = <super::EnumrefType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
-                    return self.handle_enumref(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::EnumrefType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_enumref(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"popcount" {
-                    let output = <super::PopcountType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
-                    return self.handle_popcount(
-                        helper,
-                        Default::default(),
-                        output,
-                        &mut *fallback,
-                    );
+                    let output = <super::PopcountType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_popcount(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"sumof" {
-                    let output =
-                        <super::SumofType as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_sumof(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::SumofType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_sumof(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"value" {
                     let output =
-                        <super::DecOrHexIntegerType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
-                    return self.handle_value(helper, Default::default(), output, &mut *fallback);
+                        <super::DecOrHexIntegerType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_value(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"bit" {
-                    let output = <i32 as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_bit(helper, Default::default(), output, &mut *fallback);
+                    let output = <i32 as WithDeserializer>::init(helper, event)?;
+                    return self.handle_bit(helper, Default::default(), None, output);
                 }
             }
-            *self.state__ = fallback
-                .take()
-                .unwrap_or(PopcountTypeDeserializerState::Init__);
+            *self.state__ = PopcountTypeDeserializerState::Init__;
             Ok(ElementHandlerOutput::return_to_parent(event, false))
         }
         fn from_bytes_start(
@@ -15765,81 +14039,81 @@ pub mod quick_xml_deserialize {
         ) -> Result<super::PopcountType, Error> {
             use PopcountTypeDeserializerState as S;
             match state {
-                S::Unknown__ => unreachable!(),
                 S::Init__ => Err(ErrorKind::MissingContent.into()),
-                S::Op(mut values, deserializer) => {
+                S::Op(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_op(&mut values, value)?;
                     }
                     Ok(super::PopcountType::Op(Box::new(
-                        values.ok_or_else(|| ErrorKind::MissingElement("op".into()))?,
+                        helper.finish_element("op", values)?,
                     )))
                 }
-                S::Unop(mut values, deserializer) => {
+                S::Unop(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_unop(&mut values, value)?;
                     }
-                    Ok(super::PopcountType::Unop(Box::new(values.ok_or_else(
-                        || ErrorKind::MissingElement("unop".into()),
-                    )?)))
+                    Ok(super::PopcountType::Unop(Box::new(
+                        helper.finish_element("unop", values)?,
+                    )))
                 }
-                S::Fieldref(mut values, deserializer) => {
+                S::Fieldref(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_fieldref(&mut values, value)?;
                     }
-                    Ok(super::PopcountType::Fieldref(values.ok_or_else(|| {
-                        ErrorKind::MissingElement("fieldref".into())
-                    })?))
+                    Ok(super::PopcountType::Fieldref(
+                        helper.finish_element("fieldref", values)?,
+                    ))
                 }
-                S::Enumref(mut values, deserializer) => {
+                S::Enumref(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_enumref(&mut values, value)?;
                     }
-                    Ok(super::PopcountType::Enumref(values.ok_or_else(|| {
-                        ErrorKind::MissingElement("enumref".into())
-                    })?))
+                    Ok(super::PopcountType::Enumref(
+                        helper.finish_element("enumref", values)?,
+                    ))
                 }
-                S::Popcount(mut values, deserializer) => {
+                S::Popcount(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_popcount(&mut values, value)?;
                     }
-                    Ok(super::PopcountType::Popcount(Box::new(values.ok_or_else(
-                        || ErrorKind::MissingElement("popcount".into()),
-                    )?)))
+                    Ok(super::PopcountType::Popcount(Box::new(
+                        helper.finish_element("popcount", values)?,
+                    )))
                 }
-                S::Sumof(mut values, deserializer) => {
+                S::Sumof(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_sumof(&mut values, value)?;
                     }
-                    Ok(super::PopcountType::Sumof(values.ok_or_else(|| {
-                        ErrorKind::MissingElement("sumof".into())
-                    })?))
+                    Ok(super::PopcountType::Sumof(
+                        helper.finish_element("sumof", values)?,
+                    ))
                 }
-                S::Value(mut values, deserializer) => {
+                S::Value(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_value(&mut values, value)?;
                     }
-                    Ok(super::PopcountType::Value(values.ok_or_else(|| {
-                        ErrorKind::MissingElement("value".into())
-                    })?))
+                    Ok(super::PopcountType::Value(
+                        helper.finish_element("value", values)?,
+                    ))
                 }
-                S::Bit(mut values, deserializer) => {
+                S::Bit(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_bit(&mut values, value)?;
                     }
                     Ok(super::PopcountType::Bit(
-                        values.ok_or_else(|| ErrorKind::MissingElement("bit".into()))?,
+                        helper.finish_element("bit", values)?,
                     ))
                 }
                 S::Done__(data) => Ok(data),
+                _ => unreachable!(),
             }
         }
         fn store_op(values: &mut Option<super::OpType>, value: super::OpType) -> Result<(), Error> {
@@ -15927,382 +14201,265 @@ pub mod quick_xml_deserialize {
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::OpType>,
+            fallback: Option<<super::OpType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::OpType>,
-            fallback: &mut Option<PopcountTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use PopcountTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = PopcountTypeDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => PopcountTypeDeserializerState::Op(values, None),
-                    Some(PopcountTypeDeserializerState::Op(_, Some(deserializer))) => {
-                        PopcountTypeDeserializerState::Op(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(PopcountTypeDeserializerState::Op(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_op(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_op(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_op(&mut values, data)?;
-                    *self.state__ = PopcountTypeDeserializerState::Op(values, None);
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::Op(values, None, None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = PopcountTypeDeserializerState::Op(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Op(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::from_event_end(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_unop<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::UnopType>,
+            fallback: Option<<super::UnopType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::UnopType>,
-            fallback: &mut Option<PopcountTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use PopcountTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = PopcountTypeDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => PopcountTypeDeserializerState::Unop(values, None),
-                    Some(PopcountTypeDeserializerState::Unop(_, Some(deserializer))) => {
-                        PopcountTypeDeserializerState::Unop(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(PopcountTypeDeserializerState::Unop(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_unop(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_unop(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_unop(&mut values, data)?;
-                    *self.state__ = PopcountTypeDeserializerState::Unop(values, None);
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::Unop(values, None, None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = PopcountTypeDeserializerState::Unop(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Unop(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::from_event_end(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_fieldref<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<String>,
+            fallback: Option<<String as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, String>,
-            fallback: &mut Option<PopcountTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use PopcountTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = PopcountTypeDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => PopcountTypeDeserializerState::Fieldref(values, None),
-                    Some(PopcountTypeDeserializerState::Fieldref(_, Some(deserializer))) => {
-                        PopcountTypeDeserializerState::Fieldref(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(PopcountTypeDeserializerState::Fieldref(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_fieldref(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_fieldref(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_fieldref(&mut values, data)?;
-                    *self.state__ = PopcountTypeDeserializerState::Fieldref(values, None);
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::Fieldref(values, None, None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        PopcountTypeDeserializerState::Fieldref(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Fieldref(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::from_event_end(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_enumref<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::EnumrefType>,
+            fallback: Option<<super::EnumrefType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::EnumrefType>,
-            fallback: &mut Option<PopcountTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use PopcountTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = PopcountTypeDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => PopcountTypeDeserializerState::Enumref(values, None),
-                    Some(PopcountTypeDeserializerState::Enumref(_, Some(deserializer))) => {
-                        PopcountTypeDeserializerState::Enumref(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(PopcountTypeDeserializerState::Enumref(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_enumref(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_enumref(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_enumref(&mut values, data)?;
-                    *self.state__ = PopcountTypeDeserializerState::Enumref(values, None);
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::Enumref(values, None, None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        PopcountTypeDeserializerState::Enumref(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Enumref(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::from_event_end(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_popcount<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::PopcountType>,
+            fallback: Option<<super::PopcountType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::PopcountType>,
-            fallback: &mut Option<PopcountTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use PopcountTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = PopcountTypeDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => PopcountTypeDeserializerState::Popcount(values, None),
-                    Some(PopcountTypeDeserializerState::Popcount(_, Some(deserializer))) => {
-                        PopcountTypeDeserializerState::Popcount(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(PopcountTypeDeserializerState::Popcount(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_popcount(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_popcount(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_popcount(&mut values, data)?;
-                    *self.state__ = PopcountTypeDeserializerState::Popcount(values, None);
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::Popcount(values, None, None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        PopcountTypeDeserializerState::Popcount(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Popcount(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::from_event_end(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_sumof<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::SumofType>,
+            fallback: Option<<super::SumofType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::SumofType>,
-            fallback: &mut Option<PopcountTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use PopcountTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = PopcountTypeDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => PopcountTypeDeserializerState::Sumof(values, None),
-                    Some(PopcountTypeDeserializerState::Sumof(_, Some(deserializer))) => {
-                        PopcountTypeDeserializerState::Sumof(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(PopcountTypeDeserializerState::Sumof(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_sumof(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_sumof(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_sumof(&mut values, data)?;
-                    *self.state__ = PopcountTypeDeserializerState::Sumof(values, None);
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::Sumof(values, None, None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        PopcountTypeDeserializerState::Sumof(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Sumof(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::from_event_end(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_value<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::DecOrHexIntegerType>,
+            fallback: Option<<super::DecOrHexIntegerType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::DecOrHexIntegerType>,
-            fallback: &mut Option<PopcountTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use PopcountTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = PopcountTypeDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => PopcountTypeDeserializerState::Value(values, None),
-                    Some(PopcountTypeDeserializerState::Value(_, Some(deserializer))) => {
-                        PopcountTypeDeserializerState::Value(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(PopcountTypeDeserializerState::Value(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_value(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_value(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_value(&mut values, data)?;
-                    *self.state__ = PopcountTypeDeserializerState::Value(values, None);
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::Value(values, None, None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        PopcountTypeDeserializerState::Value(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Value(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::from_event_end(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_bit<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<i32>,
+            fallback: Option<<i32 as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, i32>,
-            fallback: &mut Option<PopcountTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use PopcountTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = PopcountTypeDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => PopcountTypeDeserializerState::Bit(values, None),
-                    Some(PopcountTypeDeserializerState::Bit(_, Some(deserializer))) => {
-                        PopcountTypeDeserializerState::Bit(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(PopcountTypeDeserializerState::Bit(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_bit(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_bit(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_bit(&mut values, data)?;
-                    *self.state__ = PopcountTypeDeserializerState::Bit(values, None);
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::Bit(values, None, None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = PopcountTypeDeserializerState::Bit(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Bit(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::from_event_end(event, allow_any))
                 }
-            })
+            }
         }
     }
     impl<'de> Deserializer<'de, super::PopcountType> for PopcountTypeDeserializer {
@@ -16319,77 +14476,76 @@ pub mod quick_xml_deserialize {
         ) -> DeserializerResult<'de, super::PopcountType> {
             use PopcountTypeDeserializerState as S;
             let mut event = event;
-            let mut fallback = None;
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
-                    (S::Op(values, Some(deserializer)), event) => {
+                    (S::Op(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_op(helper, values, output, &mut fallback)? {
+                        match self.handle_op(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Unop(values, Some(deserializer)), event) => {
+                    (S::Unop(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_unop(helper, values, output, &mut fallback)? {
+                        match self.handle_unop(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Fieldref(values, Some(deserializer)), event) => {
+                    (S::Fieldref(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_fieldref(helper, values, output, &mut fallback)? {
+                        match self.handle_fieldref(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Enumref(values, Some(deserializer)), event) => {
+                    (S::Enumref(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_enumref(helper, values, output, &mut fallback)? {
+                        match self.handle_enumref(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Popcount(values, Some(deserializer)), event) => {
+                    (S::Popcount(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_popcount(helper, values, output, &mut fallback)? {
+                        match self.handle_popcount(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Sumof(values, Some(deserializer)), event) => {
+                    (S::Sumof(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_sumof(helper, values, output, &mut fallback)? {
+                        match self.handle_sumof(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Value(values, Some(deserializer)), event) => {
+                    (S::Value(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_value(helper, values, output, &mut fallback)? {
+                        match self.handle_value(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Bit(values, Some(deserializer)), event) => {
+                    (S::Bit(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_bit(helper, values, output, &mut fallback)? {
+                        match self.handle_bit(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
@@ -16405,99 +14561,123 @@ pub mod quick_xml_deserialize {
                             allow_any: false,
                         });
                     }
-                    (S::Init__, event) => match self.find_suitable(helper, event, &mut fallback)? {
+                    (S::Init__, event) => match self.find_suitable(helper, event)? {
                         ElementHandlerOutput::Break { event, allow_any } => {
                             break (event, allow_any)
                         }
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
-                    (S::Op(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Op(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"op", false)?;
-                        match self.handle_op(helper, values, output, &mut fallback)? {
+                        match self.handle_op(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Unop(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Unop(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"unop", false)?;
-                        match self.handle_unop(helper, values, output, &mut fallback)? {
+                        match self.handle_unop(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Fieldref(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Fieldref(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"fieldref", false)?;
-                        match self.handle_fieldref(helper, values, output, &mut fallback)? {
+                        match self.handle_fieldref(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Enumref(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Enumref(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"enumref", false)?;
-                        match self.handle_enumref(helper, values, output, &mut fallback)? {
+                        match self.handle_enumref(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Popcount(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Popcount(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"popcount", false)?;
-                        match self.handle_popcount(helper, values, output, &mut fallback)? {
+                        match self.handle_popcount(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Sumof(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Sumof(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"sumof", false)?;
-                        match self.handle_sumof(helper, values, output, &mut fallback)? {
+                        match self.handle_sumof(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Value(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Value(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"value", false)?;
-                        match self.handle_value(helper, values, output, &mut fallback)? {
+                        match self.handle_value(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Bit(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Bit(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"bit", false)?;
-                        match self.handle_bit(helper, values, output, &mut fallback)? {
+                        match self.handle_bit(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (s @ S::Done__(_), event) => {
-                        *self.state__ = s;
+                    (state @ S::Done__(_), event) => {
+                        *self.state__ = state;
                         break (DeserializerEvent::Continue(event), false);
                     }
                     (state, event) => {
                         *self.state__ = state;
-                        break (DeserializerEvent::Break(event), false);
+                        break (DeserializerEvent::Continue(event), false);
                     }
                 }
             };
@@ -16638,43 +14818,32 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::CaseexprTypeContent>,
             fallback: &mut Option<CaseexprTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use CaseexprTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = fallback
-                    .take()
-                    .unwrap_or(CaseexprTypeDeserializerState::Next__);
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                *self.state__ = fallback.take().unwrap_or(S::Next__);
+                return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
                 self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_content(data)?;
-                    *self.state__ = CaseexprTypeDeserializerState::Next__;
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::Next__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Break { .. } => {
-                            *self.state__ = CaseexprTypeDeserializerState::Content__(deserializer);
-                        }
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback.get_or_insert(CaseexprTypeDeserializerState::Content__(
-                                deserializer,
-                            ));
-                            *self.state__ = CaseexprTypeDeserializerState::Next__;
-                        }
-                    }
-                    ret
+                    *fallback = Some(S::Content__(deserializer));
+                    *self.state__ = S::Next__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
     }
     impl<'de> Deserializer<'de, super::CaseexprType> for CaseexprTypeDeserializer {
@@ -16715,9 +14884,7 @@ pub mod quick_xml_deserialize {
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
                         let output =
-                            <super::CaseexprTypeContent as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::CaseexprTypeContent as WithDeserializer>::init(helper, event)?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -16727,6 +14894,9 @@ pub mod quick_xml_deserialize {
                     }
                 }
             };
+            if let Some(fallback) = fallback {
+                *self.state__ = fallback;
+            }
             let artifact = DeserializerArtifact::Deserializer(self);
             Ok(DeserializerOutput {
                 artifact,
@@ -16739,7 +14909,7 @@ pub mod quick_xml_deserialize {
             self.finish_state(helper, state)?;
             Ok(super::CaseexprType {
                 name: self.name,
-                content: self.content,
+                content: helper.finish_vec(2usize, None, self.content)?,
             })
         }
     }
@@ -16753,50 +14923,66 @@ pub mod quick_xml_deserialize {
         Op(
             Option<super::OpType>,
             Option<<super::OpType as WithDeserializer>::Deserializer>,
+            Option<<super::OpType as WithDeserializer>::Deserializer>,
         ),
         Unop(
             Option<super::UnopType>,
+            Option<<super::UnopType as WithDeserializer>::Deserializer>,
             Option<<super::UnopType as WithDeserializer>::Deserializer>,
         ),
         Fieldref(
             Option<String>,
             Option<<String as WithDeserializer>::Deserializer>,
+            Option<<String as WithDeserializer>::Deserializer>,
         ),
         Enumref(
             Option<super::EnumrefType>,
+            Option<<super::EnumrefType as WithDeserializer>::Deserializer>,
             Option<<super::EnumrefType as WithDeserializer>::Deserializer>,
         ),
         Popcount(
             Option<super::PopcountType>,
             Option<<super::PopcountType as WithDeserializer>::Deserializer>,
+            Option<<super::PopcountType as WithDeserializer>::Deserializer>,
         ),
         Sumof(
             Option<super::SumofType>,
+            Option<<super::SumofType as WithDeserializer>::Deserializer>,
             Option<<super::SumofType as WithDeserializer>::Deserializer>,
         ),
         Value(
             Option<super::DecOrHexIntegerType>,
             Option<<super::DecOrHexIntegerType as WithDeserializer>::Deserializer>,
+            Option<<super::DecOrHexIntegerType as WithDeserializer>::Deserializer>,
         ),
-        Bit(Option<i32>, Option<<i32 as WithDeserializer>::Deserializer>),
+        Bit(
+            Option<i32>,
+            Option<<i32 as WithDeserializer>::Deserializer>,
+            Option<<i32 as WithDeserializer>::Deserializer>,
+        ),
         Pad(
             Option<super::PadType>,
+            Option<<super::PadType as WithDeserializer>::Deserializer>,
             Option<<super::PadType as WithDeserializer>::Deserializer>,
         ),
         Field(
             Option<super::VarType>,
             Option<<super::VarType as WithDeserializer>::Deserializer>,
+            Option<<super::VarType as WithDeserializer>::Deserializer>,
         ),
         List(
             Option<super::ListType>,
+            Option<<super::ListType as WithDeserializer>::Deserializer>,
             Option<<super::ListType as WithDeserializer>::Deserializer>,
         ),
         Fd(
             Option<super::AnyType>,
             Option<<super::AnyType as WithDeserializer>::Deserializer>,
+            Option<<super::AnyType as WithDeserializer>::Deserializer>,
         ),
         Switch(
             Option<super::SwitchexprType>,
+            Option<<super::SwitchexprType as WithDeserializer>::Deserializer>,
             Option<<super::SwitchexprType as WithDeserializer>::Deserializer>,
         ),
         Done__(super::CaseexprTypeContent),
@@ -16807,91 +14993,63 @@ pub mod quick_xml_deserialize {
             &mut self,
             helper: &mut DeserializeHelper,
             event: Event<'de>,
-            fallback: &mut Option<CaseexprTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if x.name().local_name().as_ref() == b"op" {
-                    let output =
-                        <super::OpType as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_op(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::OpType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_op(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"unop" {
-                    let output =
-                        <super::UnopType as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_unop(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::UnopType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_unop(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"fieldref" {
-                    let output = <String as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_fieldref(
-                        helper,
-                        Default::default(),
-                        output,
-                        &mut *fallback,
-                    );
+                    let output = <String as WithDeserializer>::init(helper, event)?;
+                    return self.handle_fieldref(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"enumref" {
-                    let output = <super::EnumrefType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
-                    return self.handle_enumref(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::EnumrefType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_enumref(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"popcount" {
-                    let output = <super::PopcountType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
-                    return self.handle_popcount(
-                        helper,
-                        Default::default(),
-                        output,
-                        &mut *fallback,
-                    );
+                    let output = <super::PopcountType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_popcount(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"sumof" {
-                    let output =
-                        <super::SumofType as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_sumof(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::SumofType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_sumof(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"value" {
                     let output =
-                        <super::DecOrHexIntegerType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
-                    return self.handle_value(helper, Default::default(), output, &mut *fallback);
+                        <super::DecOrHexIntegerType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_value(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"bit" {
-                    let output = <i32 as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_bit(helper, Default::default(), output, &mut *fallback);
+                    let output = <i32 as WithDeserializer>::init(helper, event)?;
+                    return self.handle_bit(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"pad" {
-                    let output =
-                        <super::PadType as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_pad(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::PadType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_pad(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"field" {
-                    let output =
-                        <super::VarType as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_field(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::VarType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_field(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"list" {
-                    let output =
-                        <super::ListType as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_list(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::ListType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_list(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"fd" {
-                    let output =
-                        <super::AnyType as WithDeserializer>::Deserializer::init(helper, event)?;
-                    return self.handle_fd(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::AnyType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_fd(helper, Default::default(), None, output);
                 }
                 if x.name().local_name().as_ref() == b"switch" {
-                    let output = <super::SwitchexprType as WithDeserializer>::Deserializer::init(
-                        helper, event,
-                    )?;
-                    return self.handle_switch(helper, Default::default(), output, &mut *fallback);
+                    let output = <super::SwitchexprType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_switch(helper, Default::default(), None, output);
                 }
             }
-            *self.state__ = fallback
-                .take()
-                .unwrap_or(CaseexprTypeContentDeserializerState::Init__);
+            *self.state__ = CaseexprTypeContentDeserializerState::Init__;
             Ok(ElementHandlerOutput::return_to_parent(event, false))
         }
         fn finish_state(
@@ -16900,126 +15058,126 @@ pub mod quick_xml_deserialize {
         ) -> Result<super::CaseexprTypeContent, Error> {
             use CaseexprTypeContentDeserializerState as S;
             match state {
-                S::Unknown__ => unreachable!(),
                 S::Init__ => Err(ErrorKind::MissingContent.into()),
-                S::Op(mut values, deserializer) => {
+                S::Op(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_op(&mut values, value)?;
                     }
                     Ok(super::CaseexprTypeContent::Op(
-                        values.ok_or_else(|| ErrorKind::MissingElement("op".into()))?,
+                        helper.finish_element("op", values)?,
                     ))
                 }
-                S::Unop(mut values, deserializer) => {
+                S::Unop(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_unop(&mut values, value)?;
                     }
                     Ok(super::CaseexprTypeContent::Unop(
-                        values.ok_or_else(|| ErrorKind::MissingElement("unop".into()))?,
+                        helper.finish_element("unop", values)?,
                     ))
                 }
-                S::Fieldref(mut values, deserializer) => {
+                S::Fieldref(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_fieldref(&mut values, value)?;
                     }
-                    Ok(super::CaseexprTypeContent::Fieldref(values.ok_or_else(
-                        || ErrorKind::MissingElement("fieldref".into()),
-                    )?))
+                    Ok(super::CaseexprTypeContent::Fieldref(
+                        helper.finish_element("fieldref", values)?,
+                    ))
                 }
-                S::Enumref(mut values, deserializer) => {
+                S::Enumref(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_enumref(&mut values, value)?;
                     }
-                    Ok(super::CaseexprTypeContent::Enumref(values.ok_or_else(
-                        || ErrorKind::MissingElement("enumref".into()),
-                    )?))
+                    Ok(super::CaseexprTypeContent::Enumref(
+                        helper.finish_element("enumref", values)?,
+                    ))
                 }
-                S::Popcount(mut values, deserializer) => {
+                S::Popcount(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_popcount(&mut values, value)?;
                     }
-                    Ok(super::CaseexprTypeContent::Popcount(values.ok_or_else(
-                        || ErrorKind::MissingElement("popcount".into()),
-                    )?))
+                    Ok(super::CaseexprTypeContent::Popcount(
+                        helper.finish_element("popcount", values)?,
+                    ))
                 }
-                S::Sumof(mut values, deserializer) => {
+                S::Sumof(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_sumof(&mut values, value)?;
                     }
-                    Ok(super::CaseexprTypeContent::Sumof(values.ok_or_else(
-                        || ErrorKind::MissingElement("sumof".into()),
-                    )?))
+                    Ok(super::CaseexprTypeContent::Sumof(
+                        helper.finish_element("sumof", values)?,
+                    ))
                 }
-                S::Value(mut values, deserializer) => {
+                S::Value(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_value(&mut values, value)?;
                     }
-                    Ok(super::CaseexprTypeContent::Value(values.ok_or_else(
-                        || ErrorKind::MissingElement("value".into()),
-                    )?))
+                    Ok(super::CaseexprTypeContent::Value(
+                        helper.finish_element("value", values)?,
+                    ))
                 }
-                S::Bit(mut values, deserializer) => {
+                S::Bit(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_bit(&mut values, value)?;
                     }
                     Ok(super::CaseexprTypeContent::Bit(
-                        values.ok_or_else(|| ErrorKind::MissingElement("bit".into()))?,
+                        helper.finish_element("bit", values)?,
                     ))
                 }
-                S::Pad(mut values, deserializer) => {
+                S::Pad(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_pad(&mut values, value)?;
                     }
                     Ok(super::CaseexprTypeContent::Pad(
-                        values.ok_or_else(|| ErrorKind::MissingElement("pad".into()))?,
+                        helper.finish_element("pad", values)?,
                     ))
                 }
-                S::Field(mut values, deserializer) => {
+                S::Field(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_field(&mut values, value)?;
                     }
-                    Ok(super::CaseexprTypeContent::Field(values.ok_or_else(
-                        || ErrorKind::MissingElement("field".into()),
-                    )?))
+                    Ok(super::CaseexprTypeContent::Field(
+                        helper.finish_element("field", values)?,
+                    ))
                 }
-                S::List(mut values, deserializer) => {
+                S::List(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_list(&mut values, value)?;
                     }
                     Ok(super::CaseexprTypeContent::List(
-                        values.ok_or_else(|| ErrorKind::MissingElement("list".into()))?,
+                        helper.finish_element("list", values)?,
                     ))
                 }
-                S::Fd(mut values, deserializer) => {
+                S::Fd(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_fd(&mut values, value)?;
                     }
                     Ok(super::CaseexprTypeContent::Fd(
-                        values.ok_or_else(|| ErrorKind::MissingElement("fd".into()))?,
+                        helper.finish_element("fd", values)?,
                     ))
                 }
-                S::Switch(mut values, deserializer) => {
+                S::Switch(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
                         Self::store_switch(&mut values, value)?;
                     }
-                    Ok(super::CaseexprTypeContent::Switch(values.ok_or_else(
-                        || ErrorKind::MissingElement("switch".into()),
-                    )?))
+                    Ok(super::CaseexprTypeContent::Switch(
+                        helper.finish_element("switch", values)?,
+                    ))
                 }
                 S::Done__(data) => Ok(data),
+                _ => unreachable!(),
             }
         }
         fn store_op(values: &mut Option<super::OpType>, value: super::OpType) -> Result<(), Error> {
@@ -17161,677 +15319,443 @@ pub mod quick_xml_deserialize {
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::OpType>,
+            fallback: Option<<super::OpType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::OpType>,
-            fallback: &mut Option<CaseexprTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use CaseexprTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = CaseexprTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => CaseexprTypeContentDeserializerState::Op(values, None),
-                    Some(CaseexprTypeContentDeserializerState::Op(_, Some(deserializer))) => {
-                        CaseexprTypeContentDeserializerState::Op(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(CaseexprTypeContentDeserializerState::Op(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_op(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_op(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_op(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        CaseexprTypeContentDeserializerState::Op(values, None),
-                    )?;
-                    *self.state__ = CaseexprTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Op(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        CaseexprTypeContentDeserializerState::Op(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Op(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_unop<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::UnopType>,
+            fallback: Option<<super::UnopType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::UnopType>,
-            fallback: &mut Option<CaseexprTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use CaseexprTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = CaseexprTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => CaseexprTypeContentDeserializerState::Unop(values, None),
-                    Some(CaseexprTypeContentDeserializerState::Unop(_, Some(deserializer))) => {
-                        CaseexprTypeContentDeserializerState::Unop(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(CaseexprTypeContentDeserializerState::Unop(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_unop(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_unop(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_unop(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        CaseexprTypeContentDeserializerState::Unop(values, None),
-                    )?;
-                    *self.state__ = CaseexprTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Unop(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        CaseexprTypeContentDeserializerState::Unop(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Unop(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_fieldref<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<String>,
+            fallback: Option<<String as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, String>,
-            fallback: &mut Option<CaseexprTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use CaseexprTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = CaseexprTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => CaseexprTypeContentDeserializerState::Fieldref(values, None),
-                    Some(CaseexprTypeContentDeserializerState::Fieldref(_, Some(deserializer))) => {
-                        CaseexprTypeContentDeserializerState::Fieldref(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(CaseexprTypeContentDeserializerState::Fieldref(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_fieldref(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_fieldref(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_fieldref(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        CaseexprTypeContentDeserializerState::Fieldref(values, None),
-                    )?;
-                    *self.state__ = CaseexprTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Fieldref(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        CaseexprTypeContentDeserializerState::Fieldref(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Fieldref(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_enumref<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::EnumrefType>,
+            fallback: Option<<super::EnumrefType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::EnumrefType>,
-            fallback: &mut Option<CaseexprTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use CaseexprTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = CaseexprTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => CaseexprTypeContentDeserializerState::Enumref(values, None),
-                    Some(CaseexprTypeContentDeserializerState::Enumref(_, Some(deserializer))) => {
-                        CaseexprTypeContentDeserializerState::Enumref(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(CaseexprTypeContentDeserializerState::Enumref(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_enumref(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_enumref(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_enumref(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        CaseexprTypeContentDeserializerState::Enumref(values, None),
-                    )?;
-                    *self.state__ = CaseexprTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Enumref(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        CaseexprTypeContentDeserializerState::Enumref(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Enumref(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_popcount<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::PopcountType>,
+            fallback: Option<<super::PopcountType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::PopcountType>,
-            fallback: &mut Option<CaseexprTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use CaseexprTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = CaseexprTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => CaseexprTypeContentDeserializerState::Popcount(values, None),
-                    Some(CaseexprTypeContentDeserializerState::Popcount(_, Some(deserializer))) => {
-                        CaseexprTypeContentDeserializerState::Popcount(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(CaseexprTypeContentDeserializerState::Popcount(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_popcount(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_popcount(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_popcount(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        CaseexprTypeContentDeserializerState::Popcount(values, None),
-                    )?;
-                    *self.state__ = CaseexprTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Popcount(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        CaseexprTypeContentDeserializerState::Popcount(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Popcount(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_sumof<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::SumofType>,
+            fallback: Option<<super::SumofType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::SumofType>,
-            fallback: &mut Option<CaseexprTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use CaseexprTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = CaseexprTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => CaseexprTypeContentDeserializerState::Sumof(values, None),
-                    Some(CaseexprTypeContentDeserializerState::Sumof(_, Some(deserializer))) => {
-                        CaseexprTypeContentDeserializerState::Sumof(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(CaseexprTypeContentDeserializerState::Sumof(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_sumof(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_sumof(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_sumof(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        CaseexprTypeContentDeserializerState::Sumof(values, None),
-                    )?;
-                    *self.state__ = CaseexprTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Sumof(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        CaseexprTypeContentDeserializerState::Sumof(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Sumof(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_value<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::DecOrHexIntegerType>,
+            fallback: Option<<super::DecOrHexIntegerType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::DecOrHexIntegerType>,
-            fallback: &mut Option<CaseexprTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use CaseexprTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = CaseexprTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => CaseexprTypeContentDeserializerState::Value(values, None),
-                    Some(CaseexprTypeContentDeserializerState::Value(_, Some(deserializer))) => {
-                        CaseexprTypeContentDeserializerState::Value(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(CaseexprTypeContentDeserializerState::Value(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_value(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_value(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_value(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        CaseexprTypeContentDeserializerState::Value(values, None),
-                    )?;
-                    *self.state__ = CaseexprTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Value(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        CaseexprTypeContentDeserializerState::Value(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Value(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_bit<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<i32>,
+            fallback: Option<<i32 as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, i32>,
-            fallback: &mut Option<CaseexprTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use CaseexprTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = CaseexprTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => CaseexprTypeContentDeserializerState::Bit(values, None),
-                    Some(CaseexprTypeContentDeserializerState::Bit(_, Some(deserializer))) => {
-                        CaseexprTypeContentDeserializerState::Bit(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(CaseexprTypeContentDeserializerState::Bit(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_bit(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_bit(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_bit(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        CaseexprTypeContentDeserializerState::Bit(values, None),
-                    )?;
-                    *self.state__ = CaseexprTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Bit(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        CaseexprTypeContentDeserializerState::Bit(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Bit(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_pad<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::PadType>,
+            fallback: Option<<super::PadType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::PadType>,
-            fallback: &mut Option<CaseexprTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use CaseexprTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = CaseexprTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => CaseexprTypeContentDeserializerState::Pad(values, None),
-                    Some(CaseexprTypeContentDeserializerState::Pad(_, Some(deserializer))) => {
-                        CaseexprTypeContentDeserializerState::Pad(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(CaseexprTypeContentDeserializerState::Pad(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_pad(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_pad(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_pad(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        CaseexprTypeContentDeserializerState::Pad(values, None),
-                    )?;
-                    *self.state__ = CaseexprTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Pad(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        CaseexprTypeContentDeserializerState::Pad(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Pad(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_field<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::VarType>,
+            fallback: Option<<super::VarType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::VarType>,
-            fallback: &mut Option<CaseexprTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use CaseexprTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = CaseexprTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => CaseexprTypeContentDeserializerState::Field(values, None),
-                    Some(CaseexprTypeContentDeserializerState::Field(_, Some(deserializer))) => {
-                        CaseexprTypeContentDeserializerState::Field(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(CaseexprTypeContentDeserializerState::Field(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_field(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_field(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_field(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        CaseexprTypeContentDeserializerState::Field(values, None),
-                    )?;
-                    *self.state__ = CaseexprTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Field(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        CaseexprTypeContentDeserializerState::Field(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Field(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_list<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::ListType>,
+            fallback: Option<<super::ListType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::ListType>,
-            fallback: &mut Option<CaseexprTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use CaseexprTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = CaseexprTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => CaseexprTypeContentDeserializerState::List(values, None),
-                    Some(CaseexprTypeContentDeserializerState::List(_, Some(deserializer))) => {
-                        CaseexprTypeContentDeserializerState::List(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(CaseexprTypeContentDeserializerState::List(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_list(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_list(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_list(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        CaseexprTypeContentDeserializerState::List(values, None),
-                    )?;
-                    *self.state__ = CaseexprTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::List(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        CaseexprTypeContentDeserializerState::List(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::List(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_fd<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::AnyType>,
+            fallback: Option<<super::AnyType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::AnyType>,
-            fallback: &mut Option<CaseexprTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use CaseexprTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = CaseexprTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => CaseexprTypeContentDeserializerState::Fd(values, None),
-                    Some(CaseexprTypeContentDeserializerState::Fd(_, Some(deserializer))) => {
-                        CaseexprTypeContentDeserializerState::Fd(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(CaseexprTypeContentDeserializerState::Fd(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_fd(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_fd(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_fd(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        CaseexprTypeContentDeserializerState::Fd(values, None),
-                    )?;
-                    *self.state__ = CaseexprTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Fd(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        CaseexprTypeContentDeserializerState::Fd(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Fd(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_switch<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::SwitchexprType>,
+            fallback: Option<<super::SwitchexprType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::SwitchexprType>,
-            fallback: &mut Option<CaseexprTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use CaseexprTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = CaseexprTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => CaseexprTypeContentDeserializerState::Switch(values, None),
-                    Some(CaseexprTypeContentDeserializerState::Switch(_, Some(deserializer))) => {
-                        CaseexprTypeContentDeserializerState::Switch(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(CaseexprTypeContentDeserializerState::Switch(_, Some(deserializer))) => {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_switch(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_switch(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_switch(&mut values, data)?;
-                    let data = Self::finish_state(
-                        helper,
-                        CaseexprTypeContentDeserializerState::Switch(values, None),
-                    )?;
-                    *self.state__ = CaseexprTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::Switch(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ =
-                        CaseexprTypeContentDeserializerState::Switch(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Switch(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
     }
     impl<'de> Deserializer<'de, super::CaseexprTypeContent> for CaseexprTypeContentDeserializer {
@@ -17860,122 +15784,121 @@ pub mod quick_xml_deserialize {
         ) -> DeserializerResult<'de, super::CaseexprTypeContent> {
             use CaseexprTypeContentDeserializerState as S;
             let mut event = event;
-            let mut fallback = None;
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
-                    (S::Op(values, Some(deserializer)), event) => {
+                    (S::Op(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_op(helper, values, output, &mut fallback)? {
+                        match self.handle_op(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Unop(values, Some(deserializer)), event) => {
+                    (S::Unop(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_unop(helper, values, output, &mut fallback)? {
+                        match self.handle_unop(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Fieldref(values, Some(deserializer)), event) => {
+                    (S::Fieldref(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_fieldref(helper, values, output, &mut fallback)? {
+                        match self.handle_fieldref(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Enumref(values, Some(deserializer)), event) => {
+                    (S::Enumref(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_enumref(helper, values, output, &mut fallback)? {
+                        match self.handle_enumref(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Popcount(values, Some(deserializer)), event) => {
+                    (S::Popcount(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_popcount(helper, values, output, &mut fallback)? {
+                        match self.handle_popcount(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Sumof(values, Some(deserializer)), event) => {
+                    (S::Sumof(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_sumof(helper, values, output, &mut fallback)? {
+                        match self.handle_sumof(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Value(values, Some(deserializer)), event) => {
+                    (S::Value(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_value(helper, values, output, &mut fallback)? {
+                        match self.handle_value(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Bit(values, Some(deserializer)), event) => {
+                    (S::Bit(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_bit(helper, values, output, &mut fallback)? {
+                        match self.handle_bit(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Pad(values, Some(deserializer)), event) => {
+                    (S::Pad(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_pad(helper, values, output, &mut fallback)? {
+                        match self.handle_pad(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Field(values, Some(deserializer)), event) => {
+                    (S::Field(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_field(helper, values, output, &mut fallback)? {
+                        match self.handle_field(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::List(values, Some(deserializer)), event) => {
+                    (S::List(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_list(helper, values, output, &mut fallback)? {
+                        match self.handle_list(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Fd(values, Some(deserializer)), event) => {
+                    (S::Fd(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_fd(helper, values, output, &mut fallback)? {
+                        match self.handle_fd(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Switch(values, Some(deserializer)), event) => {
+                    (S::Switch(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_switch(helper, values, output, &mut fallback)? {
+                        match self.handle_switch(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
@@ -17991,149 +15914,188 @@ pub mod quick_xml_deserialize {
                             allow_any: false,
                         });
                     }
-                    (S::Init__, event) => match self.find_suitable(helper, event, &mut fallback)? {
+                    (S::Init__, event) => match self.find_suitable(helper, event)? {
                         ElementHandlerOutput::Break { event, allow_any } => {
                             break (event, allow_any)
                         }
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
-                    (S::Op(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Op(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"op", false)?;
-                        match self.handle_op(helper, values, output, &mut fallback)? {
+                        match self.handle_op(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Unop(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Unop(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"unop", false)?;
-                        match self.handle_unop(helper, values, output, &mut fallback)? {
+                        match self.handle_unop(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Fieldref(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Fieldref(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"fieldref", false)?;
-                        match self.handle_fieldref(helper, values, output, &mut fallback)? {
+                        match self.handle_fieldref(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Enumref(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Enumref(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"enumref", false)?;
-                        match self.handle_enumref(helper, values, output, &mut fallback)? {
+                        match self.handle_enumref(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Popcount(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Popcount(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"popcount", false)?;
-                        match self.handle_popcount(helper, values, output, &mut fallback)? {
+                        match self.handle_popcount(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Sumof(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Sumof(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"sumof", false)?;
-                        match self.handle_sumof(helper, values, output, &mut fallback)? {
+                        match self.handle_sumof(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Value(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Value(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"value", false)?;
-                        match self.handle_value(helper, values, output, &mut fallback)? {
+                        match self.handle_value(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Bit(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Bit(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"bit", false)?;
-                        match self.handle_bit(helper, values, output, &mut fallback)? {
+                        match self.handle_bit(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Pad(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Pad(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"pad", false)?;
-                        match self.handle_pad(helper, values, output, &mut fallback)? {
+                        match self.handle_pad(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Field(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Field(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"field", false)?;
-                        match self.handle_field(helper, values, output, &mut fallback)? {
+                        match self.handle_field(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::List(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::List(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"list", false)?;
-                        match self.handle_list(helper, values, output, &mut fallback)? {
+                        match self.handle_list(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Fd(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Fd(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"fd", true)?;
-                        match self.handle_fd(helper, values, output, &mut fallback)? {
+                        match self.handle_fd(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Switch(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (
+                        S::Switch(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
                         let output =
                             helper.init_start_tag_deserializer(event, None, b"switch", true)?;
-                        match self.handle_switch(helper, values, output, &mut fallback)? {
+                        match self.handle_switch(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (s @ S::Done__(_), event) => {
-                        *self.state__ = s;
+                    (state @ S::Done__(_), event) => {
+                        *self.state__ = state;
                         break (DeserializerEvent::Continue(event), false);
                     }
                     (state, event) => {
                         *self.state__ = state;
-                        break (DeserializerEvent::Break(event), false);
+                        break (DeserializerEvent::Continue(event), false);
                     }
                 }
             };
@@ -18278,7 +16240,7 @@ pub mod quick_xml_deserialize {
             self.finish_state(helper, state)?;
             Ok(super::FieldType {
                 name: self.name,
-                content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                content: helper.finish_content(self.content)?,
             })
         }
     }
@@ -18405,7 +16367,7 @@ pub mod quick_xml_deserialize {
             self.finish_state(helper, state)?;
             Ok(super::ErrorType {
                 type_: self.type_,
-                content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                content: helper.finish_content(self.content)?,
             })
         }
     }

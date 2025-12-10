@@ -23,6 +23,48 @@ use super::{Error, ErrorKind, RawByteStr, XmlReader, XmlReaderSync};
 pub trait WithDeserializer: Sized {
     /// The deserializer to use for this type.
     type Deserializer: for<'de> Deserializer<'de, Self>;
+
+    /// Initializes a new deserializer for the given `event` using the given `helper`.
+    ///
+    /// This is a shortcut for `Self::Deserializer::init()`.
+    ///
+    /// # Errors
+    ///
+    /// Forwards the errors from `Self::Deserializer::init()`;
+    fn init<'de>(
+        helper: &mut DeserializeHelper,
+        event: Event<'de>,
+    ) -> DeserializerResult<'de, Self> {
+        Self::Deserializer::init(helper, event)
+    }
+
+    /// Create a new default deserializer.
+    ///
+    /// If a type does not represent a element (for example a group type), it
+    /// does not need to extract attribute information from an element, which
+    /// means, that it's  deserializer may be constructed with default values.
+    ///
+    /// This is a shortcut for `Self::Deserializer::default()`.
+    #[must_use]
+    fn default_deserializer() -> Self::Deserializer
+    where
+        Self::Deserializer: Default,
+    {
+        Self::Deserializer::default()
+    }
+
+    /// Create a new default value by creating and default deserializer and
+    /// finish it right after.
+    ///
+    /// # Errors
+    ///
+    /// Forwards errors from [`Deserializer::finish`].
+    fn default_value(helper: &mut DeserializeHelper) -> Result<Self, Error>
+    where
+        Self::Deserializer: Default,
+    {
+        Self::default_deserializer().finish(helper)
+    }
 }
 
 impl<X> WithDeserializer for X
@@ -109,8 +151,8 @@ impl<'a> ElementHandlerOutput<'a> {
     /// Create a [`Break`](Self::Break) instance that will return the passed
     /// `event` to root of the deserialization process.
     #[must_use]
-    pub fn return_to_root(event: Event<'a>, allow_any: bool) -> Self {
-        Self::break_(DeserializerEvent::Break(event), allow_any)
+    pub fn return_to_root(event: DeserializerEvent<'a>, allow_any: bool) -> Self {
+        Self::break_(event.into_break(), allow_any)
     }
 
     /// Create a [`Continue`](Self::Continue) instance if the passed `event` is
@@ -135,6 +177,21 @@ impl<'a> ElementHandlerOutput<'a> {
             DeserializerEvent::Continue(event) => Self::return_to_parent(event, allow_any),
             event => Self::break_(event, allow_any),
         }
+    }
+
+    /// Returns `true` if this is a [`Continue`](ElementHandlerOutput::Continue)
+    /// that contains a [`Start`](Event::Start) or [`Empty`](Event::Empty) event,
+    /// `false` otherwise.
+    #[inline]
+    #[must_use]
+    pub fn is_continue_start_or_empty(&self) -> bool {
+        matches!(
+            self,
+            Self::Continue {
+                event: Event::Start(_) | Event::Empty(_),
+                ..
+            }
+        )
     }
 }
 
@@ -249,18 +306,42 @@ pub enum DeserializerEvent<'a> {
     /// for additional evaluation.
     Break(Event<'a>),
 
-    /// The event was not consumed by the deserializer an may be processed again
+    /// The event was not consumed by the deserializer and may be processed again
     /// by any of it's parents.
     Continue(Event<'a>),
 }
 
 impl<'a> DeserializerEvent<'a> {
     /// Extract the event as `Option`.
+    #[inline]
     #[must_use]
     pub fn into_event(self) -> Option<Event<'a>> {
         match self {
             Self::None => None,
             Self::Break(event) | Self::Continue(event) => Some(event),
+        }
+    }
+
+    /// Return [`None`](DeserializerEvent::None) if the contained event is
+    /// [`Text`](Event::Text) or [`CData`](Event::CData).
+    #[must_use]
+    pub fn drop_text(self) -> Self {
+        match self {
+            Self::None => Self::None,
+            Self::Break(Event::Text(_) | Event::CData(_)) => Self::None,
+            Self::Continue(Event::Text(_) | Event::CData(_)) => Self::None,
+            x => x,
+        }
+    }
+
+    /// Converts a [`Continue`](DeserializerEvent::Continue) into a
+    /// [`Break`](DeserializerEvent::Break).
+    #[must_use]
+    pub fn into_break(self) -> Self {
+        match self {
+            Self::None => Self::None,
+            Self::Break(event) => Self::Break(event),
+            Self::Continue(event) => Self::Break(event),
         }
     }
 }
@@ -832,6 +913,133 @@ impl DeserializeHelper {
                 event: DeserializerEvent::Continue(event),
                 allow_any: false,
             }),
+        }
+    }
+
+    /// Try to extract the value from the storage type used by the deserializer.
+    ///
+    /// # Errors
+    ///
+    /// If the value is not valid a [`ErrorKind::MissingContent`] error is raised.
+    #[inline]
+    pub fn finish_content<T>(&self, value: Option<T>) -> Result<T, Error> {
+        Ok(value.ok_or_else(|| ErrorKind::MissingContent)?)
+    }
+
+    /// Try to extract the value from the storage type used by the deserializer.
+    ///
+    /// # Errors
+    ///
+    /// If the value is not valid a [`ErrorKind::MissingElement`] error is raised.
+    #[inline]
+    pub fn finish_element<T>(&self, name: &'static str, value: Option<T>) -> Result<T, Error> {
+        Ok(value.ok_or_else(|| ErrorKind::MissingElement(name.into()))?)
+    }
+
+    /// Try to extract the value from the storage type used by the deserializer
+    /// or create a new default value.
+    ///
+    /// # Errors
+    ///
+    /// Forwards the error from the deserializer that is used to default construct
+    /// a new value.
+    #[inline]
+    pub fn finish_default<T>(&mut self, value: Option<T>) -> Result<T, Error>
+    where
+        T: WithDeserializer,
+        T::Deserializer: Default,
+    {
+        if let Some(value) = value {
+            Ok(value)
+        } else {
+            T::default_value(self)
+        }
+    }
+
+    /// Try to extract the value from the storage type used by the deserializer
+    /// and checks it's bounds.
+    ///
+    /// # Errors
+    ///
+    /// If the value does not match the expected bounds a
+    /// [`ErrorKind::InsufficientSize`] error is raised.
+    #[inline]
+    pub fn finish_vec<T>(
+        &self,
+        min: usize,
+        max: Option<usize>,
+        value: Vec<T>,
+    ) -> Result<Vec<T>, Error> {
+        if value.len() < min && matches!(max, Some(max) if value.len() > max) {
+            return Err(ErrorKind::InsufficientSize {
+                min,
+                max,
+                actual: value.len(),
+            })?;
+        }
+
+        Ok(value)
+    }
+
+    /// Try to extract the value from the storage type used by the deserializer
+    /// and fill it up with default constructed values until the lower bound is
+    /// fulfilled.
+    ///
+    /// # Errors
+    ///
+    /// Forwards the error from the deserializer that is used to default construct
+    /// a new value.
+    #[inline]
+    pub fn finish_vec_default<T>(&mut self, min: usize, mut value: Vec<T>) -> Result<Vec<T>, Error>
+    where
+        T: WithDeserializer,
+        T::Deserializer: Default,
+    {
+        while value.len() < min {
+            value.push(T::default_value(self)?);
+        }
+
+        Ok(value)
+    }
+
+    /// Try to extract the value from the storage type used by the deserializer,
+    /// checks it's bounds and perform a conversion to the array.
+    ///
+    /// # Errors
+    ///
+    /// If the value does not match the expected bounds a
+    /// [`ErrorKind::InsufficientSize`] error is raised.
+    #[inline]
+    pub fn finish_arr<T, const N: usize>(&self, value: Vec<T>) -> Result<[T; N], Error> {
+        Ok(value
+            .try_into()
+            .map_err(|value: Vec<_>| ErrorKind::InsufficientSize {
+                min: N,
+                max: Some(N),
+                actual: value.len(),
+            })?)
+    }
+
+    /// Try to extract the value from the storage type used by the deserializer,
+    /// fill it up with default constructed values until the lower bound is
+    /// fulfilled and then convert it into an array.
+    ///
+    /// # Errors
+    ///
+    /// Forwards the error from the deserializer that is used to default construct
+    /// a new value.
+    #[inline]
+    pub fn finish_arr_default<T, const N: usize>(&mut self, value: Vec<T>) -> Result<[T; N], Error>
+    where
+        T: WithDeserializer,
+        T::Deserializer: Default,
+    {
+        let value = self.finish_vec_default(N, value)?;
+
+        if let Ok(arr) = value.try_into() {
+            Ok(arr)
+        } else {
+            unreachable!()
         }
     }
 

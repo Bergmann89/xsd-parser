@@ -148,43 +148,33 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, Text>,
             fallback: &mut Option<AttributeValueTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use AttributeValueTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(AttributeValueTypeDeserializerState::TextBefore(None));
-                *self.state__ = AttributeValueTypeDeserializerState::BaseElement(None);
+                fallback.get_or_insert(S::TextBefore(None));
+                *self.state__ = S::BaseElement(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
                 self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_text_before(data)?;
-                    *self.state__ = AttributeValueTypeDeserializerState::BaseElement(None);
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::BaseElement(None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback.get_or_insert(
-                                AttributeValueTypeDeserializerState::TextBefore(Some(deserializer)),
-                            );
-                            *self.state__ = AttributeValueTypeDeserializerState::BaseElement(None);
-                        }
-                        ElementHandlerOutput::Break { .. } => {
-                            *self.state__ =
-                                AttributeValueTypeDeserializerState::TextBefore(Some(deserializer));
-                        }
-                    }
-                    ret
+                    fallback.get_or_insert(S::TextBefore(Some(deserializer)));
+                    *self.state__ = S::BaseElement(None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_base_element<'de>(
             &mut self,
@@ -192,51 +182,36 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, Mixed<String>>,
             fallback: &mut Option<AttributeValueTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use AttributeValueTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                if self.base_element.is_some() {
-                    fallback.get_or_insert(AttributeValueTypeDeserializerState::BaseElement(None));
-                    *self.state__ = AttributeValueTypeDeserializerState::Any(None);
-                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                } else {
-                    *self.state__ = AttributeValueTypeDeserializerState::BaseElement(None);
+                fallback.get_or_insert(S::BaseElement(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
+                } else {
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 }
             }
             if let Some(fallback) = fallback.take() {
                 self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_base_element(data)?;
-                    *self.state__ = AttributeValueTypeDeserializerState::Any(None);
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::Any(None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback.get_or_insert(
-                                AttributeValueTypeDeserializerState::BaseElement(Some(
-                                    deserializer,
-                                )),
-                            );
-                            *self.state__ = AttributeValueTypeDeserializerState::Any(None);
-                        }
-                        ElementHandlerOutput::Break { .. } => {
-                            *self.state__ = AttributeValueTypeDeserializerState::BaseElement(Some(
-                                deserializer,
-                            ));
-                        }
-                    }
-                    ret
+                    fallback.get_or_insert(S::BaseElement(Some(deserializer)));
+                    *self.state__ = S::Any(None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_any<'de>(
             &mut self,
@@ -244,43 +219,33 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, Mixed<AnyElement>>,
             fallback: &mut Option<AttributeValueTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use AttributeValueTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(AttributeValueTypeDeserializerState::Any(None));
-                *self.state__ = AttributeValueTypeDeserializerState::Done__;
+                fallback.get_or_insert(S::Any(None));
+                *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
                 self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_any(data)?;
-                    *self.state__ = AttributeValueTypeDeserializerState::Any(None);
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::Any(None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback.get_or_insert(AttributeValueTypeDeserializerState::Any(Some(
-                                deserializer,
-                            )));
-                            *self.state__ = AttributeValueTypeDeserializerState::Any(None);
-                        }
-                        ElementHandlerOutput::Break { .. } => {
-                            *self.state__ =
-                                AttributeValueTypeDeserializerState::Any(Some(deserializer));
-                        }
-                    }
-                    ret
+                    fallback.get_or_insert(S::Any(Some(deserializer)));
+                    *self.state__ = S::Any(None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
     }
     impl<'de> Deserializer<'de, super::AttributeValueType> for AttributeValueTypeDeserializer {
@@ -353,11 +318,11 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ = AttributeValueTypeDeserializerState::TextBefore(None);
+                        *self.state__ = S::TextBefore(None);
                         event
                     }
                     (S::TextBefore(None), event) => {
-                        let output = <Text as WithDeserializer>::Deserializer::init(helper, event)?;
+                        let output = <Text as WithDeserializer>::init(helper, event)?;
                         match self.handle_text_before(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
@@ -388,9 +353,7 @@ pub mod quick_xml_deserialize {
                     (S::Any(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         if is_any_retry {
                             let output =
-                                <Mixed<AnyElement> as WithDeserializer>::Deserializer::init(
-                                    helper, event,
-                                )?;
+                                <Mixed<AnyElement> as WithDeserializer>::init(helper, event)?;
                             match self.handle_any(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
@@ -412,7 +375,7 @@ pub mod quick_xml_deserialize {
                             *self.state__ = state;
                             event
                         } else {
-                            fallback.get_or_insert(S::Done__);
+                            *self.state__ = S::Done__;
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
                     }
@@ -449,9 +412,7 @@ pub mod quick_xml_deserialize {
                 data_type: self.data_type,
                 any_attribute: self.any_attribute,
                 text_before: self.text_before,
-                base_element: self
-                    .base_element
-                    .ok_or_else(|| ErrorKind::MissingElement("BaseElement".into()))?,
+                base_element: helper.finish_element("BaseElement", self.base_element)?,
                 any: self.any,
             })
         }

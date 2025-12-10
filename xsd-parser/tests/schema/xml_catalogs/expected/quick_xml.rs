@@ -499,44 +499,32 @@ pub mod er {
                 output: DeserializerOutput<'de, super::CatalogTypeContent>,
                 fallback: &mut Option<CatalogTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CatalogTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state__ = fallback
-                        .take()
-                        .unwrap_or(CatalogTypeDeserializerState::Next__);
-                    return Ok(ElementHandlerOutput::break_(event, allow_any));
+                    *self.state__ = fallback.take().unwrap_or(S::Next__);
+                    return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
                     self.finish_state(helper, fallback)?;
                 }
-                Ok(match artifact {
+                match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state__ = CatalogTypeDeserializerState::Next__;
-                        ElementHandlerOutput::from_event(event, allow_any)
+                        *self.state__ = S::Next__;
+                        Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        let ret = ElementHandlerOutput::from_event(event, allow_any);
-                        match &ret {
-                            ElementHandlerOutput::Break { .. } => {
-                                *self.state__ =
-                                    CatalogTypeDeserializerState::Content__(deserializer);
-                            }
-                            ElementHandlerOutput::Continue { .. } => {
-                                fallback.get_or_insert(CatalogTypeDeserializerState::Content__(
-                                    deserializer,
-                                ));
-                                *self.state__ = CatalogTypeDeserializerState::Next__;
-                            }
-                        }
-                        ret
+                        *fallback = Some(S::Content__(deserializer));
+                        *self.state__ = S::Next__;
+                        Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
-                })
+                }
             }
         }
         impl<'de> Deserializer<'de, super::CatalogType> for CatalogTypeDeserializer {
@@ -576,7 +564,9 @@ pub mod er {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = < super :: CatalogTypeContent as WithDeserializer > :: Deserializer :: init (helper , event) ? ;
+                            let output = <super::CatalogTypeContent as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -586,6 +576,9 @@ pub mod er {
                         }
                     }
                 };
+                if let Some(fallback) = fallback {
+                    *self.state__ = fallback;
+                }
                 let artifact = DeserializerArtifact::Deserializer(self);
                 Ok(DeserializerOutput {
                     artifact,
@@ -602,7 +595,7 @@ pub mod er {
                 Ok(super::CatalogType {
                     id: self.id,
                     prefer: self.prefer,
-                    content: self.content,
+                    content: helper.finish_vec(1usize, None, self.content)?,
                 })
             }
         }
@@ -616,49 +609,61 @@ pub mod er {
             Public(
                 Option<super::PublicType>,
                 Option<<super::PublicType as WithDeserializer>::Deserializer>,
+                Option<<super::PublicType as WithDeserializer>::Deserializer>,
             ),
             System(
                 Option<super::SystemType>,
+                Option<<super::SystemType as WithDeserializer>::Deserializer>,
                 Option<<super::SystemType as WithDeserializer>::Deserializer>,
             ),
             Uri(
                 Option<super::UriType>,
                 Option<<super::UriType as WithDeserializer>::Deserializer>,
+                Option<<super::UriType as WithDeserializer>::Deserializer>,
             ),
             RewriteSystem(
                 Option<super::RewriteSystemType>,
+                Option<<super::RewriteSystemType as WithDeserializer>::Deserializer>,
                 Option<<super::RewriteSystemType as WithDeserializer>::Deserializer>,
             ),
             RewriteUri(
                 Option<super::RewriteUriType>,
                 Option<<super::RewriteUriType as WithDeserializer>::Deserializer>,
+                Option<<super::RewriteUriType as WithDeserializer>::Deserializer>,
             ),
             UriSuffix(
                 Option<super::UriSuffixType>,
+                Option<<super::UriSuffixType as WithDeserializer>::Deserializer>,
                 Option<<super::UriSuffixType as WithDeserializer>::Deserializer>,
             ),
             SystemSuffix(
                 Option<super::SystemSuffixType>,
                 Option<<super::SystemSuffixType as WithDeserializer>::Deserializer>,
+                Option<<super::SystemSuffixType as WithDeserializer>::Deserializer>,
             ),
             DelegatePublic(
                 Option<super::DelegatePublicType>,
+                Option<<super::DelegatePublicType as WithDeserializer>::Deserializer>,
                 Option<<super::DelegatePublicType as WithDeserializer>::Deserializer>,
             ),
             DelegateSystem(
                 Option<super::DelegateSystemType>,
                 Option<<super::DelegateSystemType as WithDeserializer>::Deserializer>,
+                Option<<super::DelegateSystemType as WithDeserializer>::Deserializer>,
             ),
             DelegateUri(
                 Option<super::DelegateUriType>,
+                Option<<super::DelegateUriType as WithDeserializer>::Deserializer>,
                 Option<<super::DelegateUriType as WithDeserializer>::Deserializer>,
             ),
             NextCatalog(
                 Option<super::NextCatalogType>,
                 Option<<super::NextCatalogType as WithDeserializer>::Deserializer>,
+                Option<<super::NextCatalogType as WithDeserializer>::Deserializer>,
             ),
             Group(
                 Option<super::GroupType>,
+                Option<<super::GroupType as WithDeserializer>::Deserializer>,
                 Option<<super::GroupType as WithDeserializer>::Deserializer>,
             ),
             Done__(super::CatalogTypeContent),
@@ -669,59 +674,40 @@ pub mod er {
                 &mut self,
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
-                fallback: &mut Option<CatalogTypeContentDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
                         helper.resolve_local_name(x.name(), &super::super::NS_ER),
                         Some(b"public")
                     ) {
-                        let output = <super::PublicType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
-                        return self.handle_public(
-                            helper,
-                            Default::default(),
-                            output,
-                            &mut *fallback,
-                        );
+                        let output = <super::PublicType as WithDeserializer>::init(helper, event)?;
+                        return self.handle_public(helper, Default::default(), None, output);
                     }
                     if matches!(
                         helper.resolve_local_name(x.name(), &super::super::NS_ER),
                         Some(b"system")
                     ) {
-                        let output = <super::SystemType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
-                        return self.handle_system(
-                            helper,
-                            Default::default(),
-                            output,
-                            &mut *fallback,
-                        );
+                        let output = <super::SystemType as WithDeserializer>::init(helper, event)?;
+                        return self.handle_system(helper, Default::default(), None, output);
                     }
                     if matches!(
                         helper.resolve_local_name(x.name(), &super::super::NS_ER),
                         Some(b"uri")
                     ) {
-                        let output = <super::UriType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
-                        return self.handle_uri(helper, Default::default(), output, &mut *fallback);
+                        let output = <super::UriType as WithDeserializer>::init(helper, event)?;
+                        return self.handle_uri(helper, Default::default(), None, output);
                     }
                     if matches!(
                         helper.resolve_local_name(x.name(), &super::super::NS_ER),
                         Some(b"rewriteSystem")
                     ) {
                         let output =
-                            <super::RewriteSystemType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::RewriteSystemType as WithDeserializer>::init(helper, event)?;
                         return self.handle_rewrite_system(
                             helper,
                             Default::default(),
+                            None,
                             output,
-                            &mut *fallback,
                         );
                     }
                     if matches!(
@@ -729,59 +715,36 @@ pub mod er {
                         Some(b"rewriteURI")
                     ) {
                         let output =
-                            <super::RewriteUriType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
-                        return self.handle_rewrite_uri(
-                            helper,
-                            Default::default(),
-                            output,
-                            &mut *fallback,
-                        );
+                            <super::RewriteUriType as WithDeserializer>::init(helper, event)?;
+                        return self.handle_rewrite_uri(helper, Default::default(), None, output);
                     }
                     if matches!(
                         helper.resolve_local_name(x.name(), &super::super::NS_ER),
                         Some(b"uriSuffix")
                     ) {
                         let output =
-                            <super::UriSuffixType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
-                        return self.handle_uri_suffix(
-                            helper,
-                            Default::default(),
-                            output,
-                            &mut *fallback,
-                        );
+                            <super::UriSuffixType as WithDeserializer>::init(helper, event)?;
+                        return self.handle_uri_suffix(helper, Default::default(), None, output);
                     }
                     if matches!(
                         helper.resolve_local_name(x.name(), &super::super::NS_ER),
                         Some(b"systemSuffix")
                     ) {
                         let output =
-                            <super::SystemSuffixType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
-                        return self.handle_system_suffix(
-                            helper,
-                            Default::default(),
-                            output,
-                            &mut *fallback,
-                        );
+                            <super::SystemSuffixType as WithDeserializer>::init(helper, event)?;
+                        return self.handle_system_suffix(helper, Default::default(), None, output);
                     }
                     if matches!(
                         helper.resolve_local_name(x.name(), &super::super::NS_ER),
                         Some(b"delegatePublic")
                     ) {
                         let output =
-                            <super::DelegatePublicType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::DelegatePublicType as WithDeserializer>::init(helper, event)?;
                         return self.handle_delegate_public(
                             helper,
                             Default::default(),
+                            None,
                             output,
-                            &mut *fallback,
                         );
                     }
                     if matches!(
@@ -789,14 +752,12 @@ pub mod er {
                         Some(b"delegateSystem")
                     ) {
                         let output =
-                            <super::DelegateSystemType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::DelegateSystemType as WithDeserializer>::init(helper, event)?;
                         return self.handle_delegate_system(
                             helper,
                             Default::default(),
+                            None,
                             output,
-                            &mut *fallback,
                         );
                     }
                     if matches!(
@@ -804,49 +765,26 @@ pub mod er {
                         Some(b"delegateURI")
                     ) {
                         let output =
-                            <super::DelegateUriType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
-                        return self.handle_delegate_uri(
-                            helper,
-                            Default::default(),
-                            output,
-                            &mut *fallback,
-                        );
+                            <super::DelegateUriType as WithDeserializer>::init(helper, event)?;
+                        return self.handle_delegate_uri(helper, Default::default(), None, output);
                     }
                     if matches!(
                         helper.resolve_local_name(x.name(), &super::super::NS_ER),
                         Some(b"nextCatalog")
                     ) {
                         let output =
-                            <super::NextCatalogType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
-                        return self.handle_next_catalog(
-                            helper,
-                            Default::default(),
-                            output,
-                            &mut *fallback,
-                        );
+                            <super::NextCatalogType as WithDeserializer>::init(helper, event)?;
+                        return self.handle_next_catalog(helper, Default::default(), None, output);
                     }
                     if matches!(
                         helper.resolve_local_name(x.name(), &super::super::NS_ER),
                         Some(b"group")
                     ) {
-                        let output = <super::GroupType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
-                        return self.handle_group(
-                            helper,
-                            Default::default(),
-                            output,
-                            &mut *fallback,
-                        );
+                        let output = <super::GroupType as WithDeserializer>::init(helper, event)?;
+                        return self.handle_group(helper, Default::default(), None, output);
                     }
                 }
-                *self.state__ = fallback
-                    .take()
-                    .unwrap_or(CatalogTypeContentDeserializerState::Init__);
+                *self.state__ = CatalogTypeContentDeserializerState::Init__;
                 Ok(ElementHandlerOutput::return_to_parent(event, true))
             }
             fn finish_state(
@@ -855,122 +793,117 @@ pub mod er {
             ) -> Result<super::CatalogTypeContent, Error> {
                 use CatalogTypeContentDeserializerState as S;
                 match state {
-                    S::Unknown__ => unreachable!(),
                     S::Init__ => Err(ErrorKind::MissingContent.into()),
-                    S::Public(mut values, deserializer) => {
+                    S::Public(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_public(&mut values, value)?;
                         }
-                        Ok(super::CatalogTypeContent::Public(values.ok_or_else(
-                            || ErrorKind::MissingElement("public".into()),
-                        )?))
+                        Ok(super::CatalogTypeContent::Public(
+                            helper.finish_element("public", values)?,
+                        ))
                     }
-                    S::System(mut values, deserializer) => {
+                    S::System(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_system(&mut values, value)?;
                         }
-                        Ok(super::CatalogTypeContent::System(values.ok_or_else(
-                            || ErrorKind::MissingElement("system".into()),
-                        )?))
+                        Ok(super::CatalogTypeContent::System(
+                            helper.finish_element("system", values)?,
+                        ))
                     }
-                    S::Uri(mut values, deserializer) => {
+                    S::Uri(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_uri(&mut values, value)?;
                         }
                         Ok(super::CatalogTypeContent::Uri(
-                            values.ok_or_else(|| ErrorKind::MissingElement("uri".into()))?,
+                            helper.finish_element("uri", values)?,
                         ))
                     }
-                    S::RewriteSystem(mut values, deserializer) => {
+                    S::RewriteSystem(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_rewrite_system(&mut values, value)?;
                         }
                         Ok(super::CatalogTypeContent::RewriteSystem(
-                            values
-                                .ok_or_else(|| ErrorKind::MissingElement("rewriteSystem".into()))?,
+                            helper.finish_element("rewriteSystem", values)?,
                         ))
                     }
-                    S::RewriteUri(mut values, deserializer) => {
+                    S::RewriteUri(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_rewrite_uri(&mut values, value)?;
                         }
-                        Ok(super::CatalogTypeContent::RewriteUri(values.ok_or_else(
-                            || ErrorKind::MissingElement("rewriteURI".into()),
-                        )?))
+                        Ok(super::CatalogTypeContent::RewriteUri(
+                            helper.finish_element("rewriteURI", values)?,
+                        ))
                     }
-                    S::UriSuffix(mut values, deserializer) => {
+                    S::UriSuffix(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_uri_suffix(&mut values, value)?;
                         }
-                        Ok(super::CatalogTypeContent::UriSuffix(values.ok_or_else(
-                            || ErrorKind::MissingElement("uriSuffix".into()),
-                        )?))
+                        Ok(super::CatalogTypeContent::UriSuffix(
+                            helper.finish_element("uriSuffix", values)?,
+                        ))
                     }
-                    S::SystemSuffix(mut values, deserializer) => {
+                    S::SystemSuffix(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_system_suffix(&mut values, value)?;
                         }
-                        Ok(super::CatalogTypeContent::SystemSuffix(values.ok_or_else(
-                            || ErrorKind::MissingElement("systemSuffix".into()),
-                        )?))
+                        Ok(super::CatalogTypeContent::SystemSuffix(
+                            helper.finish_element("systemSuffix", values)?,
+                        ))
                     }
-                    S::DelegatePublic(mut values, deserializer) => {
+                    S::DelegatePublic(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_delegate_public(&mut values, value)?;
                         }
                         Ok(super::CatalogTypeContent::DelegatePublic(
-                            values.ok_or_else(|| {
-                                ErrorKind::MissingElement("delegatePublic".into())
-                            })?,
+                            helper.finish_element("delegatePublic", values)?,
                         ))
                     }
-                    S::DelegateSystem(mut values, deserializer) => {
+                    S::DelegateSystem(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_delegate_system(&mut values, value)?;
                         }
                         Ok(super::CatalogTypeContent::DelegateSystem(
-                            values.ok_or_else(|| {
-                                ErrorKind::MissingElement("delegateSystem".into())
-                            })?,
+                            helper.finish_element("delegateSystem", values)?,
                         ))
                     }
-                    S::DelegateUri(mut values, deserializer) => {
+                    S::DelegateUri(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_delegate_uri(&mut values, value)?;
                         }
-                        Ok(super::CatalogTypeContent::DelegateUri(values.ok_or_else(
-                            || ErrorKind::MissingElement("delegateURI".into()),
-                        )?))
+                        Ok(super::CatalogTypeContent::DelegateUri(
+                            helper.finish_element("delegateURI", values)?,
+                        ))
                     }
-                    S::NextCatalog(mut values, deserializer) => {
+                    S::NextCatalog(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_next_catalog(&mut values, value)?;
                         }
-                        Ok(super::CatalogTypeContent::NextCatalog(values.ok_or_else(
-                            || ErrorKind::MissingElement("nextCatalog".into()),
-                        )?))
+                        Ok(super::CatalogTypeContent::NextCatalog(
+                            helper.finish_element("nextCatalog", values)?,
+                        ))
                     }
-                    S::Group(mut values, deserializer) => {
+                    S::Group(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_group(&mut values, value)?;
                         }
-                        Ok(super::CatalogTypeContent::Group(values.ok_or_else(
-                            || ErrorKind::MissingElement("group".into()),
-                        )?))
+                        Ok(super::CatalogTypeContent::Group(
+                            helper.finish_element("group", values)?,
+                        ))
                     }
                     S::Done__(data) => Ok(data),
+                    _ => unreachable!(),
                 }
             }
             fn store_public(
@@ -1119,700 +1052,412 @@ pub mod er {
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::PublicType>,
+                fallback: Option<<super::PublicType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::PublicType>,
-                fallback: &mut Option<CatalogTypeContentDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CatalogTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state__ = match fallback.take() {
-                        None if values.is_none() => {
-                            *self.state__ = CatalogTypeContentDeserializerState::Init__;
-                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                        }
-                        None => CatalogTypeContentDeserializerState::Public(values, None),
-                        Some(CatalogTypeContentDeserializerState::Public(
-                            _,
-                            Some(deserializer),
-                        )) => {
-                            CatalogTypeContentDeserializerState::Public(values, Some(deserializer))
-                        }
-                        _ => unreachable!(),
-                    };
-                    return Ok(ElementHandlerOutput::break_(event, allow_any));
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 }
-                match fallback.take() {
-                    None => (),
-                    Some(CatalogTypeContentDeserializerState::Public(_, Some(deserializer))) => {
-                        let data = deserializer.finish(helper)?;
-                        Self::store_public(&mut values, data)?;
-                    }
-                    Some(_) => unreachable!(),
+                if let Some(deserializer) = fallback {
+                    let data = deserializer.finish(helper)?;
+                    Self::store_public(&mut values, data)?;
                 }
-                Ok(match artifact {
+                match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_public(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CatalogTypeContentDeserializerState::Public(values, None),
-                        )?;
-                        *self.state__ = CatalogTypeContentDeserializerState::Done__(data);
-                        ElementHandlerOutput::Break { event, allow_any }
+                        let data = Self::finish_state(helper, S::Public(values, None, None))?;
+                        *self.state__ = S::Done__(data);
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ =
-                            CatalogTypeContentDeserializerState::Public(values, Some(deserializer));
-                        ElementHandlerOutput::from_event_end(event, allow_any)
+                        *self.state__ = S::Public(values, None, Some(deserializer));
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
-                })
+                }
             }
             fn handle_system<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::SystemType>,
+                fallback: Option<<super::SystemType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::SystemType>,
-                fallback: &mut Option<CatalogTypeContentDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CatalogTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state__ = match fallback.take() {
-                        None if values.is_none() => {
-                            *self.state__ = CatalogTypeContentDeserializerState::Init__;
-                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                        }
-                        None => CatalogTypeContentDeserializerState::System(values, None),
-                        Some(CatalogTypeContentDeserializerState::System(
-                            _,
-                            Some(deserializer),
-                        )) => {
-                            CatalogTypeContentDeserializerState::System(values, Some(deserializer))
-                        }
-                        _ => unreachable!(),
-                    };
-                    return Ok(ElementHandlerOutput::break_(event, allow_any));
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 }
-                match fallback.take() {
-                    None => (),
-                    Some(CatalogTypeContentDeserializerState::System(_, Some(deserializer))) => {
-                        let data = deserializer.finish(helper)?;
-                        Self::store_system(&mut values, data)?;
-                    }
-                    Some(_) => unreachable!(),
+                if let Some(deserializer) = fallback {
+                    let data = deserializer.finish(helper)?;
+                    Self::store_system(&mut values, data)?;
                 }
-                Ok(match artifact {
+                match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_system(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CatalogTypeContentDeserializerState::System(values, None),
-                        )?;
-                        *self.state__ = CatalogTypeContentDeserializerState::Done__(data);
-                        ElementHandlerOutput::Break { event, allow_any }
+                        let data = Self::finish_state(helper, S::System(values, None, None))?;
+                        *self.state__ = S::Done__(data);
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ =
-                            CatalogTypeContentDeserializerState::System(values, Some(deserializer));
-                        ElementHandlerOutput::from_event_end(event, allow_any)
+                        *self.state__ = S::System(values, None, Some(deserializer));
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
-                })
+                }
             }
             fn handle_uri<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::UriType>,
+                fallback: Option<<super::UriType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::UriType>,
-                fallback: &mut Option<CatalogTypeContentDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CatalogTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state__ = match fallback.take() {
-                        None if values.is_none() => {
-                            *self.state__ = CatalogTypeContentDeserializerState::Init__;
-                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                        }
-                        None => CatalogTypeContentDeserializerState::Uri(values, None),
-                        Some(CatalogTypeContentDeserializerState::Uri(_, Some(deserializer))) => {
-                            CatalogTypeContentDeserializerState::Uri(values, Some(deserializer))
-                        }
-                        _ => unreachable!(),
-                    };
-                    return Ok(ElementHandlerOutput::break_(event, allow_any));
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 }
-                match fallback.take() {
-                    None => (),
-                    Some(CatalogTypeContentDeserializerState::Uri(_, Some(deserializer))) => {
-                        let data = deserializer.finish(helper)?;
-                        Self::store_uri(&mut values, data)?;
-                    }
-                    Some(_) => unreachable!(),
+                if let Some(deserializer) = fallback {
+                    let data = deserializer.finish(helper)?;
+                    Self::store_uri(&mut values, data)?;
                 }
-                Ok(match artifact {
+                match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_uri(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CatalogTypeContentDeserializerState::Uri(values, None),
-                        )?;
-                        *self.state__ = CatalogTypeContentDeserializerState::Done__(data);
-                        ElementHandlerOutput::Break { event, allow_any }
+                        let data = Self::finish_state(helper, S::Uri(values, None, None))?;
+                        *self.state__ = S::Done__(data);
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ =
-                            CatalogTypeContentDeserializerState::Uri(values, Some(deserializer));
-                        ElementHandlerOutput::from_event_end(event, allow_any)
+                        *self.state__ = S::Uri(values, None, Some(deserializer));
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
-                })
+                }
             }
             fn handle_rewrite_system<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::RewriteSystemType>,
+                fallback: Option<<super::RewriteSystemType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::RewriteSystemType>,
-                fallback: &mut Option<CatalogTypeContentDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CatalogTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state__ = match fallback.take() {
-                        None if values.is_none() => {
-                            *self.state__ = CatalogTypeContentDeserializerState::Init__;
-                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                        }
-                        None => CatalogTypeContentDeserializerState::RewriteSystem(values, None),
-                        Some(CatalogTypeContentDeserializerState::RewriteSystem(
-                            _,
-                            Some(deserializer),
-                        )) => CatalogTypeContentDeserializerState::RewriteSystem(
-                            values,
-                            Some(deserializer),
-                        ),
-                        _ => unreachable!(),
-                    };
-                    return Ok(ElementHandlerOutput::break_(event, allow_any));
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 }
-                match fallback.take() {
-                    None => (),
-                    Some(CatalogTypeContentDeserializerState::RewriteSystem(
-                        _,
-                        Some(deserializer),
-                    )) => {
-                        let data = deserializer.finish(helper)?;
-                        Self::store_rewrite_system(&mut values, data)?;
-                    }
-                    Some(_) => unreachable!(),
+                if let Some(deserializer) = fallback {
+                    let data = deserializer.finish(helper)?;
+                    Self::store_rewrite_system(&mut values, data)?;
                 }
-                Ok(match artifact {
+                match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_rewrite_system(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CatalogTypeContentDeserializerState::RewriteSystem(values, None),
-                        )?;
-                        *self.state__ = CatalogTypeContentDeserializerState::Done__(data);
-                        ElementHandlerOutput::Break { event, allow_any }
+                        let data =
+                            Self::finish_state(helper, S::RewriteSystem(values, None, None))?;
+                        *self.state__ = S::Done__(data);
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CatalogTypeContentDeserializerState::RewriteSystem(
-                            values,
-                            Some(deserializer),
-                        );
-                        ElementHandlerOutput::from_event_end(event, allow_any)
+                        *self.state__ = S::RewriteSystem(values, None, Some(deserializer));
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
-                })
+                }
             }
             fn handle_rewrite_uri<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::RewriteUriType>,
+                fallback: Option<<super::RewriteUriType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::RewriteUriType>,
-                fallback: &mut Option<CatalogTypeContentDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CatalogTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state__ = match fallback.take() {
-                        None if values.is_none() => {
-                            *self.state__ = CatalogTypeContentDeserializerState::Init__;
-                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                        }
-                        None => CatalogTypeContentDeserializerState::RewriteUri(values, None),
-                        Some(CatalogTypeContentDeserializerState::RewriteUri(
-                            _,
-                            Some(deserializer),
-                        )) => CatalogTypeContentDeserializerState::RewriteUri(
-                            values,
-                            Some(deserializer),
-                        ),
-                        _ => unreachable!(),
-                    };
-                    return Ok(ElementHandlerOutput::break_(event, allow_any));
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 }
-                match fallback.take() {
-                    None => (),
-                    Some(CatalogTypeContentDeserializerState::RewriteUri(
-                        _,
-                        Some(deserializer),
-                    )) => {
-                        let data = deserializer.finish(helper)?;
-                        Self::store_rewrite_uri(&mut values, data)?;
-                    }
-                    Some(_) => unreachable!(),
+                if let Some(deserializer) = fallback {
+                    let data = deserializer.finish(helper)?;
+                    Self::store_rewrite_uri(&mut values, data)?;
                 }
-                Ok(match artifact {
+                match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_rewrite_uri(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CatalogTypeContentDeserializerState::RewriteUri(values, None),
-                        )?;
-                        *self.state__ = CatalogTypeContentDeserializerState::Done__(data);
-                        ElementHandlerOutput::Break { event, allow_any }
+                        let data = Self::finish_state(helper, S::RewriteUri(values, None, None))?;
+                        *self.state__ = S::Done__(data);
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CatalogTypeContentDeserializerState::RewriteUri(
-                            values,
-                            Some(deserializer),
-                        );
-                        ElementHandlerOutput::from_event_end(event, allow_any)
+                        *self.state__ = S::RewriteUri(values, None, Some(deserializer));
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
-                })
+                }
             }
             fn handle_uri_suffix<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::UriSuffixType>,
+                fallback: Option<<super::UriSuffixType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::UriSuffixType>,
-                fallback: &mut Option<CatalogTypeContentDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CatalogTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state__ = match fallback.take() {
-                        None if values.is_none() => {
-                            *self.state__ = CatalogTypeContentDeserializerState::Init__;
-                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                        }
-                        None => CatalogTypeContentDeserializerState::UriSuffix(values, None),
-                        Some(CatalogTypeContentDeserializerState::UriSuffix(
-                            _,
-                            Some(deserializer),
-                        )) => CatalogTypeContentDeserializerState::UriSuffix(
-                            values,
-                            Some(deserializer),
-                        ),
-                        _ => unreachable!(),
-                    };
-                    return Ok(ElementHandlerOutput::break_(event, allow_any));
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 }
-                match fallback.take() {
-                    None => (),
-                    Some(CatalogTypeContentDeserializerState::UriSuffix(_, Some(deserializer))) => {
-                        let data = deserializer.finish(helper)?;
-                        Self::store_uri_suffix(&mut values, data)?;
-                    }
-                    Some(_) => unreachable!(),
+                if let Some(deserializer) = fallback {
+                    let data = deserializer.finish(helper)?;
+                    Self::store_uri_suffix(&mut values, data)?;
                 }
-                Ok(match artifact {
+                match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_uri_suffix(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CatalogTypeContentDeserializerState::UriSuffix(values, None),
-                        )?;
-                        *self.state__ = CatalogTypeContentDeserializerState::Done__(data);
-                        ElementHandlerOutput::Break { event, allow_any }
+                        let data = Self::finish_state(helper, S::UriSuffix(values, None, None))?;
+                        *self.state__ = S::Done__(data);
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CatalogTypeContentDeserializerState::UriSuffix(
-                            values,
-                            Some(deserializer),
-                        );
-                        ElementHandlerOutput::from_event_end(event, allow_any)
+                        *self.state__ = S::UriSuffix(values, None, Some(deserializer));
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
-                })
+                }
             }
             fn handle_system_suffix<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::SystemSuffixType>,
+                fallback: Option<<super::SystemSuffixType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::SystemSuffixType>,
-                fallback: &mut Option<CatalogTypeContentDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CatalogTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state__ = match fallback.take() {
-                        None if values.is_none() => {
-                            *self.state__ = CatalogTypeContentDeserializerState::Init__;
-                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                        }
-                        None => CatalogTypeContentDeserializerState::SystemSuffix(values, None),
-                        Some(CatalogTypeContentDeserializerState::SystemSuffix(
-                            _,
-                            Some(deserializer),
-                        )) => CatalogTypeContentDeserializerState::SystemSuffix(
-                            values,
-                            Some(deserializer),
-                        ),
-                        _ => unreachable!(),
-                    };
-                    return Ok(ElementHandlerOutput::break_(event, allow_any));
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 }
-                match fallback.take() {
-                    None => (),
-                    Some(CatalogTypeContentDeserializerState::SystemSuffix(
-                        _,
-                        Some(deserializer),
-                    )) => {
-                        let data = deserializer.finish(helper)?;
-                        Self::store_system_suffix(&mut values, data)?;
-                    }
-                    Some(_) => unreachable!(),
+                if let Some(deserializer) = fallback {
+                    let data = deserializer.finish(helper)?;
+                    Self::store_system_suffix(&mut values, data)?;
                 }
-                Ok(match artifact {
+                match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_system_suffix(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CatalogTypeContentDeserializerState::SystemSuffix(values, None),
-                        )?;
-                        *self.state__ = CatalogTypeContentDeserializerState::Done__(data);
-                        ElementHandlerOutput::Break { event, allow_any }
+                        let data = Self::finish_state(helper, S::SystemSuffix(values, None, None))?;
+                        *self.state__ = S::Done__(data);
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CatalogTypeContentDeserializerState::SystemSuffix(
-                            values,
-                            Some(deserializer),
-                        );
-                        ElementHandlerOutput::from_event_end(event, allow_any)
+                        *self.state__ = S::SystemSuffix(values, None, Some(deserializer));
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
-                })
+                }
             }
             fn handle_delegate_public<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::DelegatePublicType>,
+                fallback: Option<<super::DelegatePublicType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::DelegatePublicType>,
-                fallback: &mut Option<CatalogTypeContentDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CatalogTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state__ = match fallback.take() {
-                        None if values.is_none() => {
-                            *self.state__ = CatalogTypeContentDeserializerState::Init__;
-                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                        }
-                        None => CatalogTypeContentDeserializerState::DelegatePublic(values, None),
-                        Some(CatalogTypeContentDeserializerState::DelegatePublic(
-                            _,
-                            Some(deserializer),
-                        )) => CatalogTypeContentDeserializerState::DelegatePublic(
-                            values,
-                            Some(deserializer),
-                        ),
-                        _ => unreachable!(),
-                    };
-                    return Ok(ElementHandlerOutput::break_(event, allow_any));
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 }
-                match fallback.take() {
-                    None => (),
-                    Some(CatalogTypeContentDeserializerState::DelegatePublic(
-                        _,
-                        Some(deserializer),
-                    )) => {
-                        let data = deserializer.finish(helper)?;
-                        Self::store_delegate_public(&mut values, data)?;
-                    }
-                    Some(_) => unreachable!(),
+                if let Some(deserializer) = fallback {
+                    let data = deserializer.finish(helper)?;
+                    Self::store_delegate_public(&mut values, data)?;
                 }
-                Ok(match artifact {
+                match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_delegate_public(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CatalogTypeContentDeserializerState::DelegatePublic(values, None),
-                        )?;
-                        *self.state__ = CatalogTypeContentDeserializerState::Done__(data);
-                        ElementHandlerOutput::Break { event, allow_any }
+                        let data =
+                            Self::finish_state(helper, S::DelegatePublic(values, None, None))?;
+                        *self.state__ = S::Done__(data);
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CatalogTypeContentDeserializerState::DelegatePublic(
-                            values,
-                            Some(deserializer),
-                        );
-                        ElementHandlerOutput::from_event_end(event, allow_any)
+                        *self.state__ = S::DelegatePublic(values, None, Some(deserializer));
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
-                })
+                }
             }
             fn handle_delegate_system<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::DelegateSystemType>,
+                fallback: Option<<super::DelegateSystemType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::DelegateSystemType>,
-                fallback: &mut Option<CatalogTypeContentDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CatalogTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state__ = match fallback.take() {
-                        None if values.is_none() => {
-                            *self.state__ = CatalogTypeContentDeserializerState::Init__;
-                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                        }
-                        None => CatalogTypeContentDeserializerState::DelegateSystem(values, None),
-                        Some(CatalogTypeContentDeserializerState::DelegateSystem(
-                            _,
-                            Some(deserializer),
-                        )) => CatalogTypeContentDeserializerState::DelegateSystem(
-                            values,
-                            Some(deserializer),
-                        ),
-                        _ => unreachable!(),
-                    };
-                    return Ok(ElementHandlerOutput::break_(event, allow_any));
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 }
-                match fallback.take() {
-                    None => (),
-                    Some(CatalogTypeContentDeserializerState::DelegateSystem(
-                        _,
-                        Some(deserializer),
-                    )) => {
-                        let data = deserializer.finish(helper)?;
-                        Self::store_delegate_system(&mut values, data)?;
-                    }
-                    Some(_) => unreachable!(),
+                if let Some(deserializer) = fallback {
+                    let data = deserializer.finish(helper)?;
+                    Self::store_delegate_system(&mut values, data)?;
                 }
-                Ok(match artifact {
+                match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_delegate_system(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CatalogTypeContentDeserializerState::DelegateSystem(values, None),
-                        )?;
-                        *self.state__ = CatalogTypeContentDeserializerState::Done__(data);
-                        ElementHandlerOutput::Break { event, allow_any }
+                        let data =
+                            Self::finish_state(helper, S::DelegateSystem(values, None, None))?;
+                        *self.state__ = S::Done__(data);
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CatalogTypeContentDeserializerState::DelegateSystem(
-                            values,
-                            Some(deserializer),
-                        );
-                        ElementHandlerOutput::from_event_end(event, allow_any)
+                        *self.state__ = S::DelegateSystem(values, None, Some(deserializer));
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
-                })
+                }
             }
             fn handle_delegate_uri<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::DelegateUriType>,
+                fallback: Option<<super::DelegateUriType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::DelegateUriType>,
-                fallback: &mut Option<CatalogTypeContentDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CatalogTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state__ = match fallback.take() {
-                        None if values.is_none() => {
-                            *self.state__ = CatalogTypeContentDeserializerState::Init__;
-                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                        }
-                        None => CatalogTypeContentDeserializerState::DelegateUri(values, None),
-                        Some(CatalogTypeContentDeserializerState::DelegateUri(
-                            _,
-                            Some(deserializer),
-                        )) => CatalogTypeContentDeserializerState::DelegateUri(
-                            values,
-                            Some(deserializer),
-                        ),
-                        _ => unreachable!(),
-                    };
-                    return Ok(ElementHandlerOutput::break_(event, allow_any));
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 }
-                match fallback.take() {
-                    None => (),
-                    Some(CatalogTypeContentDeserializerState::DelegateUri(
-                        _,
-                        Some(deserializer),
-                    )) => {
-                        let data = deserializer.finish(helper)?;
-                        Self::store_delegate_uri(&mut values, data)?;
-                    }
-                    Some(_) => unreachable!(),
+                if let Some(deserializer) = fallback {
+                    let data = deserializer.finish(helper)?;
+                    Self::store_delegate_uri(&mut values, data)?;
                 }
-                Ok(match artifact {
+                match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_delegate_uri(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CatalogTypeContentDeserializerState::DelegateUri(values, None),
-                        )?;
-                        *self.state__ = CatalogTypeContentDeserializerState::Done__(data);
-                        ElementHandlerOutput::Break { event, allow_any }
+                        let data = Self::finish_state(helper, S::DelegateUri(values, None, None))?;
+                        *self.state__ = S::Done__(data);
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CatalogTypeContentDeserializerState::DelegateUri(
-                            values,
-                            Some(deserializer),
-                        );
-                        ElementHandlerOutput::from_event_end(event, allow_any)
+                        *self.state__ = S::DelegateUri(values, None, Some(deserializer));
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
-                })
+                }
             }
             fn handle_next_catalog<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::NextCatalogType>,
+                fallback: Option<<super::NextCatalogType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::NextCatalogType>,
-                fallback: &mut Option<CatalogTypeContentDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CatalogTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state__ = match fallback.take() {
-                        None if values.is_none() => {
-                            *self.state__ = CatalogTypeContentDeserializerState::Init__;
-                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                        }
-                        None => CatalogTypeContentDeserializerState::NextCatalog(values, None),
-                        Some(CatalogTypeContentDeserializerState::NextCatalog(
-                            _,
-                            Some(deserializer),
-                        )) => CatalogTypeContentDeserializerState::NextCatalog(
-                            values,
-                            Some(deserializer),
-                        ),
-                        _ => unreachable!(),
-                    };
-                    return Ok(ElementHandlerOutput::break_(event, allow_any));
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 }
-                match fallback.take() {
-                    None => (),
-                    Some(CatalogTypeContentDeserializerState::NextCatalog(
-                        _,
-                        Some(deserializer),
-                    )) => {
-                        let data = deserializer.finish(helper)?;
-                        Self::store_next_catalog(&mut values, data)?;
-                    }
-                    Some(_) => unreachable!(),
+                if let Some(deserializer) = fallback {
+                    let data = deserializer.finish(helper)?;
+                    Self::store_next_catalog(&mut values, data)?;
                 }
-                Ok(match artifact {
+                match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_next_catalog(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CatalogTypeContentDeserializerState::NextCatalog(values, None),
-                        )?;
-                        *self.state__ = CatalogTypeContentDeserializerState::Done__(data);
-                        ElementHandlerOutput::Break { event, allow_any }
+                        let data = Self::finish_state(helper, S::NextCatalog(values, None, None))?;
+                        *self.state__ = S::Done__(data);
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = CatalogTypeContentDeserializerState::NextCatalog(
-                            values,
-                            Some(deserializer),
-                        );
-                        ElementHandlerOutput::from_event_end(event, allow_any)
+                        *self.state__ = S::NextCatalog(values, None, Some(deserializer));
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
-                })
+                }
             }
             fn handle_group<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::GroupType>,
+                fallback: Option<<super::GroupType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::GroupType>,
-                fallback: &mut Option<CatalogTypeContentDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CatalogTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state__ = match fallback.take() {
-                        None if values.is_none() => {
-                            *self.state__ = CatalogTypeContentDeserializerState::Init__;
-                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                        }
-                        None => CatalogTypeContentDeserializerState::Group(values, None),
-                        Some(CatalogTypeContentDeserializerState::Group(_, Some(deserializer))) => {
-                            CatalogTypeContentDeserializerState::Group(values, Some(deserializer))
-                        }
-                        _ => unreachable!(),
-                    };
-                    return Ok(ElementHandlerOutput::break_(event, allow_any));
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 }
-                match fallback.take() {
-                    None => (),
-                    Some(CatalogTypeContentDeserializerState::Group(_, Some(deserializer))) => {
-                        let data = deserializer.finish(helper)?;
-                        Self::store_group(&mut values, data)?;
-                    }
-                    Some(_) => unreachable!(),
+                if let Some(deserializer) = fallback {
+                    let data = deserializer.finish(helper)?;
+                    Self::store_group(&mut values, data)?;
                 }
-                Ok(match artifact {
+                match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_group(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            CatalogTypeContentDeserializerState::Group(values, None),
-                        )?;
-                        *self.state__ = CatalogTypeContentDeserializerState::Done__(data);
-                        ElementHandlerOutput::Break { event, allow_any }
+                        let data = Self::finish_state(helper, S::Group(values, None, None))?;
+                        *self.state__ = S::Done__(data);
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ =
-                            CatalogTypeContentDeserializerState::Group(values, Some(deserializer));
-                        ElementHandlerOutput::from_event_end(event, allow_any)
+                        *self.state__ = S::Group(values, None, Some(deserializer));
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
-                })
+                }
             }
         }
         impl<'de> Deserializer<'de, super::CatalogTypeContent> for CatalogTypeContentDeserializer {
@@ -1841,133 +1486,112 @@ pub mod er {
             ) -> DeserializerResult<'de, super::CatalogTypeContent> {
                 use CatalogTypeContentDeserializerState as S;
                 let mut event = event;
-                let mut fallback = None;
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Unknown__, _) => unreachable!(),
-                        (S::Public(values, Some(deserializer)), event) => {
+                        (S::Public(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_public(helper, values, output, &mut fallback)? {
+                            match self.handle_public(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::System(values, Some(deserializer)), event) => {
+                        (S::System(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_system(helper, values, output, &mut fallback)? {
+                            match self.handle_system(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::Uri(values, Some(deserializer)), event) => {
+                        (S::Uri(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_uri(helper, values, output, &mut fallback)? {
+                            match self.handle_uri(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::RewriteSystem(values, Some(deserializer)), event) => {
+                        (S::RewriteSystem(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_rewrite_system(
-                                helper,
-                                values,
-                                output,
-                                &mut fallback,
-                            )? {
+                            match self.handle_rewrite_system(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::RewriteUri(values, Some(deserializer)), event) => {
+                        (S::RewriteUri(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_rewrite_uri(helper, values, output, &mut fallback)? {
+                            match self.handle_rewrite_uri(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::UriSuffix(values, Some(deserializer)), event) => {
+                        (S::UriSuffix(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_uri_suffix(helper, values, output, &mut fallback)? {
+                            match self.handle_uri_suffix(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::SystemSuffix(values, Some(deserializer)), event) => {
+                        (S::SystemSuffix(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_system_suffix(
-                                helper,
-                                values,
-                                output,
-                                &mut fallback,
-                            )? {
+                            match self.handle_system_suffix(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::DelegatePublic(values, Some(deserializer)), event) => {
+                        (S::DelegatePublic(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_delegate_public(
-                                helper,
-                                values,
-                                output,
-                                &mut fallback,
-                            )? {
+                            match self.handle_delegate_public(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::DelegateSystem(values, Some(deserializer)), event) => {
+                        (S::DelegateSystem(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_delegate_system(
-                                helper,
-                                values,
-                                output,
-                                &mut fallback,
-                            )? {
+                            match self.handle_delegate_system(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::DelegateUri(values, Some(deserializer)), event) => {
+                        (S::DelegateUri(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_delegate_uri(helper, values, output, &mut fallback)? {
+                            match self.handle_delegate_uri(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::NextCatalog(values, Some(deserializer)), event) => {
+                        (S::NextCatalog(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_next_catalog(helper, values, output, &mut fallback)? {
+                            match self.handle_next_catalog(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::Group(values, Some(deserializer)), event) => {
+                        (S::Group(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_group(helper, values, output, &mut fallback)? {
+                            match self.handle_group(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -1983,50 +1607,23 @@ pub mod er {
                                 allow_any: false,
                             });
                         }
-                        (S::Init__, event) => {
-                            match self.find_suitable(helper, event, &mut fallback)? {
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
-                                ElementHandlerOutput::Continue { event, .. } => event,
+                        (S::Init__, event) => match self.find_suitable(helper, event)? {
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
                             }
-                        }
-                        (S::Public(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                            ElementHandlerOutput::Continue { event, .. } => event,
+                        },
+                        (
+                            S::Public(values, fallback, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_ER),
                                 b"public",
                                 false,
                             )?;
-                            match self.handle_public(helper, values, output, &mut fallback)? {
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
-                                ElementHandlerOutput::Continue { event, .. } => event,
-                            }
-                        }
-                        (S::System(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            let output = helper.init_start_tag_deserializer(
-                                event,
-                                Some(&super::super::NS_ER),
-                                b"system",
-                                false,
-                            )?;
-                            match self.handle_system(helper, values, output, &mut fallback)? {
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
-                                ElementHandlerOutput::Continue { event, .. } => event,
-                            }
-                        }
-                        (S::Uri(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            let output = helper.init_start_tag_deserializer(
-                                event,
-                                Some(&super::super::NS_ER),
-                                b"uri",
-                                false,
-                            )?;
-                            match self.handle_uri(helper, values, output, &mut fallback)? {
+                            match self.handle_public(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -2034,7 +1631,41 @@ pub mod er {
                             }
                         }
                         (
-                            S::RewriteSystem(values, None),
+                            S::System(values, fallback, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
+                            let output = helper.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_ER),
+                                b"system",
+                                false,
+                            )?;
+                            match self.handle_system(helper, values, fallback, output)? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
+                        (
+                            S::Uri(values, fallback, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
+                            let output = helper.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_ER),
+                                b"uri",
+                                false,
+                            )?;
+                            match self.handle_uri(helper, values, fallback, output)? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
+                        (
+                            S::RewriteSystem(values, fallback, None),
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
                             let output = helper.init_start_tag_deserializer(
@@ -2043,12 +1674,7 @@ pub mod er {
                                 b"rewriteSystem",
                                 false,
                             )?;
-                            match self.handle_rewrite_system(
-                                helper,
-                                values,
-                                output,
-                                &mut fallback,
-                            )? {
+                            match self.handle_rewrite_system(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -2056,7 +1682,7 @@ pub mod er {
                             }
                         }
                         (
-                            S::RewriteUri(values, None),
+                            S::RewriteUri(values, fallback, None),
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
                             let output = helper.init_start_tag_deserializer(
@@ -2065,7 +1691,7 @@ pub mod er {
                                 b"rewriteURI",
                                 false,
                             )?;
-                            match self.handle_rewrite_uri(helper, values, output, &mut fallback)? {
+                            match self.handle_rewrite_uri(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -2073,7 +1699,7 @@ pub mod er {
                             }
                         }
                         (
-                            S::UriSuffix(values, None),
+                            S::UriSuffix(values, fallback, None),
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
                             let output = helper.init_start_tag_deserializer(
@@ -2082,7 +1708,7 @@ pub mod er {
                                 b"uriSuffix",
                                 false,
                             )?;
-                            match self.handle_uri_suffix(helper, values, output, &mut fallback)? {
+                            match self.handle_uri_suffix(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -2090,7 +1716,7 @@ pub mod er {
                             }
                         }
                         (
-                            S::SystemSuffix(values, None),
+                            S::SystemSuffix(values, fallback, None),
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
                             let output = helper.init_start_tag_deserializer(
@@ -2099,12 +1725,7 @@ pub mod er {
                                 b"systemSuffix",
                                 false,
                             )?;
-                            match self.handle_system_suffix(
-                                helper,
-                                values,
-                                output,
-                                &mut fallback,
-                            )? {
+                            match self.handle_system_suffix(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -2112,7 +1733,7 @@ pub mod er {
                             }
                         }
                         (
-                            S::DelegatePublic(values, None),
+                            S::DelegatePublic(values, fallback, None),
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
                             let output = helper.init_start_tag_deserializer(
@@ -2121,12 +1742,7 @@ pub mod er {
                                 b"delegatePublic",
                                 false,
                             )?;
-                            match self.handle_delegate_public(
-                                helper,
-                                values,
-                                output,
-                                &mut fallback,
-                            )? {
+                            match self.handle_delegate_public(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -2134,7 +1750,7 @@ pub mod er {
                             }
                         }
                         (
-                            S::DelegateSystem(values, None),
+                            S::DelegateSystem(values, fallback, None),
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
                             let output = helper.init_start_tag_deserializer(
@@ -2143,12 +1759,7 @@ pub mod er {
                                 b"delegateSystem",
                                 false,
                             )?;
-                            match self.handle_delegate_system(
-                                helper,
-                                values,
-                                output,
-                                &mut fallback,
-                            )? {
+                            match self.handle_delegate_system(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -2156,7 +1767,7 @@ pub mod er {
                             }
                         }
                         (
-                            S::DelegateUri(values, None),
+                            S::DelegateUri(values, fallback, None),
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
                             let output = helper.init_start_tag_deserializer(
@@ -2165,7 +1776,7 @@ pub mod er {
                                 b"delegateURI",
                                 false,
                             )?;
-                            match self.handle_delegate_uri(helper, values, output, &mut fallback)? {
+                            match self.handle_delegate_uri(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -2173,7 +1784,7 @@ pub mod er {
                             }
                         }
                         (
-                            S::NextCatalog(values, None),
+                            S::NextCatalog(values, fallback, None),
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
                             let output = helper.init_start_tag_deserializer(
@@ -2182,34 +1793,37 @@ pub mod er {
                                 b"nextCatalog",
                                 false,
                             )?;
-                            match self.handle_next_catalog(helper, values, output, &mut fallback)? {
+                            match self.handle_next_catalog(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::Group(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                        (
+                            S::Group(values, fallback, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_ER),
                                 b"group",
                                 true,
                             )?;
-                            match self.handle_group(helper, values, output, &mut fallback)? {
+                            match self.handle_group(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (s @ S::Done__(_), event) => {
-                            *self.state__ = s;
+                        (state @ S::Done__(_), event) => {
+                            *self.state__ = state;
                             break (DeserializerEvent::Continue(event), false);
                         }
                         (state, event) => {
                             *self.state__ = state;
-                            break (DeserializerEvent::Break(event), false);
+                            break (DeserializerEvent::Continue(event), false);
                         }
                     }
                 };
@@ -2599,43 +2213,32 @@ pub mod er {
                 output: DeserializerOutput<'de, super::GroupTypeContent>,
                 fallback: &mut Option<GroupTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use GroupTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state__ = fallback
-                        .take()
-                        .unwrap_or(GroupTypeDeserializerState::Next__);
-                    return Ok(ElementHandlerOutput::break_(event, allow_any));
+                    *self.state__ = fallback.take().unwrap_or(S::Next__);
+                    return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
                     self.finish_state(helper, fallback)?;
                 }
-                Ok(match artifact {
+                match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state__ = GroupTypeDeserializerState::Next__;
-                        ElementHandlerOutput::from_event(event, allow_any)
+                        *self.state__ = S::Next__;
+                        Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        let ret = ElementHandlerOutput::from_event(event, allow_any);
-                        match &ret {
-                            ElementHandlerOutput::Break { .. } => {
-                                *self.state__ = GroupTypeDeserializerState::Content__(deserializer);
-                            }
-                            ElementHandlerOutput::Continue { .. } => {
-                                fallback.get_or_insert(GroupTypeDeserializerState::Content__(
-                                    deserializer,
-                                ));
-                                *self.state__ = GroupTypeDeserializerState::Next__;
-                            }
-                        }
-                        ret
+                        *fallback = Some(S::Content__(deserializer));
+                        *self.state__ = S::Next__;
+                        Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
-                })
+                }
             }
         }
         impl<'de> Deserializer<'de, super::GroupType> for GroupTypeDeserializer {
@@ -2676,9 +2279,7 @@ pub mod er {
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
                             let output =
-                                <super::GroupTypeContent as WithDeserializer>::Deserializer::init(
-                                    helper, event,
-                                )?;
+                                <super::GroupTypeContent as WithDeserializer>::init(helper, event)?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -2688,6 +2289,9 @@ pub mod er {
                         }
                     }
                 };
+                if let Some(fallback) = fallback {
+                    *self.state__ = fallback;
+                }
                 let artifact = DeserializerArtifact::Deserializer(self);
                 Ok(DeserializerOutput {
                     artifact,
@@ -2701,7 +2305,7 @@ pub mod er {
                 Ok(super::GroupType {
                     prefer: self.prefer,
                     id: self.id,
-                    content: self.content,
+                    content: helper.finish_vec(1usize, None, self.content)?,
                 })
             }
         }
@@ -2715,45 +2319,56 @@ pub mod er {
             Public(
                 Option<super::PublicType>,
                 Option<<super::PublicType as WithDeserializer>::Deserializer>,
+                Option<<super::PublicType as WithDeserializer>::Deserializer>,
             ),
             System(
                 Option<super::SystemType>,
+                Option<<super::SystemType as WithDeserializer>::Deserializer>,
                 Option<<super::SystemType as WithDeserializer>::Deserializer>,
             ),
             Uri(
                 Option<super::UriType>,
                 Option<<super::UriType as WithDeserializer>::Deserializer>,
+                Option<<super::UriType as WithDeserializer>::Deserializer>,
             ),
             RewriteSystem(
                 Option<super::RewriteSystemType>,
+                Option<<super::RewriteSystemType as WithDeserializer>::Deserializer>,
                 Option<<super::RewriteSystemType as WithDeserializer>::Deserializer>,
             ),
             RewriteUri(
                 Option<super::RewriteUriType>,
                 Option<<super::RewriteUriType as WithDeserializer>::Deserializer>,
+                Option<<super::RewriteUriType as WithDeserializer>::Deserializer>,
             ),
             UriSuffix(
                 Option<super::UriSuffixType>,
+                Option<<super::UriSuffixType as WithDeserializer>::Deserializer>,
                 Option<<super::UriSuffixType as WithDeserializer>::Deserializer>,
             ),
             SystemSuffix(
                 Option<super::SystemSuffixType>,
                 Option<<super::SystemSuffixType as WithDeserializer>::Deserializer>,
+                Option<<super::SystemSuffixType as WithDeserializer>::Deserializer>,
             ),
             DelegatePublic(
                 Option<super::DelegatePublicType>,
+                Option<<super::DelegatePublicType as WithDeserializer>::Deserializer>,
                 Option<<super::DelegatePublicType as WithDeserializer>::Deserializer>,
             ),
             DelegateSystem(
                 Option<super::DelegateSystemType>,
                 Option<<super::DelegateSystemType as WithDeserializer>::Deserializer>,
+                Option<<super::DelegateSystemType as WithDeserializer>::Deserializer>,
             ),
             DelegateUri(
                 Option<super::DelegateUriType>,
                 Option<<super::DelegateUriType as WithDeserializer>::Deserializer>,
+                Option<<super::DelegateUriType as WithDeserializer>::Deserializer>,
             ),
             NextCatalog(
                 Option<super::NextCatalogType>,
+                Option<<super::NextCatalogType as WithDeserializer>::Deserializer>,
                 Option<<super::NextCatalogType as WithDeserializer>::Deserializer>,
             ),
             Done__(super::GroupTypeContent),
@@ -2764,59 +2379,40 @@ pub mod er {
                 &mut self,
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
-                fallback: &mut Option<GroupTypeContentDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
                         helper.resolve_local_name(x.name(), &super::super::NS_ER),
                         Some(b"public")
                     ) {
-                        let output = <super::PublicType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
-                        return self.handle_public(
-                            helper,
-                            Default::default(),
-                            output,
-                            &mut *fallback,
-                        );
+                        let output = <super::PublicType as WithDeserializer>::init(helper, event)?;
+                        return self.handle_public(helper, Default::default(), None, output);
                     }
                     if matches!(
                         helper.resolve_local_name(x.name(), &super::super::NS_ER),
                         Some(b"system")
                     ) {
-                        let output = <super::SystemType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
-                        return self.handle_system(
-                            helper,
-                            Default::default(),
-                            output,
-                            &mut *fallback,
-                        );
+                        let output = <super::SystemType as WithDeserializer>::init(helper, event)?;
+                        return self.handle_system(helper, Default::default(), None, output);
                     }
                     if matches!(
                         helper.resolve_local_name(x.name(), &super::super::NS_ER),
                         Some(b"uri")
                     ) {
-                        let output = <super::UriType as WithDeserializer>::Deserializer::init(
-                            helper, event,
-                        )?;
-                        return self.handle_uri(helper, Default::default(), output, &mut *fallback);
+                        let output = <super::UriType as WithDeserializer>::init(helper, event)?;
+                        return self.handle_uri(helper, Default::default(), None, output);
                     }
                     if matches!(
                         helper.resolve_local_name(x.name(), &super::super::NS_ER),
                         Some(b"rewriteSystem")
                     ) {
                         let output =
-                            <super::RewriteSystemType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::RewriteSystemType as WithDeserializer>::init(helper, event)?;
                         return self.handle_rewrite_system(
                             helper,
                             Default::default(),
+                            None,
                             output,
-                            &mut *fallback,
                         );
                     }
                     if matches!(
@@ -2824,59 +2420,36 @@ pub mod er {
                         Some(b"rewriteURI")
                     ) {
                         let output =
-                            <super::RewriteUriType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
-                        return self.handle_rewrite_uri(
-                            helper,
-                            Default::default(),
-                            output,
-                            &mut *fallback,
-                        );
+                            <super::RewriteUriType as WithDeserializer>::init(helper, event)?;
+                        return self.handle_rewrite_uri(helper, Default::default(), None, output);
                     }
                     if matches!(
                         helper.resolve_local_name(x.name(), &super::super::NS_ER),
                         Some(b"uriSuffix")
                     ) {
                         let output =
-                            <super::UriSuffixType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
-                        return self.handle_uri_suffix(
-                            helper,
-                            Default::default(),
-                            output,
-                            &mut *fallback,
-                        );
+                            <super::UriSuffixType as WithDeserializer>::init(helper, event)?;
+                        return self.handle_uri_suffix(helper, Default::default(), None, output);
                     }
                     if matches!(
                         helper.resolve_local_name(x.name(), &super::super::NS_ER),
                         Some(b"systemSuffix")
                     ) {
                         let output =
-                            <super::SystemSuffixType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
-                        return self.handle_system_suffix(
-                            helper,
-                            Default::default(),
-                            output,
-                            &mut *fallback,
-                        );
+                            <super::SystemSuffixType as WithDeserializer>::init(helper, event)?;
+                        return self.handle_system_suffix(helper, Default::default(), None, output);
                     }
                     if matches!(
                         helper.resolve_local_name(x.name(), &super::super::NS_ER),
                         Some(b"delegatePublic")
                     ) {
                         let output =
-                            <super::DelegatePublicType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::DelegatePublicType as WithDeserializer>::init(helper, event)?;
                         return self.handle_delegate_public(
                             helper,
                             Default::default(),
+                            None,
                             output,
-                            &mut *fallback,
                         );
                     }
                     if matches!(
@@ -2884,14 +2457,12 @@ pub mod er {
                         Some(b"delegateSystem")
                     ) {
                         let output =
-                            <super::DelegateSystemType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::DelegateSystemType as WithDeserializer>::init(helper, event)?;
                         return self.handle_delegate_system(
                             helper,
                             Default::default(),
+                            None,
                             output,
-                            &mut *fallback,
                         );
                     }
                     if matches!(
@@ -2899,35 +2470,19 @@ pub mod er {
                         Some(b"delegateURI")
                     ) {
                         let output =
-                            <super::DelegateUriType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
-                        return self.handle_delegate_uri(
-                            helper,
-                            Default::default(),
-                            output,
-                            &mut *fallback,
-                        );
+                            <super::DelegateUriType as WithDeserializer>::init(helper, event)?;
+                        return self.handle_delegate_uri(helper, Default::default(), None, output);
                     }
                     if matches!(
                         helper.resolve_local_name(x.name(), &super::super::NS_ER),
                         Some(b"nextCatalog")
                     ) {
                         let output =
-                            <super::NextCatalogType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
-                        return self.handle_next_catalog(
-                            helper,
-                            Default::default(),
-                            output,
-                            &mut *fallback,
-                        );
+                            <super::NextCatalogType as WithDeserializer>::init(helper, event)?;
+                        return self.handle_next_catalog(helper, Default::default(), None, output);
                     }
                 }
-                *self.state__ = fallback
-                    .take()
-                    .unwrap_or(GroupTypeContentDeserializerState::Init__);
+                *self.state__ = GroupTypeContentDeserializerState::Init__;
                 Ok(ElementHandlerOutput::return_to_parent(event, true))
             }
             fn finish_state(
@@ -2936,108 +2491,108 @@ pub mod er {
             ) -> Result<super::GroupTypeContent, Error> {
                 use GroupTypeContentDeserializerState as S;
                 match state {
-                    S::Unknown__ => unreachable!(),
                     S::Init__ => Err(ErrorKind::MissingContent.into()),
-                    S::Public(mut values, deserializer) => {
+                    S::Public(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_public(&mut values, value)?;
                         }
-                        Ok(super::GroupTypeContent::Public(values.ok_or_else(
-                            || ErrorKind::MissingElement("public".into()),
-                        )?))
+                        Ok(super::GroupTypeContent::Public(
+                            helper.finish_element("public", values)?,
+                        ))
                     }
-                    S::System(mut values, deserializer) => {
+                    S::System(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_system(&mut values, value)?;
                         }
-                        Ok(super::GroupTypeContent::System(values.ok_or_else(
-                            || ErrorKind::MissingElement("system".into()),
-                        )?))
+                        Ok(super::GroupTypeContent::System(
+                            helper.finish_element("system", values)?,
+                        ))
                     }
-                    S::Uri(mut values, deserializer) => {
+                    S::Uri(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_uri(&mut values, value)?;
                         }
                         Ok(super::GroupTypeContent::Uri(
-                            values.ok_or_else(|| ErrorKind::MissingElement("uri".into()))?,
+                            helper.finish_element("uri", values)?,
                         ))
                     }
-                    S::RewriteSystem(mut values, deserializer) => {
+                    S::RewriteSystem(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_rewrite_system(&mut values, value)?;
                         }
-                        Ok(super::GroupTypeContent::RewriteSystem(values.ok_or_else(
-                            || ErrorKind::MissingElement("rewriteSystem".into()),
-                        )?))
+                        Ok(super::GroupTypeContent::RewriteSystem(
+                            helper.finish_element("rewriteSystem", values)?,
+                        ))
                     }
-                    S::RewriteUri(mut values, deserializer) => {
+                    S::RewriteUri(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_rewrite_uri(&mut values, value)?;
                         }
-                        Ok(super::GroupTypeContent::RewriteUri(values.ok_or_else(
-                            || ErrorKind::MissingElement("rewriteURI".into()),
-                        )?))
+                        Ok(super::GroupTypeContent::RewriteUri(
+                            helper.finish_element("rewriteURI", values)?,
+                        ))
                     }
-                    S::UriSuffix(mut values, deserializer) => {
+                    S::UriSuffix(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_uri_suffix(&mut values, value)?;
                         }
-                        Ok(super::GroupTypeContent::UriSuffix(values.ok_or_else(
-                            || ErrorKind::MissingElement("uriSuffix".into()),
-                        )?))
+                        Ok(super::GroupTypeContent::UriSuffix(
+                            helper.finish_element("uriSuffix", values)?,
+                        ))
                     }
-                    S::SystemSuffix(mut values, deserializer) => {
+                    S::SystemSuffix(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_system_suffix(&mut values, value)?;
                         }
-                        Ok(super::GroupTypeContent::SystemSuffix(values.ok_or_else(
-                            || ErrorKind::MissingElement("systemSuffix".into()),
-                        )?))
+                        Ok(super::GroupTypeContent::SystemSuffix(
+                            helper.finish_element("systemSuffix", values)?,
+                        ))
                     }
-                    S::DelegatePublic(mut values, deserializer) => {
+                    S::DelegatePublic(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_delegate_public(&mut values, value)?;
                         }
-                        Ok(super::GroupTypeContent::DelegatePublic(values.ok_or_else(
-                            || ErrorKind::MissingElement("delegatePublic".into()),
-                        )?))
+                        Ok(super::GroupTypeContent::DelegatePublic(
+                            helper.finish_element("delegatePublic", values)?,
+                        ))
                     }
-                    S::DelegateSystem(mut values, deserializer) => {
+                    S::DelegateSystem(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_delegate_system(&mut values, value)?;
                         }
-                        Ok(super::GroupTypeContent::DelegateSystem(values.ok_or_else(
-                            || ErrorKind::MissingElement("delegateSystem".into()),
-                        )?))
+                        Ok(super::GroupTypeContent::DelegateSystem(
+                            helper.finish_element("delegateSystem", values)?,
+                        ))
                     }
-                    S::DelegateUri(mut values, deserializer) => {
+                    S::DelegateUri(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_delegate_uri(&mut values, value)?;
                         }
-                        Ok(super::GroupTypeContent::DelegateUri(values.ok_or_else(
-                            || ErrorKind::MissingElement("delegateURI".into()),
-                        )?))
+                        Ok(super::GroupTypeContent::DelegateUri(
+                            helper.finish_element("delegateURI", values)?,
+                        ))
                     }
-                    S::NextCatalog(mut values, deserializer) => {
+                    S::NextCatalog(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_next_catalog(&mut values, value)?;
                         }
-                        Ok(super::GroupTypeContent::NextCatalog(values.ok_or_else(
-                            || ErrorKind::MissingElement("nextCatalog".into()),
-                        )?))
+                        Ok(super::GroupTypeContent::NextCatalog(
+                            helper.finish_element("nextCatalog", values)?,
+                        ))
                     }
                     S::Done__(data) => Ok(data),
+                    _ => unreachable!(),
                 }
             }
             fn store_public(
@@ -3174,632 +2729,378 @@ pub mod er {
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::PublicType>,
+                fallback: Option<<super::PublicType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::PublicType>,
-                fallback: &mut Option<GroupTypeContentDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use GroupTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state__ = match fallback.take() {
-                        None if values.is_none() => {
-                            *self.state__ = GroupTypeContentDeserializerState::Init__;
-                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                        }
-                        None => GroupTypeContentDeserializerState::Public(values, None),
-                        Some(GroupTypeContentDeserializerState::Public(_, Some(deserializer))) => {
-                            GroupTypeContentDeserializerState::Public(values, Some(deserializer))
-                        }
-                        _ => unreachable!(),
-                    };
-                    return Ok(ElementHandlerOutput::break_(event, allow_any));
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 }
-                match fallback.take() {
-                    None => (),
-                    Some(GroupTypeContentDeserializerState::Public(_, Some(deserializer))) => {
-                        let data = deserializer.finish(helper)?;
-                        Self::store_public(&mut values, data)?;
-                    }
-                    Some(_) => unreachable!(),
+                if let Some(deserializer) = fallback {
+                    let data = deserializer.finish(helper)?;
+                    Self::store_public(&mut values, data)?;
                 }
-                Ok(match artifact {
+                match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_public(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            GroupTypeContentDeserializerState::Public(values, None),
-                        )?;
-                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
-                        ElementHandlerOutput::Break { event, allow_any }
+                        let data = Self::finish_state(helper, S::Public(values, None, None))?;
+                        *self.state__ = S::Done__(data);
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ =
-                            GroupTypeContentDeserializerState::Public(values, Some(deserializer));
-                        ElementHandlerOutput::from_event_end(event, allow_any)
+                        *self.state__ = S::Public(values, None, Some(deserializer));
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
-                })
+                }
             }
             fn handle_system<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::SystemType>,
+                fallback: Option<<super::SystemType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::SystemType>,
-                fallback: &mut Option<GroupTypeContentDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use GroupTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state__ = match fallback.take() {
-                        None if values.is_none() => {
-                            *self.state__ = GroupTypeContentDeserializerState::Init__;
-                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                        }
-                        None => GroupTypeContentDeserializerState::System(values, None),
-                        Some(GroupTypeContentDeserializerState::System(_, Some(deserializer))) => {
-                            GroupTypeContentDeserializerState::System(values, Some(deserializer))
-                        }
-                        _ => unreachable!(),
-                    };
-                    return Ok(ElementHandlerOutput::break_(event, allow_any));
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 }
-                match fallback.take() {
-                    None => (),
-                    Some(GroupTypeContentDeserializerState::System(_, Some(deserializer))) => {
-                        let data = deserializer.finish(helper)?;
-                        Self::store_system(&mut values, data)?;
-                    }
-                    Some(_) => unreachable!(),
+                if let Some(deserializer) = fallback {
+                    let data = deserializer.finish(helper)?;
+                    Self::store_system(&mut values, data)?;
                 }
-                Ok(match artifact {
+                match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_system(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            GroupTypeContentDeserializerState::System(values, None),
-                        )?;
-                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
-                        ElementHandlerOutput::Break { event, allow_any }
+                        let data = Self::finish_state(helper, S::System(values, None, None))?;
+                        *self.state__ = S::Done__(data);
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ =
-                            GroupTypeContentDeserializerState::System(values, Some(deserializer));
-                        ElementHandlerOutput::from_event_end(event, allow_any)
+                        *self.state__ = S::System(values, None, Some(deserializer));
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
-                })
+                }
             }
             fn handle_uri<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::UriType>,
+                fallback: Option<<super::UriType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::UriType>,
-                fallback: &mut Option<GroupTypeContentDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use GroupTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state__ = match fallback.take() {
-                        None if values.is_none() => {
-                            *self.state__ = GroupTypeContentDeserializerState::Init__;
-                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                        }
-                        None => GroupTypeContentDeserializerState::Uri(values, None),
-                        Some(GroupTypeContentDeserializerState::Uri(_, Some(deserializer))) => {
-                            GroupTypeContentDeserializerState::Uri(values, Some(deserializer))
-                        }
-                        _ => unreachable!(),
-                    };
-                    return Ok(ElementHandlerOutput::break_(event, allow_any));
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 }
-                match fallback.take() {
-                    None => (),
-                    Some(GroupTypeContentDeserializerState::Uri(_, Some(deserializer))) => {
-                        let data = deserializer.finish(helper)?;
-                        Self::store_uri(&mut values, data)?;
-                    }
-                    Some(_) => unreachable!(),
+                if let Some(deserializer) = fallback {
+                    let data = deserializer.finish(helper)?;
+                    Self::store_uri(&mut values, data)?;
                 }
-                Ok(match artifact {
+                match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_uri(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            GroupTypeContentDeserializerState::Uri(values, None),
-                        )?;
-                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
-                        ElementHandlerOutput::Break { event, allow_any }
+                        let data = Self::finish_state(helper, S::Uri(values, None, None))?;
+                        *self.state__ = S::Done__(data);
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ =
-                            GroupTypeContentDeserializerState::Uri(values, Some(deserializer));
-                        ElementHandlerOutput::from_event_end(event, allow_any)
+                        *self.state__ = S::Uri(values, None, Some(deserializer));
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
-                })
+                }
             }
             fn handle_rewrite_system<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::RewriteSystemType>,
+                fallback: Option<<super::RewriteSystemType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::RewriteSystemType>,
-                fallback: &mut Option<GroupTypeContentDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use GroupTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state__ = match fallback.take() {
-                        None if values.is_none() => {
-                            *self.state__ = GroupTypeContentDeserializerState::Init__;
-                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                        }
-                        None => GroupTypeContentDeserializerState::RewriteSystem(values, None),
-                        Some(GroupTypeContentDeserializerState::RewriteSystem(
-                            _,
-                            Some(deserializer),
-                        )) => GroupTypeContentDeserializerState::RewriteSystem(
-                            values,
-                            Some(deserializer),
-                        ),
-                        _ => unreachable!(),
-                    };
-                    return Ok(ElementHandlerOutput::break_(event, allow_any));
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 }
-                match fallback.take() {
-                    None => (),
-                    Some(GroupTypeContentDeserializerState::RewriteSystem(
-                        _,
-                        Some(deserializer),
-                    )) => {
-                        let data = deserializer.finish(helper)?;
-                        Self::store_rewrite_system(&mut values, data)?;
-                    }
-                    Some(_) => unreachable!(),
+                if let Some(deserializer) = fallback {
+                    let data = deserializer.finish(helper)?;
+                    Self::store_rewrite_system(&mut values, data)?;
                 }
-                Ok(match artifact {
+                match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_rewrite_system(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            GroupTypeContentDeserializerState::RewriteSystem(values, None),
-                        )?;
-                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
-                        ElementHandlerOutput::Break { event, allow_any }
+                        let data =
+                            Self::finish_state(helper, S::RewriteSystem(values, None, None))?;
+                        *self.state__ = S::Done__(data);
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = GroupTypeContentDeserializerState::RewriteSystem(
-                            values,
-                            Some(deserializer),
-                        );
-                        ElementHandlerOutput::from_event_end(event, allow_any)
+                        *self.state__ = S::RewriteSystem(values, None, Some(deserializer));
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
-                })
+                }
             }
             fn handle_rewrite_uri<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::RewriteUriType>,
+                fallback: Option<<super::RewriteUriType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::RewriteUriType>,
-                fallback: &mut Option<GroupTypeContentDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use GroupTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state__ = match fallback.take() {
-                        None if values.is_none() => {
-                            *self.state__ = GroupTypeContentDeserializerState::Init__;
-                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                        }
-                        None => GroupTypeContentDeserializerState::RewriteUri(values, None),
-                        Some(GroupTypeContentDeserializerState::RewriteUri(
-                            _,
-                            Some(deserializer),
-                        )) => GroupTypeContentDeserializerState::RewriteUri(
-                            values,
-                            Some(deserializer),
-                        ),
-                        _ => unreachable!(),
-                    };
-                    return Ok(ElementHandlerOutput::break_(event, allow_any));
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 }
-                match fallback.take() {
-                    None => (),
-                    Some(GroupTypeContentDeserializerState::RewriteUri(_, Some(deserializer))) => {
-                        let data = deserializer.finish(helper)?;
-                        Self::store_rewrite_uri(&mut values, data)?;
-                    }
-                    Some(_) => unreachable!(),
+                if let Some(deserializer) = fallback {
+                    let data = deserializer.finish(helper)?;
+                    Self::store_rewrite_uri(&mut values, data)?;
                 }
-                Ok(match artifact {
+                match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_rewrite_uri(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            GroupTypeContentDeserializerState::RewriteUri(values, None),
-                        )?;
-                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
-                        ElementHandlerOutput::Break { event, allow_any }
+                        let data = Self::finish_state(helper, S::RewriteUri(values, None, None))?;
+                        *self.state__ = S::Done__(data);
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = GroupTypeContentDeserializerState::RewriteUri(
-                            values,
-                            Some(deserializer),
-                        );
-                        ElementHandlerOutput::from_event_end(event, allow_any)
+                        *self.state__ = S::RewriteUri(values, None, Some(deserializer));
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
-                })
+                }
             }
             fn handle_uri_suffix<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::UriSuffixType>,
+                fallback: Option<<super::UriSuffixType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::UriSuffixType>,
-                fallback: &mut Option<GroupTypeContentDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use GroupTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state__ = match fallback.take() {
-                        None if values.is_none() => {
-                            *self.state__ = GroupTypeContentDeserializerState::Init__;
-                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                        }
-                        None => GroupTypeContentDeserializerState::UriSuffix(values, None),
-                        Some(GroupTypeContentDeserializerState::UriSuffix(
-                            _,
-                            Some(deserializer),
-                        )) => {
-                            GroupTypeContentDeserializerState::UriSuffix(values, Some(deserializer))
-                        }
-                        _ => unreachable!(),
-                    };
-                    return Ok(ElementHandlerOutput::break_(event, allow_any));
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 }
-                match fallback.take() {
-                    None => (),
-                    Some(GroupTypeContentDeserializerState::UriSuffix(_, Some(deserializer))) => {
-                        let data = deserializer.finish(helper)?;
-                        Self::store_uri_suffix(&mut values, data)?;
-                    }
-                    Some(_) => unreachable!(),
+                if let Some(deserializer) = fallback {
+                    let data = deserializer.finish(helper)?;
+                    Self::store_uri_suffix(&mut values, data)?;
                 }
-                Ok(match artifact {
+                match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_uri_suffix(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            GroupTypeContentDeserializerState::UriSuffix(values, None),
-                        )?;
-                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
-                        ElementHandlerOutput::Break { event, allow_any }
+                        let data = Self::finish_state(helper, S::UriSuffix(values, None, None))?;
+                        *self.state__ = S::Done__(data);
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = GroupTypeContentDeserializerState::UriSuffix(
-                            values,
-                            Some(deserializer),
-                        );
-                        ElementHandlerOutput::from_event_end(event, allow_any)
+                        *self.state__ = S::UriSuffix(values, None, Some(deserializer));
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
-                })
+                }
             }
             fn handle_system_suffix<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::SystemSuffixType>,
+                fallback: Option<<super::SystemSuffixType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::SystemSuffixType>,
-                fallback: &mut Option<GroupTypeContentDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use GroupTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state__ = match fallback.take() {
-                        None if values.is_none() => {
-                            *self.state__ = GroupTypeContentDeserializerState::Init__;
-                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                        }
-                        None => GroupTypeContentDeserializerState::SystemSuffix(values, None),
-                        Some(GroupTypeContentDeserializerState::SystemSuffix(
-                            _,
-                            Some(deserializer),
-                        )) => GroupTypeContentDeserializerState::SystemSuffix(
-                            values,
-                            Some(deserializer),
-                        ),
-                        _ => unreachable!(),
-                    };
-                    return Ok(ElementHandlerOutput::break_(event, allow_any));
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 }
-                match fallback.take() {
-                    None => (),
-                    Some(GroupTypeContentDeserializerState::SystemSuffix(
-                        _,
-                        Some(deserializer),
-                    )) => {
-                        let data = deserializer.finish(helper)?;
-                        Self::store_system_suffix(&mut values, data)?;
-                    }
-                    Some(_) => unreachable!(),
+                if let Some(deserializer) = fallback {
+                    let data = deserializer.finish(helper)?;
+                    Self::store_system_suffix(&mut values, data)?;
                 }
-                Ok(match artifact {
+                match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_system_suffix(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            GroupTypeContentDeserializerState::SystemSuffix(values, None),
-                        )?;
-                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
-                        ElementHandlerOutput::Break { event, allow_any }
+                        let data = Self::finish_state(helper, S::SystemSuffix(values, None, None))?;
+                        *self.state__ = S::Done__(data);
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = GroupTypeContentDeserializerState::SystemSuffix(
-                            values,
-                            Some(deserializer),
-                        );
-                        ElementHandlerOutput::from_event_end(event, allow_any)
+                        *self.state__ = S::SystemSuffix(values, None, Some(deserializer));
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
-                })
+                }
             }
             fn handle_delegate_public<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::DelegatePublicType>,
+                fallback: Option<<super::DelegatePublicType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::DelegatePublicType>,
-                fallback: &mut Option<GroupTypeContentDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use GroupTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state__ = match fallback.take() {
-                        None if values.is_none() => {
-                            *self.state__ = GroupTypeContentDeserializerState::Init__;
-                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                        }
-                        None => GroupTypeContentDeserializerState::DelegatePublic(values, None),
-                        Some(GroupTypeContentDeserializerState::DelegatePublic(
-                            _,
-                            Some(deserializer),
-                        )) => GroupTypeContentDeserializerState::DelegatePublic(
-                            values,
-                            Some(deserializer),
-                        ),
-                        _ => unreachable!(),
-                    };
-                    return Ok(ElementHandlerOutput::break_(event, allow_any));
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 }
-                match fallback.take() {
-                    None => (),
-                    Some(GroupTypeContentDeserializerState::DelegatePublic(
-                        _,
-                        Some(deserializer),
-                    )) => {
-                        let data = deserializer.finish(helper)?;
-                        Self::store_delegate_public(&mut values, data)?;
-                    }
-                    Some(_) => unreachable!(),
+                if let Some(deserializer) = fallback {
+                    let data = deserializer.finish(helper)?;
+                    Self::store_delegate_public(&mut values, data)?;
                 }
-                Ok(match artifact {
+                match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_delegate_public(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            GroupTypeContentDeserializerState::DelegatePublic(values, None),
-                        )?;
-                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
-                        ElementHandlerOutput::Break { event, allow_any }
+                        let data =
+                            Self::finish_state(helper, S::DelegatePublic(values, None, None))?;
+                        *self.state__ = S::Done__(data);
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = GroupTypeContentDeserializerState::DelegatePublic(
-                            values,
-                            Some(deserializer),
-                        );
-                        ElementHandlerOutput::from_event_end(event, allow_any)
+                        *self.state__ = S::DelegatePublic(values, None, Some(deserializer));
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
-                })
+                }
             }
             fn handle_delegate_system<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::DelegateSystemType>,
+                fallback: Option<<super::DelegateSystemType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::DelegateSystemType>,
-                fallback: &mut Option<GroupTypeContentDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use GroupTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state__ = match fallback.take() {
-                        None if values.is_none() => {
-                            *self.state__ = GroupTypeContentDeserializerState::Init__;
-                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                        }
-                        None => GroupTypeContentDeserializerState::DelegateSystem(values, None),
-                        Some(GroupTypeContentDeserializerState::DelegateSystem(
-                            _,
-                            Some(deserializer),
-                        )) => GroupTypeContentDeserializerState::DelegateSystem(
-                            values,
-                            Some(deserializer),
-                        ),
-                        _ => unreachable!(),
-                    };
-                    return Ok(ElementHandlerOutput::break_(event, allow_any));
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 }
-                match fallback.take() {
-                    None => (),
-                    Some(GroupTypeContentDeserializerState::DelegateSystem(
-                        _,
-                        Some(deserializer),
-                    )) => {
-                        let data = deserializer.finish(helper)?;
-                        Self::store_delegate_system(&mut values, data)?;
-                    }
-                    Some(_) => unreachable!(),
+                if let Some(deserializer) = fallback {
+                    let data = deserializer.finish(helper)?;
+                    Self::store_delegate_system(&mut values, data)?;
                 }
-                Ok(match artifact {
+                match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_delegate_system(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            GroupTypeContentDeserializerState::DelegateSystem(values, None),
-                        )?;
-                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
-                        ElementHandlerOutput::Break { event, allow_any }
+                        let data =
+                            Self::finish_state(helper, S::DelegateSystem(values, None, None))?;
+                        *self.state__ = S::Done__(data);
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = GroupTypeContentDeserializerState::DelegateSystem(
-                            values,
-                            Some(deserializer),
-                        );
-                        ElementHandlerOutput::from_event_end(event, allow_any)
+                        *self.state__ = S::DelegateSystem(values, None, Some(deserializer));
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
-                })
+                }
             }
             fn handle_delegate_uri<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::DelegateUriType>,
+                fallback: Option<<super::DelegateUriType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::DelegateUriType>,
-                fallback: &mut Option<GroupTypeContentDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use GroupTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state__ = match fallback.take() {
-                        None if values.is_none() => {
-                            *self.state__ = GroupTypeContentDeserializerState::Init__;
-                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                        }
-                        None => GroupTypeContentDeserializerState::DelegateUri(values, None),
-                        Some(GroupTypeContentDeserializerState::DelegateUri(
-                            _,
-                            Some(deserializer),
-                        )) => GroupTypeContentDeserializerState::DelegateUri(
-                            values,
-                            Some(deserializer),
-                        ),
-                        _ => unreachable!(),
-                    };
-                    return Ok(ElementHandlerOutput::break_(event, allow_any));
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 }
-                match fallback.take() {
-                    None => (),
-                    Some(GroupTypeContentDeserializerState::DelegateUri(_, Some(deserializer))) => {
-                        let data = deserializer.finish(helper)?;
-                        Self::store_delegate_uri(&mut values, data)?;
-                    }
-                    Some(_) => unreachable!(),
+                if let Some(deserializer) = fallback {
+                    let data = deserializer.finish(helper)?;
+                    Self::store_delegate_uri(&mut values, data)?;
                 }
-                Ok(match artifact {
+                match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_delegate_uri(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            GroupTypeContentDeserializerState::DelegateUri(values, None),
-                        )?;
-                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
-                        ElementHandlerOutput::Break { event, allow_any }
+                        let data = Self::finish_state(helper, S::DelegateUri(values, None, None))?;
+                        *self.state__ = S::Done__(data);
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = GroupTypeContentDeserializerState::DelegateUri(
-                            values,
-                            Some(deserializer),
-                        );
-                        ElementHandlerOutput::from_event_end(event, allow_any)
+                        *self.state__ = S::DelegateUri(values, None, Some(deserializer));
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
-                })
+                }
             }
             fn handle_next_catalog<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::NextCatalogType>,
+                fallback: Option<<super::NextCatalogType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::NextCatalogType>,
-                fallback: &mut Option<GroupTypeContentDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use GroupTypeContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state__ = match fallback.take() {
-                        None if values.is_none() => {
-                            *self.state__ = GroupTypeContentDeserializerState::Init__;
-                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                        }
-                        None => GroupTypeContentDeserializerState::NextCatalog(values, None),
-                        Some(GroupTypeContentDeserializerState::NextCatalog(
-                            _,
-                            Some(deserializer),
-                        )) => GroupTypeContentDeserializerState::NextCatalog(
-                            values,
-                            Some(deserializer),
-                        ),
-                        _ => unreachable!(),
-                    };
-                    return Ok(ElementHandlerOutput::break_(event, allow_any));
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 }
-                match fallback.take() {
-                    None => (),
-                    Some(GroupTypeContentDeserializerState::NextCatalog(_, Some(deserializer))) => {
-                        let data = deserializer.finish(helper)?;
-                        Self::store_next_catalog(&mut values, data)?;
-                    }
-                    Some(_) => unreachable!(),
+                if let Some(deserializer) = fallback {
+                    let data = deserializer.finish(helper)?;
+                    Self::store_next_catalog(&mut values, data)?;
                 }
-                Ok(match artifact {
+                match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_next_catalog(&mut values, data)?;
-                        let data = Self::finish_state(
-                            helper,
-                            GroupTypeContentDeserializerState::NextCatalog(values, None),
-                        )?;
-                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
-                        ElementHandlerOutput::Break { event, allow_any }
+                        let data = Self::finish_state(helper, S::NextCatalog(values, None, None))?;
+                        *self.state__ = S::Done__(data);
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = GroupTypeContentDeserializerState::NextCatalog(
-                            values,
-                            Some(deserializer),
-                        );
-                        ElementHandlerOutput::from_event_end(event, allow_any)
+                        *self.state__ = S::NextCatalog(values, None, Some(deserializer));
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
                     }
-                })
+                }
             }
         }
         impl<'de> Deserializer<'de, super::GroupTypeContent> for GroupTypeContentDeserializer {
@@ -3828,124 +3129,103 @@ pub mod er {
             ) -> DeserializerResult<'de, super::GroupTypeContent> {
                 use GroupTypeContentDeserializerState as S;
                 let mut event = event;
-                let mut fallback = None;
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Unknown__, _) => unreachable!(),
-                        (S::Public(values, Some(deserializer)), event) => {
+                        (S::Public(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_public(helper, values, output, &mut fallback)? {
+                            match self.handle_public(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::System(values, Some(deserializer)), event) => {
+                        (S::System(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_system(helper, values, output, &mut fallback)? {
+                            match self.handle_system(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::Uri(values, Some(deserializer)), event) => {
+                        (S::Uri(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_uri(helper, values, output, &mut fallback)? {
+                            match self.handle_uri(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::RewriteSystem(values, Some(deserializer)), event) => {
+                        (S::RewriteSystem(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_rewrite_system(
-                                helper,
-                                values,
-                                output,
-                                &mut fallback,
-                            )? {
+                            match self.handle_rewrite_system(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::RewriteUri(values, Some(deserializer)), event) => {
+                        (S::RewriteUri(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_rewrite_uri(helper, values, output, &mut fallback)? {
+                            match self.handle_rewrite_uri(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::UriSuffix(values, Some(deserializer)), event) => {
+                        (S::UriSuffix(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_uri_suffix(helper, values, output, &mut fallback)? {
+                            match self.handle_uri_suffix(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::SystemSuffix(values, Some(deserializer)), event) => {
+                        (S::SystemSuffix(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_system_suffix(
-                                helper,
-                                values,
-                                output,
-                                &mut fallback,
-                            )? {
+                            match self.handle_system_suffix(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::DelegatePublic(values, Some(deserializer)), event) => {
+                        (S::DelegatePublic(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_delegate_public(
-                                helper,
-                                values,
-                                output,
-                                &mut fallback,
-                            )? {
+                            match self.handle_delegate_public(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::DelegateSystem(values, Some(deserializer)), event) => {
+                        (S::DelegateSystem(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_delegate_system(
-                                helper,
-                                values,
-                                output,
-                                &mut fallback,
-                            )? {
+                            match self.handle_delegate_system(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::DelegateUri(values, Some(deserializer)), event) => {
+                        (S::DelegateUri(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_delegate_uri(helper, values, output, &mut fallback)? {
+                            match self.handle_delegate_uri(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (S::NextCatalog(values, Some(deserializer)), event) => {
+                        (S::NextCatalog(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_next_catalog(helper, values, output, &mut fallback)? {
+                            match self.handle_next_catalog(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -3961,50 +3241,23 @@ pub mod er {
                                 allow_any: false,
                             });
                         }
-                        (S::Init__, event) => {
-                            match self.find_suitable(helper, event, &mut fallback)? {
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
-                                ElementHandlerOutput::Continue { event, .. } => event,
+                        (S::Init__, event) => match self.find_suitable(helper, event)? {
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
                             }
-                        }
-                        (S::Public(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                            ElementHandlerOutput::Continue { event, .. } => event,
+                        },
+                        (
+                            S::Public(values, fallback, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_ER),
                                 b"public",
                                 false,
                             )?;
-                            match self.handle_public(helper, values, output, &mut fallback)? {
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
-                                ElementHandlerOutput::Continue { event, .. } => event,
-                            }
-                        }
-                        (S::System(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            let output = helper.init_start_tag_deserializer(
-                                event,
-                                Some(&super::super::NS_ER),
-                                b"system",
-                                false,
-                            )?;
-                            match self.handle_system(helper, values, output, &mut fallback)? {
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
-                                ElementHandlerOutput::Continue { event, .. } => event,
-                            }
-                        }
-                        (S::Uri(values, None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            let output = helper.init_start_tag_deserializer(
-                                event,
-                                Some(&super::super::NS_ER),
-                                b"uri",
-                                false,
-                            )?;
-                            match self.handle_uri(helper, values, output, &mut fallback)? {
+                            match self.handle_public(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -4012,7 +3265,41 @@ pub mod er {
                             }
                         }
                         (
-                            S::RewriteSystem(values, None),
+                            S::System(values, fallback, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
+                            let output = helper.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_ER),
+                                b"system",
+                                false,
+                            )?;
+                            match self.handle_system(helper, values, fallback, output)? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
+                        (
+                            S::Uri(values, fallback, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
+                            let output = helper.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_ER),
+                                b"uri",
+                                false,
+                            )?;
+                            match self.handle_uri(helper, values, fallback, output)? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
+                        (
+                            S::RewriteSystem(values, fallback, None),
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
                             let output = helper.init_start_tag_deserializer(
@@ -4021,12 +3308,7 @@ pub mod er {
                                 b"rewriteSystem",
                                 false,
                             )?;
-                            match self.handle_rewrite_system(
-                                helper,
-                                values,
-                                output,
-                                &mut fallback,
-                            )? {
+                            match self.handle_rewrite_system(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -4034,7 +3316,7 @@ pub mod er {
                             }
                         }
                         (
-                            S::RewriteUri(values, None),
+                            S::RewriteUri(values, fallback, None),
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
                             let output = helper.init_start_tag_deserializer(
@@ -4043,7 +3325,7 @@ pub mod er {
                                 b"rewriteURI",
                                 false,
                             )?;
-                            match self.handle_rewrite_uri(helper, values, output, &mut fallback)? {
+                            match self.handle_rewrite_uri(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -4051,7 +3333,7 @@ pub mod er {
                             }
                         }
                         (
-                            S::UriSuffix(values, None),
+                            S::UriSuffix(values, fallback, None),
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
                             let output = helper.init_start_tag_deserializer(
@@ -4060,7 +3342,7 @@ pub mod er {
                                 b"uriSuffix",
                                 false,
                             )?;
-                            match self.handle_uri_suffix(helper, values, output, &mut fallback)? {
+                            match self.handle_uri_suffix(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -4068,7 +3350,7 @@ pub mod er {
                             }
                         }
                         (
-                            S::SystemSuffix(values, None),
+                            S::SystemSuffix(values, fallback, None),
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
                             let output = helper.init_start_tag_deserializer(
@@ -4077,12 +3359,7 @@ pub mod er {
                                 b"systemSuffix",
                                 false,
                             )?;
-                            match self.handle_system_suffix(
-                                helper,
-                                values,
-                                output,
-                                &mut fallback,
-                            )? {
+                            match self.handle_system_suffix(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -4090,7 +3367,7 @@ pub mod er {
                             }
                         }
                         (
-                            S::DelegatePublic(values, None),
+                            S::DelegatePublic(values, fallback, None),
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
                             let output = helper.init_start_tag_deserializer(
@@ -4099,12 +3376,7 @@ pub mod er {
                                 b"delegatePublic",
                                 false,
                             )?;
-                            match self.handle_delegate_public(
-                                helper,
-                                values,
-                                output,
-                                &mut fallback,
-                            )? {
+                            match self.handle_delegate_public(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -4112,7 +3384,7 @@ pub mod er {
                             }
                         }
                         (
-                            S::DelegateSystem(values, None),
+                            S::DelegateSystem(values, fallback, None),
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
                             let output = helper.init_start_tag_deserializer(
@@ -4121,12 +3393,7 @@ pub mod er {
                                 b"delegateSystem",
                                 false,
                             )?;
-                            match self.handle_delegate_system(
-                                helper,
-                                values,
-                                output,
-                                &mut fallback,
-                            )? {
+                            match self.handle_delegate_system(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -4134,7 +3401,7 @@ pub mod er {
                             }
                         }
                         (
-                            S::DelegateUri(values, None),
+                            S::DelegateUri(values, fallback, None),
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
                             let output = helper.init_start_tag_deserializer(
@@ -4143,7 +3410,7 @@ pub mod er {
                                 b"delegateURI",
                                 false,
                             )?;
-                            match self.handle_delegate_uri(helper, values, output, &mut fallback)? {
+                            match self.handle_delegate_uri(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -4151,7 +3418,7 @@ pub mod er {
                             }
                         }
                         (
-                            S::NextCatalog(values, None),
+                            S::NextCatalog(values, fallback, None),
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
                             let output = helper.init_start_tag_deserializer(
@@ -4160,20 +3427,20 @@ pub mod er {
                                 b"nextCatalog",
                                 false,
                             )?;
-                            match self.handle_next_catalog(helper, values, output, &mut fallback)? {
+                            match self.handle_next_catalog(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
-                        (s @ S::Done__(_), event) => {
-                            *self.state__ = s;
+                        (state @ S::Done__(_), event) => {
+                            *self.state__ = state;
                             break (DeserializerEvent::Continue(event), false);
                         }
                         (state, event) => {
                             *self.state__ = state;
-                            break (DeserializerEvent::Break(event), false);
+                            break (DeserializerEvent::Continue(event), false);
                         }
                     }
                 };

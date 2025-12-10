@@ -56,13 +56,17 @@ pub trait Naming: Debug {
     ///
     /// The default implementation uses pascal case here.
     fn format_type_name(&self, s: &str) -> String {
-        let name = self.unify(s);
+        let mut name = self.unify(s);
+
+        if let Ok(idx) = KEYWORDS.binary_search_by(|(key, _)| key.cmp(&&*name)) {
+            name = KEYWORDS[idx].1.into();
+        }
 
         if name.starts_with(char::is_numeric) {
-            format!("_{name}")
-        } else {
-            name
+            name = format!("_{name}");
         }
+
+        name
     }
 
     /// Format the passed string `s` as field name.

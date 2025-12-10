@@ -178,47 +178,36 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::NormalGroupType>,
             fallback: &mut Option<NormalTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use NormalTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                if self.group.is_some() {
-                    fallback.get_or_insert(NormalTypeDeserializerState::Group(None));
-                    *self.state__ = NormalTypeDeserializerState::Baz(None);
-                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                } else {
-                    *self.state__ = NormalTypeDeserializerState::Group(None);
+                fallback.get_or_insert(S::Group(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
+                } else {
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 }
             }
             if let Some(fallback) = fallback.take() {
                 self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_group(data)?;
-                    *self.state__ = NormalTypeDeserializerState::Baz(None);
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::Baz(None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback.get_or_insert(NormalTypeDeserializerState::Group(Some(
-                                deserializer,
-                            )));
-                            *self.state__ = NormalTypeDeserializerState::Baz(None);
-                        }
-                        ElementHandlerOutput::Break { .. } => {
-                            *self.state__ = NormalTypeDeserializerState::Group(Some(deserializer));
-                        }
-                    }
-                    ret
+                    fallback.get_or_insert(S::Group(Some(deserializer)));
+                    *self.state__ = S::Baz(None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_baz<'de>(
             &mut self,
@@ -226,47 +215,36 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<NormalTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use NormalTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                if self.baz.is_some() {
-                    fallback.get_or_insert(NormalTypeDeserializerState::Baz(None));
-                    *self.state__ = NormalTypeDeserializerState::Done__;
-                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                } else {
-                    *self.state__ = NormalTypeDeserializerState::Baz(None);
+                fallback.get_or_insert(S::Baz(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
+                } else {
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 }
             }
             if let Some(fallback) = fallback.take() {
                 self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_baz(data)?;
-                    *self.state__ = NormalTypeDeserializerState::Done__;
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::Done__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback.get_or_insert(NormalTypeDeserializerState::Baz(Some(
-                                deserializer,
-                            )));
-                            *self.state__ = NormalTypeDeserializerState::Done__;
-                        }
-                        ElementHandlerOutput::Break { .. } => {
-                            *self.state__ = NormalTypeDeserializerState::Baz(Some(deserializer));
-                        }
-                    }
-                    ret
+                    fallback.get_or_insert(S::Baz(Some(deserializer)));
+                    *self.state__ = S::Done__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
     }
     impl<'de> Deserializer<'de, super::NormalType> for NormalTypeDeserializer {
@@ -325,14 +303,12 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ = NormalTypeDeserializerState::Group(None);
+                        *self.state__ = S::Group(None);
                         event
                     }
                     (S::Group(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
-                            <super::NormalGroupType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::NormalGroupType as WithDeserializer>::init(helper, event)?;
                         match self.handle_group(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
@@ -361,7 +337,7 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Done__, event) => {
-                        fallback.get_or_insert(S::Done__);
+                        *self.state__ = S::Done__;
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
                     (state, event) => {
@@ -383,12 +359,8 @@ pub mod quick_xml_deserialize {
             let state = replace(&mut *self.state__, NormalTypeDeserializerState::Unknown__);
             self.finish_state(helper, state)?;
             Ok(super::NormalType {
-                group: self
-                    .group
-                    .ok_or_else(|| ErrorKind::MissingElement("Group".into()))?,
-                baz: self
-                    .baz
-                    .ok_or_else(|| ErrorKind::MissingElement("Baz".into()))?,
+                group: helper.finish_element("Group", self.group)?,
+                baz: helper.finish_element("Baz", self.baz)?,
             })
         }
     }
@@ -440,48 +412,36 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, i32>,
             fallback: &mut Option<NormalGroupTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use NormalGroupTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                if self.fuu.is_some() {
-                    fallback.get_or_insert(NormalGroupTypeDeserializerState::Fuu(None));
-                    *self.state__ = NormalGroupTypeDeserializerState::Bar(None);
-                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                } else {
-                    *self.state__ = NormalGroupTypeDeserializerState::Fuu(None);
+                fallback.get_or_insert(S::Fuu(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
+                } else {
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 }
             }
             if let Some(fallback) = fallback.take() {
                 self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_fuu(data)?;
-                    *self.state__ = NormalGroupTypeDeserializerState::Bar(None);
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::Bar(None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback.get_or_insert(NormalGroupTypeDeserializerState::Fuu(Some(
-                                deserializer,
-                            )));
-                            *self.state__ = NormalGroupTypeDeserializerState::Bar(None);
-                        }
-                        ElementHandlerOutput::Break { .. } => {
-                            *self.state__ =
-                                NormalGroupTypeDeserializerState::Fuu(Some(deserializer));
-                        }
-                    }
-                    ret
+                    fallback.get_or_insert(S::Fuu(Some(deserializer)));
+                    *self.state__ = S::Bar(None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_bar<'de>(
             &mut self,
@@ -489,48 +449,36 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, String>,
             fallback: &mut Option<NormalGroupTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use NormalGroupTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                if self.bar.is_some() {
-                    fallback.get_or_insert(NormalGroupTypeDeserializerState::Bar(None));
-                    *self.state__ = NormalGroupTypeDeserializerState::Done__;
-                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                } else {
-                    *self.state__ = NormalGroupTypeDeserializerState::Bar(None);
+                fallback.get_or_insert(S::Bar(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
+                } else {
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 }
             }
             if let Some(fallback) = fallback.take() {
                 self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_bar(data)?;
-                    *self.state__ = NormalGroupTypeDeserializerState::Done__;
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::Done__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback.get_or_insert(NormalGroupTypeDeserializerState::Bar(Some(
-                                deserializer,
-                            )));
-                            *self.state__ = NormalGroupTypeDeserializerState::Done__;
-                        }
-                        ElementHandlerOutput::Break { .. } => {
-                            *self.state__ =
-                                NormalGroupTypeDeserializerState::Bar(Some(deserializer));
-                        }
-                    }
-                    ret
+                    fallback.get_or_insert(S::Bar(Some(deserializer)));
+                    *self.state__ = S::Done__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
     }
     impl<'de> Deserializer<'de, super::NormalGroupType> for NormalGroupTypeDeserializer {
@@ -603,7 +551,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ = NormalGroupTypeDeserializerState::Fuu(None);
+                        *self.state__ = S::Fuu(None);
                         event
                     }
                     (S::Fuu(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -641,7 +589,7 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Done__, event) => {
-                        fallback.get_or_insert(S::Done__);
+                        *self.state__ = S::Done__;
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
                     (state, event) => {
@@ -669,12 +617,8 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::NormalGroupType {
-                fuu: self
-                    .fuu
-                    .ok_or_else(|| ErrorKind::MissingElement("Fuu".into()))?,
-                bar: self
-                    .bar
-                    .ok_or_else(|| ErrorKind::MissingElement("Bar".into()))?,
+                fuu: helper.finish_element("Fuu", self.fuu)?,
+                bar: helper.finish_element("Bar", self.bar)?,
             })
         }
     }
@@ -757,43 +701,33 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, Text>,
             fallback: &mut Option<MixedTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use MixedTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(MixedTypeDeserializerState::TextBefore(None));
-                *self.state__ = MixedTypeDeserializerState::Group(None);
+                fallback.get_or_insert(S::TextBefore(None));
+                *self.state__ = S::Group(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
                 self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_text_before(data)?;
-                    *self.state__ = MixedTypeDeserializerState::Group(None);
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::Group(None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback.get_or_insert(MixedTypeDeserializerState::TextBefore(Some(
-                                deserializer,
-                            )));
-                            *self.state__ = MixedTypeDeserializerState::Group(None);
-                        }
-                        ElementHandlerOutput::Break { .. } => {
-                            *self.state__ =
-                                MixedTypeDeserializerState::TextBefore(Some(deserializer));
-                        }
-                    }
-                    ret
+                    fallback.get_or_insert(S::TextBefore(Some(deserializer)));
+                    *self.state__ = S::Group(None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_group<'de>(
             &mut self,
@@ -801,47 +735,36 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, super::MixedGroupType>,
             fallback: &mut Option<MixedTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use MixedTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                if self.group.is_some() {
-                    fallback.get_or_insert(MixedTypeDeserializerState::Group(None));
-                    *self.state__ = MixedTypeDeserializerState::Baz(None);
-                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                } else {
-                    *self.state__ = MixedTypeDeserializerState::Group(None);
+                fallback.get_or_insert(S::Group(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
+                } else {
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 }
             }
             if let Some(fallback) = fallback.take() {
                 self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_group(data)?;
-                    *self.state__ = MixedTypeDeserializerState::Baz(None);
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::Baz(None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback.get_or_insert(MixedTypeDeserializerState::Group(Some(
-                                deserializer,
-                            )));
-                            *self.state__ = MixedTypeDeserializerState::Baz(None);
-                        }
-                        ElementHandlerOutput::Break { .. } => {
-                            *self.state__ = MixedTypeDeserializerState::Group(Some(deserializer));
-                        }
-                    }
-                    ret
+                    fallback.get_or_insert(S::Group(Some(deserializer)));
+                    *self.state__ = S::Baz(None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_baz<'de>(
             &mut self,
@@ -849,46 +772,36 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, Mixed<String>>,
             fallback: &mut Option<MixedTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use MixedTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                if self.baz.is_some() {
-                    fallback.get_or_insert(MixedTypeDeserializerState::Baz(None));
-                    *self.state__ = MixedTypeDeserializerState::Done__;
-                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                } else {
-                    *self.state__ = MixedTypeDeserializerState::Baz(None);
+                fallback.get_or_insert(S::Baz(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
+                } else {
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 }
             }
             if let Some(fallback) = fallback.take() {
                 self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_baz(data)?;
-                    *self.state__ = MixedTypeDeserializerState::Done__;
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::Done__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback
-                                .get_or_insert(MixedTypeDeserializerState::Baz(Some(deserializer)));
-                            *self.state__ = MixedTypeDeserializerState::Done__;
-                        }
-                        ElementHandlerOutput::Break { .. } => {
-                            *self.state__ = MixedTypeDeserializerState::Baz(Some(deserializer));
-                        }
-                    }
-                    ret
+                    fallback.get_or_insert(S::Baz(Some(deserializer)));
+                    *self.state__ = S::Done__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
     }
     impl<'de> Deserializer<'de, super::MixedType> for MixedTypeDeserializer {
@@ -959,11 +872,11 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ = MixedTypeDeserializerState::TextBefore(None);
+                        *self.state__ = S::TextBefore(None);
                         event
                     }
                     (S::TextBefore(None), event) => {
-                        let output = <Text as WithDeserializer>::Deserializer::init(helper, event)?;
+                        let output = <Text as WithDeserializer>::init(helper, event)?;
                         match self.handle_text_before(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
@@ -976,9 +889,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Group(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
-                            <super::MixedGroupType as WithDeserializer>::Deserializer::init(
-                                helper, event,
-                            )?;
+                            <super::MixedGroupType as WithDeserializer>::init(helper, event)?;
                         match self.handle_group(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
@@ -1007,7 +918,7 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Done__, event) => {
-                        fallback.get_or_insert(S::Done__);
+                        *self.state__ = S::Done__;
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
                     (state, Event::Text(_) | Event::CData(_)) => {
@@ -1034,12 +945,8 @@ pub mod quick_xml_deserialize {
             self.finish_state(helper, state)?;
             Ok(super::MixedType {
                 text_before: self.text_before,
-                group: self
-                    .group
-                    .ok_or_else(|| ErrorKind::MissingElement("Group".into()))?,
-                baz: self
-                    .baz
-                    .ok_or_else(|| ErrorKind::MissingElement("Baz".into()))?,
+                group: helper.finish_element("Group", self.group)?,
+                baz: helper.finish_element("Baz", self.baz)?,
             })
         }
     }
@@ -1091,48 +998,36 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, Mixed<i32>>,
             fallback: &mut Option<MixedGroupTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use MixedGroupTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                if self.fuu.is_some() {
-                    fallback.get_or_insert(MixedGroupTypeDeserializerState::Fuu(None));
-                    *self.state__ = MixedGroupTypeDeserializerState::Bar(None);
-                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                } else {
-                    *self.state__ = MixedGroupTypeDeserializerState::Fuu(None);
+                fallback.get_or_insert(S::Fuu(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
+                } else {
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 }
             }
             if let Some(fallback) = fallback.take() {
                 self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_fuu(data)?;
-                    *self.state__ = MixedGroupTypeDeserializerState::Bar(None);
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::Bar(None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback.get_or_insert(MixedGroupTypeDeserializerState::Fuu(Some(
-                                deserializer,
-                            )));
-                            *self.state__ = MixedGroupTypeDeserializerState::Bar(None);
-                        }
-                        ElementHandlerOutput::Break { .. } => {
-                            *self.state__ =
-                                MixedGroupTypeDeserializerState::Fuu(Some(deserializer));
-                        }
-                    }
-                    ret
+                    fallback.get_or_insert(S::Fuu(Some(deserializer)));
+                    *self.state__ = S::Bar(None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
         fn handle_bar<'de>(
             &mut self,
@@ -1140,48 +1035,36 @@ pub mod quick_xml_deserialize {
             output: DeserializerOutput<'de, Mixed<String>>,
             fallback: &mut Option<MixedGroupTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use MixedGroupTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                if self.bar.is_some() {
-                    fallback.get_or_insert(MixedGroupTypeDeserializerState::Bar(None));
-                    *self.state__ = MixedGroupTypeDeserializerState::Done__;
-                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                } else {
-                    *self.state__ = MixedGroupTypeDeserializerState::Bar(None);
+                fallback.get_or_insert(S::Bar(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
+                } else {
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 }
             }
             if let Some(fallback) = fallback.take() {
                 self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_bar(data)?;
-                    *self.state__ = MixedGroupTypeDeserializerState::Done__;
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::Done__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback.get_or_insert(MixedGroupTypeDeserializerState::Bar(Some(
-                                deserializer,
-                            )));
-                            *self.state__ = MixedGroupTypeDeserializerState::Done__;
-                        }
-                        ElementHandlerOutput::Break { .. } => {
-                            *self.state__ =
-                                MixedGroupTypeDeserializerState::Bar(Some(deserializer));
-                        }
-                    }
-                    ret
+                    fallback.get_or_insert(S::Bar(Some(deserializer)));
+                    *self.state__ = S::Done__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
     }
     impl<'de> Deserializer<'de, super::MixedGroupType> for MixedGroupTypeDeserializer {
@@ -1254,7 +1137,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ = MixedGroupTypeDeserializerState::Fuu(None);
+                        *self.state__ = S::Fuu(None);
                         event
                     }
                     (S::Fuu(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -1292,7 +1175,7 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Done__, event) => {
-                        fallback.get_or_insert(S::Done__);
+                        *self.state__ = S::Done__;
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
                     (state, Event::Text(_) | Event::CData(_)) => {
@@ -1324,12 +1207,8 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(helper, state)?;
             Ok(super::MixedGroupType {
-                fuu: self
-                    .fuu
-                    .ok_or_else(|| ErrorKind::MissingElement("Fuu".into()))?,
-                bar: self
-                    .bar
-                    .ok_or_else(|| ErrorKind::MissingElement("Bar".into()))?,
+                fuu: helper.finish_element("Fuu", self.fuu)?,
+                bar: helper.finish_element("Bar", self.bar)?,
             })
         }
     }
