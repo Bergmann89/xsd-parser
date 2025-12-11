@@ -1,6 +1,6 @@
 [package]
 name = "xsd-parser"
-version = "1.3.0"
+version = "1.4.0"
 description = "Rust code generator for XML schema files"
 
 license.workspace = true
@@ -52,7 +52,6 @@ text-diff = { workspace = true }
 tokio = { workspace = true, features = [ "fs", "io-util", "macros", "rt-multi-thread" ] }
 tracing-subscriber = { workspace = true, features = [ "std", "env-filter", "json", "tracing-log" ] }
 
-xsd-parser = { workspace = true, features = [ "num" ] }
 xsd-parser-types = { workspace = true, features = [ "async", "num", "quick-xml", "serde", "xml" ] }
 
 [build-dependencies]

@@ -2502,7 +2502,7 @@ checksum = "3ae8337f8a065cfc972643663ea4279e04e7256de865aa66fe25cec5fb912d3f"
 
 [[package]]
 name = "xsd-parser"
-version = "1.3.0"
+version = "1.4.0"
 dependencies = [
  "Inflector",
  "anyhow",
@@ -2530,13 +2530,12 @@ dependencies = [
  "tracing-subscriber",
  "unindent",
  "url",
- "xsd-parser",
  "xsd-parser-types",
 ]
 
 [[package]]
 name = "xsd-parser-types"
-version = "0.1.0"
+version = "0.1.2"
 dependencies = [
  "encoding_rs",
  "futures",

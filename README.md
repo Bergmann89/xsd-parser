@@ -65,10 +65,37 @@ This library provides the following features:
 
 Below you can find a short list of the most important changes for each released version.
 
-## Next
+## Version 1.4.0
 
-- Make the whole name generation and formatting customizable.
-- Split the whole code base into two crates (`xsd-parser` and `xsd-parser-types`) to make the dependency handling for all dependent crates easier.
+This release focuses on extending customization options, improving `quick_xml` serialization/deserialization, and restructuring the crate into a more modular form. It also includes numerous fixes for naming, type handling, and schema interpretation issues found in real-world XSDs.
+
+- **Customizable Name Generation**
+  The entire naming system has been reworked to allow full customization of how identifiers are formatted and generated. This includes support for handling reserved keywords, resolving name collisions, and providing user-defined naming strategies.
+
+- **Crate Split into `xsd-parser` and `xsd-parser-types`**
+  The library is now split into two crates. All runtime types and dependencies were moved into `xsd-parser-types`, reducing dependency overhead for users of the generator and improving compatibility with downstream projects.
+
+- **Improved `quick_xml` Serializer/Deserializer**
+  The `quick_xml` backend received a comprehensive refactor. Namespace serialization has been improved, state naming is simplified, async reading tests were added, and multiple edge cases involving `xs:any`, `xs:anyType`, CDATA, mixed content, and boxed types are now handled correctly.
+
+- **Extended Interpreter and Generator Capabilities**
+  Several complex schema patterns are now correctly interpreted and rendered:
+  - complex/simple content combinations with mixed or emptyable bases
+  - extended types with mixed content
+  - facets applied to enums, unions, and simple types
+  - improved handling of `xs:any`, `xs:anyAttribute`, and custom XML runtime types
+  - unified configuration for XML helper types
+  - new optimizer step to replace `xs:anyType` with `AnyElement` where appropriate
+
+- **Absolute Path Support Improvements**
+  Both `GeneratorFlags::BUILD_IN_ABSOLUTE_PATHS` and the new `GeneratorFlags::ABSOLUTE_PATHS_INSTEAD_USINGS` flag now ensure that all built-in types and traits are resolved using absolute paths, reducing the risk of naming conflicts.
+
+- **Additional improvements include**
+  - faster loop detection for large schemas resulting in better performance while code generation
+  - improved namespace handling and prefix resolution
+  - more reliable display names during serialization
+  - fixes for mixed choices, nested `xs:any`, substitution groups, and enum/union facets
+  - updated schema definitions and expanded test coverage
 
 ## Version 1.3
 

@@ -40,7 +40,7 @@ pub trait XmlReaderSync<'a>: XmlReader {
 /// Trait that defines a asynchronous XML reader.
 #[cfg(feature = "async")]
 pub trait XmlReaderAsync<'a>: XmlReader {
-    /// Future that is returned by the [`read_event_async`] method.
+    /// Future that is returned by the [`read_event_async`](XmlReaderAsync::read_event_async) method.
     type ReadEventFut<'x>: Future<Output = Result<Event<'a>, Error>> + Unpin
     where
         Self: 'x;

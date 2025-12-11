@@ -12,8 +12,8 @@ fn main() {
         var("CARGO_MANIFEST_DIR").expect("Missing `CARGO_MANIFEST_DIR` environment variable!");
     let cargo_dir = PathBuf::from(cargo_dir);
 
-    let readme = cargo_dir.join("../README.md");
-    let doc_svg = cargo_dir.join("../doc/overview.svg");
+    let readme = cargo_dir.join("README.md");
+    let doc_svg = cargo_dir.join("doc/overview.svg");
 
     println!("cargo:rerun-if-changed={}", readme.display());
     println!("cargo:rerun-if-changed={}", doc_svg.display());
