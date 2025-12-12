@@ -44,6 +44,7 @@ mod nillable;
 mod nillable_dynamic_types;
 mod num_big_int;
 mod numeric_fields;
+mod redefine;
 mod ref_to_attribute;
 mod schema_display_name;
 mod schema_no_prefix;
