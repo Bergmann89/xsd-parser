@@ -72,3 +72,6 @@ similar_names = "allow"
 single_match_else = "allow"
 struct_field_names = "allow"
 uninlined_format_args = "allow"
+
+[workspace.package.metadata.docs.rs]
+all-features = true
