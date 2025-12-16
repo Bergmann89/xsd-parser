@@ -42,6 +42,7 @@ mod mixed_unexpected_text;
 mod namespaces_qualified;
 mod nillable;
 mod nillable_dynamic_types;
+mod nonzero_int;
 mod num_big_int;
 mod numeric_fields;
 mod ref_to_attribute;

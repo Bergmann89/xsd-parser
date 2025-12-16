@@ -51981,6 +51981,7 @@ pub mod version {
     }
 }
 pub mod xs {
+    use core::num::{NonZeroIsize, NonZeroUsize};
     use num::{BigInt, BigUint};
     use std::borrow::Cow;
     use xsd_parser_types::quick_xml::{
@@ -52049,11 +52050,11 @@ pub mod xs {
     pub type IntegerXType = BigInt;
     pub type LanguageXType = String;
     pub type LongXType = i64;
-    pub type NegativeIntegerXType = BigInt;
+    pub type NegativeIntegerXType = NonZeroIsize;
     pub type NonNegativeIntegerXType = BigUint;
     pub type NonPositiveIntegerXType = BigInt;
     pub type NormalizedStringXType = String;
-    pub type PositiveIntegerXType = BigUint;
+    pub type PositiveIntegerXType = NonZeroUsize;
     pub type ShortXType = i16;
     pub type StringXType = String;
     pub type TimeXType = String;
