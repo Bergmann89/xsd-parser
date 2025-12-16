@@ -200,6 +200,10 @@ pub fn exec_interpreter(config: InterpreterConfig, schemas: &Schemas) -> Result<
         interpreter = interpreter.with_num_big_int()?;
     }
 
+    if config.flags.contains(InterpreterFlags::NONZERO_TYPEDEFS) {
+        interpreter = interpreter.with_nonzero_typedefs()?;
+    }
+
     for (ident, ty) in config.types {
         let ident = ident.resolve(schemas)?;
         interpreter = interpreter.with_type(ident, ty)?;

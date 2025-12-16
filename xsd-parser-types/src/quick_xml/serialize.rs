@@ -3,6 +3,10 @@ use std::fmt::Debug;
 use std::io::Write;
 use std::marker::PhantomData;
 use std::mem::replace;
+use std::num::{
+    NonZeroI128, NonZeroI16, NonZeroI32, NonZeroI64, NonZeroI8, NonZeroIsize, NonZeroU128,
+    NonZeroU16, NonZeroU32, NonZeroU64, NonZeroU8, NonZeroUsize,
+};
 use std::ops::{Deref, DerefMut};
 
 use quick_xml::{
@@ -229,16 +233,32 @@ impl SerializeBytesToString for u8 {}
 impl SerializeBytesToString for u16 {}
 impl SerializeBytesToString for u32 {}
 impl SerializeBytesToString for u64 {}
+impl SerializeBytesToString for u128 {}
 impl SerializeBytesToString for usize {}
 
 impl SerializeBytesToString for i8 {}
 impl SerializeBytesToString for i16 {}
 impl SerializeBytesToString for i32 {}
 impl SerializeBytesToString for i64 {}
+impl SerializeBytesToString for i128 {}
 impl SerializeBytesToString for isize {}
 
 impl SerializeBytesToString for f32 {}
 impl SerializeBytesToString for f64 {}
+
+impl SerializeBytesToString for NonZeroU8 {}
+impl SerializeBytesToString for NonZeroU16 {}
+impl SerializeBytesToString for NonZeroU32 {}
+impl SerializeBytesToString for NonZeroU64 {}
+impl SerializeBytesToString for NonZeroU128 {}
+impl SerializeBytesToString for NonZeroUsize {}
+
+impl SerializeBytesToString for NonZeroI8 {}
+impl SerializeBytesToString for NonZeroI16 {}
+impl SerializeBytesToString for NonZeroI32 {}
+impl SerializeBytesToString for NonZeroI64 {}
+impl SerializeBytesToString for NonZeroI128 {}
+impl SerializeBytesToString for NonZeroIsize {}
 
 #[cfg(feature = "num")]
 impl SerializeBytesToString for num::BigInt {}

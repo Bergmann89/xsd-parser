@@ -2,6 +2,10 @@ use std::borrow::Cow;
 use std::fmt::Debug;
 use std::marker::PhantomData;
 use std::mem::take;
+use std::num::{
+    NonZeroI128, NonZeroI16, NonZeroI32, NonZeroI64, NonZeroI8, NonZeroIsize, NonZeroU128,
+    NonZeroU16, NonZeroU32, NonZeroU64, NonZeroU8, NonZeroUsize,
+};
 use std::str::{from_utf8, FromStr};
 
 use quick_xml::{
@@ -513,16 +517,32 @@ impl DeserializeBytesFromStr for u8 {}
 impl DeserializeBytesFromStr for u16 {}
 impl DeserializeBytesFromStr for u32 {}
 impl DeserializeBytesFromStr for u64 {}
+impl DeserializeBytesFromStr for u128 {}
 impl DeserializeBytesFromStr for usize {}
 
 impl DeserializeBytesFromStr for i8 {}
 impl DeserializeBytesFromStr for i16 {}
 impl DeserializeBytesFromStr for i32 {}
 impl DeserializeBytesFromStr for i64 {}
+impl DeserializeBytesFromStr for i128 {}
 impl DeserializeBytesFromStr for isize {}
 
 impl DeserializeBytesFromStr for f32 {}
 impl DeserializeBytesFromStr for f64 {}
+
+impl DeserializeBytesFromStr for NonZeroU8 {}
+impl DeserializeBytesFromStr for NonZeroU16 {}
+impl DeserializeBytesFromStr for NonZeroU32 {}
+impl DeserializeBytesFromStr for NonZeroU64 {}
+impl DeserializeBytesFromStr for NonZeroU128 {}
+impl DeserializeBytesFromStr for NonZeroUsize {}
+
+impl DeserializeBytesFromStr for NonZeroI8 {}
+impl DeserializeBytesFromStr for NonZeroI16 {}
+impl DeserializeBytesFromStr for NonZeroI32 {}
+impl DeserializeBytesFromStr for NonZeroI64 {}
+impl DeserializeBytesFromStr for NonZeroI128 {}
+impl DeserializeBytesFromStr for NonZeroIsize {}
 
 #[cfg(feature = "num")]
 impl DeserializeBytesFromStr for num::BigInt {}

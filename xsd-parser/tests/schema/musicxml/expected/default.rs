@@ -114,7 +114,7 @@ pub enum AccidentalValue {
 }
 #[derive(Debug)]
 pub struct Accord {
-    pub string: ::core::option::Option<::num::BigUint>,
+    pub string: ::core::option::Option<::core::num::NonZeroUsize>,
     pub content: AccordContent,
 }
 #[derive(Debug)]
@@ -123,7 +123,7 @@ pub struct AccordContent {
     pub tuning_alter: ::core::option::Option<::core::primitive::f64>,
     pub tuning_octave: ::num::BigInt,
 }
-pub type AccordionMiddle = ::num::BigUint;
+pub type AccordionMiddle = ::core::num::NonZeroUsize;
 #[derive(Debug)]
 pub struct AccordionRegistration {
     pub default_x: ::core::option::Option<::core::primitive::f64>,
@@ -143,7 +143,7 @@ pub struct AccordionRegistration {
 #[derive(Debug)]
 pub struct AccordionRegistrationContent {
     pub accordion_high: ::core::option::Option<Empty>,
-    pub accordion_middle: ::core::option::Option<::num::BigUint>,
+    pub accordion_middle: ::core::option::Option<::core::num::NonZeroUsize>,
     pub accordion_low: ::core::option::Option<Empty>,
 }
 #[derive(Debug)]
@@ -160,7 +160,7 @@ pub struct AppearanceContent {
 }
 #[derive(Debug)]
 pub struct Arpeggiate {
-    pub number: ::core::option::Option<::num::BigUint>,
+    pub number: ::core::option::Option<::core::num::NonZeroUsize>,
     pub direction: ::core::option::Option<UpDown>,
     pub unbroken: ::core::option::Option<YesNo>,
     pub default_x: ::core::option::Option<::core::primitive::f64>,
@@ -358,14 +358,14 @@ pub struct BassStep {
 }
 #[derive(Debug)]
 pub struct Beam {
-    pub number: ::num::BigUint,
+    pub number: ::core::num::NonZeroUsize,
     pub repeater: ::core::option::Option<YesNo>,
     pub fan: ::core::option::Option<Fan>,
     pub color: ::core::option::Option<::std::string::String>,
     pub id: ::core::option::Option<::std::string::String>,
     pub content: BeamValue,
 }
-pub type BeamLevel = ::num::BigUint;
+pub type BeamLevel = ::core::num::NonZeroUsize;
 #[derive(Debug)]
 pub enum BeamValue {
     Begin,
@@ -377,7 +377,7 @@ pub enum BeamValue {
 #[derive(Debug)]
 pub struct BeatRepeat {
     pub type_: StartStop,
-    pub slashes: ::core::option::Option<::num::BigUint>,
+    pub slashes: ::core::option::Option<::core::num::NonZeroUsize>,
     pub use_dots: ::core::option::Option<YesNo>,
     pub content: ::core::option::Option<BeatRepeatContent>,
 }
@@ -459,12 +459,12 @@ pub struct Bookmark {
     pub id: ::std::string::String,
     pub name: ::core::option::Option<::std::string::String>,
     pub element: ::core::option::Option<::std::string::String>,
-    pub position: ::core::option::Option<::num::BigUint>,
+    pub position: ::core::option::Option<::core::num::NonZeroUsize>,
 }
 #[derive(Debug)]
 pub struct Bracket {
     pub type_: StartStopContinue,
-    pub number: ::core::option::Option<::num::BigUint>,
+    pub number: ::core::option::Option<::core::num::NonZeroUsize>,
     pub line_end: LineEnd,
     pub end_length: ::core::option::Option<::core::primitive::f64>,
     pub line_type: ::core::option::Option<LineType>,
@@ -538,7 +538,7 @@ pub enum CircularArrow {
 }
 #[derive(Debug)]
 pub struct Clef {
-    pub number: ::core::option::Option<::num::BigUint>,
+    pub number: ::core::option::Option<::core::num::NonZeroUsize>,
     pub additional: ::core::option::Option<YesNo>,
     pub size: ::core::option::Option<SymbolSize>,
     pub after_barline: ::core::option::Option<YesNo>,
@@ -591,7 +591,7 @@ pub type Color = ::std::string::String;
 pub type CommaSeparatedText = ::std::string::String;
 #[derive(Debug)]
 pub struct Credit {
-    pub page: ::core::option::Option<::num::BigUint>,
+    pub page: ::core::option::Option<::core::num::NonZeroUsize>,
     pub id: ::core::option::Option<::std::string::String>,
     pub content: ::std::vec::Vec<CreditContent>,
 }
@@ -617,7 +617,7 @@ pub enum CssFontSize {
 #[derive(Debug)]
 pub struct Dashes {
     pub type_: StartStopContinue,
-    pub number: ::core::option::Option<::num::BigUint>,
+    pub number: ::core::option::Option<::core::num::NonZeroUsize>,
     pub dash_length: ::core::option::Option<::core::primitive::f64>,
     pub space_length: ::core::option::Option<::core::primitive::f64>,
     pub default_x: ::core::option::Option<::core::primitive::f64>,
@@ -710,7 +710,7 @@ pub struct DegreeValue {
     pub font_size: ::core::option::Option<FontSize>,
     pub font_weight: ::core::option::Option<FontWeight>,
     pub color: ::core::option::Option<::std::string::String>,
-    pub content: ::num::BigUint,
+    pub content: ::core::num::NonZeroUsize,
 }
 #[derive(Debug)]
 pub struct Direction {
@@ -727,7 +727,7 @@ pub struct DirectionContent {
     pub footnote: ::core::option::Option<FormattedText>,
     pub level: ::core::option::Option<Level>,
     pub voice: ::core::option::Option<::std::string::String>,
-    pub staff: ::core::option::Option<::num::BigUint>,
+    pub staff: ::core::option::Option<::core::num::NonZeroUsize>,
     pub sound: ::core::option::Option<Sound>,
     pub listening: ::core::option::Option<Listening>,
 }
@@ -1149,7 +1149,7 @@ pub struct Fingering {
 pub struct FirstFret {
     pub text: ::core::option::Option<::std::string::String>,
     pub location: ::core::option::Option<LeftRight>,
-    pub content: ::num::BigUint,
+    pub content: ::core::num::NonZeroUsize,
 }
 pub type FontFamily = ::std::string::String;
 #[derive(Debug)]
@@ -1175,7 +1175,7 @@ pub enum FontWeight {
 }
 #[derive(Debug)]
 pub struct ForPart {
-    pub number: ::core::option::Option<::num::BigUint>,
+    pub number: ::core::option::Option<::core::num::NonZeroUsize>,
     pub id: ::core::option::Option<::std::string::String>,
     pub content: ForPartContent,
 }
@@ -1296,7 +1296,7 @@ pub struct ForwardContent {
     pub footnote: ::core::option::Option<FormattedText>,
     pub level: ::core::option::Option<Level>,
     pub voice: ::core::option::Option<::std::string::String>,
-    pub staff: ::core::option::Option<::num::BigUint>,
+    pub staff: ::core::option::Option<::core::num::NonZeroUsize>,
 }
 #[derive(Debug)]
 pub struct Frame {
@@ -1315,8 +1315,8 @@ pub struct Frame {
 }
 #[derive(Debug)]
 pub struct FrameContent {
-    pub frame_strings: ::num::BigUint,
-    pub frame_frets: ::num::BigUint,
+    pub frame_strings: ::core::num::NonZeroUsize,
+    pub frame_frets: ::core::num::NonZeroUsize,
     pub first_fret: ::core::option::Option<FirstFret>,
     pub frame_note: ::std::vec::Vec<FrameNote>,
 }
@@ -1354,7 +1354,7 @@ pub enum GlassValue {
 #[derive(Debug)]
 pub struct Glissando {
     pub type_: StartStop,
-    pub number: ::num::BigUint,
+    pub number: ::core::num::NonZeroUsize,
     pub line_type: ::core::option::Option<LineType>,
     pub dash_length: ::core::option::Option<::core::primitive::f64>,
     pub space_length: ::core::option::Option<::core::primitive::f64>,
@@ -1440,7 +1440,7 @@ pub struct GroupingContent {
 #[derive(Debug)]
 pub struct HammerOnPullOff {
     pub type_: StartStop,
-    pub number: ::num::BigUint,
+    pub number: ::core::num::NonZeroUsize,
     pub default_x: ::core::option::Option<::core::primitive::f64>,
     pub default_y: ::core::option::Option<::core::primitive::f64>,
     pub relative_x: ::core::option::Option<::core::primitive::f64>,
@@ -1574,7 +1574,7 @@ pub enum HarmonyContent {
     Offset(Offset),
     Footnote(FormattedText),
     Level(Level),
-    Staff(::num::BigUint),
+    Staff(::core::num::NonZeroUsize),
 }
 #[derive(Debug)]
 pub struct HarmonyAlter {
@@ -1771,7 +1771,7 @@ pub struct Inversion {
 }
 #[derive(Debug)]
 pub struct Key {
-    pub number: ::core::option::Option<::num::BigUint>,
+    pub number: ::core::option::Option<::core::num::NonZeroUsize>,
     pub default_x: ::core::option::Option<::core::primitive::f64>,
     pub default_y: ::core::option::Option<::core::primitive::f64>,
     pub relative_x: ::core::option::Option<::core::primitive::f64>,
@@ -1802,7 +1802,7 @@ pub struct KeyAccidental {
 }
 #[derive(Debug)]
 pub struct KeyOctave {
-    pub number: ::num::BigUint,
+    pub number: ::core::num::NonZeroUsize,
     pub cancel: ::core::option::Option<YesNo>,
     pub content: ::num::BigInt,
 }
@@ -1884,7 +1884,7 @@ pub struct Level {
 }
 #[derive(Debug)]
 pub struct LineDetail {
-    pub line: ::num::BigUint,
+    pub line: ::core::num::NonZeroUsize,
     pub width: ::core::option::Option<::core::primitive::f64>,
     pub color: ::core::option::Option<::std::string::String>,
     pub line_type: ::core::option::Option<LineType>,
@@ -1932,7 +1932,7 @@ pub struct Link {
     pub actuate: xlink::Actuate,
     pub name: ::core::option::Option<::std::string::String>,
     pub element: ::core::option::Option<::std::string::String>,
-    pub position: ::core::option::Option<::num::BigUint>,
+    pub position: ::core::option::Option<::core::num::NonZeroUsize>,
     pub default_x: ::core::option::Option<::core::primitive::f64>,
     pub default_y: ::core::option::Option<::core::primitive::f64>,
     pub relative_x: ::core::option::Option<::core::primitive::f64>,
@@ -2019,7 +2019,7 @@ pub struct MeasureLayoutContent {
 #[derive(Debug)]
 pub struct MeasureNumbering {
     pub system: ::core::option::Option<SystemRelationNumber>,
-    pub staff: ::core::option::Option<::num::BigUint>,
+    pub staff: ::core::option::Option<::core::num::NonZeroUsize>,
     pub multiple_rest_always: ::core::option::Option<YesNo>,
     pub multiple_rest_range: ::core::option::Option<YesNo>,
     pub default_x: ::core::option::Option<::core::primitive::f64>,
@@ -2044,12 +2044,12 @@ pub enum MeasureNumberingValue {
 #[derive(Debug)]
 pub struct MeasureRepeat {
     pub type_: StartStop,
-    pub slashes: ::core::option::Option<::num::BigUint>,
+    pub slashes: ::core::option::Option<::core::num::NonZeroUsize>,
     pub content: PositiveIntegerOrEmpty,
 }
 #[derive(Debug)]
 pub struct MeasureStyle {
-    pub number: ::core::option::Option<::num::BigUint>,
+    pub number: ::core::option::Option<::core::num::NonZeroUsize>,
     pub font_family: ::core::option::Option<::std::string::String>,
     pub font_style: ::core::option::Option<FontStyle>,
     pub font_size: ::core::option::Option<FontSize>,
@@ -2162,7 +2162,7 @@ pub enum MetronomeContent {
 }
 #[derive(Debug)]
 pub struct MetronomeBeam {
-    pub number: ::num::BigUint,
+    pub number: ::core::num::NonZeroUsize,
     pub content: BeamValue,
 }
 #[derive(Debug)]
@@ -2195,12 +2195,12 @@ pub struct MetronomeTupletContent {
     pub normal_type: ::core::option::Option<NoteTypeValue>,
     pub normal_dot: ::std::vec::Vec<Empty>,
 }
-pub type Midi128 = ::num::BigUint;
-pub type Midi16 = ::num::BigUint;
-pub type Midi16384 = ::num::BigUint;
+pub type Midi128 = ::core::num::NonZeroUsize;
+pub type Midi16 = ::core::num::NonZeroUsize;
+pub type Midi16384 = ::core::num::NonZeroUsize;
 #[derive(Debug)]
 pub struct MidiDevice {
-    pub port: ::core::option::Option<::num::BigUint>,
+    pub port: ::core::option::Option<::core::num::NonZeroUsize>,
     pub id: ::core::option::Option<::std::string::String>,
     pub content: ::std::string::String,
 }
@@ -2211,11 +2211,11 @@ pub struct MidiInstrument {
 }
 #[derive(Debug)]
 pub struct MidiInstrumentContent {
-    pub midi_channel: ::core::option::Option<::num::BigUint>,
+    pub midi_channel: ::core::option::Option<::core::num::NonZeroUsize>,
     pub midi_name: ::core::option::Option<::std::string::String>,
-    pub midi_bank: ::core::option::Option<::num::BigUint>,
-    pub midi_program: ::core::option::Option<::num::BigUint>,
-    pub midi_unpitched: ::core::option::Option<::num::BigUint>,
+    pub midi_bank: ::core::option::Option<::core::num::NonZeroUsize>,
+    pub midi_program: ::core::option::Option<::core::num::NonZeroUsize>,
+    pub midi_unpitched: ::core::option::Option<::core::num::NonZeroUsize>,
     pub volume: ::core::option::Option<::core::primitive::f64>,
     pub pan: ::core::option::Option<::core::primitive::f64>,
     pub elevation: ::core::option::Option<::core::primitive::f64>,
@@ -2262,7 +2262,7 @@ pub struct Mordent {
 #[derive(Debug)]
 pub struct MultipleRest {
     pub use_symbols: ::core::option::Option<YesNo>,
-    pub content: ::num::BigUint,
+    pub content: ::core::num::NonZeroUsize,
 }
 #[derive(Debug)]
 pub enum Mute {
@@ -2295,7 +2295,7 @@ pub enum NameDisplayContent {
 #[derive(Debug)]
 pub struct NonArpeggiate {
     pub type_: TopBottom,
-    pub number: ::core::option::Option<::num::BigUint>,
+    pub number: ::core::option::Option<::core::num::NonZeroUsize>,
     pub default_x: ::core::option::Option<::core::primitive::f64>,
     pub default_y: ::core::option::Option<::core::primitive::f64>,
     pub relative_x: ::core::option::Option<::core::primitive::f64>,
@@ -2376,7 +2376,7 @@ pub enum NoteContent {
     Stem(Stem),
     Notehead(Notehead),
     NoteheadText(NoteheadText),
-    Staff(::num::BigUint),
+    Staff(::core::num::NonZeroUsize),
     Beam(Beam),
     Notations(Notations),
     Lyric(Lyric),
@@ -2469,7 +2469,7 @@ pub enum NoteheadValue {
     Ti,
     Other,
 }
-pub type NumberLevel = ::num::BigUint;
+pub type NumberLevel = ::core::num::NonZeroUsize;
 pub type NumberOfLines = ::num::BigUint;
 #[derive(Debug)]
 pub enum NumberOrNormal {
@@ -2516,15 +2516,15 @@ pub struct NumeralRoot {
     pub font_size: ::core::option::Option<FontSize>,
     pub font_weight: ::core::option::Option<FontWeight>,
     pub color: ::core::option::Option<::std::string::String>,
-    pub content: ::num::BigUint,
+    pub content: ::core::num::NonZeroUsize,
 }
-pub type NumeralValue = ::num::BigUint;
+pub type NumeralValue = ::core::num::NonZeroUsize;
 pub type Octave = ::num::BigInt;
 #[derive(Debug)]
 pub struct OctaveShift {
     pub type_: UpDownStopContinue,
-    pub number: ::core::option::Option<::num::BigUint>,
-    pub size: ::num::BigUint,
+    pub number: ::core::option::Option<::core::num::NonZeroUsize>,
+    pub size: ::core::num::NonZeroUsize,
     pub dash_length: ::core::option::Option<::core::primitive::f64>,
     pub space_length: ::core::option::Option<::core::primitive::f64>,
     pub default_x: ::core::option::Option<::core::primitive::f64>,
@@ -2614,7 +2614,7 @@ pub struct OtherListening {
 #[derive(Debug)]
 pub struct OtherNotation {
     pub type_: StartStopSingle,
-    pub number: ::num::BigUint,
+    pub number: ::core::num::NonZeroUsize,
     pub print_object: ::core::option::Option<YesNo>,
     pub default_x: ::core::option::Option<::core::primitive::f64>,
     pub default_y: ::core::option::Option<::core::primitive::f64>,
@@ -2751,8 +2751,8 @@ pub struct PartName {
 }
 #[derive(Debug)]
 pub struct PartSymbol {
-    pub top_staff: ::core::option::Option<::num::BigUint>,
-    pub bottom_staff: ::core::option::Option<::num::BigUint>,
+    pub top_staff: ::core::option::Option<::core::num::NonZeroUsize>,
+    pub bottom_staff: ::core::option::Option<::core::num::NonZeroUsize>,
     pub default_x: ::core::option::Option<::core::primitive::f64>,
     pub default_y: ::core::option::Option<::core::primitive::f64>,
     pub relative_x: ::core::option::Option<::core::primitive::f64>,
@@ -2774,7 +2774,7 @@ pub struct PartTransposeContent {
 #[derive(Debug)]
 pub struct Pedal {
     pub type_: PedalType,
-    pub number: ::core::option::Option<::num::BigUint>,
+    pub number: ::core::option::Option<::core::num::NonZeroUsize>,
     pub line: ::core::option::Option<YesNo>,
     pub sign: ::core::option::Option<YesNo>,
     pub abbreviated: ::core::option::Option<YesNo>,
@@ -2918,7 +2918,7 @@ pub type PositiveDecimal = ::core::primitive::f64;
 pub type PositiveDivisions = ::core::primitive::f64;
 #[derive(Debug)]
 pub enum PositiveIntegerOrEmpty {
-    BigUint(::num::BigUint),
+    NonZeroUsize(::core::num::NonZeroUsize),
     String(::std::string::String),
 }
 #[derive(Debug)]
@@ -2951,7 +2951,7 @@ pub struct Print {
     pub staff_spacing: ::core::option::Option<::core::primitive::f64>,
     pub new_system: ::core::option::Option<YesNo>,
     pub new_page: ::core::option::Option<YesNo>,
-    pub blank_page: ::core::option::Option<::num::BigUint>,
+    pub blank_page: ::core::option::Option<::core::num::NonZeroUsize>,
     pub page_number: ::core::option::Option<::std::string::String>,
     pub id: ::core::option::Option<::std::string::String>,
     pub content: PrintContent,
@@ -3155,7 +3155,7 @@ pub struct SlashContent {
 #[derive(Debug)]
 pub struct Slide {
     pub type_: StartStop,
-    pub number: ::num::BigUint,
+    pub number: ::core::num::NonZeroUsize,
     pub line_type: ::core::option::Option<LineType>,
     pub dash_length: ::core::option::Option<::core::primitive::f64>,
     pub space_length: ::core::option::Option<::core::primitive::f64>,
@@ -3178,7 +3178,7 @@ pub struct Slide {
 #[derive(Debug)]
 pub struct Slur {
     pub type_: StartStopContinue,
-    pub number: ::num::BigUint,
+    pub number: ::core::num::NonZeroUsize,
     pub line_type: ::core::option::Option<LineType>,
     pub dash_length: ::core::option::Option<::core::primitive::f64>,
     pub space_length: ::core::option::Option<::core::primitive::f64>,
@@ -3237,7 +3237,7 @@ pub enum SoundContent {
 }
 #[derive(Debug)]
 pub struct StaffDetails {
-    pub number: ::core::option::Option<::num::BigUint>,
+    pub number: ::core::option::Option<::core::num::NonZeroUsize>,
     pub show_frets: ::core::option::Option<ShowFrets>,
     pub print_object: ::core::option::Option<YesNo>,
     pub print_spacing: ::core::option::Option<YesNo>,
@@ -3276,16 +3276,16 @@ pub enum StaffDivideSymbol {
 }
 #[derive(Debug)]
 pub struct StaffLayout {
-    pub number: ::core::option::Option<::num::BigUint>,
+    pub number: ::core::option::Option<::core::num::NonZeroUsize>,
     pub content: StaffLayoutContent,
 }
 #[derive(Debug)]
 pub struct StaffLayoutContent {
     pub staff_distance: ::core::option::Option<::core::primitive::f64>,
 }
-pub type StaffLine = ::num::BigUint;
+pub type StaffLine = ::core::num::NonZeroUsize;
 pub type StaffLinePosition = ::num::BigInt;
-pub type StaffNumber = ::num::BigUint;
+pub type StaffNumber = ::core::num::NonZeroUsize;
 #[derive(Debug)]
 pub struct StaffSize {
     pub scaling: ::core::option::Option<::core::primitive::f64>,
@@ -3293,7 +3293,7 @@ pub struct StaffSize {
 }
 #[derive(Debug)]
 pub struct StaffTuning {
-    pub line: ::num::BigUint,
+    pub line: ::core::num::NonZeroUsize,
     pub content: StaffTuningContent,
 }
 #[derive(Debug)]
@@ -3424,7 +3424,7 @@ pub struct String {
     pub font_weight: ::core::option::Option<FontWeight>,
     pub color: ::core::option::Option<::std::string::String>,
     pub placement: ::core::option::Option<AboveBelow>,
-    pub content: ::num::BigUint,
+    pub content: ::core::num::NonZeroUsize,
 }
 #[derive(Debug)]
 pub struct StringMute {
@@ -3442,7 +3442,7 @@ pub struct StringMute {
     pub valign: ::core::option::Option<Valign>,
     pub id: ::core::option::Option<::std::string::String>,
 }
-pub type StringNumber = ::num::BigUint;
+pub type StringNumber = ::core::num::NonZeroUsize;
 #[derive(Debug)]
 pub struct StrongAccent {
     pub default_x: ::core::option::Option<::core::primitive::f64>,
@@ -3484,8 +3484,8 @@ pub struct Swing {
 #[derive(Debug)]
 pub enum SwingContent {
     Straight(Empty),
-    First(::num::BigUint),
-    Second(::num::BigUint),
+    First(::core::num::NonZeroUsize),
+    Second(::core::num::NonZeroUsize),
     SwingType(SwingTypeValue),
     SwingStyle(::std::string::String),
 }
@@ -3658,7 +3658,7 @@ pub struct Tie {
 #[derive(Debug)]
 pub struct Tied {
     pub type_: TiedType,
-    pub number: ::core::option::Option<::num::BigUint>,
+    pub number: ::core::option::Option<::core::num::NonZeroUsize>,
     pub line_type: ::core::option::Option<LineType>,
     pub dash_length: ::core::option::Option<::core::primitive::f64>,
     pub space_length: ::core::option::Option<::core::primitive::f64>,
@@ -3686,7 +3686,7 @@ pub enum TiedType {
 }
 #[derive(Debug)]
 pub struct Time {
-    pub number: ::core::option::Option<::num::BigUint>,
+    pub number: ::core::option::Option<::core::num::NonZeroUsize>,
     pub symbol: ::core::option::Option<TimeSymbol>,
     pub separator: ::core::option::Option<TimeSeparator>,
     pub default_x: ::core::option::Option<::core::primitive::f64>,
@@ -3771,7 +3771,7 @@ pub enum TopBottom {
 }
 #[derive(Debug)]
 pub struct Transpose {
-    pub number: ::core::option::Option<::num::BigUint>,
+    pub number: ::core::option::Option<::core::num::NonZeroUsize>,
     pub id: ::core::option::Option<::std::string::String>,
     pub content: TransposeContent,
 }
@@ -3816,7 +3816,7 @@ pub enum TrillStep {
 #[derive(Debug)]
 pub struct Tuplet {
     pub type_: StartStop,
-    pub number: ::core::option::Option<::num::BigUint>,
+    pub number: ::core::option::Option<::core::num::NonZeroUsize>,
     pub bracket: ::core::option::Option<YesNo>,
     pub show_number: ::core::option::Option<ShowTuplet>,
     pub show_type: ::core::option::Option<ShowTuplet>,
@@ -3937,7 +3937,7 @@ pub struct Wait {
 #[derive(Debug)]
 pub struct WavyLine {
     pub type_: StartStopContinue,
-    pub number: ::core::option::Option<::num::BigUint>,
+    pub number: ::core::option::Option<::core::num::NonZeroUsize>,
     pub smufl: ::core::option::Option<::std::string::String>,
     pub default_x: ::core::option::Option<::core::primitive::f64>,
     pub default_y: ::core::option::Option<::core::primitive::f64>,
@@ -3956,7 +3956,7 @@ pub struct WavyLine {
 #[derive(Debug)]
 pub struct Wedge {
     pub type_: WedgeType,
-    pub number: ::core::option::Option<::num::BigUint>,
+    pub number: ::core::option::Option<::core::num::NonZeroUsize>,
     pub spread: ::core::option::Option<::core::primitive::f64>,
     pub niente: ::core::option::Option<YesNo>,
     pub line_type: ::core::option::Option<LineType>,
@@ -4192,11 +4192,11 @@ pub mod xs {
     pub type Integer = ::num::BigInt;
     pub type Language = ::std::string::String;
     pub type Long = ::core::primitive::i64;
-    pub type NegativeInteger = ::num::BigInt;
+    pub type NegativeInteger = ::core::num::NonZeroIsize;
     pub type NonNegativeInteger = ::num::BigUint;
     pub type NonPositiveInteger = ::num::BigInt;
     pub type NormalizedString = ::std::string::String;
-    pub type PositiveInteger = ::num::BigUint;
+    pub type PositiveInteger = ::core::num::NonZeroUsize;
     pub type Short = ::core::primitive::i16;
     pub type String = ::std::string::String;
     pub type Time = ::std::string::String;
