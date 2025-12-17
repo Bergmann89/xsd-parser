@@ -1,19 +1,17 @@
 //! Build script for the `xsd_parser` crate.
 
-use std::env::var;
 use std::fs::{read, read_to_string, write};
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 use base64::{prelude::BASE64_STANDARD, Engine};
 use regex::{Captures, Regex};
 
 fn main() {
-    let cargo_dir =
-        var("CARGO_MANIFEST_DIR").expect("Missing `CARGO_MANIFEST_DIR` environment variable!");
-    let cargo_dir = PathBuf::from(cargo_dir);
+    let out_dir = env_path("OUT_DIR");
+    let cargo_dir = env_path("CARGO_MANIFEST_DIR");
 
-    let readme = cargo_dir.join("README.md");
-    let doc_svg = cargo_dir.join("doc/overview.svg");
+    let readme = resolve_file(&cargo_dir, "README.md");
+    let doc_svg = resolve_file(&cargo_dir, "doc/overview.svg");
 
     println!("cargo:rerun-if-changed={}", readme.display());
     println!("cargo:rerun-if-changed={}", doc_svg.display());
@@ -35,10 +33,30 @@ fn main() {
         }
     });
 
-    let out_dir = var("OUT_DIR").expect("Missing `OUT_DIR` environment variable!");
-    let out_dir = PathBuf::from(out_dir);
-
     write(out_dir.join("README.md"), &*readme).expect("Unable to write `README.md`");
+}
+
+fn env_path(var: &str) -> PathBuf {
+    let Ok(value) = std::env::var(var) else {
+        panic!("Missing `{var}` environment variable!");
+    };
+
+    PathBuf::from(value)
+}
+
+fn resolve_file(cargo_dir: &Path, path: &str) -> PathBuf {
+    if let Ok(path) = cargo_dir.join(path).canonicalize() {
+        return path;
+    }
+
+    if let Some(Ok(path)) = cargo_dir
+        .parent()
+        .map(|parent| parent.join(path).canonicalize())
+    {
+        return path;
+    }
+
+    panic!("Unable to find {path}");
 }
 
 const KEYWORDS: &[&str] = &[

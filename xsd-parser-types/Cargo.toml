@@ -10,6 +10,9 @@ keywords.workspace = true
 homepage.workspace = true
 repository.workspace = true
 
+[package.metadata.docs.rs]
+all-features = true
+
 [features]
 default = [ ]
 # Enable support for async `quick-xml` de-/serialization
@@ -33,7 +36,4 @@ thiserror = { workspace = true, optional = true }
 tokio = { workspace = true, optional = true }
 
 [lints]
-workspace = true
-
-[package.metadata.docs.rs]
 workspace = true
