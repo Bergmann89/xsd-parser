@@ -1,7 +1,9 @@
-use xsd_parser_types::misc::Namespace;
+use xsd_parser_types::misc::{Namespace, NamespacePrefix};
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
 pub const NS_UNNAMED_3: Namespace = Namespace::new_const(b"Test");
+pub const PREFIX_XS: NamespacePrefix = NamespacePrefix::new_const(b"xs");
+pub const PREFIX_XML: NamespacePrefix = NamespacePrefix::new_const(b"xml");
 pub mod bar {
     use xsd_parser_types::quick_xml::{Error, WithDeserializer, WithSerializer};
     pub type Inner = InnerType;
@@ -53,9 +55,9 @@ pub mod bar {
     pub mod quick_xml_deserialize {
         use core::mem::replace;
         use xsd_parser_types::quick_xml::{
-            filter_xmlns_attributes, BytesStart, DeserializeReader, Deserializer,
-            DeserializerArtifact, DeserializerEvent, DeserializerOutput, DeserializerResult,
-            ElementHandlerOutput, Error, ErrorKind, Event, RawByteStr, WithDeserializer,
+            BytesStart, DeserializeHelper, Deserializer, DeserializerArtifact, DeserializerEvent,
+            DeserializerOutput, DeserializerResult, ElementHandlerOutput, Error, ErrorKind, Event,
+            RawByteStr, WithDeserializer,
         };
         #[derive(Debug)]
         pub struct InnerTypeDeserializer {
@@ -70,30 +72,27 @@ pub mod bar {
             Unknown__,
         }
         impl InnerTypeDeserializer {
-            fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-            where
-                R: DeserializeReader,
-            {
-                for attrib in filter_xmlns_attributes(bytes_start) {
+            fn from_bytes_start(
+                helper: &mut DeserializeHelper,
+                bytes_start: &BytesStart<'_>,
+            ) -> Result<Self, Error> {
+                for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
-                    reader.raise_unexpected_attrib_checked(attrib)?;
+                    helper.raise_unexpected_attrib_checked(&attrib)?;
                 }
                 Ok(Self {
                     b: None,
                     state__: Box::new(InnerTypeDeserializerState::Init__),
                 })
             }
-            fn finish_state<R>(
+            fn finish_state(
                 &mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 state: InnerTypeDeserializerState,
-            ) -> Result<(), Error>
-            where
-                R: DeserializeReader,
-            {
+            ) -> Result<(), Error> {
                 use InnerTypeDeserializerState as S;
                 match state {
-                    S::B(Some(deserializer)) => self.store_b(deserializer.finish(reader)?)?,
+                    S::B(Some(deserializer)) => self.store_b(deserializer.finish(helper)?)?,
                     _ => (),
                 }
                 Ok(())
@@ -105,73 +104,56 @@ pub mod bar {
                 self.b = Some(value);
                 Ok(())
             }
-            fn handle_b<'de, R>(
+            fn handle_b<'de>(
                 &mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<InnerTypeDeserializerState>,
-            ) -> Result<ElementHandlerOutput<'de>, Error>
-            where
-                R: DeserializeReader,
-            {
+            ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use InnerTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    if self.b.is_some() {
-                        fallback.get_or_insert(InnerTypeDeserializerState::B(None));
-                        *self.state__ = InnerTypeDeserializerState::Done__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    } else {
-                        *self.state__ = InnerTypeDeserializerState::B(None);
+                    fallback.get_or_insert(S::B(None));
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
+                    } else {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                     }
                 }
                 if let Some(fallback) = fallback.take() {
-                    self.finish_state(reader, fallback)?;
+                    self.finish_state(helper, fallback)?;
                 }
-                Ok(match artifact {
+                match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_b(data)?;
-                        *self.state__ = InnerTypeDeserializerState::Done__;
-                        ElementHandlerOutput::from_event(event, allow_any)
+                        *self.state__ = S::Done__;
+                        Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        let ret = ElementHandlerOutput::from_event(event, allow_any);
-                        match &ret {
-                            ElementHandlerOutput::Continue { .. } => {
-                                fallback.get_or_insert(InnerTypeDeserializerState::B(Some(
-                                    deserializer,
-                                )));
-                                *self.state__ = InnerTypeDeserializerState::Done__;
-                            }
-                            ElementHandlerOutput::Break { .. } => {
-                                *self.state__ = InnerTypeDeserializerState::B(Some(deserializer));
-                            }
-                        }
-                        ret
+                        fallback.get_or_insert(S::B(Some(deserializer)));
+                        *self.state__ = S::Done__;
+                        Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
-                })
+                }
             }
         }
         impl<'de> Deserializer<'de, super::InnerType> for InnerTypeDeserializer {
-            fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, super::InnerType>
-            where
-                R: DeserializeReader,
-            {
-                reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
-            }
-            fn next<R>(
-                mut self,
-                reader: &R,
+            fn init(
+                helper: &mut DeserializeHelper,
                 event: Event<'de>,
-            ) -> DeserializerResult<'de, super::InnerType>
-            where
-                R: DeserializeReader,
-            {
+            ) -> DeserializerResult<'de, super::InnerType> {
+                helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
+            }
+            fn next(
+                mut self,
+                helper: &mut DeserializeHelper,
+                event: Event<'de>,
+            ) -> DeserializerResult<'de, super::InnerType> {
                 use InnerTypeDeserializerState as S;
                 let mut event = event;
                 let mut fallback = None;
@@ -181,8 +163,8 @@ pub mod bar {
                     event = match (state, event) {
                         (S::Unknown__, _) => unreachable!(),
                         (S::B(Some(deserializer)), event) => {
-                            let output = deserializer.next(reader, event)?;
-                            match self.handle_b(reader, output, &mut fallback)? {
+                            let output = deserializer.next(helper, event)?;
+                            match self.handle_b(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -194,27 +176,27 @@ pub mod bar {
                         }
                         (_, Event::End(_)) => {
                             if let Some(fallback) = fallback.take() {
-                                self.finish_state(reader, fallback)?;
+                                self.finish_state(helper, fallback)?;
                             }
                             return Ok(DeserializerOutput {
-                                artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                                artifact: DeserializerArtifact::Data(self.finish(helper)?),
                                 event: DeserializerEvent::None,
                                 allow_any: false,
                             });
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ = InnerTypeDeserializerState::B(None);
+                            *self.state__ = S::B(None);
                             event
                         }
                         (S::B(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            let output = reader.init_start_tag_deserializer(
+                            let output = helper.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_3),
                                 b"B",
                                 false,
                             )?;
-                            match self.handle_b(reader, output, &mut fallback)? {
+                            match self.handle_b(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -225,7 +207,7 @@ pub mod bar {
                             }
                         }
                         (S::Done__, event) => {
-                            fallback.get_or_insert(S::Done__);
+                            *self.state__ = S::Done__;
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
                         (state, event) => {
@@ -243,16 +225,11 @@ pub mod bar {
                     allow_any,
                 })
             }
-            fn finish<R>(mut self, reader: &R) -> Result<super::InnerType, Error>
-            where
-                R: DeserializeReader,
-            {
+            fn finish(mut self, helper: &mut DeserializeHelper) -> Result<super::InnerType, Error> {
                 let state = replace(&mut *self.state__, InnerTypeDeserializerState::Unknown__);
-                self.finish_state(reader, state)?;
+                self.finish_state(helper, state)?;
                 Ok(super::InnerType {
-                    b: self
-                        .b
-                        .ok_or_else(|| ErrorKind::MissingElement("B".into()))?,
+                    b: helper.finish_element("B", self.b)?,
                 })
             }
         }
@@ -269,31 +246,28 @@ pub mod bar {
             Unknown__,
         }
         impl OuterTypeDeserializer {
-            fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-            where
-                R: DeserializeReader,
-            {
-                for attrib in filter_xmlns_attributes(bytes_start) {
+            fn from_bytes_start(
+                helper: &mut DeserializeHelper,
+                bytes_start: &BytesStart<'_>,
+            ) -> Result<Self, Error> {
+                for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
-                    reader.raise_unexpected_attrib_checked(attrib)?;
+                    helper.raise_unexpected_attrib_checked(&attrib)?;
                 }
                 Ok(Self {
                     inner: None,
                     state__: Box::new(OuterTypeDeserializerState::Init__),
                 })
             }
-            fn finish_state<R>(
+            fn finish_state(
                 &mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 state: OuterTypeDeserializerState,
-            ) -> Result<(), Error>
-            where
-                R: DeserializeReader,
-            {
+            ) -> Result<(), Error> {
                 use OuterTypeDeserializerState as S;
                 match state {
                     S::Inner(Some(deserializer)) => {
-                        self.store_inner(deserializer.finish(reader)?)?
+                        self.store_inner(deserializer.finish(helper)?)?
                     }
                     _ => (),
                 }
@@ -308,74 +282,56 @@ pub mod bar {
                 self.inner = Some(value);
                 Ok(())
             }
-            fn handle_inner<'de, R>(
+            fn handle_inner<'de>(
                 &mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::InnerType>,
                 fallback: &mut Option<OuterTypeDeserializerState>,
-            ) -> Result<ElementHandlerOutput<'de>, Error>
-            where
-                R: DeserializeReader,
-            {
+            ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use OuterTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    if self.inner.is_some() {
-                        fallback.get_or_insert(OuterTypeDeserializerState::Inner(None));
-                        *self.state__ = OuterTypeDeserializerState::Done__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    } else {
-                        *self.state__ = OuterTypeDeserializerState::Inner(None);
+                    fallback.get_or_insert(S::Inner(None));
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
+                    } else {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                     }
                 }
                 if let Some(fallback) = fallback.take() {
-                    self.finish_state(reader, fallback)?;
+                    self.finish_state(helper, fallback)?;
                 }
-                Ok(match artifact {
+                match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_inner(data)?;
-                        *self.state__ = OuterTypeDeserializerState::Done__;
-                        ElementHandlerOutput::from_event(event, allow_any)
+                        *self.state__ = S::Done__;
+                        Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        let ret = ElementHandlerOutput::from_event(event, allow_any);
-                        match &ret {
-                            ElementHandlerOutput::Continue { .. } => {
-                                fallback.get_or_insert(OuterTypeDeserializerState::Inner(Some(
-                                    deserializer,
-                                )));
-                                *self.state__ = OuterTypeDeserializerState::Done__;
-                            }
-                            ElementHandlerOutput::Break { .. } => {
-                                *self.state__ =
-                                    OuterTypeDeserializerState::Inner(Some(deserializer));
-                            }
-                        }
-                        ret
+                        fallback.get_or_insert(S::Inner(Some(deserializer)));
+                        *self.state__ = S::Done__;
+                        Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
-                })
+                }
             }
         }
         impl<'de> Deserializer<'de, super::OuterType> for OuterTypeDeserializer {
-            fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, super::OuterType>
-            where
-                R: DeserializeReader,
-            {
-                reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
-            }
-            fn next<R>(
-                mut self,
-                reader: &R,
+            fn init(
+                helper: &mut DeserializeHelper,
                 event: Event<'de>,
-            ) -> DeserializerResult<'de, super::OuterType>
-            where
-                R: DeserializeReader,
-            {
+            ) -> DeserializerResult<'de, super::OuterType> {
+                helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
+            }
+            fn next(
+                mut self,
+                helper: &mut DeserializeHelper,
+                event: Event<'de>,
+            ) -> DeserializerResult<'de, super::OuterType> {
                 use OuterTypeDeserializerState as S;
                 let mut event = event;
                 let mut fallback = None;
@@ -385,8 +341,8 @@ pub mod bar {
                     event = match (state, event) {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Inner(Some(deserializer)), event) => {
-                            let output = deserializer.next(reader, event)?;
-                            match self.handle_inner(reader, output, &mut fallback)? {
+                            let output = deserializer.next(helper, event)?;
+                            match self.handle_inner(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -398,27 +354,27 @@ pub mod bar {
                         }
                         (_, Event::End(_)) => {
                             if let Some(fallback) = fallback.take() {
-                                self.finish_state(reader, fallback)?;
+                                self.finish_state(helper, fallback)?;
                             }
                             return Ok(DeserializerOutput {
-                                artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                                artifact: DeserializerArtifact::Data(self.finish(helper)?),
                                 event: DeserializerEvent::None,
                                 allow_any: false,
                             });
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ = OuterTypeDeserializerState::Inner(None);
+                            *self.state__ = S::Inner(None);
                             event
                         }
                         (S::Inner(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            let output = reader.init_start_tag_deserializer(
+                            let output = helper.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_3),
                                 b"Inner",
                                 false,
                             )?;
-                            match self.handle_inner(reader, output, &mut fallback)? {
+                            match self.handle_inner(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -429,7 +385,7 @@ pub mod bar {
                             }
                         }
                         (S::Done__, event) => {
-                            fallback.get_or_insert(S::Done__);
+                            *self.state__ = S::Done__;
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
                         (state, event) => {
@@ -447,22 +403,19 @@ pub mod bar {
                     allow_any,
                 })
             }
-            fn finish<R>(mut self, reader: &R) -> Result<super::OuterType, Error>
-            where
-                R: DeserializeReader,
-            {
+            fn finish(mut self, helper: &mut DeserializeHelper) -> Result<super::OuterType, Error> {
                 let state = replace(&mut *self.state__, OuterTypeDeserializerState::Unknown__);
-                self.finish_state(reader, state)?;
+                self.finish_state(helper, state)?;
                 Ok(super::OuterType {
-                    inner: self
-                        .inner
-                        .ok_or_else(|| ErrorKind::MissingElement("Inner".into()))?,
+                    inner: helper.finish_element("Inner", self.inner)?,
                 })
             }
         }
     }
     pub mod quick_xml_serialize {
-        use xsd_parser_types::quick_xml::{BytesEnd, BytesStart, Error, Event, WithSerializer};
+        use xsd_parser_types::quick_xml::{
+            BytesEnd, BytesStart, Error, Event, SerializeHelper, Serializer, WithSerializer,
+        };
         #[derive(Debug)]
         pub struct InnerTypeSerializer<'ser> {
             pub(super) value: &'ser super::InnerType,
@@ -479,7 +432,10 @@ pub mod bar {
             Phantom__(&'ser ()),
         }
         impl<'ser> InnerTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         InnerTypeSerializerState::Init__ => {
@@ -488,16 +444,10 @@ pub mod bar {
                                 Some("B"),
                                 false,
                             )?);
-                            let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_3[..],
-                                ));
-                            }
+                            let bytes = BytesStart::new(self.name);
                             return Ok(Some(Event::Start(bytes)));
                         }
-                        InnerTypeSerializerState::B(x) => match x.next().transpose()? {
+                        InnerTypeSerializerState::B(x) => match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = InnerTypeSerializerState::End__,
                         },
@@ -511,10 +461,9 @@ pub mod bar {
                 }
             }
         }
-        impl<'ser> Iterator for InnerTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for InnerTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -540,7 +489,10 @@ pub mod bar {
             Phantom__(&'ser ()),
         }
         impl<'ser> OuterTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         OuterTypeSerializerState::Init__ => {
@@ -550,16 +502,10 @@ pub mod bar {
                                     Some("Inner"),
                                     false,
                                 )?);
-                            let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_3[..],
-                                ));
-                            }
+                            let bytes = BytesStart::new(self.name);
                             return Ok(Some(Event::Start(bytes)));
                         }
-                        OuterTypeSerializerState::Inner(x) => match x.next().transpose()? {
+                        OuterTypeSerializerState::Inner(x) => match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = OuterTypeSerializerState::End__,
                         },
@@ -573,10 +519,9 @@ pub mod bar {
                 }
             }
         }
-        impl<'ser> Iterator for OuterTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for OuterTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -639,9 +584,9 @@ pub mod foo {
     pub mod quick_xml_deserialize {
         use core::mem::replace;
         use xsd_parser_types::quick_xml::{
-            filter_xmlns_attributes, BytesStart, DeserializeReader, Deserializer,
-            DeserializerArtifact, DeserializerEvent, DeserializerOutput, DeserializerResult,
-            ElementHandlerOutput, Error, ErrorKind, Event, RawByteStr, WithDeserializer,
+            BytesStart, DeserializeHelper, Deserializer, DeserializerArtifact, DeserializerEvent,
+            DeserializerOutput, DeserializerResult, ElementHandlerOutput, Error, ErrorKind, Event,
+            RawByteStr, WithDeserializer,
         };
         #[derive(Debug)]
         pub struct InnerTypeDeserializer {
@@ -656,30 +601,27 @@ pub mod foo {
             Unknown__,
         }
         impl InnerTypeDeserializer {
-            fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-            where
-                R: DeserializeReader,
-            {
-                for attrib in filter_xmlns_attributes(bytes_start) {
+            fn from_bytes_start(
+                helper: &mut DeserializeHelper,
+                bytes_start: &BytesStart<'_>,
+            ) -> Result<Self, Error> {
+                for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
-                    reader.raise_unexpected_attrib_checked(attrib)?;
+                    helper.raise_unexpected_attrib_checked(&attrib)?;
                 }
                 Ok(Self {
                     a: None,
                     state__: Box::new(InnerTypeDeserializerState::Init__),
                 })
             }
-            fn finish_state<R>(
+            fn finish_state(
                 &mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 state: InnerTypeDeserializerState,
-            ) -> Result<(), Error>
-            where
-                R: DeserializeReader,
-            {
+            ) -> Result<(), Error> {
                 use InnerTypeDeserializerState as S;
                 match state {
-                    S::A(Some(deserializer)) => self.store_a(deserializer.finish(reader)?)?,
+                    S::A(Some(deserializer)) => self.store_a(deserializer.finish(helper)?)?,
                     _ => (),
                 }
                 Ok(())
@@ -691,73 +633,56 @@ pub mod foo {
                 self.a = Some(value);
                 Ok(())
             }
-            fn handle_a<'de, R>(
+            fn handle_a<'de>(
                 &mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, String>,
                 fallback: &mut Option<InnerTypeDeserializerState>,
-            ) -> Result<ElementHandlerOutput<'de>, Error>
-            where
-                R: DeserializeReader,
-            {
+            ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use InnerTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    if self.a.is_some() {
-                        fallback.get_or_insert(InnerTypeDeserializerState::A(None));
-                        *self.state__ = InnerTypeDeserializerState::Done__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    } else {
-                        *self.state__ = InnerTypeDeserializerState::A(None);
+                    fallback.get_or_insert(S::A(None));
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
+                    } else {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                     }
                 }
                 if let Some(fallback) = fallback.take() {
-                    self.finish_state(reader, fallback)?;
+                    self.finish_state(helper, fallback)?;
                 }
-                Ok(match artifact {
+                match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_a(data)?;
-                        *self.state__ = InnerTypeDeserializerState::Done__;
-                        ElementHandlerOutput::from_event(event, allow_any)
+                        *self.state__ = S::Done__;
+                        Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        let ret = ElementHandlerOutput::from_event(event, allow_any);
-                        match &ret {
-                            ElementHandlerOutput::Continue { .. } => {
-                                fallback.get_or_insert(InnerTypeDeserializerState::A(Some(
-                                    deserializer,
-                                )));
-                                *self.state__ = InnerTypeDeserializerState::Done__;
-                            }
-                            ElementHandlerOutput::Break { .. } => {
-                                *self.state__ = InnerTypeDeserializerState::A(Some(deserializer));
-                            }
-                        }
-                        ret
+                        fallback.get_or_insert(S::A(Some(deserializer)));
+                        *self.state__ = S::Done__;
+                        Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
-                })
+                }
             }
         }
         impl<'de> Deserializer<'de, super::InnerType> for InnerTypeDeserializer {
-            fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, super::InnerType>
-            where
-                R: DeserializeReader,
-            {
-                reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
-            }
-            fn next<R>(
-                mut self,
-                reader: &R,
+            fn init(
+                helper: &mut DeserializeHelper,
                 event: Event<'de>,
-            ) -> DeserializerResult<'de, super::InnerType>
-            where
-                R: DeserializeReader,
-            {
+            ) -> DeserializerResult<'de, super::InnerType> {
+                helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
+            }
+            fn next(
+                mut self,
+                helper: &mut DeserializeHelper,
+                event: Event<'de>,
+            ) -> DeserializerResult<'de, super::InnerType> {
                 use InnerTypeDeserializerState as S;
                 let mut event = event;
                 let mut fallback = None;
@@ -767,8 +692,8 @@ pub mod foo {
                     event = match (state, event) {
                         (S::Unknown__, _) => unreachable!(),
                         (S::A(Some(deserializer)), event) => {
-                            let output = deserializer.next(reader, event)?;
-                            match self.handle_a(reader, output, &mut fallback)? {
+                            let output = deserializer.next(helper, event)?;
+                            match self.handle_a(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -780,27 +705,27 @@ pub mod foo {
                         }
                         (_, Event::End(_)) => {
                             if let Some(fallback) = fallback.take() {
-                                self.finish_state(reader, fallback)?;
+                                self.finish_state(helper, fallback)?;
                             }
                             return Ok(DeserializerOutput {
-                                artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                                artifact: DeserializerArtifact::Data(self.finish(helper)?),
                                 event: DeserializerEvent::None,
                                 allow_any: false,
                             });
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ = InnerTypeDeserializerState::A(None);
+                            *self.state__ = S::A(None);
                             event
                         }
                         (S::A(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            let output = reader.init_start_tag_deserializer(
+                            let output = helper.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_3),
                                 b"A",
                                 false,
                             )?;
-                            match self.handle_a(reader, output, &mut fallback)? {
+                            match self.handle_a(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -811,7 +736,7 @@ pub mod foo {
                             }
                         }
                         (S::Done__, event) => {
-                            fallback.get_or_insert(S::Done__);
+                            *self.state__ = S::Done__;
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
                         (state, event) => {
@@ -829,16 +754,11 @@ pub mod foo {
                     allow_any,
                 })
             }
-            fn finish<R>(mut self, reader: &R) -> Result<super::InnerType, Error>
-            where
-                R: DeserializeReader,
-            {
+            fn finish(mut self, helper: &mut DeserializeHelper) -> Result<super::InnerType, Error> {
                 let state = replace(&mut *self.state__, InnerTypeDeserializerState::Unknown__);
-                self.finish_state(reader, state)?;
+                self.finish_state(helper, state)?;
                 Ok(super::InnerType {
-                    a: self
-                        .a
-                        .ok_or_else(|| ErrorKind::MissingElement("A".into()))?,
+                    a: helper.finish_element("A", self.a)?,
                 })
             }
         }
@@ -855,31 +775,28 @@ pub mod foo {
             Unknown__,
         }
         impl OuterTypeDeserializer {
-            fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-            where
-                R: DeserializeReader,
-            {
-                for attrib in filter_xmlns_attributes(bytes_start) {
+            fn from_bytes_start(
+                helper: &mut DeserializeHelper,
+                bytes_start: &BytesStart<'_>,
+            ) -> Result<Self, Error> {
+                for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
-                    reader.raise_unexpected_attrib_checked(attrib)?;
+                    helper.raise_unexpected_attrib_checked(&attrib)?;
                 }
                 Ok(Self {
                     inner: None,
                     state__: Box::new(OuterTypeDeserializerState::Init__),
                 })
             }
-            fn finish_state<R>(
+            fn finish_state(
                 &mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 state: OuterTypeDeserializerState,
-            ) -> Result<(), Error>
-            where
-                R: DeserializeReader,
-            {
+            ) -> Result<(), Error> {
                 use OuterTypeDeserializerState as S;
                 match state {
                     S::Inner(Some(deserializer)) => {
-                        self.store_inner(deserializer.finish(reader)?)?
+                        self.store_inner(deserializer.finish(helper)?)?
                     }
                     _ => (),
                 }
@@ -894,74 +811,56 @@ pub mod foo {
                 self.inner = Some(value);
                 Ok(())
             }
-            fn handle_inner<'de, R>(
+            fn handle_inner<'de>(
                 &mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::InnerType>,
                 fallback: &mut Option<OuterTypeDeserializerState>,
-            ) -> Result<ElementHandlerOutput<'de>, Error>
-            where
-                R: DeserializeReader,
-            {
+            ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use OuterTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    if self.inner.is_some() {
-                        fallback.get_or_insert(OuterTypeDeserializerState::Inner(None));
-                        *self.state__ = OuterTypeDeserializerState::Done__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    } else {
-                        *self.state__ = OuterTypeDeserializerState::Inner(None);
+                    fallback.get_or_insert(S::Inner(None));
+                    if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
+                    } else {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                     }
                 }
                 if let Some(fallback) = fallback.take() {
-                    self.finish_state(reader, fallback)?;
+                    self.finish_state(helper, fallback)?;
                 }
-                Ok(match artifact {
+                match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_inner(data)?;
-                        *self.state__ = OuterTypeDeserializerState::Done__;
-                        ElementHandlerOutput::from_event(event, allow_any)
+                        *self.state__ = S::Done__;
+                        Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        let ret = ElementHandlerOutput::from_event(event, allow_any);
-                        match &ret {
-                            ElementHandlerOutput::Continue { .. } => {
-                                fallback.get_or_insert(OuterTypeDeserializerState::Inner(Some(
-                                    deserializer,
-                                )));
-                                *self.state__ = OuterTypeDeserializerState::Done__;
-                            }
-                            ElementHandlerOutput::Break { .. } => {
-                                *self.state__ =
-                                    OuterTypeDeserializerState::Inner(Some(deserializer));
-                            }
-                        }
-                        ret
+                        fallback.get_or_insert(S::Inner(Some(deserializer)));
+                        *self.state__ = S::Done__;
+                        Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
-                })
+                }
             }
         }
         impl<'de> Deserializer<'de, super::OuterType> for OuterTypeDeserializer {
-            fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, super::OuterType>
-            where
-                R: DeserializeReader,
-            {
-                reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
-            }
-            fn next<R>(
-                mut self,
-                reader: &R,
+            fn init(
+                helper: &mut DeserializeHelper,
                 event: Event<'de>,
-            ) -> DeserializerResult<'de, super::OuterType>
-            where
-                R: DeserializeReader,
-            {
+            ) -> DeserializerResult<'de, super::OuterType> {
+                helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
+            }
+            fn next(
+                mut self,
+                helper: &mut DeserializeHelper,
+                event: Event<'de>,
+            ) -> DeserializerResult<'de, super::OuterType> {
                 use OuterTypeDeserializerState as S;
                 let mut event = event;
                 let mut fallback = None;
@@ -971,8 +870,8 @@ pub mod foo {
                     event = match (state, event) {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Inner(Some(deserializer)), event) => {
-                            let output = deserializer.next(reader, event)?;
-                            match self.handle_inner(reader, output, &mut fallback)? {
+                            let output = deserializer.next(helper, event)?;
+                            match self.handle_inner(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -984,27 +883,27 @@ pub mod foo {
                         }
                         (_, Event::End(_)) => {
                             if let Some(fallback) = fallback.take() {
-                                self.finish_state(reader, fallback)?;
+                                self.finish_state(helper, fallback)?;
                             }
                             return Ok(DeserializerOutput {
-                                artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                                artifact: DeserializerArtifact::Data(self.finish(helper)?),
                                 event: DeserializerEvent::None,
                                 allow_any: false,
                             });
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state__ = OuterTypeDeserializerState::Inner(None);
+                            *self.state__ = S::Inner(None);
                             event
                         }
                         (S::Inner(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            let output = reader.init_start_tag_deserializer(
+                            let output = helper.init_start_tag_deserializer(
                                 event,
                                 Some(&super::super::NS_UNNAMED_3),
                                 b"Inner",
                                 false,
                             )?;
-                            match self.handle_inner(reader, output, &mut fallback)? {
+                            match self.handle_inner(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -1015,7 +914,7 @@ pub mod foo {
                             }
                         }
                         (S::Done__, event) => {
-                            fallback.get_or_insert(S::Done__);
+                            *self.state__ = S::Done__;
                             break (DeserializerEvent::Continue(event), allow_any_element);
                         }
                         (state, event) => {
@@ -1033,22 +932,19 @@ pub mod foo {
                     allow_any,
                 })
             }
-            fn finish<R>(mut self, reader: &R) -> Result<super::OuterType, Error>
-            where
-                R: DeserializeReader,
-            {
+            fn finish(mut self, helper: &mut DeserializeHelper) -> Result<super::OuterType, Error> {
                 let state = replace(&mut *self.state__, OuterTypeDeserializerState::Unknown__);
-                self.finish_state(reader, state)?;
+                self.finish_state(helper, state)?;
                 Ok(super::OuterType {
-                    inner: self
-                        .inner
-                        .ok_or_else(|| ErrorKind::MissingElement("Inner".into()))?,
+                    inner: helper.finish_element("Inner", self.inner)?,
                 })
             }
         }
     }
     pub mod quick_xml_serialize {
-        use xsd_parser_types::quick_xml::{BytesEnd, BytesStart, Error, Event, WithSerializer};
+        use xsd_parser_types::quick_xml::{
+            BytesEnd, BytesStart, Error, Event, SerializeHelper, Serializer, WithSerializer,
+        };
         #[derive(Debug)]
         pub struct InnerTypeSerializer<'ser> {
             pub(super) value: &'ser super::InnerType,
@@ -1065,7 +961,10 @@ pub mod foo {
             Phantom__(&'ser ()),
         }
         impl<'ser> InnerTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         InnerTypeSerializerState::Init__ => {
@@ -1074,16 +973,10 @@ pub mod foo {
                                 Some("A"),
                                 false,
                             )?);
-                            let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_3[..],
-                                ));
-                            }
+                            let bytes = BytesStart::new(self.name);
                             return Ok(Some(Event::Start(bytes)));
                         }
-                        InnerTypeSerializerState::A(x) => match x.next().transpose()? {
+                        InnerTypeSerializerState::A(x) => match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = InnerTypeSerializerState::End__,
                         },
@@ -1097,10 +990,9 @@ pub mod foo {
                 }
             }
         }
-        impl<'ser> Iterator for InnerTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for InnerTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -1126,7 +1018,10 @@ pub mod foo {
             Phantom__(&'ser ()),
         }
         impl<'ser> OuterTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         OuterTypeSerializerState::Init__ => {
@@ -1136,16 +1031,10 @@ pub mod foo {
                                     Some("Inner"),
                                     false,
                                 )?);
-                            let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_3[..],
-                                ));
-                            }
+                            let bytes = BytesStart::new(self.name);
                             return Ok(Some(Event::Start(bytes)));
                         }
-                        OuterTypeSerializerState::Inner(x) => match x.next().transpose()? {
+                        OuterTypeSerializerState::Inner(x) => match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = OuterTypeSerializerState::End__,
                         },
@@ -1159,10 +1048,9 @@ pub mod foo {
                 }
             }
         }
-        impl<'ser> Iterator for OuterTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for OuterTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
@@ -1177,19 +1065,22 @@ pub mod foo {
 pub mod xs {
     use std::borrow::Cow;
     use xsd_parser_types::quick_xml::{
-        DeserializeBytes, DeserializeReader, Error, SerializeBytes, WithDeserializer,
-        WithSerializer,
+        DeserializeBytes, DeserializeHelper, Error, SerializeBytes, SerializeHelper,
+        WithDeserializer, WithSerializer,
     };
     #[derive(Debug, Default)]
     pub struct EntitiesType(pub Vec<String>);
     impl SerializeBytes for EntitiesType {
-        fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+        fn serialize_bytes(
+            &self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Cow<'_, str>>, Error> {
             if self.0.is_empty() {
                 return Ok(None);
             }
             let mut data = String::new();
             for item in &self.0 {
-                if let Some(bytes) = item.serialize_bytes()? {
+                if let Some(bytes) = item.serialize_bytes(helper)? {
                     if !data.is_empty() {
                         data.push(' ');
                     }
@@ -1200,14 +1091,11 @@ pub mod xs {
         }
     }
     impl DeserializeBytes for EntitiesType {
-        fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
             Ok(Self(
                 bytes
                     .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
-                    .map(|bytes| String::deserialize_bytes(reader, bytes))
+                    .map(|bytes| String::deserialize_bytes(helper, bytes))
                     .collect::<Result<Vec<_>, _>>()?,
             ))
         }
@@ -1215,13 +1103,16 @@ pub mod xs {
     #[derive(Debug, Default)]
     pub struct EntityType(pub Vec<String>);
     impl SerializeBytes for EntityType {
-        fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+        fn serialize_bytes(
+            &self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Cow<'_, str>>, Error> {
             if self.0.is_empty() {
                 return Ok(None);
             }
             let mut data = String::new();
             for item in &self.0 {
-                if let Some(bytes) = item.serialize_bytes()? {
+                if let Some(bytes) = item.serialize_bytes(helper)? {
                     if !data.is_empty() {
                         data.push(' ');
                     }
@@ -1232,14 +1123,11 @@ pub mod xs {
         }
     }
     impl DeserializeBytes for EntityType {
-        fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
             Ok(Self(
                 bytes
                     .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
-                    .map(|bytes| String::deserialize_bytes(reader, bytes))
+                    .map(|bytes| String::deserialize_bytes(helper, bytes))
                     .collect::<Result<Vec<_>, _>>()?,
             ))
         }
@@ -1249,13 +1137,16 @@ pub mod xs {
     #[derive(Debug, Default)]
     pub struct IdrefsType(pub Vec<String>);
     impl SerializeBytes for IdrefsType {
-        fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+        fn serialize_bytes(
+            &self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Cow<'_, str>>, Error> {
             if self.0.is_empty() {
                 return Ok(None);
             }
             let mut data = String::new();
             for item in &self.0 {
-                if let Some(bytes) = item.serialize_bytes()? {
+                if let Some(bytes) = item.serialize_bytes(helper)? {
                     if !data.is_empty() {
                         data.push(' ');
                     }
@@ -1266,14 +1157,11 @@ pub mod xs {
         }
     }
     impl DeserializeBytes for IdrefsType {
-        fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
             Ok(Self(
                 bytes
                     .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
-                    .map(|bytes| String::deserialize_bytes(reader, bytes))
+                    .map(|bytes| String::deserialize_bytes(helper, bytes))
                     .collect::<Result<Vec<_>, _>>()?,
             ))
         }
@@ -1283,13 +1171,16 @@ pub mod xs {
     #[derive(Debug, Default)]
     pub struct NmtokensType(pub Vec<String>);
     impl SerializeBytes for NmtokensType {
-        fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+        fn serialize_bytes(
+            &self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Cow<'_, str>>, Error> {
             if self.0.is_empty() {
                 return Ok(None);
             }
             let mut data = String::new();
             for item in &self.0 {
-                if let Some(bytes) = item.serialize_bytes()? {
+                if let Some(bytes) = item.serialize_bytes(helper)? {
                     if !data.is_empty() {
                         data.push(' ');
                     }
@@ -1300,14 +1191,11 @@ pub mod xs {
         }
     }
     impl DeserializeBytes for NmtokensType {
-        fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
             Ok(Self(
                 bytes
                     .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
-                    .map(|bytes| String::deserialize_bytes(reader, bytes))
+                    .map(|bytes| String::deserialize_bytes(helper, bytes))
                     .collect::<Result<Vec<_>, _>>()?,
             ))
         }
@@ -1372,7 +1260,7 @@ pub mod xs {
     pub mod quick_xml_deserialize {
         use core::mem::replace;
         use xsd_parser_types::quick_xml::{
-            BytesStart, DeserializeReader, Deserializer, DeserializerArtifact, DeserializerEvent,
+            BytesStart, DeserializeHelper, Deserializer, DeserializerArtifact, DeserializerEvent,
             DeserializerOutput, DeserializerResult, Error, Event,
         };
         #[derive(Debug)]
@@ -1385,43 +1273,37 @@ pub mod xs {
             Unknown__,
         }
         impl AnyTypeDeserializer {
-            fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-            where
-                R: DeserializeReader,
-            {
+            fn from_bytes_start(
+                helper: &mut DeserializeHelper,
+                bytes_start: &BytesStart<'_>,
+            ) -> Result<Self, Error> {
                 Ok(Self {
                     state__: Box::new(AnyTypeDeserializerState::Init__),
                 })
             }
-            fn finish_state<R>(
+            fn finish_state(
                 &mut self,
-                reader: &R,
+                helper: &mut DeserializeHelper,
                 state: AnyTypeDeserializerState,
-            ) -> Result<(), Error>
-            where
-                R: DeserializeReader,
-            {
+            ) -> Result<(), Error> {
                 Ok(())
             }
         }
         impl<'de> Deserializer<'de, super::AnyType> for AnyTypeDeserializer {
-            fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, super::AnyType>
-            where
-                R: DeserializeReader,
-            {
-                reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
-            }
-            fn next<R>(
-                mut self,
-                reader: &R,
+            fn init(
+                helper: &mut DeserializeHelper,
                 event: Event<'de>,
-            ) -> DeserializerResult<'de, super::AnyType>
-            where
-                R: DeserializeReader,
-            {
+            ) -> DeserializerResult<'de, super::AnyType> {
+                helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
+            }
+            fn next(
+                mut self,
+                helper: &mut DeserializeHelper,
+                event: Event<'de>,
+            ) -> DeserializerResult<'de, super::AnyType> {
                 if let Event::End(_) = &event {
                     Ok(DeserializerOutput {
-                        artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                        artifact: DeserializerArtifact::Data(self.finish(helper)?),
                         event: DeserializerEvent::None,
                         allow_any: false,
                     })
@@ -1439,18 +1321,15 @@ pub mod xs {
                     })
                 }
             }
-            fn finish<R>(mut self, reader: &R) -> Result<super::AnyType, Error>
-            where
-                R: DeserializeReader,
-            {
+            fn finish(mut self, helper: &mut DeserializeHelper) -> Result<super::AnyType, Error> {
                 let state = replace(&mut *self.state__, AnyTypeDeserializerState::Unknown__);
-                self.finish_state(reader, state)?;
+                self.finish_state(helper, state)?;
                 Ok(super::AnyType {})
             }
         }
     }
     pub mod quick_xml_serialize {
-        use xsd_parser_types::quick_xml::{BytesStart, Error, Event};
+        use xsd_parser_types::quick_xml::{BytesStart, Error, Event, SerializeHelper, Serializer};
         #[derive(Debug)]
         pub struct AnyTypeSerializer<'ser> {
             pub(super) value: &'ser super::AnyType,
@@ -1465,18 +1344,15 @@ pub mod xs {
             Phantom__(&'ser ()),
         }
         impl<'ser> AnyTypeSerializer<'ser> {
-            fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
                         AnyTypeSerializerState::Init__ => {
                             *self.state = AnyTypeSerializerState::Done__;
-                            let mut bytes = BytesStart::new(self.name);
-                            if self.is_root {
-                                bytes.push_attribute((
-                                    &b"xmlns"[..],
-                                    &super::super::NS_UNNAMED_3[..],
-                                ));
-                            }
+                            let bytes = BytesStart::new(self.name);
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         AnyTypeSerializerState::Done__ => return Ok(None),
@@ -1485,10 +1361,9 @@ pub mod xs {
                 }
             }
         }
-        impl<'ser> Iterator for AnyTypeSerializer<'ser> {
-            type Item = Result<Event<'ser>, Error>;
-            fn next(&mut self) -> Option<Self::Item> {
-                match self.next_event() {
+        impl<'ser> Serializer<'ser> for AnyTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {

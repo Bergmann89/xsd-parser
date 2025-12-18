@@ -1,5 +1,5 @@
 use xsd_parser_types::{
-    misc::Namespace,
+    misc::{Namespace, NamespacePrefix},
     quick_xml::{Error, WithDeserializer, WithSerializer},
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
@@ -13,6 +13,12 @@ pub const NS_RAM: Namespace = Namespace::new_const(
 );
 pub const NS_UDT: Namespace =
     Namespace::new_const(b"urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100");
+pub const PREFIX_XS: NamespacePrefix = NamespacePrefix::new_const(b"xs");
+pub const PREFIX_XML: NamespacePrefix = NamespacePrefix::new_const(b"xml");
+pub const PREFIX_RSM: NamespacePrefix = NamespacePrefix::new_const(b"rsm");
+pub const PREFIX_QDT: NamespacePrefix = NamespacePrefix::new_const(b"qdt");
+pub const PREFIX_RAM: NamespacePrefix = NamespacePrefix::new_const(b"ram");
+pub const PREFIX_UDT: NamespacePrefix = NamespacePrefix::new_const(b"udt");
 pub type CrossIndustryInvoice = CrossIndustryInvoiceType;
 #[derive(Debug)]
 pub struct CrossIndustryInvoiceType {
@@ -555,9 +561,9 @@ impl WithDeserializer for CountryIdType {
 pub mod quick_xml_deserialize {
     use core::mem::replace;
     use xsd_parser_types::quick_xml::{
-        filter_xmlns_attributes, BytesStart, ContentDeserializer, DeserializeReader, Deserializer,
-        DeserializerArtifact, DeserializerEvent, DeserializerOutput, DeserializerResult,
-        ElementHandlerOutput, Error, ErrorKind, Event, RawByteStr, WithDeserializer,
+        BytesStart, ContentDeserializer, DeserializeHelper, Deserializer, DeserializerArtifact,
+        DeserializerEvent, DeserializerOutput, DeserializerResult, ElementHandlerOutput, Error,
+        ErrorKind, Event, RawByteStr, WithDeserializer,
     };
     #[derive(Debug)]
     pub struct CrossIndustryInvoiceTypeDeserializer {
@@ -580,13 +586,13 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl CrossIndustryInvoiceTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
-            for attrib in filter_xmlns_attributes(bytes_start) {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib_checked(attrib)?;
+                helper.raise_unexpected_attrib_checked(&attrib)?;
             }
             Ok(Self {
                 exchanged_document_context: None,
@@ -595,24 +601,21 @@ pub mod quick_xml_deserialize {
                 state__: Box::new(CrossIndustryInvoiceTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: CrossIndustryInvoiceTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             use CrossIndustryInvoiceTypeDeserializerState as S;
             match state {
                 S::ExchangedDocumentContext(Some(deserializer)) => {
-                    self.store_exchanged_document_context(deserializer.finish(reader)?)?
+                    self.store_exchanged_document_context(deserializer.finish(helper)?)?
                 }
                 S::ExchangedDocument(Some(deserializer)) => {
-                    self.store_exchanged_document(deserializer.finish(reader)?)?
+                    self.store_exchanged_document(deserializer.finish(helper)?)?
                 }
                 S::SupplyChainTradeTransaction(Some(deserializer)) => {
-                    self.store_supply_chain_trade_transaction(deserializer.finish(reader)?)?
+                    self.store_supply_chain_trade_transaction(deserializer.finish(helper)?)?
                 }
                 _ => (),
             }
@@ -654,210 +657,132 @@ pub mod quick_xml_deserialize {
             self.supply_chain_trade_transaction = Some(value);
             Ok(())
         }
-        fn handle_exchanged_document_context<'de, R>(
+        fn handle_exchanged_document_context<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::ExchangedDocumentContextType>,
             fallback: &mut Option<CrossIndustryInvoiceTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use CrossIndustryInvoiceTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                if self.exchanged_document_context.is_some() {
-                    fallback.get_or_insert(
-                        CrossIndustryInvoiceTypeDeserializerState::ExchangedDocumentContext(None),
-                    );
-                    *self.state__ =
-                        CrossIndustryInvoiceTypeDeserializerState::ExchangedDocument(None);
-                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                } else {
-                    *self.state__ =
-                        CrossIndustryInvoiceTypeDeserializerState::ExchangedDocumentContext(None);
+                fallback.get_or_insert(S::ExchangedDocumentContext(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
+                } else {
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_exchanged_document_context(data)?;
-                    *self.state__ =
-                        CrossIndustryInvoiceTypeDeserializerState::ExchangedDocument(None);
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::ExchangedDocument(None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback.get_or_insert(
-                                CrossIndustryInvoiceTypeDeserializerState::ExchangedDocumentContext(
-                                    Some(deserializer),
-                                ),
-                            );
-                            *self.state__ =
-                                CrossIndustryInvoiceTypeDeserializerState::ExchangedDocument(None);
-                        }
-                        ElementHandlerOutput::Break { .. } => {
-                            *self.state__ =
-                                CrossIndustryInvoiceTypeDeserializerState::ExchangedDocumentContext(
-                                    Some(deserializer),
-                                );
-                        }
-                    }
-                    ret
+                    fallback.get_or_insert(S::ExchangedDocumentContext(Some(deserializer)));
+                    *self.state__ = S::ExchangedDocument(None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
-        fn handle_exchanged_document<'de, R>(
+        fn handle_exchanged_document<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::ExchangedDocumentType>,
             fallback: &mut Option<CrossIndustryInvoiceTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use CrossIndustryInvoiceTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                if self.exchanged_document.is_some() {
-                    fallback.get_or_insert(
-                        CrossIndustryInvoiceTypeDeserializerState::ExchangedDocument(None),
-                    );
-                    *self.state__ =
-                        CrossIndustryInvoiceTypeDeserializerState::SupplyChainTradeTransaction(
-                            None,
-                        );
-                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                } else {
-                    *self.state__ =
-                        CrossIndustryInvoiceTypeDeserializerState::ExchangedDocument(None);
+                fallback.get_or_insert(S::ExchangedDocument(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
+                } else {
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_exchanged_document(data)?;
-                    *self.state__ =
-                        CrossIndustryInvoiceTypeDeserializerState::SupplyChainTradeTransaction(
-                            None,
-                        );
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::SupplyChainTradeTransaction(None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback.get_or_insert(
-                                CrossIndustryInvoiceTypeDeserializerState::ExchangedDocument(Some(
-                                    deserializer,
-                                )),
-                            );
-                            * self . state__ = CrossIndustryInvoiceTypeDeserializerState :: SupplyChainTradeTransaction (None) ;
-                        }
-                        ElementHandlerOutput::Break { .. } => {
-                            *self.state__ =
-                                CrossIndustryInvoiceTypeDeserializerState::ExchangedDocument(Some(
-                                    deserializer,
-                                ));
-                        }
-                    }
-                    ret
+                    fallback.get_or_insert(S::ExchangedDocument(Some(deserializer)));
+                    *self.state__ = S::SupplyChainTradeTransaction(None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
-        fn handle_supply_chain_trade_transaction<'de, R>(
+        fn handle_supply_chain_trade_transaction<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::SupplyChainTradeTransactionType>,
             fallback: &mut Option<CrossIndustryInvoiceTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use CrossIndustryInvoiceTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                if self.supply_chain_trade_transaction.is_some() {
-                    fallback.get_or_insert(
-                        CrossIndustryInvoiceTypeDeserializerState::SupplyChainTradeTransaction(
-                            None,
-                        ),
-                    );
-                    *self.state__ = CrossIndustryInvoiceTypeDeserializerState::Done__;
-                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                } else {
-                    *self.state__ =
-                        CrossIndustryInvoiceTypeDeserializerState::SupplyChainTradeTransaction(
-                            None,
-                        );
+                fallback.get_or_insert(S::SupplyChainTradeTransaction(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
+                } else {
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_supply_chain_trade_transaction(data)?;
-                    *self.state__ = CrossIndustryInvoiceTypeDeserializerState::Done__;
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::Done__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback . get_or_insert (CrossIndustryInvoiceTypeDeserializerState :: SupplyChainTradeTransaction (Some (deserializer))) ;
-                            *self.state__ = CrossIndustryInvoiceTypeDeserializerState::Done__;
-                        }
-                        ElementHandlerOutput::Break { .. } => {
-                            * self . state__ = CrossIndustryInvoiceTypeDeserializerState :: SupplyChainTradeTransaction (Some (deserializer)) ;
-                        }
-                    }
-                    ret
+                    fallback.get_or_insert(S::SupplyChainTradeTransaction(Some(deserializer)));
+                    *self.state__ = S::Done__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
     }
     impl<'de> Deserializer<'de, super::CrossIndustryInvoiceType>
         for CrossIndustryInvoiceTypeDeserializer
     {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::CrossIndustryInvoiceType>
-        where
-            R: DeserializeReader,
-        {
-            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        ) -> DeserializerResult<'de, super::CrossIndustryInvoiceType> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::CrossIndustryInvoiceType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::CrossIndustryInvoiceType> {
             use CrossIndustryInvoiceTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -867,9 +792,9 @@ pub mod quick_xml_deserialize {
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
                     (S::ExchangedDocumentContext(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
+                        let output = deserializer.next(helper, event)?;
                         match self.handle_exchanged_document_context(
-                            reader,
+                            helper,
                             output,
                             &mut fallback,
                         )? {
@@ -883,8 +808,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::ExchangedDocument(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_exchanged_document(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_exchanged_document(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -895,9 +820,9 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::SupplyChainTradeTransaction(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
+                        let output = deserializer.next(helper, event)?;
                         match self.handle_supply_chain_trade_transaction(
-                            reader,
+                            helper,
                             output,
                             &mut fallback,
                         )? {
@@ -912,34 +837,31 @@ pub mod quick_xml_deserialize {
                     }
                     (_, Event::End(_)) => {
                         if let Some(fallback) = fallback.take() {
-                            self.finish_state(reader, fallback)?;
+                            self.finish_state(helper, fallback)?;
                         }
                         return Ok(DeserializerOutput {
-                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            artifact: DeserializerArtifact::Data(self.finish(helper)?),
                             event: DeserializerEvent::None,
                             allow_any: false,
                         });
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ =
-                            CrossIndustryInvoiceTypeDeserializerState::ExchangedDocumentContext(
-                                None,
-                            );
+                        *self.state__ = S::ExchangedDocumentContext(None);
                         event
                     }
                     (
                         S::ExchangedDocumentContext(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_RSM),
                             b"ExchangedDocumentContext",
                             false,
                         )?;
                         match self.handle_exchanged_document_context(
-                            reader,
+                            helper,
                             output,
                             &mut fallback,
                         )? {
@@ -953,13 +875,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::ExchangedDocument(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_RSM),
                             b"ExchangedDocument",
                             false,
                         )?;
-                        match self.handle_exchanged_document(reader, output, &mut fallback)? {
+                        match self.handle_exchanged_document(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -973,14 +895,14 @@ pub mod quick_xml_deserialize {
                         S::SupplyChainTradeTransaction(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_RSM),
                             b"SupplyChainTradeTransaction",
                             false,
                         )?;
                         match self.handle_supply_chain_trade_transaction(
-                            reader,
+                            helper,
                             output,
                             &mut fallback,
                         )? {
@@ -994,7 +916,7 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Done__, event) => {
-                        fallback.get_or_insert(S::Done__);
+                        *self.state__ = S::Done__;
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
                     (state, event) => {
@@ -1012,24 +934,23 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::CrossIndustryInvoiceType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(
+            mut self,
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::CrossIndustryInvoiceType, Error> {
             let state = replace(
                 &mut *self.state__,
                 CrossIndustryInvoiceTypeDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::CrossIndustryInvoiceType {
-                exchanged_document_context: self
-                    .exchanged_document_context
-                    .ok_or_else(|| ErrorKind::MissingElement("ExchangedDocumentContext".into()))?,
-                exchanged_document: self
-                    .exchanged_document
-                    .ok_or_else(|| ErrorKind::MissingElement("ExchangedDocument".into()))?,
-                supply_chain_trade_transaction: self.supply_chain_trade_transaction.ok_or_else(
-                    || ErrorKind::MissingElement("SupplyChainTradeTransaction".into()),
+                exchanged_document_context: helper
+                    .finish_element("ExchangedDocumentContext", self.exchanged_document_context)?,
+                exchanged_document: helper
+                    .finish_element("ExchangedDocument", self.exchanged_document)?,
+                supply_chain_trade_transaction: helper.finish_element(
+                    "SupplyChainTradeTransaction",
+                    self.supply_chain_trade_transaction,
                 )?,
             })
         }
@@ -1054,13 +975,13 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl ExchangedDocumentContextTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
-            for attrib in filter_xmlns_attributes(bytes_start) {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib_checked(attrib)?;
+                helper.raise_unexpected_attrib_checked(&attrib)?;
             }
             Ok(Self {
                 business_process_specified_document_context_parameter: None,
@@ -1068,23 +989,20 @@ pub mod quick_xml_deserialize {
                 state__: Box::new(ExchangedDocumentContextTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: ExchangedDocumentContextTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             use ExchangedDocumentContextTypeDeserializerState as S;
             match state {
                 S::BusinessProcessSpecifiedDocumentContextParameter(Some(deserializer)) => self
                     .store_business_process_specified_document_context_parameter(
-                        deserializer.finish(reader)?,
+                        deserializer.finish(helper)?,
                     )?,
                 S::GuidelineSpecifiedDocumentContextParameter(Some(deserializer)) => self
                     .store_guideline_specified_document_context_parameter(
-                        deserializer.finish(reader)?,
+                        deserializer.finish(helper)?,
                     )?,
                 _ => (),
             }
@@ -1120,123 +1038,96 @@ pub mod quick_xml_deserialize {
             self.guideline_specified_document_context_parameter = Some(value);
             Ok(())
         }
-        fn handle_business_process_specified_document_context_parameter<'de, R>(
+        fn handle_business_process_specified_document_context_parameter<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::DocumentContextParameterType>,
             fallback: &mut Option<ExchangedDocumentContextTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use ExchangedDocumentContextTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback . get_or_insert (ExchangedDocumentContextTypeDeserializerState :: BusinessProcessSpecifiedDocumentContextParameter (None)) ;
-                * self . state__ = ExchangedDocumentContextTypeDeserializerState :: GuidelineSpecifiedDocumentContextParameter (None) ;
+                fallback.get_or_insert(S::BusinessProcessSpecifiedDocumentContextParameter(None));
+                *self.state__ = S::GuidelineSpecifiedDocumentContextParameter(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_business_process_specified_document_context_parameter(data)?;
-                    * self . state__ = ExchangedDocumentContextTypeDeserializerState :: GuidelineSpecifiedDocumentContextParameter (None) ;
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::GuidelineSpecifiedDocumentContextParameter(None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback . get_or_insert (ExchangedDocumentContextTypeDeserializerState :: BusinessProcessSpecifiedDocumentContextParameter (Some (deserializer))) ;
-                            * self . state__ = ExchangedDocumentContextTypeDeserializerState :: GuidelineSpecifiedDocumentContextParameter (None) ;
-                        }
-                        ElementHandlerOutput::Break { .. } => {
-                            * self . state__ = ExchangedDocumentContextTypeDeserializerState :: BusinessProcessSpecifiedDocumentContextParameter (Some (deserializer)) ;
-                        }
-                    }
-                    ret
+                    fallback.get_or_insert(S::BusinessProcessSpecifiedDocumentContextParameter(
+                        Some(deserializer),
+                    ));
+                    *self.state__ = S::GuidelineSpecifiedDocumentContextParameter(None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
-        fn handle_guideline_specified_document_context_parameter<'de, R>(
+        fn handle_guideline_specified_document_context_parameter<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::DocumentContextParameterType>,
             fallback: &mut Option<ExchangedDocumentContextTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use ExchangedDocumentContextTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                if self
-                    .guideline_specified_document_context_parameter
-                    .is_some()
-                {
-                    fallback . get_or_insert (ExchangedDocumentContextTypeDeserializerState :: GuidelineSpecifiedDocumentContextParameter (None)) ;
-                    *self.state__ = ExchangedDocumentContextTypeDeserializerState::Done__;
-                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                } else {
-                    * self . state__ = ExchangedDocumentContextTypeDeserializerState :: GuidelineSpecifiedDocumentContextParameter (None) ;
+                fallback.get_or_insert(S::GuidelineSpecifiedDocumentContextParameter(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
+                } else {
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_guideline_specified_document_context_parameter(data)?;
-                    *self.state__ = ExchangedDocumentContextTypeDeserializerState::Done__;
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::Done__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback . get_or_insert (ExchangedDocumentContextTypeDeserializerState :: GuidelineSpecifiedDocumentContextParameter (Some (deserializer))) ;
-                            *self.state__ = ExchangedDocumentContextTypeDeserializerState::Done__;
-                        }
-                        ElementHandlerOutput::Break { .. } => {
-                            * self . state__ = ExchangedDocumentContextTypeDeserializerState :: GuidelineSpecifiedDocumentContextParameter (Some (deserializer)) ;
-                        }
-                    }
-                    ret
+                    fallback.get_or_insert(S::GuidelineSpecifiedDocumentContextParameter(Some(
+                        deserializer,
+                    )));
+                    *self.state__ = S::Done__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
     }
     impl<'de> Deserializer<'de, super::ExchangedDocumentContextType>
         for ExchangedDocumentContextTypeDeserializer
     {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::ExchangedDocumentContextType>
-        where
-            R: DeserializeReader,
-        {
-            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        ) -> DeserializerResult<'de, super::ExchangedDocumentContextType> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::ExchangedDocumentContextType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::ExchangedDocumentContextType> {
             use ExchangedDocumentContextTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -1249,9 +1140,9 @@ pub mod quick_xml_deserialize {
                         S::BusinessProcessSpecifiedDocumentContextParameter(Some(deserializer)),
                         event,
                     ) => {
-                        let output = deserializer.next(reader, event)?;
+                        let output = deserializer.next(helper, event)?;
                         match self.handle_business_process_specified_document_context_parameter(
-                            reader,
+                            helper,
                             output,
                             &mut fallback,
                         )? {
@@ -1265,9 +1156,9 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::GuidelineSpecifiedDocumentContextParameter(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
+                        let output = deserializer.next(helper, event)?;
                         match self.handle_guideline_specified_document_context_parameter(
-                            reader,
+                            helper,
                             output,
                             &mut fallback,
                         )? {
@@ -1282,31 +1173,31 @@ pub mod quick_xml_deserialize {
                     }
                     (_, Event::End(_)) => {
                         if let Some(fallback) = fallback.take() {
-                            self.finish_state(reader, fallback)?;
+                            self.finish_state(helper, fallback)?;
                         }
                         return Ok(DeserializerOutput {
-                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            artifact: DeserializerArtifact::Data(self.finish(helper)?),
                             event: DeserializerEvent::None,
                             allow_any: false,
                         });
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        * self . state__ = ExchangedDocumentContextTypeDeserializerState :: BusinessProcessSpecifiedDocumentContextParameter (None) ;
+                        *self.state__ = S::BusinessProcessSpecifiedDocumentContextParameter(None);
                         event
                     }
                     (
                         S::BusinessProcessSpecifiedDocumentContextParameter(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_RAM),
                             b"BusinessProcessSpecifiedDocumentContextParameter",
                             false,
                         )?;
                         match self.handle_business_process_specified_document_context_parameter(
-                            reader,
+                            helper,
                             output,
                             &mut fallback,
                         )? {
@@ -1323,14 +1214,14 @@ pub mod quick_xml_deserialize {
                         S::GuidelineSpecifiedDocumentContextParameter(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_RAM),
                             b"GuidelineSpecifiedDocumentContextParameter",
                             false,
                         )?;
                         match self.handle_guideline_specified_document_context_parameter(
-                            reader,
+                            helper,
                             output,
                             &mut fallback,
                         )? {
@@ -1344,7 +1235,7 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Done__, event) => {
-                        fallback.get_or_insert(S::Done__);
+                        *self.state__ = S::Done__;
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
                     (state, event) => {
@@ -1362,25 +1253,22 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::ExchangedDocumentContextType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(
+            mut self,
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::ExchangedDocumentContextType, Error> {
             let state = replace(
                 &mut *self.state__,
                 ExchangedDocumentContextTypeDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::ExchangedDocumentContextType {
                 business_process_specified_document_context_parameter: self
                     .business_process_specified_document_context_parameter,
-                guideline_specified_document_context_parameter: self
-                    .guideline_specified_document_context_parameter
-                    .ok_or_else(|| {
-                        ErrorKind::MissingElement(
-                            "GuidelineSpecifiedDocumentContextParameter".into(),
-                        )
-                    })?,
+                guideline_specified_document_context_parameter: helper.finish_element(
+                    "GuidelineSpecifiedDocumentContextParameter",
+                    self.guideline_specified_document_context_parameter,
+                )?,
             })
         }
     }
@@ -1401,13 +1289,13 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl ExchangedDocumentTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
-            for attrib in filter_xmlns_attributes(bytes_start) {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib_checked(attrib)?;
+                helper.raise_unexpected_attrib_checked(&attrib)?;
             }
             Ok(Self {
                 id: None,
@@ -1416,22 +1304,19 @@ pub mod quick_xml_deserialize {
                 state__: Box::new(ExchangedDocumentTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: ExchangedDocumentTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             use ExchangedDocumentTypeDeserializerState as S;
             match state {
-                S::Id(Some(deserializer)) => self.store_id(deserializer.finish(reader)?)?,
+                S::Id(Some(deserializer)) => self.store_id(deserializer.finish(helper)?)?,
                 S::TypeCode(Some(deserializer)) => {
-                    self.store_type_code(deserializer.finish(reader)?)?
+                    self.store_type_code(deserializer.finish(helper)?)?
                 }
                 S::IssueDateTime(Some(deserializer)) => {
-                    self.store_issue_date_time(deserializer.finish(reader)?)?
+                    self.store_issue_date_time(deserializer.finish(helper)?)?
                 }
                 _ => (),
             }
@@ -1462,189 +1347,130 @@ pub mod quick_xml_deserialize {
             self.issue_date_time = Some(value);
             Ok(())
         }
-        fn handle_id<'de, R>(
+        fn handle_id<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::IdType>,
             fallback: &mut Option<ExchangedDocumentTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use ExchangedDocumentTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                if self.id.is_some() {
-                    fallback.get_or_insert(ExchangedDocumentTypeDeserializerState::Id(None));
-                    *self.state__ = ExchangedDocumentTypeDeserializerState::TypeCode(None);
-                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                } else {
-                    *self.state__ = ExchangedDocumentTypeDeserializerState::Id(None);
+                fallback.get_or_insert(S::Id(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
+                } else {
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_id(data)?;
-                    *self.state__ = ExchangedDocumentTypeDeserializerState::TypeCode(None);
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::TypeCode(None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback.get_or_insert(ExchangedDocumentTypeDeserializerState::Id(
-                                Some(deserializer),
-                            ));
-                            *self.state__ = ExchangedDocumentTypeDeserializerState::TypeCode(None);
-                        }
-                        ElementHandlerOutput::Break { .. } => {
-                            *self.state__ =
-                                ExchangedDocumentTypeDeserializerState::Id(Some(deserializer));
-                        }
-                    }
-                    ret
+                    fallback.get_or_insert(S::Id(Some(deserializer)));
+                    *self.state__ = S::TypeCode(None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
-        fn handle_type_code<'de, R>(
+        fn handle_type_code<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::DocumentCodeType>,
             fallback: &mut Option<ExchangedDocumentTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use ExchangedDocumentTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                if self.type_code.is_some() {
-                    fallback.get_or_insert(ExchangedDocumentTypeDeserializerState::TypeCode(None));
-                    *self.state__ = ExchangedDocumentTypeDeserializerState::IssueDateTime(None);
-                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                } else {
-                    *self.state__ = ExchangedDocumentTypeDeserializerState::TypeCode(None);
+                fallback.get_or_insert(S::TypeCode(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
+                } else {
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_type_code(data)?;
-                    *self.state__ = ExchangedDocumentTypeDeserializerState::IssueDateTime(None);
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::IssueDateTime(None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback.get_or_insert(
-                                ExchangedDocumentTypeDeserializerState::TypeCode(Some(
-                                    deserializer,
-                                )),
-                            );
-                            *self.state__ =
-                                ExchangedDocumentTypeDeserializerState::IssueDateTime(None);
-                        }
-                        ElementHandlerOutput::Break { .. } => {
-                            *self.state__ = ExchangedDocumentTypeDeserializerState::TypeCode(Some(
-                                deserializer,
-                            ));
-                        }
-                    }
-                    ret
+                    fallback.get_or_insert(S::TypeCode(Some(deserializer)));
+                    *self.state__ = S::IssueDateTime(None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
-        fn handle_issue_date_time<'de, R>(
+        fn handle_issue_date_time<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::DateTimeType>,
             fallback: &mut Option<ExchangedDocumentTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use ExchangedDocumentTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                if self.issue_date_time.is_some() {
-                    fallback
-                        .get_or_insert(ExchangedDocumentTypeDeserializerState::IssueDateTime(None));
-                    *self.state__ = ExchangedDocumentTypeDeserializerState::Done__;
-                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                } else {
-                    *self.state__ = ExchangedDocumentTypeDeserializerState::IssueDateTime(None);
+                fallback.get_or_insert(S::IssueDateTime(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
+                } else {
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_issue_date_time(data)?;
-                    *self.state__ = ExchangedDocumentTypeDeserializerState::Done__;
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::Done__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback.get_or_insert(
-                                ExchangedDocumentTypeDeserializerState::IssueDateTime(Some(
-                                    deserializer,
-                                )),
-                            );
-                            *self.state__ = ExchangedDocumentTypeDeserializerState::Done__;
-                        }
-                        ElementHandlerOutput::Break { .. } => {
-                            *self.state__ = ExchangedDocumentTypeDeserializerState::IssueDateTime(
-                                Some(deserializer),
-                            );
-                        }
-                    }
-                    ret
+                    fallback.get_or_insert(S::IssueDateTime(Some(deserializer)));
+                    *self.state__ = S::Done__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
     }
     impl<'de> Deserializer<'de, super::ExchangedDocumentType> for ExchangedDocumentTypeDeserializer {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::ExchangedDocumentType>
-        where
-            R: DeserializeReader,
-        {
-            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        ) -> DeserializerResult<'de, super::ExchangedDocumentType> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::ExchangedDocumentType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::ExchangedDocumentType> {
             use ExchangedDocumentTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -1654,8 +1480,8 @@ pub mod quick_xml_deserialize {
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
                     (S::Id(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_id(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_id(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -1666,8 +1492,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::TypeCode(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_type_code(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_type_code(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -1678,8 +1504,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::IssueDateTime(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_issue_date_time(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_issue_date_time(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -1691,27 +1517,27 @@ pub mod quick_xml_deserialize {
                     }
                     (_, Event::End(_)) => {
                         if let Some(fallback) = fallback.take() {
-                            self.finish_state(reader, fallback)?;
+                            self.finish_state(helper, fallback)?;
                         }
                         return Ok(DeserializerOutput {
-                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            artifact: DeserializerArtifact::Data(self.finish(helper)?),
                             event: DeserializerEvent::None,
                             allow_any: false,
                         });
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ = ExchangedDocumentTypeDeserializerState::Id(None);
+                        *self.state__ = S::Id(None);
                         event
                     }
                     (S::Id(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_RAM),
                             b"ID",
                             false,
                         )?;
-                        match self.handle_id(reader, output, &mut fallback)? {
+                        match self.handle_id(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -1722,13 +1548,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::TypeCode(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_RAM),
                             b"TypeCode",
                             false,
                         )?;
-                        match self.handle_type_code(reader, output, &mut fallback)? {
+                        match self.handle_type_code(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -1739,13 +1565,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::IssueDateTime(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_RAM),
                             b"IssueDateTime",
                             false,
                         )?;
-                        match self.handle_issue_date_time(reader, output, &mut fallback)? {
+                        match self.handle_issue_date_time(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -1756,7 +1582,7 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Done__, event) => {
-                        fallback.get_or_insert(S::Done__);
+                        *self.state__ = S::Done__;
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
                     (state, event) => {
@@ -1774,25 +1600,19 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::ExchangedDocumentType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(
+            mut self,
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::ExchangedDocumentType, Error> {
             let state = replace(
                 &mut *self.state__,
                 ExchangedDocumentTypeDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::ExchangedDocumentType {
-                id: self
-                    .id
-                    .ok_or_else(|| ErrorKind::MissingElement("ID".into()))?,
-                type_code: self
-                    .type_code
-                    .ok_or_else(|| ErrorKind::MissingElement("TypeCode".into()))?,
-                issue_date_time: self
-                    .issue_date_time
-                    .ok_or_else(|| ErrorKind::MissingElement("IssueDateTime".into()))?,
+                id: helper.finish_element("ID", self.id)?,
+                type_code: helper.finish_element("TypeCode", self.type_code)?,
+                issue_date_time: helper.finish_element("IssueDateTime", self.issue_date_time)?,
             })
         }
     }
@@ -1819,13 +1639,13 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl SupplyChainTradeTransactionTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
-            for attrib in filter_xmlns_attributes(bytes_start) {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib_checked(attrib)?;
+                helper.raise_unexpected_attrib_checked(&attrib)?;
             }
             Ok(Self {
                 applicable_header_trade_agreement: None,
@@ -1834,24 +1654,21 @@ pub mod quick_xml_deserialize {
                 state__: Box::new(SupplyChainTradeTransactionTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: SupplyChainTradeTransactionTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             use SupplyChainTradeTransactionTypeDeserializerState as S;
             match state {
                 S::ApplicableHeaderTradeAgreement(Some(deserializer)) => {
-                    self.store_applicable_header_trade_agreement(deserializer.finish(reader)?)?
+                    self.store_applicable_header_trade_agreement(deserializer.finish(helper)?)?
                 }
                 S::ApplicableHeaderTradeDelivery(Some(deserializer)) => {
-                    self.store_applicable_header_trade_delivery(deserializer.finish(reader)?)?
+                    self.store_applicable_header_trade_delivery(deserializer.finish(helper)?)?
                 }
                 S::ApplicableHeaderTradeSettlement(Some(deserializer)) => {
-                    self.store_applicable_header_trade_settlement(deserializer.finish(reader)?)?
+                    self.store_applicable_header_trade_settlement(deserializer.finish(helper)?)?
                 }
                 _ => (),
             }
@@ -1893,175 +1710,132 @@ pub mod quick_xml_deserialize {
             self.applicable_header_trade_settlement = Some(value);
             Ok(())
         }
-        fn handle_applicable_header_trade_agreement<'de, R>(
+        fn handle_applicable_header_trade_agreement<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::HeaderTradeAgreementType>,
             fallback: &mut Option<SupplyChainTradeTransactionTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use SupplyChainTradeTransactionTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                if self.applicable_header_trade_agreement.is_some() {
-                    fallback . get_or_insert (SupplyChainTradeTransactionTypeDeserializerState :: ApplicableHeaderTradeAgreement (None)) ;
-                    * self . state__ = SupplyChainTradeTransactionTypeDeserializerState :: ApplicableHeaderTradeDelivery (None) ;
-                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                } else {
-                    * self . state__ = SupplyChainTradeTransactionTypeDeserializerState :: ApplicableHeaderTradeAgreement (None) ;
+                fallback.get_or_insert(S::ApplicableHeaderTradeAgreement(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
+                } else {
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_applicable_header_trade_agreement(data)?;
-                    * self . state__ = SupplyChainTradeTransactionTypeDeserializerState :: ApplicableHeaderTradeDelivery (None) ;
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::ApplicableHeaderTradeDelivery(None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback . get_or_insert (SupplyChainTradeTransactionTypeDeserializerState :: ApplicableHeaderTradeAgreement (Some (deserializer))) ;
-                            * self . state__ = SupplyChainTradeTransactionTypeDeserializerState :: ApplicableHeaderTradeDelivery (None) ;
-                        }
-                        ElementHandlerOutput::Break { .. } => {
-                            * self . state__ = SupplyChainTradeTransactionTypeDeserializerState :: ApplicableHeaderTradeAgreement (Some (deserializer)) ;
-                        }
-                    }
-                    ret
+                    fallback.get_or_insert(S::ApplicableHeaderTradeAgreement(Some(deserializer)));
+                    *self.state__ = S::ApplicableHeaderTradeDelivery(None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
-        fn handle_applicable_header_trade_delivery<'de, R>(
+        fn handle_applicable_header_trade_delivery<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::HeaderTradeDeliveryType>,
             fallback: &mut Option<SupplyChainTradeTransactionTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use SupplyChainTradeTransactionTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                if self.applicable_header_trade_delivery.is_some() {
-                    fallback . get_or_insert (SupplyChainTradeTransactionTypeDeserializerState :: ApplicableHeaderTradeDelivery (None)) ;
-                    * self . state__ = SupplyChainTradeTransactionTypeDeserializerState :: ApplicableHeaderTradeSettlement (None) ;
-                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                } else {
-                    * self . state__ = SupplyChainTradeTransactionTypeDeserializerState :: ApplicableHeaderTradeDelivery (None) ;
+                fallback.get_or_insert(S::ApplicableHeaderTradeDelivery(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
+                } else {
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_applicable_header_trade_delivery(data)?;
-                    * self . state__ = SupplyChainTradeTransactionTypeDeserializerState :: ApplicableHeaderTradeSettlement (None) ;
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::ApplicableHeaderTradeSettlement(None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback . get_or_insert (SupplyChainTradeTransactionTypeDeserializerState :: ApplicableHeaderTradeDelivery (Some (deserializer))) ;
-                            * self . state__ = SupplyChainTradeTransactionTypeDeserializerState :: ApplicableHeaderTradeSettlement (None) ;
-                        }
-                        ElementHandlerOutput::Break { .. } => {
-                            * self . state__ = SupplyChainTradeTransactionTypeDeserializerState :: ApplicableHeaderTradeDelivery (Some (deserializer)) ;
-                        }
-                    }
-                    ret
+                    fallback.get_or_insert(S::ApplicableHeaderTradeDelivery(Some(deserializer)));
+                    *self.state__ = S::ApplicableHeaderTradeSettlement(None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
-        fn handle_applicable_header_trade_settlement<'de, R>(
+        fn handle_applicable_header_trade_settlement<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::HeaderTradeSettlementType>,
             fallback: &mut Option<SupplyChainTradeTransactionTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use SupplyChainTradeTransactionTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                if self.applicable_header_trade_settlement.is_some() {
-                    fallback . get_or_insert (SupplyChainTradeTransactionTypeDeserializerState :: ApplicableHeaderTradeSettlement (None)) ;
-                    *self.state__ = SupplyChainTradeTransactionTypeDeserializerState::Done__;
-                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                } else {
-                    * self . state__ = SupplyChainTradeTransactionTypeDeserializerState :: ApplicableHeaderTradeSettlement (None) ;
+                fallback.get_or_insert(S::ApplicableHeaderTradeSettlement(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
+                } else {
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_applicable_header_trade_settlement(data)?;
-                    *self.state__ = SupplyChainTradeTransactionTypeDeserializerState::Done__;
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::Done__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback . get_or_insert (SupplyChainTradeTransactionTypeDeserializerState :: ApplicableHeaderTradeSettlement (Some (deserializer))) ;
-                            *self.state__ =
-                                SupplyChainTradeTransactionTypeDeserializerState::Done__;
-                        }
-                        ElementHandlerOutput::Break { .. } => {
-                            * self . state__ = SupplyChainTradeTransactionTypeDeserializerState :: ApplicableHeaderTradeSettlement (Some (deserializer)) ;
-                        }
-                    }
-                    ret
+                    fallback.get_or_insert(S::ApplicableHeaderTradeSettlement(Some(deserializer)));
+                    *self.state__ = S::Done__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
     }
     impl<'de> Deserializer<'de, super::SupplyChainTradeTransactionType>
         for SupplyChainTradeTransactionTypeDeserializer
     {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::SupplyChainTradeTransactionType>
-        where
-            R: DeserializeReader,
-        {
-            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        ) -> DeserializerResult<'de, super::SupplyChainTradeTransactionType> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::SupplyChainTradeTransactionType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::SupplyChainTradeTransactionType> {
             use SupplyChainTradeTransactionTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -2071,9 +1845,9 @@ pub mod quick_xml_deserialize {
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
                     (S::ApplicableHeaderTradeAgreement(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
+                        let output = deserializer.next(helper, event)?;
                         match self.handle_applicable_header_trade_agreement(
-                            reader,
+                            helper,
                             output,
                             &mut fallback,
                         )? {
@@ -2087,9 +1861,9 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::ApplicableHeaderTradeDelivery(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
+                        let output = deserializer.next(helper, event)?;
                         match self.handle_applicable_header_trade_delivery(
-                            reader,
+                            helper,
                             output,
                             &mut fallback,
                         )? {
@@ -2103,9 +1877,9 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::ApplicableHeaderTradeSettlement(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
+                        let output = deserializer.next(helper, event)?;
                         match self.handle_applicable_header_trade_settlement(
-                            reader,
+                            helper,
                             output,
                             &mut fallback,
                         )? {
@@ -2120,31 +1894,31 @@ pub mod quick_xml_deserialize {
                     }
                     (_, Event::End(_)) => {
                         if let Some(fallback) = fallback.take() {
-                            self.finish_state(reader, fallback)?;
+                            self.finish_state(helper, fallback)?;
                         }
                         return Ok(DeserializerOutput {
-                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            artifact: DeserializerArtifact::Data(self.finish(helper)?),
                             event: DeserializerEvent::None,
                             allow_any: false,
                         });
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        * self . state__ = SupplyChainTradeTransactionTypeDeserializerState :: ApplicableHeaderTradeAgreement (None) ;
+                        *self.state__ = S::ApplicableHeaderTradeAgreement(None);
                         event
                     }
                     (
                         S::ApplicableHeaderTradeAgreement(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_RAM),
                             b"ApplicableHeaderTradeAgreement",
                             false,
                         )?;
                         match self.handle_applicable_header_trade_agreement(
-                            reader,
+                            helper,
                             output,
                             &mut fallback,
                         )? {
@@ -2161,14 +1935,14 @@ pub mod quick_xml_deserialize {
                         S::ApplicableHeaderTradeDelivery(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_RAM),
                             b"ApplicableHeaderTradeDelivery",
                             false,
                         )?;
                         match self.handle_applicable_header_trade_delivery(
-                            reader,
+                            helper,
                             output,
                             &mut fallback,
                         )? {
@@ -2185,14 +1959,14 @@ pub mod quick_xml_deserialize {
                         S::ApplicableHeaderTradeSettlement(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_RAM),
                             b"ApplicableHeaderTradeSettlement",
                             false,
                         )?;
                         match self.handle_applicable_header_trade_settlement(
-                            reader,
+                            helper,
                             output,
                             &mut fallback,
                         )? {
@@ -2206,7 +1980,7 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Done__, event) => {
-                        fallback.get_or_insert(S::Done__);
+                        *self.state__ = S::Done__;
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
                     (state, event) => {
@@ -2224,31 +1998,28 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::SupplyChainTradeTransactionType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(
+            mut self,
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::SupplyChainTradeTransactionType, Error> {
             let state = replace(
                 &mut *self.state__,
                 SupplyChainTradeTransactionTypeDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::SupplyChainTradeTransactionType {
-                applicable_header_trade_agreement: self
-                    .applicable_header_trade_agreement
-                    .ok_or_else(|| {
-                        ErrorKind::MissingElement("ApplicableHeaderTradeAgreement".into())
-                    })?,
-                applicable_header_trade_delivery: self
-                    .applicable_header_trade_delivery
-                    .ok_or_else(|| {
-                        ErrorKind::MissingElement("ApplicableHeaderTradeDelivery".into())
-                    })?,
-                applicable_header_trade_settlement: self
-                    .applicable_header_trade_settlement
-                    .ok_or_else(|| {
-                        ErrorKind::MissingElement("ApplicableHeaderTradeSettlement".into())
-                    })?,
+                applicable_header_trade_agreement: helper.finish_element(
+                    "ApplicableHeaderTradeAgreement",
+                    self.applicable_header_trade_agreement,
+                )?,
+                applicable_header_trade_delivery: helper.finish_element(
+                    "ApplicableHeaderTradeDelivery",
+                    self.applicable_header_trade_delivery,
+                )?,
+                applicable_header_trade_settlement: helper.finish_element(
+                    "ApplicableHeaderTradeSettlement",
+                    self.applicable_header_trade_settlement,
+                )?,
             })
         }
     }
@@ -2265,30 +2036,27 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl DocumentContextParameterTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
-            for attrib in filter_xmlns_attributes(bytes_start) {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib_checked(attrib)?;
+                helper.raise_unexpected_attrib_checked(&attrib)?;
             }
             Ok(Self {
                 id: None,
                 state__: Box::new(DocumentContextParameterTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: DocumentContextParameterTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             use DocumentContextParameterTypeDeserializerState as S;
             match state {
-                S::Id(Some(deserializer)) => self.store_id(deserializer.finish(reader)?)?,
+                S::Id(Some(deserializer)) => self.store_id(deserializer.finish(helper)?)?,
                 _ => (),
             }
             Ok(())
@@ -2300,82 +2068,58 @@ pub mod quick_xml_deserialize {
             self.id = Some(value);
             Ok(())
         }
-        fn handle_id<'de, R>(
+        fn handle_id<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::IdType>,
             fallback: &mut Option<DocumentContextParameterTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use DocumentContextParameterTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                if self.id.is_some() {
-                    fallback.get_or_insert(DocumentContextParameterTypeDeserializerState::Id(None));
-                    *self.state__ = DocumentContextParameterTypeDeserializerState::Done__;
-                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                } else {
-                    *self.state__ = DocumentContextParameterTypeDeserializerState::Id(None);
+                fallback.get_or_insert(S::Id(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
+                } else {
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_id(data)?;
-                    *self.state__ = DocumentContextParameterTypeDeserializerState::Done__;
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::Done__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback.get_or_insert(
-                                DocumentContextParameterTypeDeserializerState::Id(Some(
-                                    deserializer,
-                                )),
-                            );
-                            *self.state__ = DocumentContextParameterTypeDeserializerState::Done__;
-                        }
-                        ElementHandlerOutput::Break { .. } => {
-                            *self.state__ = DocumentContextParameterTypeDeserializerState::Id(
-                                Some(deserializer),
-                            );
-                        }
-                    }
-                    ret
+                    fallback.get_or_insert(S::Id(Some(deserializer)));
+                    *self.state__ = S::Done__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
     }
     impl<'de> Deserializer<'de, super::DocumentContextParameterType>
         for DocumentContextParameterTypeDeserializer
     {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::DocumentContextParameterType>
-        where
-            R: DeserializeReader,
-        {
-            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        ) -> DeserializerResult<'de, super::DocumentContextParameterType> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::DocumentContextParameterType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::DocumentContextParameterType> {
             use DocumentContextParameterTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -2385,8 +2129,8 @@ pub mod quick_xml_deserialize {
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
                     (S::Id(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_id(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_id(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -2398,27 +2142,27 @@ pub mod quick_xml_deserialize {
                     }
                     (_, Event::End(_)) => {
                         if let Some(fallback) = fallback.take() {
-                            self.finish_state(reader, fallback)?;
+                            self.finish_state(helper, fallback)?;
                         }
                         return Ok(DeserializerOutput {
-                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            artifact: DeserializerArtifact::Data(self.finish(helper)?),
                             event: DeserializerEvent::None,
                             allow_any: false,
                         });
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ = DocumentContextParameterTypeDeserializerState::Id(None);
+                        *self.state__ = S::Id(None);
                         event
                     }
                     (S::Id(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_RAM),
                             b"ID",
                             false,
                         )?;
-                        match self.handle_id(reader, output, &mut fallback)? {
+                        match self.handle_id(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -2429,7 +2173,7 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Done__, event) => {
-                        fallback.get_or_insert(S::Done__);
+                        *self.state__ = S::Done__;
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
                     (state, event) => {
@@ -2447,19 +2191,17 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::DocumentContextParameterType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(
+            mut self,
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::DocumentContextParameterType, Error> {
             let state = replace(
                 &mut *self.state__,
                 DocumentContextParameterTypeDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::DocumentContextParameterType {
-                id: self
-                    .id
-                    .ok_or_else(|| ErrorKind::MissingElement("ID".into()))?,
+                id: helper.finish_element("ID", self.id)?,
             })
         }
     }
@@ -2476,20 +2218,20 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl IdTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
             let mut scheme_id: Option<String> = None;
-            for attrib in filter_xmlns_attributes(bytes_start) {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    reader.resolve_local_name(attrib.key, &super::NS_UDT),
+                    helper.resolve_local_name(attrib.key, &super::NS_UDT),
                     Some(b"schemeID")
                 ) {
-                    reader.read_attrib(&mut scheme_id, b"schemeID", &attrib.value)?;
+                    helper.read_attrib(&mut scheme_id, b"schemeID", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib_checked(attrib)?;
+                    helper.raise_unexpected_attrib_checked(&attrib)?;
                 }
             }
             Ok(Self {
@@ -2498,16 +2240,13 @@ pub mod quick_xml_deserialize {
                 state__: Box::new(IdTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: IdTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             if let IdTypeDeserializerState::Content__(deserializer) = state {
-                self.store_content(deserializer.finish(reader)?)?;
+                self.store_content(deserializer.finish(helper)?)?;
             }
             Ok(())
         }
@@ -2518,14 +2257,11 @@ pub mod quick_xml_deserialize {
             self.content = Some(value);
             Ok(())
         }
-        fn handle_content<'de, R>(
+        fn handle_content<'de>(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, String>,
-        ) -> DeserializerResult<'de, super::IdType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::IdType> {
             use IdTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
@@ -2540,7 +2276,7 @@ pub mod quick_xml_deserialize {
                 }),
                 DeserializerArtifact::Data(data) => {
                     self.store_content(data)?;
-                    let data = self.finish(reader)?;
+                    let data = self.finish(helper)?;
                     Ok(DeserializerOutput {
                         artifact: DeserializerArtifact::Data(data),
                         event,
@@ -2559,10 +2295,10 @@ pub mod quick_xml_deserialize {
         }
     }
     impl<'de> Deserializer<'de, super::IdType> for IdTypeDeserializer {
-        fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, super::IdType>
-        where
-            R: DeserializeReader,
-        {
+        fn init(
+            helper: &mut DeserializeHelper,
+            event: Event<'de>,
+        ) -> DeserializerResult<'de, super::IdType> {
             let (Event::Start(x) | Event::Empty(x)) = &event else {
                 return Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::None,
@@ -2570,38 +2306,32 @@ pub mod quick_xml_deserialize {
                     allow_any: false,
                 });
             };
-            Self::from_bytes_start(reader, x)?.next(reader, event)
+            Self::from_bytes_start(helper, x)?.next(helper, event)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::IdType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::IdType> {
             use IdTypeDeserializerState as S;
             match replace(&mut *self.state__, S::Unknown__) {
                 S::Unknown__ => unreachable!(),
                 S::Init__ => {
-                    let output = ContentDeserializer::init(reader, event)?;
-                    self.handle_content(reader, output)
+                    let output = ContentDeserializer::init(helper, event)?;
+                    self.handle_content(helper, output)
                 }
                 S::Content__(deserializer) => {
-                    let output = deserializer.next(reader, event)?;
-                    self.handle_content(reader, output)
+                    let output = deserializer.next(helper, event)?;
+                    self.handle_content(helper, output)
                 }
             }
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::IdType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(mut self, helper: &mut DeserializeHelper) -> Result<super::IdType, Error> {
             let state = replace(&mut *self.state__, IdTypeDeserializerState::Unknown__);
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::IdType {
                 scheme_id: self.scheme_id,
-                content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                content: helper.finish_content(self.content)?,
             })
         }
     }
@@ -2617,29 +2347,26 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl DocumentCodeTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
-            for attrib in filter_xmlns_attributes(bytes_start) {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib_checked(attrib)?;
+                helper.raise_unexpected_attrib_checked(&attrib)?;
             }
             Ok(Self {
                 content: None,
                 state__: Box::new(DocumentCodeTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: DocumentCodeTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             if let DocumentCodeTypeDeserializerState::Content__(deserializer) = state {
-                self.store_content(deserializer.finish(reader)?)?;
+                self.store_content(deserializer.finish(helper)?)?;
             }
             Ok(())
         }
@@ -2650,14 +2377,11 @@ pub mod quick_xml_deserialize {
             self.content = Some(value);
             Ok(())
         }
-        fn handle_content<'de, R>(
+        fn handle_content<'de>(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, String>,
-        ) -> DeserializerResult<'de, super::DocumentCodeType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::DocumentCodeType> {
             use DocumentCodeTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
@@ -2672,7 +2396,7 @@ pub mod quick_xml_deserialize {
                 }),
                 DeserializerArtifact::Data(data) => {
                     self.store_content(data)?;
-                    let data = self.finish(reader)?;
+                    let data = self.finish(helper)?;
                     Ok(DeserializerOutput {
                         artifact: DeserializerArtifact::Data(data),
                         event,
@@ -2691,13 +2415,10 @@ pub mod quick_xml_deserialize {
         }
     }
     impl<'de> Deserializer<'de, super::DocumentCodeType> for DocumentCodeTypeDeserializer {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::DocumentCodeType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::DocumentCodeType> {
             let (Event::Start(x) | Event::Empty(x)) = &event else {
                 return Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::None,
@@ -2705,40 +2426,37 @@ pub mod quick_xml_deserialize {
                     allow_any: false,
                 });
             };
-            Self::from_bytes_start(reader, x)?.next(reader, event)
+            Self::from_bytes_start(helper, x)?.next(helper, event)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::DocumentCodeType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::DocumentCodeType> {
             use DocumentCodeTypeDeserializerState as S;
             match replace(&mut *self.state__, S::Unknown__) {
                 S::Unknown__ => unreachable!(),
                 S::Init__ => {
-                    let output = ContentDeserializer::init(reader, event)?;
-                    self.handle_content(reader, output)
+                    let output = ContentDeserializer::init(helper, event)?;
+                    self.handle_content(helper, output)
                 }
                 S::Content__(deserializer) => {
-                    let output = deserializer.next(reader, event)?;
-                    self.handle_content(reader, output)
+                    let output = deserializer.next(helper, event)?;
+                    self.handle_content(helper, output)
                 }
             }
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::DocumentCodeType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(
+            mut self,
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::DocumentCodeType, Error> {
             let state = replace(
                 &mut *self.state__,
                 DocumentCodeTypeDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::DocumentCodeType {
-                content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                content: helper.finish_content(self.content)?,
             })
         }
     }
@@ -2755,29 +2473,26 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl DateTimeTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
-            for attrib in filter_xmlns_attributes(bytes_start) {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib_checked(attrib)?;
+                helper.raise_unexpected_attrib_checked(&attrib)?;
             }
             Ok(Self {
                 content: None,
                 state__: Box::new(DateTimeTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: DateTimeTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             if let DateTimeTypeDeserializerState::Content__(deserializer) = state {
-                self.store_content(deserializer.finish(reader)?)?;
+                self.store_content(deserializer.finish(helper)?)?;
             }
             Ok(())
         }
@@ -2788,58 +2503,51 @@ pub mod quick_xml_deserialize {
             self.content = Some(value);
             Ok(())
         }
-        fn handle_content<'de, R>(
+        fn handle_content<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::DateTimeTypeContent>,
             fallback: &mut Option<DateTimeTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use DateTimeTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = fallback
-                    .take()
-                    .unwrap_or(DateTimeTypeDeserializerState::Next__);
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                *self.state__ = fallback.take().unwrap_or(S::Next__);
+                return Ok(ElementHandlerOutput::from_event_end(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_content(data)?;
-                    *self.state__ = DateTimeTypeDeserializerState::Next__;
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::Next__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = DateTimeTypeDeserializerState::Content__(deserializer);
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::Content__(deserializer);
+                    Ok(ElementHandlerOutput::from_event_end(event, allow_any))
                 }
-            })
+            }
         }
     }
     impl<'de> Deserializer<'de, super::DateTimeType> for DateTimeTypeDeserializer {
-        fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, super::DateTimeType>
-        where
-            R: DeserializeReader,
-        {
-            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
-        }
-        fn next<R>(
-            mut self,
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::DateTimeType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::DateTimeType> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        }
+        fn next(
+            mut self,
+            helper: &mut DeserializeHelper,
+            event: Event<'de>,
+        ) -> DeserializerResult<'de, super::DateTimeType> {
             use DateTimeTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -2848,8 +2556,8 @@ pub mod quick_xml_deserialize {
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
                     (S::Content__(deserializer), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_content(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
@@ -2858,7 +2566,7 @@ pub mod quick_xml_deserialize {
                     }
                     (_, Event::End(_)) => {
                         return Ok(DeserializerOutput {
-                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            artifact: DeserializerArtifact::Data(self.finish(helper)?),
                             event: DeserializerEvent::None,
                             allow_any: false,
                         });
@@ -2866,10 +2574,8 @@ pub mod quick_xml_deserialize {
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
                         let output =
-                            <super::DateTimeTypeContent as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                        match self.handle_content(reader, output, &mut fallback)? {
+                            <super::DateTimeTypeContent as WithDeserializer>::init(helper, event)?;
+                        match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
@@ -2878,6 +2584,9 @@ pub mod quick_xml_deserialize {
                     }
                 }
             };
+            if let Some(fallback) = fallback {
+                *self.state__ = fallback;
+            }
             let artifact = DeserializerArtifact::Deserializer(self);
             Ok(DeserializerOutput {
                 artifact,
@@ -2885,14 +2594,11 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::DateTimeType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(mut self, helper: &mut DeserializeHelper) -> Result<super::DateTimeType, Error> {
             let state = replace(&mut *self.state__, DateTimeTypeDeserializerState::Unknown__);
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::DateTimeType {
-                content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                content: helper.finish_content(self.content)?,
             })
         }
     }
@@ -2906,60 +2612,49 @@ pub mod quick_xml_deserialize {
         DateTimeString(
             Option<super::DateTimeTypeDateTimeStringType>,
             Option<<super::DateTimeTypeDateTimeStringType as WithDeserializer>::Deserializer>,
+            Option<<super::DateTimeTypeDateTimeStringType as WithDeserializer>::Deserializer>,
         ),
         Done__(super::DateTimeTypeContent),
         Unknown__,
     }
     impl DateTimeTypeContentDeserializer {
-        fn find_suitable<'de, R>(
+        fn find_suitable<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-            fallback: &mut Option<DateTimeTypeContentDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if matches!(
-                    reader.resolve_local_name(x.name(), &super::NS_UDT),
+                    helper.resolve_local_name(x.name(), &super::NS_UDT),
                     Some(b"DateTimeString")
                 ) {
-                    let output = < super :: DateTimeTypeDateTimeStringType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                    return self.handle_date_time_string(
-                        reader,
-                        Default::default(),
-                        output,
-                        &mut *fallback,
-                    );
+                    let output = <super::DateTimeTypeDateTimeStringType as WithDeserializer>::init(
+                        helper, event,
+                    )?;
+                    return self.handle_date_time_string(helper, Default::default(), None, output);
                 }
             }
-            *self.state__ = fallback
-                .take()
-                .unwrap_or(DateTimeTypeContentDeserializerState::Init__);
+            *self.state__ = DateTimeTypeContentDeserializerState::Init__;
             Ok(ElementHandlerOutput::return_to_parent(event, false))
         }
-        fn finish_state<R>(
-            reader: &R,
+        fn finish_state(
+            helper: &mut DeserializeHelper,
             state: DateTimeTypeContentDeserializerState,
-        ) -> Result<super::DateTimeTypeContent, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<super::DateTimeTypeContent, Error> {
             use DateTimeTypeContentDeserializerState as S;
             match state {
-                S::Unknown__ => unreachable!(),
                 S::Init__ => Err(ErrorKind::MissingContent.into()),
-                S::DateTimeString(mut values, deserializer) => {
+                S::DateTimeString(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
-                        let value = deserializer.finish(reader)?;
+                        let value = deserializer.finish(helper)?;
                         Self::store_date_time_string(&mut values, value)?;
                     }
                     Ok(super::DateTimeTypeContent::DateTimeString(
-                        values.ok_or_else(|| ErrorKind::MissingElement("DateTimeString".into()))?,
+                        helper.finish_element("DateTimeString", values)?,
                     ))
                 }
                 S::Done__(data) => Ok(data),
+                _ => unreachable!(),
             }
         }
         fn store_date_time_string(
@@ -2974,83 +2669,52 @@ pub mod quick_xml_deserialize {
             *values = Some(value);
             Ok(())
         }
-        fn handle_date_time_string<'de, R>(
+        fn handle_date_time_string<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             mut values: Option<super::DateTimeTypeDateTimeStringType>,
+            fallback: Option<
+                <super::DateTimeTypeDateTimeStringType as WithDeserializer>::Deserializer,
+            >,
             output: DeserializerOutput<'de, super::DateTimeTypeDateTimeStringType>,
-            fallback: &mut Option<DateTimeTypeContentDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use DateTimeTypeContentDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = match fallback.take() {
-                    None if values.is_none() => {
-                        *self.state__ = DateTimeTypeContentDeserializerState::Init__;
-                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                    }
-                    None => DateTimeTypeContentDeserializerState::DateTimeString(values, None),
-                    Some(DateTimeTypeContentDeserializerState::DateTimeString(
-                        _,
-                        Some(deserializer),
-                    )) => DateTimeTypeContentDeserializerState::DateTimeString(
-                        values,
-                        Some(deserializer),
-                    ),
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
-            match fallback.take() {
-                None => (),
-                Some(DateTimeTypeContentDeserializerState::DateTimeString(
-                    _,
-                    Some(deserializer),
-                )) => {
-                    let data = deserializer.finish(reader)?;
-                    Self::store_date_time_string(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_date_time_string(&mut values, data)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     Self::store_date_time_string(&mut values, data)?;
-                    let data = Self::finish_state(
-                        reader,
-                        DateTimeTypeContentDeserializerState::DateTimeString(values, None),
-                    )?;
-                    *self.state__ = DateTimeTypeContentDeserializerState::Done__(data);
-                    ElementHandlerOutput::Break { event, allow_any }
+                    let data = Self::finish_state(helper, S::DateTimeString(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = DateTimeTypeContentDeserializerState::DateTimeString(
-                        values,
-                        Some(deserializer),
-                    );
-                    ElementHandlerOutput::from_event_end(event, allow_any)
+                    *self.state__ = S::DateTimeString(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
                 }
-            })
+            }
         }
     }
     impl<'de> Deserializer<'de, super::DateTimeTypeContent> for DateTimeTypeContentDeserializer {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::DateTimeTypeContent>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::DateTimeTypeContent> {
             let deserializer = Self {
                 state__: Box::new(DateTimeTypeContentDeserializerState::Init__),
             };
-            let mut output = deserializer.next(reader, event)?;
+            let mut output = deserializer.next(helper, event)?;
             output.artifact = match output.artifact {
                 DeserializerArtifact::Deserializer(x)
                     if matches!(&*x.state__, DateTimeTypeContentDeserializerState::Init__) =>
@@ -3061,24 +2725,20 @@ pub mod quick_xml_deserialize {
             };
             Ok(output)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::DateTimeTypeContent>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::DateTimeTypeContent> {
             use DateTimeTypeContentDeserializerState as S;
             let mut event = event;
-            let mut fallback = None;
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
-                    (S::DateTimeString(values, Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_date_time_string(reader, values, output, &mut fallback)? {
+                    (S::DateTimeString(values, fallback, Some(deserializer)), event) => {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_date_time_string(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
@@ -3088,47 +2748,47 @@ pub mod quick_xml_deserialize {
                     (state, event @ Event::End(_)) => {
                         return Ok(DeserializerOutput {
                             artifact: DeserializerArtifact::Data(Self::finish_state(
-                                reader, state,
+                                helper, state,
                             )?),
                             event: DeserializerEvent::Continue(event),
                             allow_any: false,
                         });
                     }
-                    (S::Init__, event) => match self.find_suitable(reader, event, &mut fallback)? {
+                    (S::Init__, event) => match self.find_suitable(helper, event)? {
                         ElementHandlerOutput::Break { event, allow_any } => {
                             break (event, allow_any)
                         }
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
                     (
-                        S::DateTimeString(values, None),
+                        S::DateTimeString(values, fallback, None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UDT),
                             b"DateTimeString",
                             false,
                         )?;
-                        match self.handle_date_time_string(reader, values, output, &mut fallback)? {
+                        match self.handle_date_time_string(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (s @ S::Done__(_), event) => {
-                        *self.state__ = s;
+                    (state @ S::Done__(_), event) => {
+                        *self.state__ = state;
                         break (DeserializerEvent::Continue(event), false);
                     }
                     (state, event) => {
                         *self.state__ = state;
-                        break (DeserializerEvent::Break(event), false);
+                        break (DeserializerEvent::Continue(event), false);
                     }
                 }
             };
             let artifact = if matches!(&*self.state__, S::Done__(_)) {
-                DeserializerArtifact::Data(self.finish(reader)?)
+                DeserializerArtifact::Data(self.finish(helper)?)
             } else {
                 DeserializerArtifact::Deserializer(self)
             };
@@ -3138,11 +2798,11 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(self, reader: &R) -> Result<super::DateTimeTypeContent, Error>
-        where
-            R: DeserializeReader,
-        {
-            Self::finish_state(reader, *self.state__)
+        fn finish(
+            self,
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::DateTimeTypeContent, Error> {
+            Self::finish_state(helper, *self.state__)
         }
     }
     #[derive(Debug)]
@@ -3166,13 +2826,13 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl HeaderTradeAgreementTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
-            for attrib in filter_xmlns_attributes(bytes_start) {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib_checked(attrib)?;
+                helper.raise_unexpected_attrib_checked(&attrib)?;
             }
             Ok(Self {
                 buyer_reference: None,
@@ -3182,27 +2842,24 @@ pub mod quick_xml_deserialize {
                 state__: Box::new(HeaderTradeAgreementTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: HeaderTradeAgreementTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             use HeaderTradeAgreementTypeDeserializerState as S;
             match state {
                 S::BuyerReference(Some(deserializer)) => {
-                    self.store_buyer_reference(deserializer.finish(reader)?)?
+                    self.store_buyer_reference(deserializer.finish(helper)?)?
                 }
                 S::SellerTradeParty(Some(deserializer)) => {
-                    self.store_seller_trade_party(deserializer.finish(reader)?)?
+                    self.store_seller_trade_party(deserializer.finish(helper)?)?
                 }
                 S::BuyerTradeParty(Some(deserializer)) => {
-                    self.store_buyer_trade_party(deserializer.finish(reader)?)?
+                    self.store_buyer_trade_party(deserializer.finish(helper)?)?
                 }
                 S::BuyerOrderReferencedDocument(Some(deserializer)) => {
-                    self.store_buyer_order_referenced_document(deserializer.finish(reader)?)?
+                    self.store_buyer_order_referenced_document(deserializer.finish(helper)?)?
                 }
                 _ => (),
             }
@@ -3247,255 +2904,163 @@ pub mod quick_xml_deserialize {
             self.buyer_order_referenced_document = Some(value);
             Ok(())
         }
-        fn handle_buyer_reference<'de, R>(
+        fn handle_buyer_reference<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::TextType>,
             fallback: &mut Option<HeaderTradeAgreementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use HeaderTradeAgreementTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(HeaderTradeAgreementTypeDeserializerState::BuyerReference(
-                    None,
-                ));
-                *self.state__ = HeaderTradeAgreementTypeDeserializerState::SellerTradeParty(None);
+                fallback.get_or_insert(S::BuyerReference(None));
+                *self.state__ = S::SellerTradeParty(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_buyer_reference(data)?;
-                    *self.state__ =
-                        HeaderTradeAgreementTypeDeserializerState::SellerTradeParty(None);
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::SellerTradeParty(None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback.get_or_insert(
-                                HeaderTradeAgreementTypeDeserializerState::BuyerReference(Some(
-                                    deserializer,
-                                )),
-                            );
-                            *self.state__ =
-                                HeaderTradeAgreementTypeDeserializerState::SellerTradeParty(None);
-                        }
-                        ElementHandlerOutput::Break { .. } => {
-                            *self.state__ =
-                                HeaderTradeAgreementTypeDeserializerState::BuyerReference(Some(
-                                    deserializer,
-                                ));
-                        }
-                    }
-                    ret
+                    fallback.get_or_insert(S::BuyerReference(Some(deserializer)));
+                    *self.state__ = S::SellerTradeParty(None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
-        fn handle_seller_trade_party<'de, R>(
+        fn handle_seller_trade_party<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::TradePartyType>,
             fallback: &mut Option<HeaderTradeAgreementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use HeaderTradeAgreementTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                if self.seller_trade_party.is_some() {
-                    fallback.get_or_insert(
-                        HeaderTradeAgreementTypeDeserializerState::SellerTradeParty(None),
-                    );
-                    *self.state__ =
-                        HeaderTradeAgreementTypeDeserializerState::BuyerTradeParty(None);
-                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                } else {
-                    *self.state__ =
-                        HeaderTradeAgreementTypeDeserializerState::SellerTradeParty(None);
+                fallback.get_or_insert(S::SellerTradeParty(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
+                } else {
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_seller_trade_party(data)?;
-                    *self.state__ =
-                        HeaderTradeAgreementTypeDeserializerState::BuyerTradeParty(None);
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::BuyerTradeParty(None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback.get_or_insert(
-                                HeaderTradeAgreementTypeDeserializerState::SellerTradeParty(Some(
-                                    deserializer,
-                                )),
-                            );
-                            *self.state__ =
-                                HeaderTradeAgreementTypeDeserializerState::BuyerTradeParty(None);
-                        }
-                        ElementHandlerOutput::Break { .. } => {
-                            *self.state__ =
-                                HeaderTradeAgreementTypeDeserializerState::SellerTradeParty(Some(
-                                    deserializer,
-                                ));
-                        }
-                    }
-                    ret
+                    fallback.get_or_insert(S::SellerTradeParty(Some(deserializer)));
+                    *self.state__ = S::BuyerTradeParty(None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
-        fn handle_buyer_trade_party<'de, R>(
+        fn handle_buyer_trade_party<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::TradePartyType>,
             fallback: &mut Option<HeaderTradeAgreementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use HeaderTradeAgreementTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                if self.buyer_trade_party.is_some() {
-                    fallback.get_or_insert(
-                        HeaderTradeAgreementTypeDeserializerState::BuyerTradeParty(None),
-                    );
-                    *self.state__ =
-                        HeaderTradeAgreementTypeDeserializerState::BuyerOrderReferencedDocument(
-                            None,
-                        );
-                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                } else {
-                    *self.state__ =
-                        HeaderTradeAgreementTypeDeserializerState::BuyerTradeParty(None);
+                fallback.get_or_insert(S::BuyerTradeParty(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
+                } else {
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_buyer_trade_party(data)?;
-                    *self.state__ =
-                        HeaderTradeAgreementTypeDeserializerState::BuyerOrderReferencedDocument(
-                            None,
-                        );
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::BuyerOrderReferencedDocument(None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback.get_or_insert(
-                                HeaderTradeAgreementTypeDeserializerState::BuyerTradeParty(Some(
-                                    deserializer,
-                                )),
-                            );
-                            * self . state__ = HeaderTradeAgreementTypeDeserializerState :: BuyerOrderReferencedDocument (None) ;
-                        }
-                        ElementHandlerOutput::Break { .. } => {
-                            *self.state__ =
-                                HeaderTradeAgreementTypeDeserializerState::BuyerTradeParty(Some(
-                                    deserializer,
-                                ));
-                        }
-                    }
-                    ret
+                    fallback.get_or_insert(S::BuyerTradeParty(Some(deserializer)));
+                    *self.state__ = S::BuyerOrderReferencedDocument(None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
-        fn handle_buyer_order_referenced_document<'de, R>(
+        fn handle_buyer_order_referenced_document<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::ReferencedDocumentType>,
             fallback: &mut Option<HeaderTradeAgreementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use HeaderTradeAgreementTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(
-                    HeaderTradeAgreementTypeDeserializerState::BuyerOrderReferencedDocument(None),
-                );
-                *self.state__ = HeaderTradeAgreementTypeDeserializerState::Done__;
+                fallback.get_or_insert(S::BuyerOrderReferencedDocument(None));
+                *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_buyer_order_referenced_document(data)?;
-                    *self.state__ = HeaderTradeAgreementTypeDeserializerState::Done__;
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::Done__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback . get_or_insert (HeaderTradeAgreementTypeDeserializerState :: BuyerOrderReferencedDocument (Some (deserializer))) ;
-                            *self.state__ = HeaderTradeAgreementTypeDeserializerState::Done__;
-                        }
-                        ElementHandlerOutput::Break { .. } => {
-                            * self . state__ = HeaderTradeAgreementTypeDeserializerState :: BuyerOrderReferencedDocument (Some (deserializer)) ;
-                        }
-                    }
-                    ret
+                    fallback.get_or_insert(S::BuyerOrderReferencedDocument(Some(deserializer)));
+                    *self.state__ = S::Done__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
     }
     impl<'de> Deserializer<'de, super::HeaderTradeAgreementType>
         for HeaderTradeAgreementTypeDeserializer
     {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::HeaderTradeAgreementType>
-        where
-            R: DeserializeReader,
-        {
-            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        ) -> DeserializerResult<'de, super::HeaderTradeAgreementType> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::HeaderTradeAgreementType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::HeaderTradeAgreementType> {
             use HeaderTradeAgreementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -3505,8 +3070,8 @@ pub mod quick_xml_deserialize {
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
                     (S::BuyerReference(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_buyer_reference(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_buyer_reference(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -3517,8 +3082,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::SellerTradeParty(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_seller_trade_party(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_seller_trade_party(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -3529,8 +3094,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::BuyerTradeParty(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_buyer_trade_party(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_buyer_trade_party(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -3541,9 +3106,9 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::BuyerOrderReferencedDocument(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
+                        let output = deserializer.next(helper, event)?;
                         match self.handle_buyer_order_referenced_document(
-                            reader,
+                            helper,
                             output,
                             &mut fallback,
                         )? {
@@ -3558,28 +3123,27 @@ pub mod quick_xml_deserialize {
                     }
                     (_, Event::End(_)) => {
                         if let Some(fallback) = fallback.take() {
-                            self.finish_state(reader, fallback)?;
+                            self.finish_state(helper, fallback)?;
                         }
                         return Ok(DeserializerOutput {
-                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            artifact: DeserializerArtifact::Data(self.finish(helper)?),
                             event: DeserializerEvent::None,
                             allow_any: false,
                         });
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ =
-                            HeaderTradeAgreementTypeDeserializerState::BuyerReference(None);
+                        *self.state__ = S::BuyerReference(None);
                         event
                     }
                     (S::BuyerReference(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_RAM),
                             b"BuyerReference",
                             false,
                         )?;
-                        match self.handle_buyer_reference(reader, output, &mut fallback)? {
+                        match self.handle_buyer_reference(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -3590,13 +3154,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::SellerTradeParty(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_RAM),
                             b"SellerTradeParty",
                             false,
                         )?;
-                        match self.handle_seller_trade_party(reader, output, &mut fallback)? {
+                        match self.handle_seller_trade_party(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -3607,13 +3171,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::BuyerTradeParty(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_RAM),
                             b"BuyerTradeParty",
                             false,
                         )?;
-                        match self.handle_buyer_trade_party(reader, output, &mut fallback)? {
+                        match self.handle_buyer_trade_party(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -3627,14 +3191,14 @@ pub mod quick_xml_deserialize {
                         S::BuyerOrderReferencedDocument(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_RAM),
                             b"BuyerOrderReferencedDocument",
                             false,
                         )?;
                         match self.handle_buyer_order_referenced_document(
-                            reader,
+                            helper,
                             output,
                             &mut fallback,
                         )? {
@@ -3648,7 +3212,7 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Done__, event) => {
-                        fallback.get_or_insert(S::Done__);
+                        *self.state__ = S::Done__;
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
                     (state, event) => {
@@ -3666,23 +3230,21 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::HeaderTradeAgreementType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(
+            mut self,
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::HeaderTradeAgreementType, Error> {
             let state = replace(
                 &mut *self.state__,
                 HeaderTradeAgreementTypeDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::HeaderTradeAgreementType {
                 buyer_reference: self.buyer_reference,
-                seller_trade_party: self
-                    .seller_trade_party
-                    .ok_or_else(|| ErrorKind::MissingElement("SellerTradeParty".into()))?,
-                buyer_trade_party: self
-                    .buyer_trade_party
-                    .ok_or_else(|| ErrorKind::MissingElement("BuyerTradeParty".into()))?,
+                seller_trade_party: helper
+                    .finish_element("SellerTradeParty", self.seller_trade_party)?,
+                buyer_trade_party: helper
+                    .finish_element("BuyerTradeParty", self.buyer_trade_party)?,
                 buyer_order_referenced_document: self.buyer_order_referenced_document,
             })
         }
@@ -3697,52 +3259,43 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl HeaderTradeDeliveryTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
-            for attrib in filter_xmlns_attributes(bytes_start) {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib_checked(attrib)?;
+                helper.raise_unexpected_attrib_checked(&attrib)?;
             }
             Ok(Self {
                 state__: Box::new(HeaderTradeDeliveryTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: HeaderTradeDeliveryTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             Ok(())
         }
     }
     impl<'de> Deserializer<'de, super::HeaderTradeDeliveryType>
         for HeaderTradeDeliveryTypeDeserializer
     {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::HeaderTradeDeliveryType>
-        where
-            R: DeserializeReader,
-        {
-            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        ) -> DeserializerResult<'de, super::HeaderTradeDeliveryType> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::HeaderTradeDeliveryType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::HeaderTradeDeliveryType> {
             if let Event::End(_) = &event {
                 Ok(DeserializerOutput {
-                    artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                    artifact: DeserializerArtifact::Data(self.finish(helper)?),
                     event: DeserializerEvent::None,
                     allow_any: false,
                 })
@@ -3754,15 +3307,15 @@ pub mod quick_xml_deserialize {
                 })
             }
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::HeaderTradeDeliveryType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(
+            mut self,
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::HeaderTradeDeliveryType, Error> {
             let state = replace(
                 &mut *self.state__,
                 HeaderTradeDeliveryTypeDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::HeaderTradeDeliveryType {})
         }
     }
@@ -3777,13 +3330,13 @@ pub mod quick_xml_deserialize {
     enum HeaderTradeSettlementTypeDeserializerState {
         Init__ , InvoiceCurrencyCode (Option << super :: CurrencyCodeType as WithDeserializer > :: Deserializer >) , SpecifiedTradeSettlementHeaderMonetarySummation (Option << super :: TradeSettlementHeaderMonetarySummationType as WithDeserializer > :: Deserializer >) , Done__ , Unknown__ , }
     impl HeaderTradeSettlementTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
-            for attrib in filter_xmlns_attributes(bytes_start) {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib_checked(attrib)?;
+                helper.raise_unexpected_attrib_checked(&attrib)?;
             }
             Ok(Self {
                 invoice_currency_code: None,
@@ -3791,22 +3344,19 @@ pub mod quick_xml_deserialize {
                 state__: Box::new(HeaderTradeSettlementTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: HeaderTradeSettlementTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             use HeaderTradeSettlementTypeDeserializerState as S;
             match state {
                 S::InvoiceCurrencyCode(Some(deserializer)) => {
-                    self.store_invoice_currency_code(deserializer.finish(reader)?)?
+                    self.store_invoice_currency_code(deserializer.finish(helper)?)?
                 }
                 S::SpecifiedTradeSettlementHeaderMonetarySummation(Some(deserializer)) => self
                     .store_specified_trade_settlement_header_monetary_summation(
-                        deserializer.finish(reader)?,
+                        deserializer.finish(helper)?,
                     )?,
                 _ => (),
             }
@@ -3839,138 +3389,97 @@ pub mod quick_xml_deserialize {
             self.specified_trade_settlement_header_monetary_summation = Some(value);
             Ok(())
         }
-        fn handle_invoice_currency_code<'de, R>(
+        fn handle_invoice_currency_code<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::CurrencyCodeType>,
             fallback: &mut Option<HeaderTradeSettlementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use HeaderTradeSettlementTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                if self.invoice_currency_code.is_some() {
-                    fallback.get_or_insert(
-                        HeaderTradeSettlementTypeDeserializerState::InvoiceCurrencyCode(None),
-                    );
-                    * self . state__ = HeaderTradeSettlementTypeDeserializerState :: SpecifiedTradeSettlementHeaderMonetarySummation (None) ;
-                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                } else {
-                    *self.state__ =
-                        HeaderTradeSettlementTypeDeserializerState::InvoiceCurrencyCode(None);
+                fallback.get_or_insert(S::InvoiceCurrencyCode(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
+                } else {
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_invoice_currency_code(data)?;
-                    * self . state__ = HeaderTradeSettlementTypeDeserializerState :: SpecifiedTradeSettlementHeaderMonetarySummation (None) ;
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::SpecifiedTradeSettlementHeaderMonetarySummation(None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback.get_or_insert(
-                                HeaderTradeSettlementTypeDeserializerState::InvoiceCurrencyCode(
-                                    Some(deserializer),
-                                ),
-                            );
-                            * self . state__ = HeaderTradeSettlementTypeDeserializerState :: SpecifiedTradeSettlementHeaderMonetarySummation (None) ;
-                        }
-                        ElementHandlerOutput::Break { .. } => {
-                            *self.state__ =
-                                HeaderTradeSettlementTypeDeserializerState::InvoiceCurrencyCode(
-                                    Some(deserializer),
-                                );
-                        }
-                    }
-                    ret
+                    fallback.get_or_insert(S::InvoiceCurrencyCode(Some(deserializer)));
+                    *self.state__ = S::SpecifiedTradeSettlementHeaderMonetarySummation(None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
-        fn handle_specified_trade_settlement_header_monetary_summation<'de, R>(
+        fn handle_specified_trade_settlement_header_monetary_summation<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::TradeSettlementHeaderMonetarySummationType>,
             fallback: &mut Option<HeaderTradeSettlementTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use HeaderTradeSettlementTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                if self
-                    .specified_trade_settlement_header_monetary_summation
-                    .is_some()
-                {
-                    fallback . get_or_insert (HeaderTradeSettlementTypeDeserializerState :: SpecifiedTradeSettlementHeaderMonetarySummation (None)) ;
-                    *self.state__ = HeaderTradeSettlementTypeDeserializerState::Done__;
-                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                } else {
-                    * self . state__ = HeaderTradeSettlementTypeDeserializerState :: SpecifiedTradeSettlementHeaderMonetarySummation (None) ;
+                fallback.get_or_insert(S::SpecifiedTradeSettlementHeaderMonetarySummation(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
+                } else {
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_specified_trade_settlement_header_monetary_summation(data)?;
-                    *self.state__ = HeaderTradeSettlementTypeDeserializerState::Done__;
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::Done__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback . get_or_insert (HeaderTradeSettlementTypeDeserializerState :: SpecifiedTradeSettlementHeaderMonetarySummation (Some (deserializer))) ;
-                            *self.state__ = HeaderTradeSettlementTypeDeserializerState::Done__;
-                        }
-                        ElementHandlerOutput::Break { .. } => {
-                            * self . state__ = HeaderTradeSettlementTypeDeserializerState :: SpecifiedTradeSettlementHeaderMonetarySummation (Some (deserializer)) ;
-                        }
-                    }
-                    ret
+                    fallback.get_or_insert(S::SpecifiedTradeSettlementHeaderMonetarySummation(
+                        Some(deserializer),
+                    ));
+                    *self.state__ = S::Done__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
     }
     impl<'de> Deserializer<'de, super::HeaderTradeSettlementType>
         for HeaderTradeSettlementTypeDeserializer
     {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::HeaderTradeSettlementType>
-        where
-            R: DeserializeReader,
-        {
-            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        ) -> DeserializerResult<'de, super::HeaderTradeSettlementType> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::HeaderTradeSettlementType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::HeaderTradeSettlementType> {
             use HeaderTradeSettlementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -3980,8 +3489,8 @@ pub mod quick_xml_deserialize {
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
                     (S::InvoiceCurrencyCode(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_invoice_currency_code(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_invoice_currency_code(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -3995,9 +3504,9 @@ pub mod quick_xml_deserialize {
                         S::SpecifiedTradeSettlementHeaderMonetarySummation(Some(deserializer)),
                         event,
                     ) => {
-                        let output = deserializer.next(reader, event)?;
+                        let output = deserializer.next(helper, event)?;
                         match self.handle_specified_trade_settlement_header_monetary_summation(
-                            reader,
+                            helper,
                             output,
                             &mut fallback,
                         )? {
@@ -4012,28 +3521,27 @@ pub mod quick_xml_deserialize {
                     }
                     (_, Event::End(_)) => {
                         if let Some(fallback) = fallback.take() {
-                            self.finish_state(reader, fallback)?;
+                            self.finish_state(helper, fallback)?;
                         }
                         return Ok(DeserializerOutput {
-                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            artifact: DeserializerArtifact::Data(self.finish(helper)?),
                             event: DeserializerEvent::None,
                             allow_any: false,
                         });
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ =
-                            HeaderTradeSettlementTypeDeserializerState::InvoiceCurrencyCode(None);
+                        *self.state__ = S::InvoiceCurrencyCode(None);
                         event
                     }
                     (S::InvoiceCurrencyCode(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_RAM),
                             b"InvoiceCurrencyCode",
                             false,
                         )?;
-                        match self.handle_invoice_currency_code(reader, output, &mut fallback)? {
+                        match self.handle_invoice_currency_code(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -4047,14 +3555,14 @@ pub mod quick_xml_deserialize {
                         S::SpecifiedTradeSettlementHeaderMonetarySummation(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_RAM),
                             b"SpecifiedTradeSettlementHeaderMonetarySummation",
                             false,
                         )?;
                         match self.handle_specified_trade_settlement_header_monetary_summation(
-                            reader,
+                            helper,
                             output,
                             &mut fallback,
                         )? {
@@ -4068,7 +3576,7 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Done__, event) => {
-                        fallback.get_or_insert(S::Done__);
+                        *self.state__ = S::Done__;
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
                     (state, event) => {
@@ -4086,26 +3594,22 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::HeaderTradeSettlementType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(
+            mut self,
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::HeaderTradeSettlementType, Error> {
             let state = replace(
                 &mut *self.state__,
                 HeaderTradeSettlementTypeDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::HeaderTradeSettlementType {
-                invoice_currency_code: self
-                    .invoice_currency_code
-                    .ok_or_else(|| ErrorKind::MissingElement("InvoiceCurrencyCode".into()))?,
-                specified_trade_settlement_header_monetary_summation: self
-                    .specified_trade_settlement_header_monetary_summation
-                    .ok_or_else(|| {
-                        ErrorKind::MissingElement(
-                            "SpecifiedTradeSettlementHeaderMonetarySummation".into(),
-                        )
-                    })?,
+                invoice_currency_code: helper
+                    .finish_element("InvoiceCurrencyCode", self.invoice_currency_code)?,
+                specified_trade_settlement_header_monetary_summation: helper.finish_element(
+                    "SpecifiedTradeSettlementHeaderMonetarySummation",
+                    self.specified_trade_settlement_header_monetary_summation,
+                )?,
             })
         }
     }
@@ -4122,41 +3626,36 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl DateTimeTypeDateTimeStringTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
             let mut format: Option<String> = None;
-            for attrib in filter_xmlns_attributes(bytes_start) {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    reader.resolve_local_name(attrib.key, &super::NS_UDT),
+                    helper.resolve_local_name(attrib.key, &super::NS_UDT),
                     Some(b"format")
                 ) {
-                    reader.read_attrib(&mut format, b"format", &attrib.value)?;
+                    helper.read_attrib(&mut format, b"format", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib_checked(attrib)?;
+                    helper.raise_unexpected_attrib_checked(&attrib)?;
                 }
             }
             Ok(Self {
-                format: format.ok_or_else(|| {
-                    reader.map_error(ErrorKind::MissingAttribute("format".into()))
-                })?,
+                format: format.ok_or_else(|| ErrorKind::MissingAttribute("format".into()))?,
                 content: None,
                 state__: Box::new(DateTimeTypeDateTimeStringTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: DateTimeTypeDateTimeStringTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             if let DateTimeTypeDateTimeStringTypeDeserializerState::Content__(deserializer) = state
             {
-                self.store_content(deserializer.finish(reader)?)?;
+                self.store_content(deserializer.finish(helper)?)?;
             }
             Ok(())
         }
@@ -4167,14 +3666,11 @@ pub mod quick_xml_deserialize {
             self.content = Some(value);
             Ok(())
         }
-        fn handle_content<'de, R>(
+        fn handle_content<'de>(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, String>,
-        ) -> DeserializerResult<'de, super::DateTimeTypeDateTimeStringType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::DateTimeTypeDateTimeStringType> {
             use DateTimeTypeDateTimeStringTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
@@ -4189,7 +3685,7 @@ pub mod quick_xml_deserialize {
                 }),
                 DeserializerArtifact::Data(data) => {
                     self.store_content(data)?;
-                    let data = self.finish(reader)?;
+                    let data = self.finish(helper)?;
                     Ok(DeserializerOutput {
                         artifact: DeserializerArtifact::Data(data),
                         event,
@@ -4210,13 +3706,10 @@ pub mod quick_xml_deserialize {
     impl<'de> Deserializer<'de, super::DateTimeTypeDateTimeStringType>
         for DateTimeTypeDateTimeStringTypeDeserializer
     {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::DateTimeTypeDateTimeStringType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::DateTimeTypeDateTimeStringType> {
             let (Event::Start(x) | Event::Empty(x)) = &event else {
                 return Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::None,
@@ -4224,41 +3717,38 @@ pub mod quick_xml_deserialize {
                     allow_any: false,
                 });
             };
-            Self::from_bytes_start(reader, x)?.next(reader, event)
+            Self::from_bytes_start(helper, x)?.next(helper, event)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::DateTimeTypeDateTimeStringType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::DateTimeTypeDateTimeStringType> {
             use DateTimeTypeDateTimeStringTypeDeserializerState as S;
             match replace(&mut *self.state__, S::Unknown__) {
                 S::Unknown__ => unreachable!(),
                 S::Init__ => {
-                    let output = ContentDeserializer::init(reader, event)?;
-                    self.handle_content(reader, output)
+                    let output = ContentDeserializer::init(helper, event)?;
+                    self.handle_content(helper, output)
                 }
                 S::Content__(deserializer) => {
-                    let output = deserializer.next(reader, event)?;
-                    self.handle_content(reader, output)
+                    let output = deserializer.next(helper, event)?;
+                    self.handle_content(helper, output)
                 }
             }
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::DateTimeTypeDateTimeStringType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(
+            mut self,
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::DateTimeTypeDateTimeStringType, Error> {
             let state = replace(
                 &mut *self.state__,
                 DateTimeTypeDateTimeStringTypeDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::DateTimeTypeDateTimeStringType {
                 format: self.format,
-                content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                content: helper.finish_content(self.content)?,
             })
         }
     }
@@ -4274,29 +3764,26 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl TextTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
-            for attrib in filter_xmlns_attributes(bytes_start) {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib_checked(attrib)?;
+                helper.raise_unexpected_attrib_checked(&attrib)?;
             }
             Ok(Self {
                 content: None,
                 state__: Box::new(TextTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: TextTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             if let TextTypeDeserializerState::Content__(deserializer) = state {
-                self.store_content(deserializer.finish(reader)?)?;
+                self.store_content(deserializer.finish(helper)?)?;
             }
             Ok(())
         }
@@ -4307,14 +3794,11 @@ pub mod quick_xml_deserialize {
             self.content = Some(value);
             Ok(())
         }
-        fn handle_content<'de, R>(
+        fn handle_content<'de>(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, String>,
-        ) -> DeserializerResult<'de, super::TextType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::TextType> {
             use TextTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
@@ -4329,7 +3813,7 @@ pub mod quick_xml_deserialize {
                 }),
                 DeserializerArtifact::Data(data) => {
                     self.store_content(data)?;
-                    let data = self.finish(reader)?;
+                    let data = self.finish(helper)?;
                     Ok(DeserializerOutput {
                         artifact: DeserializerArtifact::Data(data),
                         event,
@@ -4348,10 +3832,10 @@ pub mod quick_xml_deserialize {
         }
     }
     impl<'de> Deserializer<'de, super::TextType> for TextTypeDeserializer {
-        fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, super::TextType>
-        where
-            R: DeserializeReader,
-        {
+        fn init(
+            helper: &mut DeserializeHelper,
+            event: Event<'de>,
+        ) -> DeserializerResult<'de, super::TextType> {
             let (Event::Start(x) | Event::Empty(x)) = &event else {
                 return Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::None,
@@ -4359,37 +3843,31 @@ pub mod quick_xml_deserialize {
                     allow_any: false,
                 });
             };
-            Self::from_bytes_start(reader, x)?.next(reader, event)
+            Self::from_bytes_start(helper, x)?.next(helper, event)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::TextType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::TextType> {
             use TextTypeDeserializerState as S;
             match replace(&mut *self.state__, S::Unknown__) {
                 S::Unknown__ => unreachable!(),
                 S::Init__ => {
-                    let output = ContentDeserializer::init(reader, event)?;
-                    self.handle_content(reader, output)
+                    let output = ContentDeserializer::init(helper, event)?;
+                    self.handle_content(helper, output)
                 }
                 S::Content__(deserializer) => {
-                    let output = deserializer.next(reader, event)?;
-                    self.handle_content(reader, output)
+                    let output = deserializer.next(helper, event)?;
+                    self.handle_content(helper, output)
                 }
             }
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::TextType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(mut self, helper: &mut DeserializeHelper) -> Result<super::TextType, Error> {
             let state = replace(&mut *self.state__, TextTypeDeserializerState::Unknown__);
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::TextType {
-                content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                content: helper.finish_content(self.content)?,
             })
         }
     }
@@ -4416,13 +3894,13 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl TradePartyTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
-            for attrib in filter_xmlns_attributes(bytes_start) {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib_checked(attrib)?;
+                helper.raise_unexpected_attrib_checked(&attrib)?;
             }
             Ok(Self {
                 name: None,
@@ -4432,25 +3910,22 @@ pub mod quick_xml_deserialize {
                 state__: Box::new(TradePartyTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: TradePartyTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             use TradePartyTypeDeserializerState as S;
             match state {
-                S::Name(Some(deserializer)) => self.store_name(deserializer.finish(reader)?)?,
+                S::Name(Some(deserializer)) => self.store_name(deserializer.finish(helper)?)?,
                 S::SpecifiedLegalOrganization(Some(deserializer)) => {
-                    self.store_specified_legal_organization(deserializer.finish(reader)?)?
+                    self.store_specified_legal_organization(deserializer.finish(helper)?)?
                 }
                 S::PostalTradeAddress(Some(deserializer)) => {
-                    self.store_postal_trade_address(deserializer.finish(reader)?)?
+                    self.store_postal_trade_address(deserializer.finish(helper)?)?
                 }
                 S::SpecifiedTaxRegistration(Some(deserializer)) => {
-                    self.store_specified_tax_registration(deserializer.finish(reader)?)?
+                    self.store_specified_tax_registration(deserializer.finish(helper)?)?
                 }
                 _ => (),
             }
@@ -4494,247 +3969,166 @@ pub mod quick_xml_deserialize {
             self.specified_tax_registration.push(value);
             Ok(())
         }
-        fn handle_name<'de, R>(
+        fn handle_name<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::TextType>,
             fallback: &mut Option<TradePartyTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use TradePartyTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                if self.name.is_some() {
-                    fallback.get_or_insert(TradePartyTypeDeserializerState::Name(None));
-                    *self.state__ =
-                        TradePartyTypeDeserializerState::SpecifiedLegalOrganization(None);
-                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                } else {
-                    *self.state__ = TradePartyTypeDeserializerState::Name(None);
+                fallback.get_or_insert(S::Name(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
+                } else {
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_name(data)?;
-                    *self.state__ =
-                        TradePartyTypeDeserializerState::SpecifiedLegalOrganization(None);
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::SpecifiedLegalOrganization(None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback.get_or_insert(TradePartyTypeDeserializerState::Name(Some(
-                                deserializer,
-                            )));
-                            *self.state__ =
-                                TradePartyTypeDeserializerState::SpecifiedLegalOrganization(None);
-                        }
-                        ElementHandlerOutput::Break { .. } => {
-                            *self.state__ =
-                                TradePartyTypeDeserializerState::Name(Some(deserializer));
-                        }
-                    }
-                    ret
+                    fallback.get_or_insert(S::Name(Some(deserializer)));
+                    *self.state__ = S::SpecifiedLegalOrganization(None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
-        fn handle_specified_legal_organization<'de, R>(
+        fn handle_specified_legal_organization<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::LegalOrganizationType>,
             fallback: &mut Option<TradePartyTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use TradePartyTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(
-                    TradePartyTypeDeserializerState::SpecifiedLegalOrganization(None),
-                );
-                *self.state__ = TradePartyTypeDeserializerState::PostalTradeAddress(None);
+                fallback.get_or_insert(S::SpecifiedLegalOrganization(None));
+                *self.state__ = S::PostalTradeAddress(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_specified_legal_organization(data)?;
-                    *self.state__ = TradePartyTypeDeserializerState::PostalTradeAddress(None);
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::PostalTradeAddress(None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback.get_or_insert(
-                                TradePartyTypeDeserializerState::SpecifiedLegalOrganization(Some(
-                                    deserializer,
-                                )),
-                            );
-                            *self.state__ =
-                                TradePartyTypeDeserializerState::PostalTradeAddress(None);
-                        }
-                        ElementHandlerOutput::Break { .. } => {
-                            *self.state__ =
-                                TradePartyTypeDeserializerState::SpecifiedLegalOrganization(Some(
-                                    deserializer,
-                                ));
-                        }
-                    }
-                    ret
+                    fallback.get_or_insert(S::SpecifiedLegalOrganization(Some(deserializer)));
+                    *self.state__ = S::PostalTradeAddress(None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
-        fn handle_postal_trade_address<'de, R>(
+        fn handle_postal_trade_address<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::TradeAddressType>,
             fallback: &mut Option<TradePartyTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use TradePartyTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(TradePartyTypeDeserializerState::PostalTradeAddress(None));
-                *self.state__ = TradePartyTypeDeserializerState::SpecifiedTaxRegistration(None);
+                fallback.get_or_insert(S::PostalTradeAddress(None));
+                *self.state__ = S::SpecifiedTaxRegistration(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_postal_trade_address(data)?;
-                    *self.state__ = TradePartyTypeDeserializerState::SpecifiedTaxRegistration(None);
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::SpecifiedTaxRegistration(None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback.get_or_insert(
-                                TradePartyTypeDeserializerState::PostalTradeAddress(Some(
-                                    deserializer,
-                                )),
-                            );
-                            *self.state__ =
-                                TradePartyTypeDeserializerState::SpecifiedTaxRegistration(None);
-                        }
-                        ElementHandlerOutput::Break { .. } => {
-                            *self.state__ = TradePartyTypeDeserializerState::PostalTradeAddress(
-                                Some(deserializer),
-                            );
-                        }
-                    }
-                    ret
+                    fallback.get_or_insert(S::PostalTradeAddress(Some(deserializer)));
+                    *self.state__ = S::SpecifiedTaxRegistration(None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
-        fn handle_specified_tax_registration<'de, R>(
+        fn handle_specified_tax_registration<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::TaxRegistrationType>,
             fallback: &mut Option<TradePartyTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use TradePartyTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(TradePartyTypeDeserializerState::SpecifiedTaxRegistration(
-                    None,
-                ));
-                *self.state__ = TradePartyTypeDeserializerState::Done__;
+                fallback.get_or_insert(S::SpecifiedTaxRegistration(None));
+                *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_specified_tax_registration(data)?;
                     if self.specified_tax_registration.len() < 2usize {
-                        *self.state__ =
-                            TradePartyTypeDeserializerState::SpecifiedTaxRegistration(None);
+                        *self.state__ = S::SpecifiedTaxRegistration(None);
                     } else {
-                        *self.state__ = TradePartyTypeDeserializerState::Done__;
+                        *self.state__ = S::Done__;
                     }
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback.get_or_insert(
-                                TradePartyTypeDeserializerState::SpecifiedTaxRegistration(Some(
-                                    deserializer,
-                                )),
-                            );
-                            let can_have_more =
-                                self.specified_tax_registration.len().saturating_add(1) < 2usize;
-                            if can_have_more {
-                                *self.state__ =
-                                    TradePartyTypeDeserializerState::SpecifiedTaxRegistration(None);
-                            } else {
-                                *self.state__ = TradePartyTypeDeserializerState::Done__;
-                            }
-                        }
-                        ElementHandlerOutput::Break { .. } => {
-                            *self.state__ =
-                                TradePartyTypeDeserializerState::SpecifiedTaxRegistration(Some(
-                                    deserializer,
-                                ));
-                        }
+                    fallback.get_or_insert(S::SpecifiedTaxRegistration(Some(deserializer)));
+                    if self.specified_tax_registration.len() < 1usize {
+                        *self.state__ = S::SpecifiedTaxRegistration(None);
+                    } else {
+                        *self.state__ = S::Done__;
                     }
-                    ret
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
     }
     impl<'de> Deserializer<'de, super::TradePartyType> for TradePartyTypeDeserializer {
-        fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, super::TradePartyType>
-        where
-            R: DeserializeReader,
-        {
-            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
-        }
-        fn next<R>(
-            mut self,
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::TradePartyType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::TradePartyType> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        }
+        fn next(
+            mut self,
+            helper: &mut DeserializeHelper,
+            event: Event<'de>,
+        ) -> DeserializerResult<'de, super::TradePartyType> {
             use TradePartyTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -4744,8 +4138,8 @@ pub mod quick_xml_deserialize {
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
                     (S::Name(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_name(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_name(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -4756,9 +4150,9 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::SpecifiedLegalOrganization(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
+                        let output = deserializer.next(helper, event)?;
                         match self.handle_specified_legal_organization(
-                            reader,
+                            helper,
                             output,
                             &mut fallback,
                         )? {
@@ -4772,8 +4166,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::PostalTradeAddress(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_postal_trade_address(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_postal_trade_address(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -4784,9 +4178,9 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::SpecifiedTaxRegistration(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
+                        let output = deserializer.next(helper, event)?;
                         match self.handle_specified_tax_registration(
-                            reader,
+                            helper,
                             output,
                             &mut fallback,
                         )? {
@@ -4801,27 +4195,27 @@ pub mod quick_xml_deserialize {
                     }
                     (_, Event::End(_)) => {
                         if let Some(fallback) = fallback.take() {
-                            self.finish_state(reader, fallback)?;
+                            self.finish_state(helper, fallback)?;
                         }
                         return Ok(DeserializerOutput {
-                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            artifact: DeserializerArtifact::Data(self.finish(helper)?),
                             event: DeserializerEvent::None,
                             allow_any: false,
                         });
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ = TradePartyTypeDeserializerState::Name(None);
+                        *self.state__ = S::Name(None);
                         event
                     }
                     (S::Name(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_RAM),
                             b"Name",
                             false,
                         )?;
-                        match self.handle_name(reader, output, &mut fallback)? {
+                        match self.handle_name(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -4835,14 +4229,14 @@ pub mod quick_xml_deserialize {
                         S::SpecifiedLegalOrganization(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_RAM),
                             b"SpecifiedLegalOrganization",
                             false,
                         )?;
                         match self.handle_specified_legal_organization(
-                            reader,
+                            helper,
                             output,
                             &mut fallback,
                         )? {
@@ -4856,13 +4250,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::PostalTradeAddress(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_RAM),
                             b"PostalTradeAddress",
                             false,
                         )?;
-                        match self.handle_postal_trade_address(reader, output, &mut fallback)? {
+                        match self.handle_postal_trade_address(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -4876,14 +4270,14 @@ pub mod quick_xml_deserialize {
                         S::SpecifiedTaxRegistration(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_RAM),
                             b"SpecifiedTaxRegistration",
                             false,
                         )?;
                         match self.handle_specified_tax_registration(
-                            reader,
+                            helper,
                             output,
                             &mut fallback,
                         )? {
@@ -4897,7 +4291,7 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Done__, event) => {
-                        fallback.get_or_insert(S::Done__);
+                        *self.state__ = S::Done__;
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
                     (state, event) => {
@@ -4915,19 +4309,17 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::TradePartyType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(
+            mut self,
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::TradePartyType, Error> {
             let state = replace(
                 &mut *self.state__,
                 TradePartyTypeDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::TradePartyType {
-                name: self
-                    .name
-                    .ok_or_else(|| ErrorKind::MissingElement("Name".into()))?,
+                name: helper.finish_element("Name", self.name)?,
                 specified_legal_organization: self.specified_legal_organization,
                 postal_trade_address: self.postal_trade_address,
                 specified_tax_registration: self.specified_tax_registration,
@@ -4947,31 +4339,28 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl ReferencedDocumentTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
-            for attrib in filter_xmlns_attributes(bytes_start) {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib_checked(attrib)?;
+                helper.raise_unexpected_attrib_checked(&attrib)?;
             }
             Ok(Self {
                 issuer_assigned_id: None,
                 state__: Box::new(ReferencedDocumentTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: ReferencedDocumentTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             use ReferencedDocumentTypeDeserializerState as S;
             match state {
                 S::IssuerAssignedId(Some(deserializer)) => {
-                    self.store_issuer_assigned_id(deserializer.finish(reader)?)?
+                    self.store_issuer_assigned_id(deserializer.finish(helper)?)?
                 }
                 _ => (),
             }
@@ -4986,83 +4375,56 @@ pub mod quick_xml_deserialize {
             self.issuer_assigned_id = Some(value);
             Ok(())
         }
-        fn handle_issuer_assigned_id<'de, R>(
+        fn handle_issuer_assigned_id<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::IdType>,
             fallback: &mut Option<ReferencedDocumentTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use ReferencedDocumentTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                if self.issuer_assigned_id.is_some() {
-                    fallback.get_or_insert(
-                        ReferencedDocumentTypeDeserializerState::IssuerAssignedId(None),
-                    );
-                    *self.state__ = ReferencedDocumentTypeDeserializerState::Done__;
-                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                } else {
-                    *self.state__ = ReferencedDocumentTypeDeserializerState::IssuerAssignedId(None);
+                fallback.get_or_insert(S::IssuerAssignedId(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
+                } else {
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_issuer_assigned_id(data)?;
-                    *self.state__ = ReferencedDocumentTypeDeserializerState::Done__;
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::Done__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback.get_or_insert(
-                                ReferencedDocumentTypeDeserializerState::IssuerAssignedId(Some(
-                                    deserializer,
-                                )),
-                            );
-                            *self.state__ = ReferencedDocumentTypeDeserializerState::Done__;
-                        }
-                        ElementHandlerOutput::Break { .. } => {
-                            *self.state__ =
-                                ReferencedDocumentTypeDeserializerState::IssuerAssignedId(Some(
-                                    deserializer,
-                                ));
-                        }
-                    }
-                    ret
+                    fallback.get_or_insert(S::IssuerAssignedId(Some(deserializer)));
+                    *self.state__ = S::Done__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
     }
     impl<'de> Deserializer<'de, super::ReferencedDocumentType> for ReferencedDocumentTypeDeserializer {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::ReferencedDocumentType>
-        where
-            R: DeserializeReader,
-        {
-            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        ) -> DeserializerResult<'de, super::ReferencedDocumentType> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::ReferencedDocumentType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::ReferencedDocumentType> {
             use ReferencedDocumentTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -5072,8 +4434,8 @@ pub mod quick_xml_deserialize {
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
                     (S::IssuerAssignedId(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_issuer_assigned_id(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_issuer_assigned_id(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -5085,28 +4447,27 @@ pub mod quick_xml_deserialize {
                     }
                     (_, Event::End(_)) => {
                         if let Some(fallback) = fallback.take() {
-                            self.finish_state(reader, fallback)?;
+                            self.finish_state(helper, fallback)?;
                         }
                         return Ok(DeserializerOutput {
-                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            artifact: DeserializerArtifact::Data(self.finish(helper)?),
                             event: DeserializerEvent::None,
                             allow_any: false,
                         });
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ =
-                            ReferencedDocumentTypeDeserializerState::IssuerAssignedId(None);
+                        *self.state__ = S::IssuerAssignedId(None);
                         event
                     }
                     (S::IssuerAssignedId(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_RAM),
                             b"IssuerAssignedID",
                             false,
                         )?;
-                        match self.handle_issuer_assigned_id(reader, output, &mut fallback)? {
+                        match self.handle_issuer_assigned_id(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -5117,7 +4478,7 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Done__, event) => {
-                        fallback.get_or_insert(S::Done__);
+                        *self.state__ = S::Done__;
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
                     (state, event) => {
@@ -5135,19 +4496,18 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::ReferencedDocumentType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(
+            mut self,
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::ReferencedDocumentType, Error> {
             let state = replace(
                 &mut *self.state__,
                 ReferencedDocumentTypeDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::ReferencedDocumentType {
-                issuer_assigned_id: self
-                    .issuer_assigned_id
-                    .ok_or_else(|| ErrorKind::MissingElement("IssuerAssignedID".into()))?,
+                issuer_assigned_id: helper
+                    .finish_element("IssuerAssignedID", self.issuer_assigned_id)?,
             })
         }
     }
@@ -5163,29 +4523,26 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl CurrencyCodeTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
-            for attrib in filter_xmlns_attributes(bytes_start) {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib_checked(attrib)?;
+                helper.raise_unexpected_attrib_checked(&attrib)?;
             }
             Ok(Self {
                 content: None,
                 state__: Box::new(CurrencyCodeTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: CurrencyCodeTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             if let CurrencyCodeTypeDeserializerState::Content__(deserializer) = state {
-                self.store_content(deserializer.finish(reader)?)?;
+                self.store_content(deserializer.finish(helper)?)?;
             }
             Ok(())
         }
@@ -5196,14 +4553,11 @@ pub mod quick_xml_deserialize {
             self.content = Some(value);
             Ok(())
         }
-        fn handle_content<'de, R>(
+        fn handle_content<'de>(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, String>,
-        ) -> DeserializerResult<'de, super::CurrencyCodeType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::CurrencyCodeType> {
             use CurrencyCodeTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
@@ -5218,7 +4572,7 @@ pub mod quick_xml_deserialize {
                 }),
                 DeserializerArtifact::Data(data) => {
                     self.store_content(data)?;
-                    let data = self.finish(reader)?;
+                    let data = self.finish(helper)?;
                     Ok(DeserializerOutput {
                         artifact: DeserializerArtifact::Data(data),
                         event,
@@ -5237,13 +4591,10 @@ pub mod quick_xml_deserialize {
         }
     }
     impl<'de> Deserializer<'de, super::CurrencyCodeType> for CurrencyCodeTypeDeserializer {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::CurrencyCodeType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::CurrencyCodeType> {
             let (Event::Start(x) | Event::Empty(x)) = &event else {
                 return Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::None,
@@ -5251,40 +4602,37 @@ pub mod quick_xml_deserialize {
                     allow_any: false,
                 });
             };
-            Self::from_bytes_start(reader, x)?.next(reader, event)
+            Self::from_bytes_start(helper, x)?.next(helper, event)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::CurrencyCodeType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::CurrencyCodeType> {
             use CurrencyCodeTypeDeserializerState as S;
             match replace(&mut *self.state__, S::Unknown__) {
                 S::Unknown__ => unreachable!(),
                 S::Init__ => {
-                    let output = ContentDeserializer::init(reader, event)?;
-                    self.handle_content(reader, output)
+                    let output = ContentDeserializer::init(helper, event)?;
+                    self.handle_content(helper, output)
                 }
                 S::Content__(deserializer) => {
-                    let output = deserializer.next(reader, event)?;
-                    self.handle_content(reader, output)
+                    let output = deserializer.next(helper, event)?;
+                    self.handle_content(helper, output)
                 }
             }
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::CurrencyCodeType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(
+            mut self,
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::CurrencyCodeType, Error> {
             let state = replace(
                 &mut *self.state__,
                 CurrencyCodeTypeDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::CurrencyCodeType {
-                content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                content: helper.finish_content(self.content)?,
             })
         }
     }
@@ -5307,13 +4655,13 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl TradeSettlementHeaderMonetarySummationTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
-            for attrib in filter_xmlns_attributes(bytes_start) {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib_checked(attrib)?;
+                helper.raise_unexpected_attrib_checked(&attrib)?;
             }
             Ok(Self {
                 tax_basis_total_amount: None,
@@ -5325,27 +4673,24 @@ pub mod quick_xml_deserialize {
                 ),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: TradeSettlementHeaderMonetarySummationTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             use TradeSettlementHeaderMonetarySummationTypeDeserializerState as S;
             match state {
                 S::TaxBasisTotalAmount(Some(deserializer)) => {
-                    self.store_tax_basis_total_amount(deserializer.finish(reader)?)?
+                    self.store_tax_basis_total_amount(deserializer.finish(helper)?)?
                 }
                 S::TaxTotalAmount(Some(deserializer)) => {
-                    self.store_tax_total_amount(deserializer.finish(reader)?)?
+                    self.store_tax_total_amount(deserializer.finish(helper)?)?
                 }
                 S::GrandTotalAmount(Some(deserializer)) => {
-                    self.store_grand_total_amount(deserializer.finish(reader)?)?
+                    self.store_grand_total_amount(deserializer.finish(helper)?)?
                 }
                 S::DuePayableAmount(Some(deserializer)) => {
-                    self.store_due_payable_amount(deserializer.finish(reader)?)?
+                    self.store_due_payable_amount(deserializer.finish(helper)?)?
                 }
                 _ => (),
             }
@@ -5382,244 +4727,174 @@ pub mod quick_xml_deserialize {
             self.due_payable_amount = Some(value);
             Ok(())
         }
-        fn handle_tax_basis_total_amount<'de, R>(
+        fn handle_tax_basis_total_amount<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::AmountType>,
             fallback: &mut Option<TradeSettlementHeaderMonetarySummationTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use TradeSettlementHeaderMonetarySummationTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                if self.tax_basis_total_amount.is_some() {
-                    fallback . get_or_insert (TradeSettlementHeaderMonetarySummationTypeDeserializerState :: TaxBasisTotalAmount (None)) ;
-                    *self.state__ =
-                        TradeSettlementHeaderMonetarySummationTypeDeserializerState::TaxTotalAmount(
-                            None,
-                        );
-                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                } else {
-                    * self . state__ = TradeSettlementHeaderMonetarySummationTypeDeserializerState :: TaxBasisTotalAmount (None) ;
+                fallback.get_or_insert(S::TaxBasisTotalAmount(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
+                } else {
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_tax_basis_total_amount(data)?;
-                    *self.state__ =
-                        TradeSettlementHeaderMonetarySummationTypeDeserializerState::TaxTotalAmount(
-                            None,
-                        );
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::TaxTotalAmount(None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback . get_or_insert (TradeSettlementHeaderMonetarySummationTypeDeserializerState :: TaxBasisTotalAmount (Some (deserializer))) ;
-                            * self . state__ = TradeSettlementHeaderMonetarySummationTypeDeserializerState :: TaxTotalAmount (None) ;
-                        }
-                        ElementHandlerOutput::Break { .. } => {
-                            * self . state__ = TradeSettlementHeaderMonetarySummationTypeDeserializerState :: TaxBasisTotalAmount (Some (deserializer)) ;
-                        }
-                    }
-                    ret
+                    fallback.get_or_insert(S::TaxBasisTotalAmount(Some(deserializer)));
+                    *self.state__ = S::TaxTotalAmount(None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
-        fn handle_tax_total_amount<'de, R>(
+        fn handle_tax_total_amount<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::AmountType>,
             fallback: &mut Option<TradeSettlementHeaderMonetarySummationTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use TradeSettlementHeaderMonetarySummationTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(
-                    TradeSettlementHeaderMonetarySummationTypeDeserializerState::TaxTotalAmount(
-                        None,
-                    ),
-                );
-                *self.state__ =
-                    TradeSettlementHeaderMonetarySummationTypeDeserializerState::GrandTotalAmount(
-                        None,
-                    );
+                fallback.get_or_insert(S::TaxTotalAmount(None));
+                *self.state__ = S::GrandTotalAmount(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_tax_total_amount(data)?;
                     if self.tax_total_amount.len() < 2usize {
-                        * self . state__ = TradeSettlementHeaderMonetarySummationTypeDeserializerState :: TaxTotalAmount (None) ;
+                        *self.state__ = S::TaxTotalAmount(None);
                     } else {
-                        * self . state__ = TradeSettlementHeaderMonetarySummationTypeDeserializerState :: GrandTotalAmount (None) ;
+                        *self.state__ = S::GrandTotalAmount(None);
                     }
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback . get_or_insert (TradeSettlementHeaderMonetarySummationTypeDeserializerState :: TaxTotalAmount (Some (deserializer))) ;
-                            let can_have_more =
-                                self.tax_total_amount.len().saturating_add(1) < 2usize;
-                            if can_have_more {
-                                * self . state__ = TradeSettlementHeaderMonetarySummationTypeDeserializerState :: TaxTotalAmount (None) ;
-                            } else {
-                                * self . state__ = TradeSettlementHeaderMonetarySummationTypeDeserializerState :: GrandTotalAmount (None) ;
-                            }
-                        }
-                        ElementHandlerOutput::Break { .. } => {
-                            * self . state__ = TradeSettlementHeaderMonetarySummationTypeDeserializerState :: TaxTotalAmount (Some (deserializer)) ;
-                        }
+                    fallback.get_or_insert(S::TaxTotalAmount(Some(deserializer)));
+                    if self.tax_total_amount.len() < 1usize {
+                        *self.state__ = S::TaxTotalAmount(None);
+                    } else {
+                        *self.state__ = S::GrandTotalAmount(None);
                     }
-                    ret
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
-        fn handle_grand_total_amount<'de, R>(
+        fn handle_grand_total_amount<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::AmountType>,
             fallback: &mut Option<TradeSettlementHeaderMonetarySummationTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use TradeSettlementHeaderMonetarySummationTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                if self.grand_total_amount.is_some() {
-                    fallback . get_or_insert (TradeSettlementHeaderMonetarySummationTypeDeserializerState :: GrandTotalAmount (None)) ;
-                    * self . state__ = TradeSettlementHeaderMonetarySummationTypeDeserializerState :: DuePayableAmount (None) ;
-                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                } else {
-                    * self . state__ = TradeSettlementHeaderMonetarySummationTypeDeserializerState :: GrandTotalAmount (None) ;
+                fallback.get_or_insert(S::GrandTotalAmount(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
+                } else {
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_grand_total_amount(data)?;
-                    * self . state__ = TradeSettlementHeaderMonetarySummationTypeDeserializerState :: DuePayableAmount (None) ;
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::DuePayableAmount(None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback . get_or_insert (TradeSettlementHeaderMonetarySummationTypeDeserializerState :: GrandTotalAmount (Some (deserializer))) ;
-                            * self . state__ = TradeSettlementHeaderMonetarySummationTypeDeserializerState :: DuePayableAmount (None) ;
-                        }
-                        ElementHandlerOutput::Break { .. } => {
-                            * self . state__ = TradeSettlementHeaderMonetarySummationTypeDeserializerState :: GrandTotalAmount (Some (deserializer)) ;
-                        }
-                    }
-                    ret
+                    fallback.get_or_insert(S::GrandTotalAmount(Some(deserializer)));
+                    *self.state__ = S::DuePayableAmount(None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
-        fn handle_due_payable_amount<'de, R>(
+        fn handle_due_payable_amount<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::AmountType>,
             fallback: &mut Option<TradeSettlementHeaderMonetarySummationTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use TradeSettlementHeaderMonetarySummationTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                if self.due_payable_amount.is_some() {
-                    fallback . get_or_insert (TradeSettlementHeaderMonetarySummationTypeDeserializerState :: DuePayableAmount (None)) ;
-                    *self.state__ =
-                        TradeSettlementHeaderMonetarySummationTypeDeserializerState::Done__;
-                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                } else {
-                    * self . state__ = TradeSettlementHeaderMonetarySummationTypeDeserializerState :: DuePayableAmount (None) ;
+                fallback.get_or_insert(S::DuePayableAmount(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
+                } else {
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_due_payable_amount(data)?;
-                    *self.state__ =
-                        TradeSettlementHeaderMonetarySummationTypeDeserializerState::Done__;
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::Done__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback . get_or_insert (TradeSettlementHeaderMonetarySummationTypeDeserializerState :: DuePayableAmount (Some (deserializer))) ;
-                            *self.state__ =
-                                TradeSettlementHeaderMonetarySummationTypeDeserializerState::Done__;
-                        }
-                        ElementHandlerOutput::Break { .. } => {
-                            * self . state__ = TradeSettlementHeaderMonetarySummationTypeDeserializerState :: DuePayableAmount (Some (deserializer)) ;
-                        }
-                    }
-                    ret
+                    fallback.get_or_insert(S::DuePayableAmount(Some(deserializer)));
+                    *self.state__ = S::Done__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
     }
     impl<'de> Deserializer<'de, super::TradeSettlementHeaderMonetarySummationType>
         for TradeSettlementHeaderMonetarySummationTypeDeserializer
     {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::TradeSettlementHeaderMonetarySummationType>
-        where
-            R: DeserializeReader,
-        {
-            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        ) -> DeserializerResult<'de, super::TradeSettlementHeaderMonetarySummationType> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::TradeSettlementHeaderMonetarySummationType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::TradeSettlementHeaderMonetarySummationType> {
             use TradeSettlementHeaderMonetarySummationTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -5629,8 +4904,8 @@ pub mod quick_xml_deserialize {
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
                     (S::TaxBasisTotalAmount(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_tax_basis_total_amount(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_tax_basis_total_amount(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -5641,8 +4916,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::TaxTotalAmount(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_tax_total_amount(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_tax_total_amount(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -5653,8 +4928,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::GrandTotalAmount(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_grand_total_amount(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_grand_total_amount(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -5665,8 +4940,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::DuePayableAmount(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_due_payable_amount(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_due_payable_amount(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -5678,27 +4953,27 @@ pub mod quick_xml_deserialize {
                     }
                     (_, Event::End(_)) => {
                         if let Some(fallback) = fallback.take() {
-                            self.finish_state(reader, fallback)?;
+                            self.finish_state(helper, fallback)?;
                         }
                         return Ok(DeserializerOutput {
-                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            artifact: DeserializerArtifact::Data(self.finish(helper)?),
                             event: DeserializerEvent::None,
                             allow_any: false,
                         });
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        * self . state__ = TradeSettlementHeaderMonetarySummationTypeDeserializerState :: TaxBasisTotalAmount (None) ;
+                        *self.state__ = S::TaxBasisTotalAmount(None);
                         event
                     }
                     (S::TaxBasisTotalAmount(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_RAM),
                             b"TaxBasisTotalAmount",
                             false,
                         )?;
-                        match self.handle_tax_basis_total_amount(reader, output, &mut fallback)? {
+                        match self.handle_tax_basis_total_amount(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -5709,13 +4984,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::TaxTotalAmount(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_RAM),
                             b"TaxTotalAmount",
                             false,
                         )?;
-                        match self.handle_tax_total_amount(reader, output, &mut fallback)? {
+                        match self.handle_tax_total_amount(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -5726,13 +5001,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::GrandTotalAmount(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_RAM),
                             b"GrandTotalAmount",
                             false,
                         )?;
-                        match self.handle_grand_total_amount(reader, output, &mut fallback)? {
+                        match self.handle_grand_total_amount(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -5743,13 +5018,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::DuePayableAmount(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_RAM),
                             b"DuePayableAmount",
                             false,
                         )?;
-                        match self.handle_due_payable_amount(reader, output, &mut fallback)? {
+                        match self.handle_due_payable_amount(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -5760,7 +5035,7 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Done__, event) => {
-                        fallback.get_or_insert(S::Done__);
+                        *self.state__ = S::Done__;
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
                     (state, event) => {
@@ -5778,29 +5053,23 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(
+        fn finish(
             mut self,
-            reader: &R,
-        ) -> Result<super::TradeSettlementHeaderMonetarySummationType, Error>
-        where
-            R: DeserializeReader,
-        {
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::TradeSettlementHeaderMonetarySummationType, Error> {
             let state = replace(
                 &mut *self.state__,
                 TradeSettlementHeaderMonetarySummationTypeDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::TradeSettlementHeaderMonetarySummationType {
-                tax_basis_total_amount: self
-                    .tax_basis_total_amount
-                    .ok_or_else(|| ErrorKind::MissingElement("TaxBasisTotalAmount".into()))?,
+                tax_basis_total_amount: helper
+                    .finish_element("TaxBasisTotalAmount", self.tax_basis_total_amount)?,
                 tax_total_amount: self.tax_total_amount,
-                grand_total_amount: self
-                    .grand_total_amount
-                    .ok_or_else(|| ErrorKind::MissingElement("GrandTotalAmount".into()))?,
-                due_payable_amount: self
-                    .due_payable_amount
-                    .ok_or_else(|| ErrorKind::MissingElement("DuePayableAmount".into()))?,
+                grand_total_amount: helper
+                    .finish_element("GrandTotalAmount", self.grand_total_amount)?,
+                due_payable_amount: helper
+                    .finish_element("DuePayableAmount", self.due_payable_amount)?,
             })
         }
     }
@@ -5817,30 +5086,27 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl LegalOrganizationTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
-            for attrib in filter_xmlns_attributes(bytes_start) {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib_checked(attrib)?;
+                helper.raise_unexpected_attrib_checked(&attrib)?;
             }
             Ok(Self {
                 id: None,
                 state__: Box::new(LegalOrganizationTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: LegalOrganizationTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             use LegalOrganizationTypeDeserializerState as S;
             match state {
-                S::Id(Some(deserializer)) => self.store_id(deserializer.finish(reader)?)?,
+                S::Id(Some(deserializer)) => self.store_id(deserializer.finish(helper)?)?,
                 _ => (),
             }
             Ok(())
@@ -5852,72 +5118,53 @@ pub mod quick_xml_deserialize {
             self.id = Some(value);
             Ok(())
         }
-        fn handle_id<'de, R>(
+        fn handle_id<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::IdType>,
             fallback: &mut Option<LegalOrganizationTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use LegalOrganizationTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(LegalOrganizationTypeDeserializerState::Id(None));
-                *self.state__ = LegalOrganizationTypeDeserializerState::Done__;
+                fallback.get_or_insert(S::Id(None));
+                *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_id(data)?;
-                    *self.state__ = LegalOrganizationTypeDeserializerState::Done__;
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::Done__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback.get_or_insert(LegalOrganizationTypeDeserializerState::Id(
-                                Some(deserializer),
-                            ));
-                            *self.state__ = LegalOrganizationTypeDeserializerState::Done__;
-                        }
-                        ElementHandlerOutput::Break { .. } => {
-                            *self.state__ =
-                                LegalOrganizationTypeDeserializerState::Id(Some(deserializer));
-                        }
-                    }
-                    ret
+                    fallback.get_or_insert(S::Id(Some(deserializer)));
+                    *self.state__ = S::Done__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
     }
     impl<'de> Deserializer<'de, super::LegalOrganizationType> for LegalOrganizationTypeDeserializer {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::LegalOrganizationType>
-        where
-            R: DeserializeReader,
-        {
-            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        ) -> DeserializerResult<'de, super::LegalOrganizationType> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::LegalOrganizationType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::LegalOrganizationType> {
             use LegalOrganizationTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -5927,8 +5174,8 @@ pub mod quick_xml_deserialize {
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
                     (S::Id(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_id(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_id(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -5940,27 +5187,27 @@ pub mod quick_xml_deserialize {
                     }
                     (_, Event::End(_)) => {
                         if let Some(fallback) = fallback.take() {
-                            self.finish_state(reader, fallback)?;
+                            self.finish_state(helper, fallback)?;
                         }
                         return Ok(DeserializerOutput {
-                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            artifact: DeserializerArtifact::Data(self.finish(helper)?),
                             event: DeserializerEvent::None,
                             allow_any: false,
                         });
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ = LegalOrganizationTypeDeserializerState::Id(None);
+                        *self.state__ = S::Id(None);
                         event
                     }
                     (S::Id(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_RAM),
                             b"ID",
                             false,
                         )?;
-                        match self.handle_id(reader, output, &mut fallback)? {
+                        match self.handle_id(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -5971,7 +5218,7 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Done__, event) => {
-                        fallback.get_or_insert(S::Done__);
+                        *self.state__ = S::Done__;
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
                     (state, event) => {
@@ -5989,15 +5236,15 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::LegalOrganizationType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(
+            mut self,
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::LegalOrganizationType, Error> {
             let state = replace(
                 &mut *self.state__,
                 LegalOrganizationTypeDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::LegalOrganizationType { id: self.id })
         }
     }
@@ -6014,31 +5261,28 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl TradeAddressTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
-            for attrib in filter_xmlns_attributes(bytes_start) {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib_checked(attrib)?;
+                helper.raise_unexpected_attrib_checked(&attrib)?;
             }
             Ok(Self {
                 country_id: None,
                 state__: Box::new(TradeAddressTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: TradeAddressTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             use TradeAddressTypeDeserializerState as S;
             match state {
                 S::CountryId(Some(deserializer)) => {
-                    self.store_country_id(deserializer.finish(reader)?)?
+                    self.store_country_id(deserializer.finish(helper)?)?
                 }
                 _ => (),
             }
@@ -6053,77 +5297,56 @@ pub mod quick_xml_deserialize {
             self.country_id = Some(value);
             Ok(())
         }
-        fn handle_country_id<'de, R>(
+        fn handle_country_id<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::CountryIdType>,
             fallback: &mut Option<TradeAddressTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use TradeAddressTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                if self.country_id.is_some() {
-                    fallback.get_or_insert(TradeAddressTypeDeserializerState::CountryId(None));
-                    *self.state__ = TradeAddressTypeDeserializerState::Done__;
-                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                } else {
-                    *self.state__ = TradeAddressTypeDeserializerState::CountryId(None);
+                fallback.get_or_insert(S::CountryId(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
+                } else {
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_country_id(data)?;
-                    *self.state__ = TradeAddressTypeDeserializerState::Done__;
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::Done__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback.get_or_insert(TradeAddressTypeDeserializerState::CountryId(
-                                Some(deserializer),
-                            ));
-                            *self.state__ = TradeAddressTypeDeserializerState::Done__;
-                        }
-                        ElementHandlerOutput::Break { .. } => {
-                            *self.state__ =
-                                TradeAddressTypeDeserializerState::CountryId(Some(deserializer));
-                        }
-                    }
-                    ret
+                    fallback.get_or_insert(S::CountryId(Some(deserializer)));
+                    *self.state__ = S::Done__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
     }
     impl<'de> Deserializer<'de, super::TradeAddressType> for TradeAddressTypeDeserializer {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::TradeAddressType>
-        where
-            R: DeserializeReader,
-        {
-            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        ) -> DeserializerResult<'de, super::TradeAddressType> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::TradeAddressType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::TradeAddressType> {
             use TradeAddressTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -6133,8 +5356,8 @@ pub mod quick_xml_deserialize {
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
                     (S::CountryId(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_country_id(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_country_id(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -6146,27 +5369,27 @@ pub mod quick_xml_deserialize {
                     }
                     (_, Event::End(_)) => {
                         if let Some(fallback) = fallback.take() {
-                            self.finish_state(reader, fallback)?;
+                            self.finish_state(helper, fallback)?;
                         }
                         return Ok(DeserializerOutput {
-                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            artifact: DeserializerArtifact::Data(self.finish(helper)?),
                             event: DeserializerEvent::None,
                             allow_any: false,
                         });
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ = TradeAddressTypeDeserializerState::CountryId(None);
+                        *self.state__ = S::CountryId(None);
                         event
                     }
                     (S::CountryId(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_RAM),
                             b"CountryID",
                             false,
                         )?;
-                        match self.handle_country_id(reader, output, &mut fallback)? {
+                        match self.handle_country_id(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -6177,7 +5400,7 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Done__, event) => {
-                        fallback.get_or_insert(S::Done__);
+                        *self.state__ = S::Done__;
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
                     (state, event) => {
@@ -6195,19 +5418,17 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::TradeAddressType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(
+            mut self,
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::TradeAddressType, Error> {
             let state = replace(
                 &mut *self.state__,
                 TradeAddressTypeDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::TradeAddressType {
-                country_id: self
-                    .country_id
-                    .ok_or_else(|| ErrorKind::MissingElement("CountryID".into()))?,
+                country_id: helper.finish_element("CountryID", self.country_id)?,
             })
         }
     }
@@ -6224,30 +5445,27 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl TaxRegistrationTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
-            for attrib in filter_xmlns_attributes(bytes_start) {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib_checked(attrib)?;
+                helper.raise_unexpected_attrib_checked(&attrib)?;
             }
             Ok(Self {
                 id: None,
                 state__: Box::new(TaxRegistrationTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: TaxRegistrationTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             use TaxRegistrationTypeDeserializerState as S;
             match state {
-                S::Id(Some(deserializer)) => self.store_id(deserializer.finish(reader)?)?,
+                S::Id(Some(deserializer)) => self.store_id(deserializer.finish(helper)?)?,
                 _ => (),
             }
             Ok(())
@@ -6259,77 +5477,56 @@ pub mod quick_xml_deserialize {
             self.id = Some(value);
             Ok(())
         }
-        fn handle_id<'de, R>(
+        fn handle_id<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::IdType>,
             fallback: &mut Option<TaxRegistrationTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use TaxRegistrationTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                if self.id.is_some() {
-                    fallback.get_or_insert(TaxRegistrationTypeDeserializerState::Id(None));
-                    *self.state__ = TaxRegistrationTypeDeserializerState::Done__;
-                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                } else {
-                    *self.state__ = TaxRegistrationTypeDeserializerState::Id(None);
+                fallback.get_or_insert(S::Id(None));
+                if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
+                } else {
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 }
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_id(data)?;
-                    *self.state__ = TaxRegistrationTypeDeserializerState::Done__;
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::Done__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback.get_or_insert(TaxRegistrationTypeDeserializerState::Id(Some(
-                                deserializer,
-                            )));
-                            *self.state__ = TaxRegistrationTypeDeserializerState::Done__;
-                        }
-                        ElementHandlerOutput::Break { .. } => {
-                            *self.state__ =
-                                TaxRegistrationTypeDeserializerState::Id(Some(deserializer));
-                        }
-                    }
-                    ret
+                    fallback.get_or_insert(S::Id(Some(deserializer)));
+                    *self.state__ = S::Done__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
     }
     impl<'de> Deserializer<'de, super::TaxRegistrationType> for TaxRegistrationTypeDeserializer {
-        fn init<R>(
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::TaxRegistrationType>
-        where
-            R: DeserializeReader,
-        {
-            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        ) -> DeserializerResult<'de, super::TaxRegistrationType> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::TaxRegistrationType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::TaxRegistrationType> {
             use TaxRegistrationTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -6339,8 +5536,8 @@ pub mod quick_xml_deserialize {
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
                     (S::Id(Some(deserializer)), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_id(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_id(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -6352,27 +5549,27 @@ pub mod quick_xml_deserialize {
                     }
                     (_, Event::End(_)) => {
                         if let Some(fallback) = fallback.take() {
-                            self.finish_state(reader, fallback)?;
+                            self.finish_state(helper, fallback)?;
                         }
                         return Ok(DeserializerOutput {
-                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            artifact: DeserializerArtifact::Data(self.finish(helper)?),
                             event: DeserializerEvent::None,
                             allow_any: false,
                         });
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state__ = TaxRegistrationTypeDeserializerState::Id(None);
+                        *self.state__ = S::Id(None);
                         event
                     }
                     (S::Id(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = reader.init_start_tag_deserializer(
+                        let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_RAM),
                             b"ID",
                             false,
                         )?;
-                        match self.handle_id(reader, output, &mut fallback)? {
+                        match self.handle_id(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -6383,7 +5580,7 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Done__, event) => {
-                        fallback.get_or_insert(S::Done__);
+                        *self.state__ = S::Done__;
                         break (DeserializerEvent::Continue(event), allow_any_element);
                     }
                     (state, event) => {
@@ -6401,19 +5598,17 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::TaxRegistrationType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(
+            mut self,
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::TaxRegistrationType, Error> {
             let state = replace(
                 &mut *self.state__,
                 TaxRegistrationTypeDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::TaxRegistrationType {
-                id: self
-                    .id
-                    .ok_or_else(|| ErrorKind::MissingElement("ID".into()))?,
+                id: helper.finish_element("ID", self.id)?,
             })
         }
     }
@@ -6430,20 +5625,20 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl AmountTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
             let mut currency_id: Option<String> = None;
-            for attrib in filter_xmlns_attributes(bytes_start) {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    reader.resolve_local_name(attrib.key, &super::NS_UDT),
+                    helper.resolve_local_name(attrib.key, &super::NS_UDT),
                     Some(b"currencyID")
                 ) {
-                    reader.read_attrib(&mut currency_id, b"currencyID", &attrib.value)?;
+                    helper.read_attrib(&mut currency_id, b"currencyID", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib_checked(attrib)?;
+                    helper.raise_unexpected_attrib_checked(&attrib)?;
                 }
             }
             Ok(Self {
@@ -6452,16 +5647,13 @@ pub mod quick_xml_deserialize {
                 state__: Box::new(AmountTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: AmountTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             if let AmountTypeDeserializerState::Content__(deserializer) = state {
-                self.store_content(deserializer.finish(reader)?)?;
+                self.store_content(deserializer.finish(helper)?)?;
             }
             Ok(())
         }
@@ -6472,14 +5664,11 @@ pub mod quick_xml_deserialize {
             self.content = Some(value);
             Ok(())
         }
-        fn handle_content<'de, R>(
+        fn handle_content<'de>(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, f64>,
-        ) -> DeserializerResult<'de, super::AmountType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::AmountType> {
             use AmountTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
@@ -6494,7 +5683,7 @@ pub mod quick_xml_deserialize {
                 }),
                 DeserializerArtifact::Data(data) => {
                     self.store_content(data)?;
-                    let data = self.finish(reader)?;
+                    let data = self.finish(helper)?;
                     Ok(DeserializerOutput {
                         artifact: DeserializerArtifact::Data(data),
                         event,
@@ -6513,10 +5702,10 @@ pub mod quick_xml_deserialize {
         }
     }
     impl<'de> Deserializer<'de, super::AmountType> for AmountTypeDeserializer {
-        fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, super::AmountType>
-        where
-            R: DeserializeReader,
-        {
+        fn init(
+            helper: &mut DeserializeHelper,
+            event: Event<'de>,
+        ) -> DeserializerResult<'de, super::AmountType> {
             let (Event::Start(x) | Event::Empty(x)) = &event else {
                 return Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::None,
@@ -6524,38 +5713,32 @@ pub mod quick_xml_deserialize {
                     allow_any: false,
                 });
             };
-            Self::from_bytes_start(reader, x)?.next(reader, event)
+            Self::from_bytes_start(helper, x)?.next(helper, event)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::AmountType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::AmountType> {
             use AmountTypeDeserializerState as S;
             match replace(&mut *self.state__, S::Unknown__) {
                 S::Unknown__ => unreachable!(),
                 S::Init__ => {
-                    let output = ContentDeserializer::init(reader, event)?;
-                    self.handle_content(reader, output)
+                    let output = ContentDeserializer::init(helper, event)?;
+                    self.handle_content(helper, output)
                 }
                 S::Content__(deserializer) => {
-                    let output = deserializer.next(reader, event)?;
-                    self.handle_content(reader, output)
+                    let output = deserializer.next(helper, event)?;
+                    self.handle_content(helper, output)
                 }
             }
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::AmountType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(mut self, helper: &mut DeserializeHelper) -> Result<super::AmountType, Error> {
             let state = replace(&mut *self.state__, AmountTypeDeserializerState::Unknown__);
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::AmountType {
                 currency_id: self.currency_id,
-                content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                content: helper.finish_content(self.content)?,
             })
         }
     }
@@ -6571,29 +5754,26 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl CountryIdTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
-            for attrib in filter_xmlns_attributes(bytes_start) {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib_checked(attrib)?;
+                helper.raise_unexpected_attrib_checked(&attrib)?;
             }
             Ok(Self {
                 content: None,
                 state__: Box::new(CountryIdTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: CountryIdTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             if let CountryIdTypeDeserializerState::Content__(deserializer) = state {
-                self.store_content(deserializer.finish(reader)?)?;
+                self.store_content(deserializer.finish(helper)?)?;
             }
             Ok(())
         }
@@ -6604,14 +5784,11 @@ pub mod quick_xml_deserialize {
             self.content = Some(value);
             Ok(())
         }
-        fn handle_content<'de, R>(
+        fn handle_content<'de>(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, String>,
-        ) -> DeserializerResult<'de, super::CountryIdType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::CountryIdType> {
             use CountryIdTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
@@ -6626,7 +5803,7 @@ pub mod quick_xml_deserialize {
                 }),
                 DeserializerArtifact::Data(data) => {
                     self.store_content(data)?;
-                    let data = self.finish(reader)?;
+                    let data = self.finish(helper)?;
                     Ok(DeserializerOutput {
                         artifact: DeserializerArtifact::Data(data),
                         event,
@@ -6645,10 +5822,10 @@ pub mod quick_xml_deserialize {
         }
     }
     impl<'de> Deserializer<'de, super::CountryIdType> for CountryIdTypeDeserializer {
-        fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, super::CountryIdType>
-        where
-            R: DeserializeReader,
-        {
+        fn init(
+            helper: &mut DeserializeHelper,
+            event: Event<'de>,
+        ) -> DeserializerResult<'de, super::CountryIdType> {
             let (Event::Start(x) | Event::Empty(x)) = &event else {
                 return Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::None,
@@ -6656,47 +5833,41 @@ pub mod quick_xml_deserialize {
                     allow_any: false,
                 });
             };
-            Self::from_bytes_start(reader, x)?.next(reader, event)
+            Self::from_bytes_start(helper, x)?.next(helper, event)
         }
-        fn next<R>(
+        fn next(
             mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::CountryIdType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::CountryIdType> {
             use CountryIdTypeDeserializerState as S;
             match replace(&mut *self.state__, S::Unknown__) {
                 S::Unknown__ => unreachable!(),
                 S::Init__ => {
-                    let output = ContentDeserializer::init(reader, event)?;
-                    self.handle_content(reader, output)
+                    let output = ContentDeserializer::init(helper, event)?;
+                    self.handle_content(helper, output)
                 }
                 S::Content__(deserializer) => {
-                    let output = deserializer.next(reader, event)?;
-                    self.handle_content(reader, output)
+                    let output = deserializer.next(helper, event)?;
+                    self.handle_content(helper, output)
                 }
             }
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::CountryIdType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(mut self, helper: &mut DeserializeHelper) -> Result<super::CountryIdType, Error> {
             let state = replace(
                 &mut *self.state__,
                 CountryIdTypeDeserializerState::Unknown__,
             );
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::CountryIdType {
-                content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                content: helper.finish_content(self.content)?,
             })
         }
     }
 }
 pub mod quick_xml_serialize {
     use xsd_parser_types::quick_xml::{
-        write_attrib, write_attrib_opt, BytesEnd, BytesStart, Error, Event, IterSerializer,
+        BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
         WithSerializer,
     };
     #[derive(Debug)]
@@ -6721,7 +5892,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> CrossIndustryInvoiceTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     CrossIndustryInvoiceTypeSerializerState::Init__ => {
@@ -6734,16 +5908,33 @@ pub mod quick_xml_serialize {
                                 )?,
                             );
                         let mut bytes = BytesStart::new(self.name);
+                        helper.begin_ns_scope();
                         if self.is_root {
-                            bytes.push_attribute((&b"xmlns:rsm"[..], &super::NS_RSM[..]));
-                            bytes.push_attribute((&b"xmlns:qdt"[..], &super::NS_QDT[..]));
-                            bytes.push_attribute((&b"xmlns:ram"[..], &super::NS_RAM[..]));
-                            bytes.push_attribute((&b"xmlns:udt"[..], &super::NS_UDT[..]));
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_RSM),
+                                &super::NS_RSM,
+                            );
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_QDT),
+                                &super::NS_QDT,
+                            );
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_RAM),
+                                &super::NS_RAM,
+                            );
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_UDT),
+                                &super::NS_UDT,
+                            );
                         }
                         return Ok(Some(Event::Start(bytes)));
                     }
                     CrossIndustryInvoiceTypeSerializerState::ExchangedDocumentContext(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state =
@@ -6758,7 +5949,7 @@ pub mod quick_xml_serialize {
                         }
                     }
                     CrossIndustryInvoiceTypeSerializerState::ExchangedDocument(x) => match x
-                        .next()
+                        .next(helper)
                         .transpose()?
                     {
                         Some(event) => return Ok(Some(event)),
@@ -6774,13 +5965,14 @@ pub mod quick_xml_serialize {
                         }
                     },
                     CrossIndustryInvoiceTypeSerializerState::SupplyChainTradeTransaction(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = CrossIndustryInvoiceTypeSerializerState::End__,
                         }
                     }
                     CrossIndustryInvoiceTypeSerializerState::End__ => {
                         *self.state = CrossIndustryInvoiceTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     CrossIndustryInvoiceTypeSerializerState::Done__ => return Ok(None),
@@ -6789,10 +5981,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for CrossIndustryInvoiceTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for CrossIndustryInvoiceTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -6827,16 +6018,18 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> ExchangedDocumentContextTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match & mut * self . state { ExchangedDocumentContextTypeSerializerState :: Init__ => { * self . state = ExchangedDocumentContextTypeSerializerState :: BusinessProcessSpecifiedDocumentContextParameter (IterSerializer :: new (self . value . business_process_specified_document_context_parameter . as_ref () , Some ("ram:BusinessProcessSpecifiedDocumentContextParameter") , false)) ; let mut bytes = BytesStart :: new (self . name) ; if self . is_root { bytes . push_attribute ((& b"xmlns:rsm" [..] , & super :: NS_RSM [..])) ; bytes . push_attribute ((& b"xmlns:qdt" [..] , & super :: NS_QDT [..])) ; bytes . push_attribute ((& b"xmlns:ram" [..] , & super :: NS_RAM [..])) ; bytes . push_attribute ((& b"xmlns:udt" [..] , & super :: NS_UDT [..])) ; } return Ok (Some (Event :: Start (bytes))) } ExchangedDocumentContextTypeSerializerState :: BusinessProcessSpecifiedDocumentContextParameter (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ExchangedDocumentContextTypeSerializerState :: GuidelineSpecifiedDocumentContextParameter (WithSerializer :: serializer (& self . value . guideline_specified_document_context_parameter , Some ("ram:GuidelineSpecifiedDocumentContextParameter") , false) ?) , } ExchangedDocumentContextTypeSerializerState :: GuidelineSpecifiedDocumentContextParameter (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ExchangedDocumentContextTypeSerializerState :: End__ , } ExchangedDocumentContextTypeSerializerState :: End__ => { * self . state = ExchangedDocumentContextTypeSerializerState :: Done__ ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } ExchangedDocumentContextTypeSerializerState :: Done__ => return Ok (None) , ExchangedDocumentContextTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                match & mut * self . state { ExchangedDocumentContextTypeSerializerState :: Init__ => { * self . state = ExchangedDocumentContextTypeSerializerState :: BusinessProcessSpecifiedDocumentContextParameter (IterSerializer :: new (self . value . business_process_specified_document_context_parameter . as_ref () , Some ("ram:BusinessProcessSpecifiedDocumentContextParameter") , false)) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; if self . is_root { helper . write_xmlns (& mut bytes , Some (& super :: PREFIX_RAM) , & super :: NS_RAM) ; helper . write_xmlns (& mut bytes , Some (& super :: PREFIX_UDT) , & super :: NS_UDT) ; } return Ok (Some (Event :: Start (bytes))) } ExchangedDocumentContextTypeSerializerState :: BusinessProcessSpecifiedDocumentContextParameter (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ExchangedDocumentContextTypeSerializerState :: GuidelineSpecifiedDocumentContextParameter (WithSerializer :: serializer (& self . value . guideline_specified_document_context_parameter , Some ("ram:GuidelineSpecifiedDocumentContextParameter") , false) ?) , } ExchangedDocumentContextTypeSerializerState :: GuidelineSpecifiedDocumentContextParameter (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ExchangedDocumentContextTypeSerializerState :: End__ , } ExchangedDocumentContextTypeSerializerState :: End__ => { * self . state = ExchangedDocumentContextTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } ExchangedDocumentContextTypeSerializerState :: Done__ => return Ok (None) , ExchangedDocumentContextTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
             }
         }
     }
-    impl<'ser> Iterator for ExchangedDocumentContextTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for ExchangedDocumentContextTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -6864,7 +6057,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> ExchangedDocumentTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     ExchangedDocumentTypeSerializerState::Init__ => {
@@ -6872,28 +6068,42 @@ pub mod quick_xml_serialize {
                             WithSerializer::serializer(&self.value.id, Some("ram:ID"), false)?,
                         );
                         let mut bytes = BytesStart::new(self.name);
+                        helper.begin_ns_scope();
                         if self.is_root {
-                            bytes.push_attribute((&b"xmlns:rsm"[..], &super::NS_RSM[..]));
-                            bytes.push_attribute((&b"xmlns:qdt"[..], &super::NS_QDT[..]));
-                            bytes.push_attribute((&b"xmlns:ram"[..], &super::NS_RAM[..]));
-                            bytes.push_attribute((&b"xmlns:udt"[..], &super::NS_UDT[..]));
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_QDT),
+                                &super::NS_QDT,
+                            );
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_RAM),
+                                &super::NS_RAM,
+                            );
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_UDT),
+                                &super::NS_UDT,
+                            );
                         }
                         return Ok(Some(Event::Start(bytes)));
                     }
-                    ExchangedDocumentTypeSerializerState::Id(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => {
-                            *self.state = ExchangedDocumentTypeSerializerState::TypeCode(
-                                WithSerializer::serializer(
-                                    &self.value.type_code,
-                                    Some("ram:TypeCode"),
-                                    false,
-                                )?,
-                            )
+                    ExchangedDocumentTypeSerializerState::Id(x) => {
+                        match x.next(helper).transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => {
+                                *self.state = ExchangedDocumentTypeSerializerState::TypeCode(
+                                    WithSerializer::serializer(
+                                        &self.value.type_code,
+                                        Some("ram:TypeCode"),
+                                        false,
+                                    )?,
+                                )
+                            }
                         }
-                    },
+                    }
                     ExchangedDocumentTypeSerializerState::TypeCode(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state = ExchangedDocumentTypeSerializerState::IssueDateTime(
@@ -6907,13 +6117,14 @@ pub mod quick_xml_serialize {
                         }
                     }
                     ExchangedDocumentTypeSerializerState::IssueDateTime(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = ExchangedDocumentTypeSerializerState::End__,
                         }
                     }
                     ExchangedDocumentTypeSerializerState::End__ => {
                         *self.state = ExchangedDocumentTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     ExchangedDocumentTypeSerializerState::Done__ => return Ok(None),
@@ -6922,10 +6133,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for ExchangedDocumentTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for ExchangedDocumentTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -6959,16 +6169,18 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> SupplyChainTradeTransactionTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match & mut * self . state { SupplyChainTradeTransactionTypeSerializerState :: Init__ => { * self . state = SupplyChainTradeTransactionTypeSerializerState :: ApplicableHeaderTradeAgreement (WithSerializer :: serializer (& self . value . applicable_header_trade_agreement , Some ("ram:ApplicableHeaderTradeAgreement") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; if self . is_root { bytes . push_attribute ((& b"xmlns:rsm" [..] , & super :: NS_RSM [..])) ; bytes . push_attribute ((& b"xmlns:qdt" [..] , & super :: NS_QDT [..])) ; bytes . push_attribute ((& b"xmlns:ram" [..] , & super :: NS_RAM [..])) ; bytes . push_attribute ((& b"xmlns:udt" [..] , & super :: NS_UDT [..])) ; } return Ok (Some (Event :: Start (bytes))) } SupplyChainTradeTransactionTypeSerializerState :: ApplicableHeaderTradeAgreement (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SupplyChainTradeTransactionTypeSerializerState :: ApplicableHeaderTradeDelivery (WithSerializer :: serializer (& self . value . applicable_header_trade_delivery , Some ("ram:ApplicableHeaderTradeDelivery") , false) ?) , } SupplyChainTradeTransactionTypeSerializerState :: ApplicableHeaderTradeDelivery (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SupplyChainTradeTransactionTypeSerializerState :: ApplicableHeaderTradeSettlement (WithSerializer :: serializer (& self . value . applicable_header_trade_settlement , Some ("ram:ApplicableHeaderTradeSettlement") , false) ?) , } SupplyChainTradeTransactionTypeSerializerState :: ApplicableHeaderTradeSettlement (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SupplyChainTradeTransactionTypeSerializerState :: End__ , } SupplyChainTradeTransactionTypeSerializerState :: End__ => { * self . state = SupplyChainTradeTransactionTypeSerializerState :: Done__ ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } SupplyChainTradeTransactionTypeSerializerState :: Done__ => return Ok (None) , SupplyChainTradeTransactionTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                match & mut * self . state { SupplyChainTradeTransactionTypeSerializerState :: Init__ => { * self . state = SupplyChainTradeTransactionTypeSerializerState :: ApplicableHeaderTradeAgreement (WithSerializer :: serializer (& self . value . applicable_header_trade_agreement , Some ("ram:ApplicableHeaderTradeAgreement") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; if self . is_root { helper . write_xmlns (& mut bytes , Some (& super :: PREFIX_QDT) , & super :: NS_QDT) ; helper . write_xmlns (& mut bytes , Some (& super :: PREFIX_RAM) , & super :: NS_RAM) ; helper . write_xmlns (& mut bytes , Some (& super :: PREFIX_UDT) , & super :: NS_UDT) ; } return Ok (Some (Event :: Start (bytes))) } SupplyChainTradeTransactionTypeSerializerState :: ApplicableHeaderTradeAgreement (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SupplyChainTradeTransactionTypeSerializerState :: ApplicableHeaderTradeDelivery (WithSerializer :: serializer (& self . value . applicable_header_trade_delivery , Some ("ram:ApplicableHeaderTradeDelivery") , false) ?) , } SupplyChainTradeTransactionTypeSerializerState :: ApplicableHeaderTradeDelivery (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SupplyChainTradeTransactionTypeSerializerState :: ApplicableHeaderTradeSettlement (WithSerializer :: serializer (& self . value . applicable_header_trade_settlement , Some ("ram:ApplicableHeaderTradeSettlement") , false) ?) , } SupplyChainTradeTransactionTypeSerializerState :: ApplicableHeaderTradeSettlement (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SupplyChainTradeTransactionTypeSerializerState :: End__ , } SupplyChainTradeTransactionTypeSerializerState :: End__ => { * self . state = SupplyChainTradeTransactionTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } SupplyChainTradeTransactionTypeSerializerState :: Done__ => return Ok (None) , SupplyChainTradeTransactionTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
             }
         }
     }
-    impl<'ser> Iterator for SupplyChainTradeTransactionTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for SupplyChainTradeTransactionTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -6994,7 +6206,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> DocumentContextParameterTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     DocumentContextParameterTypeSerializerState::Init__ => {
@@ -7002,16 +6217,23 @@ pub mod quick_xml_serialize {
                             WithSerializer::serializer(&self.value.id, Some("ram:ID"), false)?,
                         );
                         let mut bytes = BytesStart::new(self.name);
+                        helper.begin_ns_scope();
                         if self.is_root {
-                            bytes.push_attribute((&b"xmlns:rsm"[..], &super::NS_RSM[..]));
-                            bytes.push_attribute((&b"xmlns:qdt"[..], &super::NS_QDT[..]));
-                            bytes.push_attribute((&b"xmlns:ram"[..], &super::NS_RAM[..]));
-                            bytes.push_attribute((&b"xmlns:udt"[..], &super::NS_UDT[..]));
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_RAM),
+                                &super::NS_RAM,
+                            );
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_UDT),
+                                &super::NS_UDT,
+                            );
                         }
                         return Ok(Some(Event::Start(bytes)));
                     }
                     DocumentContextParameterTypeSerializerState::Id(x) => match x
-                        .next()
+                        .next(helper)
                         .transpose()?
                     {
                         Some(event) => return Ok(Some(event)),
@@ -7019,6 +6241,7 @@ pub mod quick_xml_serialize {
                     },
                     DocumentContextParameterTypeSerializerState::End__ => {
                         *self.state = DocumentContextParameterTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     DocumentContextParameterTypeSerializerState::Done__ => return Ok(None),
@@ -7027,10 +6250,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for DocumentContextParameterTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for DocumentContextParameterTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -7056,7 +6278,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> IdTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     IdTypeSerializerState::Init__ => {
@@ -7066,21 +6291,24 @@ pub mod quick_xml_serialize {
                             false,
                         )?);
                         let mut bytes = BytesStart::new(self.name);
+                        helper.begin_ns_scope();
                         if self.is_root {
-                            bytes.push_attribute((&b"xmlns:rsm"[..], &super::NS_RSM[..]));
-                            bytes.push_attribute((&b"xmlns:qdt"[..], &super::NS_QDT[..]));
-                            bytes.push_attribute((&b"xmlns:ram"[..], &super::NS_RAM[..]));
-                            bytes.push_attribute((&b"xmlns:udt"[..], &super::NS_UDT[..]));
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_UDT),
+                                &super::NS_UDT,
+                            );
                         }
-                        write_attrib_opt(&mut bytes, "schemeID", &self.value.scheme_id)?;
+                        helper.write_attrib_opt(&mut bytes, "schemeID", &self.value.scheme_id)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
-                    IdTypeSerializerState::Content__(x) => match x.next().transpose()? {
+                    IdTypeSerializerState::Content__(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => *self.state = IdTypeSerializerState::End__,
                     },
                     IdTypeSerializerState::End__ => {
                         *self.state = IdTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     IdTypeSerializerState::Done__ => return Ok(None),
@@ -7089,10 +6317,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for IdTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for IdTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -7118,7 +6345,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> DocumentCodeTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     DocumentCodeTypeSerializerState::Init__ => {
@@ -7126,20 +6356,25 @@ pub mod quick_xml_serialize {
                             WithSerializer::serializer(&self.value.content, None, false)?,
                         );
                         let mut bytes = BytesStart::new(self.name);
+                        helper.begin_ns_scope();
                         if self.is_root {
-                            bytes.push_attribute((&b"xmlns:rsm"[..], &super::NS_RSM[..]));
-                            bytes.push_attribute((&b"xmlns:qdt"[..], &super::NS_QDT[..]));
-                            bytes.push_attribute((&b"xmlns:ram"[..], &super::NS_RAM[..]));
-                            bytes.push_attribute((&b"xmlns:udt"[..], &super::NS_UDT[..]));
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_QDT),
+                                &super::NS_QDT,
+                            );
                         }
                         return Ok(Some(Event::Start(bytes)));
                     }
-                    DocumentCodeTypeSerializerState::Content__(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => *self.state = DocumentCodeTypeSerializerState::End__,
-                    },
+                    DocumentCodeTypeSerializerState::Content__(x) => {
+                        match x.next(helper).transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => *self.state = DocumentCodeTypeSerializerState::End__,
+                        }
+                    }
                     DocumentCodeTypeSerializerState::End__ => {
                         *self.state = DocumentCodeTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     DocumentCodeTypeSerializerState::Done__ => return Ok(None),
@@ -7148,10 +6383,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for DocumentCodeTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for DocumentCodeTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -7177,7 +6411,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> DateTimeTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     DateTimeTypeSerializerState::Init__ => {
@@ -7185,20 +6422,25 @@ pub mod quick_xml_serialize {
                             WithSerializer::serializer(&self.value.content, None, false)?,
                         );
                         let mut bytes = BytesStart::new(self.name);
+                        helper.begin_ns_scope();
                         if self.is_root {
-                            bytes.push_attribute((&b"xmlns:rsm"[..], &super::NS_RSM[..]));
-                            bytes.push_attribute((&b"xmlns:qdt"[..], &super::NS_QDT[..]));
-                            bytes.push_attribute((&b"xmlns:ram"[..], &super::NS_RAM[..]));
-                            bytes.push_attribute((&b"xmlns:udt"[..], &super::NS_UDT[..]));
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_UDT),
+                                &super::NS_UDT,
+                            );
                         }
                         return Ok(Some(Event::Start(bytes)));
                     }
-                    DateTimeTypeSerializerState::Content__(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => *self.state = DateTimeTypeSerializerState::End__,
-                    },
+                    DateTimeTypeSerializerState::Content__(x) => {
+                        match x.next(helper).transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => *self.state = DateTimeTypeSerializerState::End__,
+                        }
+                    }
                     DateTimeTypeSerializerState::End__ => {
                         *self.state = DateTimeTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     DateTimeTypeSerializerState::Done__ => return Ok(None),
@@ -7207,10 +6449,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for DateTimeTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for DateTimeTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -7233,7 +6474,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> DateTimeTypeContentSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     DateTimeTypeContentSerializerState::Init__ => match self.value {
@@ -7244,7 +6488,7 @@ pub mod quick_xml_serialize {
                         }
                     },
                     DateTimeTypeContentSerializerState::DateTimeString(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = DateTimeTypeContentSerializerState::Done__,
                         }
@@ -7255,10 +6499,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for DateTimeTypeContentSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for DateTimeTypeContentSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -7293,7 +6536,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> HeaderTradeAgreementTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     HeaderTradeAgreementTypeSerializerState::Init__ => {
@@ -7305,16 +6551,28 @@ pub mod quick_xml_serialize {
                             ),
                         );
                         let mut bytes = BytesStart::new(self.name);
+                        helper.begin_ns_scope();
                         if self.is_root {
-                            bytes.push_attribute((&b"xmlns:rsm"[..], &super::NS_RSM[..]));
-                            bytes.push_attribute((&b"xmlns:qdt"[..], &super::NS_QDT[..]));
-                            bytes.push_attribute((&b"xmlns:ram"[..], &super::NS_RAM[..]));
-                            bytes.push_attribute((&b"xmlns:udt"[..], &super::NS_UDT[..]));
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_QDT),
+                                &super::NS_QDT,
+                            );
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_RAM),
+                                &super::NS_RAM,
+                            );
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_UDT),
+                                &super::NS_UDT,
+                            );
                         }
                         return Ok(Some(Event::Start(bytes)));
                     }
                     HeaderTradeAgreementTypeSerializerState::BuyerReference(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state =
@@ -7329,7 +6587,7 @@ pub mod quick_xml_serialize {
                         }
                     }
                     HeaderTradeAgreementTypeSerializerState::SellerTradeParty(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state =
@@ -7344,7 +6602,7 @@ pub mod quick_xml_serialize {
                         }
                     }
                     HeaderTradeAgreementTypeSerializerState::BuyerTradeParty(x) => match x
-                        .next()
+                        .next(helper)
                         .transpose()?
                     {
                         Some(event) => return Ok(Some(event)),
@@ -7358,13 +6616,14 @@ pub mod quick_xml_serialize {
                             ),
                     },
                     HeaderTradeAgreementTypeSerializerState::BuyerOrderReferencedDocument(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = HeaderTradeAgreementTypeSerializerState::End__,
                         }
                     }
                     HeaderTradeAgreementTypeSerializerState::End__ => {
                         *self.state = HeaderTradeAgreementTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     HeaderTradeAgreementTypeSerializerState::Done__ => return Ok(None),
@@ -7373,10 +6632,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for HeaderTradeAgreementTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for HeaderTradeAgreementTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -7400,18 +6658,24 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> HeaderTradeDeliveryTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     HeaderTradeDeliveryTypeSerializerState::Init__ => {
                         *self.state = HeaderTradeDeliveryTypeSerializerState::Done__;
                         let mut bytes = BytesStart::new(self.name);
+                        helper.begin_ns_scope();
                         if self.is_root {
-                            bytes.push_attribute((&b"xmlns:rsm"[..], &super::NS_RSM[..]));
-                            bytes.push_attribute((&b"xmlns:qdt"[..], &super::NS_QDT[..]));
-                            bytes.push_attribute((&b"xmlns:ram"[..], &super::NS_RAM[..]));
-                            bytes.push_attribute((&b"xmlns:udt"[..], &super::NS_UDT[..]));
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_RAM),
+                                &super::NS_RAM,
+                            );
                         }
+                        helper.end_ns_scope();
                         return Ok(Some(Event::Empty(bytes)));
                     }
                     HeaderTradeDeliveryTypeSerializerState::Done__ => return Ok(None),
@@ -7420,10 +6684,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for HeaderTradeDeliveryTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for HeaderTradeDeliveryTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -7452,16 +6715,18 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> HeaderTradeSettlementTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match & mut * self . state { HeaderTradeSettlementTypeSerializerState :: Init__ => { * self . state = HeaderTradeSettlementTypeSerializerState :: InvoiceCurrencyCode (WithSerializer :: serializer (& self . value . invoice_currency_code , Some ("ram:InvoiceCurrencyCode") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; if self . is_root { bytes . push_attribute ((& b"xmlns:rsm" [..] , & super :: NS_RSM [..])) ; bytes . push_attribute ((& b"xmlns:qdt" [..] , & super :: NS_QDT [..])) ; bytes . push_attribute ((& b"xmlns:ram" [..] , & super :: NS_RAM [..])) ; bytes . push_attribute ((& b"xmlns:udt" [..] , & super :: NS_UDT [..])) ; } return Ok (Some (Event :: Start (bytes))) } HeaderTradeSettlementTypeSerializerState :: InvoiceCurrencyCode (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = HeaderTradeSettlementTypeSerializerState :: SpecifiedTradeSettlementHeaderMonetarySummation (WithSerializer :: serializer (& self . value . specified_trade_settlement_header_monetary_summation , Some ("ram:SpecifiedTradeSettlementHeaderMonetarySummation") , false) ?) , } HeaderTradeSettlementTypeSerializerState :: SpecifiedTradeSettlementHeaderMonetarySummation (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = HeaderTradeSettlementTypeSerializerState :: End__ , } HeaderTradeSettlementTypeSerializerState :: End__ => { * self . state = HeaderTradeSettlementTypeSerializerState :: Done__ ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } HeaderTradeSettlementTypeSerializerState :: Done__ => return Ok (None) , HeaderTradeSettlementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                match & mut * self . state { HeaderTradeSettlementTypeSerializerState :: Init__ => { * self . state = HeaderTradeSettlementTypeSerializerState :: InvoiceCurrencyCode (WithSerializer :: serializer (& self . value . invoice_currency_code , Some ("ram:InvoiceCurrencyCode") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; if self . is_root { helper . write_xmlns (& mut bytes , Some (& super :: PREFIX_QDT) , & super :: NS_QDT) ; helper . write_xmlns (& mut bytes , Some (& super :: PREFIX_RAM) , & super :: NS_RAM) ; helper . write_xmlns (& mut bytes , Some (& super :: PREFIX_UDT) , & super :: NS_UDT) ; } return Ok (Some (Event :: Start (bytes))) } HeaderTradeSettlementTypeSerializerState :: InvoiceCurrencyCode (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = HeaderTradeSettlementTypeSerializerState :: SpecifiedTradeSettlementHeaderMonetarySummation (WithSerializer :: serializer (& self . value . specified_trade_settlement_header_monetary_summation , Some ("ram:SpecifiedTradeSettlementHeaderMonetarySummation") , false) ?) , } HeaderTradeSettlementTypeSerializerState :: SpecifiedTradeSettlementHeaderMonetarySummation (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = HeaderTradeSettlementTypeSerializerState :: End__ , } HeaderTradeSettlementTypeSerializerState :: End__ => { * self . state = HeaderTradeSettlementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } HeaderTradeSettlementTypeSerializerState :: Done__ => return Ok (None) , HeaderTradeSettlementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
             }
         }
     }
-    impl<'ser> Iterator for HeaderTradeSettlementTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for HeaderTradeSettlementTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -7487,7 +6752,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> DateTimeTypeDateTimeStringTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     DateTimeTypeDateTimeStringTypeSerializerState::Init__ => {
@@ -7495,17 +6763,19 @@ pub mod quick_xml_serialize {
                             WithSerializer::serializer(&self.value.content, None, false)?,
                         );
                         let mut bytes = BytesStart::new(self.name);
+                        helper.begin_ns_scope();
                         if self.is_root {
-                            bytes.push_attribute((&b"xmlns:rsm"[..], &super::NS_RSM[..]));
-                            bytes.push_attribute((&b"xmlns:qdt"[..], &super::NS_QDT[..]));
-                            bytes.push_attribute((&b"xmlns:ram"[..], &super::NS_RAM[..]));
-                            bytes.push_attribute((&b"xmlns:udt"[..], &super::NS_UDT[..]));
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_UDT),
+                                &super::NS_UDT,
+                            );
                         }
-                        write_attrib(&mut bytes, "format", &self.value.format)?;
+                        helper.write_attrib(&mut bytes, "format", &self.value.format)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
                     DateTimeTypeDateTimeStringTypeSerializerState::Content__(x) => match x
-                        .next()
+                        .next(helper)
                         .transpose()?
                     {
                         Some(event) => return Ok(Some(event)),
@@ -7513,6 +6783,7 @@ pub mod quick_xml_serialize {
                     },
                     DateTimeTypeDateTimeStringTypeSerializerState::End__ => {
                         *self.state = DateTimeTypeDateTimeStringTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     DateTimeTypeDateTimeStringTypeSerializerState::Done__ => return Ok(None),
@@ -7521,10 +6792,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for DateTimeTypeDateTimeStringTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for DateTimeTypeDateTimeStringTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -7550,7 +6820,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> TextTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     TextTypeSerializerState::Init__ => {
@@ -7558,20 +6831,23 @@ pub mod quick_xml_serialize {
                             WithSerializer::serializer(&self.value.content, None, false)?,
                         );
                         let mut bytes = BytesStart::new(self.name);
+                        helper.begin_ns_scope();
                         if self.is_root {
-                            bytes.push_attribute((&b"xmlns:rsm"[..], &super::NS_RSM[..]));
-                            bytes.push_attribute((&b"xmlns:qdt"[..], &super::NS_QDT[..]));
-                            bytes.push_attribute((&b"xmlns:ram"[..], &super::NS_RAM[..]));
-                            bytes.push_attribute((&b"xmlns:udt"[..], &super::NS_UDT[..]));
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_UDT),
+                                &super::NS_UDT,
+                            );
                         }
                         return Ok(Some(Event::Start(bytes)));
                     }
-                    TextTypeSerializerState::Content__(x) => match x.next().transpose()? {
+                    TextTypeSerializerState::Content__(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => *self.state = TextTypeSerializerState::End__,
                     },
                     TextTypeSerializerState::End__ => {
                         *self.state = TextTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     TextTypeSerializerState::Done__ => return Ok(None),
@@ -7580,10 +6856,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for TextTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for TextTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -7622,7 +6897,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> TradePartyTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     TradePartyTypeSerializerState::Init__ => {
@@ -7630,15 +6908,27 @@ pub mod quick_xml_serialize {
                             WithSerializer::serializer(&self.value.name, Some("ram:Name"), false)?,
                         );
                         let mut bytes = BytesStart::new(self.name);
+                        helper.begin_ns_scope();
                         if self.is_root {
-                            bytes.push_attribute((&b"xmlns:rsm"[..], &super::NS_RSM[..]));
-                            bytes.push_attribute((&b"xmlns:qdt"[..], &super::NS_QDT[..]));
-                            bytes.push_attribute((&b"xmlns:ram"[..], &super::NS_RAM[..]));
-                            bytes.push_attribute((&b"xmlns:udt"[..], &super::NS_UDT[..]));
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_QDT),
+                                &super::NS_QDT,
+                            );
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_RAM),
+                                &super::NS_RAM,
+                            );
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_UDT),
+                                &super::NS_UDT,
+                            );
                         }
                         return Ok(Some(Event::Start(bytes)));
                     }
-                    TradePartyTypeSerializerState::Name(x) => match x.next().transpose()? {
+                    TradePartyTypeSerializerState::Name(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => {
                             *self.state = TradePartyTypeSerializerState::SpecifiedLegalOrganization(
@@ -7651,7 +6941,7 @@ pub mod quick_xml_serialize {
                         }
                     },
                     TradePartyTypeSerializerState::SpecifiedLegalOrganization(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state = TradePartyTypeSerializerState::PostalTradeAddress(
@@ -7665,7 +6955,7 @@ pub mod quick_xml_serialize {
                         }
                     }
                     TradePartyTypeSerializerState::PostalTradeAddress(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state =
@@ -7680,13 +6970,14 @@ pub mod quick_xml_serialize {
                         }
                     }
                     TradePartyTypeSerializerState::SpecifiedTaxRegistration(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = TradePartyTypeSerializerState::End__,
                         }
                     }
                     TradePartyTypeSerializerState::End__ => {
                         *self.state = TradePartyTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     TradePartyTypeSerializerState::Done__ => return Ok(None),
@@ -7695,10 +6986,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for TradePartyTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for TradePartyTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -7724,7 +7014,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> ReferencedDocumentTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     ReferencedDocumentTypeSerializerState::Init__ => {
@@ -7736,22 +7029,30 @@ pub mod quick_xml_serialize {
                             )?,
                         );
                         let mut bytes = BytesStart::new(self.name);
+                        helper.begin_ns_scope();
                         if self.is_root {
-                            bytes.push_attribute((&b"xmlns:rsm"[..], &super::NS_RSM[..]));
-                            bytes.push_attribute((&b"xmlns:qdt"[..], &super::NS_QDT[..]));
-                            bytes.push_attribute((&b"xmlns:ram"[..], &super::NS_RAM[..]));
-                            bytes.push_attribute((&b"xmlns:udt"[..], &super::NS_UDT[..]));
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_RAM),
+                                &super::NS_RAM,
+                            );
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_UDT),
+                                &super::NS_UDT,
+                            );
                         }
                         return Ok(Some(Event::Start(bytes)));
                     }
                     ReferencedDocumentTypeSerializerState::IssuerAssignedId(x) => {
-                        match x.next().transpose()? {
+                        match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = ReferencedDocumentTypeSerializerState::End__,
                         }
                     }
                     ReferencedDocumentTypeSerializerState::End__ => {
                         *self.state = ReferencedDocumentTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     ReferencedDocumentTypeSerializerState::Done__ => return Ok(None),
@@ -7760,10 +7061,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for ReferencedDocumentTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for ReferencedDocumentTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -7789,7 +7089,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> CurrencyCodeTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     CurrencyCodeTypeSerializerState::Init__ => {
@@ -7797,20 +7100,25 @@ pub mod quick_xml_serialize {
                             WithSerializer::serializer(&self.value.content, None, false)?,
                         );
                         let mut bytes = BytesStart::new(self.name);
+                        helper.begin_ns_scope();
                         if self.is_root {
-                            bytes.push_attribute((&b"xmlns:rsm"[..], &super::NS_RSM[..]));
-                            bytes.push_attribute((&b"xmlns:qdt"[..], &super::NS_QDT[..]));
-                            bytes.push_attribute((&b"xmlns:ram"[..], &super::NS_RAM[..]));
-                            bytes.push_attribute((&b"xmlns:udt"[..], &super::NS_UDT[..]));
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_QDT),
+                                &super::NS_QDT,
+                            );
                         }
                         return Ok(Some(Event::Start(bytes)));
                     }
-                    CurrencyCodeTypeSerializerState::Content__(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => *self.state = CurrencyCodeTypeSerializerState::End__,
-                    },
+                    CurrencyCodeTypeSerializerState::Content__(x) => {
+                        match x.next(helper).transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => *self.state = CurrencyCodeTypeSerializerState::End__,
+                        }
+                    }
                     CurrencyCodeTypeSerializerState::End__ => {
                         *self.state = CurrencyCodeTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     CurrencyCodeTypeSerializerState::Done__ => return Ok(None),
@@ -7819,10 +7127,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for CurrencyCodeTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for CurrencyCodeTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -7851,16 +7158,18 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> TradeSettlementHeaderMonetarySummationTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match & mut * self . state { TradeSettlementHeaderMonetarySummationTypeSerializerState :: Init__ => { * self . state = TradeSettlementHeaderMonetarySummationTypeSerializerState :: TaxBasisTotalAmount (WithSerializer :: serializer (& self . value . tax_basis_total_amount , Some ("ram:TaxBasisTotalAmount") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; if self . is_root { bytes . push_attribute ((& b"xmlns:rsm" [..] , & super :: NS_RSM [..])) ; bytes . push_attribute ((& b"xmlns:qdt" [..] , & super :: NS_QDT [..])) ; bytes . push_attribute ((& b"xmlns:ram" [..] , & super :: NS_RAM [..])) ; bytes . push_attribute ((& b"xmlns:udt" [..] , & super :: NS_UDT [..])) ; } return Ok (Some (Event :: Start (bytes))) } TradeSettlementHeaderMonetarySummationTypeSerializerState :: TaxBasisTotalAmount (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TradeSettlementHeaderMonetarySummationTypeSerializerState :: TaxTotalAmount (IterSerializer :: new (& self . value . tax_total_amount [..] , Some ("ram:TaxTotalAmount") , false)) , } TradeSettlementHeaderMonetarySummationTypeSerializerState :: TaxTotalAmount (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TradeSettlementHeaderMonetarySummationTypeSerializerState :: GrandTotalAmount (WithSerializer :: serializer (& self . value . grand_total_amount , Some ("ram:GrandTotalAmount") , false) ?) , } TradeSettlementHeaderMonetarySummationTypeSerializerState :: GrandTotalAmount (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TradeSettlementHeaderMonetarySummationTypeSerializerState :: DuePayableAmount (WithSerializer :: serializer (& self . value . due_payable_amount , Some ("ram:DuePayableAmount") , false) ?) , } TradeSettlementHeaderMonetarySummationTypeSerializerState :: DuePayableAmount (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TradeSettlementHeaderMonetarySummationTypeSerializerState :: End__ , } TradeSettlementHeaderMonetarySummationTypeSerializerState :: End__ => { * self . state = TradeSettlementHeaderMonetarySummationTypeSerializerState :: Done__ ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } TradeSettlementHeaderMonetarySummationTypeSerializerState :: Done__ => return Ok (None) , TradeSettlementHeaderMonetarySummationTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                match & mut * self . state { TradeSettlementHeaderMonetarySummationTypeSerializerState :: Init__ => { * self . state = TradeSettlementHeaderMonetarySummationTypeSerializerState :: TaxBasisTotalAmount (WithSerializer :: serializer (& self . value . tax_basis_total_amount , Some ("ram:TaxBasisTotalAmount") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; if self . is_root { helper . write_xmlns (& mut bytes , Some (& super :: PREFIX_RAM) , & super :: NS_RAM) ; helper . write_xmlns (& mut bytes , Some (& super :: PREFIX_UDT) , & super :: NS_UDT) ; } return Ok (Some (Event :: Start (bytes))) } TradeSettlementHeaderMonetarySummationTypeSerializerState :: TaxBasisTotalAmount (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TradeSettlementHeaderMonetarySummationTypeSerializerState :: TaxTotalAmount (IterSerializer :: new (& self . value . tax_total_amount [..] , Some ("ram:TaxTotalAmount") , false)) , } TradeSettlementHeaderMonetarySummationTypeSerializerState :: TaxTotalAmount (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TradeSettlementHeaderMonetarySummationTypeSerializerState :: GrandTotalAmount (WithSerializer :: serializer (& self . value . grand_total_amount , Some ("ram:GrandTotalAmount") , false) ?) , } TradeSettlementHeaderMonetarySummationTypeSerializerState :: GrandTotalAmount (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TradeSettlementHeaderMonetarySummationTypeSerializerState :: DuePayableAmount (WithSerializer :: serializer (& self . value . due_payable_amount , Some ("ram:DuePayableAmount") , false) ?) , } TradeSettlementHeaderMonetarySummationTypeSerializerState :: DuePayableAmount (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TradeSettlementHeaderMonetarySummationTypeSerializerState :: End__ , } TradeSettlementHeaderMonetarySummationTypeSerializerState :: End__ => { * self . state = TradeSettlementHeaderMonetarySummationTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } TradeSettlementHeaderMonetarySummationTypeSerializerState :: Done__ => return Ok (None) , TradeSettlementHeaderMonetarySummationTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
             }
         }
     }
-    impl<'ser> Iterator for TradeSettlementHeaderMonetarySummationTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for TradeSettlementHeaderMonetarySummationTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -7886,7 +7195,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> LegalOrganizationTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     LegalOrganizationTypeSerializerState::Init__ => {
@@ -7894,20 +7206,30 @@ pub mod quick_xml_serialize {
                             IterSerializer::new(self.value.id.as_ref(), Some("ram:ID"), false),
                         );
                         let mut bytes = BytesStart::new(self.name);
+                        helper.begin_ns_scope();
                         if self.is_root {
-                            bytes.push_attribute((&b"xmlns:rsm"[..], &super::NS_RSM[..]));
-                            bytes.push_attribute((&b"xmlns:qdt"[..], &super::NS_QDT[..]));
-                            bytes.push_attribute((&b"xmlns:ram"[..], &super::NS_RAM[..]));
-                            bytes.push_attribute((&b"xmlns:udt"[..], &super::NS_UDT[..]));
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_RAM),
+                                &super::NS_RAM,
+                            );
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_UDT),
+                                &super::NS_UDT,
+                            );
                         }
                         return Ok(Some(Event::Start(bytes)));
                     }
-                    LegalOrganizationTypeSerializerState::Id(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => *self.state = LegalOrganizationTypeSerializerState::End__,
-                    },
+                    LegalOrganizationTypeSerializerState::Id(x) => {
+                        match x.next(helper).transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => *self.state = LegalOrganizationTypeSerializerState::End__,
+                        }
+                    }
                     LegalOrganizationTypeSerializerState::End__ => {
                         *self.state = LegalOrganizationTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     LegalOrganizationTypeSerializerState::Done__ => return Ok(None),
@@ -7916,10 +7238,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for LegalOrganizationTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for LegalOrganizationTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -7945,7 +7266,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> TradeAddressTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     TradeAddressTypeSerializerState::Init__ => {
@@ -7956,20 +7280,30 @@ pub mod quick_xml_serialize {
                                 false,
                             )?);
                         let mut bytes = BytesStart::new(self.name);
+                        helper.begin_ns_scope();
                         if self.is_root {
-                            bytes.push_attribute((&b"xmlns:rsm"[..], &super::NS_RSM[..]));
-                            bytes.push_attribute((&b"xmlns:qdt"[..], &super::NS_QDT[..]));
-                            bytes.push_attribute((&b"xmlns:ram"[..], &super::NS_RAM[..]));
-                            bytes.push_attribute((&b"xmlns:udt"[..], &super::NS_UDT[..]));
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_QDT),
+                                &super::NS_QDT,
+                            );
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_RAM),
+                                &super::NS_RAM,
+                            );
                         }
                         return Ok(Some(Event::Start(bytes)));
                     }
-                    TradeAddressTypeSerializerState::CountryId(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => *self.state = TradeAddressTypeSerializerState::End__,
-                    },
+                    TradeAddressTypeSerializerState::CountryId(x) => {
+                        match x.next(helper).transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => *self.state = TradeAddressTypeSerializerState::End__,
+                        }
+                    }
                     TradeAddressTypeSerializerState::End__ => {
                         *self.state = TradeAddressTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     TradeAddressTypeSerializerState::Done__ => return Ok(None),
@@ -7978,10 +7312,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for TradeAddressTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for TradeAddressTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -8007,7 +7340,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> TaxRegistrationTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     TaxRegistrationTypeSerializerState::Init__ => {
@@ -8015,20 +7351,30 @@ pub mod quick_xml_serialize {
                             WithSerializer::serializer(&self.value.id, Some("ram:ID"), false)?,
                         );
                         let mut bytes = BytesStart::new(self.name);
+                        helper.begin_ns_scope();
                         if self.is_root {
-                            bytes.push_attribute((&b"xmlns:rsm"[..], &super::NS_RSM[..]));
-                            bytes.push_attribute((&b"xmlns:qdt"[..], &super::NS_QDT[..]));
-                            bytes.push_attribute((&b"xmlns:ram"[..], &super::NS_RAM[..]));
-                            bytes.push_attribute((&b"xmlns:udt"[..], &super::NS_UDT[..]));
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_RAM),
+                                &super::NS_RAM,
+                            );
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_UDT),
+                                &super::NS_UDT,
+                            );
                         }
                         return Ok(Some(Event::Start(bytes)));
                     }
-                    TaxRegistrationTypeSerializerState::Id(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => *self.state = TaxRegistrationTypeSerializerState::End__,
-                    },
+                    TaxRegistrationTypeSerializerState::Id(x) => {
+                        match x.next(helper).transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => *self.state = TaxRegistrationTypeSerializerState::End__,
+                        }
+                    }
                     TaxRegistrationTypeSerializerState::End__ => {
                         *self.state = TaxRegistrationTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     TaxRegistrationTypeSerializerState::Done__ => return Ok(None),
@@ -8037,10 +7383,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for TaxRegistrationTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for TaxRegistrationTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -8066,7 +7411,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> AmountTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     AmountTypeSerializerState::Init__ => {
@@ -8074,21 +7422,28 @@ pub mod quick_xml_serialize {
                             WithSerializer::serializer(&self.value.content, None, false)?,
                         );
                         let mut bytes = BytesStart::new(self.name);
+                        helper.begin_ns_scope();
                         if self.is_root {
-                            bytes.push_attribute((&b"xmlns:rsm"[..], &super::NS_RSM[..]));
-                            bytes.push_attribute((&b"xmlns:qdt"[..], &super::NS_QDT[..]));
-                            bytes.push_attribute((&b"xmlns:ram"[..], &super::NS_RAM[..]));
-                            bytes.push_attribute((&b"xmlns:udt"[..], &super::NS_UDT[..]));
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_UDT),
+                                &super::NS_UDT,
+                            );
                         }
-                        write_attrib_opt(&mut bytes, "currencyID", &self.value.currency_id)?;
+                        helper.write_attrib_opt(
+                            &mut bytes,
+                            "currencyID",
+                            &self.value.currency_id,
+                        )?;
                         return Ok(Some(Event::Start(bytes)));
                     }
-                    AmountTypeSerializerState::Content__(x) => match x.next().transpose()? {
+                    AmountTypeSerializerState::Content__(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => *self.state = AmountTypeSerializerState::End__,
                     },
                     AmountTypeSerializerState::End__ => {
                         *self.state = AmountTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     AmountTypeSerializerState::Done__ => return Ok(None),
@@ -8097,10 +7452,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for AmountTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for AmountTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
@@ -8126,7 +7480,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> CountryIdTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     CountryIdTypeSerializerState::Init__ => {
@@ -8134,20 +7491,25 @@ pub mod quick_xml_serialize {
                             WithSerializer::serializer(&self.value.content, None, false)?,
                         );
                         let mut bytes = BytesStart::new(self.name);
+                        helper.begin_ns_scope();
                         if self.is_root {
-                            bytes.push_attribute((&b"xmlns:rsm"[..], &super::NS_RSM[..]));
-                            bytes.push_attribute((&b"xmlns:qdt"[..], &super::NS_QDT[..]));
-                            bytes.push_attribute((&b"xmlns:ram"[..], &super::NS_RAM[..]));
-                            bytes.push_attribute((&b"xmlns:udt"[..], &super::NS_UDT[..]));
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_QDT),
+                                &super::NS_QDT,
+                            );
                         }
                         return Ok(Some(Event::Start(bytes)));
                     }
-                    CountryIdTypeSerializerState::Content__(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => *self.state = CountryIdTypeSerializerState::End__,
-                    },
+                    CountryIdTypeSerializerState::Content__(x) => {
+                        match x.next(helper).transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => *self.state = CountryIdTypeSerializerState::End__,
+                        }
+                    }
                     CountryIdTypeSerializerState::End__ => {
                         *self.state = CountryIdTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     CountryIdTypeSerializerState::Done__ => return Ok(None),
@@ -8156,10 +7518,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for CountryIdTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for CountryIdTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {

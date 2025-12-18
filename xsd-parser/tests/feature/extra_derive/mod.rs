@@ -42,7 +42,10 @@ fn generate_default() {
     let ident = IdentTriple::from((IdentType::Type, "tns:FooType"))
         .resolve(&schemas)
         .expect("Unable to resolve ident for `tns:FooType`");
-    let data_type = data_types.get_mut(&ident).expect("Unable to get data type");
+    let data_type = data_types
+        .items
+        .get_mut(&ident)
+        .expect("Unable to get data type");
     data_type.derive = ConfigValue::Extend(vec![
         IdentPath::from_str("Default").unwrap(),
         IdentPath::from_str("Eq").unwrap(),
@@ -54,7 +57,10 @@ fn generate_default() {
     let ident = IdentTriple::from((IdentType::Type, "tns:BarType"))
         .resolve(&schemas)
         .expect("Unable to resolve ident for `tns:BarType`");
-    let data_type = data_types.get_mut(&ident).expect("Unable to get data type");
+    let data_type = data_types
+        .items
+        .get_mut(&ident)
+        .expect("Unable to get data type");
     data_type.derive = ConfigValue::Overwrite(vec![]);
 
     let module = exec_render(config.renderer, &data_types).expect("Renderer failed");

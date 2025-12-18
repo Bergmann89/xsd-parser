@@ -1,9 +1,11 @@
 use xsd_parser_types::{
-    misc::Namespace,
+    misc::{Namespace, NamespacePrefix},
     quick_xml::{Error, WithDeserializer, WithSerializer},
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
+pub const PREFIX_XS: NamespacePrefix = NamespacePrefix::new_const(b"xs");
+pub const PREFIX_XML: NamespacePrefix = NamespacePrefix::new_const(b"xml");
 pub type MyName = AnyType;
 #[derive(Debug)]
 pub struct AnyType;
@@ -28,7 +30,7 @@ impl WithDeserializer for AnyType {
 pub mod quick_xml_deserialize {
     use core::mem::replace;
     use xsd_parser_types::quick_xml::{
-        BytesStart, DeserializeReader, Deserializer, DeserializerArtifact, DeserializerEvent,
+        BytesStart, DeserializeHelper, Deserializer, DeserializerArtifact, DeserializerEvent,
         DeserializerOutput, DeserializerResult, Error, Event,
     };
     #[derive(Debug)]
@@ -41,43 +43,37 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl AnyTypeDeserializer {
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
             Ok(Self {
                 state__: Box::new(AnyTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: AnyTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             Ok(())
         }
     }
     impl<'de> Deserializer<'de, super::AnyType> for AnyTypeDeserializer {
-        fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, super::AnyType>
-        where
-            R: DeserializeReader,
-        {
-            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
-        }
-        fn next<R>(
-            mut self,
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::AnyType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::AnyType> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        }
+        fn next(
+            mut self,
+            helper: &mut DeserializeHelper,
+            event: Event<'de>,
+        ) -> DeserializerResult<'de, super::AnyType> {
             if let Event::End(_) = &event {
                 Ok(DeserializerOutput {
-                    artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                    artifact: DeserializerArtifact::Data(self.finish(helper)?),
                     event: DeserializerEvent::None,
                     allow_any: false,
                 })
@@ -95,18 +91,15 @@ pub mod quick_xml_deserialize {
                 })
             }
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::AnyType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(mut self, helper: &mut DeserializeHelper) -> Result<super::AnyType, Error> {
             let state = replace(&mut *self.state__, AnyTypeDeserializerState::Unknown__);
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::AnyType {})
         }
     }
 }
 pub mod quick_xml_serialize {
-    use xsd_parser_types::quick_xml::{BytesStart, Error, Event};
+    use xsd_parser_types::quick_xml::{BytesStart, Error, Event, SerializeHelper, Serializer};
     #[derive(Debug)]
     pub struct AnyTypeSerializer<'ser> {
         pub(super) value: &'ser super::AnyType,
@@ -121,7 +114,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> AnyTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     AnyTypeSerializerState::Init__ => {
@@ -135,10 +131,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for AnyTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for AnyTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {

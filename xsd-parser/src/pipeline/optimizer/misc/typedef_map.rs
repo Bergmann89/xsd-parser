@@ -12,7 +12,7 @@ impl TypedefMap {
     pub(crate) fn new(types: &MetaTypes) -> Self {
         let mut ret = HashMap::new();
 
-        for (ident, type_) in types.iter_items() {
+        for (ident, type_) in &types.items {
             if let MetaTypeVariant::Reference(x) = &type_.variant {
                 if x.is_simple() {
                     ret.insert(ident.clone(), x.type_.clone());

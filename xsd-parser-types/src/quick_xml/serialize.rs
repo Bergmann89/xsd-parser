@@ -1,14 +1,21 @@
-use std::borrow::Cow;
+use std::borrow::{BorrowMut, Cow};
 use std::fmt::Debug;
 use std::io::Write;
+use std::marker::PhantomData;
 use std::mem::replace;
-use std::ops::Deref;
+use std::num::{
+    NonZeroI128, NonZeroI16, NonZeroI32, NonZeroI64, NonZeroI8, NonZeroIsize, NonZeroU128,
+    NonZeroU16, NonZeroU32, NonZeroU64, NonZeroU8, NonZeroUsize,
+};
+use std::ops::{Deref, DerefMut};
 
 use quick_xml::{
     escape::escape,
     events::{BytesEnd, BytesStart, BytesText, Event},
     Writer,
 };
+
+use crate::misc::{Namespace, NamespacePrefix};
 
 use super::{Error, ErrorKind, RawByteStr};
 
@@ -51,11 +58,40 @@ where
 
 /// Trait that defines a serializer that can be used to destruct a type to
 /// suitable XML [`Event`]s.
-pub trait Serializer<'ser>: Iterator<Item = Result<Event<'ser>, Error>> + Debug {}
+pub trait Serializer<'ser>: Debug {
+    /// Get the next XML event from the serializer.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the serializer encountered any issue.
+    fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>>;
 
-impl<'ser, X> Serializer<'ser> for X where
-    X: Iterator<Item = Result<Event<'ser>, Error>> + Debug + Sized
+    /// Turn this serializer into an iterator using a newly created [`SerializeHelper`].
+    fn into_iter(self) -> SerializerIter<'ser, Self, SerializeHelper>
+    where
+        Self: Sized,
+    {
+        self.into_iter_with(SerializeHelper::default())
+    }
+
+    /// Turn this serializer into an iterator using the passed [`SerializeHelper`].
+    fn into_iter_with<H>(self, helper: H) -> SerializerIter<'ser, Self, H>
+    where
+        Self: Sized,
+        H: BorrowMut<SerializeHelper>,
+    {
+        SerializerIter::new(self, helper)
+    }
+}
+
+impl<'ser, X> Serializer<'ser> for X
+where
+    X: DerefMut + Debug,
+    X::Target: Serializer<'ser>,
 {
+    fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+        self.deref_mut().next(helper)
+    }
 }
 
 /// Trait that returns a boxed version of a [`Serializer`] for any type that
@@ -87,8 +123,7 @@ where
 }
 
 /// Boxed version of a [`Serializer`].
-pub type BoxedSerializer<'ser> =
-    Box<dyn Serializer<'ser, Item = Result<Event<'ser>, Error>> + 'ser>;
+pub type BoxedSerializer<'ser> = Box<dyn Serializer<'ser> + 'ser>;
 
 /// Trait that could be implemented by types to support serialization to XML
 /// using the [`quick_xml`] crate.
@@ -111,7 +146,7 @@ where
     type Error = Error;
 
     fn serialize<W: Write>(&self, root: &str, writer: &mut Writer<W>) -> Result<(), Self::Error> {
-        SerializeHelper::new(self, Some(root), writer)?.serialize_sync()
+        SerializeImpl::new(self, Some(root), writer)?.serialize_sync()
     }
 }
 
@@ -153,7 +188,7 @@ where
         writer: &'a mut Writer<W>,
     ) -> Self::Future<'a> {
         Box::pin(async move {
-            SerializeHelper::new(self, Some(root), writer)?
+            SerializeImpl::new(self, Some(root), writer)?
                 .serialize_async()
                 .await
         })
@@ -173,7 +208,7 @@ pub trait SerializeBytes: Sized {
     /// # Errors
     ///
     /// Returns a suitable [`Error`] if the serialization was not successful.
-    fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error>;
+    fn serialize_bytes(&self, helper: &mut SerializeHelper) -> Result<Option<Cow<'_, str>>, Error>;
 }
 
 /// Marker trait used to automatically implement [`SerializeBytes`] for any type
@@ -184,7 +219,9 @@ impl<X> SerializeBytes for X
 where
     X: SerializeBytesToString,
 {
-    fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+    fn serialize_bytes(&self, helper: &mut SerializeHelper) -> Result<Option<Cow<'_, str>>, Error> {
+        let _helper = helper;
+
         Ok(Some(Cow::Owned(self.to_string())))
     }
 }
@@ -196,16 +233,32 @@ impl SerializeBytesToString for u8 {}
 impl SerializeBytesToString for u16 {}
 impl SerializeBytesToString for u32 {}
 impl SerializeBytesToString for u64 {}
+impl SerializeBytesToString for u128 {}
 impl SerializeBytesToString for usize {}
 
 impl SerializeBytesToString for i8 {}
 impl SerializeBytesToString for i16 {}
 impl SerializeBytesToString for i32 {}
 impl SerializeBytesToString for i64 {}
+impl SerializeBytesToString for i128 {}
 impl SerializeBytesToString for isize {}
 
 impl SerializeBytesToString for f32 {}
 impl SerializeBytesToString for f64 {}
+
+impl SerializeBytesToString for NonZeroU8 {}
+impl SerializeBytesToString for NonZeroU16 {}
+impl SerializeBytesToString for NonZeroU32 {}
+impl SerializeBytesToString for NonZeroU64 {}
+impl SerializeBytesToString for NonZeroU128 {}
+impl SerializeBytesToString for NonZeroUsize {}
+
+impl SerializeBytesToString for NonZeroI8 {}
+impl SerializeBytesToString for NonZeroI16 {}
+impl SerializeBytesToString for NonZeroI32 {}
+impl SerializeBytesToString for NonZeroI64 {}
+impl SerializeBytesToString for NonZeroI128 {}
+impl SerializeBytesToString for NonZeroIsize {}
 
 #[cfg(feature = "num")]
 impl SerializeBytesToString for num::BigInt {}
@@ -253,16 +306,14 @@ where
     }
 }
 
-impl<'ser, T> Iterator for ContentSerializer<'ser, T>
+impl<'ser, T> Serializer<'ser> for ContentSerializer<'ser, T>
 where
     T: SerializeBytes + Debug,
 {
-    type Item = Result<Event<'ser>, Error>;
-
-    fn next(&mut self) -> Option<Self::Item> {
+    fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
         loop {
             match replace(self, Self::Done) {
-                Self::Begin { name, value } => match value.serialize_bytes() {
+                Self::Begin { name, value } => match value.serialize_bytes(helper) {
                     Ok(None) => return name.map(|name| Ok(Event::Empty(BytesStart::new(name)))),
                     Ok(Some(data)) => {
                         if data.contains("]]>") {
@@ -320,15 +371,13 @@ where
     Done,
 }
 
-impl<'ser, T, TItem> Iterator for IterSerializer<'ser, T, TItem>
+impl<'ser, T, TItem> Serializer<'ser> for IterSerializer<'ser, T, TItem>
 where
-    T: IntoIterator<Item = &'ser TItem> + 'ser,
+    T: IntoIterator<Item = &'ser TItem> + Debug + 'ser,
     <T as IntoIterator>::IntoIter: Debug,
-    TItem: WithSerializer + 'ser,
+    TItem: WithSerializer + Debug + 'ser,
 {
-    type Item = Result<Event<'ser>, Error>;
-
-    fn next(&mut self) -> Option<Self::Item> {
+    fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
         loop {
             match replace(self, Self::Done) {
                 Self::Pending { name, mut iter } => {
@@ -350,7 +399,7 @@ where
                     iter,
                     mut serializer,
                 } => {
-                    if let Some(ret) = serializer.next() {
+                    if let Some(ret) = serializer.next(helper) {
                         *self = Self::Emitting {
                             name,
                             iter,
@@ -418,34 +467,193 @@ where
     }
 }
 
-/* SerializeHelper */
+/// Implements [`Iterator`] for any [`Serializer`] `S` using the [`BorrowMut<SerializeHelper>`] `H`.
+#[derive(Debug)]
+pub struct SerializerIter<'ser, S, H>
+where
+    S: Serializer<'ser>,
+    H: BorrowMut<SerializeHelper>,
+{
+    serializer: S,
+    helper: H,
+    lt: PhantomData<&'ser ()>,
+}
 
-struct SerializeHelper<'a, T, W>
+impl<'ser, S, H> SerializerIter<'ser, S, H>
+where
+    S: Serializer<'ser>,
+    H: BorrowMut<SerializeHelper>,
+{
+    pub fn new(serializer: S, helper: H) -> Self {
+        Self {
+            serializer,
+            helper,
+            lt: PhantomData,
+        }
+    }
+}
+
+impl<'ser, S, H> Iterator for SerializerIter<'ser, S, H>
+where
+    S: Serializer<'ser>,
+    H: BorrowMut<SerializeHelper>,
+{
+    type Item = Result<Event<'ser>, Error>;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.serializer.next(self.helper.borrow_mut())
+    }
+}
+
+/// Helper that defines some useful methods needed for `quick_xml` serialization.
+///
+/// Mainly used in [`Serializer`] and [`SerializeBytes`].
+#[derive(Default, Debug)]
+pub struct SerializeHelper {
+    level: usize,
+    namespaces: Vec<NamespaceEntry>,
+}
+
+#[derive(Debug)]
+struct NamespaceEntry {
+    level: usize,
+    prefix: Option<NamespacePrefix>,
+    namespace: Namespace,
+}
+
+impl SerializeHelper {
+    /// Begin a new namespace scope inside the serialized XML.
+    ///
+    /// This is usually the case, if you create a [`Event::Start`] or [`Event::Empty`].
+    pub fn begin_ns_scope(&mut self) {
+        self.level += 1;
+    }
+
+    /// End the current namespace scope inside the serialized XML.
+    ///
+    /// This is usually the case, if you create a [`Event::End`].
+    pub fn end_ns_scope(&mut self) {
+        self.level = self.level.saturating_sub(1);
+
+        loop {
+            let is_outdated =
+                matches!(self.namespaces.last(), Some(entry) if entry.level > self.level);
+            if is_outdated {
+                self.namespaces.pop();
+            } else {
+                break;
+            }
+        }
+    }
+
+    /// Write a suitable `xmlns` attribute to the passed `bytes` object, if the
+    /// namespace is not already active in the current scope.
+    pub fn write_xmlns(
+        &mut self,
+        bytes: &mut BytesStart<'_>,
+        prefix: Option<&NamespacePrefix>,
+        namespace: &Namespace,
+    ) {
+        for entry in self.namespaces.iter().rev() {
+            if &entry.namespace == namespace {
+                if entry.prefix.as_ref() == prefix {
+                    return;
+                }
+
+                break;
+            }
+        }
+
+        let xmlns = prefix.as_ref().map(|x| {
+            let mut xmlns = b"xmlns:".to_vec();
+            xmlns.extend_from_slice(&x.0);
+            xmlns
+        });
+        let xmlns = xmlns.as_deref().unwrap_or(b"xmlns");
+        bytes.push_attribute((xmlns, &***namespace));
+
+        self.namespaces.push(NamespaceEntry {
+            level: self.level,
+            prefix: prefix.cloned(),
+            namespace: namespace.clone(),
+        });
+    }
+
+    /// Write the passed `attrib` to the passed `bytes` object.
+    ///
+    /// # Errors
+    /// An error is returned of the attribute could not be serialized.
+    pub fn write_attrib<T>(
+        &mut self,
+        bytes: &mut BytesStart<'_>,
+        name: &str,
+        attrib: &T,
+    ) -> Result<(), Error>
+    where
+        T: SerializeBytes,
+    {
+        if let Some(attrib) = SerializeBytes::serialize_bytes(attrib, self)? {
+            bytes.push_attribute((name, attrib));
+        }
+
+        Ok(())
+    }
+
+    /// Write the passed `attrib`  to the passed `bytes` object.
+    ///
+    /// # Errors
+    /// An error is returned of the attribute could not be serialized.
+    pub fn write_attrib_opt<T>(
+        &mut self,
+        bytes: &mut BytesStart<'_>,
+        name: &str,
+        attrib: &Option<T>,
+    ) -> Result<(), Error>
+    where
+        T: SerializeBytes,
+    {
+        let Some(attrib) = attrib else {
+            return Ok(());
+        };
+
+        self.write_attrib(bytes, name, attrib)
+    }
+}
+
+/* SerializeImpl */
+
+struct SerializeImpl<'a, T, W>
 where
     T: WithSerializer + 'a,
 {
+    helper: SerializeHelper,
     writer: &'a mut Writer<W>,
     serializer: T::Serializer<'a>,
 }
 
-impl<'a, T, W> SerializeHelper<'a, T, W>
+impl<'a, T, W> SerializeImpl<'a, T, W>
 where
     T: WithSerializer,
 {
     fn new(value: &'a T, name: Option<&'a str>, writer: &'a mut Writer<W>) -> Result<Self, Error> {
+        let helper = SerializeHelper::default();
         let serializer = value.serializer(name, true)?;
 
-        Ok(Self { writer, serializer })
+        Ok(Self {
+            helper,
+            writer,
+            serializer,
+        })
     }
 }
 
-impl<T, W> SerializeHelper<'_, T, W>
+impl<T, W> SerializeImpl<'_, T, W>
 where
     T: WithSerializer,
     W: Write,
 {
     fn serialize_sync(&mut self) -> Result<(), Error> {
-        for event in self.serializer.by_ref() {
+        while let Some(event) = self.serializer.next(&mut self.helper) {
             self.writer
                 .write_event(event?)
                 .map_err(|error| ErrorKind::XmlError(error.into()))?;
@@ -456,13 +664,13 @@ where
 }
 
 #[cfg(feature = "async")]
-impl<T, W> SerializeHelper<'_, T, W>
+impl<T, W> SerializeImpl<'_, T, W>
 where
     T: WithSerializer,
     W: tokio::io::AsyncWrite + Unpin,
 {
     async fn serialize_async(&mut self) -> Result<(), Error> {
-        for event in self.serializer.by_ref() {
+        while let Some(event) = self.serializer.next(&mut self.helper) {
             self.writer
                 .write_event_async(event?)
                 .await

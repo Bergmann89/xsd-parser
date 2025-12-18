@@ -24,7 +24,7 @@ use std::{
 use quick_xml::{events::Event, Writer};
 use unindent::unindent;
 
-use xsd_parser_types::quick_xml::WithSerializer;
+use xsd_parser_types::quick_xml::{Serializer, WithSerializer};
 
 pub type Use = AttributeUseType;
 
@@ -89,7 +89,11 @@ impl Annotation {
             let mut buffer = Vec::new();
             let mut writer = Writer::new(&mut buffer);
 
-            for event in doc.serializer(None, true).into_iter().flatten() {
+            for event in doc
+                .serializer(None, true)
+                .into_iter()
+                .flat_map(Serializer::into_iter)
+            {
                 let event = event?;
                 let write = match &event {
                     Event::Start(_) | Event::Empty(_) => {

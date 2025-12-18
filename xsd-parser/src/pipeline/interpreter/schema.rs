@@ -1,3 +1,4 @@
+use std::borrow::Cow;
 use std::collections::{HashMap, VecDeque};
 use std::str::from_utf8;
 
@@ -5,6 +6,7 @@ use tracing::instrument;
 
 use xsd_parser_types::misc::{Namespace, RawByteStr};
 
+use crate::models::meta::BuildInMeta;
 use crate::models::{
     meta::{MetaType, MetaTypeVariant},
     schema::{
@@ -108,7 +110,7 @@ impl SchemaInterpreter<'_, '_> {
         ident: &Ident,
     ) -> Result<&mut MetaType, Error> {
         // Create the element if it does not exist
-        if self.state.types.get_type(ident).is_none() {
+        if !self.state.types.items.contains_key(ident) {
             let ty = self
                 .find_element(ident.clone())
                 .ok_or_else(|| Error::UnknownType(ident.clone()))?;
@@ -117,15 +119,15 @@ impl SchemaInterpreter<'_, '_> {
             crate::assert_eq!(ident, &new_ident);
         }
 
-        Ok(self.state.types.get_type_mut(ident).unwrap())
+        Ok(self.state.types.items.get_mut(ident).unwrap())
     }
 
     #[instrument(level = "trace", skip(self))]
     pub(super) fn get_simple_type_variant(
         &mut self,
         ident: &Ident,
-    ) -> Result<&MetaTypeVariant, Error> {
-        if self.state.types.get_type(ident).is_none() {
+    ) -> Result<Cow<'_, MetaTypeVariant>, Error> {
+        if !self.state.types.items.contains_key(ident) {
             let ty = self
                 .find_simple_type(ident.clone())
                 .ok_or_else(|| Error::UnknownType(ident.clone()))?;
@@ -135,6 +137,9 @@ impl SchemaInterpreter<'_, '_> {
         }
 
         match self.state.types.get_variant(ident) {
+            Some(ty) if ty.is_mixed(&self.state.types) && ty.is_emptiable(&self.state.types) => {
+                Ok(Cow::Owned(MetaTypeVariant::BuildIn(BuildInMeta::String)))
+            }
             None
             | Some(
                 MetaTypeVariant::ComplexType(_)
@@ -150,7 +155,7 @@ impl SchemaInterpreter<'_, '_> {
                 | MetaTypeVariant::Union(_)
                 | MetaTypeVariant::Reference(_)
                 | MetaTypeVariant::SimpleType(_)),
-            ) => Ok(ty),
+            ) => Ok(Cow::Borrowed(ty)),
         }
     }
 
@@ -159,7 +164,7 @@ impl SchemaInterpreter<'_, '_> {
         &mut self,
         ident: &Ident,
     ) -> Result<&MetaTypeVariant, Error> {
-        if self.state.types.get_type(ident).is_none() {
+        if !self.state.types.items.contains_key(ident) {
             let ty = self
                 .find_complex_type(ident.clone())
                 .ok_or_else(|| Error::UnknownType(ident.clone()))?;
@@ -283,12 +288,12 @@ impl<'schema> SchemaInterpreter<'schema, '_> {
     where
         F: FnMut(&mut VariantBuilder<'_, 'schema, '_>) -> Result<(), Error>,
     {
-        if self.state.types.contains_exact_type(&ident)
+        if self.state.types.items.contains_key(&ident)
             || self
                 .state
                 .type_stack
                 .iter()
-                .any(|x| matches!(x, StackEntry::Type(x, _) if x.matches(&ident)))
+                .any(|x| matches!(x, StackEntry::Type(x, _) if *x == ident))
         {
             return Ok(ident);
         }

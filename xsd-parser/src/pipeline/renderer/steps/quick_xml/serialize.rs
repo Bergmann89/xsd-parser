@@ -1,16 +1,29 @@
-use proc_macro2::{Ident as Ident2, Literal, TokenStream};
+use std::cell::RefCell;
+use std::collections::{
+    btree_map::Entry, hash_map::Entry as HashMapEntry, BTreeMap, HashMap, HashSet,
+};
+use std::mem::replace;
+use std::ops::Not;
+use std::rc::Rc;
+
+use proc_macro2::{Ident as Ident2, TokenStream};
 use quote::{format_ident, quote};
 
 use xsd_parser_types::misc::Namespace;
 
 use crate::config::{GeneratorFlags, TypedefMode};
+use crate::models::schema::xs::FormChoiceType;
+use crate::models::schema::NamespaceId;
 use crate::models::{
     code::IdentPath,
     data::{
-        ComplexBase, ComplexData, ComplexDataContent, ComplexDataElement, ComplexDataEnum,
-        ComplexDataStruct, DataTypeVariant, DynamicData, EnumerationData, EnumerationTypeVariant,
-        Occurs, ReferenceData, SimpleData, UnionData, UnionTypeVariant,
+        ComplexBase, ComplexData, ComplexDataAttribute, ComplexDataContent, ComplexDataElement,
+        ComplexDataEnum, ComplexDataStruct, DataTypeVariant, DynamicData, EnumerationData,
+        EnumerationTypeVariant, Occurs, PathData, ReferenceData, SimpleData, UnionData,
+        UnionTypeVariant,
     },
+    meta::{ElementMetaVariant, MetaTypeVariant, MetaTypes},
+    Ident,
 };
 
 use super::super::super::{
@@ -21,11 +34,43 @@ use super::super::super::{
 /// Implements a [`RenderStep`] that renders the code for the `quick_xml` serialization.
 #[derive(Debug, Clone)]
 pub struct QuickXmlSerializeRenderStep {
-    /// Whether to add namespaces to the root element during serialization or not.
-    pub with_namespaces: bool,
+    /// How to serialize namespace definitions.
+    pub namespaces: NamespaceSerialization,
 
     /// Default namespace to use for the serialization.
     pub default_namespace: Option<Namespace>,
+}
+
+/// Defines how the [`QuickXmlSerializeRenderStep`] will serialize the different
+/// namespaces of the elements and attributes.
+#[derive(Debug, Clone, Copy, Eq, PartialEq)]
+pub enum NamespaceSerialization {
+    /// Do not serialize any namespace definitions.
+    None,
+
+    /// All namespace definitions are added to the local element if they are
+    /// not already in scope.
+    Local,
+
+    /// All namespace definitions are serialized to the root element.
+    Global,
+}
+
+impl NamespaceSerialization {
+    /// Returns `true` if this is [`NamespaceSerialization::None`], `false` otherwise.
+    #[inline]
+    #[must_use]
+    pub fn is_none(&self) -> bool {
+        matches!(self, Self::None)
+    }
+
+    /// Returns `true` if this is [`NamespaceSerialization::Local`] or
+    /// [`NamespaceSerialization::Global`], `false` otherwise.
+    #[inline]
+    #[must_use]
+    pub fn is_some(&self) -> bool {
+        matches!(self, Self::Local | Self::Global)
+    }
 }
 
 macro_rules! resolve_build_in {
@@ -51,6 +96,20 @@ struct SerializerConfig;
 impl ValueKey for SerializerConfig {
     type Type = QuickXmlSerializeRenderStep;
 }
+
+#[derive(Default, Debug)]
+struct NamespaceCollector {
+    cache: HashMap<Ident, Option<SharedGlobalNamespaces>>,
+}
+
+#[derive(Debug, Clone, Copy, Eq, PartialEq, Ord, PartialOrd, Hash)]
+enum NamespaceKey {
+    Normal(NamespaceId),
+    Default(NamespaceId),
+}
+
+type GlobalNamespaces = BTreeMap<NamespaceKey, (Option<PathData>, PathData)>;
+type SharedGlobalNamespaces = Rc<GlobalNamespaces>;
 
 impl RenderStep for QuickXmlSerializeRenderStep {
     fn render_step_type(&self) -> RenderStepType {
@@ -100,16 +159,19 @@ impl UnionData<'_> {
             .map(UnionTypeVariant::render_serializer_variant)
             .collect::<Vec<_>>();
 
+        let str_ = resolve_build_in!(ctx, "::core::primitive::str");
         let result = resolve_build_in!(ctx, "::core::result::Result");
         let option = resolve_build_in!(ctx, "::core::option::Option");
 
         let cow = resolve_ident!(ctx, "::alloc::borrow::Cow");
         let error = resolve_ident!(ctx, "::xsd_parser_types::quick_xml::Error");
         let serialize_bytes = resolve_ident!(ctx, "::xsd_parser_types::quick_xml::SerializeBytes");
+        let serialize_helper =
+            resolve_ident!(ctx, "::xsd_parser_types::quick_xml::SerializeHelper");
 
         let code = quote! {
             impl #serialize_bytes for #type_ident {
-                fn serialize_bytes(&self) -> #result<#option<#cow<'_, str>>, #error> {
+                fn serialize_bytes(&self, helper: &mut #serialize_helper) -> #result<#option<#cow<'_, #str_>>, #error> {
                     match self {
                         #( #variants )*
                     }
@@ -126,7 +188,7 @@ impl UnionTypeVariant<'_> {
         let Self { variant_ident, .. } = self;
 
         quote! {
-            Self::#variant_ident(x) => x.serialize_bytes(),
+            Self::#variant_ident(x) => x.serialize_bytes(helper),
         }
     }
 }
@@ -137,6 +199,8 @@ impl DynamicData<'_> {
     pub(crate) fn render_serializer(&self, ctx: &mut Context<'_, '_>) {
         let Self { type_ident, .. } = self;
 
+        let str_ = resolve_build_in!(ctx, "::core::primitive::str");
+        let bool_ = resolve_build_in!(ctx, "::core::primitive::bool");
         let result = resolve_build_in!(ctx, "::core::result::Result");
         let option = resolve_build_in!(ctx, "::core::option::Option");
 
@@ -151,8 +215,8 @@ impl DynamicData<'_> {
 
                 fn serializer<'ser>(
                     &'ser self,
-                    name: #option<&'ser str>,
-                    is_root: bool
+                    name: #option<&'ser #str_>,
+                    is_root: #bool_
                 ) -> #result<Self::Serializer<'ser>, #error> {
                     let _name = name;
 
@@ -184,13 +248,13 @@ impl ReferenceData<'_> {
             Occurs::None => return,
             Occurs::Single => {
                 quote! {
-                    self.0.serialize_bytes()
+                    self.0.serialize_bytes(helper)
                 }
             }
             Occurs::Optional => {
                 quote! {
                     if let Some(inner) = &self.0 {
-                        Ok(Some(inner.serialize_bytes()?))
+                        Ok(Some(inner.serialize_bytes(helper)?))
                     } else {
                         Ok(None)
                     }
@@ -208,7 +272,7 @@ impl ReferenceData<'_> {
 
                     let mut data = #string::new();
                     for item in &self.0 {
-                        if let Some(bytes) = item.serialize_bytes()? {
+                        if let Some(bytes) = item.serialize_bytes(helper)? {
                             if !data.is_empty() {
                                 data.push(' ');
                             }
@@ -222,16 +286,19 @@ impl ReferenceData<'_> {
             }
         };
 
+        let str_ = resolve_build_in!(ctx, "::core::primitive::str");
         let result = resolve_build_in!(ctx, "::core::result::Result");
         let option = resolve_build_in!(ctx, "::core::option::Option");
 
         let cow = resolve_ident!(ctx, "::alloc::borrow::Cow");
         let error = resolve_ident!(ctx, "::xsd_parser_types::quick_xml::Error");
         let serialize_bytes = resolve_ident!(ctx, "::xsd_parser_types::quick_xml::SerializeBytes");
+        let serialize_helper =
+            resolve_ident!(ctx, "::xsd_parser_types::quick_xml::SerializeHelper");
 
         let code = quote! {
             impl #serialize_bytes for #type_ident {
-                fn serialize_bytes(&self) -> #result<#option<#cow<'_, str>>, #error> {
+                fn serialize_bytes(&self, helper: &mut #serialize_helper) -> #result<#option<#cow<'_, #str_>>, #error> {
                     #body
                 }
             }
@@ -253,16 +320,19 @@ impl EnumerationData<'_> {
 
         let variants = variants.iter().map(|x| x.render_serializer_variant(ctx));
 
+        let str_ = resolve_build_in!(ctx, "::core::primitive::str");
         let result = resolve_build_in!(ctx, "::core::result::Result");
         let option = resolve_build_in!(ctx, "::core::option::Option");
 
         let cow = resolve_ident!(ctx, "::alloc::borrow::Cow");
         let error = resolve_ident!(ctx, "::xsd_parser_types::quick_xml::Error");
         let serialize_bytes = resolve_ident!(ctx, "::xsd_parser_types::quick_xml::SerializeBytes");
+        let serialize_helper =
+            resolve_ident!(ctx, "::xsd_parser_types::quick_xml::SerializeHelper");
 
         let code = quote! {
             impl #serialize_bytes for #type_ident {
-                fn serialize_bytes(&self) -> #result<#option<#cow<'_, str>>, #error> {
+                fn serialize_bytes(&self, helper: &mut #serialize_helper) -> #result<#option<#cow<'_, #str_>>, #error> {
                     match self {
                         #( #variants )*
                     }
@@ -285,7 +355,7 @@ impl EnumerationTypeVariant<'_> {
 
         if target_type.is_some() {
             quote! {
-                Self::#variant_ident(x) => x.serialize_bytes(),
+                Self::#variant_ident(x) => x.serialize_bytes(helper),
             }
         } else {
             let cow = resolve_ident!(ctx, "::alloc::borrow::Cow");
@@ -303,12 +373,15 @@ impl SimpleData<'_> {
     pub(crate) fn render_serializer(&self, ctx: &mut Context<'_, '_>) {
         let Self { type_ident, .. } = self;
 
+        let str_ = resolve_build_in!(ctx, "::core::primitive::str");
         let result = resolve_build_in!(ctx, "::core::result::Result");
         let option = resolve_build_in!(ctx, "::core::option::Option");
 
         let cow = resolve_ident!(ctx, "::alloc::borrow::Cow");
         let error = resolve_ident!(ctx, "::xsd_parser_types::quick_xml::Error");
         let serialize_bytes = resolve_ident!(ctx, "::xsd_parser_types::quick_xml::SerializeBytes");
+        let serialize_helper =
+            resolve_ident!(ctx, "::xsd_parser_types::quick_xml::SerializeHelper");
 
         let body = if let Some(digits) = self.meta.constrains.fraction_digits {
             let format = format!("{{inner:.0{digits}}}");
@@ -328,7 +401,7 @@ impl SimpleData<'_> {
 
                 let mut data = #string::new();
                 for item in &self.0 {
-                    if let Some(bytes) = item.serialize_bytes()? {
+                    if let Some(bytes) = item.serialize_bytes(helper)? {
                         if !data.is_empty() {
                             data.push(' ');
                         }
@@ -341,13 +414,13 @@ impl SimpleData<'_> {
             }
         } else {
             quote! {
-                self.0.serialize_bytes()
+                self.0.serialize_bytes(helper)
             }
         };
 
         let code = quote! {
             impl #serialize_bytes for #type_ident {
-                fn serialize_bytes(&self) -> #result<#option<#cow<'_, str>>, #error> {
+                fn serialize_bytes(&self, helper: &mut #serialize_helper) -> #result<#option<#cow<'_, #str_>>, #error> {
                     #body
                 }
             }
@@ -403,6 +476,8 @@ impl ComplexBase<'_> {
             self.render_with_serializer_for_content(ctx, forward_root)
         };
 
+        let str_ = resolve_build_in!(ctx, "::core::primitive::str");
+        let bool_ = resolve_build_in!(ctx, "::core::primitive::bool");
         let result = resolve_build_in!(ctx, "::core::result::Result");
         let option = resolve_build_in!(ctx, "::core::option::Option");
 
@@ -415,8 +490,8 @@ impl ComplexBase<'_> {
 
                 fn serializer<'ser>(
                     &'ser self,
-                    name: #option<&'ser str>,
-                    is_root: bool
+                    name: #option<&'ser #str_>,
+                    is_root: #bool_,
                 ) -> #result<Self::Serializer<'ser>, #error> {
                     #body
                 }
@@ -485,18 +560,20 @@ impl ComplexBase<'_> {
             ..
         } = self;
 
+        let box_ = resolve_build_in!(ctx, "::alloc::boxed::Box");
+        let str_ = resolve_build_in!(ctx, "::core::primitive::str");
+        let bool_ = resolve_build_in!(ctx, "::core::primitive::bool");
+
         let name = self.represents_element().then(|| {
             quote! {
-                pub(super) name: &'ser str,
+                pub(super) name: &'ser #str_,
             }
         });
         let is_root = forward_root.then(|| {
             quote! {
-                pub(super) is_root: bool,
+                pub(super) is_root: #bool_,
             }
         });
-
-        let box_ = resolve_build_in!(ctx, "::alloc::boxed::Box");
 
         let code = quote! {
             #[derive(Debug)]
@@ -511,15 +588,23 @@ impl ComplexBase<'_> {
         ctx.quick_xml_serialize().append(code);
     }
 
-    fn render_serializer_handle_state_end(&self, ctx: &Context<'_, '_>) -> TokenStream {
+    fn render_serializer_handle_state_end(
+        &self,
+        ctx: &Context<'_, '_>,
+        need_ns_scope: bool,
+    ) -> TokenStream {
         let serializer_state_ident = &self.serializer_state_ident;
 
         let event = resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::Event");
         let bytes_end = resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::BytesEnd");
 
+        let end_ns_scope = need_ns_scope.then(|| quote!(helper.end_ns_scope();));
+
         quote! {
             #serializer_state_ident::End__ => {
                 *self.state = #serializer_state_ident::Done__;
+
+                #end_ns_scope
 
                 return Ok(Some(
                     #event::End(
@@ -530,55 +615,160 @@ impl ComplexBase<'_> {
         }
     }
 
-    fn render_serializer_xmlns(&self, ctx: &Context<'_, '_>) -> Vec<TokenStream> {
-        let _self = self;
+    #[allow(clippy::too_many_lines)]
+    fn render_serializer_bytes_ctor(
+        &self,
+        ctx: &mut Context<'_, '_>,
+        attributes: &[ComplexDataAttribute<'_>],
+    ) -> (TokenStream, bool) {
+        let attributes_ctor = attributes.iter().map(|attrib| {
+            let attrib_name = attrib.tag_name.get(true);
+            let field_ident = &attrib.ident;
+
+            if attrib.meta.is_any() {
+                quote! {
+                    bytes.extend_attributes(self.value.#field_ident.attributes());
+                }
+            } else if attrib.is_option {
+                quote! {
+                    helper.write_attrib_opt(&mut bytes, #attrib_name, &self.value.#field_ident)?;
+                }
+            } else {
+                quote! {
+                    helper.write_attrib(&mut bytes, #attrib_name, &self.value.#field_ident)?;
+                }
+            }
+        });
 
         let config = ctx.get_ref::<SerializerConfig>();
-        if !config.with_namespaces {
-            return Vec::new();
-        }
+        let namespaces = config.namespaces;
+        let default_namespace = config.default_namespace.clone();
+        let xmlns = match namespaces {
+            NamespaceSerialization::None => None,
+            NamespaceSerialization::Local => {
+                let mut xmlns = Vec::new();
+                let mut cache = HashSet::new();
 
-        let xsi = ctx
-            .check_generator_flags(GeneratorFlags::NILLABLE_TYPE_SUPPORT)
-            .then(|| {
-                let namespace =
-                    resolve_quick_xml_ident!(ctx, "::xsd_parser_types::misc::Namespace");
+                let element_module = self
+                    .tag_name
+                    .as_ref()
+                    .and_then(|tag| {
+                        let module = tag.module?;
+                        let form = if matches!((&default_namespace, &module.namespace), (Some(a), Some(b)) if a == b) {
+                            FormChoiceType::Unqualified
+                        } else {
+                            tag.form
+                        };
 
-                quote!(bytes.push_attribute((&b"xmlns:xsi"[..], &#namespace::XSI[..]));)
-            });
+                        Some((form, module))
+                    })
+                    .into_iter();
+                let attribute_modules = attributes
+                    .iter()
+                    .filter_map(|attrib| {
+                        (attrib.tag_name.form == FormChoiceType::Qualified)
+                            .then_some(attrib.tag_name.module?)
+                    })
+                    .map(|module| (FormChoiceType::Qualified, module));
 
-        ctx.types
-            .meta
-            .types
-            .modules
-            .values()
-            .filter_map(|module| {
-                let ns = module.namespace.as_ref()?;
-                if *ns == Namespace::XS || *ns == Namespace::XML {
-                    return None;
+                for (form, module) in element_module.chain(attribute_modules) {
+                    if !cache.insert(module.namespace_id) {
+                        continue;
+                    }
+
+                    let ns_const = ctx.resolve_type_for_serialize_module(&module.make_ns_const());
+                    let prefix_const = (form == FormChoiceType::Qualified)
+                        .then(|| module.make_prefix_const())
+                        .flatten()
+                        .map(|path| ctx.resolve_type_for_serialize_module(&path))
+                        .map_or_else(|| quote!(None), |x| quote!(Some(&#x)));
+
+                    xmlns.push(quote! {
+                        helper.write_xmlns(&mut bytes, #prefix_const, &#ns_const);
+                    });
                 }
 
-                let ns_const = ctx.resolve_type_for_serialize_module(&module.make_ns_const());
-
-                let buffer;
-                let xmlns = if let Some(prefix) = &module.prefix {
-                    if matches!((&config.default_namespace, &module.namespace), (a, b) if a == b) {
-                        b"xmlns"
-                    } else {
-                        buffer = format!("xmlns:{prefix}");
-                        buffer.as_bytes()
+                xmlns.is_empty().not().then(|| {
+                    quote! {
+                        #( #xmlns )*
                     }
-                } else {
-                    b"xmlns"
-                };
-                let xmlns = Literal::byte_string(xmlns);
-
-                Some(quote! {
-                    bytes.push_attribute((&#xmlns[..], &#ns_const[..]));
                 })
-            })
-            .chain(xsi)
-            .collect::<Vec<_>>()
+            }
+            NamespaceSerialization::Global => {
+                let collector = ctx.get_or_create::<NamespaceCollector>().clone();
+                let mut collector = collector.borrow_mut();
+
+                let xmlns = self.tag_name.as_ref().and_then(|tag| {
+                    let module = tag.module?;
+                    if tag.form != FormChoiceType::Qualified || module.prefix().is_some() {
+                        return None;
+                    }
+
+                    let ns = module.make_ns_const();
+                    let ns_const = ctx.resolve_type_for_serialize_module(&ns);
+
+                    Some(quote!(helper.write_xmlns(&mut bytes, None, &#ns_const);))
+                });
+
+                let xsi = ctx.check_generator_flags(GeneratorFlags::NILLABLE_TYPE_SUPPORT).then(|| {
+                    let namespace = resolve_quick_xml_ident!(ctx, "::xsd_parser_types::misc::Namespace");
+                    let namespace_prefix = resolve_quick_xml_ident!(ctx, "::xsd_parser_types::misc::NamespacePrefix");
+
+                    quote!(helper.write_xmlns(&mut bytes, Some(&#namespace_prefix::XSI), &#namespace::XSI);)
+                });
+
+                let global_xmlns = collector
+                    .get_namespaces(ctx.types, ctx.ident, default_namespace.as_ref())
+                    .values()
+                    .map(|(prefix, namespace)| {
+                        let ns_const = ctx.resolve_type_for_serialize_module(namespace);
+                        let prefix_const = prefix.as_ref().map_or_else(
+                            || quote!(None),
+                            |prefix| {
+                                let x = ctx.resolve_type_for_serialize_module(prefix);
+
+                                quote!(Some(&#x))
+                            },
+                        );
+
+                        quote! {
+                            helper.write_xmlns(&mut bytes, #prefix_const, &#ns_const);
+                        }
+                    });
+                let global_xmlns = xsi.into_iter().chain(global_xmlns).collect::<Vec<_>>();
+                let global_xmlns = global_xmlns.is_empty().not().then(|| {
+                    quote! {
+                        if self.is_root {
+                            #( #global_xmlns )*
+                        }
+                    }
+                });
+
+                (xmlns.is_some() || global_xmlns.is_some()).then(|| {
+                    quote! {
+                        #xmlns
+                        #global_xmlns
+                    }
+                })
+            }
+        };
+
+        let mut_ = xmlns.is_some() || !attributes.is_empty();
+        let mut_ = mut_.then(|| quote!(mut));
+
+        let bytes_start =
+            resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::BytesStart");
+
+        let need_ns_scope = xmlns.is_some();
+        let begin_ns_scope = need_ns_scope.then(|| quote!(helper.begin_ns_scope();));
+        let code = quote! {
+            let #mut_ bytes = #bytes_start::new(self.name);
+            #begin_ns_scope
+            #xmlns
+            #( #attributes_ctor )*
+        };
+
+        (code, need_ns_scope)
     }
 }
 
@@ -588,8 +778,8 @@ impl ComplexDataEnum<'_> {
     }
 
     fn render_serializer(&self, ctx: &mut Context<'_, '_>) {
-        self.render_with_serializer(ctx, !self.is_content);
-        self.render_serializer_type(ctx, !self.is_content);
+        self.render_with_serializer(ctx, !self.is_content());
+        self.render_serializer_type(ctx, !self.is_content());
         self.render_serializer_state_type(ctx);
         self.render_serializer_impl(ctx);
     }
@@ -625,9 +815,16 @@ impl ComplexDataEnum<'_> {
         let serializer_ident = &self.serializer_ident;
         let serializer_state_ident = &self.serializer_state_ident;
 
-        let emit_start_event = self
+        let (emit_start_event, handle_state_end) = self
             .serializer_need_end_state()
-            .then(|| self.render_serializer_impl_start_event(ctx));
+            .then(|| {
+                let (emit_start_event, need_ns_scope) =
+                    self.render_serializer_impl_start_event(ctx);
+                let handle_state_end = self.render_serializer_handle_state_end(ctx, need_ns_scope);
+
+                (emit_start_event, handle_state_end)
+            })
+            .unzip();
 
         let final_state = if self.serializer_need_end_state() {
             quote!(#serializer_state_ident::End__)
@@ -641,7 +838,7 @@ impl ComplexDataEnum<'_> {
             let init = element.render_serializer_enum_state_init(
                 ctx,
                 &self.serializer_state_ident,
-                !self.is_content,
+                !self.is_content(),
             );
 
             quote! {
@@ -660,7 +857,7 @@ impl ComplexDataEnum<'_> {
 
             quote! {
                 #serializer_state_ident::#variant_ident(x) => {
-                    match x.next().transpose()? {
+                    match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => *self.state = #final_state,
                     }
@@ -668,20 +865,20 @@ impl ComplexDataEnum<'_> {
             }
         });
 
-        let handle_state_end = self
-            .serializer_need_end_state()
-            .then(|| self.render_serializer_handle_state_end(ctx));
-
         let result = resolve_build_in!(ctx, "::core::result::Result");
         let option = resolve_build_in!(ctx, "::core::option::Option");
-        let iterator = resolve_build_in!(ctx, "::core::iter::Iterator");
 
         let event = resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::Event");
         let error = resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::Error");
+        let serializer = resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::Serializer");
+        let serialize_helper =
+            resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::SerializeHelper");
+
+        ctx.add_quick_xml_serialize_usings(true, ["::xsd_parser_types::quick_xml::Serializer"]);
 
         let code = quote! {
             impl<'ser> #serializer_ident<'ser> {
-                fn next_event(&mut self) -> #result<#option<#event<'ser>>, #error> {
+                fn next_event(&mut self, helper: &mut #serialize_helper) -> #result<#option<#event<'ser>>, #error> {
                     loop {
                         match &mut *self.state {
                             #serializer_state_ident::Init__ => {
@@ -697,11 +894,9 @@ impl ComplexDataEnum<'_> {
                 }
             }
 
-            impl<'ser> #iterator for #serializer_ident<'ser> {
-                type Item = #result<#event<'ser>, #error>;
-
-                fn next(&mut self) -> #option<Self::Item> {
-                    match self.next_event() {
+            impl<'ser> #serializer<'ser> for #serializer_ident<'ser> {
+                fn next(&mut self, helper: &mut #serialize_helper) -> #option<#result<#event<'ser>, #error>> {
+                    match self.next_event(helper) {
                         Ok(Some(event)) => Some(Ok(event)),
                         Ok(None) => None,
                         Err(error) => {
@@ -717,29 +912,17 @@ impl ComplexDataEnum<'_> {
         ctx.quick_xml_serialize().append(code);
     }
 
-    fn render_serializer_impl_start_event(&self, ctx: &Context<'_, '_>) -> TokenStream {
+    fn render_serializer_impl_start_event(&self, ctx: &mut Context<'_, '_>) -> (TokenStream, bool) {
         let event = resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::Event");
-        let bytes_start =
-            resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::BytesStart");
 
-        let xmlns = self.render_serializer_xmlns(ctx);
-        let bytes_ctor = if xmlns.is_empty() {
-            quote! {
-                let bytes = #bytes_start::new(self.name);
-            }
-        } else {
-            quote! {
-                let mut bytes = #bytes_start::new(self.name);
-                if self.is_root {
-                    #( #xmlns )*
-                }
-            }
-        };
+        let (bytes_ctor, need_ns_scope) = self.render_serializer_bytes_ctor(ctx, &[]);
 
-        quote! {
+        let code = quote! {
             #bytes_ctor
             return Ok(Some(#event::Start(bytes)))
-        }
+        };
+
+        (code, need_ns_scope)
     }
 }
 
@@ -791,9 +974,19 @@ impl ComplexDataStruct<'_> {
         let serializer_ident = &self.serializer_ident;
         let serializer_state_ident = &self.serializer_state_ident;
 
-        let emit_start_event = self
+        let (emit_start_event, handle_state_end) = self
             .represents_element()
-            .then(|| self.render_serializer_impl_start_event(ctx));
+            .then(|| {
+                let (emit_start_event, need_ns_scope) =
+                    self.render_serializer_impl_start_event(ctx);
+                let handle_state_end = self
+                    .serializer_need_end_state()
+                    .then(|| self.render_serializer_handle_state_end(ctx, need_ns_scope));
+
+                (emit_start_event, handle_state_end)
+            })
+            .unzip();
+        let handle_state_end = handle_state_end.flatten();
 
         let final_state = if self.serializer_need_end_state() {
             quote!(#serializer_state_ident::End__)
@@ -829,7 +1022,7 @@ impl ComplexDataStruct<'_> {
             };
 
             quote! {
-                #serializer_state_ident::#variant_ident(x) => match x.next().transpose()? {
+                #serializer_state_ident::#variant_ident(x) => match x.next(helper).transpose()? {
                     Some(event) => return Ok(Some(event)),
                     None => #next
                 }
@@ -838,28 +1031,27 @@ impl ComplexDataStruct<'_> {
 
         let handle_state_content = self.content().map(|_| {
             quote! {
-                #serializer_state_ident::Content__(x) => match x.next().transpose()? {
+                #serializer_state_ident::Content__(x) => match x.next(helper).transpose()? {
                     Some(event) => return Ok(Some(event)),
                     None => *self.state = #final_state,
                 }
             }
         });
 
-        let handle_state_end = self
-            .serializer_need_end_state()
-            .then(|| self.render_serializer_handle_state_end(ctx));
-
         let result = resolve_build_in!(ctx, "::core::result::Result");
         let option = resolve_build_in!(ctx, "::core::option::Option");
-        let iterator = resolve_build_in!(ctx, "::core::iter::Iterator");
 
         let event = resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::Event");
         let error = resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::Error");
+        let serializer = resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::Serializer");
+        let serialize_helper =
+            resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::SerializeHelper");
+
+        ctx.add_quick_xml_serialize_usings(true, ["::xsd_parser_types::quick_xml::Serializer"]);
 
         let code = quote! {
             impl<'ser> #serializer_ident<'ser> {
-                fn next_event(&mut self) -> #result<#option<#event<'ser>>, #error>
-                {
+                fn next_event(&mut self, helper: &mut #serialize_helper) -> #result<#option<#event<'ser>>, #error> {
                     loop {
                         match &mut *self.state {
                             #serializer_state_ident::Init__ => {
@@ -876,11 +1068,9 @@ impl ComplexDataStruct<'_> {
                 }
             }
 
-            impl<'ser> #iterator for #serializer_ident<'ser> {
-                type Item = #result<#event<'ser>, #error>;
-
-                fn next(&mut self) -> #option<Self::Item> {
-                    match self.next_event() {
+            impl<'ser> #serializer<'ser> for #serializer_ident<'ser> {
+                fn next(&mut self, helper: &mut #serialize_helper) -> #option<#result<#event<'ser>, #error>> {
+                    match self.next_event(helper) {
                         Ok(Some(event)) => Some(Ok(event)),
                         Ok(None) => None,
                         Err(error) => {
@@ -896,52 +1086,12 @@ impl ComplexDataStruct<'_> {
         ctx.quick_xml_serialize().append(code);
     }
 
-    fn render_serializer_impl_start_event(&self, ctx: &Context<'_, '_>) -> TokenStream {
-        let xmlns = self.render_serializer_xmlns(ctx);
-        let attributes = self.attributes.iter().map(|attrib| {
-            let attrib_name = attrib.tag_name.get(true);
-            let field_ident = &attrib.ident;
-
-            if attrib.meta.is_any() {
-                quote! {
-                    bytes.extend_attributes(self.value.#field_ident.attributes());
-                }
-            } else if attrib.is_option {
-                let write_attrib_opt = resolve_quick_xml_ident!(
-                    ctx,
-                    "::xsd_parser_types::quick_xml::write_attrib_opt"
-                );
-
-                quote! {
-                    #write_attrib_opt(&mut bytes, #attrib_name, &self.value.#field_ident)?;
-                }
-            } else {
-                let write_attrib =
-                    resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::write_attrib");
-
-                quote! {
-                    #write_attrib(&mut bytes, #attrib_name, &self.value.#field_ident)?;
-                }
-            }
-        });
-
+    fn render_serializer_impl_start_event(&self, ctx: &mut Context<'_, '_>) -> (TokenStream, bool) {
         let event = resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::Event");
-        let bytes_start =
-            resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::BytesStart");
 
-        let bytes_mut = self.has_attributes().then(|| quote!(mut));
-        let bytes_ctor = if xmlns.is_empty() {
-            quote! {
-                let #bytes_mut bytes = #bytes_start::new(self.name);
-            }
-        } else {
-            quote! {
-                let mut bytes = #bytes_start::new(self.name);
-                if self.is_root {
-                    #( #xmlns )*
-                }
-            }
-        };
+        let (bytes_ctor, need_ns_scope) = self.render_serializer_bytes_ctor(ctx, &self.attributes);
+        let end_ns_scope =
+            (need_ns_scope && !self.has_content()).then(|| quote!(helper.end_ns_scope();));
 
         let variant = if self.has_content() {
             format_ident!("Start")
@@ -949,11 +1099,14 @@ impl ComplexDataStruct<'_> {
             format_ident!("Empty")
         };
 
-        quote! {
+        let code = quote! {
             #bytes_ctor
-            #( #attributes )*
+            #end_ns_scope
+
             return Ok(Some(#event::#variant(bytes)))
-        }
+        };
+
+        (code, need_ns_scope)
     }
 }
 
@@ -1182,6 +1335,219 @@ impl Occurs {
                     resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::IterSerializer");
 
                 Some(quote!(#iter_serializer<'ser, &'ser [#target_type], #target_type>))
+            }
+        }
+    }
+}
+
+impl ValueKey for NamespaceCollector {
+    type Type = Rc<RefCell<Self>>;
+}
+
+#[derive(Debug)]
+enum GetNamespaceState {
+    Empty,
+    Weak(GlobalNamespaces),
+    Strong(GlobalNamespaces),
+    Shared(SharedGlobalNamespaces),
+}
+
+impl NamespaceCollector {
+    fn get_namespaces(
+        &mut self,
+        types: &MetaTypes,
+        ident: &Ident,
+        default_ns: Option<&Namespace>,
+    ) -> &SharedGlobalNamespaces {
+        self.get_namespaces_impl(types, ident, default_ns).unwrap()
+    }
+
+    fn get_namespaces_impl(
+        &mut self,
+        types: &MetaTypes,
+        ident: &Ident,
+        default_ns: Option<&Namespace>,
+    ) -> Option<&SharedGlobalNamespaces> {
+        let create = match self.cache.entry(ident.clone()) {
+            HashMapEntry::Vacant(e) => {
+                e.insert(None);
+
+                true
+            }
+            HashMapEntry::Occupied(_) => false,
+        };
+
+        let new_value = if create {
+            let ty = types.items.get(ident).unwrap();
+            let mut state = GetNamespaceState::Empty;
+
+            match &ty.variant {
+                MetaTypeVariant::Union(x) => {
+                    for ty in &*x.types {
+                        self.merge(&mut state, types, &ty.type_, default_ns);
+                    }
+                }
+                MetaTypeVariant::Reference(x) => {
+                    self.merge(&mut state, types, &x.type_, default_ns);
+                }
+                MetaTypeVariant::Enumeration(x) => {
+                    for var in &*x.variants {
+                        if let Some(ident) = &var.type_ {
+                            self.merge(&mut state, types, ident, default_ns);
+                        }
+                    }
+                }
+                MetaTypeVariant::Dynamic(x) => {
+                    for ident in &x.derived_types {
+                        self.merge(&mut state, types, ident, default_ns);
+                    }
+                }
+                MetaTypeVariant::All(x)
+                | MetaTypeVariant::Choice(x)
+                | MetaTypeVariant::Sequence(x) => {
+                    for el in &*x.elements {
+                        if let ElementMetaVariant::Type { type_, .. } = &el.variant {
+                            self.merge(&mut state, types, type_, default_ns);
+                        }
+                    }
+                }
+                MetaTypeVariant::ComplexType(x) => {
+                    if let Some(ident) = &x.content {
+                        self.merge(&mut state, types, ident, default_ns);
+                    }
+
+                    for attrib in &*x.attributes {
+                        if attrib.form == FormChoiceType::Qualified {
+                            if let Some(id) = attrib.ident.ns {
+                                Self::add_ns(&mut state, types, NamespaceKey::Normal(id));
+                            }
+                        }
+                    }
+                }
+                MetaTypeVariant::BuildIn(_)
+                | MetaTypeVariant::Custom(_)
+                | MetaTypeVariant::SimpleType(_) => (),
+            }
+
+            if ty.form() == FormChoiceType::Qualified {
+                if let Some(id) = ident.ns {
+                    let ns = types
+                        .modules
+                        .get(&id)
+                        .and_then(|module| module.namespace.as_ref());
+
+                    let key = if matches!((ns, default_ns), (Some(a), Some(b)) if a == b) {
+                        NamespaceKey::Default(id)
+                    } else {
+                        NamespaceKey::Normal(id)
+                    };
+
+                    Self::add_ns(&mut state, types, key);
+                }
+            }
+
+            let value = match state {
+                GetNamespaceState::Empty => Default::default(),
+                GetNamespaceState::Shared(value) => value,
+                GetNamespaceState::Weak(value) | GetNamespaceState::Strong(value) => Rc::new(value),
+            };
+
+            Some(value)
+        } else {
+            None
+        };
+
+        match self.cache.entry(ident.clone()) {
+            HashMapEntry::Occupied(mut e) => {
+                if let Some(value) = new_value {
+                    e.insert(Some(value));
+                }
+
+                e.into_mut().as_ref()
+            }
+            HashMapEntry::Vacant(_) => unreachable!(),
+        }
+    }
+
+    fn merge(
+        &mut self,
+        state: &mut GetNamespaceState,
+        types: &MetaTypes,
+        ident: &Ident,
+        default_ns: Option<&Namespace>,
+    ) {
+        let Some(src) = self.get_namespaces_impl(types, ident, default_ns) else {
+            return;
+        };
+
+        match replace(state, GetNamespaceState::Empty) {
+            GetNamespaceState::Empty => *state = GetNamespaceState::Shared(src.clone()),
+            GetNamespaceState::Weak(dst) => {
+                *state = GetNamespaceState::Shared(src.clone());
+
+                for ns in dst.into_keys() {
+                    Self::add_ns(state, types, ns);
+                }
+            }
+            GetNamespaceState::Shared(dst) if Rc::ptr_eq(&dst, src) => {
+                *state = GetNamespaceState::Shared(dst);
+            }
+            s => {
+                *state = s;
+
+                for ns in src.keys() {
+                    Self::add_ns(state, types, *ns);
+                }
+            }
+        }
+    }
+
+    fn add_ns(state: &mut GetNamespaceState, types: &MetaTypes, key: NamespaceKey) {
+        match state {
+            GetNamespaceState::Empty => {
+                if let Some(value) = Self::make_value(types, key) {
+                    let mut map = GlobalNamespaces::new();
+                    map.insert(key, value);
+
+                    *state = GetNamespaceState::Weak(map);
+                }
+            }
+            GetNamespaceState::Weak(map) | GetNamespaceState::Strong(map) => {
+                if let Entry::Vacant(e) = map.entry(key) {
+                    if let Some(value) = Self::make_value(types, key) {
+                        e.insert(value);
+                    }
+                }
+            }
+            GetNamespaceState::Shared(map) => {
+                if !map.contains_key(&key) {
+                    if let Some(value) = Self::make_value(types, key) {
+                        let mut map = (**map).clone();
+                        map.insert(key, value);
+
+                        *state = GetNamespaceState::Strong(map);
+                    }
+                }
+            }
+        }
+    }
+
+    fn make_value(types: &MetaTypes, key: NamespaceKey) -> Option<(Option<PathData>, PathData)> {
+        match key {
+            NamespaceKey::Normal(id) => {
+                let module = types.modules.get(&id)?;
+
+                let prefix = Some(module.make_prefix_const()?);
+                let namespace = module.make_ns_const();
+
+                Some((prefix, namespace))
+            }
+            NamespaceKey::Default(id) => {
+                let module = types.modules.get(&id)?;
+
+                let namespace = module.make_ns_const();
+
+                Some((None, namespace))
             }
         }
     }

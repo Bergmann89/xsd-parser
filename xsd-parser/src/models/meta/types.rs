@@ -22,10 +22,7 @@ use super::{MetaType, MetaTypeVariant};
 #[derive(Debug)]
 pub struct MetaTypes {
     /// Map of the different types.
-    items: BTreeMap<Ident, MetaType>,
-
-    /// Map generic schemaless Idents to the schema they come from.
-    schema_idents: BTreeMap<Ident, Ident>,
+    pub items: BTreeMap<Ident, MetaType>,
 
     /// Map of the different namespaces.
     pub modules: BTreeMap<NamespaceId, ModuleMeta>,
@@ -110,7 +107,7 @@ impl MetaTypes {
     #[inline]
     #[must_use]
     pub fn get_variant(&self, ident: &Ident) -> Option<&MetaTypeVariant> {
-        self.get_type(ident).map(|ty| &ty.variant)
+        self.items.get(ident).map(|ty| &ty.variant)
     }
 
     /// Return the [`MetaTypeVariant`] of corresponding type for the passed identifier.
@@ -121,91 +118,30 @@ impl MetaTypes {
     pub fn get_variant_mut(&mut self, ident: &Ident) -> Option<&mut MetaTypeVariant> {
         self.items.get_mut(ident).map(|ty| &mut ty.variant)
     }
-
-    /// Iterate over all types and Idents
-    pub fn iter_items(&self) -> impl Iterator<Item = (&Ident, &MetaType)> {
-        self.items.iter()
-    }
-
-    /// Iterate over all types and Idents mutably
-    pub fn iter_items_mut(&mut self) -> impl Iterator<Item = (&Ident, &mut MetaType)> {
-        self.items.iter_mut()
-    }
-
-    /// Iterate over all Idents
-    pub fn iter_type_idents(&self) -> impl Iterator<Item = &Ident> {
-        self.items.keys()
-    }
-
-    /// Iterate over all types mutably
-    pub fn iter_types_mut(&mut self) -> impl Iterator<Item = &mut MetaType> {
-        self.items.values_mut()
-    }
-
-    /// Look up a type by Ident.
-    /// Types from the schema given by the ident are preferred over types from other schemas.
-    #[must_use]
-    pub fn get_type(&self, ident: &Ident) -> Option<&MetaType> {
-        self.items.get(ident).or_else(|| {
-            self.schema_idents
-                .get(&ident.clone().with_schema(None))
-                .and_then(|i| self.items.get(i))
-        })
-    }
-
-    /// Look up a type by Ident mutably.
-    /// Types from the schema given by the ident are preferred over types from other schemas.
-    pub fn get_type_mut<'a, 'b>(&'a mut self, mut ident: &'b Ident) -> Option<&'a mut MetaType>
-    where
-        'a: 'b,
-    {
-        if !self.items.contains_key(ident) {
-            ident = self.schema_idents.get(&ident.clone().with_schema(None))?;
-        }
-        self.items.get_mut(ident)
-    }
-
-    /// Check if this exact Ident (including schema) was added.
-    #[must_use]
-    pub fn contains_exact_type(&self, ident: &Ident) -> bool {
-        self.items.contains_key(ident)
-    }
-
-    /// Resolve this Ident to the schema where it was defined.
-    /// If the provided Ident is defined in the schema file specified by `Ident::schema`,
-    /// the Ident is returned unchanged.
-    /// Else an otherwise identical Ident pointing to a schema where the Ident is defined is returned.
-    /// In a valid schema this should be unambiguous. In schemas that define duplicate types,
-    /// an arbitrary instance is selected.
-    #[must_use]
-    pub fn find_original_schema<'a>(&'a self, ident: &'a Ident) -> &'a Ident {
-        if self.items.contains_key(ident) {
-            ident
-        } else {
-            self.schema_idents
-                .get(&ident.clone().with_schema(None))
-                .unwrap_or(ident)
-        }
-    }
-
-    /// Register a type
-    pub fn insert_type(&mut self, ident: Ident, type_: MetaType) {
-        self.schema_idents
-            .entry(ident.clone().with_schema(None))
-            .or_insert_with(|| ident.clone());
-        self.items.insert(ident, type_);
-    }
 }
 
 impl Default for MetaTypes {
     fn default() -> Self {
         Self {
             items: Default::default(),
-            schema_idents: Default::default(),
             modules: Default::default(),
             schemas: Default::default(),
             naming: Box::new(Naming::default()),
         }
+    }
+}
+
+impl ModuleMeta {
+    /// Get the name or the prefix of the module.
+    #[must_use]
+    pub fn name(&self) -> Option<&Name> {
+        self.name.as_ref().or(self.prefix.as_ref())
+    }
+
+    /// Get the prefix or the name of the module.
+    #[must_use]
+    pub fn prefix(&self) -> Option<&Name> {
+        self.prefix.as_ref().or(self.name.as_ref())
     }
 }
 
@@ -227,7 +163,6 @@ fn get_resolved_impl<'a>(
         return None;
     }
 
-    let ident = types.find_original_schema(ident);
     let ty = types.items.get(ident)?;
 
     match &ty.variant {

@@ -64,7 +64,7 @@ impl TraitInfos {
     pub(super) fn new(types: &MetaTypes) -> Self {
         let mut ret = Self(BTreeMap::new());
 
-        for (base_ident, ty) in types.iter_items() {
+        for (base_ident, ty) in types.items.iter() {
             let MetaTypeVariant::Dynamic(ai) = &ty.variant else {
                 continue;
             };

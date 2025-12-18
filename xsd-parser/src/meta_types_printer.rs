@@ -42,7 +42,7 @@ impl<'a> MetaTypesPrinter<'a> {
     pub fn print_all(&self, f: &mut Formatter<'_>) -> FmtResult {
         let mut s = State::default();
 
-        for (ident, ty) in self.types.iter_items() {
+        for (ident, ty) in &self.types.items {
             self.print_type_impl(f, &mut s, ident, ty)?;
         }
 
@@ -58,7 +58,7 @@ impl<'a> MetaTypesPrinter<'a> {
     pub fn print_type(&self, ident: &Ident, f: &mut Formatter<'_>) -> FmtResult {
         let mut s = State::default();
 
-        if let Some(ty) = self.types.get_type(ident) {
+        if let Some(ty) = self.types.items.get(ident) {
             self.print_type_impl(f, &mut s, ident, ty)?;
         }
 
@@ -71,7 +71,7 @@ impl<'a> MetaTypesPrinter<'a> {
         s: &mut State,
         ident: &Ident,
     ) -> FmtResult {
-        if let Some(x) = self.types.get_type(ident) {
+        if let Some(x) = self.types.items.get(ident) {
             self.print_type_impl(f, s, ident, x)
         } else {
             writeln!(f, "NOT FOUND")?;

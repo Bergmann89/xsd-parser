@@ -14,8 +14,9 @@ use crate::misc::format_utf8_slice;
 
 #[cfg(feature = "quick-xml")]
 use crate::quick_xml::{
-    Deserializer, DeserializerArtifact, DeserializerEvent, DeserializerOutput, DeserializerResult,
-    Error, Event, WithDeserializer, WithSerializer, XmlReader,
+    DeserializeHelper, Deserializer, DeserializerArtifact, DeserializerEvent, DeserializerOutput,
+    DeserializerResult, Error, Event, SerializeHelper, Serializer, WithDeserializer,
+    WithSerializer,
 };
 
 use super::{
@@ -171,7 +172,7 @@ impl<'ser, 'el> ElementSerializer<'ser, 'el> {
         Self::Start { name, element }
     }
 
-    fn next_item(&mut self) -> Result<Option<Event<'ser>>, Error> {
+    fn next_item(&mut self, helper: &mut SerializeHelper) -> Result<Option<Event<'ser>>, Error> {
         loop {
             match replace(self, Self::Done) {
                 Self::Start { name, element } => {
@@ -256,7 +257,7 @@ impl<'ser, 'el> ElementSerializer<'ser, 'el> {
                     element,
                     values,
                     mut serializer,
-                } => match serializer.next() {
+                } => match serializer.next(helper) {
                     None => {
                         *self = Self::NextValue {
                             name,
@@ -282,11 +283,9 @@ impl<'ser, 'el> ElementSerializer<'ser, 'el> {
 }
 
 #[cfg(feature = "quick-xml")]
-impl<'ser> Iterator for ElementSerializer<'ser, '_> {
-    type Item = Result<Event<'ser>, Error>;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        self.next_item().transpose()
+impl<'ser> Serializer<'ser> for ElementSerializer<'ser, '_> {
+    fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+        self.next_item(helper).transpose()
     }
 }
 
@@ -335,13 +334,13 @@ impl ElementDeserializer {
 
 #[cfg(feature = "quick-xml")]
 impl<'de> Deserializer<'de, Element<'static>> for ElementDeserializer {
-    fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, Element<'static>>
-    where
-        R: XmlReader,
-    {
+    fn init(
+        helper: &mut DeserializeHelper,
+        event: Event<'de>,
+    ) -> DeserializerResult<'de, Element<'static>> {
         match event {
             Event::Start(start) => {
-                let namespaces = reader.namespaces();
+                let namespaces = helper.namespaces();
                 let element = Self::create_element(&start, namespaces)?;
                 let deserializer = Self::new(element);
 
@@ -352,7 +351,7 @@ impl<'de> Deserializer<'de, Element<'static>> for ElementDeserializer {
                 })
             }
             Event::Empty(start) => {
-                let namespaces = reader.namespaces();
+                let namespaces = helper.namespaces();
                 let element = Self::create_element(&start, namespaces)?;
 
                 Ok(DeserializerOutput {
@@ -369,10 +368,11 @@ impl<'de> Deserializer<'de, Element<'static>> for ElementDeserializer {
         }
     }
 
-    fn next<R>(mut self, reader: &R, event: Event<'de>) -> DeserializerResult<'de, Element<'static>>
-    where
-        R: XmlReader,
-    {
+    fn next(
+        mut self,
+        helper: &mut DeserializeHelper,
+        event: Event<'de>,
+    ) -> DeserializerResult<'de, Element<'static>> {
         macro_rules! handle_output {
             ($output:expr) => {{
                 let output = $output;
@@ -404,7 +404,7 @@ impl<'de> Deserializer<'de, Element<'static>> for ElementDeserializer {
         }
 
         let event = if let Some(sub) = self.sub.take() {
-            let output = sub.next(reader, event)?;
+            let output = sub.next(helper, event)?;
 
             handle_output!(output)
         } else {
@@ -414,7 +414,7 @@ impl<'de> Deserializer<'de, Element<'static>> for ElementDeserializer {
         let event = match event {
             None => None,
             Some(event @ (Event::Start(_) | Event::Empty(_))) => {
-                let output = Self::init(reader, event)?;
+                let output = Self::init(helper, event)?;
 
                 handle_output!(output)
             }
@@ -456,12 +456,10 @@ impl<'de> Deserializer<'de, Element<'static>> for ElementDeserializer {
         })
     }
 
-    fn finish<R>(mut self, reader: &R) -> Result<Element<'static>, Error>
-    where
-        R: XmlReader,
-    {
+    #[allow(clippy::only_used_in_recursion)]
+    fn finish(mut self, helper: &mut DeserializeHelper) -> Result<Element<'static>, Error> {
         if let Some(sub) = self.sub.take() {
-            let element = sub.finish(reader)?;
+            let element = sub.finish(helper)?;
             let value = Value::Element(element);
 
             self.element.values.push(value);
@@ -541,8 +539,6 @@ mod tests {
     fn deserialize() {
         let mut reader = SliceReader::new(XML.trim());
         let root = Element::deserialize(&mut reader).unwrap();
-
-        dbg!(&root);
 
         assert_eq!(root.name.as_ref(), b"names");
         assert_eq!(root.values.len(), 5);

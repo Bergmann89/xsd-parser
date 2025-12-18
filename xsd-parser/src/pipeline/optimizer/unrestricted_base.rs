@@ -53,7 +53,7 @@ impl Optimizer {
 
         let bases = get_bases!(self);
 
-        for (ident, type_) in self.types.iter_items_mut() {
+        for (ident, type_) in &mut self.types.items {
             let replace = match &type_.variant {
                 MetaTypeVariant::ComplexType(_) => flags.intersects(UnrestrictedBaseFlags::COMPLEX),
                 MetaTypeVariant::SimpleType(x) => {

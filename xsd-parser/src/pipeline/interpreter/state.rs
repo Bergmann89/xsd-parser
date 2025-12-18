@@ -139,12 +139,19 @@ impl<'a> State<'a> {
         I: Into<Ident>,
         T: Into<MetaType>,
     {
-        let ident = ident.into();
-        if !allow_overwrite && self.types.contains_exact_type(&ident) {
-            return Err(Error::TypeAlreadyDefined(ident));
+        match self.types.items.entry(ident.into()) {
+            Entry::Vacant(e) => {
+                e.insert(type_.into());
+
+                Ok(())
+            }
+            Entry::Occupied(mut e) if allow_overwrite => {
+                e.insert(type_.into());
+
+                Ok(())
+            }
+            Entry::Occupied(e) => Err(Error::TypeAlreadyDefined(e.key().clone())),
         }
-        self.types.insert_type(ident, type_.into());
-        Ok(())
     }
 
     pub(super) fn get_node(

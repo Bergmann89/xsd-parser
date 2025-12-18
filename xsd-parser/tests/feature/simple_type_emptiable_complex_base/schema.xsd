@@ -1,0 +1,22 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+    <xs:complexType name="SimpleLiteral">
+        <xs:complexContent mixed="true">
+            <xs:restriction base="xs:anyType">
+                <xs:sequence>
+                    <xs:any processContents="lax" minOccurs="0" maxOccurs="0"/>
+                </xs:sequence>
+                <xs:attribute name="lang" type="xs:string"  use="optional"/>
+            </xs:restriction>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="W3CDTF">
+        <xs:simpleContent>
+            <xs:restriction base="SimpleLiteral">
+                <xs:simpleType>
+                    <xs:union memberTypes="xs:gYear xs:gYearMonth xs:date xs:dateTime"/>
+                </xs:simpleType>
+                <xs:attribute name="lang" type="xs:string" use="prohibited"/>
+            </xs:restriction>
+        </xs:simpleContent>
+    </xs:complexType>
+</xs:schema>

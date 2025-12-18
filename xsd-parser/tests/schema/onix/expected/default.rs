@@ -2523,15 +2523,15 @@ pub mod onix {
         pub sourcename: Option<String>,
         pub sourcetype: Option<List3>,
         pub gp_product_form: DescriptiveDetailGpProductForm,
-        pub gp_collections: Option<DescriptiveDetailGpCollections>,
+        pub gp_collections: DescriptiveDetailGpCollections,
         pub gp_titles: DescriptiveDetailGpTitles,
         pub gp_authorship: Option<DescriptiveDetailGpAuthorship>,
-        pub gp_events: Option<DescriptiveDetailGpEvents>,
-        pub gp_editions: Option<DescriptiveDetailGpEditions>,
-        pub gp_languages: Option<ContentItemGpLanguages>,
-        pub gp_extents: Option<DescriptiveDetailGpExtents>,
-        pub gp_subjects: Option<ContentItemGpSubjects>,
-        pub gp_audiences: Option<DescriptiveDetailGpAudiences>,
+        pub gp_events: DescriptiveDetailGpEvents,
+        pub gp_editions: DescriptiveDetailGpEditions,
+        pub gp_languages: ContentItemGpLanguages,
+        pub gp_extents: DescriptiveDetailGpExtents,
+        pub gp_subjects: ContentItemGpSubjects,
+        pub gp_audiences: DescriptiveDetailGpAudiences,
     }
     ///Standard attributes for all ONIX data elements
     ///● Date last changed or confirmed to be correct
@@ -2545,8 +2545,8 @@ pub mod onix {
         pub sourcename: Option<String>,
         pub sourcetype: Option<List3>,
         pub gp_descriptions_and_marketing_resources:
-            Option<CollateralDetailGpDescriptionsAndMarketingResources>,
-        pub gp_prizes: Option<CollateralDetailGpPrizes>,
+            CollateralDetailGpDescriptionsAndMarketingResources,
+        pub gp_prizes: CollateralDetailGpPrizes,
     }
     ///Standard attributes for all ONIX data elements
     ///● Date last changed or confirmed to be correct
@@ -2587,8 +2587,8 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub gp_imprints_and_publishers: PublishingDetailGpImprintsAndPublishers,
         pub gp_publishing_status_dates_and_copyright:
-            Option<PublishingDetailGpPublishingStatusDatesAndCopyright>,
-        pub gp_sales_rights_and_restrictions: Option<PublishingDetailGpSalesRightsAndRestrictions>,
+            PublishingDetailGpPublishingStatusDatesAndCopyright,
+        pub gp_sales_rights_and_restrictions: PublishingDetailGpSalesRightsAndRestrictions,
     }
     ///Standard attributes for all ONIX data elements
     ///● Date last changed or confirmed to be correct
@@ -2954,13 +2954,13 @@ pub mod onix {
         pub epub_license: Vec<EpubLicenseWithDateType>,
         pub content_54: ContentItemContent54,
         pub gp_authorship: Option<ContentItemGpAuthorship>,
-        pub gp_languages: Option<ContentItemGpLanguages>,
-        pub gp_subjects: Option<ContentItemGpSubjects>,
+        pub gp_languages: ContentItemGpLanguages,
+        pub gp_subjects: ContentItemGpSubjects,
         pub gp_descriptions_and_marketing_resources:
-            Option<CollateralDetailGpDescriptionsAndMarketingResources>,
+            CollateralDetailGpDescriptionsAndMarketingResources,
         pub publisher: Vec<PublisherElementType>,
         pub content_58: Option<ContentItemContent58>,
-        pub gp_related_materials: Option<ContentItemGpRelatedMaterials>,
+        pub gp_related_materials: ContentItemGpRelatedMaterials,
     }
     #[derive(Debug)]
     pub enum PublishingDetailRefname {
@@ -3664,7 +3664,7 @@ pub mod onix {
     }
     #[derive(Debug)]
     pub enum DescriptiveDetailContent91 {
-        Content92(Option<DescriptiveDetailContent92>),
+        Content92(DescriptiveDetailContent92),
         NoEdition(Option<NoEditionElementType>),
     }
     ///Standard attributes for all ONIX data elements
@@ -4397,7 +4397,7 @@ pub mod onix {
         pub datestamp: Option<String>,
         pub sourcename: Option<String>,
         pub sourcetype: Option<List3>,
-        pub gp_product_specification: Option<BodyManifestGpProductSpecification>,
+        pub gp_product_specification: BodyManifestGpProductSpecification,
         pub cover_resource: Vec<CoverResourceElementType>,
     }
     ///Standard attributes for all ONIX data elements
@@ -4411,7 +4411,7 @@ pub mod onix {
         pub datestamp: Option<String>,
         pub sourcename: Option<String>,
         pub sourcetype: Option<List3>,
-        pub gp_product_specification: Option<BodyManifestGpProductSpecification>,
+        pub gp_product_specification: BodyManifestGpProductSpecification,
         pub body_resource: Vec<BodyResourceElementType>,
     }
     ///Standard attributes for all ONIX data elements
@@ -4425,7 +4425,7 @@ pub mod onix {
         pub datestamp: Option<String>,
         pub sourcename: Option<String>,
         pub sourcetype: Option<List3>,
-        pub gp_product_specification: Option<BodyManifestGpProductSpecification>,
+        pub gp_product_specification: BodyManifestGpProductSpecification,
         pub insert_point: InsertPointElementType,
         pub insert_resource: Vec<InsertResourceElementType>,
     }

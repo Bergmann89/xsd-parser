@@ -4,6 +4,7 @@ use xsd_parser::{
     config::{GeneratorFlags, IdentTriple, OptimizerFlags, RendererFlags, Schema},
     exec_generator, exec_interpreter, exec_optimizer, exec_parser, exec_render,
     models::meta::{ElementMetaVariant, ElementMode, MetaTypeVariant},
+    pipeline::renderer::NamespaceSerialization,
     Config, IdentType, MetaTypes, Schemas,
 };
 use xsd_parser_types::misc::Namespace;
@@ -49,7 +50,7 @@ fn generate_quick_xml() {
         "tests/schema/onix/schema/ONIX_BookProduct_3.1_reference.xsd",
         "tests/schema/onix/expected/quick_xml.rs",
         config().with_quick_xml_config(
-            true,
+            NamespaceSerialization::Global,
             Some(Namespace::new_const(
                 b"http://ns.editeur.org/onix/3.1/reference",
             )),
@@ -102,7 +103,7 @@ fn resolve_naming_conflicts(schemas: &Schemas, mut types: MetaTypes) -> MetaType
     let type_ = IdentTriple::from((IdentType::Type, "onix:type"))
         .resolve(schemas)
         .unwrap();
-    let type_ = types.get_type_mut(&type_).unwrap();
+    let type_ = types.items.get_mut(&type_).unwrap();
     let MetaTypeVariant::Enumeration(ei) = &mut type_.variant else {
         unreachable!();
     };
@@ -118,12 +119,12 @@ fn resolve_naming_conflicts(schemas: &Schemas, mut types: MetaTypes) -> MetaType
     let message = IdentTriple::from((IdentType::ElementType, "onix:ONIXMessage"))
         .resolve(schemas)
         .unwrap();
-    let message = types.get_type(&message).unwrap();
+    let message = types.items.get(&message).unwrap();
     let MetaTypeVariant::ComplexType(ci) = &message.variant else {
         unreachable!();
     };
     let content = ci.content.clone().unwrap();
-    let content = types.get_type_mut(&content).unwrap();
+    let content = types.items.get_mut(&content).unwrap();
     let MetaTypeVariant::Sequence(si) = &mut content.variant else {
         unreachable!();
     };
@@ -144,7 +145,7 @@ fn resolve_naming_conflicts(schemas: &Schemas, mut types: MetaTypes) -> MetaType
             }
         })
         .unwrap();
-    let element = types.get_type_mut(&element).unwrap();
+    let element = types.items.get_mut(&element).unwrap();
     element.display_name = Some("ProductOrNoProductChoice".into());
 
     types

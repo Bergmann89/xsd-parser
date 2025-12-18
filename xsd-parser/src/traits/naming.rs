@@ -56,13 +56,17 @@ pub trait Naming: Debug {
     ///
     /// The default implementation uses pascal case here.
     fn format_type_name(&self, s: &str) -> String {
-        let name = self.unify(s);
+        let mut name = self.unify(s);
+
+        if let Ok(idx) = KEYWORDS.binary_search_by(|(key, _)| key.cmp(&&*name)) {
+            name = KEYWORDS[idx].1.into();
+        }
 
         if name.starts_with(char::is_numeric) {
-            format!("_{name}")
-        } else {
-            name
+            name = format!("_{name}");
         }
+
+        name
     }
 
     /// Format the passed string `s` as field name.
@@ -527,7 +531,10 @@ impl NameFallback for Option<&str> {
     }
 }
 
+/// List of keywords that needs to be replaced by something else.
+/// This list needs to be sorted, because we use it in [`core::slice::binary_search_by`]
 const KEYWORDS: &[(&str, &str)] = &[
+    ("Self", "Self_"),
     ("abstract", "abstract_"),
     ("as", "as_"),
     ("become", "become_"),
@@ -560,7 +567,6 @@ const KEYWORDS: &[(&str, &str)] = &[
     ("ref", "ref_"),
     ("return", "return_"),
     ("self", "self_"),
-    ("Self", "Self_"),
     ("static", "static_"),
     ("struct", "struct_"),
     ("super", "super_"),
@@ -578,3 +584,15 @@ const KEYWORDS: &[(&str, &str)] = &[
     ("while", "while_"),
     ("yield", "yield_"),
 ];
+
+#[cfg(test)]
+mod tests {
+    use super::KEYWORDS;
+
+    #[test]
+    fn verify_keyword_order() {
+        for i in 1..KEYWORDS.len() {
+            assert!(dbg!(KEYWORDS[i - 1].0) < dbg!(KEYWORDS[i].0));
+        }
+    }
+}

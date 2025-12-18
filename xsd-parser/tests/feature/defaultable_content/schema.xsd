@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <xs:complexType name="SimpleType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="attrib-a" type="xs:string" use="optional"/>
+                <xs:attribute name="attrib-b" type="xs:string" use="optional"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:complexType name="NestedSeqType">
+        <xs:sequence minOccurs="1" maxOccurs="1">
+            <xs:choice name="InnerChoice" minOccurs="1" maxOccurs="1">
+                <xs:sequence name="FinalSeq" minOccurs="1" maxOccurs="1">
+                    <xs:element name="A" type="xs:string" minOccurs="0" />
+                    <xs:element name="B" type="xs:string" minOccurs="0" />
+                    <xs:element name="C" type="xs:string" minOccurs="0" />
+                </xs:sequence>
+            </xs:choice>
+            <xs:element name="D" type="xs:string" minOccurs="0" />
+        </xs:sequence>
+        <xs:attribute name="attrib-a" type="xs:string" use="optional" />
+        <xs:attribute name="attrib-b" type="xs:string" use="optional" />
+    </xs:complexType>
+
+    <xs:complexType name="SequenceType">
+        <xs:sequence>
+            <xs:element name="A" type="xs:string" minOccurs="0" />
+            <xs:element name="B" type="xs:string" minOccurs="0" />
+            <xs:element name="C" type="xs:string" minOccurs="0" />
+        </xs:sequence>
+        <xs:attribute name="attrib-a" type="xs:string" use="optional" />
+        <xs:attribute name="attrib-b" type="xs:string" use="optional" />
+    </xs:complexType>
+
+    <xs:element name="Simple" type="SimpleType" />
+    <xs:element name="Sequence" type="SequenceType" />
+    <xs:element name="NestedSeq" type="NestedSeqType" />
+</xs:schema>

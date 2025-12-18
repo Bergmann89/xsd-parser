@@ -1,14 +1,25 @@
 use std::borrow::Cow;
 use std::fmt::Debug;
 use std::marker::PhantomData;
+use std::mem::take;
+use std::num::{
+    NonZeroI128, NonZeroI16, NonZeroI32, NonZeroI64, NonZeroI8, NonZeroIsize, NonZeroU128,
+    NonZeroU16, NonZeroU32, NonZeroU64, NonZeroU8, NonZeroUsize,
+};
 use std::str::{from_utf8, FromStr};
 
 use quick_xml::{
+    errors::Error as QuickXmlError,
     escape::unescape,
-    events::{attributes::Attribute, BytesStart, Event},
-    name::{Namespace, QName, ResolveResult},
+    events::{attributes::AttrError, attributes::Attribute, BytesStart, Event},
+    name::{
+        LocalName, Namespace, NamespaceError, NamespaceResolver, PrefixDeclaration, QName,
+        ResolveResult,
+    },
 };
 use thiserror::Error;
+
+use crate::xml::NamespacesShared;
 
 use super::{Error, ErrorKind, RawByteStr, XmlReader, XmlReaderSync};
 
@@ -16,6 +27,48 @@ use super::{Error, ErrorKind, RawByteStr, XmlReader, XmlReaderSync};
 pub trait WithDeserializer: Sized {
     /// The deserializer to use for this type.
     type Deserializer: for<'de> Deserializer<'de, Self>;
+
+    /// Initializes a new deserializer for the given `event` using the given `helper`.
+    ///
+    /// This is a shortcut for `Self::Deserializer::init()`.
+    ///
+    /// # Errors
+    ///
+    /// Forwards the errors from `Self::Deserializer::init()`;
+    fn init<'de>(
+        helper: &mut DeserializeHelper,
+        event: Event<'de>,
+    ) -> DeserializerResult<'de, Self> {
+        Self::Deserializer::init(helper, event)
+    }
+
+    /// Create a new default deserializer.
+    ///
+    /// If a type does not represent a element (for example a group type), it
+    /// does not need to extract attribute information from an element, which
+    /// means, that it's  deserializer may be constructed with default values.
+    ///
+    /// This is a shortcut for `Self::Deserializer::default()`.
+    #[must_use]
+    fn default_deserializer() -> Self::Deserializer
+    where
+        Self::Deserializer: Default,
+    {
+        Self::Deserializer::default()
+    }
+
+    /// Create a new default value by creating and default deserializer and
+    /// finish it right after.
+    ///
+    /// # Errors
+    ///
+    /// Forwards errors from [`Deserializer::finish`].
+    fn default_value(helper: &mut DeserializeHelper) -> Result<Self, Error>
+    where
+        Self::Deserializer: Default,
+    {
+        Self::default_deserializer().finish(helper)
+    }
 }
 
 impl<X> WithDeserializer for X
@@ -31,32 +84,26 @@ pub trait Deserializer<'de, T>: Debug + Sized
 where
     T: WithDeserializer<Deserializer = Self>,
 {
-    /// Initializes a new deserializer from the passed `reader` and the initial `event`.
+    /// Initializes a new deserializer from the passed `helper` and the initial `event`.
     ///
     /// # Errors
     ///
     /// Returns an [`struct@Error`] if the initialization of the deserializer failed.
-    fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, T>
-    where
-        R: XmlReader;
+    fn init(helper: &mut DeserializeHelper, event: Event<'de>) -> DeserializerResult<'de, T>;
 
     /// Processes the next XML [`Event`].
     ///
     /// # Errors
     ///
     /// Returns an [`struct@Error`] if processing the event failed.
-    fn next<R>(self, reader: &R, event: Event<'de>) -> DeserializerResult<'de, T>
-    where
-        R: XmlReader;
+    fn next(self, helper: &mut DeserializeHelper, event: Event<'de>) -> DeserializerResult<'de, T>;
 
     /// Force the deserializer to finish.
     ///
     /// # Errors
     ///
     /// Returns an [`struct@Error`] if the deserializer could not finish.
-    fn finish<R>(self, reader: &R) -> Result<T, Error>
-    where
-        R: XmlReader;
+    fn finish(self, helper: &mut DeserializeHelper) -> Result<T, Error>;
 }
 
 /// Result type returned by the [`Deserializer`] trait.
@@ -108,8 +155,8 @@ impl<'a> ElementHandlerOutput<'a> {
     /// Create a [`Break`](Self::Break) instance that will return the passed
     /// `event` to root of the deserialization process.
     #[must_use]
-    pub fn return_to_root(event: Event<'a>, allow_any: bool) -> Self {
-        Self::break_(DeserializerEvent::Break(event), allow_any)
+    pub fn return_to_root(event: DeserializerEvent<'a>, allow_any: bool) -> Self {
+        Self::break_(event.into_break(), allow_any)
     }
 
     /// Create a [`Continue`](Self::Continue) instance if the passed `event` is
@@ -134,6 +181,21 @@ impl<'a> ElementHandlerOutput<'a> {
             DeserializerEvent::Continue(event) => Self::return_to_parent(event, allow_any),
             event => Self::break_(event, allow_any),
         }
+    }
+
+    /// Returns `true` if this is a [`Continue`](ElementHandlerOutput::Continue)
+    /// that contains a [`Start`](Event::Start) or [`Empty`](Event::Empty) event,
+    /// `false` otherwise.
+    #[inline]
+    #[must_use]
+    pub fn is_continue_start_or_empty(&self) -> bool {
+        matches!(
+            self,
+            Self::Continue {
+                event: Event::Start(_) | Event::Empty(_),
+                ..
+            }
+        )
     }
 }
 
@@ -248,18 +310,42 @@ pub enum DeserializerEvent<'a> {
     /// for additional evaluation.
     Break(Event<'a>),
 
-    /// The event was not consumed by the deserializer an may be processed again
+    /// The event was not consumed by the deserializer and may be processed again
     /// by any of it's parents.
     Continue(Event<'a>),
 }
 
 impl<'a> DeserializerEvent<'a> {
     /// Extract the event as `Option`.
+    #[inline]
     #[must_use]
     pub fn into_event(self) -> Option<Event<'a>> {
         match self {
             Self::None => None,
             Self::Break(event) | Self::Continue(event) => Some(event),
+        }
+    }
+
+    /// Return [`None`](DeserializerEvent::None) if the contained event is
+    /// [`Text`](Event::Text) or [`CData`](Event::CData).
+    #[must_use]
+    pub fn drop_text(self) -> Self {
+        match self {
+            Self::None => Self::None,
+            Self::Break(Event::Text(_) | Event::CData(_)) => Self::None,
+            Self::Continue(Event::Text(_) | Event::CData(_)) => Self::None,
+            x => x,
+        }
+    }
+
+    /// Converts a [`Continue`](DeserializerEvent::Continue) into a
+    /// [`Break`](DeserializerEvent::Break).
+    #[must_use]
+    pub fn into_break(self) -> Self {
+        match self {
+            Self::None => Self::None,
+            Self::Break(event) => Self::Break(event),
+            Self::Continue(event) => Self::Break(event),
         }
     }
 }
@@ -289,7 +375,9 @@ where
     type Error = Error;
 
     fn deserialize(reader: &mut R) -> Result<Self, Self::Error> {
-        DeserializeHelper::new(reader).deserialize_sync()
+        DeserializeImpl::new(reader)
+            .deserialize_sync()
+            .map_err(|error| reader.extend_error(error))
     }
 }
 
@@ -300,13 +388,15 @@ pub trait DeserializeAsync<'de, R>: Sized
 where
     R: super::XmlReaderAsync<'de>,
 {
-    /// Future that is returned by the [`deserialize_async`] method.
+    /// Future that is returned by the
+    /// [`deserialize_async`](DeserializeAsync::deserialize_async) method.
     type Future<'x>: std::future::Future<Output = Result<Self, Self::Error>>
     where
         R: 'x,
         'de: 'x;
 
-    /// Error that is returned by the future generated by the [`deserialize_async`] method.
+    /// Error that is returned by the future generated by the
+    /// [`deserialize_async`](DeserializeAsync::deserialize_async) method.
     type Error;
 
     /// Asynchronously deserializes the type from the passed `reader`.
@@ -333,7 +423,12 @@ where
     where
         'de: 'x,
     {
-        Box::pin(async move { DeserializeHelper::new(reader).deserialize_async().await })
+        Box::pin(async move {
+            DeserializeImpl::new(reader)
+                .deserialize_async()
+                .await
+                .map_err(|error| reader.extend_error(error))
+        })
     }
 }
 
@@ -350,7 +445,7 @@ pub trait DeserializeBytes: Sized {
     /// # Errors
     ///
     /// Returns a suitable [`struct@Error`] if the deserialization was not successful.
-    fn deserialize_bytes<R: XmlReader>(reader: &R, bytes: &[u8]) -> Result<Self, Error>;
+    fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error>;
 
     /// Optimized version of [`deserialize_bytes`](Self::deserialize_bytes) that
     /// takes a string instead of a bytes slice.
@@ -360,8 +455,8 @@ pub trait DeserializeBytes: Sized {
     /// # Errors
     ///
     /// Returns a suitable [`struct@Error`] if the deserialization was not successful.
-    fn deserialize_str<R: XmlReader>(reader: &R, s: &str) -> Result<Self, Error> {
-        Self::deserialize_bytes(reader, s.as_bytes())
+    fn deserialize_str(helper: &mut DeserializeHelper, s: &str) -> Result<Self, Error> {
+        Self::deserialize_bytes(helper, s.as_bytes())
     }
 }
 
@@ -378,8 +473,8 @@ pub struct DeserializeStrError<E> {
 }
 
 impl DeserializeBytes for bool {
-    fn deserialize_bytes<R: XmlReader>(reader: &R, bytes: &[u8]) -> Result<Self, Error> {
-        let _reader = reader;
+    fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
+        let _helper = helper;
 
         match bytes {
             b"TRUE" | b"True" | b"true" | b"YES" | b"Yes" | b"yes" | b"1" => Ok(true),
@@ -398,14 +493,14 @@ where
     X: DeserializeBytesFromStr,
     X::Err: std::error::Error + Send + Sync + 'static,
 {
-    fn deserialize_bytes<R: XmlReader>(reader: &R, bytes: &[u8]) -> Result<Self, Error> {
+    fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         let s = from_utf8(bytes).map_err(Error::from)?;
 
-        Self::deserialize_str(reader, s)
+        Self::deserialize_str(helper, s)
     }
 
-    fn deserialize_str<R: XmlReader>(reader: &R, s: &str) -> Result<Self, Error> {
-        let _reader = reader;
+    fn deserialize_str(helper: &mut DeserializeHelper, s: &str) -> Result<Self, Error> {
+        let _helper = helper;
 
         X::from_str(s).map_err(|error| {
             Error::custom(DeserializeStrError {
@@ -422,16 +517,32 @@ impl DeserializeBytesFromStr for u8 {}
 impl DeserializeBytesFromStr for u16 {}
 impl DeserializeBytesFromStr for u32 {}
 impl DeserializeBytesFromStr for u64 {}
+impl DeserializeBytesFromStr for u128 {}
 impl DeserializeBytesFromStr for usize {}
 
 impl DeserializeBytesFromStr for i8 {}
 impl DeserializeBytesFromStr for i16 {}
 impl DeserializeBytesFromStr for i32 {}
 impl DeserializeBytesFromStr for i64 {}
+impl DeserializeBytesFromStr for i128 {}
 impl DeserializeBytesFromStr for isize {}
 
 impl DeserializeBytesFromStr for f32 {}
 impl DeserializeBytesFromStr for f64 {}
+
+impl DeserializeBytesFromStr for NonZeroU8 {}
+impl DeserializeBytesFromStr for NonZeroU16 {}
+impl DeserializeBytesFromStr for NonZeroU32 {}
+impl DeserializeBytesFromStr for NonZeroU64 {}
+impl DeserializeBytesFromStr for NonZeroU128 {}
+impl DeserializeBytesFromStr for NonZeroUsize {}
+
+impl DeserializeBytesFromStr for NonZeroI8 {}
+impl DeserializeBytesFromStr for NonZeroI16 {}
+impl DeserializeBytesFromStr for NonZeroI32 {}
+impl DeserializeBytesFromStr for NonZeroI64 {}
+impl DeserializeBytesFromStr for NonZeroI128 {}
+impl DeserializeBytesFromStr for NonZeroIsize {}
 
 #[cfg(feature = "num")]
 impl DeserializeBytesFromStr for num::BigInt {}
@@ -450,10 +561,7 @@ impl<'de, T> Deserializer<'de, T> for ContentDeserializer<T>
 where
     T: DeserializeBytes + Debug,
 {
-    fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, T>
-    where
-        R: XmlReader,
-    {
+    fn init(helper: &mut DeserializeHelper, event: Event<'de>) -> DeserializerResult<'de, T> {
         match event {
             Event::Start(_) => Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(Self {
@@ -464,7 +572,7 @@ where
                 allow_any: false,
             }),
             Event::Empty(_) => {
-                let data = T::deserialize_bytes(reader, &[])?;
+                let data = T::deserialize_bytes(helper, &[])?;
 
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Data(data),
@@ -480,10 +588,11 @@ where
         }
     }
 
-    fn next<R>(mut self, reader: &R, event: Event<'de>) -> DeserializerResult<'de, T>
-    where
-        R: XmlReader,
-    {
+    fn next(
+        mut self,
+        helper: &mut DeserializeHelper,
+        event: Event<'de>,
+    ) -> DeserializerResult<'de, T> {
         match event {
             Event::Text(x) => {
                 let text = x.decode()?;
@@ -519,7 +628,7 @@ where
                 })
             }
             Event::End(_) => {
-                let data = self.finish(reader)?;
+                let data = self.finish(helper)?;
 
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Data(data),
@@ -535,26 +644,69 @@ where
         }
     }
 
-    fn finish<R>(self, reader: &R) -> Result<T, Error>
-    where
-        R: XmlReader,
-    {
-        T::deserialize_bytes(reader, self.data.as_bytes().trim_ascii())
+    fn finish(self, helper: &mut DeserializeHelper) -> Result<T, Error> {
+        T::deserialize_bytes(helper, self.data.as_bytes().trim_ascii())
     }
 }
 
-/* DeserializeReader */
+/// Helper that defines some useful methods needed for `quick_xml` deserialization.
+///
+/// Mainly used in [`Deserializer`] and [`DeserializeBytes`].
+#[derive(Debug)]
+pub struct DeserializeHelper {
+    level: usize,
+    resolver: NamespaceResolver,
+    namespaces: Vec<(usize, Option<NamespacesShared<'static>>)>,
+    pending_pop: bool,
+}
 
-/// Reader trait with additional helper methods for deserializing.
-pub trait DeserializeReader: XmlReader {
+impl DeserializeHelper {
+    /// Resolves a [`QName`] in the current context of the parsed XML.
+    ///
+    /// For more details check [`quick_xml::NsReader::resolve`].
+    #[must_use]
+    pub fn resolve<'n>(
+        &self,
+        name: QName<'n>,
+        attribute: bool,
+    ) -> (ResolveResult<'_>, LocalName<'n>) {
+        self.resolver.resolve(name, !attribute)
+    }
+
+    /// Gets a copy of the shared namespaces in the current context of the
+    /// parsed XML.
+    ///
+    /// This may create the underlying [`Namespaces`](crate::xml::Namespaces)
+    /// object, if it did not exist before.
+    #[must_use]
+    pub fn namespaces(&mut self) -> NamespacesShared<'static> {
+        self.namespaces
+            .last_mut()
+            .map(|(_, x)| {
+                let prefixes = self.resolver.bindings().map(|(decl, ns)| {
+                    let key = match decl {
+                        PrefixDeclaration::Named(x) => Cow::Owned(x.to_vec()),
+                        PrefixDeclaration::Default => Cow::Borrowed(&b""[..]),
+                    };
+                    let value = Cow::Owned(ns.0.into());
+
+                    (key, value)
+                });
+
+                x.get_or_insert_with(|| NamespacesShared::new(prefixes.collect()))
+                    .clone()
+            })
+            .unwrap_or_default()
+    }
+
     /// Helper function to convert and store an attribute from the XML event.
     ///
     /// # Errors
     ///
     /// Returns an [`struct@Error`] with [`ErrorKind::DuplicateAttribute`] if `store`
     /// already contained a value.
-    fn read_attrib<T>(
-        &self,
+    pub fn read_attrib<T>(
+        &mut self,
         store: &mut Option<T>,
         name: &'static [u8],
         value: &[u8],
@@ -563,13 +715,28 @@ pub trait DeserializeReader: XmlReader {
         T: DeserializeBytes,
     {
         if store.is_some() {
-            self.err(ErrorKind::DuplicateAttribute(RawByteStr::from(name)))?;
+            Err(ErrorKind::DuplicateAttribute(RawByteStr::from(name)))?;
         }
 
-        let value = self.map_result(T::deserialize_bytes(self, value))?;
+        let value = T::deserialize_bytes(self, value)?;
         *store = Some(value);
 
         Ok(())
+    }
+
+    /// Returns an iterator that yields all attributes of the passed `bytes_start`
+    /// object, except the `xmlns` attributes.
+    pub fn filter_xmlns_attributes<'a>(
+        &self,
+        bytes_start: &'a BytesStart<'_>,
+    ) -> impl Iterator<Item = Result<Attribute<'a>, AttrError>> {
+        bytes_start.attributes().filter(|attrib| {
+            let Ok(attrib) = attrib else {
+                return true;
+            };
+
+            attrib.key.0 != b"xmlns" && !attrib.key.0.starts_with(b"xmlns:")
+        })
     }
 
     /// Raise the [`UnexpectedAttribute`](ErrorKind::UnexpectedAttribute) error
@@ -579,25 +746,25 @@ pub trait DeserializeReader: XmlReader {
     ///
     /// Will always return the [`UnexpectedAttribute`](ErrorKind::UnexpectedAttribute)
     /// error.
-    fn raise_unexpected_attrib(&self, attrib: Attribute<'_>) -> Result<(), Error> {
-        self.err(ErrorKind::UnexpectedAttribute(RawByteStr::from_slice(
+    pub fn raise_unexpected_attrib(&self, attrib: &Attribute<'_>) -> Result<(), Error> {
+        Err(ErrorKind::UnexpectedAttribute(RawByteStr::from_slice(
             attrib.key.into_inner(),
-        )))
+        )))?
     }
 
     /// Raises an [`UnexpectedAttribute`](ErrorKind::UnexpectedAttribute) error
     /// for the given attribute if it is not globally allowed (e.g., an XSI attribute).
     ///
     /// This method checks if the attribute is not globally allowed using
-    /// [`is_globally_allowed_attrib`](DeserializeReader::is_globally_allowed_attrib)
+    /// [`is_globally_allowed_attrib`](DeserializeHelper::is_globally_allowed_attrib)
     /// and, if so, raises the error. Otherwise, it returns `Ok(())`.
     ///
     /// # Errors
     ///
     /// Returns [`UnexpectedAttribute`](ErrorKind::UnexpectedAttribute) if the
     /// attribute is not globally allowed.
-    fn raise_unexpected_attrib_checked(&self, attrib: Attribute<'_>) -> Result<(), Error> {
-        if !self.is_globally_allowed_attrib(&attrib) {
+    pub fn raise_unexpected_attrib_checked(&self, attrib: &Attribute<'_>) -> Result<(), Error> {
+        if !self.is_globally_allowed_attrib(attrib) {
             self.raise_unexpected_attrib(attrib)?;
         }
 
@@ -611,7 +778,8 @@ pub trait DeserializeReader: XmlReader {
     /// has a local name of `schemaLocation`, `noNamespaceSchemaLocation`, `type`,
     /// or `nil`. These attributes are globally valid and do not need to be
     /// explicitly declared in the XML schema.
-    fn is_globally_allowed_attrib(&self, attrib: &Attribute<'_>) -> bool {
+    #[must_use]
+    pub fn is_globally_allowed_attrib(&self, attrib: &Attribute<'_>) -> bool {
         if let (ResolveResult::Bound(x), local) = self.resolve(attrib.key, true) {
             let local = local.as_ref();
             x.0 == &**crate::misc::Namespace::XSI
@@ -629,7 +797,8 @@ pub trait DeserializeReader: XmlReader {
     /// Checks if the passed [`QName`] `name` matches the expected namespace `ns`
     /// and returns the local name of it. If `name` does not have a namespace prefix
     /// to resolve, the local name is just returned as is.
-    fn resolve_local_name<'a>(&self, name: QName<'a>, ns: &[u8]) -> Option<&'a [u8]> {
+    #[must_use]
+    pub fn resolve_local_name<'a>(&self, name: QName<'a>, ns: &[u8]) -> Option<&'a [u8]> {
         match self.resolve(name, true) {
             (ResolveResult::Unbound, local) => Some(local.into_inner()),
             (ResolveResult::Bound(x), local) if x.0 == ns => Some(local.into_inner()),
@@ -639,7 +808,8 @@ pub trait DeserializeReader: XmlReader {
 
     /// Try to extract the resolved tag name of either a [`Start`](Event::Start) or a
     /// [`Empty`](Event::Empty) event.
-    fn check_start_tag_name(&self, event: &Event<'_>, ns: Option<&[u8]>, name: &[u8]) -> bool {
+    #[must_use]
+    pub fn check_start_tag_name(&self, event: &Event<'_>, ns: Option<&[u8]>, name: &[u8]) -> bool {
         let (Event::Start(x) | Event::Empty(x)) = event else {
             return false;
         };
@@ -661,8 +831,8 @@ pub trait DeserializeReader: XmlReader {
     ///
     /// Raises an error if the deserializer could not be initialized.
     #[inline]
-    fn init_start_tag_deserializer<'a, T>(
-        &self,
+    pub fn init_start_tag_deserializer<'a, T>(
+        &mut self,
         event: Event<'a>,
         ns: Option<&[u8]>,
         name: &[u8],
@@ -691,7 +861,7 @@ pub trait DeserializeReader: XmlReader {
     /// # Errors
     ///
     /// Raise an error if the attributes of the tag could not be resolved.
-    fn get_dynamic_type_name<'a>(
+    pub fn get_dynamic_type_name<'a>(
         &self,
         event: &'a Event<'_>,
     ) -> Result<Option<Cow<'a, [u8]>>, Error> {
@@ -728,14 +898,17 @@ pub trait DeserializeReader: XmlReader {
     /// # Errors
     ///
     /// Forwards the errors from raised by `f`.
-    fn init_deserializer_from_start_event<'a, T, F>(
-        &self,
+    pub fn init_deserializer_from_start_event<'a, T, F>(
+        &mut self,
         event: Event<'a>,
         f: F,
     ) -> Result<DeserializerOutput<'a, T>, Error>
     where
         T: WithDeserializer,
-        F: FnOnce(&Self, &BytesStart<'a>) -> Result<<T as WithDeserializer>::Deserializer, Error>,
+        F: FnOnce(
+            &mut Self,
+            &BytesStart<'a>,
+        ) -> Result<<T as WithDeserializer>::Deserializer, Error>,
     {
         match event {
             Event::Start(start) => {
@@ -764,23 +937,200 @@ pub trait DeserializeReader: XmlReader {
             }),
         }
     }
+
+    /// Try to extract the value from the storage type used by the deserializer.
+    ///
+    /// # Errors
+    ///
+    /// If the value is not valid a [`ErrorKind::MissingContent`] error is raised.
+    #[inline]
+    pub fn finish_content<T>(&self, value: Option<T>) -> Result<T, Error> {
+        Ok(value.ok_or_else(|| ErrorKind::MissingContent)?)
+    }
+
+    /// Try to extract the value from the storage type used by the deserializer.
+    ///
+    /// # Errors
+    ///
+    /// If the value is not valid a [`ErrorKind::MissingElement`] error is raised.
+    #[inline]
+    pub fn finish_element<T>(&self, name: &'static str, value: Option<T>) -> Result<T, Error> {
+        Ok(value.ok_or_else(|| ErrorKind::MissingElement(name.into()))?)
+    }
+
+    /// Try to extract the value from the storage type used by the deserializer
+    /// or create a new default value.
+    ///
+    /// # Errors
+    ///
+    /// Forwards the error from the deserializer that is used to default construct
+    /// a new value.
+    #[inline]
+    pub fn finish_default<T>(&mut self, value: Option<T>) -> Result<T, Error>
+    where
+        T: WithDeserializer,
+        T::Deserializer: Default,
+    {
+        if let Some(value) = value {
+            Ok(value)
+        } else {
+            T::default_value(self)
+        }
+    }
+
+    /// Try to extract the value from the storage type used by the deserializer
+    /// and checks it's bounds.
+    ///
+    /// # Errors
+    ///
+    /// If the value does not match the expected bounds a
+    /// [`ErrorKind::InsufficientSize`] error is raised.
+    #[inline]
+    pub fn finish_vec<T>(
+        &self,
+        min: usize,
+        max: Option<usize>,
+        value: Vec<T>,
+    ) -> Result<Vec<T>, Error> {
+        if value.len() < min && matches!(max, Some(max) if value.len() > max) {
+            return Err(ErrorKind::InsufficientSize {
+                min,
+                max,
+                actual: value.len(),
+            })?;
+        }
+
+        Ok(value)
+    }
+
+    /// Try to extract the value from the storage type used by the deserializer
+    /// and fill it up with default constructed values until the lower bound is
+    /// fulfilled.
+    ///
+    /// # Errors
+    ///
+    /// Forwards the error from the deserializer that is used to default construct
+    /// a new value.
+    #[inline]
+    pub fn finish_vec_default<T>(&mut self, min: usize, mut value: Vec<T>) -> Result<Vec<T>, Error>
+    where
+        T: WithDeserializer,
+        T::Deserializer: Default,
+    {
+        while value.len() < min {
+            value.push(T::default_value(self)?);
+        }
+
+        Ok(value)
+    }
+
+    /// Try to extract the value from the storage type used by the deserializer,
+    /// checks it's bounds and perform a conversion to the array.
+    ///
+    /// # Errors
+    ///
+    /// If the value does not match the expected bounds a
+    /// [`ErrorKind::InsufficientSize`] error is raised.
+    #[inline]
+    pub fn finish_arr<T, const N: usize>(&self, value: Vec<T>) -> Result<[T; N], Error> {
+        Ok(value
+            .try_into()
+            .map_err(|value: Vec<_>| ErrorKind::InsufficientSize {
+                min: N,
+                max: Some(N),
+                actual: value.len(),
+            })?)
+    }
+
+    /// Try to extract the value from the storage type used by the deserializer,
+    /// fill it up with default constructed values until the lower bound is
+    /// fulfilled and then convert it into an array.
+    ///
+    /// # Errors
+    ///
+    /// Forwards the error from the deserializer that is used to default construct
+    /// a new value.
+    #[inline]
+    pub fn finish_arr_default<T, const N: usize>(&mut self, value: Vec<T>) -> Result<[T; N], Error>
+    where
+        T: WithDeserializer,
+        T::Deserializer: Default,
+    {
+        let value = self.finish_vec_default(N, value)?;
+
+        if let Ok(arr) = value.try_into() {
+            Ok(arr)
+        } else {
+            unreachable!()
+        }
+    }
+
+    fn handle_event(&mut self, event: &Event<'_>) -> Result<(), NamespaceError> {
+        if take(&mut self.pending_pop) {
+            self.resolver.pop();
+
+            self.level = self.level.saturating_sub(1);
+
+            loop {
+                let is_outdated = matches!(self.namespaces.last(), Some((last_level, _)) if *last_level > self.level);
+                if is_outdated {
+                    self.namespaces.pop();
+                } else {
+                    break;
+                }
+            }
+        }
+
+        match event {
+            Event::Start(e) | Event::Empty(e) => {
+                self.level += 1;
+
+                for a in e.attributes().with_checks(false).flatten() {
+                    if a.key.0.starts_with(b"xmlns") {
+                        self.namespaces.push((self.level, None));
+
+                        break;
+                    }
+                }
+
+                self.resolver.push(e)?;
+                self.pending_pop = matches!(event, Event::Empty(_));
+            }
+            Event::End(_) => {
+                self.pending_pop = true;
+            }
+            _ => (),
+        }
+
+        Ok(())
+    }
 }
 
-impl<X> DeserializeReader for X where X: XmlReader {}
+impl Default for DeserializeHelper {
+    fn default() -> Self {
+        Self {
+            level: 0,
+            resolver: NamespaceResolver::default(),
+            namespaces: vec![(0, None)],
+            pending_pop: false,
+        }
+    }
+}
 
-/* DeserializeHelper */
+/* DeserializeImpl */
 
-struct DeserializeHelper<'a, 'de, T, R>
+struct DeserializeImpl<'a, 'de, T, R>
 where
     T: WithDeserializer,
 {
     reader: &'a mut R,
+    helper: DeserializeHelper,
     deserializer: Option<T::Deserializer>,
     skip_depth: Option<usize>,
     marker: PhantomData<&'de ()>,
 }
 
-impl<'a, 'de, T, R> DeserializeHelper<'a, 'de, T, R>
+impl<'a, 'de, T, R> DeserializeImpl<'a, 'de, T, R>
 where
     T: WithDeserializer,
     R: XmlReader,
@@ -788,18 +1138,26 @@ where
     fn new(reader: &'a mut R) -> Self {
         Self {
             reader,
+            helper: DeserializeHelper::default(),
             deserializer: None,
             skip_depth: None,
             marker: PhantomData,
         }
     }
 
-    fn handle_event(&mut self, event: Event<'_>) -> Result<Option<T>, Error> {
-        let ret = match self.deserializer.take() {
-            None => T::Deserializer::init(self.reader, event),
-            Some(b) => b.next(self.reader, event),
+    fn handle_event(&mut self, event: Event<'de>) -> Result<Option<T>, Error> {
+        self.helper
+            .handle_event(&event)
+            .map_err(QuickXmlError::from)?;
+
+        let Some(event) = self.handle_skip(event) else {
+            return Ok(None);
         };
-        let ret = self.reader.map_result(ret);
+
+        let ret = match self.deserializer.take() {
+            None => T::Deserializer::init(&mut self.helper, event),
+            Some(b) => b.next(&mut self.helper, event),
+        };
 
         let DeserializerOutput {
             artifact,
@@ -853,7 +1211,7 @@ where
     }
 }
 
-impl<'de, T, R> DeserializeHelper<'_, 'de, T, R>
+impl<'de, T, R> DeserializeImpl<'_, 'de, T, R>
 where
     T: WithDeserializer,
     R: XmlReaderSync<'de>,
@@ -862,19 +1220,14 @@ where
         loop {
             let event = self.reader.read_event()?;
 
-            if let Some(event) = self.handle_skip(event) {
-                if let Some(data) = self
-                    .handle_event(event)
-                    .map_err(|error| self.reader.extend_error(error))?
-                {
-                    return Ok(data);
-                }
+            if let Some(data) = self.handle_event(event)? {
+                return Ok(data);
             }
         }
     }
 }
 #[cfg(feature = "async")]
-impl<'de, T, R> DeserializeHelper<'_, 'de, T, R>
+impl<'de, T, R> DeserializeImpl<'_, 'de, T, R>
 where
     T: WithDeserializer,
     R: super::XmlReaderAsync<'de>,
@@ -883,10 +1236,8 @@ where
         loop {
             let event = self.reader.read_event_async().await?;
 
-            if let Some(event) = self.handle_skip(event) {
-                if let Some(data) = self.handle_event(event)? {
-                    return Ok(data);
-                }
+            if let Some(data) = self.handle_event(event)? {
+                return Ok(data);
             }
         }
     }

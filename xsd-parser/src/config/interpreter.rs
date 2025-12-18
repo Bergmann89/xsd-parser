@@ -59,7 +59,7 @@ bitflags! {
         /// See [`with_buildin_types`](crate::Interpreter::with_buildin_types) for details.
         const BUILDIN_TYPES = 1 << 0;
 
-        /// Whether to add the default types definitions to the interpreter or not.
+        /// Whether to add the default type definitions to the interpreter or not.
         ///
         /// See [`with_default_typedefs`](crate::Interpreter::with_default_typedefs) for details.
         const DEFAULT_TYPEDEFS = 1 << 1;
@@ -71,7 +71,17 @@ bitflags! {
 
         /// Whether to use `num::BigInt` and `num::BigUint` instead of build-in integer types.
         ///
+        /// This will overwrite type definitions made by [`DEFAULT_TYPEDEFS`](InterpreterFlags::DEFAULT_TYPEDEFS).
+        ///
         /// See [`with_num_big_int`](crate::Interpreter::with_num_big_int) for details.
         const WITH_NUM_BIG_INT = 1 << 3;
+
+        /// Whether to add non-zero type definitions (like `NonZeroUsize`) to the interpreter or not.
+        ///
+        /// This will overwrite type definitions made by [`DEFAULT_TYPEDEFS`](InterpreterFlags::DEFAULT_TYPEDEFS)
+        /// and [`WITH_NUM_BIG_INT`](InterpreterFlags::WITH_NUM_BIG_INT).
+        ///
+        /// See [`with_nonzero_typedefs`](crate::Interpreter::with_nonzero_typedefs) for details.
+        const NONZERO_TYPEDEFS = 1 << 4;
     }
 }

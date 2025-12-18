@@ -39,7 +39,7 @@ fn extra_attributes<'types>(
         .resolve(schemas)
         .unwrap();
 
-    let data_type = data_types.get_mut(&ident).unwrap();
+    let data_type = data_types.items.get_mut(&ident).unwrap();
     let DataTypeVariant::Enumeration(enum_data) = &mut data_type.variant else {
         panic!();
     };

@@ -1,10 +1,13 @@
 use xsd_parser_types::{
-    misc::Namespace,
+    misc::{Namespace, NamespacePrefix},
     quick_xml::{Error, WithDeserializer, WithSerializer},
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
 pub const NS_TNS: Namespace = Namespace::new_const(b"http://example.com");
+pub const PREFIX_XS: NamespacePrefix = NamespacePrefix::new_const(b"xs");
+pub const PREFIX_XML: NamespacePrefix = NamespacePrefix::new_const(b"xml");
+pub const PREFIX_TNS: NamespacePrefix = NamespacePrefix::new_const(b"tns");
 pub type Array = ArrayType;
 #[derive(Debug)]
 pub struct ArrayType {
@@ -31,9 +34,9 @@ impl WithDeserializer for ArrayType {
 pub mod quick_xml_deserialize {
     use core::mem::replace;
     use xsd_parser_types::quick_xml::{
-        filter_xmlns_attributes, BytesStart, DeserializeReader, Deserializer, DeserializerArtifact,
-        DeserializerEvent, DeserializerOutput, DeserializerResult, ElementHandlerOutput, Error,
-        ErrorKind, Event, WithDeserializer,
+        BytesStart, DeserializeHelper, Deserializer, DeserializerArtifact, DeserializerEvent,
+        DeserializerOutput, DeserializerResult, ElementHandlerOutput, Error, Event,
+        WithDeserializer,
     };
     #[derive(Debug)]
     pub struct ArrayTypeDeserializer {
@@ -48,22 +51,19 @@ pub mod quick_xml_deserialize {
         Unknown__,
     }
     impl ArrayTypeDeserializer {
-        fn find_suitable<'de, R>(
+        fn find_suitable<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
             fallback: &mut Option<ArrayTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if matches!(
-                    reader.resolve_local_name(x.name(), &super::NS_TNS),
+                    helper.resolve_local_name(x.name(), &super::NS_TNS),
                     Some(b"Item")
                 ) {
-                    let output = <i32 as WithDeserializer>::Deserializer::init(reader, event)?;
-                    return self.handle_item(reader, output, &mut *fallback);
+                    let output = <i32 as WithDeserializer>::init(helper, event)?;
+                    return self.handle_item(helper, output, &mut *fallback);
                 }
             }
             *self.state__ = fallback
@@ -71,30 +71,27 @@ pub mod quick_xml_deserialize {
                 .unwrap_or(ArrayTypeDeserializerState::Init__);
             Ok(ElementHandlerOutput::return_to_parent(event, false))
         }
-        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
-        where
-            R: DeserializeReader,
-        {
-            for attrib in filter_xmlns_attributes(bytes_start) {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib_checked(attrib)?;
+                helper.raise_unexpected_attrib_checked(&attrib)?;
             }
             Ok(Self {
                 item: Vec::new(),
                 state__: Box::new(ArrayTypeDeserializerState::Init__),
             })
         }
-        fn finish_state<R>(
+        fn finish_state(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             state: ArrayTypeDeserializerState,
-        ) -> Result<(), Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<(), Error> {
             use ArrayTypeDeserializerState as S;
             match state {
-                S::Item(deserializer) => self.store_item(deserializer.finish(reader)?)?,
+                S::Item(deserializer) => self.store_item(deserializer.finish(helper)?)?,
                 _ => (),
             }
             Ok(())
@@ -103,71 +100,52 @@ pub mod quick_xml_deserialize {
             self.item.push(value);
             Ok(())
         }
-        fn handle_item<'de, R>(
+        fn handle_item<'de>(
             &mut self,
-            reader: &R,
+            helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, i32>,
             fallback: &mut Option<ArrayTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use ArrayTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
                 allow_any,
             } = output;
             if artifact.is_none() {
-                let ret = ElementHandlerOutput::from_event(event, allow_any);
-                *self.state__ = match ret {
-                    ElementHandlerOutput::Continue { .. } => ArrayTypeDeserializerState::Next__,
-                    ElementHandlerOutput::Break { .. } => fallback
-                        .take()
-                        .unwrap_or(ArrayTypeDeserializerState::Next__),
-                };
-                return Ok(ret);
+                *self.state__ = S::Next__;
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
+                self.finish_state(helper, fallback)?;
             }
-            Ok(match artifact {
+            match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_item(data)?;
-                    *self.state__ = ArrayTypeDeserializerState::Next__;
-                    ElementHandlerOutput::from_event(event, allow_any)
+                    *self.state__ = S::Next__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback.get_or_insert(ArrayTypeDeserializerState::Item(deserializer));
-                            *self.state__ = ArrayTypeDeserializerState::Next__;
-                        }
-                        ElementHandlerOutput::Break { .. } => {
-                            *self.state__ = ArrayTypeDeserializerState::Item(deserializer);
-                        }
-                    }
-                    ret
+                    fallback.get_or_insert(S::Item(deserializer));
+                    *self.state__ = S::Next__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
-            })
+            }
         }
     }
     impl<'de> Deserializer<'de, super::ArrayType> for ArrayTypeDeserializer {
-        fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, super::ArrayType>
-        where
-            R: DeserializeReader,
-        {
-            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
-        }
-        fn next<R>(
-            mut self,
-            reader: &R,
+        fn init(
+            helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::ArrayType>
-        where
-            R: DeserializeReader,
-        {
+        ) -> DeserializerResult<'de, super::ArrayType> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        }
+        fn next(
+            mut self,
+            helper: &mut DeserializeHelper,
+            event: Event<'de>,
+        ) -> DeserializerResult<'de, super::ArrayType> {
             use ArrayTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -176,8 +154,8 @@ pub mod quick_xml_deserialize {
                 event = match (state, event) {
                     (S::Unknown__, _) => unreachable!(),
                     (S::Item(deserializer), event) => {
-                        let output = deserializer.next(reader, event)?;
-                        match self.handle_item(reader, output, &mut fallback)? {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_item(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, .. } => event,
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -186,14 +164,14 @@ pub mod quick_xml_deserialize {
                     }
                     (_, Event::End(_)) => {
                         return Ok(DeserializerOutput {
-                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            artifact: DeserializerArtifact::Data(self.finish(helper)?),
                             event: DeserializerEvent::None,
                             allow_any: false,
                         });
                     }
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
-                        match self.find_suitable(reader, event, &mut fallback)? {
+                        match self.find_suitable(helper, event, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, .. } => event,
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -202,33 +180,28 @@ pub mod quick_xml_deserialize {
                     }
                 }
             };
+            if let Some(fallback) = fallback {
+                *self.state__ = fallback;
+            }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
                 event,
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::ArrayType, Error>
-        where
-            R: DeserializeReader,
-        {
+        fn finish(mut self, helper: &mut DeserializeHelper) -> Result<super::ArrayType, Error> {
             let state = replace(&mut *self.state__, ArrayTypeDeserializerState::Unknown__);
-            self.finish_state(reader, state)?;
+            self.finish_state(helper, state)?;
             Ok(super::ArrayType {
-                item: self
-                    .item
-                    .try_into()
-                    .map_err(|vec: Vec<_>| ErrorKind::InsufficientSize {
-                        min: 5usize,
-                        max: 5usize,
-                        actual: vec.len(),
-                    })?,
+                item: helper.finish_arr::<_, 5usize>(self.item)?,
             })
         }
     }
 }
 pub mod quick_xml_serialize {
-    use xsd_parser_types::quick_xml::{BytesEnd, BytesStart, Error, Event, IterSerializer};
+    use xsd_parser_types::quick_xml::{
+        BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
+    };
     #[derive(Debug)]
     pub struct ArrayTypeSerializer<'ser> {
         pub(super) value: &'ser super::ArrayType,
@@ -245,7 +218,10 @@ pub mod quick_xml_serialize {
         Phantom__(&'ser ()),
     }
     impl<'ser> ArrayTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
                     ArrayTypeSerializerState::Init__ => {
@@ -254,13 +230,10 @@ pub mod quick_xml_serialize {
                             Some("Item"),
                             false,
                         ));
-                        let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns:tns"[..], &super::NS_TNS[..]));
-                        }
+                        let bytes = BytesStart::new(self.name);
                         return Ok(Some(Event::Start(bytes)));
                     }
-                    ArrayTypeSerializerState::Item(x) => match x.next().transpose()? {
+                    ArrayTypeSerializerState::Item(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => *self.state = ArrayTypeSerializerState::End__,
                     },
@@ -274,10 +247,9 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> Iterator for ArrayTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
+    impl<'ser> Serializer<'ser> for ArrayTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {

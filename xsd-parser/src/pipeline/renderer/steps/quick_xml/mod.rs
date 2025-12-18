@@ -7,7 +7,7 @@ use crate::models::{
 };
 
 pub use self::deserialize::QuickXmlDeserializeRenderStep;
-pub use self::serialize::QuickXmlSerializeRenderStep;
+pub use self::serialize::{NamespaceSerialization, QuickXmlSerializeRenderStep};
 
 impl ComplexDataElement<'_> {
     #[inline]
@@ -24,17 +24,25 @@ impl ComplexDataElement<'_> {
     fn treat_as_group(&self) -> bool {
         !self.treat_as_any()
             && !self.treat_as_text()
-            && (matches!(
+            && matches!(
                 &self.meta().variant,
                 ElementMetaVariant::Type {
                     mode: ElementMode::Group,
                     ..
                 }
-            ) || self.target_is_dynamic)
+            )
+    }
+
+    #[inline]
+    fn treat_as_group_or_dynamic(&self) -> bool {
+        self.treat_as_group() || self.target_is_dynamic
     }
 
     #[inline]
     fn treat_as_element(&self) -> bool {
-        !self.treat_as_any() && !self.treat_as_text() && !self.treat_as_group()
+        !self.treat_as_any()
+            && !self.treat_as_text()
+            && !self.treat_as_group()
+            && !self.target_is_dynamic
     }
 }

@@ -80,7 +80,7 @@ impl Optimizer {
             let mut map = HashMap::new();
             let mut idents = HashMap::new();
 
-            for (ident, type_) in self.types.iter_items() {
+            for (ident, type_) in &self.types.items {
                 match map.entry(Value { type_, types }) {
                     Entry::Vacant(e) => {
                         if let Some(ident) = types.get_resolved_ident(ident) {
@@ -107,7 +107,7 @@ impl Optimizer {
                     "Create reference for duplicate type: {ident} => {referenced_type}"
                 );
 
-                let ty = self.types.get_type_mut(&ident).unwrap();
+                let ty = self.types.items.get_mut(&ident).unwrap();
                 ty.variant = MetaTypeVariant::Reference(ReferenceMeta::new(referenced_type));
             }
         }

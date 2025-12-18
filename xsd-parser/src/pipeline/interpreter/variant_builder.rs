@@ -1,3 +1,4 @@
+use std::borrow::Cow;
 use std::mem::swap;
 use std::ops::{Bound, Deref, DerefMut};
 use std::str::from_utf8;
@@ -378,7 +379,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 Some(MetaTypeVariant::Union(e)) => e.base = Base::Extension(base),
                 Some(MetaTypeVariant::Enumeration(e)) => e.base = Base::Extension(base),
                 Some(MetaTypeVariant::ComplexType(e)) => e.base = Base::Extension(base),
-                e => unreachable!("Unexpected type: {e:#?}"),
+                e => crate::unreachable!("Unexpected type: {e:#?}"),
             }
         }
 
@@ -1266,18 +1267,18 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                     Err(Error::UnknownType(_)) => {
                         self.fixed = true;
 
-                        self.owner.get_complex_type_variant(base)?
+                        Cow::Borrowed(self.owner.get_complex_type_variant(base)?)
                     }
                     Err(error) => Err(error)?,
                 }
             }
             (TypeMode::Complex, ContentMode::Complex) => {
-                self.owner.get_complex_type_variant(base)?
+                Cow::Borrowed(self.owner.get_complex_type_variant(base)?)
             }
             (_, _) => crate::unreachable!("Unset or invalid combination!"),
         };
 
-        let mut base = base.clone();
+        let mut base = base.into_owned();
 
         match (self.content_mode, &mut base) {
             (ContentMode::Simple, MetaTypeVariant::Enumeration(ei)) => ei.variants.clear(),
@@ -1287,7 +1288,8 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                         .owner
                         .state
                         .types
-                        .get_type(content_ident)
+                        .items
+                        .get(content_ident)
                         .ok_or_else(|| Error::UnknownType(content_ident.clone()))?
                         .clone();
 
@@ -1379,7 +1381,10 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                     );
                 };
 
-                let content = self.owner.get_simple_type_variant(&content_ident)?.clone();
+                let content = self
+                    .owner
+                    .get_simple_type_variant(&content_ident)?
+                    .into_owned();
                 if !self.is_simple_content_unique {
                     self.is_simple_content_unique = true;
                     let content_name = self.owner.state.make_content_name();
@@ -1400,7 +1405,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 let content = builder.variant.unwrap();
                 let content = MetaType::new(content);
 
-                self.owner.state.types.insert_type(content_ident, content);
+                self.owner.state.types.items.insert(content_ident, content);
             }
             (TypeMode::Complex, ContentMode::Complex) => {
                 crate::unreachable!("Complex type with complex content tried to access simple content builder: {:?}", &self.variant);
@@ -1459,7 +1464,8 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                     .owner
                     .state
                     .types
-                    .get_type(content_ident)
+                    .items
+                    .get(content_ident)
                     .ok_or_else(|| Error::UnknownType(content_ident.clone()))?;
 
                 match (complex_content_type, &content_ty.variant) {
@@ -1534,7 +1540,8 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                     self.owner
                         .state
                         .types
-                        .insert_type(content_ident.clone(), ty);
+                        .items
+                        .insert(content_ident.clone(), ty);
 
                     ci.min_occurs = ci.min_occurs.min(min_occurs);
                     ci.max_occurs = ci.max_occurs.max(max_occurs);
@@ -1550,7 +1557,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                     };
 
                     let content_ident = ci.content.as_ref().unwrap();
-                    let content_type = self.owner.state.types.get_type_mut(content_ident).unwrap();
+                    let content_type = self.owner.state.types.items.get_mut(content_ident).unwrap();
                     let content_variant = &mut content_type.variant;
 
                     let (MetaTypeVariant::All(si)

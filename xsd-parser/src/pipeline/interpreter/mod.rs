@@ -386,6 +386,60 @@ impl<'a> Interpreter<'a> {
         Ok(self)
     }
 
+    /// Add type definitions for numeric XML types (like `xs:positiveInteger`) that
+    /// uses `::core::num::NonZeroIsize` and `::core::num::NonZeroUsize` instead
+    /// of the simple integer types.
+    ///
+    /// # Errors
+    ///
+    /// Returns a suitable [`Error`] if the operation was not successful.
+    pub fn with_nonzero_typedefs(mut self) -> Result<Self, Error> {
+        let xs = self
+            .schemas
+            .resolve_namespace(&Some(Namespace::XS))
+            .ok_or_else(|| Error::UnknownNamespace(Namespace::XS.clone()))?;
+
+        macro_rules! add {
+            ($ns:ident, $src:expr, $dst:literal) => {{
+                self.state.add_type(
+                    Ident::type_($src).with_ns(Some($ns)),
+                    ReferenceMeta::new(Ident::type_($dst)),
+                    true,
+                )?;
+            }};
+        }
+
+        let non_zero_usize = CustomMeta::new("NonZeroUsize")
+            .include_from("::core::num::NonZeroUsize")
+            .with_default(|s: &str| {
+                let code = quote! {
+                    <::core::num::NonZeroUsize as core::str::FromStr>::from_str(#s).unwrap()
+                };
+
+                Some(code)
+            });
+
+        let non_zero_isize = CustomMeta::new("NonZeroIsize")
+            .include_from("::core::num::NonZeroIsize")
+            .with_default(|s: &str| {
+                let code = quote! {
+                    <::core::num::NonZeroIsize as core::str::FromStr>::from_str(#s).unwrap()
+                };
+
+                Some(code)
+            });
+
+        self.state
+            .add_type(Ident::type_("NonZeroUsize"), non_zero_usize, true)?;
+        self.state
+            .add_type(Ident::type_("NonZeroIsize"), non_zero_isize, true)?;
+
+        add!(xs, "positiveInteger", "NonZeroUsize");
+        add!(xs, "negativeInteger", "NonZeroIsize");
+
+        Ok(self)
+    }
+
     /// Set the [`Naming`](Naming) trait that is used to generate and format names.
     ///
     /// This accepts any type that implements the [`Naming`](Naming) trait.

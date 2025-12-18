@@ -76,7 +76,8 @@ impl Optimizer {
 
         let idents = self
             .types
-            .iter_items()
+            .items
+            .iter()
             .filter_map(|(ident, type_)| {
                 if matches!(&type_.variant, MetaTypeVariant::ComplexType(ci) if ci.has_complex_choice_content(&self.types)) {
                     Some(ident)

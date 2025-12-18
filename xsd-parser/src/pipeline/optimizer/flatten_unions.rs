@@ -37,7 +37,7 @@ impl Optimizer {
     pub fn flatten_union(mut self, ident: Ident) -> Result<Self, Error> {
         tracing::debug!("flatten_union(ident={ident:?})");
 
-        let Some(ty) = self.types.get_type(&ident) else {
+        let Some(ty) = self.types.items.get(&ident) else {
             return Err(Error::UnknownType(ident));
         };
 
@@ -55,7 +55,7 @@ impl Optimizer {
         if info.count > 1 {
             info.meta.base = ui.base.clone();
 
-            let ty = self.types.get_type_mut(&ident).unwrap();
+            let ty = self.types.items.get_mut(&ident).unwrap();
             ty.variant = MetaTypeVariant::Union(info.meta);
         }
 
@@ -70,7 +70,8 @@ impl Optimizer {
 
         let idents = self
             .types
-            .iter_items()
+            .items
+            .iter()
             .filter_map(|(ident, type_)| {
                 if matches!(&type_.variant, MetaTypeVariant::Union(_)) {
                     Some(ident)
@@ -94,7 +95,7 @@ impl Optimizer {
         display_name: Option<&str>,
         next: &mut FlattenUnionInfo,
     ) {
-        let Some(type_) = self.types.get_type(ident) else {
+        let Some(type_) = self.types.items.get(ident) else {
             return;
         };
 

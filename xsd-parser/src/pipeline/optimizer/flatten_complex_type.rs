@@ -53,7 +53,8 @@ impl Optimizer {
 
         let idents = self
             .types
-            .iter_items()
+            .items
+            .iter()
             .filter_map(|(ident, type_)| {
                 if matches!(&type_.variant, MetaTypeVariant::ComplexType(ci) if ci.has_complex_content(&self.types)) {
                     Some(ident)
@@ -74,7 +75,7 @@ impl Optimizer {
     fn flatten_complex_type_impl(&mut self, ident: Ident) -> Result<(), Error> {
         tracing::debug!("flatten_complex_type_impl(ident={ident:?})");
 
-        let Some(ty) = self.types.get_type(&ident) else {
+        let Some(ty) = self.types.items.get(&ident) else {
             return Err(Error::UnknownType(ident));
         };
 
@@ -92,7 +93,7 @@ impl Optimizer {
         {
             let type_ = MetaType::new(variant);
 
-            self.types.insert_type(content_ident, type_);
+            self.types.items.insert(content_ident, type_);
 
             if let Some(MetaTypeVariant::ComplexType(ci)) = self.types.get_variant_mut(&ident) {
                 ci.min_occurs *= occurs.min;
@@ -143,7 +144,7 @@ impl<'types> Flatten<'types> {
     }
 
     fn exec(&self, ident: &Ident, depth: usize) -> Result<Builder<'types>, Error> {
-        let Some(ty) = self.types.get_type(ident) else {
+        let Some(ty) = self.types.items.get(ident) else {
             return Err(Error::UnknownType(ident.clone()));
         };
 
@@ -424,7 +425,7 @@ mod tests {
             let MetaTypeVariant::$type(info) = &mut variant else { unreachable!(); };
             make_type!(__init info $type $( $rest )*);
             let ty = MetaType::new(variant);
-            $types.insert_type(Ident::type_($name), ty);
+            $types.items.insert(Ident::type_($name), ty);
         }};
         (__init $info:ident ComplexType($name:literal) $(,)? ) => {
             $info.content = Some(Ident::type_($name));

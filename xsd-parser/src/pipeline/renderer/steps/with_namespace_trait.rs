@@ -146,15 +146,16 @@ fn render_trait_with_namespace(ctx: &Context<'_, '_>, type_ident: &Ident2) -> Op
         (_, None) => (quote!(None), quote!(None)),
     };
 
+    let str_ = ctx.resolve_build_in("::core::primitive::str");
     let option = ctx.resolve_build_in("::core::option::Option");
 
     Some(quote! {
         impl #xsd_parser_types::WithNamespace for #type_ident {
-            fn prefix() -> #option<&'static str> {
+            fn prefix() -> #option<&'static #str_> {
                 #prefix
             }
 
-            fn namespace() -> #option<&'static str> {
+            fn namespace() -> #option<&'static #str_> {
                 #namespace
             }
         }

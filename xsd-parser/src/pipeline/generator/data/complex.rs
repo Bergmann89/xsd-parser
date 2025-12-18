@@ -8,12 +8,12 @@ use crate::models::{
     code::IdentPath,
     data::{
         ComplexBase, ComplexData, ComplexDataAttribute, ComplexDataContent, ComplexDataElement,
-        ComplexDataElementOrigin, ComplexDataEnum, ComplexDataStruct, Occurs, PathData, StructMode,
-        TagName,
+        ComplexDataElementOrigin, ComplexDataEnum, ComplexDataStruct, ComplexFlags, Occurs,
+        PathData, StructMode, TagName,
     },
     meta::{
         AttributeMeta, AttributeMetaVariant, ComplexMeta, ElementMeta, ElementMetaVariant,
-        ElementMode, GroupMeta, MetaTypeVariant, MetaTypes,
+        ElementMode, GroupMeta, MetaType, MetaTypeVariant, MetaTypes,
     },
     schema::{
         xs::{FormChoiceType, Use},
@@ -168,7 +168,7 @@ impl<'types> ComplexData<'types> {
         max_occurs: MaxOccurs,
         attributes: &'types [AttributeMeta],
     ) -> Result<Self, Error> {
-        let base = ComplexBase::new(ctx, false, false, false, form)?;
+        let base = ComplexBase::new(ctx, form, ComplexFlags::empty())?;
         let occurs = Occurs::from_occurs(min_occurs, max_occurs);
 
         let content_ref = ctx.get_or_create_type_ref_for_value(simple_type, occurs.is_direct())?;
@@ -215,7 +215,10 @@ impl<'types> ComplexData<'types> {
     ) -> Result<Self, Error> {
         let has_any = ctx.check_generator_flags(GeneratorFlags::ANY_TYPE_SUPPORT)
             && elements.iter().any(ElementMeta::is_any);
-        let mut base = ComplexBase::new(ctx, has_any, mixed_mode.is_mixed(), false, form)?;
+        let flags = ComplexFlags::empty()
+            .with(ComplexFlags::HAS_ANY, has_any)
+            .with(ComplexFlags::IS_MIXED, mixed_mode.is_mixed());
+        let mut base = ComplexBase::new(ctx, form, flags)?;
         let occurs = Occurs::from_occurs(min_occurs, max_occurs);
 
         let mut allow_any_attribute = false;
@@ -268,9 +271,10 @@ impl<'types> ComplexData<'types> {
             let type_ = ComplexDataEnum {
                 base: ComplexBase::new_empty(
                     content_ident.clone(),
-                    take(&mut base.has_any),
-                    mixed_mode.is_mixed(),
-                    true,
+                    base.flags
+                        .extract(ComplexFlags::HAS_ANY)
+                        .with(ComplexFlags::IS_MIXED, mixed_mode.is_mixed())
+                        .with(ComplexFlags::IS_CONTENT, true),
                 ),
                 elements: take(&mut elements),
                 allow_any,
@@ -340,7 +344,10 @@ impl<'types> ComplexData<'types> {
     ) -> Result<Self, Error> {
         let has_any = ctx.check_generator_flags(GeneratorFlags::ANY_TYPE_SUPPORT)
             && elements.iter().any(ElementMeta::is_any);
-        let mut base = ComplexBase::new(ctx, has_any, mixed_mode.is_mixed(), false, form)?;
+        let flags = ComplexFlags::empty()
+            .with(ComplexFlags::HAS_ANY, has_any)
+            .with(ComplexFlags::IS_MIXED, mixed_mode.is_mixed());
+        let mut base = ComplexBase::new(ctx, form, flags)?;
         let occurs = Occurs::from_occurs(min_occurs, max_occurs);
         let flatten = occurs == Occurs::Single
             && ctx.check_generator_flags(GeneratorFlags::FLATTEN_STRUCT_CONTENT);
@@ -432,9 +439,10 @@ impl<'types> ComplexData<'types> {
             let type_ = ComplexDataStruct {
                 base: ComplexBase::new_empty(
                     content_ident.clone(),
-                    take(&mut base.has_any),
-                    mixed_mode.is_mixed(),
-                    true,
+                    base.flags
+                        .extract(ComplexFlags::HAS_ANY)
+                        .with(ComplexFlags::IS_MIXED, mixed_mode.is_mixed())
+                        .with(ComplexFlags::IS_CONTENT, true),
                 ),
                 mode,
 
@@ -496,27 +504,25 @@ impl<'types> ComplexData<'types> {
 impl<'types> ComplexBase<'types> {
     fn new(
         ctx: &mut Context<'_, 'types>,
-        has_any: bool,
-        is_mixed: bool,
-        is_content: bool,
         form: FormChoiceType,
+        flags: ComplexFlags,
     ) -> Result<Self, Error> {
         let type_ref = ctx.current_type_ref();
         let type_ident = type_ref.path.ident().clone();
 
-        let mut ret = Self::new_empty(type_ident, has_any, is_mixed, is_content);
+        let mut ret = Self::new_empty(type_ident, flags);
         ret.tag_name = Some(TagName::new(ctx.types, ctx.ident, form));
         ret.trait_impls = ctx.make_trait_impls()?;
 
         if let Some(MetaTypeVariant::ComplexType(ci)) = ctx.types.get_variant(ctx.ident) {
-            ret.is_complex = true;
-            ret.is_dynamic = ci.is_dynamic;
+            ret.flags.set(ComplexFlags::IS_COMPLEX, true);
+            ret.flags.set(ComplexFlags::IS_DYNAMIC, ci.is_dynamic);
         }
 
         Ok(ret)
     }
 
-    fn new_empty(type_ident: Ident2, has_any: bool, is_mixed: bool, is_content: bool) -> Self {
+    fn new_empty(type_ident: Ident2, flags: ComplexFlags) -> Self {
         let serializer_ident = format_ident!("{type_ident}Serializer");
         let serializer_state_ident = format_ident!("{type_ident}SerializerState");
 
@@ -524,16 +530,11 @@ impl<'types> ComplexBase<'types> {
         let deserializer_state_ident = format_ident!("{type_ident}DeserializerState");
 
         Self {
+            flags,
             type_ident,
             trait_impls: Vec::new(),
 
             tag_name: None,
-            has_any,
-
-            is_mixed,
-            is_content,
-            is_complex: false,
-            is_dynamic: false,
 
             serializer_ident,
             serializer_state_ident,
@@ -625,7 +626,9 @@ impl<'types> ComplexDataElement<'types> {
                 let nillable = meta.nillable
                     && ctx.check_generator_flags(GeneratorFlags::NILLABLE_TYPE_SUPPORT);
 
-                if occurs == Occurs::Single && ctx.types.group_has_only_optional_elements(type_) {
+                if occurs == Occurs::Single
+                    && ctx.types.is_choice_with_optional_elements_only(type_)
+                {
                     occurs = Occurs::Optional;
                 }
 
@@ -817,7 +820,7 @@ impl<'types> ComplexDataAttribute<'types> {
 }
 
 fn is_dynamic(ident: &Ident, types: &MetaTypes) -> bool {
-    let Some(ty) = types.get_type(ident) else {
+    let Some(ty) = types.items.get(ident) else {
         return false;
     };
 
@@ -842,7 +845,21 @@ impl Context<'_, '_> {
 }
 
 impl MetaTypes {
-    fn group_has_only_optional_elements(&self, ident: &Ident) -> bool {
+    fn is_choice_with_optional_elements_only(&self, ident: &Ident) -> bool {
+        fn check_type(types: &MetaTypes, ty: &MetaType) -> bool {
+            match &ty.variant {
+                MetaTypeVariant::Choice(gi) => gi
+                    .elements
+                    .iter()
+                    .any(|element| check_element(types, element)),
+                MetaTypeVariant::All(gi) | MetaTypeVariant::Sequence(gi) => gi
+                    .elements
+                    .iter()
+                    .all(|element| check_element(types, element)),
+                _ => false,
+            }
+        }
+
         fn check_element(types: &MetaTypes, element: &ElementMeta) -> bool {
             match &element.variant {
                 ElementMetaVariant::Any { .. } => element.min_occurs == 0,
@@ -854,25 +871,24 @@ impl MetaTypes {
                 ElementMetaVariant::Type {
                     mode: ElementMode::Group,
                     type_,
-                } => element.min_occurs == 0 || types.group_has_only_optional_elements(type_),
+                } => {
+                    element.min_occurs == 0
+                        || types
+                            .items
+                            .get(type_)
+                            .is_none_or(|ty| check_type(types, ty))
+                }
             }
         }
 
-        let Some(ty) = self.get_type(ident) else {
+        let Some(ty) = self.items.get(ident) else {
             return false;
         };
-
-        match &ty.variant {
-            MetaTypeVariant::Choice(gi) => gi
-                .elements
-                .iter()
-                .any(|element| check_element(self, element)),
-            MetaTypeVariant::All(gi) | MetaTypeVariant::Sequence(gi) => gi
-                .elements
-                .iter()
-                .all(|element| check_element(self, element)),
-            _ => false,
+        if !matches!(&ty.variant, MetaTypeVariant::Choice(_)) {
+            return false;
         }
+
+        check_type(self, ty)
     }
 }
 

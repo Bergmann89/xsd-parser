@@ -44,8 +44,8 @@ tracing-subscriber = "0.3"
 unindent = "0.2"
 url = "2.5"
 
-xsd-parser = { path = "./xsd-parser" }
-xsd-parser-types = { path = "./xsd-parser-types" }
+xsd-parser = { version = "1.4.0", path = "./xsd-parser" }
+xsd-parser-types = { version = "0.1.2", path = "./xsd-parser-types" }
 
 [workspace.lints.rust]
 future_incompatible = { level = "warn", priority = -1}

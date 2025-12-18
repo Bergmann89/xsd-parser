@@ -30,7 +30,7 @@ use crate::models::meta::Constrains;
 pub use self::build_in::BuildInData;
 pub use self::complex::{
     ComplexBase, ComplexData, ComplexDataAttribute, ComplexDataContent, ComplexDataElement,
-    ComplexDataElementOrigin, ComplexDataEnum, ComplexDataStruct, StructMode,
+    ComplexDataElementOrigin, ComplexDataEnum, ComplexDataStruct, ComplexFlags, StructMode,
 };
 pub use self::constrains::ConstrainsData;
 pub use self::custom::CustomData;

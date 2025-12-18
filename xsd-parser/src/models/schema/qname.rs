@@ -4,7 +4,7 @@ use std::fmt::{Debug, Formatter, Result as FmtResult};
 use quick_xml::name::{QName as QuickXmlQName, ResolveResult};
 use xsd_parser_types::misc::{format_utf8_slice, Namespace};
 
-use xsd_parser_types::quick_xml::{DeserializeBytes, Error, XmlReader};
+use xsd_parser_types::quick_xml::{DeserializeBytes, DeserializeHelper, Error};
 
 /// Type that represents a a resolved [`QName`].
 ///
@@ -18,12 +18,10 @@ pub struct QName {
 
 impl QName {
     /// Create a new [`QName`] instance from the passed `reader` and `raw` data.
-    pub fn from_reader<R>(reader: &R, raw: &[u8]) -> Self
-    where
-        R: XmlReader,
-    {
+    #[must_use]
+    pub fn from_helper(helper: &mut DeserializeHelper, raw: &[u8]) -> Self {
         let index = raw.iter().position(|x| *x == b':');
-        let ns = match reader.resolve(QuickXmlQName(raw), false).0 {
+        let ns = match helper.resolve(QuickXmlQName(raw), false).0 {
             ResolveResult::Unbound | ResolveResult::Unknown(_) => None,
             ResolveResult::Bound(ns) => Some(Namespace(Cow::Owned(ns.0.to_owned()))),
         };
@@ -56,8 +54,8 @@ impl QName {
 }
 
 impl DeserializeBytes for QName {
-    fn deserialize_bytes<R: XmlReader>(reader: &R, bytes: &[u8]) -> Result<Self, Error> {
-        Ok(Self::from_reader(reader, bytes))
+    fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
+        Ok(Self::from_helper(helper, bytes))
     }
 }
 

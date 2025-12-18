@@ -83,11 +83,11 @@ fn resolve_naming_conflicts(schemas: &Schemas, mut types: MetaTypes) -> MetaType
         .resolve(schemas)
         .unwrap();
 
-    for (ident, ty) in types.iter_items_mut() {
+    for (ident, ty) in &mut types.items {
         if let MetaTypeVariant::ComplexType(ci) = &mut ty.variant {
             for attrib in &mut *ci.attributes {
                 if attrib.ident.name.as_str() == "Id"
-                    && matches!(&attrib.variant, AttributeMetaVariant::Type(x) if x.matches(&xsd_id))
+                    && matches!(&attrib.variant, AttributeMetaVariant::Type(x) if *x == xsd_id)
                 {
                     attrib.display_name = Some("xml_id".into());
                 }
