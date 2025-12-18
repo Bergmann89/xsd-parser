@@ -64,19 +64,19 @@ impl<T, M: Map<K = Ident, V = T>> IdentMap<M> {
         self.items.get_mut(ident)
     }
     /// Gets an iterator over the entries of the map.
-    pub fn iter<'a>(&'a self) -> M::Iter<'a> {
+    pub fn iter(&self) -> M::Iter<'_> {
         self.items.iter()
     }
     /// Gets a mutable iterator over the entries of the map.
-    pub fn iter_mut<'a>(&'a mut self) -> M::IterMut<'a> {
+    pub fn iter_mut(&mut self) -> M::IterMut<'_> {
         self.items.iter_mut()
     }
     /// Gets an iterator over the keys of the map.
-    pub fn keys<'a>(&'a self) -> M::Keys<'a> {
+    pub fn keys(&self) -> M::Keys<'_> {
         self.items.keys()
     }
     /// Gets a mutable iterator over the values of the map.
-    pub fn values_mut<'a>(&'a mut self) -> M::ValuesMut<'a> {
+    pub fn values_mut(&mut self) -> M::ValuesMut<'_> {
         self.items.values_mut()
     }
     /// Returns `true` only if the map contains this exact identifier.
@@ -117,10 +117,10 @@ pub trait Map {
     fn get(&self, key: &Self::K) -> Option<&Self::V>;
     fn get_mut(&mut self, key: &Self::K) -> Option<&mut Self::V>;
     fn contains_key(&self, key: &Self::K) -> bool;
-    fn iter<'a>(&'a self) -> Self::Iter<'a>;
-    fn iter_mut<'a>(&'a mut self) -> Self::IterMut<'a>;
-    fn keys<'a>(&'a self) -> Self::Keys<'a>;
-    fn values_mut<'a>(&'a mut self) -> Self::ValuesMut<'a>;
+    fn iter(&self) -> Self::Iter<'_>;
+    fn iter_mut(&mut self) -> Self::IterMut<'_>;
+    fn keys(&self) -> Self::Keys<'_>;
+    fn values_mut(&mut self) -> Self::ValuesMut<'_>;
 }
 impl<K: Ord, V> Map for BTreeMap<K, V> {
     type K = K;
@@ -135,10 +135,10 @@ impl<K: Ord, V> Map for BTreeMap<K, V> {
     fn get(&self, key: &Self::K) -> Option<&Self::V> { self.get(key) }
     fn get_mut(&mut self, key: &Self::K) -> Option<&mut Self::V> { self.get_mut(key) }
     fn contains_key(&self, key: &Self::K) -> bool { self.contains_key(key) }
-    fn iter<'a>(&'a self) -> Self::Iter<'a> { self.iter() }
-    fn iter_mut<'a>(&'a mut self) -> Self::IterMut<'a> { self.iter_mut() }
-    fn keys<'a>(&'a self) -> Self::Keys<'a> { self.keys() }
-    fn values_mut<'a>(&'a mut self) -> Self::ValuesMut<'a> { self.values_mut() }
+    fn iter(&self) -> Self::Iter<'_> { self.iter() }
+    fn iter_mut(&mut self) -> Self::IterMut<'_> { self.iter_mut() }
+    fn keys(&self) -> Self::Keys<'_> { self.keys() }
+    fn values_mut(&mut self) -> Self::ValuesMut<'_> { self.values_mut() }
 }
 impl<K: Hash + Eq, V> Map for IndexMap<K, V> {
     type K = K;
@@ -153,8 +153,8 @@ impl<K: Hash + Eq, V> Map for IndexMap<K, V> {
     fn get(&self, key: &Self::K) -> Option<&Self::V> { self.get(key) }
     fn get_mut(&mut self, key: &Self::K) -> Option<&mut Self::V> { self.get_mut(key) }
     fn contains_key(&self, key: &Self::K) -> bool { self.contains_key(key) }
-    fn iter<'a>(&'a self) -> Self::Iter<'a> { self.iter() }
-    fn iter_mut<'a>(&'a mut self) -> Self::IterMut<'a> { self.iter_mut() }
-    fn keys<'a>(&'a self) -> Self::Keys<'a> { self.keys() }
-    fn values_mut<'a>(&'a mut self) -> Self::ValuesMut<'a> { self.values_mut() }
+    fn iter(&self) -> Self::Iter<'_> { self.iter() }
+    fn iter_mut(&mut self) -> Self::IterMut<'_> { self.iter_mut() }
+    fn keys(&self) -> Self::Keys<'_> { self.keys() }
+    fn values_mut(&mut self) -> Self::ValuesMut<'_> { self.values_mut() }
 }
