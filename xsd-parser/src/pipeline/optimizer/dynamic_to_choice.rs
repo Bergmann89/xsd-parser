@@ -61,7 +61,9 @@ impl Optimizer {
             });
 
             assert!(!self.types.items.contains_exact(&content_ident));
-            self.types.items.insert(content_ident, MetaType::new(MetaTypeVariant::Choice(si)));
+            self.types
+                .items
+                .insert(content_ident, MetaType::new(MetaTypeVariant::Choice(si)));
         }
 
         self

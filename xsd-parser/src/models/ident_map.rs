@@ -13,7 +13,10 @@ pub struct IdentMap<M> {
 }
 impl<M: Default> Default for IdentMap<M> {
     fn default() -> Self {
-        Self { items: Default::default(), schema_idents: Default::default() }
+        Self {
+            items: Default::default(),
+            schema_idents: Default::default(),
+        }
     }
 }
 impl<T, M: Map<K = Ident, V = T>> IdentMap<M> {
@@ -57,7 +60,10 @@ impl<T, M: Map<K = Ident, V = T>> IdentMap<M> {
     /// Returns a mutable reference to the value corresponding to the identifier.
     ///
     /// If this exact identifier is not found in the map, a matching entry from a different schema is returned.
-    pub fn get_mut<'a, 'b>(&'a mut self, mut ident: &'b Ident) -> Option<&'a mut T> where 'a: 'b {
+    pub fn get_mut<'a, 'b>(&'a mut self, mut ident: &'b Ident) -> Option<&'a mut T>
+    where
+        'a: 'b,
+    {
         if !self.items.contains_key(ident) {
             ident = self.schema_idents.get(&ident.clone().with_schema(None))?;
         }
@@ -104,6 +110,7 @@ impl<'a, M: Map> IntoIterator for &'a mut IdentMap<M> {
     }
 }
 
+#[rustfmt::skip]
 pub trait Map {
     type K;
     type V;
@@ -122,6 +129,7 @@ pub trait Map {
     fn keys(&self) -> Self::Keys<'_>;
     fn values_mut(&mut self) -> Self::ValuesMut<'_>;
 }
+#[rustfmt::skip]
 impl<K: Ord, V> Map for BTreeMap<K, V> {
     type K = K;
     type V = V;
@@ -140,6 +148,7 @@ impl<K: Ord, V> Map for BTreeMap<K, V> {
     fn keys(&self) -> Self::Keys<'_> { self.keys() }
     fn values_mut(&mut self) -> Self::ValuesMut<'_> { self.values_mut() }
 }
+#[rustfmt::skip]
 impl<K: Hash + Eq, V> Map for IndexMap<K, V> {
     type K = K;
     type V = V;
