@@ -1,5 +1,6 @@
 use std::collections::{btree_map::Entry, BTreeMap, HashMap};
 
+use crate::models::schema::SchemaId;
 use crate::models::{
     meta::{MetaType, MetaTypes},
     schema::{
@@ -73,6 +74,9 @@ impl<'a> State<'a> {
 
     pub(super) fn current_ns(&self) -> Option<NamespaceId> {
         self.current_ident().and_then(|x| x.ns)
+    }
+    pub(super) fn current_schema(&self) -> Option<SchemaId> {
+        self.current_ident().and_then(|x| x.schema)
     }
 
     pub(super) fn last_named_type(&self, stop_at_group_ref: bool) -> Option<&str> {

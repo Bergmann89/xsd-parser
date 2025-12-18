@@ -739,7 +739,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 let field_name = self.state.name_builder().or(&ty.name).finish();
                 let field_ident = Ident::new(field_name)
                     .with_ns(self.state.current_ns())
-                    .with_schema(Some(self.owner.schema_id))
+                    .with_schema(self.state.current_schema())
                     .with_type(IdentType::Element);
                 let type_name = self
                     .state
@@ -885,7 +885,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 let name = Name::from(name.clone());
                 let ident = Ident::new(name)
                     .with_ns(self.state.current_ns())
-                    .with_schema(Some(self.owner.schema_id))
+                    .with_schema(self.state.current_schema())
                     .with_type(IdentType::Attribute);
                 let form = ty.form.unwrap_or(self.schema.attribute_form_default);
 
@@ -932,7 +932,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 let name = Name::from(name.clone());
                 let ident = Ident::new(name)
                     .with_ns(self.state.current_ns())
-                    .with_schema(Some(self.owner.schema_id))
+                    .with_schema(self.state.current_schema())
                     .with_type(IdentType::Attribute);
                 let form = ty.form.unwrap_or(self.schema.attribute_form_default);
 
@@ -1128,7 +1128,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
         let name = Name::from(ty.value.trim().to_owned());
         let ident = Ident::new(name)
             .with_ns(self.state.current_ns())
-            .with_schema(Some(self.owner.schema_id))
+            .with_schema(self.state.current_schema())
             .with_type(IdentType::Enumeration);
 
         self.simple_content_builder(|builder| {
@@ -1304,7 +1304,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                     let content_name = self.state.make_content_name();
                     let content_ident = Ident::new(content_name)
                         .with_ns(self.state.current_ns())
-                        .with_schema(Some(self.owner.schema_id));
+                        .with_schema(self.state.current_schema());
 
                     self.state
                         .add_type(content_ident.clone(), content_type, false)?;
@@ -1390,7 +1390,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                     let content_name = self.owner.state.make_content_name();
                     content_ident = Ident::new(content_name)
                         .with_ns(self.owner.state.current_ns())
-                        .with_schema(Some(self.owner.schema_id));
+                        .with_schema(self.owner.state.current_schema());
 
                     ci.content = Some(content_ident.clone());
                 }
@@ -1667,7 +1667,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
             .finish();
         let type_ = Ident::new(type_name)
             .with_ns(self.state.current_ns())
-            .with_schema(Some(self.owner.schema_id));
+            .with_schema(self.state.current_schema());
 
         (field_name, type_)
     }
