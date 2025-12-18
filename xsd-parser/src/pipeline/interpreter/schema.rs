@@ -110,7 +110,7 @@ impl SchemaInterpreter<'_, '_> {
         ident: &Ident,
     ) -> Result<&mut MetaType, Error> {
         // Create the element if it does not exist
-        if !self.state.types.items.contains_key(ident) {
+        if self.state.types.items.get(ident).is_none() {
             let ty = self
                 .find_element(ident.clone())
                 .ok_or_else(|| Error::UnknownType(ident.clone()))?;
@@ -127,7 +127,7 @@ impl SchemaInterpreter<'_, '_> {
         &mut self,
         ident: &Ident,
     ) -> Result<Cow<'_, MetaTypeVariant>, Error> {
-        if !self.state.types.items.contains_key(ident) {
+        if self.state.types.items.get(ident).is_none() {
             let ty = self
                 .find_simple_type(ident.clone())
                 .ok_or_else(|| Error::UnknownType(ident.clone()))?;
@@ -164,7 +164,7 @@ impl SchemaInterpreter<'_, '_> {
         &mut self,
         ident: &Ident,
     ) -> Result<&MetaTypeVariant, Error> {
-        if !self.state.types.items.contains_key(ident) {
+        if self.state.types.items.get(ident).is_none() {
             let ty = self
                 .find_complex_type(ident.clone())
                 .ok_or_else(|| Error::UnknownType(ident.clone()))?;
@@ -288,12 +288,12 @@ impl<'schema> SchemaInterpreter<'schema, '_> {
     where
         F: FnMut(&mut VariantBuilder<'_, 'schema, '_>) -> Result<(), Error>,
     {
-        if self.state.types.items.contains_key(&ident)
+        if self.state.types.items.contains_exact(&ident)
             || self
                 .state
                 .type_stack
                 .iter()
-                .any(|x| matches!(x, StackEntry::Type(x, _) if *x == ident))
+                .any(|x| matches!(x, StackEntry::Type(x, _) if x.matches(&ident)))
         {
             return Ok(ident);
         }

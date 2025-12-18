@@ -2,6 +2,7 @@ use std::collections::BTreeMap;
 
 use xsd_parser_types::misc::Namespace;
 
+use crate::models::IdentMap;
 use crate::models::{
     schema::{NamespaceId, SchemaId},
     Ident, Name, Naming,
@@ -22,7 +23,7 @@ use super::{MetaType, MetaTypeVariant};
 #[derive(Debug)]
 pub struct MetaTypes {
     /// Map of the different types.
-    pub items: BTreeMap<Ident, MetaType>,
+    pub items: IdentMap<BTreeMap<Ident, MetaType>>,
 
     /// Map of the different namespaces.
     pub modules: BTreeMap<NamespaceId, ModuleMeta>,
@@ -163,6 +164,7 @@ fn get_resolved_impl<'a>(
         return None;
     }
 
+    //let ident = types.items.find_original_schema(ident);
     let ty = types.items.get(ident)?;
 
     match &ty.variant {

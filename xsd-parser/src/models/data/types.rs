@@ -2,8 +2,9 @@ use std::ops::Deref;
 
 use indexmap::IndexMap;
 
-use crate::models::Ident;
+use crate::models::IdentMap;
 use crate::pipeline::generator::MetaData as GeneratorMetaData;
+use crate::Ident;
 
 use super::DataType;
 
@@ -25,12 +26,12 @@ pub struct DataTypes<'types> {
     pub meta: GeneratorMetaData<'types>,
 
     /// Map of the different types.
-    pub items: IndexMap<Ident, DataType<'types>>,
+    pub items: IdentMap<IndexMap<Ident, DataType<'types>>>,
 }
 
 impl<'types> DataTypes<'types> {
     pub(crate) fn new(meta: GeneratorMetaData<'types>) -> Self {
-        let items = IndexMap::default();
+        let items = Default::default();
 
         Self { meta, items }
     }
