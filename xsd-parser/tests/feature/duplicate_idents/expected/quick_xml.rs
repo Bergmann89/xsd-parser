@@ -444,7 +444,9 @@ pub mod bar {
                                 Some("B"),
                                 false,
                             )?);
-                            let bytes = BytesStart::new(self.name);
+                            let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_3);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         InnerTypeSerializerState::B(x) => match x.next(helper).transpose()? {
@@ -453,6 +455,7 @@ pub mod bar {
                         },
                         InnerTypeSerializerState::End__ => {
                             *self.state = InnerTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         InnerTypeSerializerState::Done__ => return Ok(None),
@@ -502,7 +505,9 @@ pub mod bar {
                                     Some("Inner"),
                                     false,
                                 )?);
-                            let bytes = BytesStart::new(self.name);
+                            let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_3);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         OuterTypeSerializerState::Inner(x) => match x.next(helper).transpose()? {
@@ -511,6 +516,7 @@ pub mod bar {
                         },
                         OuterTypeSerializerState::End__ => {
                             *self.state = OuterTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         OuterTypeSerializerState::Done__ => return Ok(None),
@@ -973,7 +979,9 @@ pub mod foo {
                                 Some("A"),
                                 false,
                             )?);
-                            let bytes = BytesStart::new(self.name);
+                            let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_3);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         InnerTypeSerializerState::A(x) => match x.next(helper).transpose()? {
@@ -982,6 +990,7 @@ pub mod foo {
                         },
                         InnerTypeSerializerState::End__ => {
                             *self.state = InnerTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         InnerTypeSerializerState::Done__ => return Ok(None),
@@ -1031,7 +1040,9 @@ pub mod foo {
                                     Some("Inner"),
                                     false,
                                 )?);
-                            let bytes = BytesStart::new(self.name);
+                            let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_3);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         OuterTypeSerializerState::Inner(x) => match x.next(helper).transpose()? {
@@ -1040,6 +1051,7 @@ pub mod foo {
                         },
                         OuterTypeSerializerState::End__ => {
                             *self.state = OuterTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         OuterTypeSerializerState::Done__ => return Ok(None),
