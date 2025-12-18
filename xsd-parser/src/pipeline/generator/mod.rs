@@ -428,6 +428,7 @@ impl<'types> State<'types> {
         meta: &MetaData<'types>,
         ident: &Ident,
     ) -> Result<&mut TypeRef, Error> {
+        let ident = meta.types.items.find_original_schema(ident);
         match self.cache.entry(ident.clone()) {
             Entry::Occupied(e) => Ok(e.into_mut()),
             Entry::Vacant(e) => {
