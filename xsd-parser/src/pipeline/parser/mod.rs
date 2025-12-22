@@ -44,7 +44,7 @@ use crate::models::schema::{
 use crate::models::schema::{SchemaId, SchemaInfo};
 use crate::pipeline::parser::resolver::ResolveRequestType;
 
-pub use self::error::Error;
+pub use self::error::{Error, XmlErrorWithLocation};
 pub use self::resolver::Resolver;
 
 /// The [`Parser`] is responsible for loading and parsing XML Schema documents into
@@ -266,7 +266,7 @@ where
         let reader = SliceReader::new(schema);
         let mut reader = SchemaReader::new(reader);
 
-        let schema = Schema::deserialize(&mut reader)?;
+        let schema = Schema::deserialize(&mut reader).map_err(XmlErrorWithLocation::from)?;
 
         self.add_schema(name, schema, None, reader.namespaces);
         self.resolve_pending()?;
@@ -317,7 +317,7 @@ where
         let reader = IoReader::new(reader);
         let mut reader = SchemaReader::new(reader);
 
-        let schema = Schema::deserialize(&mut reader)?;
+        let schema = Schema::deserialize(&mut reader).map_err(XmlErrorWithLocation::from)?;
 
         self.add_schema(name, schema, None, reader.namespaces);
         self.resolve_pending()?;
@@ -415,7 +415,11 @@ where
         let reader = SchemaReader::new(reader);
         let mut reader = reader.with_error_info();
 
-        let mut schema = Schema::deserialize(&mut reader)?;
+        let mut schema =
+            Schema::deserialize(&mut reader).map_err(|error| XmlErrorWithLocation {
+                error,
+                location: Some(location.clone()),
+            })?;
 
         if schema.target_namespace.is_none()
             && ResolveRequestType::IncludeRequest == req.request_type

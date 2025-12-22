@@ -1,8 +1,9 @@
+use std::fmt::{Display, Formatter, Result as FmtResult};
 use std::io::Error as IoError;
 use std::path::PathBuf;
 
 use thiserror::Error;
-use url::ParseError as UrlParseError;
+use url::{ParseError as UrlParseError, Url};
 
 use xsd_parser_types::quick_xml::Error as XmlError;
 
@@ -16,8 +17,8 @@ pub enum Error<E> {
     IoError(#[from] IoError),
 
     /// Error while interpreting the XML for the schema.
-    #[error("XML Error: {0}")]
-    XmlError(#[from] XmlError),
+    #[error("{0}")]
+    XmlError(#[from] XmlErrorWithLocation),
 
     /// Error while paring the URL.
     #[error("URL Parse Error: {0}")]
@@ -42,5 +43,40 @@ impl<E> Error<E> {
     /// Create a [`Error::Resolver`] from the passed `error`.
     pub fn resolver<X: Into<E>>(error: X) -> Self {
         Self::Resolver(error.into())
+    }
+}
+
+/// Error that is raised during deserialization of XSD structures.
+#[derive(Debug, Error)]
+pub struct XmlErrorWithLocation {
+    /// Error that was raised.
+    pub error: XmlError,
+
+    /// Location of the schema that was processed.
+    pub location: Option<Url>,
+}
+
+impl From<XmlError> for XmlErrorWithLocation {
+    fn from(error: XmlError) -> Self {
+        Self {
+            error,
+            location: None,
+        }
+    }
+}
+
+impl Display for XmlErrorWithLocation {
+    fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
+        let Self { error, location } = self;
+
+        write!(f, "XML Error: ")?;
+        error.fmt(f)?;
+
+        if let Some(location) = location {
+            write!(f, "\n    in schema ")?;
+            location.fmt(f)?;
+        }
+
+        Ok(())
     }
 }
