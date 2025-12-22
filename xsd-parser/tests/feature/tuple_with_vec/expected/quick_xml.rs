@@ -31,12 +31,7 @@ impl SerializeBytes for FooType {
 }
 impl DeserializeBytes for FooType {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
-        Ok(Self(
-            bytes
-                .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
-                .map(|bytes| StringType::deserialize_bytes(helper, bytes))
-                .collect::<Result<Vec<_>, _>>()?,
-        ))
+        Ok(Self(helper.deserialize_list(bytes)?))
     }
 }
 pub type StringType = String;

@@ -37311,12 +37311,7 @@ pub mod xs {
     }
     impl DeserializeBytes for EntitiesType {
         fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
-            Ok(Self(
-                bytes
-                    .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
-                    .map(|bytes| String::deserialize_bytes(helper, bytes))
-                    .collect::<Result<Vec<_>, _>>()?,
-            ))
+            Ok(Self(helper.deserialize_list(bytes)?))
         }
     }
 }

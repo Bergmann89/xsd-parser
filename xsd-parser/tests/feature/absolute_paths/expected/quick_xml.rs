@@ -130,12 +130,7 @@ impl ::xsd_parser_types::quick_xml::DeserializeBytes for EntitiesType {
         helper: &mut ::xsd_parser_types::quick_xml::DeserializeHelper,
         bytes: &[::core::primitive::u8],
     ) -> ::core::result::Result<Self, ::xsd_parser_types::quick_xml::Error> {
-        Ok(Self(
-            bytes
-                .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
-                .map(|bytes| ::std::string::String::deserialize_bytes(helper, bytes))
-                .collect::<::core::result::Result<::std::vec::Vec<_>, _>>()?,
-        ))
+        Ok(Self(helper.deserialize_list(bytes)?))
     }
 }
 #[derive(Debug, Default)]
@@ -168,12 +163,7 @@ impl ::xsd_parser_types::quick_xml::DeserializeBytes for EntityType {
         helper: &mut ::xsd_parser_types::quick_xml::DeserializeHelper,
         bytes: &[::core::primitive::u8],
     ) -> ::core::result::Result<Self, ::xsd_parser_types::quick_xml::Error> {
-        Ok(Self(
-            bytes
-                .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
-                .map(|bytes| ::std::string::String::deserialize_bytes(helper, bytes))
-                .collect::<::core::result::Result<::std::vec::Vec<_>, _>>()?,
-        ))
+        Ok(Self(helper.deserialize_list(bytes)?))
     }
 }
 pub type IdType = ::std::string::String;
@@ -208,12 +198,7 @@ impl ::xsd_parser_types::quick_xml::DeserializeBytes for IdrefsType {
         helper: &mut ::xsd_parser_types::quick_xml::DeserializeHelper,
         bytes: &[::core::primitive::u8],
     ) -> ::core::result::Result<Self, ::xsd_parser_types::quick_xml::Error> {
-        Ok(Self(
-            bytes
-                .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
-                .map(|bytes| ::std::string::String::deserialize_bytes(helper, bytes))
-                .collect::<::core::result::Result<::std::vec::Vec<_>, _>>()?,
-        ))
+        Ok(Self(helper.deserialize_list(bytes)?))
     }
 }
 pub type NcNameType = ::std::string::String;
@@ -248,12 +233,7 @@ impl ::xsd_parser_types::quick_xml::DeserializeBytes for NmtokensType {
         helper: &mut ::xsd_parser_types::quick_xml::DeserializeHelper,
         bytes: &[::core::primitive::u8],
     ) -> ::core::result::Result<Self, ::xsd_parser_types::quick_xml::Error> {
-        Ok(Self(
-            bytes
-                .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
-                .map(|bytes| ::std::string::String::deserialize_bytes(helper, bytes))
-                .collect::<::core::result::Result<::std::vec::Vec<_>, _>>()?,
-        ))
+        Ok(Self(helper.deserialize_list(bytes)?))
     }
 }
 pub type NotationType = ::std::string::String;

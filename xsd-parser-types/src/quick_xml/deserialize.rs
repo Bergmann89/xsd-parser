@@ -724,6 +724,71 @@ impl DeserializeHelper {
         Ok(())
     }
 
+    /// Deserialize a list of values.
+    ///
+    /// # Errors
+    ///
+    /// Forwards the errors from [`DeserializeBytes::deserialize_bytes`].
+    pub fn deserialize_list<T>(&mut self, bytes: &[u8]) -> Result<Vec<T>, Error>
+    where
+        T: DeserializeBytes,
+    {
+        let bytes = bytes.trim_ascii();
+        if bytes.is_empty() {
+            return Ok(Vec::new());
+        }
+
+        let values = bytes
+            .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
+            .map(|bytes| T::deserialize_bytes(self, bytes))
+            .collect::<Result<Vec<_>, _>>()?;
+
+        Ok(values)
+    }
+
+    /// Deserialize a array of values.
+    ///
+    /// # Errors
+    ///
+    /// Returns an [`struct@Error`] with [`ErrorKind::InsufficientSize`] if the
+    /// expected size of the array was not fulfilled or simply forwards the errors
+    /// from [`DeserializeBytes::deserialize_bytes`].
+    pub fn deserialize_arr<T, const N: usize>(&mut self, bytes: &[u8]) -> Result<[T; N], Error>
+    where
+        T: DeserializeBytes,
+    {
+        let parts = bytes
+            .trim_ascii()
+            .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
+            .map(|bytes| T::deserialize_bytes(self, bytes));
+        let mut arr: [Option<T>; N] = std::array::from_fn(|_| None);
+        let mut index = 0;
+
+        for part in parts {
+            if index >= N {
+                return Err(Error::from(ErrorKind::InsufficientSize {
+                    min: N,
+                    max: Some(N),
+                    actual: index,
+                }));
+            }
+
+            arr[index] = Some(part?);
+
+            index += 1;
+        }
+
+        if index < N {
+            return Err(Error::from(ErrorKind::InsufficientSize {
+                min: N,
+                max: Some(N),
+                actual: index,
+            }));
+        }
+
+        Ok(arr.map(|x| x.unwrap()))
+    }
+
     /// Returns an iterator that yields all attributes of the passed `bytes_start`
     /// object, except the `xmlns` attributes.
     pub fn filter_xmlns_attributes<'a>(

@@ -460,7 +460,6 @@ impl ReferenceData<'_> {
 
         let target_type = ctx.resolve_type_for_module(target_type);
 
-        let vec = resolve_build_in!(ctx, "::alloc::vec::Vec");
         let result = resolve_build_in!(ctx, "::core::result::Result");
 
         let body = match occurs {
@@ -477,50 +476,12 @@ impl ReferenceData<'_> {
             }
             Occurs::DynamicList => {
                 quote! {
-                    Ok(Self(bytes
-                        .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
-                        .map(|bytes| #target_type::deserialize_bytes(helper, bytes))
-                        .collect::<#result<#vec<_>, _>>()?
-                    ))
+                    Ok(Self(helper.deserialize_list(bytes)?))
                 }
             }
-            Occurs::StaticList(size) => {
-                let option = resolve_build_in!(ctx, "::core::option::Option");
-
-                let error = resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::Error");
-                let error_kind =
-                    resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::ErrorKind");
-
+            Occurs::StaticList(_) => {
                 quote! {
-                    let arr: [#option<#target_type>; #size];
-                    let parts = bytes
-                        .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
-                        .map(|bytes| #target_type::deserialize_bytes(helper, bytes));
-                    let mut index = 0;
-
-                    for part in parts {
-                        if index >= #size {
-                            return Err(#error::from(#error_kind::InsufficientSize {
-                                min: #size,
-                                max: Some(#size),
-                                actual: index,
-                            }));
-                        }
-
-                        arr[index] = Some(part?);
-
-                        index += 1;
-                    }
-
-                    if index < #size {
-                        return Err(#error::from(#error_kind::InsufficientSize {
-                            min: #size,
-                            max: Some(#size),
-                            actual: index,
-                        }));
-                    }
-
-                    Ok(Self(arr.map(|x| x.unwrap())))
+                    Ok(Self(helper.deserialize_arr(bytes)?))
                 }
             }
         };

@@ -2,7 +2,8 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
            xmlns:tns="http://example.com"
            targetNamespace="http://example.com"
-           elementFormDefault="qualified">
+           elementFormDefault="qualified"
+           finalDefault="">
 
     <xs:simpleType name="ListType">
         <xs:list itemType="xs:string" />
