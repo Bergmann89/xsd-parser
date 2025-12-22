@@ -90,12 +90,7 @@ impl DeserializeBytes for FullDerivationSetType {
 pub struct TypeDerivationControlList(pub Vec<TypeDerivationControlType>);
 impl DeserializeBytes for TypeDerivationControlList {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
-        Ok(Self(
-            bytes
-                .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
-                .map(|bytes| TypeDerivationControlType::deserialize_bytes(helper, bytes))
-                .collect::<Result<Vec<_>, _>>()?,
-        ))
+        Ok(Self(helper.deserialize_list(bytes)?))
     }
 }
 ///A utility type, not for public use
@@ -120,12 +115,7 @@ impl DeserializeBytes for BlockSetType {
 pub struct BlockSetItemList(pub Vec<BlockSetItemType>);
 impl DeserializeBytes for BlockSetItemList {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
-        Ok(Self(
-            bytes
-                .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
-                .map(|bytes| BlockSetItemType::deserialize_bytes(helper, bytes))
-                .collect::<Result<Vec<_>, _>>()?,
-        ))
+        Ok(Self(helper.deserialize_list(bytes)?))
     }
 }
 ///A utility type, not for public use
@@ -836,12 +826,7 @@ impl WithDeserializer for AnyElementType {
 pub struct EntitiesType(pub Vec<String>);
 impl DeserializeBytes for EntitiesType {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
-        Ok(Self(
-            bytes
-                .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
-                .map(|bytes| String::deserialize_bytes(helper, bytes))
-                .collect::<Result<Vec<_>, _>>()?,
-        ))
+        Ok(Self(helper.deserialize_list(bytes)?))
     }
 }
 ///This type is used for 'alternative' elements.
@@ -1010,12 +995,7 @@ impl DeserializeBytes for ProcessContentsType {
 pub struct SimpleDerivationSetItemList(pub Vec<SimpleDerivationSetItemType>);
 impl DeserializeBytes for SimpleDerivationSetItemList {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
-        Ok(Self(
-            bytes
-                .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
-                .map(|bytes| SimpleDerivationSetItemType::deserialize_bytes(helper, bytes))
-                .collect::<Result<Vec<_>, _>>()?,
-        ))
+        Ok(Self(helper.deserialize_list(bytes)?))
     }
 }
 ///An abstract element, representing facets in general.
@@ -1046,12 +1026,7 @@ impl WithDeserializer for Facet {
 pub struct ReducedDerivationControlList(pub Vec<ReducedDerivationControlType>);
 impl DeserializeBytes for ReducedDerivationControlList {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
-        Ok(Self(
-            bytes
-                .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
-                .map(|bytes| ReducedDerivationControlType::deserialize_bytes(helper, bytes))
-                .collect::<Result<Vec<_>, _>>()?,
-        ))
+        Ok(Self(helper.deserialize_list(bytes)?))
     }
 }
 #[derive(Debug)]
@@ -1132,12 +1107,7 @@ impl DeserializeBytes for OpenContentModeType {
 pub struct QnameListAType(pub Vec<QnameListAItemType>);
 impl DeserializeBytes for QnameListAType {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
-        Ok(Self(
-            bytes
-                .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
-                .map(|bytes| QnameListAItemType::deserialize_bytes(helper, bytes))
-                .collect::<Result<Vec<_>, _>>()?,
-        ))
+        Ok(Self(helper.deserialize_list(bytes)?))
     }
 }
 ///A utility type, not for public use
@@ -1145,12 +1115,7 @@ impl DeserializeBytes for QnameListAType {
 pub struct QnameListType(pub Vec<QnameListItemType>);
 impl DeserializeBytes for QnameListType {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
-        Ok(Self(
-            bytes
-                .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
-                .map(|bytes| QnameListItemType::deserialize_bytes(helper, bytes))
-                .collect::<Result<Vec<_>, _>>()?,
-        ))
+        Ok(Self(helper.deserialize_list(bytes)?))
     }
 }
 #[derive(Debug)]
@@ -1169,12 +1134,7 @@ impl WithDeserializer for FieldElementType {
 pub struct BasicNamespaceListType(pub Vec<BasicNamespaceListItemType>);
 impl DeserializeBytes for BasicNamespaceListType {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
-        Ok(Self(
-            bytes
-                .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
-                .map(|bytes| BasicNamespaceListItemType::deserialize_bytes(helper, bytes))
-                .collect::<Result<Vec<_>, _>>()?,
-        ))
+        Ok(Self(helper.deserialize_list(bytes)?))
     }
 }
 #[derive(Debug)]
