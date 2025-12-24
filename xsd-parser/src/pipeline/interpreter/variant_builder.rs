@@ -1,5 +1,4 @@
 use std::borrow::Cow;
-use std::collections::btree_map::Entry;
 use std::mem::swap;
 use std::ops::{Bound, Deref, DerefMut};
 use std::str::from_utf8;
@@ -717,6 +716,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 let name = self.state.name_builder().or(name).or(&type_.name).finish();
                 let ident = Ident::new(name)
                     .with_ns(type_.ns)
+                    .with_schema(Some(self.owner.schema_id))
                     .with_type(IdentType::Element);
                 let form = ty.form.unwrap_or(self.schema.element_form_default);
 
@@ -739,6 +739,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 let field_name = self.state.name_builder().or(&ty.name).finish();
                 let field_ident = Ident::new(field_name)
                     .with_ns(self.state.current_ns())
+                    .with_schema(self.state.current_schema())
                     .with_type(IdentType::Element);
                 let type_name = self
                     .state
@@ -884,6 +885,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 let name = Name::from(name.clone());
                 let ident = Ident::new(name)
                     .with_ns(self.state.current_ns())
+                    .with_schema(self.state.current_schema())
                     .with_type(IdentType::Attribute);
                 let form = ty.form.unwrap_or(self.schema.attribute_form_default);
 
@@ -900,6 +902,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 let name = self.state.name_builder().or(name).or(&type_.name).finish();
                 let ident = Ident::new(name)
                     .with_ns(type_.ns)
+                    .with_schema(Some(self.owner.schema_id))
                     .with_type(IdentType::Attribute);
                 let form = ty.form.unwrap_or(self.schema.attribute_form_default);
 
@@ -929,6 +932,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 let name = Name::from(name.clone());
                 let ident = Ident::new(name)
                     .with_ns(self.state.current_ns())
+                    .with_schema(self.state.current_schema())
                     .with_type(IdentType::Attribute);
                 let form = ty.form.unwrap_or(self.schema.attribute_form_default);
 
@@ -1124,6 +1128,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
         let name = Name::from(ty.value.trim().to_owned());
         let ident = Ident::new(name)
             .with_ns(self.state.current_ns())
+            .with_schema(self.state.current_schema())
             .with_type(IdentType::Enumeration);
 
         self.simple_content_builder(|builder| {
@@ -1297,7 +1302,9 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                     }
 
                     let content_name = self.state.make_content_name();
-                    let content_ident = Ident::new(content_name).with_ns(self.state.current_ns());
+                    let content_ident = Ident::new(content_name)
+                        .with_ns(self.state.current_ns())
+                        .with_schema(self.state.current_schema());
 
                     self.state
                         .add_type(content_ident.clone(), content_type, false)?;
@@ -1381,7 +1388,9 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 if !self.is_simple_content_unique {
                     self.is_simple_content_unique = true;
                     let content_name = self.owner.state.make_content_name();
-                    content_ident = Ident::new(content_name).with_ns(self.owner.state.current_ns());
+                    content_ident = Ident::new(content_name)
+                        .with_ns(self.owner.state.current_ns())
+                        .with_schema(self.owner.state.current_schema());
 
                     ci.content = Some(content_ident.clone());
                 }
@@ -1396,14 +1405,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 let content = builder.variant.unwrap();
                 let content = MetaType::new(content);
 
-                match self.owner.state.types.items.entry(content_ident) {
-                    Entry::Vacant(e) => {
-                        e.insert(content);
-                    }
-                    Entry::Occupied(e) => {
-                        *e.into_mut() = content;
-                    }
-                }
+                self.owner.state.types.items.insert(content_ident, content);
             }
             (TypeMode::Complex, ContentMode::Complex) => {
                 crate::unreachable!("Complex type with complex content tried to access simple content builder: {:?}", &self.variant);
@@ -1567,6 +1569,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
 
                     let ident = Ident::new(field_name)
                         .with_ns(ns)
+                        .with_schema(Some(self.owner.schema_id))
                         .with_type(IdentType::Group);
                     let element = si.elements.insert_checked(ident, |ident| {
                         ElementMeta::new(
@@ -1597,6 +1600,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
 
                 let ident = Ident::new(field_name)
                     .with_ns(ns)
+                    .with_schema(Some(self.owner.schema_id))
                     .with_type(IdentType::Group);
                 let element = si.elements.insert_checked(ident, |ident| {
                     ElementMeta::new(
@@ -1661,7 +1665,9 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
             .remove_suffix("Content")
             .or(name)
             .finish();
-        let type_ = Ident::new(type_name).with_ns(self.state.current_ns());
+        let type_ = Ident::new(type_name)
+            .with_ns(self.state.current_ns())
+            .with_schema(self.state.current_schema());
 
         (field_name, type_)
     }
@@ -1690,7 +1696,7 @@ impl ElementsMeta {
     {
         let vec = &mut **self;
 
-        let Some(index) = vec.iter().position(|x| x.ident == ident) else {
+        let Some(index) = vec.iter().position(|x| x.ident.matches(&ident)) else {
             vec.push(f(ident));
 
             return vec.last_mut().unwrap();
@@ -1707,7 +1713,7 @@ impl ElementsMeta {
             let mut new_ident = ident.clone();
             *new_ident.name.as_mut() = format!("{}_{next}", ident.name.as_str());
 
-            if !vec.iter().any(|x| x.ident == new_ident) {
+            if !vec.iter().any(|x| x.ident.matches(&new_ident)) {
                 vec.push(f(new_ident));
 
                 return vec.last_mut().unwrap();

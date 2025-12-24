@@ -10,9 +10,11 @@ pub mod meta;
 pub mod schema;
 
 mod ident;
+mod ident_map;
 mod name;
 mod naming;
 
 pub use self::ident::{Ident, IdentType};
+pub use self::ident_map::IdentMap;
 pub use self::name::Name;
 pub use self::naming::{NameBuilder, Naming};
