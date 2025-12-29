@@ -7,6 +7,7 @@ mod ideal_merchant_acquirer;
 mod musicxml;
 mod ofd;
 mod onix;
+mod opendrive;
 mod shiporder;
 mod sitemap;
 mod xcb;
