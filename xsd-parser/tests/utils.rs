@@ -37,6 +37,41 @@ impl ConfigEx for Config {
     }
 }
 
+pub fn generate_test_smoke<P1>(input_xsd: P1, mut config: Config)
+where
+    P1: AsRef<Path>,
+{
+    let input_xsd = input_xsd.as_ref().canonicalize().unwrap();
+
+    config.parser.schemas.push(Schema::File(input_xsd.clone()));
+
+    // For debugging purposes enable the following lines
+
+    let cargo_dir = std::env::var("CARGO_MANIFEST_DIR").unwrap();
+    let target_dir = std::env::var("CARGO_TARGET_DIR").unwrap_or_else(|_| "target".into());
+    let target_dir = Path::new(&target_dir);
+    let relative_xsd = input_xsd.strip_prefix(cargo_dir).unwrap();
+    let debug_dir = target_dir
+        .join("logs")
+        .join(relative_xsd)
+        .join(input_xsd.file_name().unwrap());
+    std::fs::create_dir_all(&debug_dir).unwrap();
+
+    config.parser.debug_output = Some(debug_dir.join("schemas.log"));
+    config.interpreter.debug_output = Some(debug_dir.join("interpreter.log"));
+    config.optimizer.debug_output = Some(debug_dir.join("optimizer.log"));
+
+    let actual =
+        generate(config).unwrap_or_else(|e| panic!("codegen failed for {e} {:?}", input_xsd));
+    let actual: String = actual.to_string();
+    assert!(
+        !actual.trim().is_empty(),
+        "empty generated output for {:?}",
+        input_xsd
+    );
+    return;
+}
+
 pub fn generate_test<P1, P2>(input_xsd: P1, expected_rs: P2, mut config: Config)
 where
     P1: AsRef<Path>,

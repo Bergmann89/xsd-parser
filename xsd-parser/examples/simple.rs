@@ -94,7 +94,7 @@ fn main() -> Result<(), Error> {
     }
 
     // Executes the actual code generation process.
-    let code = generate(config)?.to_string();
+    let code: String = generate(config)?.to_string();
 
     // Writes the generated code to the requested output file.
     write(&args.output, code)?;
