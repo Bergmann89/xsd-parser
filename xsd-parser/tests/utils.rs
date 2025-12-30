@@ -10,7 +10,7 @@ use quick_xml::{escape::unescape, events::BytesText, Reader};
 use serde::{Deserialize, Serialize};
 
 use xsd_parser::{
-    config::{Config, Generate, GeneratorFlags, IdentTriple, OptimizerFlags, Schema},
+    config::{Config, Generate, GeneratorFlags, IdentQuadruple, OptimizerFlags, Schema},
     generate,
 };
 use xsd_parser_types::quick_xml::{
@@ -46,9 +46,8 @@ where
     let expected_rs = expected_rs.as_ref();
 
     // For debugging purposes enable the following lines
-
     // let cargo_dir = std::env::var("CARGO_MANIFEST_DIR").unwrap();
-    // let target_dir = std::env::var("CARGO_TARGET_DIR").unwrap_or_else(|_| "target".into());
+    // let target_dir = std::env::var("CARGO_TARGET_DIR").unwrap_or_else(|_| "../target".into());
     // let target_dir = Path::new(&target_dir);
     // let relative_xsd = input_xsd.strip_prefix(cargo_dir).unwrap();
     // let debug_dir = target_dir
@@ -117,7 +116,7 @@ pub fn optimizer_test<P1, P2, P3, T>(
     P2: AsRef<Path>,
     P3: AsRef<Path>,
     T: IntoIterator,
-    T::Item: Into<IdentTriple>,
+    T::Item: Into<IdentQuadruple>,
 {
     let mut config = Config::test_default();
 
@@ -138,7 +137,7 @@ pub fn optimizer_test_with_config<P1, P2, P3, T>(
     P2: AsRef<Path>,
     P3: AsRef<Path>,
     T: IntoIterator,
-    T::Item: Into<IdentTriple>,
+    T::Item: Into<IdentQuadruple>,
 {
     config
         .parser

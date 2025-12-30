@@ -7,9 +7,11 @@ use std::process::{Command, Output, Stdio};
 
 use anyhow::{Context, Error};
 
-use xsd_parser::config::{NamespaceIdent, SerdeXmlRsVersion};
 use xsd_parser::{
-    config::{GeneratorFlags, IdentTriple, InterpreterFlags, OptimizerFlags, Schema},
+    config::{
+        GeneratorFlags, IdentQuadruple, InterpreterFlags, NamespaceIdent, OptimizerFlags, Schema,
+        SerdeXmlRsVersion,
+    },
     generate, Config, IdentType,
 };
 
@@ -31,7 +33,7 @@ fn main() -> Result<(), Error> {
                     - GeneratorFlags::BUILD_IN_ABSOLUTE_PATHS
                     - GeneratorFlags::ABSOLUTE_PATHS_INSTEAD_USINGS,
             )
-            .with_generate([IdentTriple::from((IdentType::ElementType, "xs:schema"))]);
+            .with_generate([IdentQuadruple::from((IdentType::ElementType, "xs:schema"))]);
         config.generator.type_postfix.element = String::default();
         config.generator.type_postfix.element_type = String::default();
 

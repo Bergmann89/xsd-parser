@@ -42,7 +42,7 @@ pub mod annotion {
     }
     #[derive(Debug)]
     pub struct PageAnnotAnnotParametersXElementType {
-        pub parameter: Vec<super::ofd::CtDocInfoCustomDatasCustomDataXElementType>,
+        pub parameter: Vec<PageAnnotAnnotParametersParameterXElementType>,
     }
     #[derive(Debug)]
     pub struct PageAnnotAnnotAppearanceXElementType {
@@ -56,6 +56,11 @@ pub mod annotion {
         ImageObject(super::page::CtPageBlockImageObjectXElementType),
         CompositeObject(super::page::CtPageBlockCompositeObjectXElementType),
         PageBlock(super::page::CtPageBlockPageBlockXElementType),
+    }
+    #[derive(Debug)]
+    pub struct PageAnnotAnnotParametersParameterXElementType {
+        pub name: String,
+        pub content: String,
     }
 }
 pub mod attachments {
@@ -419,7 +424,7 @@ pub mod ofd {
     }
     #[derive(Debug)]
     pub struct CtDocInfoCustomDatasXElementType {
-        pub custom_data: Vec<CtDocInfoCustomDatasCustomDataXElementType>,
+        pub custom_data: Vec<super::annotion::PageAnnotAnnotParametersParameterXElementType>,
     }
     #[derive(Debug)]
     pub enum OfdDocTypeXType {
@@ -431,11 +436,6 @@ pub mod ofd {
         pub doc_root: String,
         pub versions: Option<OfdDocBodyVersionsXElementType>,
         pub signatures: Option<String>,
-    }
-    #[derive(Debug)]
-    pub struct CtDocInfoCustomDatasCustomDataXElementType {
-        pub name: String,
-        pub content: String,
     }
     #[derive(Debug)]
     pub struct OfdDocBodyVersionsXElementType {

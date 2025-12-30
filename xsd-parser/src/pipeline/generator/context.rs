@@ -12,7 +12,7 @@ use crate::models::{
     data::Occurs,
     meta::{BuildInMeta, MetaTypeVariant},
     schema::xs::Use,
-    Ident,
+    TypeIdent,
 };
 
 use super::{Error, MetaData, State, TraitInfos, TypeRef};
@@ -24,7 +24,7 @@ pub struct Context<'a, 'types> {
     pub meta: &'a MetaData<'types>,
 
     /// Identifier of the type that is currently processed.
-    pub ident: &'a Ident,
+    pub ident: &'a TypeIdent,
 
     state: &'a mut State<'types>,
     reachable: BitSet<u64>,
@@ -33,7 +33,7 @@ pub struct Context<'a, 'types> {
 impl<'a, 'types> Context<'a, 'types> {
     pub(super) fn new(
         meta: &'a MetaData<'types>,
-        ident: &'a Ident,
+        ident: &'a TypeIdent,
         state: &'a mut State<'types>,
     ) -> Self {
         let reachable = state.loop_detection.get_reachable(&state.cache, ident);
@@ -65,7 +65,7 @@ impl<'a, 'types> Context<'a, 'types> {
             .get_or_insert_with(|| TraitInfos::new(self.meta.types))
     }
 
-    pub(super) fn get_or_create_type_ref(&mut self, ident: &Ident) -> Result<&TypeRef, Error> {
+    pub(super) fn get_or_create_type_ref(&mut self, ident: &TypeIdent) -> Result<&TypeRef, Error> {
         let type_ref = self.state.get_or_create_type_ref_mut(self.meta, ident)?;
 
         Ok(type_ref)
@@ -73,7 +73,7 @@ impl<'a, 'types> Context<'a, 'types> {
 
     pub(super) fn get_or_create_type_ref_for_value(
         &mut self,
-        ident: &Ident,
+        ident: &TypeIdent,
         by_value: bool,
     ) -> Result<&TypeRef, Error> {
         let type_ref = self.state.get_or_create_type_ref_mut(self.meta, ident)?;
@@ -87,7 +87,7 @@ impl<'a, 'types> Context<'a, 'types> {
 
     pub(super) fn get_or_create_type_ref_for_element(
         &mut self,
-        ident: &Ident,
+        ident: &TypeIdent,
         by_value: bool,
     ) -> Result<(&TypeRef, bool), Error> {
         let boxed = by_value && need_box(&mut self.reachable, &self.state.cache, self.meta, ident);
@@ -128,7 +128,7 @@ impl<'a, 'types> Context<'a, 'types> {
         &mut self,
         current_module: ModuleIdent,
         default: &str,
-        ident: &Ident,
+        ident: &TypeIdent,
     ) -> Result<TokenStream, Error> {
         let types = self.types;
         let ty = types
@@ -295,9 +295,9 @@ impl<'types> Deref for Context<'_, 'types> {
 
 fn need_box(
     reachable: &mut BitSet<u64>,
-    cache: &BTreeMap<Ident, TypeRef>,
+    cache: &BTreeMap<TypeIdent, TypeRef>,
     meta: &MetaData<'_>,
-    ident: &Ident,
+    ident: &TypeIdent,
 ) -> bool {
     let Some(ty) = meta.types.items.get(ident) else {
         return false;

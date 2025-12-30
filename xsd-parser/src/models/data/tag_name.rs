@@ -2,8 +2,8 @@ use xsd_parser_types::misc::Namespace;
 
 use crate::models::{
     meta::{MetaTypes, ModuleMeta},
-    schema::xs::FormChoiceType,
-    Ident,
+    schema::{xs::FormChoiceType, NamespaceId},
+    Name,
 };
 
 /// Represents the name of a XML tag including an optional namespace prefix.
@@ -27,9 +27,14 @@ impl<'types> TagName<'types> {
     /// - `ident` contains the name and the namespace of the tag
     /// - `form` is used to decide if a prefix needs to be added to the tag in general.
     #[must_use]
-    pub fn new(types: &'types MetaTypes, ident: &Ident, form: FormChoiceType) -> Self {
-        let name = ident.name.to_string();
-        let module = ident.ns.as_ref().and_then(|ns| types.modules.get(ns));
+    pub fn new(
+        types: &'types MetaTypes,
+        ns: NamespaceId,
+        name: &Name,
+        form: FormChoiceType,
+    ) -> Self {
+        let name = name.to_string();
+        let module = types.modules.get(&ns);
 
         Self { name, form, module }
     }

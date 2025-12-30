@@ -4,7 +4,7 @@ use xsd_parser_types::{
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
-pub const NS_UNNAMED_2: Namespace = Namespace::new_const(b"Foo");
+pub const NS_UNNAMED_4: Namespace = Namespace::new_const(b"Foo");
 pub const NS_BAR: Namespace = Namespace::new_const(b"Bar");
 pub const NS_BAZ: Namespace = Namespace::new_const(b"Baz");
 pub const NS_BIZ: Namespace = Namespace::new_const(b"Biz");

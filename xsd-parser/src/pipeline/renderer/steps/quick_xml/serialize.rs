@@ -23,7 +23,7 @@ use crate::models::{
         UnionTypeVariant,
     },
     meta::{ElementMetaVariant, MetaTypeVariant, MetaTypes},
-    Ident,
+    TypeIdent,
 };
 
 use super::super::super::{
@@ -99,7 +99,7 @@ impl ValueKey for SerializerConfig {
 
 #[derive(Default, Debug)]
 struct NamespaceCollector {
-    cache: HashMap<Ident, Option<SharedGlobalNamespaces>>,
+    cache: HashMap<TypeIdent, Option<SharedGlobalNamespaces>>,
 }
 
 #[derive(Debug, Clone, Copy, Eq, PartialEq, Ord, PartialOrd, Hash)]
@@ -676,7 +676,11 @@ impl ComplexBase<'_> {
                         continue;
                     }
 
-                    let ns_const = ctx.resolve_type_for_serialize_module(&module.make_ns_const());
+                    let Some(path) = module.make_ns_const() else {
+                        continue;
+                    };
+
+                    let ns_const = ctx.resolve_type_for_serialize_module(&path);
                     let prefix_const = (form == FormChoiceType::Qualified)
                         .then(|| module.make_prefix_const())
                         .flatten()
@@ -704,7 +708,7 @@ impl ComplexBase<'_> {
                         return None;
                     }
 
-                    let ns = module.make_ns_const();
+                    let ns = module.make_ns_const()?;
                     let ns_const = ctx.resolve_type_for_serialize_module(&ns);
 
                     Some(quote!(helper.write_xmlns(&mut bytes, None, &#ns_const);))
@@ -1356,7 +1360,7 @@ impl NamespaceCollector {
     fn get_namespaces(
         &mut self,
         types: &MetaTypes,
-        ident: &Ident,
+        ident: &TypeIdent,
         default_ns: Option<&Namespace>,
     ) -> &SharedGlobalNamespaces {
         self.get_namespaces_impl(types, ident, default_ns).unwrap()
@@ -1365,7 +1369,7 @@ impl NamespaceCollector {
     fn get_namespaces_impl(
         &mut self,
         types: &MetaTypes,
-        ident: &Ident,
+        ident: &TypeIdent,
         default_ns: Option<&Namespace>,
     ) -> Option<&SharedGlobalNamespaces> {
         let create = match self.cache.entry(ident.clone()) {
@@ -1418,9 +1422,7 @@ impl NamespaceCollector {
 
                     for attrib in &*x.attributes {
                         if attrib.form == FormChoiceType::Qualified {
-                            if let Some(id) = attrib.ident.ns {
-                                Self::add_ns(&mut state, types, NamespaceKey::Normal(id));
-                            }
+                            Self::add_ns(&mut state, types, NamespaceKey::Normal(ident.ns));
                         }
                     }
                 }
@@ -1430,20 +1432,18 @@ impl NamespaceCollector {
             }
 
             if ty.form() == FormChoiceType::Qualified {
-                if let Some(id) = ident.ns {
-                    let ns = types
-                        .modules
-                        .get(&id)
-                        .and_then(|module| module.namespace.as_ref());
+                let ns = types
+                    .modules
+                    .get(&ident.ns)
+                    .and_then(|module| module.namespace.as_ref());
 
-                    let key = if matches!((ns, default_ns), (Some(a), Some(b)) if a == b) {
-                        NamespaceKey::Default(id)
-                    } else {
-                        NamespaceKey::Normal(id)
-                    };
+                let key = if matches!((ns, default_ns), (Some(a), Some(b)) if a == b) {
+                    NamespaceKey::Default(ident.ns)
+                } else {
+                    NamespaceKey::Normal(ident.ns)
+                };
 
-                    Self::add_ns(&mut state, types, key);
-                }
+                Self::add_ns(&mut state, types, key);
             }
 
             let value = match state {
@@ -1473,7 +1473,7 @@ impl NamespaceCollector {
         &mut self,
         state: &mut GetNamespaceState,
         types: &MetaTypes,
-        ident: &Ident,
+        ident: &TypeIdent,
         default_ns: Option<&Namespace>,
     ) {
         let Some(src) = self.get_namespaces_impl(types, ident, default_ns) else {
@@ -1538,14 +1538,13 @@ impl NamespaceCollector {
                 let module = types.modules.get(&id)?;
 
                 let prefix = Some(module.make_prefix_const()?);
-                let namespace = module.make_ns_const();
+                let namespace = module.make_ns_const()?;
 
                 Some((prefix, namespace))
             }
             NamespaceKey::Default(id) => {
                 let module = types.modules.get(&id)?;
-
-                let namespace = module.make_ns_const();
+                let namespace = module.make_ns_const()?;
 
                 Some((None, namespace))
             }

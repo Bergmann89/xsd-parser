@@ -5,7 +5,7 @@ use std::hash::{Hash, Hasher};
 use crate::models::{
     meta::{ElementMetaVariant, ElementMode},
     schema::{MaxOccurs, MinOccurs},
-    Ident,
+    TypeIdent,
 };
 
 use super::{AttributesMeta, Base, ElementsMeta, MetaType, MetaTypeVariant, MetaTypes, TypeEq};
@@ -30,7 +30,7 @@ pub struct ComplexMeta {
 
     /// Content type information of the complex type that contains the actual
     /// information about the elements that are defined for this type.
-    pub content: Option<Ident>,
+    pub content: Option<TypeIdent>,
 
     /// Minimum occurrence of this complex types content type.
     pub min_occurs: MinOccurs,

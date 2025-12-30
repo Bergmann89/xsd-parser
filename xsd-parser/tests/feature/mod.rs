@@ -1,4 +1,4 @@
-#![allow(unused_mut, missing_docs, unused_variables, unreachable_pub)]
+#![allow(missing_docs, unreachable_pub, unused_mut, unused_variables)]
 
 mod absolute_paths;
 mod all;
@@ -16,6 +16,7 @@ mod custom_type;
 mod defaultable_content;
 mod derive;
 mod documentation;
+mod duplicate_idents;
 mod dynamic_types;
 mod element_refs_with_ns;
 mod element_without_type;

@@ -131,10 +131,13 @@ bitflags! {
 /// Configuration for the [`RenderSteps`](crate::pipeline::renderer::RenderStep)s
 /// the [`Renderer`](crate::Renderer) should use for rendering the code.
 ///
-/// Caution: Some render steps are incompatible to each other (e.g. only
+/// <div class="warning">
+/// *Caution*
+/// Some render steps are incompatible to each other (e.g. only
 /// one `TypesXXX` step should be used, because they render the general type
 /// structure). While other render steps depend on each other (e.g. `QuickXmlXXX`
 /// depends on `Types` and `NamespaceConstants`).
+/// </div>
 #[derive(Debug, Clone)]
 pub enum RenderStep {
     /// Step to render the pure types.

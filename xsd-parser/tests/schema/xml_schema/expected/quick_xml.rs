@@ -12932,8 +12932,7 @@ pub mod quick_xml_deserialize {
                         S::Any(values, fallback, None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output =
-                            helper.init_start_tag_deserializer(event, None, b"any130", true)?;
+                        let output = <AnyElement as WithDeserializer>::init(helper, event)?;
                         match self.handle_any(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -20067,8 +20066,7 @@ pub mod quick_xml_deserialize {
                         S::Any(values, fallback, None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output =
-                            helper.init_start_tag_deserializer(event, None, b"any37", true)?;
+                        let output = <AnyElement as WithDeserializer>::init(helper, event)?;
                         match self.handle_any(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)

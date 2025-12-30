@@ -1,6 +1,6 @@
 use std::hash::{Hash, Hasher};
 
-use crate::models::Ident;
+use crate::models::TypeIdent;
 
 use super::MetaTypes;
 
@@ -50,7 +50,7 @@ pub trait TypeEq: Sized {
     }
 }
 
-impl TypeEq for Ident {
+impl TypeEq for TypeIdent {
     fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &MetaTypes) {
         types.get_resolved_ident(self).unwrap_or(self).hash(hasher);
     }
@@ -59,7 +59,7 @@ impl TypeEq for Ident {
         let a = types.get_resolved_ident(self).unwrap_or(self);
         let b = types.get_resolved_ident(other).unwrap_or(other);
 
-        a == b
+        a.eq(b)
     }
 }
 

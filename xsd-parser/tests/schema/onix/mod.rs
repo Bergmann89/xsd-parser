@@ -1,11 +1,11 @@
 use quote::ToTokens;
 
 use xsd_parser::{
-    config::{GeneratorFlags, IdentTriple, OptimizerFlags, RendererFlags, Schema},
-    exec_generator, exec_interpreter, exec_optimizer, exec_parser, exec_render,
+    config::{GeneratorFlags, IdentQuadruple, OptimizerFlags, RendererFlags, Schema},
+    exec_generator, exec_interpreter_with_ident_cache, exec_optimizer, exec_parser, exec_render,
     models::meta::{ElementMetaVariant, ElementMode, MetaTypeVariant},
     pipeline::renderer::NamespaceSerialization,
-    Config, IdentType, MetaTypes, Schemas,
+    Config, IdentCache, IdentType, MetaTypes, Schemas,
 };
 use xsd_parser_types::misc::Namespace;
 
@@ -88,8 +88,9 @@ fn generate_test(input_xsd: &str, expected_rs: &str, mut config: Config) {
     config.parser.schemas.push(Schema::File(input_xsd.into()));
 
     let schemas = exec_parser(config.parser).unwrap();
-    let meta_types = exec_interpreter(config.interpreter, &schemas).unwrap();
-    let meta_types = resolve_naming_conflicts(&schemas, meta_types);
+    let (meta_types, ident_cache) =
+        exec_interpreter_with_ident_cache(config.interpreter, &schemas).unwrap();
+    let meta_types = resolve_naming_conflicts(&schemas, &ident_cache, meta_types);
     let meta_types = exec_optimizer(config.optimizer, meta_types).unwrap();
     let data_types = exec_generator(config.generator, &schemas, &meta_types).unwrap();
     let module = exec_render(config.renderer, &data_types).unwrap();
@@ -98,11 +99,16 @@ fn generate_test(input_xsd: &str, expected_rs: &str, mut config: Config) {
     generate_test_validate(code, expected_rs);
 }
 
-fn resolve_naming_conflicts(schemas: &Schemas, mut types: MetaTypes) -> MetaTypes {
+fn resolve_naming_conflicts(
+    schemas: &Schemas,
+    ident_cache: &IdentCache,
+    mut types: MetaTypes,
+) -> MetaTypes {
     // Fix naming conflicts of the "type" attribute of "ol.attlist"
-    let type_ = IdentTriple::from((IdentType::Type, "onix:type"))
+    let type_ = IdentQuadruple::from((IdentType::Type, "onix:type"))
         .resolve(schemas)
         .unwrap();
+    let type_ = ident_cache.resolve(type_).unwrap();
     let type_ = types.items.get_mut(&type_).unwrap();
     let MetaTypeVariant::Enumeration(ei) = &mut type_.variant else {
         unreachable!();
@@ -116,9 +122,10 @@ fn resolve_naming_conflicts(schemas: &Schemas, mut types: MetaTypes) -> MetaType
     }
 
     // Rename onix:ONIXMessage content field and type
-    let message = IdentTriple::from((IdentType::ElementType, "onix:ONIXMessage"))
+    let message = IdentQuadruple::from((IdentType::ElementType, "onix:ONIXMessage"))
         .resolve(schemas)
         .unwrap();
+    let message = ident_cache.resolve(message).unwrap();
     let message = types.items.get(&message).unwrap();
     let MetaTypeVariant::ComplexType(ci) = &message.variant else {
         unreachable!();

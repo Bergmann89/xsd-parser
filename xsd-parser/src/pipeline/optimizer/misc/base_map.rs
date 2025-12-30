@@ -2,11 +2,11 @@ use std::collections::HashMap;
 
 use crate::models::{
     meta::{Base, MetaTypeVariant, MetaTypes},
-    Ident,
+    TypeIdent,
 };
 
 #[derive(Debug)]
-pub(crate) struct BaseMap(HashMap<Ident, Base>);
+pub(crate) struct BaseMap(HashMap<TypeIdent, Base>);
 
 impl BaseMap {
     pub(crate) fn new(types: &MetaTypes) -> Self {
@@ -48,7 +48,7 @@ impl BaseMap {
         Self(ret)
     }
 
-    pub(crate) fn get_unrestricted<'a>(&'a self, ident: &'a Ident) -> &'a Ident {
+    pub(crate) fn get_unrestricted<'a>(&'a self, ident: &'a TypeIdent) -> &'a TypeIdent {
         match self.0.get(ident) {
             Some(Base::Restriction(base)) => self.get_unrestricted(base),
             _ => ident,

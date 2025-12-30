@@ -127,8 +127,8 @@ impl ComplexDataStruct<'_> {
 }
 
 fn render_trait_with_namespace(ctx: &Context<'_, '_>, type_ident: &Ident2) -> Option<TokenStream> {
-    let ns = ctx.ident.ns.as_ref()?;
-    let module = ctx.types.meta.types.modules.get(ns)?;
+    let ns = ctx.ident.ns;
+    let module = ctx.types.meta.types.modules.get(&ns)?;
     let xsd_parser_types = &ctx.xsd_parser_types;
 
     let (prefix, namespace) = match (&module.prefix, &module.namespace) {

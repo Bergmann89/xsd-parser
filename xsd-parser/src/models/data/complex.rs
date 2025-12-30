@@ -7,7 +7,7 @@ use crate::models::{
     data::TagName,
     meta::{AttributeMeta, ElementMeta},
     schema::{MaxOccurs, MinOccurs},
-    Ident,
+    TypeIdent,
 };
 
 use super::{Occurs, PathData};
@@ -184,7 +184,7 @@ pub struct ComplexDataContent<'types> {
 
     /// Type identifier of the content type if this `ComplexDataContent` was
     /// constructed from a complex type with simple content.
-    pub simple_type: Option<&'types Ident>,
+    pub simple_type: Option<&'types TypeIdent>,
 
     /// Minimum occurrence.
     pub min_occurs: MinOccurs,

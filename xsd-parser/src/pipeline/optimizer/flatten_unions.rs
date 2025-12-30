@@ -1,6 +1,6 @@
 use crate::models::{
     meta::{MetaTypeVariant, UnionMeta, UnionMetaType},
-    Ident,
+    TypeIdent,
 };
 
 use super::{Error, Optimizer};
@@ -34,7 +34,7 @@ impl Optimizer {
     /// ```rust
     #[doc = include_str!("../../../tests/optimizer/expected1/flatten_unions.rs")]
     /// ```
-    pub fn flatten_union(mut self, ident: Ident) -> Result<Self, Error> {
+    pub fn flatten_union(mut self, ident: TypeIdent) -> Result<Self, Error> {
         tracing::debug!("flatten_union(ident={ident:?})");
 
         let Some(ty) = self.types.items.get(&ident) else {
@@ -91,7 +91,7 @@ impl Optimizer {
 
     fn flatten_union_impl(
         &self,
-        ident: &Ident,
+        ident: &TypeIdent,
         display_name: Option<&str>,
         next: &mut FlattenUnionInfo,
     ) {

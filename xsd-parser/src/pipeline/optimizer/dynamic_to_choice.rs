@@ -1,6 +1,6 @@
 use crate::models::{
     meta::{ComplexMeta, ElementMeta, ElementMode, GroupMeta, MetaType, MetaTypeVariant},
-    Ident,
+    TypeIdent,
 };
 use crate::traits::{NameBuilderExt as _, VecHelper};
 
@@ -47,7 +47,7 @@ impl Optimizer {
 
         for ident in idents {
             let content_name = self.types.name_builder().shared_name("Content").finish();
-            let content_ident = Ident::new(content_name).with_ns(ident.ns);
+            let content_ident = TypeIdent::new(content_name).with_ns(ident.ns);
 
             let mut si = GroupMeta::default();
             let type_ = self.types.items.get(&ident).unwrap();
@@ -82,9 +82,11 @@ impl Optimizer {
             if let MetaTypeVariant::Dynamic(_) = &derived_ty.variant {
                 self.add_elements(group, derived_ty);
             } else {
-                group.elements.find_or_insert(derived.clone(), |ident| {
-                    ElementMeta::new(ident, derived.clone(), ElementMode::Element, form)
-                });
+                group
+                    .elements
+                    .find_or_insert(derived.to_property_ident(), |ident| {
+                        ElementMeta::new(ident, derived.clone(), ElementMode::Element, form)
+                    });
             }
         }
     }

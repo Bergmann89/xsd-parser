@@ -13,7 +13,7 @@ use crate::models::code::{IdentPath, ModuleIdent};
 use crate::models::{
     code::{Module, ModulePath},
     data::{DataType, PathData},
-    Ident,
+    TypeIdent,
 };
 
 use super::MetaData;
@@ -32,7 +32,7 @@ pub struct Context<'a, 'types> {
     pub data: &'a DataType<'types>,
 
     /// Identifier of the data type that needs to be rendered.
-    pub ident: &'a Ident,
+    pub ident: &'a TypeIdent,
 
     /// Generic data storage for any type that implements [`ValueKey`].
     pub values: Values,
@@ -302,7 +302,7 @@ impl<'a, 'types> Context<'a, 'types> {
     pub(super) fn new(
         meta: &'a MetaData<'types>,
         data: &'a DataType<'types>,
-        ident: &'a Ident,
+        ident: &'a TypeIdent,
         module: &'a mut Module,
     ) -> Self {
         let module_ident = ModuleIdent::new(
