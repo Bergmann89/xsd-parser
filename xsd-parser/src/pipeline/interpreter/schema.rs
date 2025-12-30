@@ -6,9 +6,8 @@ use tracing::instrument;
 
 use xsd_parser_types::misc::{Namespace, RawByteStr};
 
-use crate::models::meta::BuildInMeta;
 use crate::models::{
-    meta::{MetaType, MetaTypeVariant},
+    meta::{BuildInMeta, MetaType, MetaTypeVariant},
     schema::{
         xs::{
             AttributeGroupType, AttributeType, ComplexBaseType, ElementType, GroupType, Schema,
@@ -16,7 +15,7 @@ use crate::models::{
         },
         NamespaceId, QName, SchemaId, Schemas,
     },
-    Ident, IdentType, Name,
+    IdentType, Name, NodeIdent, TypeIdent,
 };
 use crate::traits::NameBuilderExt as _;
 
@@ -30,7 +29,7 @@ pub(super) struct SchemaInterpreter<'schema, 'state> {
     pub(super) schema_id: SchemaId,
     pub(super) namespace_id: NamespaceId,
 
-    pending_element_types: VecDeque<(Ident, &'schema ElementType)>,
+    pending_element_types: VecDeque<(TypeIdent, &'schema ElementType)>,
 }
 
 impl<'schema, 'state> SchemaInterpreter<'schema, 'state> {
@@ -43,21 +42,6 @@ impl<'schema, 'state> SchemaInterpreter<'schema, 'state> {
         schema_id: SchemaId,
         namespace_id: NamespaceId,
     ) -> Result<(), Error> {
-        let target_namespace = schema
-            .target_namespace
-            .as_ref()
-            .map(|ns| {
-                let ns = ns.as_bytes().to_owned();
-                let ns = Some(Namespace::from(ns));
-
-                let Some(ns) = schemas.resolve_namespace(&ns) else {
-                    return Err(Error::UnknownNamespace(ns.unwrap()));
-                };
-
-                Ok(ns)
-            })
-            .transpose()?;
-
         let mut this = Self {
             state,
             schema,
@@ -79,16 +63,16 @@ impl<'schema, 'state> SchemaInterpreter<'schema, 'state> {
                 | SchemaContent::Override(_)
                 | SchemaContent::Redefine(_) => (),
                 SchemaContent::Element(x) => {
-                    this.create_element(target_namespace, None, x)?;
+                    this.create_element(namespace_id, schema_id, None, x)?;
                 }
                 SchemaContent::Attribute(x) => {
-                    this.create_attribute(target_namespace, None, x)?;
+                    this.create_attribute(namespace_id, schema_id, None, x)?;
                 }
                 SchemaContent::SimpleType(x) => {
-                    this.create_simple_type(target_namespace, None, x)?;
+                    this.create_simple_type(namespace_id, schema_id, None, x)?;
                 }
                 SchemaContent::ComplexType(x) => {
-                    this.create_complex_type(target_namespace, None, x)?;
+                    this.create_complex_type(namespace_id, schema_id, None, x)?;
                 }
             }
         }
@@ -107,38 +91,34 @@ impl SchemaInterpreter<'_, '_> {
     #[instrument(level = "trace", skip(self))]
     pub(super) fn get_substitution_group_element_mut(
         &mut self,
-        ident: &Ident,
+        ident: &NodeIdent,
     ) -> Result<&mut MetaType, Error> {
-        // Create the element if it does not exist
-        if !self.state.types.items.contains_key(ident) {
-            let ty = self
-                .find_element(ident.clone())
-                .ok_or_else(|| Error::UnknownType(ident.clone()))?;
-            let new_ident = self.create_element(ident.ns, None, ty)?;
-
-            crate::assert_eq!(ident, &new_ident);
+        let mut type_ident = self.resolve_node_ident(ident)?;
+        if self.state.get_type(&type_ident).is_none() {
+            let (schema, ty) = self.find_element(ident.clone())?;
+            type_ident = self.create_element(ident.ns, schema, None, ty)?;
         }
 
-        Ok(self.state.types.items.get_mut(ident).unwrap())
+        Ok(self.state.get_type_mut(&type_ident).unwrap())
     }
 
     #[instrument(level = "trace", skip(self))]
     pub(super) fn get_simple_type_variant(
         &mut self,
-        ident: &Ident,
-    ) -> Result<Cow<'_, MetaTypeVariant>, Error> {
-        if !self.state.types.items.contains_key(ident) {
-            let ty = self
-                .find_simple_type(ident.clone())
-                .ok_or_else(|| Error::UnknownType(ident.clone()))?;
-            let new_ident = self.create_simple_type(ident.ns, None, ty)?;
-
-            crate::assert_eq!(ident, &new_ident);
+        ident: &NodeIdent,
+    ) -> Result<(TypeIdent, Cow<'_, MetaTypeVariant>), Error> {
+        let mut type_ident = self.resolve_node_ident(ident)?;
+        if self.state.get_type(&type_ident).is_none() {
+            let (schema, ty) = self.find_simple_type(ident.clone())?;
+            type_ident = self.create_simple_type(ident.ns, schema, None, ty)?;
         }
 
-        match self.state.types.get_variant(ident) {
-            Some(ty) if ty.is_mixed(&self.state.types) && ty.is_emptiable(&self.state.types) => {
-                Ok(Cow::Owned(MetaTypeVariant::BuildIn(BuildInMeta::String)))
+        match self.state.get_variant(&type_ident) {
+            Some(ty) if ty.is_mixed(self.state.types()) && ty.is_emptiable(self.state.types()) => {
+                Ok((
+                    type_ident,
+                    Cow::Owned(MetaTypeVariant::BuildIn(BuildInMeta::String)),
+                ))
             }
             None
             | Some(
@@ -147,7 +127,7 @@ impl SchemaInterpreter<'_, '_> {
                 | MetaTypeVariant::Choice(_)
                 | MetaTypeVariant::Sequence(_)
                 | MetaTypeVariant::Dynamic(_),
-            ) => Err(Error::UnknownType(ident.clone())),
+            ) => Err(Error::UnknownNode(ident.clone())),
             Some(
                 ty @ (MetaTypeVariant::Enumeration(_)
                 | MetaTypeVariant::BuildIn(_)
@@ -155,25 +135,22 @@ impl SchemaInterpreter<'_, '_> {
                 | MetaTypeVariant::Union(_)
                 | MetaTypeVariant::Reference(_)
                 | MetaTypeVariant::SimpleType(_)),
-            ) => Ok(Cow::Borrowed(ty)),
+            ) => Ok((type_ident, Cow::Borrowed(ty))),
         }
     }
 
     #[instrument(level = "trace", skip(self))]
     pub(super) fn get_complex_type_variant(
         &mut self,
-        ident: &Ident,
-    ) -> Result<&MetaTypeVariant, Error> {
-        if !self.state.types.items.contains_key(ident) {
-            let ty = self
-                .find_complex_type(ident.clone())
-                .ok_or_else(|| Error::UnknownType(ident.clone()))?;
-            let new_ident = self.create_complex_type(ident.ns, None, ty)?;
-
-            crate::assert_eq!(ident, &new_ident);
+        ident: &NodeIdent,
+    ) -> Result<(TypeIdent, &MetaTypeVariant), Error> {
+        let mut type_ident = self.resolve_node_ident(ident)?;
+        if self.state.get_type(&type_ident).is_none() {
+            let (schema, ty) = self.find_complex_type(ident.clone())?;
+            type_ident = self.create_complex_type(ident.ns, schema, None, ty)?;
         }
 
-        match self.state.types.get_variant(ident) {
+        match self.state.get_variant(&type_ident) {
             None
             | Some(
                 MetaTypeVariant::Enumeration(_)
@@ -182,14 +159,14 @@ impl SchemaInterpreter<'_, '_> {
                 | MetaTypeVariant::Union(_)
                 | MetaTypeVariant::Reference(_)
                 | MetaTypeVariant::SimpleType(_),
-            ) => Err(Error::UnknownType(ident.clone())),
+            ) => Err(Error::UnknownNode(ident.clone())),
             Some(
                 ty @ (MetaTypeVariant::ComplexType(_)
                 | MetaTypeVariant::All(_)
                 | MetaTypeVariant::Choice(_)
                 | MetaTypeVariant::Sequence(_)
                 | MetaTypeVariant::Dynamic(_)),
-            ) => Ok(ty),
+            ) => Ok((type_ident, ty)),
         }
     }
 }
@@ -200,12 +177,14 @@ impl<'schema> SchemaInterpreter<'schema, '_> {
     #[instrument(err, level = "trace", skip(self))]
     pub(super) fn create_element(
         &mut self,
-        ns: Option<NamespaceId>,
+        ns: NamespaceId,
+        schema: SchemaId,
         name: Option<Name>,
         ty: &'schema ElementType,
-    ) -> Result<Ident, Error> {
-        let ident = Ident {
+    ) -> Result<TypeIdent, Error> {
+        let ident = TypeIdent {
             ns,
+            schema,
             name: self.state.name_builder().or(name).or(&ty.name).finish(),
             type_: IdentType::Element,
         };
@@ -216,14 +195,15 @@ impl<'schema> SchemaInterpreter<'schema, '_> {
     #[instrument(err, level = "trace", skip(self))]
     pub(super) fn create_element_lazy(
         &mut self,
-        ns: Option<NamespaceId>,
+        ns: NamespaceId,
         name: Option<Name>,
         ty: &'schema ElementType,
-    ) -> Result<Ident, Error> {
-        let ident = Ident {
+    ) -> Result<TypeIdent, Error> {
+        let ident = TypeIdent {
             ns,
             name: self.state.name_builder().or(name).or(&ty.name).finish(),
             type_: IdentType::Element,
+            schema: self.current_schema(),
         };
 
         self.pending_element_types.push_back((ident.clone(), ty));
@@ -234,12 +214,14 @@ impl<'schema> SchemaInterpreter<'schema, '_> {
     #[instrument(err, level = "trace", skip(self))]
     pub(super) fn create_attribute(
         &mut self,
-        ns: Option<NamespaceId>,
+        ns: NamespaceId,
+        schema: SchemaId,
         name: Option<Name>,
         ty: &'schema AttributeType,
-    ) -> Result<Ident, Error> {
-        let ident = Ident {
+    ) -> Result<TypeIdent, Error> {
+        let ident = TypeIdent {
             ns,
+            schema,
             name: self.state.name_builder().or(name).or(&ty.name).finish(),
             type_: IdentType::Attribute,
         };
@@ -250,12 +232,14 @@ impl<'schema> SchemaInterpreter<'schema, '_> {
     #[instrument(err, level = "trace", skip(self))]
     pub(super) fn create_simple_type(
         &mut self,
-        ns: Option<NamespaceId>,
+        ns: NamespaceId,
+        schema: SchemaId,
         name: Option<Name>,
         ty: &'schema SimpleBaseType,
-    ) -> Result<Ident, Error> {
-        let ident = Ident {
+    ) -> Result<TypeIdent, Error> {
+        let ident = TypeIdent {
             ns,
+            schema,
             name: self.state.name_builder().or(name).or(&ty.name).finish(),
             type_: IdentType::Type,
         };
@@ -266,12 +250,14 @@ impl<'schema> SchemaInterpreter<'schema, '_> {
     #[instrument(err, level = "trace", skip(self))]
     pub(super) fn create_complex_type(
         &mut self,
-        ns: Option<NamespaceId>,
+        ns: NamespaceId,
+        schema: SchemaId,
         name: Option<Name>,
         ty: &'schema ComplexBaseType,
-    ) -> Result<Ident, Error> {
-        let ident = Ident {
+    ) -> Result<TypeIdent, Error> {
+        let ident = TypeIdent {
             ns,
+            schema,
             name: self.state.name_builder().or(name).or(&ty.name).finish(),
             type_: IdentType::Type,
         };
@@ -279,32 +265,31 @@ impl<'schema> SchemaInterpreter<'schema, '_> {
         self.create_type(ident, |builder| builder.apply_complex_type(ty))
     }
 
-    pub(super) fn create_type<F>(&mut self, ident: Ident, mut f: F) -> Result<Ident, Error>
+    pub(super) fn create_type<F>(&mut self, ident: TypeIdent, mut f: F) -> Result<TypeIdent, Error>
     where
         F: FnMut(&mut VariantBuilder<'_, 'schema, '_>) -> Result<(), Error>,
     {
-        if self.state.types.items.contains_key(&ident)
+        if self.state.types().items.contains_key(&ident)
             || self
                 .state
-                .type_stack
+                .type_stack()
                 .iter()
-                .any(|x| matches!(x, StackEntry::Type(x, _) if *x == ident))
+                .any(|x| matches!(x, StackEntry::Type(x, _) if x == &ident))
         {
             return Ok(ident);
         }
 
         self.state
-            .type_stack
-            .push(StackEntry::Type(ident, HashMap::new()));
+            .push_stack(StackEntry::Type(ident, HashMap::new()));
 
         let mut builder = VariantBuilder::new(self);
         let type_ = f(&mut builder).and_then(|()| builder.finish());
 
-        let StackEntry::Type(ident, _) = self.state.type_stack.pop().unwrap() else {
+        let StackEntry::Type(ident, _) = self.state.pop_stack() else {
             unreachable!("Unexpected stack entry!");
         };
 
-        self.state.add_type(ident.clone(), type_?, false)?;
+        self.state.add_type(ident.clone(), type_?, false, false)?;
 
         Ok(ident)
     }
@@ -312,63 +297,45 @@ impl<'schema> SchemaInterpreter<'schema, '_> {
 
 /* Find Methods */
 
+macro_rules! impl_find_node {
+    ($name:ident, $result:ty, $variant:ident) => {
+        pub(super) fn $name(
+            &mut self,
+            ident: NodeIdent,
+        ) -> Result<(SchemaId, &'schema $result), Error> {
+            match self
+                .state
+                .get_node(self.schemas, self.current_schema(), ident.clone())
+            {
+                Ok(Some((schema, Node::$variant(x)))) => Ok((schema, x)),
+                Ok(_) => Err(Error::UnknownNode(ident)),
+                Err(error) => Err(error),
+            }
+        }
+    };
+}
+
 impl<'schema> SchemaInterpreter<'schema, '_> {
-    pub(super) fn find_element(&mut self, ident: Ident) -> Option<&'schema ElementType> {
-        if let Some(Node::Element(x)) = self.state.get_node(self.schemas, self.namespace_id, ident)
-        {
-            Some(x)
-        } else {
-            None
-        }
-    }
-
-    pub(super) fn find_simple_type(&mut self, ident: Ident) -> Option<&'schema SimpleBaseType> {
-        if let Some(Node::SimpleType(x)) =
-            self.state.get_node(self.schemas, self.namespace_id, ident)
-        {
-            Some(x)
-        } else {
-            None
-        }
-    }
-
-    pub(super) fn find_complex_type(&mut self, ident: Ident) -> Option<&'schema ComplexBaseType> {
-        if let Some(Node::ComplexType(x)) =
-            self.state.get_node(self.schemas, self.namespace_id, ident)
-        {
-            Some(x)
-        } else {
-            None
-        }
-    }
-
-    pub(super) fn find_group(&mut self, ident: Ident) -> Option<&'schema GroupType> {
-        if let Some(Node::Group(x)) = self.state.get_node(self.schemas, self.namespace_id, ident) {
-            Some(x)
-        } else {
-            None
-        }
-    }
-
-    pub(super) fn find_attribute_group(
-        &mut self,
-        ident: Ident,
-    ) -> Option<&'schema AttributeGroupType> {
-        if let Some(Node::AttributeGroup(x)) =
-            self.state.get_node(self.schemas, self.namespace_id, ident)
-        {
-            Some(x)
-        } else {
-            None
-        }
-    }
+    impl_find_node!(find_element, ElementType, Element);
+    impl_find_node!(find_simple_type, SimpleBaseType, SimpleType);
+    impl_find_node!(find_complex_type, ComplexBaseType, ComplexType);
+    impl_find_node!(find_group, GroupType, Group);
+    impl_find_node!(find_attribute_group, AttributeGroupType, AttributeGroup);
 }
 
 /* Helper Methods */
 
 impl SchemaInterpreter<'_, '_> {
+    pub(super) fn current_ns(&self) -> NamespaceId {
+        self.state.current_ns().unwrap_or(self.namespace_id)
+    }
+
+    pub(super) fn current_schema(&self) -> SchemaId {
+        self.state.current_schema().unwrap_or(self.schema_id)
+    }
+
     #[allow(clippy::unnecessary_literal_unwrap)]
-    pub(super) fn parse_qname(&self, qname: &QName) -> Result<Ident, Error> {
+    pub(super) fn parse_node_ident(&self, qname: &QName) -> Result<NodeIdent, Error> {
         let ns = qname
             .namespace()
             .map(|ns| {
@@ -379,16 +346,44 @@ impl SchemaInterpreter<'_, '_> {
                     .ok_or_else(|| Error::UnknownNamespace(ns.unwrap()))
             })
             .transpose()?
-            .or(self.state.current_ns());
+            .unwrap_or_else(|| self.current_ns());
+
         let name = qname.local_name();
         let name =
             from_utf8(name).map_err(|_| Error::InvalidLocalName(RawByteStr::from_slice(name)))?;
         let name = name.to_owned();
 
-        Ok(Ident {
+        Ok(NodeIdent {
             name: Name::new_named(name),
             ns,
             type_: IdentType::Type,
         })
+    }
+
+    pub(super) fn parse_type_ident(&self, qname: &QName) -> Result<TypeIdent, Error> {
+        let ident = self.parse_node_ident(qname)?;
+
+        self.resolve_node_ident(&ident)
+    }
+
+    pub(super) fn resolve_node_ident(&self, ident: &NodeIdent) -> Result<TypeIdent, Error> {
+        self.state
+            .resolve_type_ident(ident.to_type_ident(SchemaId::UNKNOWN))
+    }
+
+    pub(super) fn resolve_xs_type(&self, name: Name) -> Result<TypeIdent, Error> {
+        let ns = self
+            .schemas
+            .resolve_namespace(&Some(Namespace::XS))
+            .ok_or_else(|| Error::UnknownNamespace(Namespace::XS.clone()))?;
+
+        let ident = TypeIdent {
+            ns,
+            schema: SchemaId::UNKNOWN,
+            name,
+            type_: IdentType::Type,
+        };
+
+        self.state.resolve_type_ident(ident)
     }
 }

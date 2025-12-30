@@ -54,5 +54,4 @@ macro_rules! assert_eq {
 }
 
 pub(crate) use assert;
-pub(crate) use assert_eq;
 pub(crate) use unreachable;

@@ -1,6 +1,6 @@
 use bitflags::bitflags;
 
-use super::IdentTriple;
+use super::IdentQuadruple;
 
 /// Configuration for the code generator.
 #[derive(Debug, Clone)]
@@ -11,7 +11,7 @@ pub struct GeneratorConfig {
     /// Types to add to the generator before the actual data types are generated.
     ///
     /// See [`with_type`](crate::Generator::with_type) for more details.
-    pub types: Vec<IdentTriple>,
+    pub types: Vec<IdentQuadruple>,
 
     /// Specify which meta types the generator should generate data types for.
     pub generate: Generate,
@@ -296,7 +296,7 @@ pub struct TypePostfix {
     /// Postfixes added to elements (like `xs:element`).
     pub element: String,
 
-    /// Postfixes added to inline types if elements (like `xs:element`).
+    /// Postfixes added to inline types of elements (like `xs:element`).
     pub element_type: String,
 
     /// Postfix for the type that is used as content for [`Nillable`](xsd_parser_types::xml::Nillable) elements.
@@ -389,5 +389,5 @@ pub enum Generate {
     Named,
 
     /// List of identifiers the generator will generate code for.
-    Types(Vec<IdentTriple>),
+    Types(Vec<IdentQuadruple>),
 }

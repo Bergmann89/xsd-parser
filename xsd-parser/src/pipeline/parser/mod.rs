@@ -77,6 +77,7 @@ pub struct Parser<TResolver = NoOpResolver> {
 #[derive(Debug)]
 #[allow(clippy::large_enum_variant)]
 enum ParserEntry {
+    AnonymousNamespace,
     Namespace {
         prefix: NamespacePrefix,
         namespace: Namespace,
@@ -188,6 +189,7 @@ where
     /// Add the default namespaces to this parser.
     ///
     /// The default namespaces are:
+    /// - The anonymous namespace
     /// - [`NamespacePrefix::XS`] [`Namespace::XS`]
     /// - [`NamespacePrefix::XML`] [`Namespace::XML`]
     ///
@@ -195,7 +197,8 @@ where
     ///
     /// Forwards the errors from [`with_namespace`](Self::with_namespace).
     pub fn with_default_namespaces(self) -> Self {
-        self.with_namespace(NamespacePrefix::XS, Namespace::XS)
+        self.with_anonymous_namespace()
+            .with_namespace(NamespacePrefix::XS, Namespace::XS)
             .with_namespace(NamespacePrefix::XML, Namespace::XML)
     }
 
@@ -214,6 +217,17 @@ where
     pub fn with_namespace(mut self, prefix: NamespacePrefix, namespace: Namespace) -> Self {
         self.entries
             .push(ParserEntry::Namespace { prefix, namespace });
+
+        self
+    }
+
+    /// Adds the anonymous namespace to the resulting [`Schemas`] structure.
+    ///
+    /// The anonymous namespace does not have a namespace prefix, or a namespace
+    /// URI. It is used for type definitions and schemas that do not provide a
+    /// target namespace. Additionally it can be used to provide user defined types.
+    pub fn with_anonymous_namespace(mut self) -> Self {
+        self.entries.push(ParserEntry::AnonymousNamespace);
 
         self
     }
@@ -539,6 +553,9 @@ impl SchemasBuilder {
 
         for entry in entries {
             match entry {
+                ParserEntry::AnonymousNamespace => {
+                    self.get_or_create_namespace_info_mut(None);
+                }
                 ParserEntry::Namespace { namespace, .. } => {
                     self.get_or_create_namespace_info_mut(Some(namespace));
                 }
@@ -562,6 +579,9 @@ impl SchemasBuilder {
     fn build_cache(&mut self, entries: &[ParserEntry]) {
         for entry in entries {
             match entry {
+                ParserEntry::AnonymousNamespace => {
+                    self.prefix_cache.entry(None).or_default();
+                }
                 ParserEntry::Namespace { prefix, namespace } => {
                     self.prefix_cache
                         .entry(Some(namespace.clone()))
@@ -606,8 +626,8 @@ impl SchemasBuilder {
         location: Option<Url>,
         schema: Schema,
     ) {
-        let schema_id = SchemaId(self.schemas.next_schema_id);
-        self.schemas.next_schema_id = self.schemas.next_schema_id.wrapping_add(1);
+        self.schemas.last_schema_id = self.schemas.last_schema_id.wrapping_add(1);
+        let schema_id = SchemaId(self.schemas.last_schema_id);
 
         let (namespace_id, namespace_info) = self.get_or_create_namespace_info_mut(namespace);
         namespace_info.schemas.push(schema_id);
@@ -635,8 +655,8 @@ impl SchemasBuilder {
                 (id, info)
             }
             Entry::Vacant(e) => {
-                let id = NamespaceId(self.schemas.next_namespace_id);
-                self.schemas.next_namespace_id = self.schemas.next_namespace_id.wrapping_add(1);
+                self.schemas.last_namespace_id = self.schemas.last_namespace_id.wrapping_add(1);
+                let id = NamespaceId(self.schemas.last_namespace_id);
 
                 let namespace = e.key().clone();
                 e.insert(id);

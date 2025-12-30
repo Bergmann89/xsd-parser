@@ -46,7 +46,7 @@ impl RenderStep for NamespaceConstantsRenderStep {
 
         let namespace_constants = meta.types.meta.types.modules.values().filter_map(|module| {
             let ns = module.namespace.as_ref()?;
-            let const_name = module.make_ns_const();
+            let const_name = module.make_ns_const()?;
             let const_name = const_name.path.ident();
             let ns_literal = Literal::byte_string(&ns.0);
 

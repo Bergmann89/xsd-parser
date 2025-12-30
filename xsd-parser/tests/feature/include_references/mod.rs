@@ -3,7 +3,7 @@ use xsd_parser::{Config, IdentType};
 use crate::utils::{generate_test, ConfigEx};
 
 fn config() -> Config {
-    Config::test_default().with_generate([(IdentType::Type, None, "myComplexType")])
+    Config::test_default().with_generate([(IdentType::Type, "myComplexType")])
 }
 
 /* default */

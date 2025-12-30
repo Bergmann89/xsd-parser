@@ -2,7 +2,8 @@ use xsd_parser_types::misc::Namespace;
 
 use crate::models::{
     meta::{CustomMeta, MetaTypeVariant},
-    Ident,
+    schema::{NamespaceId, SchemaId},
+    IdentType, Name, TypeIdent,
 };
 
 use super::Optimizer;
@@ -17,7 +18,7 @@ impl Optimizer {
 
     /// Normally the `xs:anyType` is a complex type accepting any number of
     /// attributes, elements and intermixed text. Dealing with this complex
-    /// type is sometimes unneeded and can nbe represented by a simpler custom
+    /// type is sometimes unneeded and can be represented by a simpler custom
     /// defined type.
     ///
     /// This needs to be done in the optimizer (after the interpreter) because
@@ -45,10 +46,21 @@ impl Optimizer {
     where
         X: Into<String>,
     {
-        let ns = self.types.modules.values().find_map(|meta| {
-            matches!(&meta.namespace, Some(ns) if *ns == Namespace::XS).then_some(meta.namespace_id)
-        });
-        let ident = Ident::type_("anyType").with_ns(ns);
+        let ns = self
+            .types
+            .modules
+            .values()
+            .find_map(|meta| {
+                matches!(&meta.namespace, Some(ns) if *ns == Namespace::XS)
+                    .then_some(meta.namespace_id)
+            })
+            .unwrap_or(NamespaceId::UNKNOWN);
+        let ident = TypeIdent {
+            ns,
+            schema: SchemaId::UNKNOWN,
+            name: Name::ANY_TYPE,
+            type_: IdentType::Type,
+        };
 
         if let Some(ty) = self.types.items.get_mut(&ident) {
             ty.variant = MetaTypeVariant::Custom(

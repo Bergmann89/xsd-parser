@@ -1,4 +1,4 @@
-#![allow(dead_code, missing_docs)]
+#![allow(dead_code, deprecated, missing_docs)]
 
 mod feature;
 mod generator;

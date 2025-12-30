@@ -9,7 +9,7 @@ use quote::format_ident;
 use crate::models::{
     meta::{MetaType, MetaTypeVariant, MetaTypes},
     schema::{MaxOccurs, NamespaceId},
-    Ident, Name,
+    Name, TypeIdent,
 };
 
 /// This trait defined how names are generated and formatted in `xsd-parser`.
@@ -149,7 +149,7 @@ pub trait Naming: Debug {
 
     /// Generate a name for the passed type `ty` identified by `ident` respecting the
     /// configured type postfixes.
-    fn make_type_name(&self, postfixes: &[String], ty: &MetaType, ident: &Ident) -> Name {
+    fn make_type_name(&self, postfixes: &[String], ty: &MetaType, ident: &TypeIdent) -> Name {
         if let MetaTypeVariant::Reference(ti) = &ty.variant {
             if ident.name.is_generated() && ti.type_.name.is_named() {
                 let s = self.format_type_name(ti.type_.name.as_str());

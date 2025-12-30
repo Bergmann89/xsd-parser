@@ -1,4 +1,4 @@
-use crate::models::{meta::MetaTypeVariant, schema::MaxOccurs, Ident};
+use crate::models::{meta::MetaTypeVariant, schema::MaxOccurs, TypeIdent};
 
 use super::{Error, Optimizer};
 
@@ -27,7 +27,7 @@ impl Optimizer {
     /// ```rust
     #[doc = include_str!("../../../tests/optimizer/expected1/merge_choice_cardinalities.rs")]
     /// ```
-    pub fn merge_choice_cardinality(mut self, ident: Ident) -> Result<Self, Error> {
+    pub fn merge_choice_cardinality(mut self, ident: TypeIdent) -> Result<Self, Error> {
         tracing::debug!("merge_choice_cardinality(ident={ident:?})");
 
         let Some(ty) = self.types.get_variant(&ident) else {

@@ -5,7 +5,7 @@ use crate::models::{
     meta::{
         AttributeMetaVariant, ElementMetaVariant, ElementMode, MetaType, MetaTypeVariant, MetaTypes,
     },
-    Ident,
+    TypeIdent,
 };
 
 /// Pretty-printer for [`MetaTypes`] content.
@@ -24,7 +24,7 @@ pub struct MetaTypesPrinter<'a> {
 #[derive(Default)]
 struct State {
     level: usize,
-    visit: HashSet<Ident>,
+    visit: HashSet<TypeIdent>,
 }
 
 impl<'a> MetaTypesPrinter<'a> {
@@ -55,7 +55,7 @@ impl<'a> MetaTypesPrinter<'a> {
     /// # Errors
     ///
     /// Forwards the error raised by the formatter.
-    pub fn print_type(&self, ident: &Ident, f: &mut Formatter<'_>) -> FmtResult {
+    pub fn print_type(&self, ident: &TypeIdent, f: &mut Formatter<'_>) -> FmtResult {
         let mut s = State::default();
 
         if let Some(ty) = self.types.items.get(ident) {
@@ -69,7 +69,7 @@ impl<'a> MetaTypesPrinter<'a> {
         &self,
         f: &mut Formatter<'_>,
         s: &mut State,
-        ident: &Ident,
+        ident: &TypeIdent,
     ) -> FmtResult {
         if let Some(x) = self.types.items.get(ident) {
             self.print_type_impl(f, s, ident, x)
@@ -85,7 +85,7 @@ impl<'a> MetaTypesPrinter<'a> {
         &self,
         f: &mut Formatter<'_>,
         s: &mut State,
-        ident: &Ident,
+        ident: &TypeIdent,
         ty: &MetaType,
     ) -> FmtResult {
         macro_rules! indent {
@@ -215,7 +215,7 @@ impl<'a> MetaTypesPrinter<'a> {
                 s.level += 1;
 
                 for var in &*x.variants {
-                    indentln!("{}={:?}", var.ident.name, var.use_);
+                    indentln!("{}={:?}", var.ident, var.use_);
                 }
 
                 s.level -= 2;
@@ -238,7 +238,7 @@ impl<'a> MetaTypesPrinter<'a> {
 
                     s.level += 1;
 
-                    indentln!("name={}", x.ident.name);
+                    indentln!("ident={}", x.ident);
                     indentln!("form={:?}", x.form);
                     indentln!("nillable={:?}", x.nillable);
                     indentln!("min_occurs={}", x.min_occurs);
@@ -307,7 +307,7 @@ impl<'a> MetaTypesPrinter<'a> {
 
                     s.level += 1;
 
-                    indentln!("name={}", x.ident.name);
+                    indentln!("ident={}", x.ident);
                     indentln!("use={:?}", x.use_);
                     indentln!("form={:?}", x.form);
                     indentln!("default={:?}", x.default);

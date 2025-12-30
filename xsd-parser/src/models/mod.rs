@@ -10,9 +10,14 @@ pub mod meta;
 pub mod schema;
 
 mod ident;
+mod ident_cache;
 mod name;
 mod naming;
 
-pub use self::ident::{Ident, IdentType};
+pub use self::ident::{
+    AttributeIdent, ElementIdent, EnumerationIdent, IdentType, NodeIdent, NodeIdentType,
+    PropertyIdent, TypeIdent, TypeIdentType,
+};
+pub use self::ident_cache::IdentCache;
 pub use self::name::Name;
 pub use self::naming::{NameBuilder, Naming};
