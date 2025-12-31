@@ -1,4 +1,5 @@
 #![recursion_limit = "256"]
+#![allow(clippy::doc_markdown)]
 #![doc = include_str!(concat!(env!("OUT_DIR"), "/README.md"))]
 
 pub mod config;
