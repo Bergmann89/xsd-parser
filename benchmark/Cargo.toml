@@ -1,0 +1,31 @@
+[package]
+name = "benchmark"
+publish = false
+license.workspace = true
+edition.workspace = true
+authors.workspace = true
+keywords.workspace = true
+repository.workspace = true
+homepage.workspace = true
+
+[dependencies]
+anyhow = { workspace = true }
+bytesize = { workspace = true }
+clap = { workspace = true, features = [ "derive" ] }
+comfy-table = { workspace = true, features = [ "tty" ] }
+libc = { workspace = true }
+quick-xml = { workspace = true, features = [ "serde", "serialize" ] }
+serde = { workspace = true, features = [ "derive" ] }
+serde-xml-rs = { workspace = true }
+serde-xml-rs-v7 = { workspace = true }
+sysinfo = { workspace = true }
+
+xsd-parser-types = { workspace = true, features = [ "quick-xml" ] }
+
+[build-dependencies]
+anyhow = { workspace = true}
+
+xsd-parser = { workspace = true }
+
+[lints]
+workspace = true

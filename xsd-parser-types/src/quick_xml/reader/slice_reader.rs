@@ -17,6 +17,14 @@ impl<'a> SliceReader<'a> {
 
         Self { inner }
     }
+
+    /// Creates a new [`SliceReader`] instance from the passed `bytes` slice.
+    #[must_use]
+    pub fn from_bytes(bytes: &'a [u8]) -> Self {
+        let inner = NsReader::from_reader(bytes);
+
+        Self { inner }
+    }
 }
 
 impl XmlReader for SliceReader<'_> {
