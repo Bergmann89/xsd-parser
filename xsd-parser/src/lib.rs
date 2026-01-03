@@ -33,7 +33,7 @@ pub use self::models::{
     data::DataTypes,
     meta::MetaTypes,
     schema::Schemas,
-    Ident, IdentType, Name,
+    IdentCache, IdentType, Name, TypeIdent,
 };
 pub use self::pipeline::{
     generator::Generator,
@@ -59,7 +59,7 @@ use self::config::{
     Generate, GeneratorConfig, InterpreterConfig, InterpreterFlags, OptimizerConfig,
     OptimizerFlags, ParserConfig, ParserFlags, RendererConfig, Resolver, Schema,
 };
-use self::macros::{assert, assert_eq, unreachable};
+use self::macros::{assert, unreachable};
 use self::pipeline::{
     optimizer::UnrestrictedBaseFlags,
     parser::resolver::{FileResolver, ManyResolver},
@@ -100,9 +100,15 @@ pub fn generate(config: Config) -> Result<TokenStream, Error> {
 #[instrument(err, level = "trace")]
 pub fn generate_modules(config: Config) -> Result<Module, Error> {
     let schemas = exec_parser(config.parser)?;
-    let meta_types = exec_interpreter(config.interpreter, &schemas)?;
+    let (meta_types, ident_cache) =
+        exec_interpreter_with_ident_cache(config.interpreter, &schemas)?;
     let meta_types = exec_optimizer(config.optimizer, meta_types)?;
-    let data_types = exec_generator(config.generator, &schemas, &meta_types)?;
+    let data_types = exec_generator_with_ident_cache(
+        config.generator,
+        &schemas,
+        Some(&ident_cache),
+        &meta_types,
+    )?;
     let module = exec_render(config.renderer, &data_types)?;
 
     Ok(module)
@@ -177,6 +183,22 @@ pub fn exec_parser(config: ParserConfig) -> Result<Schemas, Error> {
 /// Returns a suitable [`Error`] type if the process was not successful.
 #[instrument(err, level = "trace", skip(schemas))]
 pub fn exec_interpreter(config: InterpreterConfig, schemas: &Schemas) -> Result<MetaTypes, Error> {
+    exec_interpreter_with_ident_cache(config, schemas).map(|(types, _)| types)
+}
+
+/// Executes the [`Interpreter`] with the passed `config` and `schema`.
+///
+/// Returns the interpreted [`MetaTypes`] structure, as well as the [`IdentCache`]
+/// that can be used to lookup [`TypeIdent`]ifiers.
+///
+/// # Errors
+///
+/// Returns a suitable [`Error`] type if the process was not successful.
+#[instrument(err, level = "trace", skip(schemas))]
+pub fn exec_interpreter_with_ident_cache(
+    config: InterpreterConfig,
+    schemas: &Schemas,
+) -> Result<(MetaTypes, IdentCache), Error> {
     tracing::info!("Interpret Schema");
 
     let mut interpreter = Interpreter::new(schemas);
@@ -210,7 +232,7 @@ pub fn exec_interpreter(config: InterpreterConfig, schemas: &Schemas) -> Result<
         interpreter = interpreter.with_type(ident, ty)?;
     }
 
-    let types = interpreter.finish()?;
+    let (types, ident_cache) = interpreter.finish()?;
 
     if let Some(output) = config.debug_output {
         let printer = MetaTypesPrinter::new(&types);
@@ -219,7 +241,7 @@ pub fn exec_interpreter(config: InterpreterConfig, schemas: &Schemas) -> Result<
         write(output, debug)?;
     }
 
-    Ok(types)
+    Ok((types, ident_cache))
 }
 
 /// Executes the [`Optimizer`] with the passed `config` and `types`.
@@ -304,6 +326,26 @@ pub fn exec_generator<'types>(
     schemas: &Schemas,
     types: &'types MetaTypes,
 ) -> Result<DataTypes<'types>, Error> {
+    exec_generator_with_ident_cache(config, schemas, None, types)
+}
+
+/// Executes the [`Generator`] with the passed `config`, `schema`, `ident_cache`
+/// and `types` to generate a [`DataTypes`] for further processing.
+///
+/// The [`IdentCache`] is needed to resolve [`TypeIdent`]ifiers that should be
+/// rendered. If it is not passed, resolving the types by only using the [`Schemas`]
+/// structure may fail.
+///
+/// # Errors
+///
+/// Returns a suitable [`Error`] type if the process was not successful.
+#[instrument(err, level = "trace", skip(schemas, types))]
+pub fn exec_generator_with_ident_cache<'types>(
+    config: GeneratorConfig,
+    schemas: &Schemas,
+    ident_cache: Option<&IdentCache>,
+    types: &'types MetaTypes,
+) -> Result<DataTypes<'types>, Error> {
     tracing::info!("Generate Module");
 
     let mut generator = Generator::new(types)
@@ -341,7 +383,10 @@ pub fn exec_generator<'types>(
     );
 
     for triple in config.types {
-        let ident = triple.resolve(schemas)?;
+        let mut ident = triple.resolve(schemas)?;
+        if let Some(ident_cache) = &ident_cache {
+            ident = ident_cache.resolve(ident)?;
+        }
 
         generator = generator.with_type(ident)?;
     }

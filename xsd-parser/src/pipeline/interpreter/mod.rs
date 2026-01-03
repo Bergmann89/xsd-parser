@@ -40,11 +40,10 @@ use xsd_parser_types::misc::Namespace;
 use crate::models::{
     meta::{
         AnyAttributeMeta, AnyMeta, AttributeMeta, BuildInMeta, ComplexMeta, CustomMeta,
-        ElementMeta, GroupMeta, MetaType, MetaTypeVariant, MetaTypes, ModuleMeta, ReferenceMeta,
-        SchemaMeta,
+        ElementMeta, GroupMeta, MetaType, MetaTypeVariant, MetaTypes, ReferenceMeta,
     },
     schema::{xs::ProcessContentsType, MaxOccurs, Schemas},
-    Ident, IdentType, Name,
+    AttributeIdent, ElementIdent, IdentCache, Name, TypeIdent,
 };
 use crate::traits::{NameBuilderExt as _, Naming};
 
@@ -73,7 +72,7 @@ pub struct Interpreter<'a> {
 impl<'a> Interpreter<'a> {
     /// Create a new [`Interpreter`] instance using the passed `schemas` reference.
     pub fn new(schemas: &'a Schemas) -> Self {
-        let state = State::default();
+        let state = State::new(schemas);
 
         Self { state, schemas }
     }
@@ -87,10 +86,10 @@ impl<'a> Interpreter<'a> {
     #[instrument(err, level = "trace", skip(self))]
     pub fn with_type<I, T>(mut self, ident: I, type_: T) -> Result<Self, Error>
     where
-        I: Into<Ident> + Debug,
+        I: Into<TypeIdent> + Debug,
         T: Into<MetaType> + Debug,
     {
-        self.state.add_type(ident, type_, true)?;
+        self.state.add_type(ident, type_, true, true)?;
 
         Ok(self)
     }
@@ -105,11 +104,11 @@ impl<'a> Interpreter<'a> {
     #[instrument(err, level = "trace", skip(self))]
     pub fn with_typedef<I, T>(mut self, ident: I, type_: T) -> Result<Self, Error>
     where
-        I: Into<Ident> + Debug,
-        T: Into<Ident> + Debug,
+        I: Into<TypeIdent> + Debug,
+        T: Into<TypeIdent> + Debug,
     {
         self.state
-            .add_type(ident, ReferenceMeta::new(type_), true)?;
+            .add_type(ident, ReferenceMeta::new(type_), true, true)?;
 
         Ok(self)
     }
@@ -124,7 +123,7 @@ impl<'a> Interpreter<'a> {
         macro_rules! add {
             ($ident:ident, $type:ident) => {
                 self.state
-                    .add_type(Ident::$ident, BuildInMeta::$type, true)?;
+                    .add_type(TypeIdent::$ident, BuildInMeta::$type, true, true)?;
             };
         }
 
@@ -165,91 +164,93 @@ impl<'a> Interpreter<'a> {
             .ok_or_else(|| Error::UnknownNamespace(Namespace::XS.clone()))?;
 
         macro_rules! add {
-            ($ns:ident, $src:expr, $dst:ident) => {
+            ($src:expr, $dst:ident) => {{
                 self.state.add_type(
-                    Ident::type_($src).with_ns(Some($ns)),
-                    ReferenceMeta::new(Ident::$dst),
+                    TypeIdent::type_($src).with_ns(xs),
+                    ReferenceMeta::new(TypeIdent::$dst),
+                    true,
                     true,
                 )?;
-            };
+            }};
         }
         macro_rules! add_list {
-            ($ns:ident, $src:expr, $dst:ident) => {
+            ($src:expr, $dst:ident) => {{
                 self.state.add_type(
-                    Ident::type_($src).with_ns(Some($ns)),
-                    ReferenceMeta::new(Ident::$dst)
+                    TypeIdent::type_($src).with_ns(xs),
+                    ReferenceMeta::new(TypeIdent::$dst)
                         .min_occurs(0)
                         .max_occurs(MaxOccurs::Unbounded),
                     true,
+                    true,
                 )?;
-            };
+            }};
         }
 
         /* Primitive Types */
 
-        add!(xs, "string", STRING);
-        add!(xs, "boolean", BOOL);
-        add!(xs, "decimal", F64);
-        add!(xs, "float", F32);
-        add!(xs, "double", F64);
+        add!("string", STRING);
+        add!("boolean", BOOL);
+        add!("decimal", F64);
+        add!("float", F32);
+        add!("double", F64);
 
         /* time related types */
 
-        add!(xs, "duration", STRING);
-        add!(xs, "dateTime", STRING);
-        add!(xs, "time", STRING);
-        add!(xs, "date", STRING);
-        add!(xs, "gYearMonth", STRING);
-        add!(xs, "gYear", STRING);
-        add!(xs, "gMonthDay", STRING);
-        add!(xs, "gMonth", STRING);
-        add!(xs, "gDay", STRING);
+        add!("duration", STRING);
+        add!("dateTime", STRING);
+        add!("time", STRING);
+        add!("date", STRING);
+        add!("gYearMonth", STRING);
+        add!("gYear", STRING);
+        add!("gMonthDay", STRING);
+        add!("gMonth", STRING);
+        add!("gDay", STRING);
 
         /* Data related types */
 
-        add!(xs, "hexBinary", STRING);
-        add!(xs, "base64Binary", STRING);
+        add!("hexBinary", STRING);
+        add!("base64Binary", STRING);
 
         /* URL related types */
 
-        add!(xs, "anyURI", STRING);
-        add!(xs, "QName", STRING);
-        add!(xs, "NOTATION", STRING);
+        add!("anyURI", STRING);
+        add!("QName", STRING);
+        add!("NOTATION", STRING);
 
         /* Numeric Types */
 
-        add!(xs, "long", I64);
-        add!(xs, "int", I32);
-        add!(xs, "integer", I32);
-        add!(xs, "short", I16);
-        add!(xs, "byte", I8);
-        add!(xs, "negativeInteger", ISIZE);
-        add!(xs, "nonPositiveInteger", ISIZE);
+        add!("long", I64);
+        add!("int", I32);
+        add!("integer", I32);
+        add!("short", I16);
+        add!("byte", I8);
+        add!("negativeInteger", ISIZE);
+        add!("nonPositiveInteger", ISIZE);
 
-        add!(xs, "unsignedLong", U64);
-        add!(xs, "unsignedInt", U32);
-        add!(xs, "unsignedShort", U16);
-        add!(xs, "unsignedByte", U8);
-        add!(xs, "positiveInteger", USIZE);
-        add!(xs, "nonNegativeInteger", USIZE);
+        add!("unsignedLong", U64);
+        add!("unsignedInt", U32);
+        add!("unsignedShort", U16);
+        add!("unsignedByte", U8);
+        add!("positiveInteger", USIZE);
+        add!("nonNegativeInteger", USIZE);
 
         /* String Types */
 
-        add!(xs, "normalizedString", STRING);
-        add!(xs, "token", STRING);
-        add!(xs, "language", STRING);
-        add!(xs, "NMTOKEN", STRING);
-        add!(xs, "Name", STRING);
-        add!(xs, "NCName", STRING);
-        add!(xs, "ID", STRING);
-        add!(xs, "IDREF", STRING);
+        add!("normalizedString", STRING);
+        add!("token", STRING);
+        add!("language", STRING);
+        add!("NMTOKEN", STRING);
+        add!("Name", STRING);
+        add!("NCName", STRING);
+        add!("ID", STRING);
+        add!("IDREF", STRING);
 
-        add!(xs, "anySimpleType", STRING);
+        add!("anySimpleType", STRING);
 
-        add_list!(xs, "NMTOKENS", STRING);
-        add_list!(xs, "IDREFS", STRING);
-        add_list!(xs, "ENTITY", STRING);
-        add_list!(xs, "ENTITIES", STRING);
+        add_list!("NMTOKENS", STRING);
+        add_list!("IDREFS", STRING);
+        add_list!("ENTITY", STRING);
+        add_list!("ENTITIES", STRING);
 
         Ok(self)
     }
@@ -268,8 +269,7 @@ impl<'a> Interpreter<'a> {
 
         /* content type */
 
-        let any_name = Name::named("any");
-        let any_ident = Ident::new(any_name).with_type(IdentType::Element);
+        let any_ident = ElementIdent::new(Name::ANY);
         let mut any = ElementMeta::any(
             any_ident,
             AnyMeta {
@@ -290,19 +290,17 @@ impl<'a> Interpreter<'a> {
         content_sequence.elements.push(any);
 
         let content_name = self.state.name_builder().shared_name("Content").finish();
-        let content_ident = Ident::new(content_name).with_ns(Some(xs));
+        let content_ident = TypeIdent::new(content_name).with_ns(xs);
         let content_variant = MetaTypeVariant::Sequence(content_sequence);
         let content_type = MetaType::new(content_variant);
 
         self.state
-            .add_type(content_ident.clone(), content_type, true)?;
+            .add_type(content_ident.clone(), content_type, true, false)?;
 
         /* xs:anyType */
 
-        let ident = Ident::type_("anyType").with_ns(Some(xs));
-
-        let any_attribute_name = Name::named("any_attribute");
-        let any_attribute_ident = Ident::new(any_attribute_name).with_type(IdentType::Attribute);
+        let ident = TypeIdent::new(Name::ANY_TYPE).with_ns(xs);
+        let any_attribute_ident = AttributeIdent::new(Name::ANY_ATTRIBUTE);
         let any_attribute = AttributeMeta::any(
             any_attribute_ident,
             AnyAttributeMeta {
@@ -326,7 +324,7 @@ impl<'a> Interpreter<'a> {
         let variant = MetaTypeVariant::ComplexType(complex);
         let type_ = MetaType::new(variant);
 
-        self.state.add_type(ident, type_, true)?;
+        self.state.add_type(ident, type_, true, true)?;
 
         Ok(self)
     }
@@ -344,10 +342,11 @@ impl<'a> Interpreter<'a> {
             .ok_or_else(|| Error::UnknownNamespace(Namespace::XS.clone()))?;
 
         macro_rules! add {
-            ($ns:ident, $src:expr, $dst:literal) => {{
+            ($src:expr, $dst:literal) => {{
                 self.state.add_type(
-                    Ident::type_($src).with_ns(Some($ns)),
-                    ReferenceMeta::new(Ident::type_($dst)),
+                    TypeIdent::type_($src).with_ns(xs),
+                    ReferenceMeta::new(TypeIdent::type_($dst)),
+                    true,
                     true,
                 )?;
             }};
@@ -373,15 +372,16 @@ impl<'a> Interpreter<'a> {
                 Some(code)
             });
 
-        self.state.add_type(Ident::type_("BigInt"), big_int, true)?;
         self.state
-            .add_type(Ident::type_("BigUint"), big_uint, true)?;
+            .add_type(TypeIdent::type_("BigInt"), big_int, true, false)?;
+        self.state
+            .add_type(TypeIdent::type_("BigUint"), big_uint, true, false)?;
 
-        add!(xs, "integer", "BigInt");
-        add!(xs, "positiveInteger", "BigUint");
-        add!(xs, "nonNegativeInteger", "BigUint");
-        add!(xs, "negativeInteger", "BigInt");
-        add!(xs, "nonPositiveInteger", "BigInt");
+        add!("integer", "BigInt");
+        add!("positiveInteger", "BigUint");
+        add!("nonNegativeInteger", "BigUint");
+        add!("negativeInteger", "BigInt");
+        add!("nonPositiveInteger", "BigInt");
 
         Ok(self)
     }
@@ -400,10 +400,11 @@ impl<'a> Interpreter<'a> {
             .ok_or_else(|| Error::UnknownNamespace(Namespace::XS.clone()))?;
 
         macro_rules! add {
-            ($ns:ident, $src:expr, $dst:literal) => {{
+            ($src:expr, $dst:literal) => {{
                 self.state.add_type(
-                    Ident::type_($src).with_ns(Some($ns)),
-                    ReferenceMeta::new(Ident::type_($dst)),
+                    TypeIdent::type_($src).with_ns(xs),
+                    ReferenceMeta::new(TypeIdent::type_($dst)),
+                    true,
                     true,
                 )?;
             }};
@@ -430,12 +431,12 @@ impl<'a> Interpreter<'a> {
             });
 
         self.state
-            .add_type(Ident::type_("NonZeroUsize"), non_zero_usize, true)?;
+            .add_type(TypeIdent::type_("NonZeroUsize"), non_zero_usize, true, true)?;
         self.state
-            .add_type(Ident::type_("NonZeroIsize"), non_zero_isize, true)?;
+            .add_type(TypeIdent::type_("NonZeroIsize"), non_zero_isize, true, true)?;
 
-        add!(xs, "positiveInteger", "NonZeroUsize");
-        add!(xs, "negativeInteger", "NonZeroIsize");
+        add!("positiveInteger", "NonZeroUsize");
+        add!("negativeInteger", "NonZeroIsize");
 
         Ok(self)
     }
@@ -459,7 +460,7 @@ impl<'a> Interpreter<'a> {
     /// use [`with_naming`](Self::with_naming) instead.
     #[instrument(level = "trace", skip(self))]
     pub fn with_naming_boxed(mut self, naming: Box<dyn Naming>) -> Self {
-        self.state.types.naming = naming;
+        self.state.set_naming(naming);
 
         self
     }
@@ -471,47 +472,13 @@ impl<'a> Interpreter<'a> {
     ///
     /// Returns a suitable [`Error`] if the operation was not successful.
     #[instrument(err, level = "trace", skip(self))]
-    pub fn finish(mut self) -> Result<MetaTypes, Error> {
-        for (id, info) in self.schemas.namespaces() {
-            let prefix = info
-                .prefix
-                .as_ref()
-                .map(ToString::to_string)
-                .map(Name::new_named);
-            let name = info.name().map(Name::new_named);
-            let namespace = info.namespace.clone();
-            let schema_count = info.schemas.len();
+    pub fn finish(self) -> Result<(MetaTypes, IdentCache), Error> {
+        let Self { schemas, state } = self;
 
-            let module = ModuleMeta {
-                name,
-                prefix,
-                namespace,
-                namespace_id: *id,
-                schema_count,
-            };
+        let (mut types, ident_cache) = state.finish(schemas)?;
 
-            self.state.types.modules.insert(*id, module);
-        }
+        post_process::fix_element_naming_conflicts(self.schemas, &mut types);
 
-        for (id, info) in self.schemas.schemas() {
-            let schema = SchemaMeta {
-                name: info.name.clone().map(Name::new_named),
-                namespace: info.namespace_id(),
-            };
-
-            self.state.types.schemas.insert(*id, schema);
-
-            SchemaInterpreter::process(
-                &mut self.state,
-                &info.schema,
-                self.schemas,
-                *id,
-                info.namespace_id(),
-            )?;
-        }
-
-        post_process::fix_element_naming_conflicts(self.schemas, &mut self.state.types);
-
-        Ok(self.state.types)
+        Ok((types, ident_cache))
     }
 }

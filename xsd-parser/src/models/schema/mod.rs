@@ -42,8 +42,8 @@ pub struct Schemas {
     pub(crate) known_prefixes: NamespacePrefixes,
     pub(crate) known_namespaces: Namespaces,
 
-    pub(crate) next_schema_id: usize,
-    pub(crate) next_namespace_id: usize,
+    pub(crate) last_schema_id: usize,
+    pub(crate) last_namespace_id: usize,
 }
 
 /// Contains the information for a specific namespace.
@@ -207,5 +207,31 @@ impl SchemaInfo {
     #[must_use]
     pub fn namespace_id(&self) -> NamespaceId {
         self.namespace_id
+    }
+}
+
+/* SchemaId */
+
+impl SchemaId {
+    /// Represents the unknown [`SchemaId`]
+    pub const UNKNOWN: Self = Self(0);
+
+    /// Returns `true` if this schema id is unknown, `false` otherwise.
+    #[must_use]
+    pub fn is_unknown(&self) -> bool {
+        self.0 == 0
+    }
+}
+
+/* NamespaceId */
+
+impl NamespaceId {
+    /// Represents the unknown [`NamespaceId`]
+    pub const UNKNOWN: Self = Self(0);
+
+    /// Returns `true` if this namespace id is unknown, `false` otherwise.
+    #[must_use]
+    pub fn is_unknown(&self) -> bool {
+        self.0 == 0
     }
 }

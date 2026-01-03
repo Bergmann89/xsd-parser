@@ -10,7 +10,7 @@ use crate::models::{
         },
         MaxOccurs, MinOccurs,
     },
-    Ident,
+    ElementIdent, TypeIdent,
 };
 
 use super::{MetaTypes, TypeEq};
@@ -19,7 +19,7 @@ use super::{MetaTypes, TypeEq};
 #[derive(Debug, Clone)]
 pub struct ElementMeta {
     /// Identifier of the element.
-    pub ident: Ident,
+    pub ident: ElementIdent,
 
     /// Type of the element.
     pub variant: ElementMetaVariant,
@@ -60,7 +60,7 @@ pub enum ElementMetaVariant {
     /// The element has a specific type.
     Type {
         /// Identifier for the type of the element
-        type_: Ident,
+        type_: TypeIdent,
 
         /// Mode if the element
         mode: ElementMode,
@@ -99,7 +99,12 @@ impl ElementMeta {
     /// Create a new [`ElementMeta`] instance from the passed `name`, `type_`
     /// and `element_mode`.
     #[must_use]
-    pub fn new(ident: Ident, type_: Ident, mode: ElementMode, form: FormChoiceType) -> Self {
+    pub fn new(
+        ident: ElementIdent,
+        type_: TypeIdent,
+        mode: ElementMode,
+        form: FormChoiceType,
+    ) -> Self {
         Self {
             ident,
             variant: ElementMetaVariant::Type { type_, mode },
@@ -114,7 +119,7 @@ impl ElementMeta {
 
     /// Create a new [`ElementMeta`] instance for an `xs:any` element.
     #[must_use]
-    pub fn any(ident: Ident, meta: AnyMeta) -> Self {
+    pub fn any(ident: ElementIdent, meta: AnyMeta) -> Self {
         Self {
             ident,
             variant: ElementMetaVariant::Any { meta },
@@ -129,7 +134,7 @@ impl ElementMeta {
 
     /// Create a new [`ElementMeta`] instance for a text.
     #[must_use]
-    pub fn text(ident: Ident) -> Self {
+    pub fn text(ident: ElementIdent) -> Self {
         Self {
             ident,
             variant: ElementMetaVariant::Text,

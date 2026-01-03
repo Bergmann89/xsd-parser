@@ -1,0 +1,5 @@
+<Outer xmlns="Test">
+    <Inner>
+        <B>b</B>
+    </Inner>
+</Outer>

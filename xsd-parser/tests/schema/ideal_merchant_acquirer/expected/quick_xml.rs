@@ -4,7 +4,7 @@ use xsd_parser_types::{
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
-pub const NS_UNNAMED_2: Namespace =
+pub const NS_UNNAMED_4: Namespace =
     Namespace::new_const(b"http://www.idealdesk.com/ideal/messages/mer-acq/3.3.1");
 pub const NS_DS: Namespace = Namespace::new_const(b"http://www.w3.org/2000/09/xmldsig#");
 pub const PREFIX_XS: NamespacePrefix = NamespacePrefix::new_const(b"xs");
@@ -819,7 +819,7 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_4),
                     Some(b"version")
                 ) {
                     helper.read_attrib(&mut version, b"version", &attrib.value)?;
@@ -1068,7 +1068,7 @@ pub mod quick_xml_deserialize {
                     (S::CreateDateTimestamp(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"createDateTimestamp",
                             false,
                         )?;
@@ -1085,7 +1085,7 @@ pub mod quick_xml_deserialize {
                     (S::Merchant(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"Merchant",
                             false,
                         )?;
@@ -1354,7 +1354,7 @@ pub mod quick_xml_deserialize {
                     (S::MerchantId(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"merchantID",
                             false,
                         )?;
@@ -1371,7 +1371,7 @@ pub mod quick_xml_deserialize {
                     (S::SubId(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"subID",
                             false,
                         )?;
@@ -9141,7 +9141,7 @@ pub mod quick_xml_serialize {
                         );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_4);
                         if self.is_root {
                             helper.write_xmlns(&mut bytes, Some(&super::PREFIX_DS), &super::NS_DS);
                         }
@@ -9238,7 +9238,7 @@ pub mod quick_xml_serialize {
                         );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_4);
                         return Ok(Some(Event::Start(bytes)));
                     }
                     DirectoryReqMerchantTypeSerializerState::MerchantId(x) => {

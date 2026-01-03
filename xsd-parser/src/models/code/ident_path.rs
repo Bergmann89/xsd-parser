@@ -10,7 +10,7 @@ use thiserror::Error;
 use crate::models::{
     meta::MetaTypes,
     schema::{NamespaceId, SchemaId},
-    Ident,
+    TypeIdent,
 };
 
 /// Represents an identifier path.
@@ -327,19 +327,18 @@ impl DerefMut for ModulePath {
 impl ModuleIdent {
     pub(crate) fn new(
         types: &MetaTypes,
-        ident: &Ident,
+        ident: &TypeIdent,
         with_namespace: bool,
         with_schema: bool,
     ) -> Self {
-        let schema_count = ident
-            .ns
-            .as_ref()
-            .and_then(|ns| types.modules.get(ns))
+        let schema_count = types
+            .modules
+            .get(&ident.ns)
             .map(|m| m.schema_count)
             .unwrap_or_default();
         let with_schema = with_schema && schema_count > 1;
 
-        let namespace = with_namespace.then_some(ident.ns).flatten();
+        let namespace = with_namespace.then_some(ident.ns);
         let schema = with_schema
             .then(|| types.items.get(ident))
             .flatten()

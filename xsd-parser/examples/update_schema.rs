@@ -17,7 +17,8 @@ use tracing_subscriber::{fmt, EnvFilter};
 
 use xsd_parser::config::GeneratorFlags;
 use xsd_parser::config::{
-    Config, Generate, IdentTriple, InterpreterFlags, OptimizerFlags, ParserFlags, Resolver, Schema,
+    Config, Generate, IdentQuadruple, InterpreterFlags, OptimizerFlags, ParserFlags, Resolver,
+    Schema,
 };
 use xsd_parser::models::meta::{CustomMeta, MetaType};
 use xsd_parser::{generate, IdentType};
@@ -73,7 +74,7 @@ fn main() -> Result<(), Error> {
     config.interpreter.flags = InterpreterFlags::all() - InterpreterFlags::WITH_NUM_BIG_INT;
     config.interpreter.types = vec![
         (
-            IdentTriple::from((IdentType::Type, "xs:allNNI")),
+            IdentQuadruple::from((IdentType::Type, "xs:allNNI")),
             MetaType::from(
                 CustomMeta::new("MaxOccurs")
                     .include_from("crate::models::schema::MaxOccurs")
@@ -81,17 +82,17 @@ fn main() -> Result<(), Error> {
             ),
         ),
         (
-            IdentTriple::from((IdentType::Type, "xs:QName")),
+            IdentQuadruple::from((IdentType::Type, "xs:QName")),
             MetaType::from(CustomMeta::new("QName").include_from("crate::models::schema::QName")),
         ),
         (
-            IdentTriple::from((IdentType::Element, "xs:appinfo")),
+            IdentQuadruple::from((IdentType::Element, "xs:appinfo")),
             MetaType::from(
                 CustomMeta::new("AnyElement").include_from("xsd_parser_types::xml::AnyElement"),
             ),
         ),
         (
-            IdentTriple::from((IdentType::Element, "xs:documentation")),
+            IdentQuadruple::from((IdentType::Element, "xs:documentation")),
             MetaType::from(
                 CustomMeta::new("AnyElement").include_from("xsd_parser_types::xml::AnyElement"),
             ),
@@ -120,7 +121,7 @@ fn main() -> Result<(), Error> {
         - GeneratorFlags::ABSOLUTE_PATHS_INSTEAD_USINGS;
     config.generator.type_postfix.element = String::default();
     config.generator.type_postfix.element_type = String::default();
-    config.generator.generate = Generate::Types(vec![IdentTriple::from((
+    config.generator.generate = Generate::Types(vec![IdentQuadruple::from((
         IdentType::ElementType,
         "xs:schema",
     ))]);

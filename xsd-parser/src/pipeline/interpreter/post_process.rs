@@ -33,11 +33,8 @@ fn fix_group_naming_conflicts(schemas: &Schemas, meta: &mut GroupMeta) {
 }
 
 fn set_display_name(schemas: &Schemas, el: &mut ElementMeta) {
-    let prefix = el
-        .ident
-        .ns
-        .as_ref()
-        .and_then(|ns| schemas.get_namespace_info(ns))
+    let prefix = schemas
+        .get_namespace_info(&el.ident.ns)
         .and_then(NamespaceInfo::name);
     if let Some(prefix) = prefix {
         let name = el.ident.name.as_str();

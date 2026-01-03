@@ -1,6 +1,6 @@
 use crate::models::{
     meta::{EnumerationMeta, EnumerationMetaVariant, MetaTypeVariant, UnionMeta, UnionMetaType},
-    Ident,
+    TypeIdent,
 };
 use crate::traits::VecHelper;
 
@@ -33,7 +33,7 @@ impl Optimizer {
     /// ```rust
     #[doc = include_str!("../../../tests/optimizer/expected1/merge_enum_unions.rs")]
     /// ```
-    pub fn merge_enum_union(mut self, ident: Ident) -> Result<Self, Error> {
+    pub fn merge_enum_union(mut self, ident: TypeIdent) -> Result<Self, Error> {
         tracing::debug!("merge_enum_union(ident={ident:?})");
 
         let Some(variant) = self.types.get_variant(&ident) else {
@@ -85,7 +85,7 @@ impl Optimizer {
 
     fn merge_enum_union_impl(
         &self,
-        ident: &Ident,
+        ident: &TypeIdent,
         display_name: Option<&str>,
         next: &mut Option<MetaTypeVariant>,
     ) {
@@ -109,9 +109,12 @@ impl Optimizer {
                         let mut ei = EnumerationMeta::default();
 
                         for t in ui.types.0 {
-                            let var = ei.variants.find_or_insert(t.type_.clone(), |ident| {
-                                EnumerationMetaVariant::new(ident).with_type(Some(t.type_.clone()))
-                            });
+                            let var =
+                                ei.variants
+                                    .find_or_insert(t.type_.to_property_ident(), |ident| {
+                                        EnumerationMetaVariant::new(ident)
+                                            .with_type(Some(t.type_.clone()))
+                                    });
                             var.display_name = t.display_name;
                         }
 
@@ -147,7 +150,7 @@ impl Optimizer {
                         ui.types.push(ti);
                     }
                     Some(MetaTypeVariant::Enumeration(ei)) => {
-                        let var = ei.variants.find_or_insert(ident.clone(), |x| {
+                        let var = ei.variants.find_or_insert(ident.to_property_ident(), |x| {
                             EnumerationMetaVariant::new(x).with_type(Some(ident.clone()))
                         });
                         var.display_name = display_name.map(ToOwned::to_owned);

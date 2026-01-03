@@ -320,7 +320,8 @@ impl RenderStepType {
 }
 
 impl ModuleMeta {
-    pub(super) fn make_ns_const(&self) -> PathData {
+    pub(super) fn make_ns_const(&self) -> Option<PathData> {
+        self.namespace.as_ref()?;
         let name = self.name().map_or_else(
             || format!("UNNAMED_{}", self.namespace_id.0),
             |name| name.as_str().to_screaming_snake_case(),
@@ -328,10 +329,11 @@ impl ModuleMeta {
         let ident = format_ident!("NS_{name}");
         let path = IdentPath::from_parts([], ident);
 
-        PathData::from_path(path)
+        Some(PathData::from_path(path))
     }
 
     pub(super) fn make_prefix_const(&self) -> Option<PathData> {
+        self.namespace.as_ref()?;
         let name = self.name()?;
         let name = name.as_str().to_screaming_snake_case();
         let ident = format_ident!("PREFIX_{name}");

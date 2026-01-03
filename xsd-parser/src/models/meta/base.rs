@@ -3,7 +3,7 @@
 use std::fmt::{Debug, Display, Formatter, Result as FmtResult};
 use std::hash::Hasher;
 
-use crate::models::Ident;
+use crate::models::TypeIdent;
 
 use super::{MetaTypes, TypeEq};
 
@@ -15,16 +15,16 @@ pub enum Base {
     None,
 
     /// The type information extends the provided base type.
-    Extension(Ident),
+    Extension(TypeIdent),
 
     /// The type information restricts the provided base type.
-    Restriction(Ident),
+    Restriction(TypeIdent),
 }
 
 impl Base {
     /// Get the identifier of the base type if it is available.
     #[must_use]
-    pub fn as_ident(&self) -> Option<&Ident> {
+    pub fn as_ident(&self) -> Option<&TypeIdent> {
         match self {
             Self::None => None,
             Self::Extension(x) => Some(x),
@@ -34,7 +34,7 @@ impl Base {
 
     /// Extracts the identifier of the base type if it is available.
     #[must_use]
-    pub fn into_ident(self) -> Option<Ident> {
+    pub fn into_ident(self) -> Option<TypeIdent> {
         match self {
             Self::None => None,
             Self::Extension(x) => Some(x),
