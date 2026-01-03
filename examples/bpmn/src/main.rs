@@ -16,7 +16,7 @@ fn main() -> Result<(), Error> {
     let definitions =
         Definitions::deserialize(&mut reader).context("Error while deserializing XML content")?;
 
-    println!("{definitions:?}");
+    println!("{definitions:#?}");
 
     Ok(())
 }

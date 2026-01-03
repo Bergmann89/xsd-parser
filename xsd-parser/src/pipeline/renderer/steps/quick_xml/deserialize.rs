@@ -3215,7 +3215,7 @@ impl ComplexDataElement<'_> {
         #[allow(clippy::if_same_then_else)]
         let continue_or_return = if self.treat_as_text() {
             quote!(from_event)
-        } else if self.treat_as_group() {
+        } else if self.treat_as_group_or_dynamic() {
             quote!(from_event)
         } else {
             quote!(return_to_root)
