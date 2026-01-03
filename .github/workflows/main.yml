@@ -56,3 +56,7 @@ jobs:
     - name: example read_write
       working-directory: examples/read_write
       run: cargo run --release
+
+    - name: example BPMN
+      working-directory: examples/bpmn
+      run: cargo run --release
