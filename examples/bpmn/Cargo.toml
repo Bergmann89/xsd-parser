@@ -1,0 +1,12 @@
+[package]
+name = "bpmn"
+edition.workspace = true
+publish = false
+
+[dependencies]
+anyhow = { workspace = true }
+xsd-parser-types = { workspace = true, features = [ "quick-xml" ] }
+
+[build-dependencies]
+anyhow = { workspace = true }
+xsd-parser = { workspace = true }
