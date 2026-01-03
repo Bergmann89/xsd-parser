@@ -48,8 +48,11 @@ pub struct Config {
 
 impl Config {
     /// Adds the passed `schema` to the list of schemas to parse.
-    pub fn with_schema(mut self, schema: Schema) -> Self {
-        self.parser.schemas.push(schema);
+    pub fn with_schema<T>(mut self, schema: T) -> Self
+    where
+        T: Into<Schema>,
+    {
+        self.parser.schemas.push(schema.into());
 
         self
     }
@@ -57,10 +60,11 @@ impl Config {
     /// Adds the passed `schemas` to the list of schemas to parse.
     pub fn with_schemas<I>(mut self, schemas: I) -> Self
     where
-        I: IntoIterator<Item = Schema>,
+        I: IntoIterator,
+        I::Item: Into<Schema>,
     {
         for schema in schemas {
-            self = self.with_schema(schema);
+            self = self.with_schema(schema.into());
         }
 
         self
@@ -419,6 +423,66 @@ impl Config {
         X: Naming + 'static,
     {
         self.interpreter.naming = Some(Box::new(naming));
+
+        self
+    }
+
+    /// Set the postfix that should be applied to the name of types.
+    ///
+    /// For details please refer to [`GeneratorConfig::type_postfix`].
+    pub fn with_type_postfix<S>(mut self, value: S) -> Self
+    where
+        S: Into<String>,
+    {
+        self.generator.type_postfix.type_ = value.into();
+
+        self
+    }
+
+    /// Set the postfix that should be applied to the name of elements.
+    ///
+    /// For details please refer to [`GeneratorConfig::type_postfix`].
+    pub fn with_element_postfix<S>(mut self, value: S) -> Self
+    where
+        S: Into<String>,
+    {
+        self.generator.type_postfix.element = value.into();
+
+        self
+    }
+
+    /// Set the postfix that should be applied to the name of element types.
+    ///
+    /// For details please refer to [`GeneratorConfig::type_postfix`].
+    pub fn with_element_type_postfix<S>(mut self, value: S) -> Self
+    where
+        S: Into<String>,
+    {
+        self.generator.type_postfix.element = value.into();
+
+        self
+    }
+
+    /// Set the postfix that should be applied to the name of nillable content types.
+    ///
+    /// For details please refer to [`GeneratorConfig::type_postfix`].
+    pub fn with_nillable_content_postfix<S>(mut self, value: S) -> Self
+    where
+        S: Into<String>,
+    {
+        self.generator.type_postfix.nillable_content = value.into();
+
+        self
+    }
+
+    /// Set the postfix that should be applied to the name of dynamic elements.
+    ///
+    /// For details please refer to [`GeneratorConfig::type_postfix`].
+    pub fn with_dynamic_element_postfix<S>(mut self, value: S) -> Self
+    where
+        S: Into<String>,
+    {
+        self.generator.type_postfix.dynamic_element = value.into();
 
         self
     }

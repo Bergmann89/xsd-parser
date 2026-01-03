@@ -109,6 +109,30 @@ impl Schema {
     }
 }
 
+impl From<Url> for Schema {
+    fn from(value: Url) -> Self {
+        Self::Url(value)
+    }
+}
+
+impl From<PathBuf> for Schema {
+    fn from(value: PathBuf) -> Self {
+        Self::File(value)
+    }
+}
+
+impl From<String> for Schema {
+    fn from(value: String) -> Self {
+        Self::Schema(value)
+    }
+}
+
+impl From<(String, String)> for Schema {
+    fn from((name, schema): (String, String)) -> Self {
+        Self::NamedSchema(name, schema)
+    }
+}
+
 bitflags! {
     /// Flags to control the [`Parser`](crate::Parser).
     #[derive(Debug, Clone)]
