@@ -12741,7 +12741,7 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(deserializer) = fallback {
                 let data = deserializer.finish(helper)?;
@@ -19579,7 +19579,7 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(deserializer) = fallback {
                 let data = deserializer.finish(helper)?;
