@@ -16,6 +16,7 @@ mod custom_type;
 mod defaultable_content;
 mod derive;
 mod documentation;
+mod duplicate_idents;
 mod dynamic_types;
 mod element_refs_with_ns;
 mod element_without_type;

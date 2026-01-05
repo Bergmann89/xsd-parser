@@ -1,5 +1,6 @@
 use std::collections::{btree_map::Entry, BTreeMap, HashMap};
 
+use crate::models::schema::SchemaId;
 use crate::models::{
     meta::{MetaType, MetaTypes},
     schema::{
@@ -74,6 +75,9 @@ impl<'a> State<'a> {
     pub(super) fn current_ns(&self) -> Option<NamespaceId> {
         self.current_ident().and_then(|x| x.ns)
     }
+    pub(super) fn current_schema(&self) -> Option<SchemaId> {
+        self.current_ident().and_then(|x| x.schema)
+    }
 
     pub(super) fn last_named_type(&self, stop_at_group_ref: bool) -> Option<&str> {
         for x in self.type_stack.iter().rev() {
@@ -139,19 +143,12 @@ impl<'a> State<'a> {
         I: Into<Ident>,
         T: Into<MetaType>,
     {
-        match self.types.items.entry(ident.into()) {
-            Entry::Vacant(e) => {
-                e.insert(type_.into());
-
-                Ok(())
-            }
-            Entry::Occupied(mut e) if allow_overwrite => {
-                e.insert(type_.into());
-
-                Ok(())
-            }
-            Entry::Occupied(e) => Err(Error::TypeAlreadyDefined(e.key().clone())),
+        let ident = ident.into();
+        if !allow_overwrite && self.types.items.contains_exact(&ident) {
+            return Err(Error::TypeAlreadyDefined(ident));
         }
+        self.types.items.insert(ident, type_.into());
+        Ok(())
     }
 
     pub(super) fn get_node(
