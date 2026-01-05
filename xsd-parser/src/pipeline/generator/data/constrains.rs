@@ -1,13 +1,13 @@
 use std::ops::{Bound, Range};
 
-use crate::models::{data::ConstrainsData, meta::Constrains, Ident};
+use crate::models::{data::ConstrainsData, meta::Constrains, TypeIdent};
 
 use super::super::{Context, Error};
 
 impl<'types> ConstrainsData<'types> {
     pub(super) fn new(
         meta: &'types Constrains,
-        base: Option<&Ident>,
+        base: Option<&TypeIdent>,
         ctx: &mut Context<'_, 'types>,
     ) -> Result<Self, Error> {
         let current_ns = ctx.current_module();

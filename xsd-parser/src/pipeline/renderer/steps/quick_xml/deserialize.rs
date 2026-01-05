@@ -19,7 +19,7 @@ use crate::models::{
         WhiteSpace,
     },
     schema::{xs::Use, MaxOccurs},
-    Ident,
+    TypeIdent,
 };
 
 use super::super::super::{
@@ -380,11 +380,15 @@ impl DerivedType {
             });
         };
 
-        if let Some(module) = ident
-            .ns
-            .and_then(|ns| ctx.types.meta.types.modules.get(&ns))
+        if let Some(path) = ctx
+            .types
+            .meta
+            .types
+            .modules
+            .get(&ident.ns)
+            .and_then(|x| x.make_ns_const())
         {
-            let ns_name = ctx.resolve_type_for_deserialize_module(&module.make_ns_const());
+            let ns_name = ctx.resolve_type_for_deserialize_module(&path);
 
             quote! {
                 if matches!(helper.resolve_local_name(#qname(&type_name), &#ns_name), Some(#b_name)) {
@@ -2692,13 +2696,15 @@ impl ComplexDataAttribute<'_> {
             });
 
             None
-        } else if let Some(module) = self
+        } else if let Some(path) = ctx
+            .types
             .meta
-            .ident
-            .ns
-            .and_then(|ns| ctx.types.meta.types.modules.get(&ns))
+            .types
+            .modules
+            .get(&self.meta.ident.ns)
+            .and_then(|x| x.make_ns_const())
         {
-            let ns_name = ctx.resolve_type_for_deserialize_module(&module.make_ns_const());
+            let ns_name = ctx.resolve_type_for_deserialize_module(&path);
 
             *index += 1;
 
@@ -2802,7 +2808,7 @@ impl ComplexDataElement<'_> {
     }
 
     fn target_type_allows_any(&self, types: &MetaTypes) -> bool {
-        fn walk(types: &MetaTypes, visit: &mut HashSet<Ident>, ident: &Ident) -> bool {
+        fn walk(types: &MetaTypes, visit: &mut HashSet<TypeIdent>, ident: &TypeIdent) -> bool {
             if !visit.insert(ident.clone()) {
                 return false;
             }
@@ -2879,13 +2885,15 @@ impl ComplexDataElement<'_> {
             return #call_handler;
         };
 
-        if let Some(module) = self
-            .meta()
-            .ident
-            .ns
-            .and_then(|ns| ctx.types.meta.types.modules.get(&ns))
+        if let Some(path) = ctx
+            .types
+            .meta
+            .types
+            .modules
+            .get(&self.meta().ident.ns)
+            .and_then(|x| x.make_ns_const())
         {
-            let ns_name = ctx.resolve_type_for_deserialize_module(&module.make_ns_const());
+            let ns_name = ctx.resolve_type_for_deserialize_module(&path);
 
             Some(quote! {
                 if matches!(helper.resolve_local_name(x.name(), &#ns_name), Some(#b_name)) {
@@ -3418,21 +3426,21 @@ impl ComplexDataElement<'_> {
         let need_name_matcher = !self.target_is_dynamic
             && matches!(
                 &self.meta().variant,
-                ElementMetaVariant::Any { .. }
-                    | ElementMetaVariant::Type {
-                        mode: ElementMode::Element,
-                        ..
-                    }
+                ElementMetaVariant::Type {
+                    mode: ElementMode::Element,
+                    ..
+                }
             );
 
         let output = if need_name_matcher {
-            let ns_name = self
-                .meta()
-                .ident
-                .ns
-                .as_ref()
-                .and_then(|ns| ctx.types.meta.types.modules.get(ns))
-                .map(|module| ctx.resolve_type_for_deserialize_module(&module.make_ns_const()))
+            let ns_name = ctx
+                .types
+                .meta
+                .types
+                .modules
+                .get(&self.meta().ident.ns)
+                .and_then(|x| x.make_ns_const())
+                .map(|path| ctx.resolve_type_for_deserialize_module(&path))
                 .map_or_else(|| quote!(None), |ns_name| quote!(Some(&#ns_name)));
 
             quote! {
@@ -4054,13 +4062,14 @@ impl ComplexDataElement<'_> {
                 }
             };
         } else if need_name_matcher {
-            let ns_name = self
-                .meta()
-                .ident
-                .ns
-                .as_ref()
-                .and_then(|ns| ctx.types.meta.types.modules.get(ns))
-                .map(|module| ctx.resolve_type_for_deserialize_module(&module.make_ns_const()))
+            let ns_name = ctx
+                .types
+                .meta
+                .types
+                .modules
+                .get(&self.meta().ident.ns)
+                .and_then(|x| x.make_ns_const())
+                .map(|path| ctx.resolve_type_for_deserialize_module(&path))
                 .map_or_else(|| quote!(None), |ns_name| quote!(Some(&#ns_name)));
 
             body = quote! {
@@ -4147,7 +4156,7 @@ fn boxed_deserializer_ident(is_boxed: bool, deserializer_ident: &Ident2) -> Iden
 
 #[derive(Default, Debug)]
 struct DefaultableCache {
-    cache: HashMap<Ident, Option<Defaultable>>,
+    cache: HashMap<TypeIdent, Option<Defaultable>>,
     content: bool,
 }
 
@@ -4164,14 +4173,14 @@ impl ValueKey for DefaultableCache {
 }
 
 impl DefaultableCache {
-    fn is_defaultable_type(&mut self, types: &MetaTypes, ident: &Ident) -> bool {
+    fn is_defaultable_type(&mut self, types: &MetaTypes, ident: &TypeIdent) -> bool {
         matches!(
             self.get_defaultable_impl(types, ident),
             Some(Defaultable::Complete)
         )
     }
 
-    fn type_has_defaultable_content(&mut self, types: &MetaTypes, ident: &Ident) -> bool {
+    fn type_has_defaultable_content(&mut self, types: &MetaTypes, ident: &TypeIdent) -> bool {
         matches!(
             self.get_defaultable_impl(types, ident),
             Some(Defaultable::Complete | Defaultable::Content)
@@ -4190,11 +4199,15 @@ impl DefaultableCache {
         }
     }
 
-    fn get_defaultable(&mut self, types: &MetaTypes, ident: &Ident) -> Defaultable {
+    fn get_defaultable(&mut self, types: &MetaTypes, ident: &TypeIdent) -> Defaultable {
         self.get_defaultable_impl(types, ident).unwrap_or_default()
     }
 
-    fn get_defaultable_impl(&mut self, types: &MetaTypes, ident: &Ident) -> Option<Defaultable> {
+    fn get_defaultable_impl(
+        &mut self,
+        types: &MetaTypes,
+        ident: &TypeIdent,
+    ) -> Option<Defaultable> {
         let create = match self.cache.entry(ident.clone()) {
             Entry::Vacant(e) => {
                 e.insert(None);
@@ -4218,7 +4231,7 @@ impl DefaultableCache {
         }
     }
 
-    fn make_new_entry(&mut self, types: &MetaTypes, ident: &Ident) -> Defaultable {
+    fn make_new_entry(&mut self, types: &MetaTypes, ident: &TypeIdent) -> Defaultable {
         match types.get_variant(ident) {
             None
             | Some(

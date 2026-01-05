@@ -6,7 +6,7 @@ use crate::models::{
         MetaTypeVariant, MetaTypes,
     },
     schema::{MaxOccurs, MinOccurs},
-    Ident,
+    TypeIdent,
 };
 
 use super::{Error, Optimizer};
@@ -37,7 +37,7 @@ impl Optimizer {
     /// ```rust
     #[doc = include_str!("../../../tests/optimizer/expected1/flatten_complex_types.rs")]
     /// ```
-    pub fn flatten_complex_type(mut self, ident: Ident) -> Result<Self, Error> {
+    pub fn flatten_complex_type(mut self, ident: TypeIdent) -> Result<Self, Error> {
         tracing::debug!("flatten_complex_type(ident={ident:?})");
 
         self.flatten_complex_type_impl(ident)?;
@@ -72,7 +72,7 @@ impl Optimizer {
         self
     }
 
-    fn flatten_complex_type_impl(&mut self, ident: Ident) -> Result<(), Error> {
+    fn flatten_complex_type_impl(&mut self, ident: TypeIdent) -> Result<(), Error> {
         tracing::debug!("flatten_complex_type_impl(ident={ident:?})");
 
         let Some(ty) = self.types.items.get(&ident) else {
@@ -143,7 +143,7 @@ impl<'types> Flatten<'types> {
         }
     }
 
-    fn exec(&self, ident: &Ident, depth: usize) -> Result<Builder<'types>, Error> {
+    fn exec(&self, ident: &TypeIdent, depth: usize) -> Result<Builder<'types>, Error> {
         let Some(ty) = self.types.items.get(ident) else {
             return Err(Error::UnknownType(ident.clone()));
         };
@@ -413,9 +413,8 @@ impl ElementMeta {
 mod tests {
     use crate::models::{
         meta::{ElementMeta, ElementMode, ElementsMeta, MetaType, MetaTypeVariant, MetaTypes},
-        schema::xs::FormChoiceType,
-        schema::MaxOccurs,
-        Ident,
+        schema::{xs::FormChoiceType, MaxOccurs},
+        ElementIdent, TypeIdent,
     };
     use crate::Optimizer;
 
@@ -425,10 +424,10 @@ mod tests {
             let MetaTypeVariant::$type(info) = &mut variant else { unreachable!(); };
             make_type!(__init info $type $( $rest )*);
             let ty = MetaType::new(variant);
-            $types.items.insert(Ident::type_($name), ty);
+            $types.items.insert(TypeIdent::type_($name), ty);
         }};
         (__init $info:ident ComplexType($name:literal) $(,)? ) => {
-            $info.content = Some(Ident::type_($name));
+            $info.content = Some(TypeIdent::type_($name));
         };
         (__init $info:ident $group:ident { $( $element:expr ),* $(,)? } $(,)? ) => {
             $info.elements = ElementsMeta(vec![
@@ -452,7 +451,7 @@ mod tests {
 
             #[allow(unused_mut)]
             let mut element = ElementMeta::new(
-                Ident::name($element_name),
+                ElementIdent::named($element_name),
                 type_ident,
                 ElementMode::$type,
                 FormChoiceType::Unqualified,
@@ -464,10 +463,10 @@ mod tests {
             element
         }};
         (__type_ident Element $name:literal) => {
-            Ident::element($name)
+            TypeIdent::element($name)
         };
         (__type_ident Group $name:literal) => {
-            Ident::type_($name)
+            TypeIdent::type_($name)
         };
         (__set_field $element:ident.min $value:expr) => {
             $element.min_occurs = $value;
@@ -488,8 +487,10 @@ mod tests {
 
     macro_rules! assert_type {
         ($types:expr, $main_ident:literal, $content_type:ident($content_ident:literal)) => {{
-            let main = $types.get_variant(&Ident::type_($main_ident)).unwrap();
-            let content = $types.get_variant(&Ident::type_($content_ident)).unwrap();
+            let main = $types.get_variant(&TypeIdent::type_($main_ident)).unwrap();
+            let content = $types
+                .get_variant(&TypeIdent::type_($content_ident))
+                .unwrap();
 
             let MetaTypeVariant::ComplexType(main) = main else {
                 panic!("Wrong type");

@@ -16,7 +16,7 @@ use anyhow::{anyhow, Error};
 use quote::ToTokens;
 use xsd_parser::{
     config::{
-        Config, GeneratorFlags, IdentTriple, InterpreterFlags, OptimizerFlags, ParserFlags,
+        Config, GeneratorFlags, IdentQuadruple, InterpreterFlags, OptimizerFlags, ParserFlags,
         Resolver, Schema,
     },
     exec_generator, exec_interpreter, exec_optimizer, exec_parser, exec_render,
@@ -54,37 +54,38 @@ fn main() -> Result<(), Error> {
 /// Define custom names for specific types.
 fn define_custom_names(schemas: &Schemas, mut types: MetaTypes) -> Result<MetaTypes, Error> {
     // Types are identified by a triple of namespace, element type and name, which are
-    // combined into `IdentTriple`.
-    let ident = IdentTriple::from((IdentType::Element, "xs:schema"));
+    // combined into `IdentQuadruple`.
+    let ident = IdentQuadruple::from((IdentType::Element, "xs:schema"));
 
-    // There are multiple ways to define a `IdentTriple`. Each of the following
-    // will resolve to the same `Ident`.
+    // There are multiple ways to define a `IdentQuadruple`. Each of the following
+    // will resolve to the same `TypeIdent`.
     //
-    //      let ident = IdentTriple::from((
+    //      let ident = IdentQuadruple::from((
     //          IdentType::Element,
-    //          Some(NamespaceIdent::prefix(b"xs")),
+    //          NamespaceIdent::prefix(b"xs"),
     //          "schema",
     //      ));
     //
-    //      let ident = IdentTriple::from((
+    //      let ident = IdentQuadruple::from((
     //          IdentType::Element,
-    //          Some(NamespaceIdent::namespace(b"http://www.w3.org/2001/XMLSchema")),
+    //          NamespaceIdent::namespace(b"http://www.w3.org/2001/XMLSchema"),
     //          "schema",
     //      ));
     //
-    //      let ident = IdentTriple {
-    //          ns: Some(NamespaceIdent::prefix(b"xs")),
+    //      let ident = IdentQuadruple {
+    //          ns: NamespaceIdent::prefix(b"xs"),
+    //          schema: None,
     //          name: "schema".into(),
     //          type_: IdentType::Element,
     //      };
 
     // Namespaces are internally represented by ids (for performance reasons), so
-    // the information from the `IdentTriple` must be resolved to an actual `Ident`
-    // by using the current `Schemas` information.
+    // the information from the `IdentQuadruple` must be resolved to an actual
+    // `TypeIdent` by using the current `Schemas` information.
     let ident = ident.resolve(schemas)?;
 
-    // `Types` is more or less a map of `Ident` to `Type`, so we can use `get_mut`,
-    // to get a mutable reference to the type we want to rename.
+    // `MetaTypes` is more or less a map of `TypeIdent` to `MetaType`, so we can
+    // use `get_mut`, to get a mutable reference to the type we want to rename.
     let ty = types
         .items
         .get_mut(&ident)

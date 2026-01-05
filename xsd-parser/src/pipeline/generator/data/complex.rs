@@ -19,7 +19,7 @@ use crate::models::{
         xs::{FormChoiceType, Use},
         MaxOccurs, MinOccurs,
     },
-    Ident,
+    ElementIdent, TypeIdent,
 };
 
 use super::super::{Context, Error};
@@ -29,7 +29,7 @@ enum TypeMode<'types> {
     All,
     Choice,
     Sequence,
-    Simple { simple_type: &'types Ident },
+    Simple { simple_type: &'types TypeIdent },
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -163,7 +163,7 @@ impl<'types> ComplexData<'types> {
     fn new_simple(
         ctx: &mut Context<'_, 'types>,
         form: FormChoiceType,
-        simple_type: &'types Ident,
+        simple_type: &'types TypeIdent,
         min_occurs: MinOccurs,
         max_occurs: MaxOccurs,
         attributes: &'types [AttributeMeta],
@@ -511,7 +511,7 @@ impl<'types> ComplexBase<'types> {
         let type_ident = type_ref.path.ident().clone();
 
         let mut ret = Self::new_empty(type_ident, flags);
-        ret.tag_name = Some(TagName::new(ctx.types, ctx.ident, form));
+        ret.tag_name = Some(TagName::new(ctx.types, ctx.ident.ns, &ctx.ident.name, form));
         ret.trait_impls = ctx.make_trait_impls()?;
 
         if let Some(MetaTypeVariant::ComplexType(ci)) = ctx.types.get_variant(ctx.ident) {
@@ -588,7 +588,7 @@ impl<'types> ComplexDataElement<'types> {
             return Ok(None);
         }
 
-        let tag_name = TagName::new(ctx.types, &meta.ident, meta.form);
+        let tag_name = TagName::new(ctx.types, meta.ident.ns, &meta.ident.name, meta.form);
         let s_name = meta.ident.name.to_string();
         let b_name = Literal::byte_string(s_name.as_bytes());
         let field_ident = ctx
@@ -678,7 +678,7 @@ impl<'types> ComplexDataElement<'types> {
 
     fn new_text_before(ctx: &Context<'_, 'types>, ident: &'static str) -> Self {
         let meta = ElementMeta {
-            ident: Ident::element(ident),
+            ident: ElementIdent::named(ident),
             variant: ElementMetaVariant::Text,
             form: FormChoiceType::Unqualified,
             nillable: false,
@@ -719,9 +719,9 @@ impl<'types> ComplexDataElement<'types> {
         content_ident: Ident2,
     ) -> Self {
         let meta = ElementMeta {
-            ident: Ident::element("content"),
+            ident: ElementIdent::named("content"),
             variant: ElementMetaVariant::Type {
-                type_: Ident::UNKNOWN,
+                type_: TypeIdent::UNKNOWN,
                 mode: ElementMode::Group,
             },
             form: FormChoiceType::Unqualified,
@@ -802,7 +802,7 @@ impl<'types> ComplexDataAttribute<'types> {
 
         let s_name = meta.ident.name.to_string();
         let b_name = Literal::byte_string(s_name.as_bytes());
-        let tag_name = TagName::new(ctx.types, &meta.ident, meta.form);
+        let tag_name = TagName::new(ctx.types, meta.ident.ns, &meta.ident.name, meta.form);
         let is_option = matches!((&meta.use_, &default_value), (Use::Optional, None));
 
         Ok(Some(Self {
@@ -819,7 +819,7 @@ impl<'types> ComplexDataAttribute<'types> {
     }
 }
 
-fn is_dynamic(ident: &Ident, types: &MetaTypes) -> bool {
+fn is_dynamic(ident: &TypeIdent, types: &MetaTypes) -> bool {
     let Some(ty) = types.items.get(ident) else {
         return false;
     };
@@ -845,7 +845,7 @@ impl Context<'_, '_> {
 }
 
 impl MetaTypes {
-    fn is_choice_with_optional_elements_only(&self, ident: &Ident) -> bool {
+    fn is_choice_with_optional_elements_only(&self, ident: &TypeIdent) -> bool {
         fn check_type(types: &MetaTypes, ty: &MetaType) -> bool {
             match &ty.variant {
                 MetaTypeVariant::Choice(gi) => gi

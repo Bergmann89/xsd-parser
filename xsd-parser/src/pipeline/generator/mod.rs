@@ -38,7 +38,7 @@ use crate::models::{
     code::{IdentPath, ModuleIdent, ModulePath},
     data::{DataType, DataTypes, PathData},
     meta::{MetaTypeVariant, MetaTypes},
-    Ident, IdentType,
+    IdentType, TypeIdent,
 };
 use crate::traits::Naming;
 
@@ -244,14 +244,14 @@ impl<'types> Generator<'types> {
     ///
     /// ```ignore
     /// let generator = Generator::new(types)
-    ///     .with_type(Ident::type_("UserDefinedType"));
+    ///     .with_type(TypeIdent::type_("UserDefinedType"));
     /// ```
-    pub fn with_type(mut self, ident: Ident) -> Result<Self, Error> {
+    pub fn with_type(mut self, ident: TypeIdent) -> Result<Self, Error> {
         let module_ident = self
             .meta
             .types
             .naming
-            .format_module(self.meta.types, ident.ns);
+            .format_module(self.meta.types, Some(ident.ns));
         let type_ident = format_ident!("{}", ident.name.to_string());
         let path = PathData::from_path(IdentPath::from_parts(module_ident, type_ident));
 
@@ -270,7 +270,7 @@ impl<'types> Generator<'types> {
     ///
     /// Raises an [`Error`] if the type generation failed.
     #[instrument(err, level = "trace", skip(self))]
-    pub fn generate_type(self, ident: Ident) -> Result<GeneratorFixed<'types>, Error> {
+    pub fn generate_type(self, ident: TypeIdent) -> Result<GeneratorFixed<'types>, Error> {
         self.into_fixed().generate_type(ident)
     }
 
@@ -327,7 +327,7 @@ impl<'types> GeneratorFixed<'types> {
     ///     .generate_type(Ident::type_("Root"));
     /// ```
     #[instrument(err, level = "trace", skip(self))]
-    pub fn generate_type(mut self, ident: Ident) -> Result<GeneratorFixed<'types>, Error> {
+    pub fn generate_type(mut self, ident: TypeIdent) -> Result<GeneratorFixed<'types>, Error> {
         self.state
             .get_or_create_type_ref_mut(&self.data_types.meta, &ident)?;
         self.generate_pending()?;
@@ -426,7 +426,7 @@ impl<'types> State<'types> {
     fn get_or_create_type_ref_mut(
         &mut self,
         meta: &MetaData<'types>,
-        ident: &Ident,
+        ident: &TypeIdent,
     ) -> Result<&mut TypeRef, Error> {
         match self.cache.entry(ident.clone()) {
             Entry::Occupied(e) => Ok(e.into_mut()),
@@ -442,9 +442,9 @@ impl<'types> State<'types> {
         id: usize,
         naming: &dyn Naming,
         pending: &mut VecDeque<PendingType<'types>>,
-        entry: VacantEntry<'a, Ident, TypeRef>,
+        entry: VacantEntry<'a, TypeIdent, TypeRef>,
         meta: &MetaData<'types>,
-        ident: &Ident,
+        ident: &TypeIdent,
     ) -> Result<&'a mut TypeRef, Error> {
         let ty = meta
             .types

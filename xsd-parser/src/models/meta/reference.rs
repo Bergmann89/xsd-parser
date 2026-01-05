@@ -4,7 +4,7 @@ use std::hash::{Hash, Hasher};
 
 use crate::models::{
     schema::{MaxOccurs, MinOccurs},
-    Ident,
+    TypeIdent,
 };
 
 use super::{MetaTypes, TypeEq};
@@ -13,7 +13,7 @@ use super::{MetaTypes, TypeEq};
 #[derive(Debug, Clone)]
 pub struct ReferenceMeta {
     /// Type that is referenced.
-    pub type_: Ident,
+    pub type_: TypeIdent,
 
     /// Whether the referenced type is nillable or not.
     pub nillable: bool,
@@ -30,7 +30,7 @@ impl ReferenceMeta {
     #[must_use]
     pub fn new<T>(type_: T) -> Self
     where
-        T: Into<Ident>,
+        T: Into<TypeIdent>,
     {
         Self {
             type_: type_.into(),

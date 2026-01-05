@@ -10,7 +10,7 @@ use crate::models::{
     },
     meta::{MetaType, MetaTypeVariant},
     schema::xs::Use,
-    Ident,
+    TypeIdent,
 };
 use crate::traits::Naming;
 
@@ -44,7 +44,7 @@ impl RenderStep for SerdeXmlRsV8TypesRenderStep {
 /* Context */
 
 impl<'types> Context<'_, 'types> {
-    fn get_resolved_complex_content(&self) -> Option<(&'types Ident, &'types MetaType)> {
+    fn get_resolved_complex_content(&self) -> Option<(&'types TypeIdent, &'types MetaType)> {
         let MetaTypeVariant::ComplexType(cm) = &self.data.meta.variant else {
             return None;
         };
@@ -621,7 +621,7 @@ impl ComplexDataElement<'_> {
     }
 }
 
-fn format_enum_values_ident(naming: &dyn Naming, ident: &Ident) -> Ident2 {
+fn format_enum_values_ident(naming: &dyn Naming, ident: &TypeIdent) -> Ident2 {
     let values_ident = naming.format_type_name(ident.name.as_str());
 
     format_ident!("{values_ident}Value")

@@ -4,7 +4,7 @@ use quote::format_ident;
 use crate::models::{
     data::{DerivedType, DynamicData, PathData},
     meta::{DynamicMeta, MetaTypeVariant},
-    Ident,
+    TypeIdent,
 };
 
 use super::super::{Context, Error};
@@ -57,7 +57,7 @@ impl<'types> DynamicData<'types> {
 
 fn make_derived_type_data<'types>(
     ctx: &mut Context<'_, 'types>,
-    ident: &'types Ident,
+    ident: &'types TypeIdent,
 ) -> Result<DerivedType, Error> {
     let s_name = ident.name.to_string();
     let b_name = Literal::byte_string(s_name.as_bytes());

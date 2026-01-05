@@ -4,7 +4,7 @@ use xsd_parser_types::misc::Namespace;
 
 use crate::models::{
     schema::{NamespaceId, SchemaId},
-    Ident, Name, Naming,
+    Name, Naming, TypeIdent,
 };
 use crate::traits::{NameBuilder as NameBuilderTrait, Naming as NamingTrait};
 
@@ -22,7 +22,7 @@ use super::{MetaType, MetaTypeVariant};
 #[derive(Debug)]
 pub struct MetaTypes {
     /// Map of the different types.
-    pub items: BTreeMap<Ident, MetaType>,
+    pub items: BTreeMap<TypeIdent, MetaType>,
 
     /// Map of the different namespaces.
     pub modules: BTreeMap<NamespaceId, ModuleMeta>,
@@ -77,7 +77,10 @@ impl MetaTypes {
     /// type definitions to the very base type. If the type could not be found `None`
     /// is returned.
     #[must_use]
-    pub fn get_resolved<'a>(&'a self, ident: &'a Ident) -> Option<(&'a Ident, &'a MetaType)> {
+    pub fn get_resolved<'a>(
+        &'a self,
+        ident: &'a TypeIdent,
+    ) -> Option<(&'a TypeIdent, &'a MetaType)> {
         let mut visit = Vec::new();
 
         get_resolved_impl(self, ident, &mut visit)
@@ -88,7 +91,7 @@ impl MetaTypes {
     /// Like [`get_resolved`](Self::get_resolved), but instead of returning the identifier and
     /// the type it will return only the resolved type.
     #[must_use]
-    pub fn get_resolved_type<'a>(&'a self, ident: &'a Ident) -> Option<&'a MetaType> {
+    pub fn get_resolved_type<'a>(&'a self, ident: &'a TypeIdent) -> Option<&'a MetaType> {
         self.get_resolved(ident).map(|(_ident, ty)| ty)
     }
 
@@ -97,7 +100,7 @@ impl MetaTypes {
     /// Like [`get_resolved`](Self::get_resolved), but instead of returning the identifier and
     /// the type it will return only the identifier of the resolved type.
     #[must_use]
-    pub fn get_resolved_ident<'a>(&'a self, ident: &'a Ident) -> Option<&'a Ident> {
+    pub fn get_resolved_ident<'a>(&'a self, ident: &'a TypeIdent) -> Option<&'a TypeIdent> {
         self.get_resolved(ident).map(|(ident, _ty)| ident)
     }
 
@@ -106,7 +109,7 @@ impl MetaTypes {
     /// This is a shorthand for `self.get(ident).map(|ty| &type.variant)`.
     #[inline]
     #[must_use]
-    pub fn get_variant(&self, ident: &Ident) -> Option<&MetaTypeVariant> {
+    pub fn get_variant(&self, ident: &TypeIdent) -> Option<&MetaTypeVariant> {
         self.items.get(ident).map(|ty| &ty.variant)
     }
 
@@ -115,7 +118,7 @@ impl MetaTypes {
     /// This is a shorthand for `self.get_mut(ident).map(|ty| &type.variant)`.
     #[inline]
     #[must_use]
-    pub fn get_variant_mut(&mut self, ident: &Ident) -> Option<&mut MetaTypeVariant> {
+    pub fn get_variant_mut(&mut self, ident: &TypeIdent) -> Option<&mut MetaTypeVariant> {
         self.items.get_mut(ident).map(|ty| &mut ty.variant)
     }
 }
@@ -147,9 +150,9 @@ impl ModuleMeta {
 
 fn get_resolved_impl<'a>(
     types: &'a MetaTypes,
-    ident: &'a Ident,
-    visited: &mut Vec<&'a Ident>,
-) -> Option<(&'a Ident, &'a MetaType)> {
+    ident: &'a TypeIdent,
+    visited: &mut Vec<&'a TypeIdent>,
+) -> Option<(&'a TypeIdent, &'a MetaType)> {
     if visited.contains(&ident) {
         let chain = visited
             .iter()

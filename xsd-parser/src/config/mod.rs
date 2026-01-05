@@ -6,10 +6,13 @@ mod optimizer;
 mod parser;
 mod renderer;
 
-use xsd_parser_types::misc::{Namespace, NamespacePrefix};
+use url::Url;
 
-pub use crate::models::{meta::MetaType, Ident, IdentType, Name};
+pub use xsd_parser_types::misc::{Namespace, NamespacePrefix};
 
+pub use crate::models::{meta::MetaType, schema::NamespaceId, IdentType, Name, TypeIdent};
+
+use crate::models::schema::xs::SchemaContent;
 use crate::pipeline::renderer::NamespaceSerialization;
 use crate::traits::Naming;
 use crate::InterpreterError;
@@ -24,7 +27,7 @@ pub use self::renderer::{
     DynTypeTraits, RenderStep, RenderStepConfig, RendererConfig, RendererFlags, SerdeXmlRsVersion,
 };
 
-use crate::models::schema::Schemas;
+use crate::models::schema::{SchemaId, Schemas};
 
 /// Configuration structure for the [`generate`](super::generate) method.
 #[must_use]
@@ -337,7 +340,7 @@ impl Config {
     pub fn with_generate<I>(mut self, types: I) -> Self
     where
         I: IntoIterator,
-        I::Item: Into<IdentTriple>,
+        I::Item: Into<IdentQuadruple>,
     {
         self.generator.generate = Generate::Types(types.into_iter().map(Into::into).collect());
 
@@ -488,20 +491,30 @@ impl Config {
     }
 }
 
+/// Convenient type to not break the public interface.
+///
+/// The type was renamed to [`IdentQuadruple`].
+#[deprecated(note = "Use IdentQuadruple")]
+pub type IdentTriple = IdentQuadruple;
+
 /// Identifier that is used inside the config.
 ///
-/// Each element in a XML schema is uniquely identified by the following three
+/// Each element in a XML schema is uniquely identified by the following four
 /// values:
 ///     - The namespace of the element (or no namespace at all).
+///     - The schema the element was defined in.
 ///     - The name of the element.
 ///     - The type of element.
 ///
 /// This struct is used to bundle these three information to a unique identifier
 /// for an element.
 #[derive(Debug, Clone)]
-pub struct IdentTriple {
+pub struct IdentQuadruple {
     /// Namespace where the type is defined in.
     pub ns: Option<NamespaceIdent>,
+
+    /// Id of the schema the type is defined in.
+    pub schema: Option<SchemaIdent>,
 
     /// Name of the type.
     pub name: String,
@@ -510,41 +523,155 @@ pub struct IdentTriple {
     pub type_: IdentType,
 }
 
-impl IdentTriple {
-    /// Resolve the triple to an actual type that is available in the schema.
+impl IdentQuadruple {
+    /// Create a new [`IdentQuadruple`] instance from the passed `name` and `type_`.
+    #[inline]
+    #[must_use]
+    pub fn new<S>(name: S, type_: IdentType) -> Self
+    where
+        S: Into<String>,
+    {
+        Self {
+            ns: None,
+            schema: None,
+            name: name.into(),
+            type_,
+        }
+    }
+
+    /// Adds a [`NamespaceIdent`] to this identifier quadruple.
+    #[inline]
+    #[must_use]
+    pub fn with_ns<X>(mut self, ns: X) -> Self
+    where
+        X: Into<NamespaceIdent>,
+    {
+        self.ns = Some(ns.into());
+
+        self
+    }
+
+    /// Adds a [`SchemaIdent`] to this identifier quadruple.
+    #[inline]
+    #[must_use]
+    pub fn with_schema<X>(mut self, schema: X) -> Self
+    where
+        X: Into<SchemaIdent>,
+    {
+        self.schema = Some(schema.into());
+
+        self
+    }
+
+    /// Sets the name of the type that is identified by this identifier quadruple.
+    #[inline]
+    #[must_use]
+    pub fn with_name<X>(mut self, name: X) -> Self
+    where
+        X: Into<String>,
+    {
+        self.name = name.into();
+
+        self
+    }
+
+    /// Sets the identifier type of this identifier quadruple.
+    #[inline]
+    #[must_use]
+    pub fn with_type(mut self, type_: IdentType) -> Self {
+        self.type_ = type_;
+
+        self
+    }
+
+    /// Resolve the quadruple to an actual type identifier that is available in
+    /// the schema.
+    ///
+    /// /// <div class="warning">
+    /// *Caution*
+    /// This may end up in a type with the [`schema`](TypeIdent::schema) not fully
+    /// resolved. This can happen if you specified the wrong schema name, or schema
+    /// location. If you didn't provide a [`SchemaIdent`] at all, the type is resolved
+    /// by it's name, which is also not always successful, if the type is not defined
+    /// in the root of the available schemas.
+    ///
+    /// If you use this to get suitable identifiers to define types for the interpreter
+    /// (see [`with_type`](crate::Interpreter::with_type)), then you are fine, because
+    /// the interpreter will resolve unknown schema IDs by it's own.
+    ///
+    /// If you want to use the resolved identifier for selecting a [`MetaType`]
+    /// from the resulting [`MetaTypes`](crate::MetaTypes) structure created by
+    /// the interpreted, you have to resolve the type additionally using the
+    /// [`IdentCache`](crate::IdentCache), which is also returned by the
+    /// [`Interpreter`](crate::Interpreter)
+    /// (see [`exec_interpreter_with_ident_cache`](crate::exec_interpreter_with_ident_cache)).
+    /// </div>
     ///
     /// # Errors
     ///
     /// Returns an error if the namespace or the namespace prefix could not be
     /// resolved.
-    pub fn resolve(self, schemas: &Schemas) -> Result<Ident, InterpreterError> {
-        let ns = match self.ns {
-            None => None,
-            Some(NamespaceIdent::Prefix(prefix)) => Some(
-                schemas
-                    .resolve_prefix(&prefix)
-                    .ok_or(InterpreterError::UnknownNamespacePrefix(prefix))?,
-            ),
+    pub fn resolve(self, schemas: &Schemas) -> Result<TypeIdent, InterpreterError> {
+        let Self {
+            ns,
+            schema,
+            name,
+            type_,
+        } = self;
+
+        let name = Name::new_named(name);
+
+        let ns = match ns {
+            None => schemas
+                .resolve_namespace(&None)
+                .ok_or(InterpreterError::AnonymousNamespaceIsUndefined)?,
+            Some(NamespaceIdent::Id(ns)) => ns,
+            Some(NamespaceIdent::Prefix(prefix)) => schemas
+                .resolve_prefix(&prefix)
+                .ok_or(InterpreterError::UnknownNamespacePrefix(prefix))?,
             #[allow(clippy::unnecessary_literal_unwrap)]
             Some(NamespaceIdent::Namespace(ns)) => {
                 let ns = Some(ns);
-                Some(
-                    schemas
-                        .resolve_namespace(&ns)
-                        .ok_or_else(|| InterpreterError::UnknownNamespace(ns.unwrap()))?,
-                )
+
+                schemas
+                    .resolve_namespace(&ns)
+                    .ok_or_else(|| InterpreterError::UnknownNamespace(ns.unwrap()))?
             }
         };
 
-        Ok(Ident {
+        let schema = match schema {
+            None => schemas
+                .get_namespace_info(&ns)
+                .and_then(|x| {
+                    if x.schemas.len() == 1 {
+                        Some(x.schemas[0])
+                    } else {
+                        None
+                    }
+                })
+                .or_else(|| schemas.resolve_schema(ns, name.as_str(), type_))
+                .unwrap_or(SchemaId::UNKNOWN),
+            Some(SchemaIdent::Id(schema)) => schema,
+            Some(SchemaIdent::Name(s)) => schemas
+                .schemas()
+                .find(|(_, info)| matches!(&info.name, Some(name) if *name == s))
+                .map_or(SchemaId::UNKNOWN, |(id, _)| *id),
+            Some(SchemaIdent::Location(url)) => schemas
+                .schemas()
+                .find(|(_, info)| matches!(&info.location, Some(location) if *location == url))
+                .map_or(SchemaId::UNKNOWN, |(id, _)| *id),
+        };
+
+        Ok(TypeIdent {
             ns,
-            name: Name::new_named(self.name),
-            type_: self.type_,
+            schema,
+            name,
+            type_,
         })
     }
 }
 
-impl<X> From<(IdentType, X)> for IdentTriple
+impl<X> From<(IdentType, X)> for IdentQuadruple
 where
     X: AsRef<str>,
 {
@@ -555,27 +682,107 @@ where
             .map_or((None, ident), |(a, b)| (Some(a), b));
         let ns = prefix.map(|x| NamespaceIdent::prefix(x.as_bytes().to_owned()));
         let name = name.to_owned();
+        let schema = None;
 
-        Self { ns, name, type_ }
+        Self {
+            ns,
+            schema,
+            name,
+            type_,
+        }
     }
 }
 
-impl<N, X> From<(IdentType, N, X)> for IdentTriple
+impl<N, X> From<(IdentType, N, X)> for IdentQuadruple
 where
-    N: Into<Option<NamespaceIdent>>,
+    N: Into<NamespaceIdent>,
     X: Into<String>,
 {
     fn from((type_, ns, name): (IdentType, N, X)) -> Self {
-        let ns = ns.into();
-        let name = name.into();
-
-        Self { ns, name, type_ }
+        Self::from((type_, Some(ns), name))
     }
 }
 
-/// Identifies a namespace by either it's known prefix or by the namespace directly.
+impl<N, X> From<(IdentType, Option<N>, X)> for IdentQuadruple
+where
+    N: Into<NamespaceIdent>,
+    X: Into<String>,
+{
+    fn from((type_, ns, name): (IdentType, Option<N>, X)) -> Self {
+        let ns = ns.map(Into::into);
+        let name = name.into();
+        let schema = None;
+
+        Self {
+            ns,
+            schema,
+            name,
+            type_,
+        }
+    }
+}
+
+impl<N, S, X> From<(IdentType, N, S, X)> for IdentQuadruple
+where
+    N: Into<NamespaceIdent>,
+    S: Into<SchemaIdent>,
+    X: Into<String>,
+{
+    fn from((type_, ns, schema, name): (IdentType, N, S, X)) -> Self {
+        Self::from((type_, Some(ns), Some(schema), name))
+    }
+}
+
+impl<N, S, X> From<(IdentType, Option<N>, S, X)> for IdentQuadruple
+where
+    N: Into<NamespaceIdent>,
+    S: Into<SchemaIdent>,
+    X: Into<String>,
+{
+    fn from((type_, ns, schema, name): (IdentType, Option<N>, S, X)) -> Self {
+        Self::from((type_, ns, Some(schema), name))
+    }
+}
+
+impl<N, S, X> From<(IdentType, N, Option<S>, X)> for IdentQuadruple
+where
+    N: Into<NamespaceIdent>,
+    S: Into<SchemaIdent>,
+    X: Into<String>,
+{
+    fn from((type_, ns, schema, name): (IdentType, N, Option<S>, X)) -> Self {
+        Self::from((type_, Some(ns), schema, name))
+    }
+}
+
+impl<N, S, X> From<(IdentType, Option<N>, Option<S>, X)> for IdentQuadruple
+where
+    N: Into<NamespaceIdent>,
+    S: Into<SchemaIdent>,
+    X: Into<String>,
+{
+    fn from((type_, ns, schema, name): (IdentType, Option<N>, Option<S>, X)) -> Self {
+        let ns = ns.map(Into::into);
+        let schema = schema.map(Into::into);
+        let name = name.into();
+
+        Self {
+            ns,
+            schema,
+            name,
+            type_,
+        }
+    }
+}
+
+/// Identifies a namespace by either it's id, it's known prefix or it's namespace.
+///
+/// Used in [`IdentQuadruple`].
 #[derive(Debug, Clone)]
 pub enum NamespaceIdent {
+    /// Use the actual id the namespace is identified with.
+    Id(NamespaceId),
+
     /// Uses a namespace prefix to refer to a specific namespace in the schema.
     Prefix(NamespacePrefix),
 
@@ -584,7 +791,16 @@ pub enum NamespaceIdent {
 }
 
 impl NamespaceIdent {
+    /// Creates a new [`NamespaceIdent::Id`] instance from the passed `value`.
+    #[inline]
+    #[must_use]
+    pub fn id(value: NamespaceId) -> Self {
+        Self::Id(value)
+    }
+
     /// Creates a new [`NamespaceIdent::Prefix`] instance from the passed `value`.
+    #[inline]
+    #[must_use]
     pub fn prefix<X>(value: X) -> Self
     where
         NamespacePrefix: From<X>,
@@ -593,6 +809,8 @@ impl NamespaceIdent {
     }
 
     /// Creates a new [`NamespaceIdent::Namespace`] instance from the passed `value`.
+    #[inline]
+    #[must_use]
     pub fn namespace<X>(value: X) -> Self
     where
         Namespace: From<X>,
@@ -601,14 +819,117 @@ impl NamespaceIdent {
     }
 }
 
+impl From<NamespaceId> for NamespaceIdent {
+    #[inline]
+    fn from(value: NamespaceId) -> Self {
+        Self::Id(value)
+    }
+}
+
 impl From<Namespace> for NamespaceIdent {
+    #[inline]
     fn from(value: Namespace) -> Self {
         Self::Namespace(value)
     }
 }
 
 impl From<NamespacePrefix> for NamespaceIdent {
+    #[inline]
     fn from(value: NamespacePrefix) -> Self {
         Self::Prefix(value)
+    }
+}
+
+/// Identifies a schema by either it's id, it's name or it's location.
+///
+/// Used in [`IdentQuadruple`].
+#[derive(Debug, Clone)]
+pub enum SchemaIdent {
+    /// Identify the schema by it's [`SchemaId`].
+    Id(SchemaId),
+
+    /// Identify the schema by it's name.
+    Name(String),
+
+    /// Identify the schema by it's location.
+    Location(Url),
+}
+
+impl SchemaIdent {
+    /// Creates a new [`SchemaIdent::Id`] instance from the passed `value`.
+    #[inline]
+    #[must_use]
+    pub fn id(value: SchemaId) -> Self {
+        Self::Id(value)
+    }
+
+    /// Creates a new [`SchemaIdent::Name`] instance from the passed `value`.
+    #[inline]
+    #[must_use]
+    pub fn name<X>(value: X) -> Self
+    where
+        X: Into<String>,
+    {
+        Self::Name(value.into())
+    }
+
+    /// Creates a new [`SchemaIdent::Location`] instance from the passed `value`.
+    #[inline]
+    #[must_use]
+    pub fn location<X>(value: X) -> Self
+    where
+        X: Into<Url>,
+    {
+        Self::Location(value.into())
+    }
+}
+
+impl From<SchemaId> for SchemaIdent {
+    #[inline]
+    fn from(value: SchemaId) -> Self {
+        Self::Id(value)
+    }
+}
+
+impl From<String> for SchemaIdent {
+    #[inline]
+    fn from(value: String) -> Self {
+        Self::Name(value)
+    }
+}
+
+impl From<Url> for SchemaIdent {
+    #[inline]
+    fn from(value: Url) -> Self {
+        Self::Location(value)
+    }
+}
+
+impl Schemas {
+    fn resolve_schema(&self, ns: NamespaceId, name: &str, type_: IdentType) -> Option<SchemaId> {
+        let ns_info = self.get_namespace_info(&ns)?;
+
+        for schema in &ns_info.schemas {
+            let Some(schema_info) = self.get_schema(schema) else {
+                continue;
+            };
+
+            for c in &schema_info.schema.content {
+                match (type_, c) {
+                    (IdentType::Element, SchemaContent::Element(x)) if matches!(&x.name, Some(n) if n == name) => {
+                        return Some(*schema)
+                    }
+                    (IdentType::Type, SchemaContent::SimpleType(x)) if matches!(&x.name, Some(n) if n == name) => {
+                        return Some(*schema)
+                    }
+                    (IdentType::Type, SchemaContent::ComplexType(x)) if matches!(&x.name, Some(n) if n == name) => {
+                        return Some(*schema)
+                    }
+                    (_, _) => (),
+                }
+            }
+        }
+
+        None
     }
 }
