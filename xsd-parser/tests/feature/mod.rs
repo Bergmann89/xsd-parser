@@ -31,6 +31,7 @@ mod extension_simple_content;
 mod extra_derive;
 mod facets;
 mod globally_allowed_attribute;
+mod group_modules;
 mod group_refs_with_ns;
 mod include_references;
 mod include_target_namespace;

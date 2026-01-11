@@ -786,7 +786,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
         let ref_ = ty.ref_.as_ref().ok_or(Error::GroupMissingRef)?;
         let prefix = ref_.prefix();
         let ref_ = self.parse_node_ident(ref_)?.with_type(IdentType::Group);
-        let (schema, group) = self.find_group(ref_.clone())?;
+        let (_schema, group) = self.find_group(ref_.clone())?;
 
         let mut ret = Ok(());
 
@@ -798,8 +798,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 .map(ToOwned::to_owned)
         };
 
-        self.state
-            .push_stack(StackEntry::GroupRef(ref_, schema, prefix));
+        self.state.push_stack(StackEntry::GroupRef(ref_, prefix));
 
         for c in &group.content {
             ret = match c {
@@ -830,10 +829,9 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
         let ref_ = self
             .parse_node_ident(ref_)?
             .with_type(IdentType::AttributeGroup);
-        let (schema, group) = self.find_attribute_group(ref_.clone())?;
+        let (_schema, group) = self.find_attribute_group(ref_.clone())?;
 
-        self.state
-            .push_stack(StackEntry::AttributeGroupRef(ref_, schema));
+        self.state.push_stack(StackEntry::AttributeGroupRef);
 
         let mut ret = Ok(());
 
@@ -1450,7 +1448,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
         }
 
         let group_ident = self.state.type_stack().last().and_then(|x| {
-            if let StackEntry::GroupRef(x, _, _) = x {
+            if let StackEntry::GroupRef(x, _) = x {
                 Some(x.clone())
             } else {
                 None

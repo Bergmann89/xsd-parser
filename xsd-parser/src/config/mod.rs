@@ -494,7 +494,7 @@ impl Config {
 /// Convenient type to not break the public interface.
 ///
 /// The type was renamed to [`IdentQuadruple`].
-#[deprecated(note = "Use IdentQuadruple")]
+#[deprecated(note = "Use IdentQuadruple instead")]
 pub type IdentTriple = IdentQuadruple;
 
 /// Identifier that is used inside the config.

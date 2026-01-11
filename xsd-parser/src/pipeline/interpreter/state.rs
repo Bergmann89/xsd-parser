@@ -26,8 +26,8 @@ pub(super) struct State<'a> {
 #[derive(Debug)]
 pub(super) enum StackEntry {
     Type(TypeIdent, HashMap<NodeIdent, TypeIdent>),
-    GroupRef(NodeIdent, SchemaId, Option<String>),
-    AttributeGroupRef(NodeIdent, SchemaId),
+    GroupRef(NodeIdent, Option<String>),
+    AttributeGroupRef,
     Mixed(bool),
     Group,
 }
@@ -115,8 +115,6 @@ impl<'a> State<'a> {
     pub(super) fn current_ns(&self) -> Option<NamespaceId> {
         self.type_stack.iter().rev().find_map(|x| match x {
             StackEntry::Type(x, _) => Some(x.ns),
-            StackEntry::GroupRef(x, _, _) => Some(x.ns),
-            StackEntry::AttributeGroupRef(x, _) => Some(x.ns),
             _ => None,
         })
     }
@@ -124,8 +122,6 @@ impl<'a> State<'a> {
     pub(super) fn current_schema(&self) -> Option<SchemaId> {
         self.type_stack.iter().rev().find_map(|x| match x {
             StackEntry::Type(x, _) => Some(x.schema),
-            StackEntry::GroupRef(_, x, _) => Some(*x),
-            StackEntry::AttributeGroupRef(_, x) => Some(*x),
             _ => None,
         })
     }
@@ -134,9 +130,7 @@ impl<'a> State<'a> {
         for x in self.type_stack.iter().rev() {
             match x {
                 StackEntry::Type(x, _) if x.name.is_named() => return Some(x.name.as_str()),
-                StackEntry::GroupRef(_, _, _) | StackEntry::AttributeGroupRef(_, _)
-                    if stop_at_group_ref =>
-                {
+                StackEntry::GroupRef(_, _) | StackEntry::AttributeGroupRef if stop_at_group_ref => {
                     return None
                 }
                 _ => (),
@@ -147,7 +141,7 @@ impl<'a> State<'a> {
     }
 
     pub(super) fn named_group(&self) -> Option<String> {
-        if let StackEntry::GroupRef(x, _, prefix) = self.type_stack.last()? {
+        if let StackEntry::GroupRef(x, prefix) = self.type_stack.last()? {
             let name = x.name.as_str();
             if let Some(prefix) = prefix {
                 Some(format!("{prefix}:{name}"))

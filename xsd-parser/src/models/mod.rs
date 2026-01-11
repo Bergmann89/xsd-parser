@@ -14,6 +14,12 @@ mod ident_cache;
 mod name;
 mod naming;
 
+/// Convenient type to not break the public interface.
+///
+/// The `Ident` was renamed to [`TypeIdent`].
+#[deprecated(note = "Use TypeIdent instead")]
+pub type Ident = TypeIdent;
+
 pub use self::ident::{
     AttributeIdent, ElementIdent, EnumerationIdent, IdentType, NodeIdent, NodeIdentType,
     PropertyIdent, TypeIdent, TypeIdentType,
