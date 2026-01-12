@@ -655,8 +655,13 @@ impl SchemasBuilder {
                 (id, info)
             }
             Entry::Vacant(e) => {
-                self.schemas.last_namespace_id = self.schemas.last_namespace_id.wrapping_add(1);
-                let id = NamespaceId(self.schemas.last_namespace_id);
+                let id = if e.key().is_none() {
+                    NamespaceId::ANONYMOUS
+                } else {
+                    self.schemas.last_namespace_id = self.schemas.last_namespace_id.wrapping_add(1);
+
+                    NamespaceId(self.schemas.last_namespace_id)
+                };
 
                 let namespace = e.key().clone();
                 e.insert(id);

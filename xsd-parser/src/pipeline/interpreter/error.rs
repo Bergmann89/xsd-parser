@@ -77,6 +77,13 @@ pub enum Error {
     UnknownNamespacePrefix(NamespacePrefix),
 
     /// Anonymous namespace is undefined.
+    ///
+    /// Before resolving any type that is defined in the anonymous namespace
+    /// you have to add it to the [`Schemas`](crate::models::schema::Schemas)
+    /// by either adding a schema file that uses it (see
+    /// [`add_schema_from_str`](crate::pipeline::parser::Parser::add_schema_from_str)
+    /// or related add_schema_xxx methods) or by defining is manually (see
+    /// [`with_anonymous_namespace`](crate::pipeline::parser::Parser::with_anonymous_namespace)).
     #[error("Anonymous namespace is undefined!")]
     AnonymousNamespaceIsUndefined,
 

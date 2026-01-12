@@ -120,11 +120,18 @@ impl<'a> Interpreter<'a> {
     /// Returns a suitable [`Error`] if the operation was not successful.
     #[instrument(err, level = "trace", skip(self))]
     pub fn with_buildin_types(mut self) -> Result<Self, Error> {
+        let anonymous = self
+            .schemas
+            .resolve_namespace(&None)
+            .ok_or_else(|| Error::AnonymousNamespaceIsUndefined)?;
+
         macro_rules! add {
-            ($ident:ident, $type:ident) => {
-                self.state
-                    .add_type(TypeIdent::$ident, BuildInMeta::$type, true, true)?;
-            };
+            ($ident:ident, $type:ident) => {{
+                let ident = TypeIdent::$ident.with_ns(anonymous);
+                let ty = BuildInMeta::$type;
+
+                self.state.add_type(ident, ty, true, true)?;
+            }};
         }
 
         add!(U8, U8);
@@ -158,6 +165,10 @@ impl<'a> Interpreter<'a> {
     /// Returns a suitable [`Error`] if the operation was not successful.
     #[instrument(err, level = "trace", skip(self))]
     pub fn with_default_typedefs(mut self) -> Result<Self, Error> {
+        let anonymous = self
+            .schemas
+            .resolve_namespace(&None)
+            .ok_or_else(|| Error::AnonymousNamespaceIsUndefined)?;
         let xs = self
             .schemas
             .resolve_namespace(&Some(Namespace::XS))
@@ -165,19 +176,21 @@ impl<'a> Interpreter<'a> {
 
         macro_rules! add {
             ($src:expr, $dst:ident) => {{
-                self.state.add_type(
-                    TypeIdent::type_($src).with_ns(xs),
-                    ReferenceMeta::new(TypeIdent::$dst),
-                    true,
-                    true,
-                )?;
+                let src = TypeIdent::type_($src).with_ns(xs);
+                let dst = TypeIdent::$dst.with_ns(anonymous);
+
+                self.state
+                    .add_type(src, ReferenceMeta::new(dst), true, true)?;
             }};
         }
         macro_rules! add_list {
             ($src:expr, $dst:ident) => {{
+                let src = TypeIdent::type_($src).with_ns(xs);
+                let dst = TypeIdent::$dst.with_ns(anonymous);
+
                 self.state.add_type(
-                    TypeIdent::type_($src).with_ns(xs),
-                    ReferenceMeta::new(TypeIdent::$dst)
+                    src,
+                    ReferenceMeta::new(dst)
                         .min_occurs(0)
                         .max_occurs(MaxOccurs::Unbounded),
                     true,

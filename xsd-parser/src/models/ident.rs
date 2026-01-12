@@ -232,7 +232,7 @@ impl TypeIdent {
     #[must_use]
     pub const fn build_in(name: &'static str) -> Self {
         Self {
-            ns: NamespaceId::UNKNOWN,
+            ns: NamespaceId::ANONYMOUS,
             schema: SchemaId::UNKNOWN,
             name: Name::named(name),
             type_: IdentType::BuildIn,

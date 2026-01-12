@@ -622,7 +622,7 @@ impl IdentQuadruple {
         let name = Name::new_named(name);
 
         let ns = match ns {
-            None => schemas
+            None | Some(NamespaceIdent::Anonymous) => schemas
                 .resolve_namespace(&None)
                 .ok_or(InterpreterError::AnonymousNamespaceIsUndefined)?,
             Some(NamespaceIdent::Id(ns)) => ns,
@@ -780,6 +780,9 @@ where
 /// Used in [`IdentQuadruple`].
 #[derive(Debug, Clone)]
 pub enum NamespaceIdent {
+    /// Identifies the anonymous namespace.
+    Anonymous,
+
     /// Use the actual id the namespace is identified with.
     Id(NamespaceId),
 
