@@ -4,10 +4,10 @@
            targetNamespace="http://example.com"
            elementFormDefault="qualified">
     <xs:simpleType name="NameType">
-		<xs:restriction base="xs:string">
-			<xs:maxLength value="30"/>
-		</xs:restriction>
-	</xs:simpleType>
+      <xs:restriction base="xs:string">
+        <xs:maxLength value="30"/>
+      </xs:restriction>
+    </xs:simpleType>
 
     <xs:element name="Name" type="tns:NameType"/>
 </xs:schema>

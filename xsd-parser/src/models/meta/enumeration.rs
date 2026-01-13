@@ -3,7 +3,7 @@
 use std::hash::{Hash, Hasher};
 use std::ops::{Deref, DerefMut};
 
-use crate::models::{schema::xs::Use, Ident};
+use crate::models::{schema::xs::Use, EnumerationIdent, TypeIdent};
 
 use super::{Base, Constrains, MetaTypes, TypeEq};
 
@@ -24,13 +24,13 @@ pub struct EnumerationMeta {
 #[derive(Debug, Clone)]
 pub struct EnumerationMetaVariant {
     /// Identifier of the variant.
-    pub ident: Ident,
+    pub ident: EnumerationIdent,
 
     /// Use of the variant.
     pub use_: Use,
 
     /// Type of the variant.
-    pub type_: Option<Ident>,
+    pub type_: Option<TypeIdent>,
 
     /// Name of the variant to use inside the generated code.
     pub display_name: Option<String>,
@@ -76,7 +76,7 @@ impl TypeEq for EnumerationMeta {
 impl EnumerationMetaVariant {
     /// Create a new [`EnumerationMetaVariant`] instance from the passed `name`.
     #[must_use]
-    pub fn new(ident: Ident) -> Self {
+    pub fn new(ident: EnumerationIdent) -> Self {
         Self {
             ident,
             use_: Use::Optional,
@@ -88,7 +88,7 @@ impl EnumerationMetaVariant {
 
     /// Set the type of this variant information.
     #[must_use]
-    pub fn with_type(mut self, type_: Option<Ident>) -> Self {
+    pub fn with_type(mut self, type_: Option<TypeIdent>) -> Self {
         self.type_ = type_;
 
         self

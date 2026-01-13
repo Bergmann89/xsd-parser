@@ -2,7 +2,7 @@
 
 use std::hash::Hasher;
 
-use crate::models::Ident;
+use crate::models::TypeIdent;
 
 use super::{MetaTypes, TypeEq};
 
@@ -10,10 +10,10 @@ use super::{MetaTypes, TypeEq};
 #[derive(Default, Debug, Clone)]
 pub struct DynamicMeta {
     /// Base type of the dynamic type.
-    pub type_: Option<Ident>,
+    pub type_: Option<TypeIdent>,
 
     /// List of derived types.
-    pub derived_types: Vec<Ident>,
+    pub derived_types: Vec<TypeIdent>,
 }
 
 impl TypeEq for DynamicMeta {

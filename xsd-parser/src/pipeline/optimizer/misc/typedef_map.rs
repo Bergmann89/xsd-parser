@@ -2,11 +2,11 @@ use std::collections::HashMap;
 
 use crate::models::{
     meta::{MetaTypeVariant, MetaTypes},
-    Ident,
+    TypeIdent,
 };
 
 #[derive(Debug)]
-pub(crate) struct TypedefMap(HashMap<Ident, Ident>);
+pub(crate) struct TypedefMap(HashMap<TypeIdent, TypeIdent>);
 
 impl TypedefMap {
     pub(crate) fn new(types: &MetaTypes) -> Self {
@@ -23,7 +23,7 @@ impl TypedefMap {
         Self(ret)
     }
 
-    pub(crate) fn resolve<'a>(&'a self, ident: &'a Ident) -> &'a Ident {
+    pub(crate) fn resolve<'a>(&'a self, ident: &'a TypeIdent) -> &'a TypeIdent {
         let x = self.0.get(ident).map_or(ident, |x| self.resolve(x));
 
         x

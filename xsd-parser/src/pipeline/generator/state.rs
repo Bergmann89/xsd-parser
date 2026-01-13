@@ -6,14 +6,14 @@ use bit_set::BitSet;
 use crate::models::{
     data::PathData,
     meta::{DynamicMeta, MetaType, MetaTypeVariant, MetaTypes},
-    Ident,
+    TypeIdent,
 };
 
 /* State */
 
 #[derive(Debug)]
 pub(super) struct State<'types> {
-    pub cache: BTreeMap<Ident, TypeRef>,
+    pub cache: BTreeMap<TypeIdent, TypeRef>,
     pub pending: VecDeque<PendingType<'types>>,
     pub trait_infos: Option<TraitInfos>,
     pub loop_detection: LoopDetection,
@@ -24,7 +24,7 @@ pub(super) struct State<'types> {
 #[derive(Debug)]
 pub(super) struct PendingType<'types> {
     pub ty: &'types MetaType,
-    pub ident: Ident,
+    pub ident: TypeIdent,
 }
 
 /* TypeRef */
@@ -57,7 +57,7 @@ impl TypeRef {
 /* TraitInfos */
 
 #[derive(Debug)]
-pub(super) struct TraitInfos(BTreeMap<Ident, TraitInfo>);
+pub(super) struct TraitInfos(BTreeMap<TypeIdent, TraitInfo>);
 
 impl TraitInfos {
     #[must_use]
@@ -111,9 +111,9 @@ impl TraitInfos {
 
     fn collect_traits(
         &self,
-        ident: &Ident,
+        ident: &TypeIdent,
         depth: usize,
-        traits_second_level: &mut BTreeSet<Ident>,
+        traits_second_level: &mut BTreeSet<TypeIdent>,
     ) {
         if depth > 1 {
             traits_second_level.insert(ident.clone());
@@ -128,7 +128,7 @@ impl TraitInfos {
 }
 
 impl Deref for TraitInfos {
-    type Target = BTreeMap<Ident, TraitInfo>;
+    type Target = BTreeMap<TypeIdent, TraitInfo>;
 
     fn deref(&self) -> &Self::Target {
         &self.0
@@ -139,19 +139,19 @@ impl Deref for TraitInfos {
 
 #[derive(Default, Debug)]
 pub(super) struct TraitInfo {
-    pub traits_all: BTreeSet<Ident>,
-    pub traits_direct: BTreeSet<Ident>,
+    pub traits_all: BTreeSet<TypeIdent>,
+    pub traits_direct: BTreeSet<TypeIdent>,
 }
 
 /* LoopDetection */
 
 #[derive(Debug, Default)]
 pub(super) struct LoopDetection {
-    pub types: Vec<Ident>,
+    pub types: Vec<TypeIdent>,
 }
 
 impl LoopDetection {
-    pub(super) fn next_id(&mut self, ident: Ident) -> usize {
+    pub(super) fn next_id(&mut self, ident: TypeIdent) -> usize {
         let ret = self.types.len();
 
         self.types.push(ident);
@@ -161,8 +161,8 @@ impl LoopDetection {
 
     pub(super) fn get_reachable(
         &self,
-        cache: &BTreeMap<Ident, TypeRef>,
-        ident: &Ident,
+        cache: &BTreeMap<TypeIdent, TypeRef>,
+        ident: &TypeIdent,
     ) -> BitSet<u64> {
         let type_ref = cache.get(ident).unwrap();
         let mut reachable = BitSet::default();

@@ -1,6 +1,6 @@
 use std::hash::{Hash, Hasher};
 
-use crate::models::Ident;
+use crate::models::TypeIdent;
 
 use super::{Constrains, MetaTypes, TypeEq};
 
@@ -13,7 +13,7 @@ use super::{Constrains, MetaTypes, TypeEq};
 #[derive(Debug, Clone)]
 pub struct SimpleMeta {
     /// Type that is referenced.
-    pub base: Ident,
+    pub base: TypeIdent,
 
     /// `true` if this simple type is a list, `false` otherwise.
     pub is_list: bool,
@@ -40,7 +40,7 @@ pub enum WhiteSpace {
 impl SimpleMeta {
     /// Create a new [`SimpleMeta`] instance from the passed `base` identifier.
     #[must_use]
-    pub fn new(base: Ident) -> Self {
+    pub fn new(base: TypeIdent) -> Self {
         Self {
             base,
             is_list: false,

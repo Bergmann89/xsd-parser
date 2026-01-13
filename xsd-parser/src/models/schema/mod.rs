@@ -34,7 +34,7 @@ pub use self::qname::QName;
 ///
 /// This type supports iterating over loaded schemas and namespaces,
 /// as well as resolving prefixes and namespaces during interpretation.
-#[derive(Default, Debug)]
+#[derive(Debug)]
 pub struct Schemas {
     pub(crate) schemas: SchemaFiles,
     pub(crate) namespace_infos: NamespaceInfos,
@@ -42,8 +42,8 @@ pub struct Schemas {
     pub(crate) known_prefixes: NamespacePrefixes,
     pub(crate) known_namespaces: Namespaces,
 
-    pub(crate) next_schema_id: usize,
-    pub(crate) next_namespace_id: usize,
+    pub(crate) last_schema_id: usize,
+    pub(crate) last_namespace_id: usize,
 }
 
 /// Contains the information for a specific namespace.
@@ -174,6 +174,21 @@ impl Schemas {
     }
 }
 
+impl Default for Schemas {
+    fn default() -> Self {
+        Self {
+            schemas: SchemaFiles::default(),
+            namespace_infos: NamespaceInfos::default(),
+
+            known_prefixes: NamespacePrefixes::default(),
+            known_namespaces: Namespaces::default(),
+
+            last_schema_id: SchemaId::UNKNOWN.0,
+            last_namespace_id: NamespaceId::ANONYMOUS.0,
+        }
+    }
+}
+
 /* NamespaceInfo */
 
 impl NamespaceInfo {
@@ -207,5 +222,42 @@ impl SchemaInfo {
     #[must_use]
     pub fn namespace_id(&self) -> NamespaceId {
         self.namespace_id
+    }
+}
+
+/* SchemaId */
+
+impl SchemaId {
+    /// Represents the unknown [`SchemaId`]
+    pub const UNKNOWN: Self = Self(0);
+
+    /// Returns `true` if this schema id is unknown, `false` otherwise.
+    #[must_use]
+    pub fn is_unknown(&self) -> bool {
+        self.0 == 0
+    }
+}
+
+/* NamespaceId */
+
+impl NamespaceId {
+    /// Represents the unknown [`NamespaceId`]
+    pub const UNKNOWN: Self = Self(0);
+
+    /// Represents the anonymous [`NamespaceId`]
+    pub const ANONYMOUS: Self = Self(1);
+
+    /// Returns `true` if this namespace id is unknown, `false` otherwise.
+    #[inline]
+    #[must_use]
+    pub fn is_unknown(&self) -> bool {
+        self.eq(&Self::UNKNOWN)
+    }
+
+    /// Returns `true` if this namespace id is unknown, `false` otherwise.
+    #[inline]
+    #[must_use]
+    pub fn is_anonymous(&self) -> bool {
+        self.eq(&Self::ANONYMOUS)
     }
 }

@@ -8,7 +8,7 @@ use xsd_parser_types::{
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
-pub const NS_UNNAMED_2: Namespace =
+pub const NS_UNNAMED_4: Namespace =
     Namespace::new_const(b"https://www.etim-international.com/bmecat/50");
 pub const PREFIX_XS: NamespacePrefix = NamespacePrefix::new_const(b"xs");
 pub const PREFIX_XML: NamespacePrefix = NamespacePrefix::new_const(b"xml");
@@ -5145,7 +5145,7 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_4),
                     Some(b"version")
                 ) {
                     helper.read_attrib(&mut version, b"version", &attrib.value)?;
@@ -5329,7 +5329,7 @@ pub mod quick_xml_deserialize {
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_4),
                     Some(b"HEADER")
                 ) {
                     let output =
@@ -5337,7 +5337,7 @@ pub mod quick_xml_deserialize {
                     return self.handle_header(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_4),
                     Some(b"T_NEW_CATALOG")
                 ) {
                     let output =
@@ -5345,7 +5345,7 @@ pub mod quick_xml_deserialize {
                     return self.handle_t_new_catalog(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_4),
                     Some(b"T_UPDATE_PRODUCTS")
                 ) {
                     let output = <super::TUpdateProductsElementType as WithDeserializer>::init(
@@ -5354,7 +5354,7 @@ pub mod quick_xml_deserialize {
                     return self.handle_t_update_products(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_4),
                     Some(b"T_UPDATE_PRICES")
                 ) {
                     let output =
@@ -5362,7 +5362,7 @@ pub mod quick_xml_deserialize {
                     return self.handle_t_update_prices(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_4),
                     Some(b"T_NEW_PRODUCTDATA")
                 ) {
                     let output = <super::TNewProductdataElementType as WithDeserializer>::init(
@@ -5762,7 +5762,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"HEADER",
                             false,
                         )?;
@@ -5779,7 +5779,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"T_NEW_CATALOG",
                             false,
                         )?;
@@ -5796,7 +5796,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"T_UPDATE_PRODUCTS",
                             false,
                         )?;
@@ -5813,7 +5813,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"T_UPDATE_PRICES",
                             false,
                         )?;
@@ -5830,7 +5830,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"T_NEW_PRODUCTDATA",
                             false,
                         )?;
@@ -6257,7 +6257,7 @@ pub mod quick_xml_deserialize {
                     (S::GeneratorInfo(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"GENERATOR_INFO",
                             false,
                         )?;
@@ -6274,7 +6274,7 @@ pub mod quick_xml_deserialize {
                     (S::Catalog(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"CATALOG",
                             false,
                         )?;
@@ -6291,7 +6291,7 @@ pub mod quick_xml_deserialize {
                     (S::Buyer(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"BUYER",
                             false,
                         )?;
@@ -6308,7 +6308,7 @@ pub mod quick_xml_deserialize {
                     (S::Supplier(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"SUPPLIER",
                             false,
                         )?;
@@ -6328,7 +6328,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"USER_DEFINED_EXTENSIONS",
                             false,
                         )?;
@@ -6519,7 +6519,7 @@ pub mod quick_xml_deserialize {
                     (S::Product(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"PRODUCT",
                             false,
                         )?;
@@ -6590,7 +6590,7 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_4),
                     Some(b"prev_version")
                 ) {
                     helper.read_attrib(&mut prev_version, b"prev_version", &attrib.value)?;
@@ -6720,7 +6720,7 @@ pub mod quick_xml_deserialize {
                     (S::Product(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"PRODUCT",
                             false,
                         )?;
@@ -6790,7 +6790,7 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_4),
                     Some(b"prev_version")
                 ) {
                     helper.read_attrib(&mut prev_version, b"prev_version", &attrib.value)?;
@@ -6920,7 +6920,7 @@ pub mod quick_xml_deserialize {
                     (S::Product(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"PRODUCT",
                             false,
                         )?;
@@ -7111,7 +7111,7 @@ pub mod quick_xml_deserialize {
                     (S::Product(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"PRODUCT",
                             false,
                         )?;
@@ -7725,7 +7725,7 @@ pub mod quick_xml_deserialize {
                     (S::Language(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"LANGUAGE",
                             false,
                         )?;
@@ -7742,7 +7742,7 @@ pub mod quick_xml_deserialize {
                     (S::CatalogId(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"CATALOG_ID",
                             false,
                         )?;
@@ -7759,7 +7759,7 @@ pub mod quick_xml_deserialize {
                     (S::CatalogVersion(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"CATALOG_VERSION",
                             false,
                         )?;
@@ -7776,7 +7776,7 @@ pub mod quick_xml_deserialize {
                     (S::CatalogName(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"CATALOG_NAME",
                             false,
                         )?;
@@ -7793,7 +7793,7 @@ pub mod quick_xml_deserialize {
                     (S::Datetime(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"DATETIME",
                             false,
                         )?;
@@ -7810,7 +7810,7 @@ pub mod quick_xml_deserialize {
                     (S::Territory(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"TERRITORY",
                             false,
                         )?;
@@ -7827,7 +7827,7 @@ pub mod quick_xml_deserialize {
                     (S::Currency(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"CURRENCY",
                             false,
                         )?;
@@ -7844,7 +7844,7 @@ pub mod quick_xml_deserialize {
                     (S::MimeRoot(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"MIME_ROOT",
                             false,
                         )?;
@@ -8099,7 +8099,7 @@ pub mod quick_xml_deserialize {
                     (S::BuyerId(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"BUYER_ID",
                             false,
                         )?;
@@ -8116,7 +8116,7 @@ pub mod quick_xml_deserialize {
                     (S::BuyerName(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"BUYER_NAME",
                             false,
                         )?;
@@ -8487,7 +8487,7 @@ pub mod quick_xml_deserialize {
                     (S::SupplierId(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"SUPPLIER_ID",
                             false,
                         )?;
@@ -8504,7 +8504,7 @@ pub mod quick_xml_deserialize {
                     (S::SupplierName(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"SUPPLIER_NAME",
                             false,
                         )?;
@@ -8521,7 +8521,7 @@ pub mod quick_xml_deserialize {
                     (S::Address(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"ADDRESS",
                             false,
                         )?;
@@ -8538,7 +8538,7 @@ pub mod quick_xml_deserialize {
                     (S::MimeInfo(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"MIME_INFO",
                             false,
                         )?;
@@ -8728,7 +8728,7 @@ pub mod quick_xml_deserialize {
                     (S::UdxEdxfVersion(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.VERSION",
                             false,
                         )?;
@@ -8818,7 +8818,7 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_4),
                     Some(b"mode")
                 ) {
                     helper.read_attrib(&mut mode, b"mode", &attrib.value)?;
@@ -9384,7 +9384,7 @@ pub mod quick_xml_deserialize {
                     (S::SupplierPid(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"SUPPLIER_PID",
                             false,
                         )?;
@@ -9401,7 +9401,7 @@ pub mod quick_xml_deserialize {
                     (S::ProductDetails(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"PRODUCT_DETAILS",
                             false,
                         )?;
@@ -9418,7 +9418,7 @@ pub mod quick_xml_deserialize {
                     (S::ProductFeatures(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"PRODUCT_FEATURES",
                             false,
                         )?;
@@ -9435,7 +9435,7 @@ pub mod quick_xml_deserialize {
                     (S::ProductOrderDetails(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"PRODUCT_ORDER_DETAILS",
                             false,
                         )?;
@@ -9452,7 +9452,7 @@ pub mod quick_xml_deserialize {
                     (S::ProductPriceDetails(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"PRODUCT_PRICE_DETAILS",
                             false,
                         )?;
@@ -9472,7 +9472,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"USER_DEFINED_EXTENSIONS",
                             false,
                         )?;
@@ -9489,7 +9489,7 @@ pub mod quick_xml_deserialize {
                     (S::ProductReference(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"PRODUCT_REFERENCE",
                             false,
                         )?;
@@ -9509,7 +9509,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"PRODUCT_LOGISTIC_DETAILS",
                             false,
                         )?;
@@ -9618,7 +9618,7 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_4),
                     Some(b"mode")
                 ) {
                     helper.read_attrib(&mut mode, b"mode", &attrib.value)?;
@@ -10174,7 +10174,7 @@ pub mod quick_xml_deserialize {
                     (S::SupplierPid(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"SUPPLIER_PID",
                             false,
                         )?;
@@ -10191,7 +10191,7 @@ pub mod quick_xml_deserialize {
                     (S::ProductDetails(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"PRODUCT_DETAILS",
                             false,
                         )?;
@@ -10208,7 +10208,7 @@ pub mod quick_xml_deserialize {
                     (S::ProductFeatures(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"PRODUCT_FEATURES",
                             false,
                         )?;
@@ -10225,7 +10225,7 @@ pub mod quick_xml_deserialize {
                     (S::ProductOrderDetails(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"PRODUCT_ORDER_DETAILS",
                             false,
                         )?;
@@ -10242,7 +10242,7 @@ pub mod quick_xml_deserialize {
                     (S::ProductPriceDetails(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"PRODUCT_PRICE_DETAILS",
                             false,
                         )?;
@@ -10262,7 +10262,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"USER_DEFINED_EXTENSIONS",
                             false,
                         )?;
@@ -10279,7 +10279,7 @@ pub mod quick_xml_deserialize {
                     (S::ProductReference(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"PRODUCT_REFERENCE",
                             false,
                         )?;
@@ -10299,7 +10299,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"PRODUCT_LOGISTIC_DETAILS",
                             false,
                         )?;
@@ -10387,7 +10387,7 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_4),
                     Some(b"mode")
                 ) {
                     helper.read_attrib(&mut mode, b"mode", &attrib.value)?;
@@ -10637,7 +10637,7 @@ pub mod quick_xml_deserialize {
                     (S::SupplierPid(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"SUPPLIER_PID",
                             false,
                         )?;
@@ -10654,7 +10654,7 @@ pub mod quick_xml_deserialize {
                     (S::ProductPriceDetails(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"PRODUCT_PRICE_DETAILS",
                             false,
                         )?;
@@ -10674,7 +10674,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"USER_DEFINED_EXTENSIONS",
                             false,
                         )?;
@@ -10764,7 +10764,7 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_4),
                     Some(b"mode")
                 ) {
                     helper.read_attrib(&mut mode, b"mode", &attrib.value)?;
@@ -11132,7 +11132,7 @@ pub mod quick_xml_deserialize {
                     (S::SupplierPid(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"SUPPLIER_PID",
                             false,
                         )?;
@@ -11149,7 +11149,7 @@ pub mod quick_xml_deserialize {
                     (S::ProductDetails(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"PRODUCT_DETAILS",
                             false,
                         )?;
@@ -11166,7 +11166,7 @@ pub mod quick_xml_deserialize {
                     (S::ProductFeatures(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"PRODUCT_FEATURES",
                             false,
                         )?;
@@ -11186,7 +11186,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"USER_DEFINED_EXTENSIONS",
                             false,
                         )?;
@@ -11203,7 +11203,7 @@ pub mod quick_xml_deserialize {
                     (S::ProductReference(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"PRODUCT_REFERENCE",
                             false,
                         )?;
@@ -11276,7 +11276,7 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_4),
                     Some(b"default")
                 ) {
                     helper.read_attrib(&mut default, b"default", &attrib.value)?;
@@ -11412,7 +11412,7 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_4),
                     Some(b"lang")
                 ) {
                     helper.read_attrib(&mut lang, b"lang", &attrib.value)?;
@@ -11543,7 +11543,7 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_4),
                     Some(b"type")
                 ) {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
@@ -11666,7 +11666,7 @@ pub mod quick_xml_deserialize {
                     (S::Date(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"DATE",
                             false,
                         )?;
@@ -11735,7 +11735,7 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_4),
                     Some(b"type")
                 ) {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
@@ -11880,7 +11880,7 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_4),
                     Some(b"type")
                 ) {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
@@ -12381,7 +12381,7 @@ pub mod quick_xml_deserialize {
                     (S::Contact(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"CONTACT",
                             false,
                         )?;
@@ -12398,7 +12398,7 @@ pub mod quick_xml_deserialize {
                     (S::Street(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"STREET",
                             false,
                         )?;
@@ -12415,7 +12415,7 @@ pub mod quick_xml_deserialize {
                     (S::Zip(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"ZIP",
                             false,
                         )?;
@@ -12432,7 +12432,7 @@ pub mod quick_xml_deserialize {
                     (S::City(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"CITY",
                             false,
                         )?;
@@ -12449,7 +12449,7 @@ pub mod quick_xml_deserialize {
                     (S::Country(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"COUNTRY",
                             false,
                         )?;
@@ -12466,7 +12466,7 @@ pub mod quick_xml_deserialize {
                     (S::VatId(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"VAT_ID",
                             false,
                         )?;
@@ -12483,7 +12483,7 @@ pub mod quick_xml_deserialize {
                     (S::Email(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"EMAIL",
                             false,
                         )?;
@@ -12500,7 +12500,7 @@ pub mod quick_xml_deserialize {
                     (S::Url(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"URL",
                             false,
                         )?;
@@ -12689,7 +12689,7 @@ pub mod quick_xml_deserialize {
                     (S::Mime(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"MIME",
                             false,
                         )?;
@@ -13656,7 +13656,7 @@ pub mod quick_xml_deserialize {
                     (S::DescriptionShort(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"DESCRIPTION_SHORT",
                             false,
                         )?;
@@ -13673,7 +13673,7 @@ pub mod quick_xml_deserialize {
                     (S::DescriptionLong(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"DESCRIPTION_LONG",
                             false,
                         )?;
@@ -13690,7 +13690,7 @@ pub mod quick_xml_deserialize {
                     (S::InternationalPid(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"INTERNATIONAL_PID",
                             false,
                         )?;
@@ -13707,7 +13707,7 @@ pub mod quick_xml_deserialize {
                     (S::SupplierAltPid(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"SUPPLIER_ALT_PID",
                             false,
                         )?;
@@ -13724,7 +13724,7 @@ pub mod quick_xml_deserialize {
                     (S::BuyerPid(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"BUYER_PID",
                             false,
                         )?;
@@ -13741,7 +13741,7 @@ pub mod quick_xml_deserialize {
                     (S::ManufacturerPid(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"MANUFACTURER_PID",
                             false,
                         )?;
@@ -13758,7 +13758,7 @@ pub mod quick_xml_deserialize {
                     (S::ManufacturerName(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"MANUFACTURER_NAME",
                             false,
                         )?;
@@ -13778,7 +13778,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"MANUFACTURER_TYPE_DESCR",
                             false,
                         )?;
@@ -13795,7 +13795,7 @@ pub mod quick_xml_deserialize {
                     (S::DeliveryTime(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"DELIVERY_TIME",
                             false,
                         )?;
@@ -13815,7 +13815,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"SPECIAL_TREATMENT_CLASS",
                             false,
                         )?;
@@ -13832,7 +13832,7 @@ pub mod quick_xml_deserialize {
                     (S::Keyword(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"KEYWORD",
                             false,
                         )?;
@@ -13849,7 +13849,7 @@ pub mod quick_xml_deserialize {
                     (S::Remarks(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"REMARKS",
                             false,
                         )?;
@@ -13866,7 +13866,7 @@ pub mod quick_xml_deserialize {
                     (S::ProductStatus(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"PRODUCT_STATUS",
                             false,
                         )?;
@@ -13883,7 +13883,7 @@ pub mod quick_xml_deserialize {
                     (S::ProductType(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"PRODUCT_TYPE",
                             false,
                         )?;
@@ -14218,7 +14218,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"REFERENCE_FEATURE_SYSTEM_NAME",
                             false,
                         )?;
@@ -14242,7 +14242,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"REFERENCE_FEATURE_GROUP_ID",
                             false,
                         )?;
@@ -14263,7 +14263,7 @@ pub mod quick_xml_deserialize {
                     (S::Feature(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"FEATURE",
                             false,
                         )?;
@@ -14765,7 +14765,7 @@ pub mod quick_xml_deserialize {
                     (S::OrderUnit(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"ORDER_UNIT",
                             false,
                         )?;
@@ -14782,7 +14782,7 @@ pub mod quick_xml_deserialize {
                     (S::ContentUnit(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"CONTENT_UNIT",
                             false,
                         )?;
@@ -14799,7 +14799,7 @@ pub mod quick_xml_deserialize {
                     (S::NoCuPerOu(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"NO_CU_PER_OU",
                             false,
                         )?;
@@ -14816,7 +14816,7 @@ pub mod quick_xml_deserialize {
                     (S::PriceQuantity(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"PRICE_QUANTITY",
                             false,
                         )?;
@@ -14833,7 +14833,7 @@ pub mod quick_xml_deserialize {
                     (S::QuantityMin(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"QUANTITY_MIN",
                             false,
                         )?;
@@ -14850,7 +14850,7 @@ pub mod quick_xml_deserialize {
                     (S::QuantityInterval(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"QUANTITY_INTERVAL",
                             false,
                         )?;
@@ -15243,7 +15243,7 @@ pub mod quick_xml_deserialize {
                     (S::Datetime(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"DATETIME",
                             false,
                         )?;
@@ -15260,7 +15260,7 @@ pub mod quick_xml_deserialize {
                     (S::DailyPrice(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"DAILY_PRICE",
                             false,
                         )?;
@@ -15277,7 +15277,7 @@ pub mod quick_xml_deserialize {
                     (S::ProductPrice(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"PRODUCT_PRICE",
                             false,
                         )?;
@@ -15294,7 +15294,7 @@ pub mod quick_xml_deserialize {
                     (S::PriceBase(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"PRICE_BASE",
                             false,
                         )?;
@@ -17242,7 +17242,7 @@ pub mod quick_xml_deserialize {
                     (S::UdxEdxfMimeInfo(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.MIME_INFO",
                             false,
                         )?;
@@ -17262,7 +17262,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.MANUFACTURER_ACRONYM",
                             false,
                         )?;
@@ -17286,7 +17286,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.DESCRIPTION_VERY_SHORT",
                             false,
                         )?;
@@ -17307,7 +17307,7 @@ pub mod quick_xml_deserialize {
                     (S::UdxEdxfBrandName(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.BRAND_NAME",
                             false,
                         )?;
@@ -17324,7 +17324,7 @@ pub mod quick_xml_deserialize {
                     (S::UdxEdxfTenderText(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.TENDER_TEXT",
                             false,
                         )?;
@@ -17341,7 +17341,7 @@ pub mod quick_xml_deserialize {
                     (S::UdxEdxfValidFrom(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.VALID_FROM",
                             false,
                         )?;
@@ -17361,7 +17361,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.EXPIRATION_DATE",
                             false,
                         )?;
@@ -17381,7 +17381,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.DISCOUNT_GROUP",
                             false,
                         )?;
@@ -17401,7 +17401,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.BONUS_GROUP_SUPPLIER",
                             false,
                         )?;
@@ -17425,7 +17425,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.ADDITIONAL_FACTORS",
                             false,
                         )?;
@@ -17449,7 +17449,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.PRODUCT_TO_STOCK",
                             false,
                         )?;
@@ -17473,7 +17473,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.PRODUCT_SERIES",
                             false,
                         )?;
@@ -17493,7 +17493,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.PRODUCT_VARIATION",
                             false,
                         )?;
@@ -17517,7 +17517,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.PREDECESSOR_PID",
                             false,
                         )?;
@@ -17537,7 +17537,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.COUNTRY_BRANCH_NUMBERS",
                             false,
                         )?;
@@ -17561,7 +17561,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.COUNTRY_BRANCH_SUPPLIER_IDS",
                             false,
                         )?;
@@ -17582,7 +17582,7 @@ pub mod quick_xml_deserialize {
                     (S::UdxEdxfPackingUnits(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.PACKING_UNITS",
                             false,
                         )?;
@@ -17602,7 +17602,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.PRODUCT_LOGISTIC_DETAILS",
                             false,
                         )?;
@@ -17626,7 +17626,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.SHELF_LIFE_PERIOD",
                             false,
                         )?;
@@ -17650,7 +17650,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.BATTERY_CONTAINED",
                             false,
                         )?;
@@ -17674,7 +17674,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.ROHS_INDICATOR",
                             false,
                         )?;
@@ -17691,7 +17691,7 @@ pub mod quick_xml_deserialize {
                     (S::UdxEdxfCeMarking(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.CE_MARKING",
                             false,
                         )?;
@@ -17708,7 +17708,7 @@ pub mod quick_xml_deserialize {
                     (S::UdxEdxfReach(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.REACH",
                             false,
                         )?;
@@ -17728,7 +17728,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.SPECIAL_TREATMENT_CLASS_DETAILS",
                             false,
                         )?;
@@ -17752,7 +17752,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.SURCHARGE_LIST",
                             false,
                         )?;
@@ -17769,7 +17769,7 @@ pub mod quick_xml_deserialize {
                     (S::UdxEdxfWarranty(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.WARRANTY",
                             false,
                         )?;
@@ -17789,7 +17789,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.PRODUCT_ETIM_DYNAMIC",
                             false,
                         )?;
@@ -17813,7 +17813,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.PRODUCT_FEATURES_MC",
                             false,
                         )?;
@@ -17837,7 +17837,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.PRODUCT_CHARACTERISTICS",
                             false,
                         )?;
@@ -17941,12 +17941,12 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_4),
                     Some(b"type")
                 ) {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_4),
                     Some(b"quantity")
                 ) {
                     helper.read_attrib(&mut quantity, b"quantity", &attrib.value)?;
@@ -18246,7 +18246,7 @@ pub mod quick_xml_deserialize {
                     (S::ProdIdTo(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"PROD_ID_TO",
                             false,
                         )?;
@@ -18263,7 +18263,7 @@ pub mod quick_xml_deserialize {
                     (S::CatalogId(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"CATALOG_ID",
                             false,
                         )?;
@@ -18280,7 +18280,7 @@ pub mod quick_xml_deserialize {
                     (S::CatalogVersion(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"CATALOG_VERSION",
                             false,
                         )?;
@@ -18297,7 +18297,7 @@ pub mod quick_xml_deserialize {
                     (S::ReferenceDescr(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"REFERENCE_DESCR",
                             false,
                         )?;
@@ -18602,7 +18602,7 @@ pub mod quick_xml_deserialize {
                     (S::CustomsTariffNumber(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"CUSTOMS_TARIFF_NUMBER",
                             false,
                         )?;
@@ -18619,7 +18619,7 @@ pub mod quick_xml_deserialize {
                     (S::StatisticsFactor(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"STATISTICS_FACTOR",
                             false,
                         )?;
@@ -18636,7 +18636,7 @@ pub mod quick_xml_deserialize {
                     (S::CountryOfOrigin(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"COUNTRY_OF_ORIGIN",
                             false,
                         )?;
@@ -19687,7 +19687,7 @@ pub mod quick_xml_deserialize {
                     (S::UdxEdxfMimeInfo(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.MIME_INFO",
                             false,
                         )?;
@@ -19707,7 +19707,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.MANUFACTURER_ACRONYM",
                             false,
                         )?;
@@ -19731,7 +19731,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.DESCRIPTION_VERY_SHORT",
                             false,
                         )?;
@@ -19752,7 +19752,7 @@ pub mod quick_xml_deserialize {
                     (S::UdxEdxfBrandName(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.BRAND_NAME",
                             false,
                         )?;
@@ -19769,7 +19769,7 @@ pub mod quick_xml_deserialize {
                     (S::UdxEdxfTenderText(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.TENDER_TEXT",
                             false,
                         )?;
@@ -19786,7 +19786,7 @@ pub mod quick_xml_deserialize {
                     (S::UdxEdxfValidFrom(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.VALID_FROM",
                             false,
                         )?;
@@ -19806,7 +19806,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.EXPIRATION_DATE",
                             false,
                         )?;
@@ -19826,7 +19826,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.PRODUCT_SERIES",
                             false,
                         )?;
@@ -19846,7 +19846,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.PRODUCT_VARIATION",
                             false,
                         )?;
@@ -19870,7 +19870,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.PREDECESSOR_PID",
                             false,
                         )?;
@@ -19890,7 +19890,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.COUNTRY_BRANCH_NUMBERS",
                             false,
                         )?;
@@ -19914,7 +19914,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.COUNTRY_BRANCH_SUPPLIER_IDS",
                             false,
                         )?;
@@ -19938,7 +19938,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.PRODUCT_ETIM_DYNAMIC",
                             false,
                         )?;
@@ -19962,7 +19962,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.PRODUCT_FEATURES_MC",
                             false,
                         )?;
@@ -19986,7 +19986,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.PRODUCT_CHARACTERISTICS",
                             false,
                         )?;
@@ -20299,7 +20299,7 @@ pub mod quick_xml_deserialize {
                     (S::MimeSource(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"MIME_SOURCE",
                             false,
                         )?;
@@ -20316,7 +20316,7 @@ pub mod quick_xml_deserialize {
                     (S::MimeDescr(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"MIME_DESCR",
                             false,
                         )?;
@@ -20333,7 +20333,7 @@ pub mod quick_xml_deserialize {
                     (S::MimeAlt(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"MIME_ALT",
                             false,
                         )?;
@@ -20403,7 +20403,7 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_4),
                     Some(b"type")
                 ) {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
@@ -20541,7 +20541,7 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_4),
                     Some(b"type")
                 ) {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
@@ -20677,7 +20677,7 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_4),
                     Some(b"type")
                 ) {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
@@ -20819,12 +20819,12 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_4),
                     Some(b"lang")
                 ) {
                     helper.read_attrib(&mut lang, b"lang", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_4),
                     Some(b"type")
                 ) {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
@@ -21253,7 +21253,7 @@ pub mod quick_xml_deserialize {
                     (S::Fname(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"FNAME",
                             false,
                         )?;
@@ -21270,7 +21270,7 @@ pub mod quick_xml_deserialize {
                     (S::Fvalue(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"FVALUE",
                             false,
                         )?;
@@ -21287,7 +21287,7 @@ pub mod quick_xml_deserialize {
                     (S::Funit(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"FUNIT",
                             false,
                         )?;
@@ -21304,7 +21304,7 @@ pub mod quick_xml_deserialize {
                     (S::FvalueDetails(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"FVALUE_DETAILS",
                             false,
                         )?;
@@ -21376,7 +21376,7 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_4),
                     Some(b"type")
                 ) {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
@@ -21499,7 +21499,7 @@ pub mod quick_xml_deserialize {
                     (S::Date(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"DATE",
                             false,
                         )?;
@@ -21579,7 +21579,7 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_4),
                     Some(b"price_type")
                 ) {
                     helper.read_attrib(&mut price_type, b"price_type", &attrib.value)?;
@@ -21993,7 +21993,7 @@ pub mod quick_xml_deserialize {
                     (S::PriceAmount(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"PRICE_AMOUNT",
                             false,
                         )?;
@@ -22010,7 +22010,7 @@ pub mod quick_xml_deserialize {
                     (S::PriceCurrency(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"PRICE_CURRENCY",
                             false,
                         )?;
@@ -22027,7 +22027,7 @@ pub mod quick_xml_deserialize {
                     (S::Tax(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"TAX",
                             false,
                         )?;
@@ -22044,7 +22044,7 @@ pub mod quick_xml_deserialize {
                     (S::PriceFactor(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"PRICE_FACTOR",
                             false,
                         )?;
@@ -22061,7 +22061,7 @@ pub mod quick_xml_deserialize {
                     (S::LowerBound(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"LOWER_BOUND",
                             false,
                         )?;
@@ -22078,7 +22078,7 @@ pub mod quick_xml_deserialize {
                     (S::Territory(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"TERRITORY",
                             false,
                         )?;
@@ -22329,7 +22329,7 @@ pub mod quick_xml_deserialize {
                     (S::PriceUnit(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"PRICE_UNIT",
                             false,
                         )?;
@@ -22346,7 +22346,7 @@ pub mod quick_xml_deserialize {
                     (S::PriceUnitFactor(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"PRICE_UNIT_FACTOR",
                             false,
                         )?;
@@ -22535,7 +22535,7 @@ pub mod quick_xml_deserialize {
                     (S::UdxEdxfMime(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.MIME",
                             false,
                         )?;
@@ -22768,7 +22768,7 @@ pub mod quick_xml_deserialize {
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_4),
                     Some(b"UDX.EDXF.DISCOUNT_GROUP_MANUFACTURER")
                 ) {
                     let output = <String as WithDeserializer>::init(helper, event)?;
@@ -22780,7 +22780,7 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_4),
                     Some(b"UDX.EDXF.DISCOUNT_GROUP_SUPPLIER")
                 ) {
                     let output = <String as WithDeserializer>::init(helper, event)?;
@@ -23009,7 +23009,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.DISCOUNT_GROUP_MANUFACTURER",
                             false,
                         )?;
@@ -23028,7 +23028,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.DISCOUNT_GROUP_SUPPLIER",
                             false,
                         )?;
@@ -23285,7 +23285,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.ADDITIONAL_PRICE_FACTOR",
                             false,
                         )?;
@@ -23309,7 +23309,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.ADDITIONAL_FACTOR_INFO",
                             false,
                         )?;
@@ -23516,7 +23516,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.COUNTRY_BRANCH_NUMBER",
                             false,
                         )?;
@@ -23721,7 +23721,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.COUNTRY_BRANCH_SUPPLIER_ID",
                             false,
                         )?;
@@ -23919,7 +23919,7 @@ pub mod quick_xml_deserialize {
                     (S::UdxEdxfPackingUnit(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.PACKING_UNIT",
                             false,
                         )?;
@@ -24478,7 +24478,7 @@ pub mod quick_xml_deserialize {
                     (S::UdxEdxfNetvolume(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.NETVOLUME",
                             false,
                         )?;
@@ -24495,7 +24495,7 @@ pub mod quick_xml_deserialize {
                     (S::UdxEdxfNetweight(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.NETWEIGHT",
                             false,
                         )?;
@@ -24512,7 +24512,7 @@ pub mod quick_xml_deserialize {
                     (S::UdxEdxfNetlength(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.NETLENGTH",
                             false,
                         )?;
@@ -24529,7 +24529,7 @@ pub mod quick_xml_deserialize {
                     (S::UdxEdxfNetwidth(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.NETWIDTH",
                             false,
                         )?;
@@ -24546,7 +24546,7 @@ pub mod quick_xml_deserialize {
                     (S::UdxEdxfNetdepth(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.NETDEPTH",
                             false,
                         )?;
@@ -24563,7 +24563,7 @@ pub mod quick_xml_deserialize {
                     (S::UdxEdxfNetdiameter(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.NETDIAMETER",
                             false,
                         )?;
@@ -24583,7 +24583,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.REGION_OF_ORIGIN",
                             false,
                         )?;
@@ -24970,7 +24970,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.REACH.LISTDATE",
                             false,
                         )?;
@@ -24987,7 +24987,7 @@ pub mod quick_xml_deserialize {
                     (S::UdxEdxfReachInfo(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.REACH.INFO",
                             false,
                         )?;
@@ -25004,7 +25004,7 @@ pub mod quick_xml_deserialize {
                     (S::UdxEdxfScipNumber(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.SCIP_NUMBER",
                             false,
                         )?;
@@ -25021,7 +25021,7 @@ pub mod quick_xml_deserialize {
                     (S::UdxEdxfUfiCode(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.UFI_CODE",
                             false,
                         )?;
@@ -26598,7 +26598,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.HAZARDOUS_SUBSTANCES",
                             false,
                         )?;
@@ -26619,7 +26619,7 @@ pub mod quick_xml_deserialize {
                     (S::UdxEdxfShippingName(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.SHIPPING_NAME",
                             false,
                         )?;
@@ -26636,7 +26636,7 @@ pub mod quick_xml_deserialize {
                     (S::UdxEdxfPackingGroup(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.PACKING_GROUP",
                             false,
                         )?;
@@ -26656,7 +26656,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.TRANSPORT_CATEGORY",
                             false,
                         )?;
@@ -26680,7 +26680,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.MULTIPLICATION_FACTOR",
                             false,
                         )?;
@@ -26704,7 +26704,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.LIMITED_QUANTITIES",
                             false,
                         )?;
@@ -26728,7 +26728,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.EXCEPTED_QUANTITIES",
                             false,
                         )?;
@@ -26752,7 +26752,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.AGGREGATION_STATE",
                             false,
                         )?;
@@ -26776,7 +26776,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.SPECIAL_PROVISION_ID",
                             false,
                         )?;
@@ -26797,7 +26797,7 @@ pub mod quick_xml_deserialize {
                     (S::UdxEdxfHazardClass(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.HAZARD_CLASS",
                             false,
                         )?;
@@ -26817,7 +26817,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.CLASSIFICATION_CODE",
                             false,
                         )?;
@@ -26838,7 +26838,7 @@ pub mod quick_xml_deserialize {
                     (S::UdxEdxfHazardLabel(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.HAZARD_LABEL",
                             false,
                         )?;
@@ -26858,7 +26858,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.ENVIRONMENTAL_HAZARDS",
                             false,
                         )?;
@@ -26879,7 +26879,7 @@ pub mod quick_xml_deserialize {
                     (S::UdxEdxfTunnelCode(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.TUNNEL_CODE",
                             false,
                         )?;
@@ -26896,7 +26896,7 @@ pub mod quick_xml_deserialize {
                     (S::UdxEdxfGhsLabelCode(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.GHS_LABEL_CODE",
                             false,
                         )?;
@@ -26916,7 +26916,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.GHS_SIGNAL_WORD",
                             false,
                         )?;
@@ -26936,7 +26936,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.HAZARD_STATEMENT",
                             false,
                         )?;
@@ -26960,7 +26960,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.PRECAUTIONARY_STATEMENT",
                             false,
                         )?;
@@ -26981,7 +26981,7 @@ pub mod quick_xml_deserialize {
                     (S::UdxEdxfLiIonTested(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.LI-ION_TESTED",
                             false,
                         )?;
@@ -27001,7 +27001,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.LITHIUM_AMOUNT",
                             false,
                         )?;
@@ -27021,7 +27021,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.BATTERY_ENERGY",
                             false,
                         )?;
@@ -27038,7 +27038,7 @@ pub mod quick_xml_deserialize {
                     (S::UdxEdxfNos274(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.NOS_274",
                             false,
                         )?;
@@ -27058,7 +27058,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.HAZARD_TRIGGER",
                             false,
                         )?;
@@ -27270,7 +27270,7 @@ pub mod quick_xml_deserialize {
                     (S::UdxEdxfSurcharge(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.SURCHARGE",
                             false,
                         )?;
@@ -27525,7 +27525,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.WARRANTY_BUSINESS",
                             false,
                         )?;
@@ -27549,7 +27549,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.WARRANTY_CONSUMER",
                             false,
                         )?;
@@ -27747,7 +27747,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.PRODUCT_ETIM_RELEASE_DATE",
                             false,
                         )?;
@@ -28149,7 +28149,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.REFERENCE_FEATURE_MC_ID",
                             false,
                         )?;
@@ -28173,7 +28173,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.REFERENCE_FEATURE_MC_VERSION",
                             false,
                         )?;
@@ -28194,7 +28194,7 @@ pub mod quick_xml_deserialize {
                     (S::UdxEdxfBimStatus(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.BIM_STATUS",
                             false,
                         )?;
@@ -28211,7 +28211,7 @@ pub mod quick_xml_deserialize {
                     (S::UdxEdxfFeatureMc(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.FEATURE_MC",
                             false,
                         )?;
@@ -28421,7 +28421,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.PRODUCT_CHARACTERISTIC",
                             false,
                         )?;
@@ -28615,7 +28615,7 @@ pub mod quick_xml_deserialize {
                     (S::CustomsNumber(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"CUSTOMS_NUMBER",
                             false,
                         )?;
@@ -29229,7 +29229,7 @@ pub mod quick_xml_deserialize {
                     (S::UdxEdxfMimeSource(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.MIME_SOURCE",
                             false,
                         )?;
@@ -29246,7 +29246,7 @@ pub mod quick_xml_deserialize {
                     (S::UdxEdxfMimeCode(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.MIME_CODE",
                             false,
                         )?;
@@ -29263,7 +29263,7 @@ pub mod quick_xml_deserialize {
                     (S::UdxEdxfMimeFilename(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.MIME_FILENAME",
                             false,
                         )?;
@@ -29283,7 +29283,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.MIME_DESIGNATION",
                             false,
                         )?;
@@ -29304,7 +29304,7 @@ pub mod quick_xml_deserialize {
                     (S::UdxEdxfMimeAlt(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.MIME_ALT",
                             false,
                         )?;
@@ -29324,7 +29324,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.MIME_ISSUE_DATE",
                             false,
                         )?;
@@ -29344,7 +29344,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.MIME_EXPIRY_DATE",
                             false,
                         )?;
@@ -29365,7 +29365,7 @@ pub mod quick_xml_deserialize {
                     (S::UdxEdxfMimeOrder(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.MIME_ORDER",
                             false,
                         )?;
@@ -29444,12 +29444,12 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_4),
                     Some(b"type")
                 ) {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_4),
                     Some(b"country")
                 ) {
                     helper.read_attrib(&mut country, b"country", &attrib.value)?;
@@ -29589,12 +29589,12 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_4),
                     Some(b"type")
                 ) {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_4),
                     Some(b"country")
                 ) {
                     helper.read_attrib(&mut country, b"country", &attrib.value)?;
@@ -30661,7 +30661,7 @@ pub mod quick_xml_deserialize {
                     (S::UdxEdxfQuantityMin(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.QUANTITY_MIN",
                             false,
                         )?;
@@ -30678,7 +30678,7 @@ pub mod quick_xml_deserialize {
                     (S::UdxEdxfQuantityMax(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.QUANTITY_MAX",
                             false,
                         )?;
@@ -30698,7 +30698,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.PACKING_UNIT_CODE",
                             false,
                         )?;
@@ -30722,7 +30722,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.PACKING_UNIT_NAME",
                             false,
                         )?;
@@ -30743,7 +30743,7 @@ pub mod quick_xml_deserialize {
                     (S::UdxEdxfPackageBreak(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.PACKAGE_BREAK",
                             false,
                         )?;
@@ -30760,7 +30760,7 @@ pub mod quick_xml_deserialize {
                     (S::UdxEdxfPackingParts(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.PACKING_PARTS",
                             false,
                         )?;
@@ -30777,7 +30777,7 @@ pub mod quick_xml_deserialize {
                     (S::UdxEdxfVolume(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.VOLUME",
                             false,
                         )?;
@@ -30794,7 +30794,7 @@ pub mod quick_xml_deserialize {
                     (S::UdxEdxfWeight(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.WEIGHT",
                             false,
                         )?;
@@ -30811,7 +30811,7 @@ pub mod quick_xml_deserialize {
                     (S::UdxEdxfLength(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.LENGTH",
                             false,
                         )?;
@@ -30828,7 +30828,7 @@ pub mod quick_xml_deserialize {
                     (S::UdxEdxfWidth(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.WIDTH",
                             false,
                         )?;
@@ -30845,7 +30845,7 @@ pub mod quick_xml_deserialize {
                     (S::UdxEdxfDepth(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.DEPTH",
                             false,
                         )?;
@@ -30862,7 +30862,7 @@ pub mod quick_xml_deserialize {
                     (S::UdxEdxfDiameter(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.DIAMETER",
                             false,
                         )?;
@@ -30879,7 +30879,7 @@ pub mod quick_xml_deserialize {
                     (S::UdxEdxfGtin(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.GTIN",
                             false,
                         )?;
@@ -30896,7 +30896,7 @@ pub mod quick_xml_deserialize {
                     (S::UdxEdxfGs1128(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.GS1_128",
                             false,
                         )?;
@@ -31237,7 +31237,7 @@ pub mod quick_xml_deserialize {
                     (S::UdxEdxfUnNumber(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.UN_NUMBER",
                             false,
                         )?;
@@ -31257,7 +31257,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.NET_WEIGHT_OF_HAZARDOUS_SUBSTANCE",
                             false,
                         )?;
@@ -31281,7 +31281,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.VOLUME_OF_HAZARDOUS_SUBSTANCES",
                             false,
                         )?;
@@ -31505,7 +31505,7 @@ pub mod quick_xml_deserialize {
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_4),
                     Some(b"UDX.EDXF.SURCHARGE_TYPE")
                 ) {
                     let output = <String as WithDeserializer>::init(helper, event)?;
@@ -31517,7 +31517,7 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_4),
                     Some(b"UDX.EDXF.SURCHARGE_CLASS")
                 ) {
                     let output = <String as WithDeserializer>::init(helper, event)?;
@@ -31529,7 +31529,7 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_4),
                     Some(b"UDX.EDXF.SURCHARGE_MANNER")
                 ) {
                     let output =
@@ -31544,7 +31544,7 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_4),
                     Some(b"UDX.EDXF.SURCHARGE_PERCENTAGE")
                 ) {
                     let output = <f64 as WithDeserializer>::init(helper, event)?;
@@ -31556,7 +31556,7 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_4),
                     Some(b"UDX.EDXF.SURCHARGE_PRICE_AMOUNT")
                 ) {
                     let output = <f64 as WithDeserializer>::init(helper, event)?;
@@ -31568,7 +31568,7 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_4),
                     Some(b"UDX.EDXF.SURCHARGE_CALCULATION")
                 ) {
                     let output = < super :: UdxEdxfSurchargeUdxEdxfSurchargeCalculationElementType as WithDeserializer > :: init (helper , event) ? ;
@@ -31580,7 +31580,7 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_4),
                     Some(b"UDX.EDXF.MATERIAL_BASIS")
                 ) {
                     let output = <f64 as WithDeserializer>::init(helper, event)?;
@@ -31592,7 +31592,7 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_4),
                     Some(b"UDX.EDXF.MATERIAL_BASIS_WEIGHT")
                 ) {
                     let output = <f64 as WithDeserializer>::init(helper, event)?;
@@ -31604,7 +31604,7 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_4),
                     Some(b"UDX.EDXF.MATERIAL_BASIS_SURCHARGE_THRESHOLD")
                 ) {
                     let output = <f64 as WithDeserializer>::init(helper, event)?;
@@ -31616,7 +31616,7 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_4),
                     Some(b"UDX.EDXF.MATERIAL_BASIS_SURCHARGE_SHUTTER")
                 ) {
                     let output = < super :: UdxEdxfSurchargeUdxEdxfMaterialBasisSurchargeShutterElementType as WithDeserializer > :: init (helper , event) ? ;
@@ -31628,7 +31628,7 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_4),
                     Some(b"UDX.EDXF.MATERIAL_BASIS_SURCHARGE_CREDIT")
                 ) {
                     let output = < super :: UdxEdxfSurchargeUdxEdxfMaterialBasisSurchargeCreditElementType as WithDeserializer > :: init (helper , event) ? ;
@@ -31640,7 +31640,7 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_4),
                     Some(b"UDX.EDXF.MATERIAL_BASIS_SURCHARGE_TABLE")
                 ) {
                     let output = <super::DtMlstring as WithDeserializer>::init(helper, event)?;
@@ -32615,7 +32615,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.SURCHARGE_TYPE",
                             false,
                         )?;
@@ -32634,7 +32634,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.SURCHARGE_CLASS",
                             false,
                         )?;
@@ -32653,7 +32653,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.SURCHARGE_MANNER",
                             false,
                         )?;
@@ -32672,7 +32672,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.SURCHARGE_PERCENTAGE",
                             false,
                         )?;
@@ -32691,7 +32691,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.SURCHARGE_PRICE_AMOUNT",
                             false,
                         )?;
@@ -32710,7 +32710,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.SURCHARGE_CALCULATION",
                             false,
                         )?;
@@ -32729,7 +32729,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.MATERIAL_BASIS",
                             false,
                         )?;
@@ -32748,7 +32748,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.MATERIAL_BASIS_WEIGHT",
                             false,
                         )?;
@@ -32767,7 +32767,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.MATERIAL_BASIS_SURCHARGE_THRESHOLD",
                             false,
                         )?;
@@ -32786,7 +32786,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.MATERIAL_BASIS_SURCHARGE_SHUTTER",
                             false,
                         )?;
@@ -32805,7 +32805,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.MATERIAL_BASIS_SURCHARGE_CREDIT",
                             false,
                         )?;
@@ -32824,7 +32824,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.MATERIAL_BASIS_SURCHARGE_TABLE",
                             false,
                         )?;
@@ -33071,28 +33071,28 @@ pub mod quick_xml_deserialize {
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_4),
                     Some(b"UDX.EDXF.PORTCODE")
                 ) {
                     let output = <i32 as WithDeserializer>::init(helper, event)?;
                     return self.handle_udx_edxf_portcode(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_4),
                     Some(b"UDX.EDXF.FNAME")
                 ) {
                     let output = <String as WithDeserializer>::init(helper, event)?;
                     return self.handle_udx_edxf_fname(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_4),
                     Some(b"UDX.EDXF.FVALUE")
                 ) {
                     let output = <String as WithDeserializer>::init(helper, event)?;
                     return self.handle_udx_edxf_fvalue(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_4),
                     Some(b"UDX.EDXF.COORDINATE_X")
                 ) {
                     let output = <f32 as WithDeserializer>::init(helper, event)?;
@@ -33104,7 +33104,7 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_4),
                     Some(b"UDX.EDXF.COORDINATE_Y")
                 ) {
                     let output = <f32 as WithDeserializer>::init(helper, event)?;
@@ -33116,7 +33116,7 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_4),
                     Some(b"UDX.EDXF.COORDINATE_Z")
                 ) {
                     let output = <f32 as WithDeserializer>::init(helper, event)?;
@@ -33128,7 +33128,7 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_4),
                     Some(b"UDX.EDXF.MATRIX_VALUES")
                 ) {
                     let output = <super::UdxEdxfMatrixValuesElementType as WithDeserializer>::init(
@@ -33659,7 +33659,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.PORTCODE",
                             false,
                         )?;
@@ -33676,7 +33676,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.FNAME",
                             false,
                         )?;
@@ -33693,7 +33693,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.FVALUE",
                             false,
                         )?;
@@ -33710,7 +33710,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.COORDINATE_X",
                             false,
                         )?;
@@ -33727,7 +33727,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.COORDINATE_Y",
                             false,
                         )?;
@@ -33744,7 +33744,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.COORDINATE_Z",
                             false,
                         )?;
@@ -33761,7 +33761,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.MATRIX_VALUES",
                             false,
                         )?;
@@ -34024,7 +34024,7 @@ pub mod quick_xml_deserialize {
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_4),
                     Some(b"UDX.EDXF.PRODUCT_CHARACTERISTIC_CODE")
                 ) {
                     let output = <String as WithDeserializer>::init(helper, event)?;
@@ -34036,7 +34036,7 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_4),
                     Some(b"UDX.EDXF.PRODUCT_CHARACTERISTIC_NAME")
                 ) {
                     let output = <super::DtMlstring as WithDeserializer>::init(helper, event)?;
@@ -34048,7 +34048,7 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_4),
                     Some(b"UDX.EDXF.PRODUCT_CHARACTERISTIC_VALUE_BOOLEAN")
                 ) {
                     let output = <String as WithDeserializer>::init(helper, event)?;
@@ -34060,7 +34060,7 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_4),
                     Some(b"UDX.EDXF.PRODUCT_CHARACTERISTIC_VALUE_NUMERIC")
                 ) {
                     let output = <f32 as WithDeserializer>::init(helper, event)?;
@@ -34072,7 +34072,7 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_4),
                     Some(b"UDX.EDXF.PRODUCT_CHARACTERISTIC_VALUE_RANGE_FROM")
                 ) {
                     let output = <f32 as WithDeserializer>::init(helper, event)?;
@@ -34084,7 +34084,7 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_4),
                     Some(b"UDX.EDXF.PRODUCT_CHARACTERISTIC_VALUE_RANGE_TO")
                 ) {
                     let output = <f32 as WithDeserializer>::init(helper, event)?;
@@ -34096,7 +34096,7 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_4),
                     Some(b"UDX.EDXF.PRODUCT_CHARACTERISTIC_VALUE_STRING")
                 ) {
                     let output = <super::DtMlstring as WithDeserializer>::init(helper, event)?;
@@ -34108,7 +34108,7 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_4),
                     Some(b"UDX.EDXF.PRODUCT_CHARACTERISTIC_VALUE_SET")
                 ) {
                     let output = <super::DtMlstring as WithDeserializer>::init(helper, event)?;
@@ -34120,7 +34120,7 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_4),
                     Some(b"UDX.EDXF.PRODUCT_CHARACTERISTIC_VALUE_SELECT")
                 ) {
                     let output = <String as WithDeserializer>::init(helper, event)?;
@@ -34132,7 +34132,7 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_4),
                     Some(b"UDX.EDXF.PRODUCT_CHARACTERISTIC_VALUE_UNIT_CODE")
                 ) {
                     let output = <String as WithDeserializer>::init(helper, event)?;
@@ -34144,7 +34144,7 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_2),
+                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_4),
                     Some(b"UDX.EDXF.PRODUCT_CHARACTERISTIC_REFERENCE_GTIN")
                 ) {
                     let output = <String as WithDeserializer>::init(helper, event)?;
@@ -35099,7 +35099,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.PRODUCT_CHARACTERISTIC_CODE",
                             false,
                         )?;
@@ -35118,7 +35118,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.PRODUCT_CHARACTERISTIC_NAME",
                             false,
                         )?;
@@ -35137,7 +35137,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.PRODUCT_CHARACTERISTIC_VALUE_BOOLEAN",
                             false,
                         )?;
@@ -35156,7 +35156,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.PRODUCT_CHARACTERISTIC_VALUE_NUMERIC",
                             false,
                         )?;
@@ -35175,7 +35175,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.PRODUCT_CHARACTERISTIC_VALUE_RANGE_FROM",
                             false,
                         )?;
@@ -35194,7 +35194,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.PRODUCT_CHARACTERISTIC_VALUE_RANGE_TO",
                             false,
                         )?;
@@ -35213,7 +35213,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.PRODUCT_CHARACTERISTIC_VALUE_STRING",
                             false,
                         )?;
@@ -35232,7 +35232,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.PRODUCT_CHARACTERISTIC_VALUE_SET",
                             false,
                         )?;
@@ -35251,7 +35251,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.PRODUCT_CHARACTERISTIC_VALUE_SELECT",
                             false,
                         )?;
@@ -35270,7 +35270,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.PRODUCT_CHARACTERISTIC_VALUE_UNIT_CODE",
                             false,
                         )?;
@@ -35289,7 +35289,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.PRODUCT_CHARACTERISTIC_REFERENCE_GTIN",
                             false,
                         )?;
@@ -35473,7 +35473,7 @@ pub mod quick_xml_deserialize {
                     (S::UdxEdxfMatrixValue(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.MATRIX_VALUE",
                             false,
                         )?;
@@ -35738,7 +35738,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.MATRIX_SOURCE_VALUE",
                             false,
                         )?;
@@ -35762,7 +35762,7 @@ pub mod quick_xml_deserialize {
                     ) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_2),
+                            Some(&super::NS_UNNAMED_4),
                             b"UDX.EDXF.MATRIX_RESULT_VALUE",
                             false,
                         )?;
@@ -35860,7 +35860,7 @@ pub mod quick_xml_serialize {
                         );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_4);
                         helper.write_attrib(&mut bytes, "version", &self.value.version)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
@@ -36026,7 +36026,7 @@ pub mod quick_xml_serialize {
                             ));
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_4);
                         return Ok(Some(Event::Start(bytes)));
                     }
                     HeaderElementTypeSerializerState::GeneratorInfo(x) => {
@@ -36149,7 +36149,7 @@ pub mod quick_xml_serialize {
                         );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_4);
                         return Ok(Some(Event::Start(bytes)));
                     }
                     TNewCatalogElementTypeSerializerState::Product(x) => {
@@ -36215,7 +36215,7 @@ pub mod quick_xml_serialize {
                         );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_4);
                         helper.write_attrib(
                             &mut bytes,
                             "prev_version",
@@ -36286,7 +36286,7 @@ pub mod quick_xml_serialize {
                         );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_4);
                         helper.write_attrib(
                             &mut bytes,
                             "prev_version",
@@ -36357,7 +36357,7 @@ pub mod quick_xml_serialize {
                         );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_4);
                         return Ok(Some(Event::Start(bytes)));
                     }
                     TNewProductdataElementTypeSerializerState::Product(x) => {
@@ -36426,7 +36426,7 @@ pub mod quick_xml_serialize {
                         );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_4);
                         return Ok(Some(Event::Start(bytes)));
                     }
                     CatalogElementTypeSerializerState::Language(x) => {
@@ -36585,7 +36585,7 @@ pub mod quick_xml_serialize {
                         );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_4);
                         return Ok(Some(Event::Start(bytes)));
                     }
                     BuyerElementTypeSerializerState::BuyerId(x) => {
@@ -36677,7 +36677,7 @@ pub mod quick_xml_serialize {
                             ));
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_4);
                         return Ok(Some(Event::Start(bytes)));
                     }
                     SupplierElementTypeSerializerState::SupplierId(x) => {
@@ -36782,7 +36782,7 @@ pub mod quick_xml_serialize {
                             )?);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_4);
                         return Ok(Some(Event::Start(bytes)));
                     }
                     UdxHeaderSerializerState::UdxEdxfVersion(x) => {
@@ -36879,7 +36879,7 @@ pub mod quick_xml_serialize {
                         );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_4);
                         helper.write_attrib(&mut bytes, "mode", &self.value.mode)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
@@ -37070,7 +37070,7 @@ pub mod quick_xml_serialize {
             helper: &mut SerializeHelper,
         ) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match & mut * self . state { TUpdateProductsProductElementTypeSerializerState :: Init__ => { * self . state = TUpdateProductsProductElementTypeSerializerState :: SupplierPid (WithSerializer :: serializer (& self . value . supplier_pid , Some ("SUPPLIER_PID") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns (& mut bytes , None , & super :: NS_UNNAMED_2) ; helper . write_attrib (& mut bytes , "mode" , & self . value . mode) ? ; return Ok (Some (Event :: Start (bytes))) } TUpdateProductsProductElementTypeSerializerState :: SupplierPid (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdateProductsProductElementTypeSerializerState :: ProductDetails (WithSerializer :: serializer (& self . value . product_details , Some ("PRODUCT_DETAILS") , false) ?) , } TUpdateProductsProductElementTypeSerializerState :: ProductDetails (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdateProductsProductElementTypeSerializerState :: ProductFeatures (IterSerializer :: new (& self . value . product_features [..] , Some ("PRODUCT_FEATURES") , false)) , } TUpdateProductsProductElementTypeSerializerState :: ProductFeatures (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdateProductsProductElementTypeSerializerState :: ProductOrderDetails (WithSerializer :: serializer (& self . value . product_order_details , Some ("PRODUCT_ORDER_DETAILS") , false) ?) , } TUpdateProductsProductElementTypeSerializerState :: ProductOrderDetails (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdateProductsProductElementTypeSerializerState :: ProductPriceDetails (IterSerializer :: new (& self . value . product_price_details [..] , Some ("PRODUCT_PRICE_DETAILS") , false)) , } TUpdateProductsProductElementTypeSerializerState :: ProductPriceDetails (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdateProductsProductElementTypeSerializerState :: UserDefinedExtensions (IterSerializer :: new (self . value . user_defined_extensions . as_ref () , Some ("USER_DEFINED_EXTENSIONS") , false)) , } TUpdateProductsProductElementTypeSerializerState :: UserDefinedExtensions (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdateProductsProductElementTypeSerializerState :: ProductReference (IterSerializer :: new (& self . value . product_reference [..] , Some ("PRODUCT_REFERENCE") , false)) , } TUpdateProductsProductElementTypeSerializerState :: ProductReference (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdateProductsProductElementTypeSerializerState :: ProductLogisticDetails (IterSerializer :: new (self . value . product_logistic_details . as_ref () , Some ("PRODUCT_LOGISTIC_DETAILS") , false)) , } TUpdateProductsProductElementTypeSerializerState :: ProductLogisticDetails (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdateProductsProductElementTypeSerializerState :: End__ , } TUpdateProductsProductElementTypeSerializerState :: End__ => { * self . state = TUpdateProductsProductElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } TUpdateProductsProductElementTypeSerializerState :: Done__ => return Ok (None) , TUpdateProductsProductElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                match & mut * self . state { TUpdateProductsProductElementTypeSerializerState :: Init__ => { * self . state = TUpdateProductsProductElementTypeSerializerState :: SupplierPid (WithSerializer :: serializer (& self . value . supplier_pid , Some ("SUPPLIER_PID") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns (& mut bytes , None , & super :: NS_UNNAMED_4) ; helper . write_attrib (& mut bytes , "mode" , & self . value . mode) ? ; return Ok (Some (Event :: Start (bytes))) } TUpdateProductsProductElementTypeSerializerState :: SupplierPid (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdateProductsProductElementTypeSerializerState :: ProductDetails (WithSerializer :: serializer (& self . value . product_details , Some ("PRODUCT_DETAILS") , false) ?) , } TUpdateProductsProductElementTypeSerializerState :: ProductDetails (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdateProductsProductElementTypeSerializerState :: ProductFeatures (IterSerializer :: new (& self . value . product_features [..] , Some ("PRODUCT_FEATURES") , false)) , } TUpdateProductsProductElementTypeSerializerState :: ProductFeatures (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdateProductsProductElementTypeSerializerState :: ProductOrderDetails (WithSerializer :: serializer (& self . value . product_order_details , Some ("PRODUCT_ORDER_DETAILS") , false) ?) , } TUpdateProductsProductElementTypeSerializerState :: ProductOrderDetails (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdateProductsProductElementTypeSerializerState :: ProductPriceDetails (IterSerializer :: new (& self . value . product_price_details [..] , Some ("PRODUCT_PRICE_DETAILS") , false)) , } TUpdateProductsProductElementTypeSerializerState :: ProductPriceDetails (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdateProductsProductElementTypeSerializerState :: UserDefinedExtensions (IterSerializer :: new (self . value . user_defined_extensions . as_ref () , Some ("USER_DEFINED_EXTENSIONS") , false)) , } TUpdateProductsProductElementTypeSerializerState :: UserDefinedExtensions (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdateProductsProductElementTypeSerializerState :: ProductReference (IterSerializer :: new (& self . value . product_reference [..] , Some ("PRODUCT_REFERENCE") , false)) , } TUpdateProductsProductElementTypeSerializerState :: ProductReference (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdateProductsProductElementTypeSerializerState :: ProductLogisticDetails (IterSerializer :: new (self . value . product_logistic_details . as_ref () , Some ("PRODUCT_LOGISTIC_DETAILS") , false)) , } TUpdateProductsProductElementTypeSerializerState :: ProductLogisticDetails (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdateProductsProductElementTypeSerializerState :: End__ , } TUpdateProductsProductElementTypeSerializerState :: End__ => { * self . state = TUpdateProductsProductElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } TUpdateProductsProductElementTypeSerializerState :: Done__ => return Ok (None) , TUpdateProductsProductElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
             }
         }
     }
@@ -37117,7 +37117,7 @@ pub mod quick_xml_serialize {
             helper: &mut SerializeHelper,
         ) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match & mut * self . state { TUpdatePricesProductElementTypeSerializerState :: Init__ => { * self . state = TUpdatePricesProductElementTypeSerializerState :: SupplierPid (WithSerializer :: serializer (& self . value . supplier_pid , Some ("SUPPLIER_PID") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns (& mut bytes , None , & super :: NS_UNNAMED_2) ; helper . write_attrib (& mut bytes , "mode" , & self . value . mode) ? ; return Ok (Some (Event :: Start (bytes))) } TUpdatePricesProductElementTypeSerializerState :: SupplierPid (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdatePricesProductElementTypeSerializerState :: ProductPriceDetails (IterSerializer :: new (& self . value . product_price_details [..] , Some ("PRODUCT_PRICE_DETAILS") , false)) , } TUpdatePricesProductElementTypeSerializerState :: ProductPriceDetails (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdatePricesProductElementTypeSerializerState :: UserDefinedExtensions (IterSerializer :: new (self . value . user_defined_extensions . as_ref () , Some ("USER_DEFINED_EXTENSIONS") , false)) , } TUpdatePricesProductElementTypeSerializerState :: UserDefinedExtensions (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdatePricesProductElementTypeSerializerState :: End__ , } TUpdatePricesProductElementTypeSerializerState :: End__ => { * self . state = TUpdatePricesProductElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } TUpdatePricesProductElementTypeSerializerState :: Done__ => return Ok (None) , TUpdatePricesProductElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                match & mut * self . state { TUpdatePricesProductElementTypeSerializerState :: Init__ => { * self . state = TUpdatePricesProductElementTypeSerializerState :: SupplierPid (WithSerializer :: serializer (& self . value . supplier_pid , Some ("SUPPLIER_PID") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns (& mut bytes , None , & super :: NS_UNNAMED_4) ; helper . write_attrib (& mut bytes , "mode" , & self . value . mode) ? ; return Ok (Some (Event :: Start (bytes))) } TUpdatePricesProductElementTypeSerializerState :: SupplierPid (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdatePricesProductElementTypeSerializerState :: ProductPriceDetails (IterSerializer :: new (& self . value . product_price_details [..] , Some ("PRODUCT_PRICE_DETAILS") , false)) , } TUpdatePricesProductElementTypeSerializerState :: ProductPriceDetails (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdatePricesProductElementTypeSerializerState :: UserDefinedExtensions (IterSerializer :: new (self . value . user_defined_extensions . as_ref () , Some ("USER_DEFINED_EXTENSIONS") , false)) , } TUpdatePricesProductElementTypeSerializerState :: UserDefinedExtensions (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdatePricesProductElementTypeSerializerState :: End__ , } TUpdatePricesProductElementTypeSerializerState :: End__ => { * self . state = TUpdatePricesProductElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } TUpdatePricesProductElementTypeSerializerState :: Done__ => return Ok (None) , TUpdatePricesProductElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
             }
         }
     }
@@ -37183,7 +37183,7 @@ pub mod quick_xml_serialize {
                         );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_4);
                         helper.write_attrib(&mut bytes, "mode", &self.value.mode)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
@@ -37304,7 +37304,7 @@ pub mod quick_xml_serialize {
                         );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_4);
                         helper.write_attrib_opt(&mut bytes, "default", &self.value.default)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
@@ -37365,7 +37365,7 @@ pub mod quick_xml_serialize {
                         );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_4);
                         helper.write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
@@ -37424,7 +37424,7 @@ pub mod quick_xml_serialize {
                         );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_4);
                         helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
@@ -37485,7 +37485,7 @@ pub mod quick_xml_serialize {
                         );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_4);
                         helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
@@ -37551,7 +37551,7 @@ pub mod quick_xml_serialize {
                         );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_4);
                         helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
@@ -37696,7 +37696,7 @@ pub mod quick_xml_serialize {
                         );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_4);
                         return Ok(Some(Event::Start(bytes)));
                     }
                     MimeInfoElementTypeSerializerState::Mime(x) => {
@@ -37803,7 +37803,7 @@ pub mod quick_xml_serialize {
                         );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_4);
                         return Ok(Some(Event::Start(bytes)));
                     }
                     ProductDetailsElementTypeSerializerState::DescriptionShort(x) => {
@@ -38062,7 +38062,7 @@ pub mod quick_xml_serialize {
                             );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_4);
                         return Ok(Some(Event::Start(bytes)));
                     }
                     ProductFeaturesElementTypeSerializerState::ReferenceFeatureSystemName(x) => {
@@ -38158,7 +38158,7 @@ pub mod quick_xml_serialize {
                         );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_4);
                         return Ok(Some(Event::Start(bytes)));
                     }
                     ProductOrderDetailsElementTypeSerializerState::OrderUnit(x) => {
@@ -38315,7 +38315,7 @@ pub mod quick_xml_serialize {
                         );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_4);
                         return Ok(Some(Event::Start(bytes)));
                     }
                     ProductPriceDetailsElementTypeSerializerState::Datetime(x) => {
@@ -38544,7 +38544,7 @@ pub mod quick_xml_serialize {
                             ));
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_4);
                         return Ok(Some(Event::Start(bytes)));
                     }
                     UdxProductSerializerState::UdxEdxfMimeInfo(x) => {
@@ -39007,7 +39007,7 @@ pub mod quick_xml_serialize {
                         );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_4);
                         helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
                         helper.write_attrib_opt(&mut bytes, "quantity", &self.value.quantity)?;
                         return Ok(Some(Event::Start(bytes)));
@@ -39126,7 +39126,7 @@ pub mod quick_xml_serialize {
                             );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_4);
                         return Ok(Some(Event::Start(bytes)));
                     }
                     ProductLogisticDetailsElementTypeSerializerState::CustomsTariffNumber(x) => {
@@ -39272,7 +39272,7 @@ pub mod quick_xml_serialize {
                             ));
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_4);
                         return Ok(Some(Event::Start(bytes)));
                     }
                     UdxProductdataSerializerState::UdxEdxfMimeInfo(x) => {
@@ -39541,7 +39541,7 @@ pub mod quick_xml_serialize {
                             ));
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_4);
                         return Ok(Some(Event::Start(bytes)));
                     }
                     MimeElementTypeSerializerState::MimeSource(x) => {
@@ -39627,7 +39627,7 @@ pub mod quick_xml_serialize {
                         );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_4);
                         helper.write_attrib_opt(&mut bytes, "type", &self.value.type_)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
@@ -39688,7 +39688,7 @@ pub mod quick_xml_serialize {
                         );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_4);
                         helper.write_attrib_opt(&mut bytes, "type", &self.value.type_)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
@@ -39749,7 +39749,7 @@ pub mod quick_xml_serialize {
                         );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_4);
                         helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
@@ -39812,7 +39812,7 @@ pub mod quick_xml_serialize {
                         );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_4);
                         helper.write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
                         helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
                         return Ok(Some(Event::Start(bytes)));
@@ -39877,7 +39877,7 @@ pub mod quick_xml_serialize {
                         );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_4);
                         return Ok(Some(Event::Start(bytes)));
                     }
                     FeatureElementTypeSerializerState::Fname(x) => match x
@@ -39975,7 +39975,7 @@ pub mod quick_xml_serialize {
                         );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_4);
                         helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
@@ -40052,7 +40052,7 @@ pub mod quick_xml_serialize {
                         );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_4);
                         helper.write_attrib(&mut bytes, "price_type", &self.value.price_type)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
@@ -40185,7 +40185,7 @@ pub mod quick_xml_serialize {
                         );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_4);
                         return Ok(Some(Event::Start(bytes)));
                     }
                     PriceBaseElementTypeSerializerState::PriceUnit(x) => {
@@ -40269,7 +40269,7 @@ pub mod quick_xml_serialize {
                         );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_4);
                         return Ok(Some(Event::Start(bytes)));
                     }
                     UdxEdxfMimeInfoElementTypeSerializerState::UdxEdxfMime(x) => {
@@ -40335,7 +40335,7 @@ pub mod quick_xml_serialize {
                         );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_4);
                         return Ok(Some(Event::Start(bytes)));
                     }
                     UdxEdxfDiscountGroupElementTypeSerializerState::Content__(x) => match x
@@ -40427,7 +40427,7 @@ pub mod quick_xml_serialize {
             helper: &mut SerializeHelper,
         ) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match & mut * self . state { UdxEdxfAdditionalFactorsElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfAdditionalFactorsElementTypeSerializerState :: UdxEdxfAdditionalPriceFactor (WithSerializer :: serializer (& self . value . udx_edxf_additional_price_factor , Some ("UDX.EDXF.ADDITIONAL_PRICE_FACTOR") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns (& mut bytes , None , & super :: NS_UNNAMED_2) ; return Ok (Some (Event :: Start (bytes))) } UdxEdxfAdditionalFactorsElementTypeSerializerState :: UdxEdxfAdditionalPriceFactor (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfAdditionalFactorsElementTypeSerializerState :: UdxEdxfAdditionalFactorInfo (IterSerializer :: new (& self . value . udx_edxf_additional_factor_info [..] , Some ("UDX.EDXF.ADDITIONAL_FACTOR_INFO") , false)) , } UdxEdxfAdditionalFactorsElementTypeSerializerState :: UdxEdxfAdditionalFactorInfo (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfAdditionalFactorsElementTypeSerializerState :: End__ , } UdxEdxfAdditionalFactorsElementTypeSerializerState :: End__ => { * self . state = UdxEdxfAdditionalFactorsElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfAdditionalFactorsElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfAdditionalFactorsElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                match & mut * self . state { UdxEdxfAdditionalFactorsElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfAdditionalFactorsElementTypeSerializerState :: UdxEdxfAdditionalPriceFactor (WithSerializer :: serializer (& self . value . udx_edxf_additional_price_factor , Some ("UDX.EDXF.ADDITIONAL_PRICE_FACTOR") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns (& mut bytes , None , & super :: NS_UNNAMED_4) ; return Ok (Some (Event :: Start (bytes))) } UdxEdxfAdditionalFactorsElementTypeSerializerState :: UdxEdxfAdditionalPriceFactor (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfAdditionalFactorsElementTypeSerializerState :: UdxEdxfAdditionalFactorInfo (IterSerializer :: new (& self . value . udx_edxf_additional_factor_info [..] , Some ("UDX.EDXF.ADDITIONAL_FACTOR_INFO") , false)) , } UdxEdxfAdditionalFactorsElementTypeSerializerState :: UdxEdxfAdditionalFactorInfo (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfAdditionalFactorsElementTypeSerializerState :: End__ , } UdxEdxfAdditionalFactorsElementTypeSerializerState :: End__ => { * self . state = UdxEdxfAdditionalFactorsElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfAdditionalFactorsElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfAdditionalFactorsElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
             }
         }
     }
@@ -40470,7 +40470,7 @@ pub mod quick_xml_serialize {
             helper: &mut SerializeHelper,
         ) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match & mut * self . state { UdxEdxfCountryBranchNumbersElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfCountryBranchNumbersElementTypeSerializerState :: UdxEdxfCountryBranchNumber (IterSerializer :: new (& self . value . udx_edxf_country_branch_number [..] , Some ("UDX.EDXF.COUNTRY_BRANCH_NUMBER") , false)) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns (& mut bytes , None , & super :: NS_UNNAMED_2) ; return Ok (Some (Event :: Start (bytes))) } UdxEdxfCountryBranchNumbersElementTypeSerializerState :: UdxEdxfCountryBranchNumber (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfCountryBranchNumbersElementTypeSerializerState :: End__ , } UdxEdxfCountryBranchNumbersElementTypeSerializerState :: End__ => { * self . state = UdxEdxfCountryBranchNumbersElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfCountryBranchNumbersElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfCountryBranchNumbersElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                match & mut * self . state { UdxEdxfCountryBranchNumbersElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfCountryBranchNumbersElementTypeSerializerState :: UdxEdxfCountryBranchNumber (IterSerializer :: new (& self . value . udx_edxf_country_branch_number [..] , Some ("UDX.EDXF.COUNTRY_BRANCH_NUMBER") , false)) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns (& mut bytes , None , & super :: NS_UNNAMED_4) ; return Ok (Some (Event :: Start (bytes))) } UdxEdxfCountryBranchNumbersElementTypeSerializerState :: UdxEdxfCountryBranchNumber (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfCountryBranchNumbersElementTypeSerializerState :: End__ , } UdxEdxfCountryBranchNumbersElementTypeSerializerState :: End__ => { * self . state = UdxEdxfCountryBranchNumbersElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfCountryBranchNumbersElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfCountryBranchNumbersElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
             }
         }
     }
@@ -40502,7 +40502,7 @@ pub mod quick_xml_serialize {
             helper: &mut SerializeHelper,
         ) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match & mut * self . state { UdxEdxfCountryBranchSupplierIdsElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfCountryBranchSupplierIdsElementTypeSerializerState :: UdxEdxfCountryBranchSupplierId (IterSerializer :: new (& self . value . udx_edxf_country_branch_supplier_id [..] , Some ("UDX.EDXF.COUNTRY_BRANCH_SUPPLIER_ID") , false)) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns (& mut bytes , None , & super :: NS_UNNAMED_2) ; return Ok (Some (Event :: Start (bytes))) } UdxEdxfCountryBranchSupplierIdsElementTypeSerializerState :: UdxEdxfCountryBranchSupplierId (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfCountryBranchSupplierIdsElementTypeSerializerState :: End__ , } UdxEdxfCountryBranchSupplierIdsElementTypeSerializerState :: End__ => { * self . state = UdxEdxfCountryBranchSupplierIdsElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfCountryBranchSupplierIdsElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfCountryBranchSupplierIdsElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                match & mut * self . state { UdxEdxfCountryBranchSupplierIdsElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfCountryBranchSupplierIdsElementTypeSerializerState :: UdxEdxfCountryBranchSupplierId (IterSerializer :: new (& self . value . udx_edxf_country_branch_supplier_id [..] , Some ("UDX.EDXF.COUNTRY_BRANCH_SUPPLIER_ID") , false)) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns (& mut bytes , None , & super :: NS_UNNAMED_4) ; return Ok (Some (Event :: Start (bytes))) } UdxEdxfCountryBranchSupplierIdsElementTypeSerializerState :: UdxEdxfCountryBranchSupplierId (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfCountryBranchSupplierIdsElementTypeSerializerState :: End__ , } UdxEdxfCountryBranchSupplierIdsElementTypeSerializerState :: End__ => { * self . state = UdxEdxfCountryBranchSupplierIdsElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfCountryBranchSupplierIdsElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfCountryBranchSupplierIdsElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
             }
         }
     }
@@ -40557,7 +40557,7 @@ pub mod quick_xml_serialize {
                             );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_4);
                         return Ok(Some(Event::Start(bytes)));
                     }
                     UdxEdxfPackingUnitsElementTypeSerializerState::UdxEdxfPackingUnit(x) => match x
@@ -40617,7 +40617,7 @@ pub mod quick_xml_serialize {
             helper: &mut SerializeHelper,
         ) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match & mut * self . state { UdxEdxfProductLogisticDetailsElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfNetvolume (IterSerializer :: new (self . value . udx_edxf_netvolume . as_ref () , Some ("UDX.EDXF.NETVOLUME") , false)) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns (& mut bytes , None , & super :: NS_UNNAMED_2) ; return Ok (Some (Event :: Start (bytes))) } UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfNetvolume (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfNetweight (IterSerializer :: new (self . value . udx_edxf_netweight . as_ref () , Some ("UDX.EDXF.NETWEIGHT") , false)) , } UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfNetweight (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfNetlength (IterSerializer :: new (self . value . udx_edxf_netlength . as_ref () , Some ("UDX.EDXF.NETLENGTH") , false)) , } UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfNetlength (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfNetwidth (IterSerializer :: new (self . value . udx_edxf_netwidth . as_ref () , Some ("UDX.EDXF.NETWIDTH") , false)) , } UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfNetwidth (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfNetdepth (IterSerializer :: new (self . value . udx_edxf_netdepth . as_ref () , Some ("UDX.EDXF.NETDEPTH") , false)) , } UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfNetdepth (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfNetdiameter (IterSerializer :: new (self . value . udx_edxf_netdiameter . as_ref () , Some ("UDX.EDXF.NETDIAMETER") , false)) , } UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfNetdiameter (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfRegionOfOrigin (IterSerializer :: new (self . value . udx_edxf_region_of_origin . as_ref () , Some ("UDX.EDXF.REGION_OF_ORIGIN") , false)) , } UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfRegionOfOrigin (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfProductLogisticDetailsElementTypeSerializerState :: End__ , } UdxEdxfProductLogisticDetailsElementTypeSerializerState :: End__ => { * self . state = UdxEdxfProductLogisticDetailsElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfProductLogisticDetailsElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfProductLogisticDetailsElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                match & mut * self . state { UdxEdxfProductLogisticDetailsElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfNetvolume (IterSerializer :: new (self . value . udx_edxf_netvolume . as_ref () , Some ("UDX.EDXF.NETVOLUME") , false)) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns (& mut bytes , None , & super :: NS_UNNAMED_4) ; return Ok (Some (Event :: Start (bytes))) } UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfNetvolume (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfNetweight (IterSerializer :: new (self . value . udx_edxf_netweight . as_ref () , Some ("UDX.EDXF.NETWEIGHT") , false)) , } UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfNetweight (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfNetlength (IterSerializer :: new (self . value . udx_edxf_netlength . as_ref () , Some ("UDX.EDXF.NETLENGTH") , false)) , } UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfNetlength (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfNetwidth (IterSerializer :: new (self . value . udx_edxf_netwidth . as_ref () , Some ("UDX.EDXF.NETWIDTH") , false)) , } UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfNetwidth (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfNetdepth (IterSerializer :: new (self . value . udx_edxf_netdepth . as_ref () , Some ("UDX.EDXF.NETDEPTH") , false)) , } UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfNetdepth (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfNetdiameter (IterSerializer :: new (self . value . udx_edxf_netdiameter . as_ref () , Some ("UDX.EDXF.NETDIAMETER") , false)) , } UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfNetdiameter (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfRegionOfOrigin (IterSerializer :: new (self . value . udx_edxf_region_of_origin . as_ref () , Some ("UDX.EDXF.REGION_OF_ORIGIN") , false)) , } UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfRegionOfOrigin (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfProductLogisticDetailsElementTypeSerializerState :: End__ , } UdxEdxfProductLogisticDetailsElementTypeSerializerState :: End__ => { * self . state = UdxEdxfProductLogisticDetailsElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfProductLogisticDetailsElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfProductLogisticDetailsElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
             }
         }
     }
@@ -40668,7 +40668,7 @@ pub mod quick_xml_serialize {
                         );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_4);
                         return Ok(Some(Event::Start(bytes)));
                     }
                     UdxEdxfReachElementTypeSerializerState::UdxEdxfReachListdate(x) => {
@@ -40831,7 +40831,7 @@ pub mod quick_xml_serialize {
             helper: &mut SerializeHelper,
         ) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match & mut * self . state { UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfHazardousSubstances (IterSerializer :: new (& self . value . udx_edxf_hazardous_substances [..] , Some ("UDX.EDXF.HAZARDOUS_SUBSTANCES") , false)) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns (& mut bytes , None , & super :: NS_UNNAMED_2) ; return Ok (Some (Event :: Start (bytes))) } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfHazardousSubstances (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfShippingName (IterSerializer :: new (self . value . udx_edxf_shipping_name . as_ref () , Some ("UDX.EDXF.SHIPPING_NAME") , false)) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfShippingName (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfPackingGroup (IterSerializer :: new (self . value . udx_edxf_packing_group . as_ref () , Some ("UDX.EDXF.PACKING_GROUP") , false)) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfPackingGroup (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfTransportCategory (IterSerializer :: new (self . value . udx_edxf_transport_category . as_ref () , Some ("UDX.EDXF.TRANSPORT_CATEGORY") , false)) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfTransportCategory (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfMultiplicationFactor (IterSerializer :: new (self . value . udx_edxf_multiplication_factor . as_ref () , Some ("UDX.EDXF.MULTIPLICATION_FACTOR") , false)) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfMultiplicationFactor (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfLimitedQuantities (IterSerializer :: new (self . value . udx_edxf_limited_quantities . as_ref () , Some ("UDX.EDXF.LIMITED_QUANTITIES") , false)) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfLimitedQuantities (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfExceptedQuantities (IterSerializer :: new (self . value . udx_edxf_excepted_quantities . as_ref () , Some ("UDX.EDXF.EXCEPTED_QUANTITIES") , false)) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfExceptedQuantities (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfAggregationState (IterSerializer :: new (self . value . udx_edxf_aggregation_state . as_ref () , Some ("UDX.EDXF.AGGREGATION_STATE") , false)) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfAggregationState (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfSpecialProvisionId (IterSerializer :: new (& self . value . udx_edxf_special_provision_id [..] , Some ("UDX.EDXF.SPECIAL_PROVISION_ID") , false)) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfSpecialProvisionId (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfHazardClass (IterSerializer :: new (& self . value . udx_edxf_hazard_class [..] , Some ("UDX.EDXF.HAZARD_CLASS") , false)) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfHazardClass (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfClassificationCode (IterSerializer :: new (self . value . udx_edxf_classification_code . as_ref () , Some ("UDX.EDXF.CLASSIFICATION_CODE") , false)) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfClassificationCode (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfHazardLabel (IterSerializer :: new (& self . value . udx_edxf_hazard_label [..] , Some ("UDX.EDXF.HAZARD_LABEL") , false)) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfHazardLabel (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfEnvironmentalHazards (IterSerializer :: new (self . value . udx_edxf_environmental_hazards . as_ref () , Some ("UDX.EDXF.ENVIRONMENTAL_HAZARDS") , false)) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfEnvironmentalHazards (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfTunnelCode (IterSerializer :: new (self . value . udx_edxf_tunnel_code . as_ref () , Some ("UDX.EDXF.TUNNEL_CODE") , false)) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfTunnelCode (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfGhsLabelCode (IterSerializer :: new (& self . value . udx_edxf_ghs_label_code [..] , Some ("UDX.EDXF.GHS_LABEL_CODE") , false)) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfGhsLabelCode (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfGhsSignalWord (IterSerializer :: new (self . value . udx_edxf_ghs_signal_word . as_ref () , Some ("UDX.EDXF.GHS_SIGNAL_WORD") , false)) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfGhsSignalWord (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfHazardStatement (IterSerializer :: new (& self . value . udx_edxf_hazard_statement [..] , Some ("UDX.EDXF.HAZARD_STATEMENT") , false)) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfHazardStatement (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfPrecautionaryStatement (IterSerializer :: new (& self . value . udx_edxf_precautionary_statement [..] , Some ("UDX.EDXF.PRECAUTIONARY_STATEMENT") , false)) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfPrecautionaryStatement (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfLiIonTested (IterSerializer :: new (self . value . udx_edxf_li_ion_tested . as_ref () , Some ("UDX.EDXF.LI-ION_TESTED") , false)) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfLiIonTested (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfLithiumAmount (IterSerializer :: new (self . value . udx_edxf_lithium_amount . as_ref () , Some ("UDX.EDXF.LITHIUM_AMOUNT") , false)) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfLithiumAmount (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfBatteryEnergy (IterSerializer :: new (self . value . udx_edxf_battery_energy . as_ref () , Some ("UDX.EDXF.BATTERY_ENERGY") , false)) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfBatteryEnergy (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfNos274 (IterSerializer :: new (self . value . udx_edxf_nos_274 . as_ref () , Some ("UDX.EDXF.NOS_274") , false)) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfNos274 (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfHazardTrigger (IterSerializer :: new (& self . value . udx_edxf_hazard_trigger [..] , Some ("UDX.EDXF.HAZARD_TRIGGER") , false)) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfHazardTrigger (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: End__ , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: End__ => { * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                match & mut * self . state { UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfHazardousSubstances (IterSerializer :: new (& self . value . udx_edxf_hazardous_substances [..] , Some ("UDX.EDXF.HAZARDOUS_SUBSTANCES") , false)) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns (& mut bytes , None , & super :: NS_UNNAMED_4) ; return Ok (Some (Event :: Start (bytes))) } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfHazardousSubstances (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfShippingName (IterSerializer :: new (self . value . udx_edxf_shipping_name . as_ref () , Some ("UDX.EDXF.SHIPPING_NAME") , false)) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfShippingName (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfPackingGroup (IterSerializer :: new (self . value . udx_edxf_packing_group . as_ref () , Some ("UDX.EDXF.PACKING_GROUP") , false)) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfPackingGroup (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfTransportCategory (IterSerializer :: new (self . value . udx_edxf_transport_category . as_ref () , Some ("UDX.EDXF.TRANSPORT_CATEGORY") , false)) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfTransportCategory (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfMultiplicationFactor (IterSerializer :: new (self . value . udx_edxf_multiplication_factor . as_ref () , Some ("UDX.EDXF.MULTIPLICATION_FACTOR") , false)) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfMultiplicationFactor (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfLimitedQuantities (IterSerializer :: new (self . value . udx_edxf_limited_quantities . as_ref () , Some ("UDX.EDXF.LIMITED_QUANTITIES") , false)) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfLimitedQuantities (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfExceptedQuantities (IterSerializer :: new (self . value . udx_edxf_excepted_quantities . as_ref () , Some ("UDX.EDXF.EXCEPTED_QUANTITIES") , false)) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfExceptedQuantities (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfAggregationState (IterSerializer :: new (self . value . udx_edxf_aggregation_state . as_ref () , Some ("UDX.EDXF.AGGREGATION_STATE") , false)) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfAggregationState (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfSpecialProvisionId (IterSerializer :: new (& self . value . udx_edxf_special_provision_id [..] , Some ("UDX.EDXF.SPECIAL_PROVISION_ID") , false)) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfSpecialProvisionId (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfHazardClass (IterSerializer :: new (& self . value . udx_edxf_hazard_class [..] , Some ("UDX.EDXF.HAZARD_CLASS") , false)) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfHazardClass (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfClassificationCode (IterSerializer :: new (self . value . udx_edxf_classification_code . as_ref () , Some ("UDX.EDXF.CLASSIFICATION_CODE") , false)) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfClassificationCode (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfHazardLabel (IterSerializer :: new (& self . value . udx_edxf_hazard_label [..] , Some ("UDX.EDXF.HAZARD_LABEL") , false)) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfHazardLabel (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfEnvironmentalHazards (IterSerializer :: new (self . value . udx_edxf_environmental_hazards . as_ref () , Some ("UDX.EDXF.ENVIRONMENTAL_HAZARDS") , false)) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfEnvironmentalHazards (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfTunnelCode (IterSerializer :: new (self . value . udx_edxf_tunnel_code . as_ref () , Some ("UDX.EDXF.TUNNEL_CODE") , false)) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfTunnelCode (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfGhsLabelCode (IterSerializer :: new (& self . value . udx_edxf_ghs_label_code [..] , Some ("UDX.EDXF.GHS_LABEL_CODE") , false)) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfGhsLabelCode (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfGhsSignalWord (IterSerializer :: new (self . value . udx_edxf_ghs_signal_word . as_ref () , Some ("UDX.EDXF.GHS_SIGNAL_WORD") , false)) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfGhsSignalWord (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfHazardStatement (IterSerializer :: new (& self . value . udx_edxf_hazard_statement [..] , Some ("UDX.EDXF.HAZARD_STATEMENT") , false)) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfHazardStatement (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfPrecautionaryStatement (IterSerializer :: new (& self . value . udx_edxf_precautionary_statement [..] , Some ("UDX.EDXF.PRECAUTIONARY_STATEMENT") , false)) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfPrecautionaryStatement (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfLiIonTested (IterSerializer :: new (self . value . udx_edxf_li_ion_tested . as_ref () , Some ("UDX.EDXF.LI-ION_TESTED") , false)) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfLiIonTested (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfLithiumAmount (IterSerializer :: new (self . value . udx_edxf_lithium_amount . as_ref () , Some ("UDX.EDXF.LITHIUM_AMOUNT") , false)) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfLithiumAmount (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfBatteryEnergy (IterSerializer :: new (self . value . udx_edxf_battery_energy . as_ref () , Some ("UDX.EDXF.BATTERY_ENERGY") , false)) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfBatteryEnergy (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfNos274 (IterSerializer :: new (self . value . udx_edxf_nos_274 . as_ref () , Some ("UDX.EDXF.NOS_274") , false)) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfNos274 (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfHazardTrigger (IterSerializer :: new (& self . value . udx_edxf_hazard_trigger [..] , Some ("UDX.EDXF.HAZARD_TRIGGER") , false)) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfHazardTrigger (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: End__ , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: End__ => { * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
             }
         }
     }
@@ -40887,7 +40887,7 @@ pub mod quick_xml_serialize {
                             );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_4);
                         return Ok(Some(Event::Start(bytes)));
                     }
                     UdxEdxfSurchargeListElementTypeSerializerState::UdxEdxfSurcharge(x) => match x
@@ -40954,7 +40954,7 @@ pub mod quick_xml_serialize {
                             );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_4);
                         return Ok(Some(Event::Start(bytes)));
                     }
                     UdxEdxfWarrantyElementTypeSerializerState::UdxEdxfWarrantyBusiness(x) => {
@@ -41020,7 +41020,7 @@ pub mod quick_xml_serialize {
             helper: &mut SerializeHelper,
         ) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match & mut * self . state { UdxEdxfProductEtimDynamicElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfProductEtimDynamicElementTypeSerializerState :: UdxEdxfProductEtimReleaseDate (WithSerializer :: serializer (& self . value . udx_edxf_product_etim_release_date , Some ("UDX.EDXF.PRODUCT_ETIM_RELEASE_DATE") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns (& mut bytes , None , & super :: NS_UNNAMED_2) ; return Ok (Some (Event :: Start (bytes))) } UdxEdxfProductEtimDynamicElementTypeSerializerState :: UdxEdxfProductEtimReleaseDate (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfProductEtimDynamicElementTypeSerializerState :: End__ , } UdxEdxfProductEtimDynamicElementTypeSerializerState :: End__ => { * self . state = UdxEdxfProductEtimDynamicElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfProductEtimDynamicElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfProductEtimDynamicElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                match & mut * self . state { UdxEdxfProductEtimDynamicElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfProductEtimDynamicElementTypeSerializerState :: UdxEdxfProductEtimReleaseDate (WithSerializer :: serializer (& self . value . udx_edxf_product_etim_release_date , Some ("UDX.EDXF.PRODUCT_ETIM_RELEASE_DATE") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns (& mut bytes , None , & super :: NS_UNNAMED_4) ; return Ok (Some (Event :: Start (bytes))) } UdxEdxfProductEtimDynamicElementTypeSerializerState :: UdxEdxfProductEtimReleaseDate (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfProductEtimDynamicElementTypeSerializerState :: End__ , } UdxEdxfProductEtimDynamicElementTypeSerializerState :: End__ => { * self . state = UdxEdxfProductEtimDynamicElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfProductEtimDynamicElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfProductEtimDynamicElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
             }
         }
     }
@@ -41072,7 +41072,7 @@ pub mod quick_xml_serialize {
             helper: &mut SerializeHelper,
         ) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match & mut * self . state { UdxEdxfProductFeaturesMcElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfProductFeaturesMcElementTypeSerializerState :: UdxEdxfReferenceFeatureMcId (WithSerializer :: serializer (& self . value . udx_edxf_reference_feature_mc_id , Some ("UDX.EDXF.REFERENCE_FEATURE_MC_ID") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns (& mut bytes , None , & super :: NS_UNNAMED_2) ; return Ok (Some (Event :: Start (bytes))) } UdxEdxfProductFeaturesMcElementTypeSerializerState :: UdxEdxfReferenceFeatureMcId (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfProductFeaturesMcElementTypeSerializerState :: UdxEdxfReferenceFeatureMcVersion (WithSerializer :: serializer (& self . value . udx_edxf_reference_feature_mc_version , Some ("UDX.EDXF.REFERENCE_FEATURE_MC_VERSION") , false) ?) , } UdxEdxfProductFeaturesMcElementTypeSerializerState :: UdxEdxfReferenceFeatureMcVersion (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfProductFeaturesMcElementTypeSerializerState :: UdxEdxfBimStatus (IterSerializer :: new (self . value . udx_edxf_bim_status . as_ref () , Some ("UDX.EDXF.BIM_STATUS") , false)) , } UdxEdxfProductFeaturesMcElementTypeSerializerState :: UdxEdxfBimStatus (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfProductFeaturesMcElementTypeSerializerState :: UdxEdxfFeatureMc (IterSerializer :: new (& self . value . udx_edxf_feature_mc [..] , Some ("UDX.EDXF.FEATURE_MC") , false)) , } UdxEdxfProductFeaturesMcElementTypeSerializerState :: UdxEdxfFeatureMc (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfProductFeaturesMcElementTypeSerializerState :: End__ , } UdxEdxfProductFeaturesMcElementTypeSerializerState :: End__ => { * self . state = UdxEdxfProductFeaturesMcElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfProductFeaturesMcElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfProductFeaturesMcElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                match & mut * self . state { UdxEdxfProductFeaturesMcElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfProductFeaturesMcElementTypeSerializerState :: UdxEdxfReferenceFeatureMcId (WithSerializer :: serializer (& self . value . udx_edxf_reference_feature_mc_id , Some ("UDX.EDXF.REFERENCE_FEATURE_MC_ID") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns (& mut bytes , None , & super :: NS_UNNAMED_4) ; return Ok (Some (Event :: Start (bytes))) } UdxEdxfProductFeaturesMcElementTypeSerializerState :: UdxEdxfReferenceFeatureMcId (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfProductFeaturesMcElementTypeSerializerState :: UdxEdxfReferenceFeatureMcVersion (WithSerializer :: serializer (& self . value . udx_edxf_reference_feature_mc_version , Some ("UDX.EDXF.REFERENCE_FEATURE_MC_VERSION") , false) ?) , } UdxEdxfProductFeaturesMcElementTypeSerializerState :: UdxEdxfReferenceFeatureMcVersion (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfProductFeaturesMcElementTypeSerializerState :: UdxEdxfBimStatus (IterSerializer :: new (self . value . udx_edxf_bim_status . as_ref () , Some ("UDX.EDXF.BIM_STATUS") , false)) , } UdxEdxfProductFeaturesMcElementTypeSerializerState :: UdxEdxfBimStatus (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfProductFeaturesMcElementTypeSerializerState :: UdxEdxfFeatureMc (IterSerializer :: new (& self . value . udx_edxf_feature_mc [..] , Some ("UDX.EDXF.FEATURE_MC") , false)) , } UdxEdxfProductFeaturesMcElementTypeSerializerState :: UdxEdxfFeatureMc (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfProductFeaturesMcElementTypeSerializerState :: End__ , } UdxEdxfProductFeaturesMcElementTypeSerializerState :: End__ => { * self . state = UdxEdxfProductFeaturesMcElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfProductFeaturesMcElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfProductFeaturesMcElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
             }
         }
     }
@@ -41115,7 +41115,7 @@ pub mod quick_xml_serialize {
             helper: &mut SerializeHelper,
         ) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match & mut * self . state { UdxEdxfProductCharacteristicsElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfProductCharacteristicsElementTypeSerializerState :: UdxEdxfProductCharacteristic (IterSerializer :: new (& self . value . udx_edxf_product_characteristic [..] , Some ("UDX.EDXF.PRODUCT_CHARACTERISTIC") , false)) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns (& mut bytes , None , & super :: NS_UNNAMED_2) ; return Ok (Some (Event :: Start (bytes))) } UdxEdxfProductCharacteristicsElementTypeSerializerState :: UdxEdxfProductCharacteristic (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfProductCharacteristicsElementTypeSerializerState :: End__ , } UdxEdxfProductCharacteristicsElementTypeSerializerState :: End__ => { * self . state = UdxEdxfProductCharacteristicsElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfProductCharacteristicsElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfProductCharacteristicsElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                match & mut * self . state { UdxEdxfProductCharacteristicsElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfProductCharacteristicsElementTypeSerializerState :: UdxEdxfProductCharacteristic (IterSerializer :: new (& self . value . udx_edxf_product_characteristic [..] , Some ("UDX.EDXF.PRODUCT_CHARACTERISTIC") , false)) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns (& mut bytes , None , & super :: NS_UNNAMED_4) ; return Ok (Some (Event :: Start (bytes))) } UdxEdxfProductCharacteristicsElementTypeSerializerState :: UdxEdxfProductCharacteristic (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfProductCharacteristicsElementTypeSerializerState :: End__ , } UdxEdxfProductCharacteristicsElementTypeSerializerState :: End__ => { * self . state = UdxEdxfProductCharacteristicsElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfProductCharacteristicsElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfProductCharacteristicsElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
             }
         }
     }
@@ -41163,7 +41163,7 @@ pub mod quick_xml_serialize {
                         );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_4);
                         return Ok(Some(Event::Start(bytes)));
                     }
                     CustomsTariffNumberElementTypeSerializerState::CustomsNumber(x) => match x
@@ -41235,7 +41235,7 @@ pub mod quick_xml_serialize {
                         );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_4);
                         return Ok(Some(Event::Start(bytes)));
                     }
                     UdxEdxfMimeElementTypeSerializerState::UdxEdxfMimeSource(x) => {
@@ -41396,7 +41396,7 @@ pub mod quick_xml_serialize {
             helper: &mut SerializeHelper,
         ) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match & mut * self . state { UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeSerializerState :: Content__ (WithSerializer :: serializer (& self . value . content , None , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns (& mut bytes , None , & super :: NS_UNNAMED_2) ; helper . write_attrib (& mut bytes , "type" , & self . value . type_) ? ; helper . write_attrib (& mut bytes , "country" , & self . value . country) ? ; return Ok (Some (Event :: Start (bytes))) } UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeSerializerState :: Content__ (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeSerializerState :: End__ , } UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeSerializerState :: End__ => { * self . state = UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                match & mut * self . state { UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeSerializerState :: Content__ (WithSerializer :: serializer (& self . value . content , None , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns (& mut bytes , None , & super :: NS_UNNAMED_4) ; helper . write_attrib (& mut bytes , "type" , & self . value . type_) ? ; helper . write_attrib (& mut bytes , "country" , & self . value . country) ? ; return Ok (Some (Event :: Start (bytes))) } UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeSerializerState :: Content__ (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeSerializerState :: End__ , } UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeSerializerState :: End__ => { * self . state = UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
             }
         }
     }
@@ -41446,7 +41446,7 @@ pub mod quick_xml_serialize {
             helper: &mut SerializeHelper,
         ) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match & mut * self . state { UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeSerializerState :: Content__ (WithSerializer :: serializer (& self . value . content , None , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns (& mut bytes , None , & super :: NS_UNNAMED_2) ; helper . write_attrib (& mut bytes , "type" , & self . value . type_) ? ; helper . write_attrib (& mut bytes , "country" , & self . value . country) ? ; return Ok (Some (Event :: Start (bytes))) } UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeSerializerState :: Content__ (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeSerializerState :: End__ , } UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeSerializerState :: End__ => { * self . state = UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                match & mut * self . state { UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeSerializerState :: Content__ (WithSerializer :: serializer (& self . value . content , None , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns (& mut bytes , None , & super :: NS_UNNAMED_4) ; helper . write_attrib (& mut bytes , "type" , & self . value . type_) ? ; helper . write_attrib (& mut bytes , "country" , & self . value . country) ? ; return Ok (Some (Event :: Start (bytes))) } UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeSerializerState :: Content__ (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeSerializerState :: End__ , } UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeSerializerState :: End__ => { * self . state = UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
             }
         }
     }
@@ -41498,7 +41498,7 @@ pub mod quick_xml_serialize {
             helper: &mut SerializeHelper,
         ) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match & mut * self . state { UdxEdxfPackingUnitElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfQuantityMin (WithSerializer :: serializer (& self . value . udx_edxf_quantity_min , Some ("UDX.EDXF.QUANTITY_MIN") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns (& mut bytes , None , & super :: NS_UNNAMED_2) ; return Ok (Some (Event :: Start (bytes))) } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfQuantityMin (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfQuantityMax (IterSerializer :: new (self . value . udx_edxf_quantity_max . as_ref () , Some ("UDX.EDXF.QUANTITY_MAX") , false)) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfQuantityMax (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfPackingUnitCode (WithSerializer :: serializer (& self . value . udx_edxf_packing_unit_code , Some ("UDX.EDXF.PACKING_UNIT_CODE") , false) ?) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfPackingUnitCode (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfPackingUnitName (IterSerializer :: new (& self . value . udx_edxf_packing_unit_name [..] , Some ("UDX.EDXF.PACKING_UNIT_NAME") , false)) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfPackingUnitName (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfPackageBreak (IterSerializer :: new (self . value . udx_edxf_package_break . as_ref () , Some ("UDX.EDXF.PACKAGE_BREAK") , false)) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfPackageBreak (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfPackingParts (IterSerializer :: new (self . value . udx_edxf_packing_parts . as_ref () , Some ("UDX.EDXF.PACKING_PARTS") , false)) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfPackingParts (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfVolume (IterSerializer :: new (self . value . udx_edxf_volume . as_ref () , Some ("UDX.EDXF.VOLUME") , false)) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfVolume (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfWeight (IterSerializer :: new (self . value . udx_edxf_weight . as_ref () , Some ("UDX.EDXF.WEIGHT") , false)) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfWeight (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfLength (IterSerializer :: new (self . value . udx_edxf_length . as_ref () , Some ("UDX.EDXF.LENGTH") , false)) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfLength (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfWidth (IterSerializer :: new (self . value . udx_edxf_width . as_ref () , Some ("UDX.EDXF.WIDTH") , false)) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfWidth (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfDepth (IterSerializer :: new (self . value . udx_edxf_depth . as_ref () , Some ("UDX.EDXF.DEPTH") , false)) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfDepth (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfDiameter (IterSerializer :: new (self . value . udx_edxf_diameter . as_ref () , Some ("UDX.EDXF.DIAMETER") , false)) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfDiameter (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfGtin (IterSerializer :: new (self . value . udx_edxf_gtin . as_ref () , Some ("UDX.EDXF.GTIN") , false)) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfGtin (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfGs1128 (IterSerializer :: new (self . value . udx_edxf_gs_1128 . as_ref () , Some ("UDX.EDXF.GS1_128") , false)) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfGs1128 (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: End__ , } UdxEdxfPackingUnitElementTypeSerializerState :: End__ => { * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfPackingUnitElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfPackingUnitElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                match & mut * self . state { UdxEdxfPackingUnitElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfQuantityMin (WithSerializer :: serializer (& self . value . udx_edxf_quantity_min , Some ("UDX.EDXF.QUANTITY_MIN") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns (& mut bytes , None , & super :: NS_UNNAMED_4) ; return Ok (Some (Event :: Start (bytes))) } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfQuantityMin (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfQuantityMax (IterSerializer :: new (self . value . udx_edxf_quantity_max . as_ref () , Some ("UDX.EDXF.QUANTITY_MAX") , false)) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfQuantityMax (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfPackingUnitCode (WithSerializer :: serializer (& self . value . udx_edxf_packing_unit_code , Some ("UDX.EDXF.PACKING_UNIT_CODE") , false) ?) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfPackingUnitCode (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfPackingUnitName (IterSerializer :: new (& self . value . udx_edxf_packing_unit_name [..] , Some ("UDX.EDXF.PACKING_UNIT_NAME") , false)) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfPackingUnitName (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfPackageBreak (IterSerializer :: new (self . value . udx_edxf_package_break . as_ref () , Some ("UDX.EDXF.PACKAGE_BREAK") , false)) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfPackageBreak (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfPackingParts (IterSerializer :: new (self . value . udx_edxf_packing_parts . as_ref () , Some ("UDX.EDXF.PACKING_PARTS") , false)) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfPackingParts (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfVolume (IterSerializer :: new (self . value . udx_edxf_volume . as_ref () , Some ("UDX.EDXF.VOLUME") , false)) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfVolume (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfWeight (IterSerializer :: new (self . value . udx_edxf_weight . as_ref () , Some ("UDX.EDXF.WEIGHT") , false)) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfWeight (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfLength (IterSerializer :: new (self . value . udx_edxf_length . as_ref () , Some ("UDX.EDXF.LENGTH") , false)) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfLength (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfWidth (IterSerializer :: new (self . value . udx_edxf_width . as_ref () , Some ("UDX.EDXF.WIDTH") , false)) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfWidth (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfDepth (IterSerializer :: new (self . value . udx_edxf_depth . as_ref () , Some ("UDX.EDXF.DEPTH") , false)) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfDepth (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfDiameter (IterSerializer :: new (self . value . udx_edxf_diameter . as_ref () , Some ("UDX.EDXF.DIAMETER") , false)) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfDiameter (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfGtin (IterSerializer :: new (self . value . udx_edxf_gtin . as_ref () , Some ("UDX.EDXF.GTIN") , false)) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfGtin (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfGs1128 (IterSerializer :: new (self . value . udx_edxf_gs_1128 . as_ref () , Some ("UDX.EDXF.GS1_128") , false)) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfGs1128 (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: End__ , } UdxEdxfPackingUnitElementTypeSerializerState :: End__ => { * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfPackingUnitElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfPackingUnitElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
             }
         }
     }
@@ -41537,7 +41537,7 @@ pub mod quick_xml_serialize {
             helper: &mut SerializeHelper,
         ) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match & mut * self . state { UdxEdxfHazardousSubstancesElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfHazardousSubstancesElementTypeSerializerState :: UdxEdxfUnNumber (WithSerializer :: serializer (& self . value . udx_edxf_un_number , Some ("UDX.EDXF.UN_NUMBER") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns (& mut bytes , None , & super :: NS_UNNAMED_2) ; return Ok (Some (Event :: Start (bytes))) } UdxEdxfHazardousSubstancesElementTypeSerializerState :: UdxEdxfUnNumber (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfHazardousSubstancesElementTypeSerializerState :: UdxEdxfNetWeightOfHazardousSubstance (IterSerializer :: new (self . value . udx_edxf_net_weight_of_hazardous_substance . as_ref () , Some ("UDX.EDXF.NET_WEIGHT_OF_HAZARDOUS_SUBSTANCE") , false)) , } UdxEdxfHazardousSubstancesElementTypeSerializerState :: UdxEdxfNetWeightOfHazardousSubstance (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfHazardousSubstancesElementTypeSerializerState :: UdxEdxfVolumeOfHazardousSubstances (IterSerializer :: new (self . value . udx_edxf_volume_of_hazardous_substances . as_ref () , Some ("UDX.EDXF.VOLUME_OF_HAZARDOUS_SUBSTANCES") , false)) , } UdxEdxfHazardousSubstancesElementTypeSerializerState :: UdxEdxfVolumeOfHazardousSubstances (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfHazardousSubstancesElementTypeSerializerState :: End__ , } UdxEdxfHazardousSubstancesElementTypeSerializerState :: End__ => { * self . state = UdxEdxfHazardousSubstancesElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfHazardousSubstancesElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfHazardousSubstancesElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                match & mut * self . state { UdxEdxfHazardousSubstancesElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfHazardousSubstancesElementTypeSerializerState :: UdxEdxfUnNumber (WithSerializer :: serializer (& self . value . udx_edxf_un_number , Some ("UDX.EDXF.UN_NUMBER") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns (& mut bytes , None , & super :: NS_UNNAMED_4) ; return Ok (Some (Event :: Start (bytes))) } UdxEdxfHazardousSubstancesElementTypeSerializerState :: UdxEdxfUnNumber (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfHazardousSubstancesElementTypeSerializerState :: UdxEdxfNetWeightOfHazardousSubstance (IterSerializer :: new (self . value . udx_edxf_net_weight_of_hazardous_substance . as_ref () , Some ("UDX.EDXF.NET_WEIGHT_OF_HAZARDOUS_SUBSTANCE") , false)) , } UdxEdxfHazardousSubstancesElementTypeSerializerState :: UdxEdxfNetWeightOfHazardousSubstance (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfHazardousSubstancesElementTypeSerializerState :: UdxEdxfVolumeOfHazardousSubstances (IterSerializer :: new (self . value . udx_edxf_volume_of_hazardous_substances . as_ref () , Some ("UDX.EDXF.VOLUME_OF_HAZARDOUS_SUBSTANCES") , false)) , } UdxEdxfHazardousSubstancesElementTypeSerializerState :: UdxEdxfVolumeOfHazardousSubstances (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfHazardousSubstancesElementTypeSerializerState :: End__ , } UdxEdxfHazardousSubstancesElementTypeSerializerState :: End__ => { * self . state = UdxEdxfHazardousSubstancesElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfHazardousSubstancesElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfHazardousSubstancesElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
             }
         }
     }
@@ -41587,7 +41587,7 @@ pub mod quick_xml_serialize {
                         );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_4);
                         return Ok(Some(Event::Start(bytes)));
                     }
                     UdxEdxfSurchargeElementTypeSerializerState::Content__(x) => {
@@ -41683,7 +41683,7 @@ pub mod quick_xml_serialize {
                         );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_4);
                         return Ok(Some(Event::Start(bytes)));
                     }
                     UdxEdxfFeatureMcElementTypeSerializerState::Content__(x) => {
@@ -41792,7 +41792,7 @@ pub mod quick_xml_serialize {
                             );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_4);
                         return Ok(Some(Event::Start(bytes)));
                     }
                     UdxEdxfProductCharacteristicElementTypeSerializerState::Content__(x) => {
@@ -41920,7 +41920,7 @@ pub mod quick_xml_serialize {
                             );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_4);
                         return Ok(Some(Event::Start(bytes)));
                     }
                     UdxEdxfMatrixValuesElementTypeSerializerState::UdxEdxfMatrixValue(x) => match x
@@ -41975,7 +41975,7 @@ pub mod quick_xml_serialize {
             helper: &mut SerializeHelper,
         ) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match & mut * self . state { UdxEdxfMatrixValueElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfMatrixValueElementTypeSerializerState :: UdxEdxfMatrixSourceValue (WithSerializer :: serializer (& self . value . udx_edxf_matrix_source_value , Some ("UDX.EDXF.MATRIX_SOURCE_VALUE") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns (& mut bytes , None , & super :: NS_UNNAMED_2) ; return Ok (Some (Event :: Start (bytes))) } UdxEdxfMatrixValueElementTypeSerializerState :: UdxEdxfMatrixSourceValue (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfMatrixValueElementTypeSerializerState :: UdxEdxfMatrixResultValue (WithSerializer :: serializer (& self . value . udx_edxf_matrix_result_value , Some ("UDX.EDXF.MATRIX_RESULT_VALUE") , false) ?) , } UdxEdxfMatrixValueElementTypeSerializerState :: UdxEdxfMatrixResultValue (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfMatrixValueElementTypeSerializerState :: End__ , } UdxEdxfMatrixValueElementTypeSerializerState :: End__ => { * self . state = UdxEdxfMatrixValueElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfMatrixValueElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfMatrixValueElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                match & mut * self . state { UdxEdxfMatrixValueElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfMatrixValueElementTypeSerializerState :: UdxEdxfMatrixSourceValue (WithSerializer :: serializer (& self . value . udx_edxf_matrix_source_value , Some ("UDX.EDXF.MATRIX_SOURCE_VALUE") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns (& mut bytes , None , & super :: NS_UNNAMED_4) ; return Ok (Some (Event :: Start (bytes))) } UdxEdxfMatrixValueElementTypeSerializerState :: UdxEdxfMatrixSourceValue (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfMatrixValueElementTypeSerializerState :: UdxEdxfMatrixResultValue (WithSerializer :: serializer (& self . value . udx_edxf_matrix_result_value , Some ("UDX.EDXF.MATRIX_RESULT_VALUE") , false) ?) , } UdxEdxfMatrixValueElementTypeSerializerState :: UdxEdxfMatrixResultValue (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfMatrixValueElementTypeSerializerState :: End__ , } UdxEdxfMatrixValueElementTypeSerializerState :: End__ => { * self . state = UdxEdxfMatrixValueElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfMatrixValueElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfMatrixValueElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
             }
         }
     }

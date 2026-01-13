@@ -9,14 +9,14 @@ use crate::models::{
         FormChoiceType, NamespaceListType, NotNamespaceType, ProcessContentsType, QnameListAType,
         Use,
     },
-    Ident,
+    AttributeIdent, TypeIdent,
 };
 
 /// Type information that contains data about attribute definitions.
 #[derive(Debug, Clone)]
 pub struct AttributeMeta {
     /// Identifier of the attribute.
-    pub ident: Ident,
+    pub ident: AttributeIdent,
 
     /// Type of the attribute.
     pub variant: AttributeMetaVariant,
@@ -46,7 +46,7 @@ pub enum AttributeMetaVariant {
     Any(AnyAttributeMeta),
 
     /// The attribute has a specific type.
-    Type(Ident),
+    Type(TypeIdent),
 }
 
 /// Contains information about attributes that may occur in the XML file that
@@ -70,7 +70,7 @@ pub struct AttributesMeta(Vec<AttributeMeta>);
 impl AttributeMeta {
     /// Create a new [`AttributeMeta`] instance from the passed `name` and `type_`.
     #[must_use]
-    pub fn new(ident: Ident, type_: Ident, form: FormChoiceType) -> Self {
+    pub fn new(ident: AttributeIdent, type_: TypeIdent, form: FormChoiceType) -> Self {
         Self {
             ident,
             variant: AttributeMetaVariant::Type(type_),
@@ -84,7 +84,7 @@ impl AttributeMeta {
 
     /// Create a new [`AttributeMeta`] instance from for `xs:anyAttribute` attributes.
     #[must_use]
-    pub fn any(ident: Ident, any: AnyAttributeMeta) -> Self {
+    pub fn any(ident: AttributeIdent, any: AnyAttributeMeta) -> Self {
         Self {
             ident,
             variant: AttributeMetaVariant::Any(any),

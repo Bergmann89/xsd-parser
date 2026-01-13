@@ -13,6 +13,13 @@ pub enum Name {
     Generated(Cow<'static, str>),
 }
 
+#[allow(missing_docs)]
+impl Name {
+    pub const ANY: Self = Self::named("any");
+    pub const ANY_TYPE: Self = Self::named("anyType");
+    pub const ANY_ATTRIBUTE: Self = Self::named("any_attribute");
+}
+
 impl Name {
     /// Create a new [`Name::Named`] using the passed `name`.
     #[must_use]

@@ -4,7 +4,7 @@ use xsd_parser_types::{
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
-pub const NS_UNNAMED_2: Namespace = Namespace::new_const(b"http://www.iata.org/IATA/2007/00");
+pub const NS_UNNAMED_4: Namespace = Namespace::new_const(b"http://www.iata.org/IATA/2007/00");
 pub const PREFIX_XS: NamespacePrefix = NamespacePrefix::new_const(b"xs");
 pub const PREFIX_XML: NamespacePrefix = NamespacePrefix::new_const(b"xml");
 #[derive(Debug)]
@@ -122,7 +122,7 @@ pub mod quick_xml_serialize {
                         *self.state = SuccessTypeSerializerState::Done__;
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_2);
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_4);
                         helper.end_ns_scope();
                         return Ok(Some(Event::Empty(bytes)));
                     }

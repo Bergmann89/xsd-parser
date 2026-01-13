@@ -4,7 +4,7 @@ use xsd_parser_types::misc::{Namespace, NamespacePrefix, RawByteStr};
 
 use crate::models::{
     schema::xs::{AttributeType, Facet},
-    Ident,
+    NodeIdent, TypeIdent,
 };
 
 /// error raised by the [`Interpreter`](super::Interpreter).
@@ -15,27 +15,48 @@ pub enum Error {
     /// Is raised if a new type with an already existing identifier is added
     /// to the [`MetaTypes`](crate::models::meta::MetaTypes) structure.
     #[error("Type has already been defined: {0}!")]
-    TypeAlreadyDefined(Ident),
+    TypeAlreadyDefined(TypeIdent),
+
+    /// Ambiguous type definition
+    ///
+    /// Is raised by the interpreter if it tries to resolve a certain type
+    /// identifier during interpretation of the schema, but multiple matching
+    /// types were found.
+    #[error("Ambiguous type: {0}!")]
+    AmbiguousType(TypeIdent),
+
+    /// Ambiguous node definition
+    ///
+    /// Is raised by the interpreter if it tries to resolve a certain type
+    /// definition inside the schemas, but multiple matching types were found.
+    #[error("Ambiguous node: {0}!")]
+    AmbiguousNode(NodeIdent),
 
     /// Expected dynamic element.
     ///
     /// Expected the specified element to be dynamic because it is referenced
     /// as substitution group.
     #[error("Expected dynamic element: {0}!")]
-    ExpectedDynamicElement(Ident),
+    ExpectedDynamicElement(NodeIdent),
+
+    /// Unknown node.
+    ///
+    /// Is raised if a specific node could not be found inside the schema definitions.
+    #[error("Unknown node: {0}!")]
+    UnknownNode(NodeIdent),
 
     /// Unknown type.
     ///
     /// Is raised if a type identifier could not been resolved to the actual
     /// type information.
     #[error("Unknown type: {0}!")]
-    UnknownType(Ident),
+    UnknownType(TypeIdent),
 
     /// Unknown element.
     ///
     /// Is raised if an element referenced inside the XML schema could not be resolved.
     #[error("Unknown element: {0}!")]
-    UnknownElement(Ident),
+    UnknownElement(TypeIdent),
 
     /// Unknown attribute.
     ///
@@ -54,6 +75,17 @@ pub enum Error {
     /// Is raised if the namespace prefix could not be resolved.
     #[error("Unknown namespace prefix: {0}!")]
     UnknownNamespacePrefix(NamespacePrefix),
+
+    /// Anonymous namespace is undefined.
+    ///
+    /// Before resolving any type that is defined in the anonymous namespace
+    /// you have to add it to the [`Schemas`](crate::models::schema::Schemas)
+    /// by either adding a schema file that uses it (see
+    /// [`add_schema_from_str`](crate::pipeline::parser::Parser::add_schema_from_str)
+    /// or related add_schema_xxx methods) or by defining is manually (see
+    /// [`with_anonymous_namespace`](crate::pipeline::parser::Parser::with_anonymous_namespace)).
+    #[error("Anonymous namespace is undefined!")]
+    AnonymousNamespaceIsUndefined,
 
     /// Invalid value.
     ///

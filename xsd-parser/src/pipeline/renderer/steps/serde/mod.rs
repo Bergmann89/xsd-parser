@@ -6,10 +6,8 @@ use std::str::FromStr;
 
 use proc_macro2::TokenStream;
 
-use crate::models::code::IdentPath;
-use crate::models::data::ComplexDataContent;
-use crate::models::meta::MetaTypes;
-use crate::models::Ident;
+use crate::models::{code::IdentPath, data::ComplexDataContent, meta::MetaTypes};
+use crate::TypeIdent;
 
 pub use self::quick_xml::SerdeQuickXmlTypesRenderStep;
 pub use self::serde_xml_rs_v7::SerdeXmlRsV7TypesRenderStep;
@@ -21,7 +19,7 @@ impl ComplexDataContent<'_> {
     fn is_empty_string_content(&self, types: &MetaTypes) -> bool {
         if let Some(ident) = &self.simple_type {
             if let Some(ident) = types.get_resolved_ident(ident) {
-                if *ident == Ident::STRING {
+                if ident.matches(&TypeIdent::STRING) {
                     return true;
                 }
             }

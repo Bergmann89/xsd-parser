@@ -29,7 +29,7 @@ mod unrestricted_base;
 
 use thiserror::Error;
 
-use crate::models::{meta::MetaTypes, Ident};
+use crate::models::{meta::MetaTypes, TypeIdent};
 
 use self::misc::{BaseMap, TypedefMap};
 
@@ -62,56 +62,56 @@ pub enum Error {
     /// Is raised if a specific identifier could not be resolved to it's
     /// corresponding type information.
     #[error("Unknown type identifier: {0}!")]
-    UnknownType(Ident),
+    UnknownType(TypeIdent),
 
     /// The type is not a union type.
     ///
     /// Is raised if a type is expected to be a union, but it is not.
     #[error("The type is not a union type: {0}!")]
-    ExpectedUnion(Ident),
+    ExpectedUnion(TypeIdent),
 
     /// The type is not a complex choice type.
     ///
     /// Is raised if a type is expected to be a complex choice, but it is not.
     #[error("The type is not a complex choice type: {0}!")]
-    ExpectedComplexChoice(Ident),
+    ExpectedComplexChoice(TypeIdent),
 
     /// The type is not a complex type.
     ///
     /// Is raised if a type is expected to be a complex type, but it is not.
     #[error("The type is not a complex type: {0}!")]
-    ExpectedComplexType(Ident),
+    ExpectedComplexType(TypeIdent),
 
     /// The complex type is missing a content type.
     ///
     /// Is raised if the content type of a complex type could not be resolved.
     #[error("Complex type {0} is missing a content type!")]
-    MissingContentType(Ident),
+    MissingContentType(TypeIdent),
 
     /// The complex type is expected to have a choice content.
     ///
     /// Is raised if the content type of a complex type it not a choice.
     #[error("Complex type {0} is expected to have a choice content!")]
-    ExpectedChoiceContent(Ident),
+    ExpectedChoiceContent(TypeIdent),
 
     /// The complex type is expected to have content with [`MaxOccurs::Unbounded`](crate::models::schema::MaxOccurs::Unbounded).
     ///
     /// Is raised if the content of a complex type does nor have unbounded occurrence.
     #[error("Complex type {0} is expected to have content with unbound occurrence!")]
-    ExpectedUnboundContent(Ident),
+    ExpectedUnboundContent(TypeIdent),
 
     /// The complex type has an unexpected content type.
     ///
     /// Is raised if the content type of a complex type does not match the expectations.
     #[error("Complex type {0} has an unexpected content type!")]
-    UnexpectedContentType(Ident),
+    UnexpectedContentType(TypeIdent),
 
     /// The complex type contains an unexpected element in it's content type.
     ///
     /// Is raised if any element of the content of a complex type does not match the
     /// expectations.
     #[error("Complex type {0} contains an unexpected element in it's content type!")]
-    UnexpectedElementInContent(Ident),
+    UnexpectedElementInContent(TypeIdent),
 
     /// Custom Error
     #[error("{0}")]

@@ -1,6 +1,6 @@
 use proc_macro2::{Ident as Ident2, Literal};
 
-use crate::models::{data::PathData, meta::DynamicMeta, Ident};
+use crate::models::{data::PathData, meta::DynamicMeta, TypeIdent};
 
 /// Contains additional information for the rendering process of a
 /// [`MetaTypeVariant::Dynamic`](crate::models::meta::MetaTypeVariant::Dynamic)
@@ -32,7 +32,7 @@ pub struct DynamicData<'types> {
 #[derive(Debug)]
 pub struct DerivedType {
     /// Identifier of the derived type.
-    pub ident: Ident,
+    pub ident: TypeIdent,
 
     /// Name of the derived type as byte string literal.
     pub b_name: Literal,

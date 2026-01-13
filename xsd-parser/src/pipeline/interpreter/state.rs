@@ -1,31 +1,32 @@
 use std::collections::{btree_map::Entry, BTreeMap, HashMap};
 
 use crate::models::{
-    meta::{MetaType, MetaTypes},
+    meta::{ElementMetaVariant, MetaType, MetaTypeVariant, MetaTypes, ModuleMeta, SchemaMeta},
     schema::{
         xs::{
-            AttributeGroupType, ComplexBaseType, ElementType, GroupType, Schema, SchemaContent,
-            SimpleBaseType,
+            AttributeGroupType, AttributeType, ComplexBaseType, ElementType, GroupType, Schema,
+            SchemaContent, SimpleBaseType,
         },
-        NamespaceId, Schemas,
+        NamespaceId, SchemaId, Schemas,
     },
-    Ident, IdentType, Name,
+    IdentCache, IdentType, Name, NodeIdent, TypeIdent,
 };
-use crate::traits::{NameBuilder, NameBuilderExt as _};
+use crate::traits::{NameBuilder, NameBuilderExt as _, Naming};
 
-use super::{name_builder::NameBuilderExt as _, Error};
+use super::{name_builder::NameBuilderExt as _, Error, SchemaInterpreter};
 
-#[derive(Default, Debug)]
+#[derive(Debug)]
 pub(super) struct State<'a> {
-    pub types: MetaTypes,
-    pub node_cache: BTreeMap<Ident, Node<'a>>,
-    pub type_stack: Vec<StackEntry>,
+    types: MetaTypes,
+    type_stack: Vec<StackEntry>,
+    node_cache: BTreeMap<(SchemaId, NodeIdent), (SchemaId, Node<'a>)>,
+    ident_cache: IdentCache,
 }
 
 #[derive(Debug)]
 pub(super) enum StackEntry {
-    Type(Ident, HashMap<Ident, Ident>),
-    GroupRef(Ident, Option<String>),
+    Type(TypeIdent, HashMap<NodeIdent, TypeIdent>),
+    GroupRef(NodeIdent, Option<String>),
     AttributeGroupRef,
     Mixed(bool),
     Group,
@@ -41,17 +42,47 @@ pub(super) enum Node<'a> {
 }
 
 impl<'a> State<'a> {
-    pub(super) fn current_ident(&self) -> Option<&Ident> {
-        self.type_stack.iter().rev().find_map(|x| {
-            if let StackEntry::Type(x, _) = x {
-                Some(x)
-            } else {
-                None
-            }
-        })
+    pub(super) fn new(schemas: &'a Schemas) -> Self {
+        let mut ret = Self {
+            types: MetaTypes::default(),
+            type_stack: Vec::new(),
+            node_cache: BTreeMap::default(),
+            ident_cache: IdentCache::default(),
+        };
+
+        ret.create_ident_cache(schemas);
+
+        ret
     }
 
-    pub(super) fn group_cache(&self) -> Option<&HashMap<Ident, Ident>> {
+    pub(super) fn finish(mut self, schemas: &'a Schemas) -> Result<(MetaTypes, IdentCache), Error> {
+        self.prepare_modules(schemas);
+        self.process_schemas(schemas)?;
+
+        Ok((self.types, self.ident_cache))
+    }
+
+    pub(super) fn types(&self) -> &MetaTypes {
+        &self.types
+    }
+
+    pub(super) fn type_stack(&self) -> &Vec<StackEntry> {
+        &self.type_stack
+    }
+
+    pub(super) fn push_stack(&mut self, entry: StackEntry) {
+        self.type_stack.push(entry);
+    }
+
+    pub(super) fn pop_stack(&mut self) -> StackEntry {
+        self.type_stack.pop().unwrap()
+    }
+
+    pub(super) fn set_naming(&mut self, naming: Box<dyn Naming>) {
+        self.types.naming = naming;
+    }
+
+    pub(super) fn group_cache(&self) -> Option<&HashMap<NodeIdent, TypeIdent>> {
         self.type_stack.iter().rev().find_map(|x| {
             if let StackEntry::Type(_, cache) = x {
                 Some(cache)
@@ -61,7 +92,7 @@ impl<'a> State<'a> {
         })
     }
 
-    pub(super) fn group_cache_mut(&mut self) -> Option<&mut HashMap<Ident, Ident>> {
+    pub(super) fn group_cache_mut(&mut self) -> Option<&mut HashMap<NodeIdent, TypeIdent>> {
         self.type_stack.iter_mut().rev().find_map(|x| {
             if let StackEntry::Type(_, cache) = x {
                 Some(cache)
@@ -71,8 +102,28 @@ impl<'a> State<'a> {
         })
     }
 
+    pub(super) fn current_ident(&self) -> Option<&TypeIdent> {
+        self.type_stack.iter().rev().find_map(|x| {
+            if let StackEntry::Type(x, _) = x {
+                Some(x)
+            } else {
+                None
+            }
+        })
+    }
+
     pub(super) fn current_ns(&self) -> Option<NamespaceId> {
-        self.current_ident().and_then(|x| x.ns)
+        self.type_stack.iter().rev().find_map(|x| match x {
+            StackEntry::Type(x, _) => Some(x.ns),
+            _ => None,
+        })
+    }
+
+    pub(super) fn current_schema(&self) -> Option<SchemaId> {
+        self.type_stack.iter().rev().find_map(|x| match x {
+            StackEntry::Type(x, _) => Some(x.schema),
+            _ => None,
+        })
     }
 
     pub(super) fn last_named_type(&self, stop_at_group_ref: bool) -> Option<&str> {
@@ -129,68 +180,286 @@ impl<'a> State<'a> {
             .finish()
     }
 
+    pub(super) fn get_type(&self, ident: &TypeIdent) -> Option<&MetaType> {
+        self.types.items.get(ident)
+    }
+
+    pub(super) fn get_variant(&self, ident: &TypeIdent) -> Option<&MetaTypeVariant> {
+        self.types.get_variant(ident)
+    }
+
+    pub(super) fn get_type_mut(&mut self, ident: &TypeIdent) -> Option<&mut MetaType> {
+        self.types.items.get_mut(ident)
+    }
+
     pub(super) fn add_type<I, T>(
         &mut self,
         ident: I,
         type_: T,
         allow_overwrite: bool,
+        resolve_idents: bool,
     ) -> Result<(), Error>
     where
-        I: Into<Ident>,
+        I: Into<TypeIdent>,
         T: Into<MetaType>,
     {
-        match self.types.items.entry(ident.into()) {
-            Entry::Vacant(e) => {
-                e.insert(type_.into());
+        let mut ident = ident.into();
+        let mut type_ = type_.into();
 
-                Ok(())
-            }
-            Entry::Occupied(mut e) if allow_overwrite => {
-                e.insert(type_.into());
+        if resolve_idents {
+            let resolved = self.resolve_type_ident_allow_unknown(ident)?;
 
-                Ok(())
-            }
-            Entry::Occupied(e) => Err(Error::TypeAlreadyDefined(e.key().clone())),
+            self.push_stack(StackEntry::Type(resolved, HashMap::new()));
+            self.resolve_type_idents(&mut type_)?;
+
+            let StackEntry::Type(resolved, _) = self.pop_stack() else {
+                crate::unreachable!();
+            };
+
+            ident = resolved;
         }
+
+        let entry = self.types.items.entry(ident);
+        if !allow_overwrite && matches!(&entry, Entry::Occupied(_)) {
+            return Err(Error::TypeAlreadyDefined(entry.key().clone()));
+        }
+
+        let ident = entry.key().clone();
+        let ns = ident.ns;
+        let schema = ident.schema;
+        self.ident_cache.insert(ident, ns, schema);
+
+        match entry {
+            Entry::Vacant(e) => {
+                e.insert(type_);
+            }
+            Entry::Occupied(mut e) => {
+                e.insert(type_);
+            }
+        }
+
+        Ok(())
     }
 
     pub(super) fn get_node(
         &mut self,
         schemas: &'a Schemas,
-        current: NamespaceId,
-        ident: Ident,
-    ) -> Option<Node<'a>> {
-        match self.node_cache.entry(ident) {
-            Entry::Occupied(e) => Some(*e.get()),
+        schema: SchemaId,
+        ident: NodeIdent,
+    ) -> Result<Option<(SchemaId, Node<'a>)>, Error> {
+        match self.node_cache.entry((schema, ident)) {
+            Entry::Occupied(e) => Ok(Some(*e.get())),
             Entry::Vacant(e) => {
-                let node = search_in_schemas(schemas, current, e.key())?;
-
-                Some(*e.insert(node))
+                if let Some((schema, node)) = search_in_schemas(schemas, schema, &e.key().1)? {
+                    Ok(Some(*e.insert((schema, node))))
+                } else {
+                    Ok(None)
+                }
             }
         }
+    }
+
+    pub(super) fn resolve_type_ident_allow_unknown(
+        &self,
+        ident: TypeIdent,
+    ) -> Result<TypeIdent, Error> {
+        match self.resolve_type_ident(ident) {
+            Ok(ident) => Ok(ident),
+            Err(Error::UnknownType(ident)) => Ok(ident),
+            Err(error) => Err(error),
+        }
+    }
+
+    pub(super) fn resolve_type_ident(&self, mut ident: TypeIdent) -> Result<TypeIdent, Error> {
+        if ident.schema.is_unknown() {
+            if let Some(schema) = self.current_schema() {
+                ident.schema = schema;
+
+                if let Some(entry) = self.ident_cache.get(&ident) {
+                    return entry.resolve(ident);
+                }
+
+                ident.schema = SchemaId::UNKNOWN;
+            }
+        }
+
+        if let Some(entry) = self.ident_cache.get(&ident) {
+            return entry.resolve(ident);
+        }
+
+        Err(Error::UnknownType(ident))
+    }
+
+    /// This method is used to patch types that were defined by the user
+    /// using the config that type identifiers are maybe not fully qualified.
+    /// The unqualified identifiers are resolved by this method. For type
+    /// generated by the interpreter this is usually not necessary.
+    fn resolve_type_idents(&self, type_: &mut MetaType) -> Result<(), Error> {
+        match &mut type_.variant {
+            MetaTypeVariant::Union(x) => {
+                for ty in &mut *x.types {
+                    ty.type_ = self.resolve_type_ident_allow_unknown(ty.type_.clone())?;
+                }
+            }
+            MetaTypeVariant::Enumeration(x) => {
+                for var in &mut *x.variants {
+                    if let Some(ty) = &mut var.type_ {
+                        *ty = self.resolve_type_ident_allow_unknown(ty.clone())?;
+                    }
+                }
+            }
+            MetaTypeVariant::Dynamic(x) => {
+                if let Some(ty) = &mut x.type_ {
+                    *ty = self.resolve_type_ident_allow_unknown(ty.clone())?;
+                }
+
+                for ty in &mut x.derived_types {
+                    *ty = self.resolve_type_ident_allow_unknown(ty.clone())?;
+                }
+            }
+            MetaTypeVariant::Reference(x) => {
+                x.type_ = self.resolve_type_ident_allow_unknown(x.type_.clone())?;
+            }
+            MetaTypeVariant::All(x) | MetaTypeVariant::Choice(x) | MetaTypeVariant::Sequence(x) => {
+                for el in &mut *x.elements {
+                    if let ElementMetaVariant::Type { type_, .. } = &mut el.variant {
+                        *type_ = self.resolve_type_ident_allow_unknown(type_.clone())?;
+                    }
+                }
+            }
+            MetaTypeVariant::ComplexType(x) => {
+                if let Some(ty) = &mut x.content {
+                    *ty = self.resolve_type_ident_allow_unknown(ty.clone())?;
+                }
+            }
+            MetaTypeVariant::SimpleType(x) => {
+                x.base = self.resolve_type_ident_allow_unknown(x.base.clone())?;
+            }
+            _ => (),
+        }
+
+        Ok(())
+    }
+
+    fn create_ident_cache(&mut self, schemas: &'a Schemas) {
+        for (schema, info) in &schemas.schemas {
+            let ns = info.namespace_id;
+            let schema = *schema;
+
+            for c in &info.schema.content {
+                let (type_, name) = match c {
+                    SchemaContent::Element(ElementType {
+                        name: Some(name), ..
+                    }) => (IdentType::Element, Name::new_named(name.clone())),
+                    SchemaContent::Attribute(AttributeType {
+                        name: Some(name), ..
+                    }) => (IdentType::Attribute, Name::new_named(name.clone())),
+                    SchemaContent::SimpleType(SimpleBaseType {
+                        name: Some(name), ..
+                    }) => (IdentType::Type, Name::new_named(name.clone())),
+                    SchemaContent::ComplexType(ComplexBaseType {
+                        name: Some(name), ..
+                    }) => (IdentType::Type, Name::new_named(name.clone())),
+                    _ => continue,
+                };
+
+                let ident = TypeIdent {
+                    ns,
+                    schema,
+                    name,
+                    type_,
+                };
+
+                self.ident_cache.insert(ident, ns, schema);
+            }
+        }
+    }
+
+    fn prepare_modules(&mut self, schemas: &Schemas) {
+        for (id, info) in schemas.namespaces() {
+            let prefix = info
+                .prefix
+                .as_ref()
+                .map(ToString::to_string)
+                .map(Name::new_named);
+            let name = info.name().map(Name::new_named);
+            let namespace = info.namespace.clone();
+            let schema_count = info.schemas.len();
+
+            let module = ModuleMeta {
+                name,
+                prefix,
+                namespace,
+                namespace_id: *id,
+                schema_count,
+            };
+
+            self.types.modules.insert(*id, module);
+        }
+    }
+
+    fn process_schemas(&mut self, schemas: &'a Schemas) -> Result<(), Error> {
+        for (id, info) in schemas.schemas() {
+            let schema = SchemaMeta {
+                name: info.name.clone().map(Name::new_named),
+                namespace: info.namespace_id(),
+            };
+
+            self.types.schemas.insert(*id, schema);
+
+            SchemaInterpreter::process(self, &info.schema, schemas, *id, info.namespace_id())?;
+        }
+
+        Ok(())
     }
 }
 
 fn search_in_schemas<'a>(
     schemas: &'a Schemas,
-    current: NamespaceId,
-    ident: &Ident,
-) -> Option<Node<'a>> {
-    let name = ident.name.as_named_str()?;
+    schema: SchemaId,
+    ident: &NodeIdent,
+) -> Result<Option<(SchemaId, Node<'a>)>, Error> {
+    let Some(name) = ident.name.as_named_str() else {
+        return Ok(None);
+    };
+
     let type_ = ident.type_;
 
-    let ns = ident.ns.as_ref().unwrap_or(&current);
-    let ns_info = schemas.get_namespace_info(ns)?;
+    let Some(ns_info) = schemas.get_namespace_info(&ident.ns) else {
+        return Ok(None);
+    };
+
+    let mut err = false;
+    let mut ret = None;
 
     for id in &ns_info.schemas {
         if let Some(info) = schemas.get_schema(id) {
             if let Some(node) = search_in_schema(&info.schema, name, type_) {
-                return Some(node);
+                if *id == schema {
+                    // If the node was defined in the current schema we
+                    // can ignore any other node we might find in other
+                    // schemas and return instantly.
+                    return Ok(Some((*id, node)));
+                }
+
+                if ret.is_some() {
+                    err = true;
+                    // If the node was already set, we have more than one
+                    // matching type, so we should return an error, but we
+                    // still continue if we find another matching node in the
+                    // current schema
+                } else {
+                    ret = Some((*id, node));
+                }
             }
         }
     }
 
-    None
+    if err {
+        Err(Error::AmbiguousNode(ident.clone()))
+    } else {
+        Ok(ret)
+    }
 }
 
 fn search_in_schema<'a>(schema: &'a Schema, name: &str, type_: IdentType) -> Option<Node<'a>> {

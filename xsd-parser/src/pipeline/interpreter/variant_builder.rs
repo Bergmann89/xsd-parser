@@ -1,13 +1,11 @@
 use std::borrow::Cow;
-use std::collections::btree_map::Entry;
 use std::mem::swap;
 use std::ops::{Bound, Deref, DerefMut};
 use std::str::from_utf8;
 
 use tracing::instrument;
 
-use xsd_parser_types::misc::Namespace;
-
+use crate::models::EnumerationIdent;
 use crate::models::{
     meta::{
         AnyAttributeMeta, AnyMeta, AttributeMeta, Base, DynamicMeta, ElementMeta,
@@ -23,7 +21,7 @@ use crate::models::{
         },
         MaxOccurs, MinOccurs,
     },
-    Ident, IdentType, Name,
+    AttributeIdent, ElementIdent, IdentType, Name, NodeIdent, TypeIdent,
 };
 use crate::traits::{NameBuilderExt as _, VecHelper};
 
@@ -193,7 +191,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
         use crate::models::schema::xs::ElementTypeContent as C;
 
         if let Some(type_) = &ty.type_ {
-            let type_ = self.parse_qname(type_)?;
+            let type_ = self.parse_type_ident(type_)?;
 
             init_any!(self, Reference, ReferenceMeta::new(type_), true);
         } else if !ty.content.is_empty() {
@@ -230,21 +228,14 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
             if has_content {
                 init_any!(self, Reference, ReferenceMeta::new(type_?), true);
             } else {
-                // No actual type content found, default to xs:anyType
-                let xs = self
-                    .schemas
-                    .resolve_namespace(&Some(Namespace::XS))
-                    .ok_or_else(|| Error::UnknownNamespace(Namespace::XS.clone()))?;
-                let ident = Ident::ANY_TYPE.with_ns(Some(xs));
+                // No actual type content found, default to `xs:anyType`
+                let ident = self.resolve_xs_type(Name::ANY_TYPE)?;
 
                 init_any!(self, Reference, ReferenceMeta::new(ident), true);
             }
         } else {
-            let xs = self
-                .schemas
-                .resolve_namespace(&Some(Namespace::XS))
-                .ok_or_else(|| Error::UnknownNamespace(Namespace::XS.clone()))?;
-            let ident = Ident::ANY_TYPE.with_ns(Some(xs));
+            // No content, default to `xs:anyType`
+            let ident = self.resolve_xs_type(Name::ANY_TYPE)?;
 
             init_any!(self, Reference, ReferenceMeta::new(ident), true);
         }
@@ -262,7 +253,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
             ident.type_ = IdentType::NillableContent;
 
             let type_ = self.finish_mut()?;
-            self.state.add_type(ident.clone(), type_, false)?;
+            self.state.add_type(ident.clone(), type_, false, false)?;
 
             let meta = init_any!(self, Reference, ReferenceMeta::new(ident), true);
             meta.nillable = true;
@@ -273,7 +264,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
             ident.type_ = IdentType::DynamicElement;
 
             let type_ = self.finish_mut()?;
-            self.state.add_type(ident.clone(), type_, false)?;
+            self.state.add_type(ident.clone(), type_, false, false)?;
 
             init_any!(self, Reference, ReferenceMeta::new(ident), true);
 
@@ -315,7 +306,8 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
     #[instrument(err, level = "trace", skip(self))]
     pub(super) fn apply_attribute(&mut self, ty: &'schema AttributeType) -> Result<(), Error> {
         if let Some(type_) = &ty.type_ {
-            let type_ = self.parse_qname(type_)?;
+            let type_ = self.parse_type_ident(type_)?;
+
             init_any!(self, Reference, ReferenceMeta::new(type_), false);
         } else if let Some(x) = &ty.simple_type {
             self.apply_simple_type(x)?;
@@ -354,11 +346,9 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
             .base
             .as_ref()
             .map(|base| {
-                let base = self.parse_qname(base)?;
+                let base = self.parse_node_ident(base)?;
 
-                self.copy_base_type(&base, UpdateMode::Restriction)?;
-
-                Ok(base)
+                self.copy_base_type(&base, UpdateMode::Restriction)
             })
             .transpose()?;
 
@@ -397,7 +387,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
         let ci = get_or_init_any!(self, ComplexType);
         if let Some(mixed) = ty.mixed {
             ci.is_mixed = mixed;
-            self.state.type_stack.push(StackEntry::Mixed(mixed));
+            self.state.push_stack(StackEntry::Mixed(mixed));
         }
 
         let mut ret = Ok(());
@@ -431,7 +421,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
         }
 
         if ty.mixed.is_some() {
-            self.state.type_stack.pop();
+            self.state.pop_stack();
         }
 
         ret
@@ -461,7 +451,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
         let ci = get_or_init_any!(self, ComplexType);
         if let Some(mixed) = ty.mixed {
             ci.is_mixed = mixed;
-            self.state.type_stack.push(StackEntry::Mixed(mixed));
+            self.state.push_stack(StackEntry::Mixed(mixed));
         }
 
         let mut ret = Ok(());
@@ -482,7 +472,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
         }
 
         if ty.mixed.is_some() {
-            self.state.type_stack.pop();
+            self.state.pop_stack();
         }
 
         ret
@@ -490,9 +480,9 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
 
     #[instrument(err, level = "trace", skip(self))]
     fn apply_simple_content_extension(&mut self, ty: &'schema ExtensionType) -> Result<(), Error> {
-        let base = self.parse_qname(&ty.base)?;
+        let base = self.parse_node_ident(&ty.base)?;
+        let base = self.copy_base_type(&base, UpdateMode::Extension)?;
 
-        self.copy_base_type(&base, UpdateMode::Extension)?;
         self.apply_extension(ty)?;
 
         match &mut self.variant {
@@ -511,9 +501,9 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
         &mut self,
         ty: &'schema RestrictionType,
     ) -> Result<(), Error> {
-        let base = self.parse_qname(&ty.base)?;
+        let base = self.parse_node_ident(&ty.base)?;
+        let base = self.copy_base_type(&base, UpdateMode::Restriction)?;
 
-        self.copy_base_type(&base, UpdateMode::Restriction)?;
         self.apply_restriction(ty)?;
 
         match &mut self.variant {
@@ -529,9 +519,9 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
 
     #[instrument(err, level = "trace", skip(self))]
     fn apply_complex_content_extension(&mut self, ty: &'schema ExtensionType) -> Result<(), Error> {
-        let base = self.parse_qname(&ty.base)?;
+        let base = self.parse_node_ident(&ty.base)?;
+        let base = self.copy_base_type(&base, UpdateMode::Extension)?;
 
-        self.copy_base_type(&base, UpdateMode::Extension)?;
         self.apply_extension(ty)?;
 
         let ci = get_or_init_any!(self, ComplexType);
@@ -545,9 +535,9 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
         &mut self,
         ty: &'schema RestrictionType,
     ) -> Result<(), Error> {
-        let base = self.parse_qname(&ty.base)?;
+        let base = self.parse_node_ident(&ty.base)?;
+        let base = self.copy_base_type(&base, UpdateMode::Restriction)?;
 
-        self.copy_base_type(&base, UpdateMode::Restriction)?;
         self.apply_restriction(ty)?;
 
         let ci = get_or_init_any!(self, ComplexType);
@@ -675,7 +665,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
             gi.is_mixed = is_mixed;
         }
 
-        self.state.type_stack.push(StackEntry::Group);
+        self.state.push_stack(StackEntry::Group);
 
         let mut ret = Ok(());
 
@@ -698,7 +688,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
             }
         }
 
-        self.state.type_stack.pop();
+        self.state.pop_stack();
 
         ret
     }
@@ -713,11 +703,10 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 name,
                 ..
             } => {
-                let type_ = self.parse_qname(ref_)?.with_type(IdentType::Element);
+                let type_ = self.parse_node_ident(ref_)?.with_type(IdentType::Element);
+                let type_ = self.resolve_node_ident(&type_)?;
                 let name = self.state.name_builder().or(name).or(&type_.name).finish();
-                let ident = Ident::new(name)
-                    .with_ns(type_.ns)
-                    .with_type(IdentType::Element);
+                let ident = ElementIdent::new(name).with_ns(type_.ns);
                 let form = ty.form.unwrap_or(self.schema.element_form_default);
 
                 let ci = get_or_init_type!(self, Sequence);
@@ -737,9 +726,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
             }
             ty => {
                 let field_name = self.state.name_builder().or(&ty.name).finish();
-                let field_ident = Ident::new(field_name)
-                    .with_ns(self.state.current_ns())
-                    .with_type(IdentType::Element);
+                let field_ident = ElementIdent::new(field_name).with_ns(self.current_ns());
                 let type_name = self
                     .state
                     .name_builder()
@@ -752,9 +739,9 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 };
                 let type_name = type_name.finish();
 
-                let ns = self.state.current_ns();
+                let ns = self.current_ns();
                 let type_ = if let Some(type_) = &ty.type_ {
-                    self.parse_qname(type_)?
+                    self.parse_type_ident(type_)?
                 } else {
                     self.create_element_lazy(ns, Some(type_name), ty)?
                 };
@@ -764,6 +751,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 let element = ci.elements.find_or_insert(field_ident, |ident| {
                     ElementMeta::new(ident, type_, ElementMode::Element, form)
                 });
+
                 crate::assert!(matches!(
                     element.variant,
                     ElementMetaVariant::Type {
@@ -797,14 +785,12 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
 
         let ref_ = ty.ref_.as_ref().ok_or(Error::GroupMissingRef)?;
         let prefix = ref_.prefix();
-        let ref_ = self.parse_qname(ref_)?.with_type(IdentType::Group);
-        let group = self
-            .find_group(ref_.clone())
-            .ok_or(Error::UnknownElement(ref_.clone()))?;
+        let ref_ = self.parse_node_ident(ref_)?.with_type(IdentType::Group);
+        let (_schema, group) = self.find_group(ref_.clone())?;
 
         let mut ret = Ok(());
 
-        let prefix = if ref_.ns == self.state.current_ns() {
+        let prefix = if ref_.ns == self.current_ns() {
             None
         } else {
             prefix
@@ -812,9 +798,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 .map(ToOwned::to_owned)
         };
 
-        self.state
-            .type_stack
-            .push(StackEntry::GroupRef(ref_, prefix));
+        self.state.push_stack(StackEntry::GroupRef(ref_, prefix));
 
         for c in &group.content {
             ret = match c {
@@ -832,7 +816,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
             }
         }
 
-        self.state.type_stack.pop();
+        self.state.pop_stack();
 
         ret
     }
@@ -842,12 +826,12 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
         use crate::models::schema::xs::AttributeGroupTypeContent as C;
 
         let ref_ = ty.ref_.as_ref().ok_or(Error::AttributeGroupMissingRef)?;
-        let ref_ = self.parse_qname(ref_)?.with_type(IdentType::AttributeGroup);
-        let group = self
-            .find_attribute_group(ref_.clone())
-            .ok_or(Error::UnknownElement(ref_))?;
+        let ref_ = self
+            .parse_node_ident(ref_)?
+            .with_type(IdentType::AttributeGroup);
+        let (_schema, group) = self.find_attribute_group(ref_.clone())?;
 
-        self.state.type_stack.push(StackEntry::AttributeGroupRef);
+        self.state.push_stack(StackEntry::AttributeGroupRef);
 
         let mut ret = Ok(());
 
@@ -867,7 +851,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
             }
         }
 
-        self.state.type_stack.pop();
+        self.state.pop_stack();
 
         ret
     }
@@ -880,11 +864,9 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 type_: Some(type_),
                 ..
             } => {
-                let type_ = self.parse_qname(type_)?;
+                let type_ = self.parse_type_ident(type_)?;
                 let name = Name::from(name.clone());
-                let ident = Ident::new(name)
-                    .with_ns(self.state.current_ns())
-                    .with_type(IdentType::Attribute);
+                let ident = AttributeIdent::new(name).with_ns(self.current_ns());
                 let form = ty.form.unwrap_or(self.schema.attribute_form_default);
 
                 get_or_init_any!(self, ComplexType)
@@ -896,11 +878,10 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 name,
                 ..
             } => {
-                let type_ = self.parse_qname(ref_)?.with_type(IdentType::Attribute);
+                let type_ = self.parse_node_ident(ref_)?.with_type(IdentType::Attribute);
+                let type_ = self.resolve_node_ident(&type_)?;
                 let name = self.state.name_builder().or(name).or(&type_.name).finish();
-                let ident = Ident::new(name)
-                    .with_ns(type_.ns)
-                    .with_type(IdentType::Attribute);
+                let ident = AttributeIdent::new(name).with_ns(type_.ns);
                 let form = ty.form.unwrap_or(self.schema.attribute_form_default);
 
                 get_or_init_any!(self, ComplexType)
@@ -921,21 +902,21 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                             .or(name)
                             .auto_extend(true, true, self.state)
                             .finish();
-                        let ns = self.state.current_ns();
+                        let ns = self.current_ns();
+                        let schema = self.current_schema();
 
-                        self.create_simple_type(ns, Some(type_name), x)
+                        self.create_simple_type(ns, schema, Some(type_name), x)
                     })
                     .transpose()?;
+
                 let name = Name::from(name.clone());
-                let ident = Ident::new(name)
-                    .with_ns(self.state.current_ns())
-                    .with_type(IdentType::Attribute);
+                let ident = AttributeIdent::new(name).with_ns(self.current_ns());
                 let form = ty.form.unwrap_or(self.schema.attribute_form_default);
 
                 get_or_init_any!(self, ComplexType)
                     .attributes
                     .find_or_insert(ident, |ident| {
-                        AttributeMeta::new(ident, type_.unwrap_or(Ident::STRING), form)
+                        AttributeMeta::new(ident, type_.unwrap_or(TypeIdent::STRING), form)
                     })
             }
             e => return Err(Error::InvalidAttributeReference(Box::new(e.clone()))),
@@ -962,7 +943,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
             .shared_name("any")
             .or(&ty.id)
             .finish();
-        let ident = Ident::new(name).with_type(IdentType::Element);
+        let ident = ElementIdent::new(name);
 
         let any = AnyMeta {
             id: ty.id.clone(),
@@ -990,7 +971,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
             .unique_name("any_attribute")
             .or(&ty.id)
             .finish();
-        let ident = Ident::new(name).with_type(IdentType::Attribute);
+        let ident = AttributeIdent::new(name);
 
         let ci = get_or_init_any!(self, ComplexType);
         ci.attributes.find_or_insert(ident, |ident| {
@@ -1122,9 +1103,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
     #[instrument(err, level = "trace", skip(self))]
     fn apply_enumeration(&mut self, ty: &FacetType) -> Result<(), Error> {
         let name = Name::from(ty.value.trim().to_owned());
-        let ident = Ident::new(name)
-            .with_ns(self.state.current_ns())
-            .with_type(IdentType::Enumeration);
+        let ident = EnumerationIdent::new(name).with_ns(self.current_ns());
 
         self.simple_content_builder(|builder| {
             if let Some(MetaTypeVariant::SimpleType(sm)) = &builder.variant {
@@ -1157,12 +1136,13 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
 
             if let Some(types) = &ty.member_types {
                 for type_ in &types.0 {
-                    let type_ = builder.owner.parse_qname(type_)?;
+                    let type_ = builder.owner.parse_type_ident(type_)?;
                     ui.types.push(UnionMetaType::new(type_));
                 }
             }
 
-            let ns = builder.owner.state.current_ns();
+            let ns = builder.owner.current_ns();
+            let schema = builder.owner.current_schema();
 
             for x in &ty.simple_type {
                 let name = builder
@@ -1172,7 +1152,9 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                     .or(&x.name)
                     .auto_extend(false, true, builder.owner.state)
                     .finish();
-                let type_ = builder.owner.create_simple_type(ns, Some(name), x)?;
+                let type_ = builder
+                    .owner
+                    .create_simple_type(ns, schema, Some(name), x)?;
                 ui.types.push(UnionMetaType::new(type_));
             }
 
@@ -1191,7 +1173,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
         let mut type_ = None;
 
         if let Some(s) = &ty.item_type {
-            type_ = Some(self.owner.parse_qname(s)?);
+            type_ = Some(self.owner.parse_type_ident(s)?);
         }
 
         if let Some(x) = &ty.simple_type {
@@ -1210,8 +1192,9 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                     Some(Name::from(s))
                 })
                 .finish();
-            let ns = self.owner.state.current_ns();
-            type_ = Some(self.owner.create_simple_type(ns, Some(name), x)?);
+            let ns = self.owner.current_ns();
+            let schema = self.owner.current_schema();
+            type_ = Some(self.owner.create_simple_type(ns, schema, Some(name), x)?);
         }
 
         if let Some(type_) = type_ {
@@ -1240,35 +1223,39 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
         }
     }
 
-    fn copy_base_type(&mut self, base: &Ident, mode: UpdateMode) -> Result<(), Error> {
-        let mut simple_base_ident = None;
-        let base = match (self.type_mode, self.content_mode) {
+    fn copy_base_type(&mut self, base: &NodeIdent, mode: UpdateMode) -> Result<TypeIdent, Error> {
+        enum BaseIdent {
+            Simple(TypeIdent),
+            Complex(TypeIdent),
+        }
+
+        let (ident, base) = match (self.type_mode, self.content_mode) {
             (TypeMode::Simple, ContentMode::Simple) => {
                 self.fixed = false;
+                let (ident, ty) = self.owner.get_simple_type_variant(base)?;
 
-                simple_base_ident = Some(base.clone());
-
-                self.owner.get_simple_type_variant(base)?
+                (BaseIdent::Simple(ident), ty)
             }
             (TypeMode::Complex, ContentMode::Simple) => {
                 match self.owner.get_simple_type_variant(base) {
-                    Ok(ty) => {
+                    Ok((ident, ty)) => {
                         self.fixed = false;
 
-                        simple_base_ident = Some(base.clone());
-
-                        ty
+                        (BaseIdent::Simple(ident), ty)
                     }
-                    Err(Error::UnknownType(_)) => {
+                    Err(Error::UnknownType(_) | Error::UnknownNode(_)) => {
                         self.fixed = true;
+                        let (ident, ty) = self.owner.get_complex_type_variant(base)?;
 
-                        Cow::Borrowed(self.owner.get_complex_type_variant(base)?)
+                        (BaseIdent::Complex(ident), Cow::Borrowed(ty))
                     }
                     Err(error) => Err(error)?,
                 }
             }
             (TypeMode::Complex, ContentMode::Complex) => {
-                Cow::Borrowed(self.owner.get_complex_type_variant(base)?)
+                let (ident, ty) = self.owner.get_complex_type_variant(base)?;
+
+                (BaseIdent::Complex(ident), Cow::Borrowed(ty))
             }
             (_, _) => crate::unreachable!("Unset or invalid combination!"),
         };
@@ -1282,7 +1269,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                     let mut content_type = self
                         .owner
                         .state
-                        .types
+                        .types()
                         .items
                         .get(content_ident)
                         .ok_or_else(|| Error::UnknownType(content_ident.clone()))?
@@ -1297,10 +1284,15 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                     }
 
                     let content_name = self.state.make_content_name();
-                    let content_ident = Ident::new(content_name).with_ns(self.state.current_ns());
+                    let content_ident = TypeIdent {
+                        ns: self.current_ns(),
+                        schema: self.current_schema(),
+                        name: content_name,
+                        type_: IdentType::Type,
+                    };
 
                     self.state
-                        .add_type(content_ident.clone(), content_type, false)?;
+                        .add_type(content_ident.clone(), content_type, false, false)?;
 
                     ci.content = Some(content_ident);
                 }
@@ -1308,28 +1300,38 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
             (_, _) => (),
         }
 
-        match (simple_base_ident, self.type_mode, self.content_mode) {
-            (Some(_), TypeMode::Simple, _) => self.variant = Some(base),
-            (Some(base_ident), TypeMode::Complex, ContentMode::Simple) => {
-                let ci = get_or_init_any!(self, ComplexType);
-                ci.content.get_or_insert(base_ident);
+        match (ident, self.type_mode, self.content_mode) {
+            (BaseIdent::Simple(ident), TypeMode::Simple, _) => {
+                self.variant = Some(base);
+
+                Ok(ident)
             }
-            (None, TypeMode::Complex, ContentMode::Simple | ContentMode::Complex) => {
+            (BaseIdent::Simple(ident), TypeMode::Complex, ContentMode::Simple) => {
+                let ci = get_or_init_any!(self, ComplexType);
+                ci.content.get_or_insert_with(|| ident.clone());
+
+                Ok(ident)
+            }
+            (
+                BaseIdent::Complex(ident),
+                TypeMode::Complex,
+                ContentMode::Simple | ContentMode::Complex,
+            ) => {
                 if let MetaTypeVariant::ComplexType(ci) = &mut base {
                     ci.is_mixed = self.state.is_mixed();
                 }
 
                 self.variant = Some(base);
+
+                Ok(ident)
             }
             (_, _, _) => crate::unreachable!("Unset or invalid combination!"),
         }
-
-        Ok(())
     }
 
     fn walk_substitution_groups<F>(&mut self, groups: &QNameList, mut f: F) -> Result<(), Error>
     where
-        F: FnMut(&mut Self, &Ident) -> Result<(), Error>,
+        F: FnMut(&mut Self, &NodeIdent) -> Result<(), Error>,
     {
         fn inner<'x, 'y, 'z, F>(
             builder: &mut VariantBuilder<'x, 'y, 'z>,
@@ -1337,17 +1339,17 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
             f: &mut F,
         ) -> Result<(), Error>
         where
-            F: FnMut(&mut VariantBuilder<'x, 'y, 'z>, &Ident) -> Result<(), Error>,
+            F: FnMut(&mut VariantBuilder<'x, 'y, 'z>, &NodeIdent) -> Result<(), Error>,
         {
             for head in &groups.0 {
-                let ident = builder.parse_qname(head)?.with_type(IdentType::Element);
+                let ident = builder
+                    .parse_node_ident(head)?
+                    .with_type(IdentType::Element);
 
                 f(builder, &ident)?;
 
-                if let Some(groups) = builder
-                    .find_element(ident)
-                    .and_then(|x| x.substitution_group.as_ref())
-                {
+                let (_, element) = builder.find_element(ident)?;
+                if let Some(groups) = &element.substitution_group {
                     inner(builder, groups, f)?;
                 }
             }
@@ -1365,23 +1367,33 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
         match (self.type_mode, self.content_mode) {
             (TypeMode::Simple, _) => f(self)?,
             (TypeMode::Complex, ContentMode::Simple) => {
+                let ns = self.current_ns();
+                let schema = self.current_schema();
+
                 let ci = get_or_init_any!(self, ComplexType);
 
-                let Some(mut content_ident) = ci.content.clone() else {
+                let Some(content_ident) = ci.content.clone() else {
                     crate::unreachable!(
                         "Complex type does not have a simple content identifier: {:?}",
                         &self.variant
                     );
                 };
 
-                let content = self
-                    .owner
-                    .get_simple_type_variant(&content_ident)?
-                    .into_owned();
+                let content_ident = content_ident.into_node_ident();
+                let (mut content_ident, content) =
+                    self.owner.get_simple_type_variant(&content_ident)?;
+                let content = content.into_owned();
+
                 if !self.is_simple_content_unique {
                     self.is_simple_content_unique = true;
                     let content_name = self.owner.state.make_content_name();
-                    content_ident = Ident::new(content_name).with_ns(self.owner.state.current_ns());
+
+                    content_ident = TypeIdent {
+                        ns,
+                        schema,
+                        name: content_name,
+                        type_: IdentType::Type,
+                    };
 
                     ci.content = Some(content_ident.clone());
                 }
@@ -1396,14 +1408,9 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 let content = builder.variant.unwrap();
                 let content = MetaType::new(content);
 
-                match self.owner.state.types.items.entry(content_ident) {
-                    Entry::Vacant(e) => {
-                        e.insert(content);
-                    }
-                    Entry::Occupied(e) => {
-                        *e.into_mut() = content;
-                    }
-                }
+                self.owner
+                    .state
+                    .add_type(content_ident, content, true, false)?;
             }
             (TypeMode::Complex, ContentMode::Complex) => {
                 crate::unreachable!("Complex type with complex content tried to access simple content builder: {:?}", &self.variant);
@@ -1421,7 +1428,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
         field_name: Name,
         min_occurs: MinOccurs,
         max_occurs: MaxOccurs,
-        type_ident: Ident,
+        type_ident: TypeIdent,
         complex_content_type: ComplexContentType,
         f: F,
     ) -> Result<(), Error>
@@ -1437,10 +1444,10 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
         #[allow(clippy::large_enum_variant)]
         enum Output {
             Type(MetaType),
-            Cached(Ident),
+            Cached(TypeIdent),
         }
 
-        let group_ident = self.state.type_stack.last().and_then(|x| {
+        let group_ident = self.state.type_stack().last().and_then(|x| {
             if let StackEntry::GroupRef(x, _) = x {
                 Some(x.clone())
             } else {
@@ -1461,7 +1468,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 let content_ty = self
                     .owner
                     .state
-                    .types
+                    .types()
                     .items
                     .get(content_ident)
                     .ok_or_else(|| Error::UnknownType(content_ident.clone()))?;
@@ -1510,7 +1517,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
             Output::Type(ty)
         };
 
-        let ns = self.state.current_ns();
+        let ns = self.current_ns();
 
         match &mut self.variant {
             Some(MetaTypeVariant::ComplexType(ci)) => match update_content_mode {
@@ -1518,7 +1525,9 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                     let content_ident = match output {
                         Output::Cached(ident) => ident,
                         Output::Type(ty) => {
-                            self.owner.state.add_type(type_ident.clone(), ty, false)?;
+                            self.owner
+                                .state
+                                .add_type(type_ident.clone(), ty, false, false)?;
 
                             type_ident.clone()
                         }
@@ -1537,9 +1546,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
 
                     self.owner
                         .state
-                        .types
-                        .items
-                        .insert(content_ident.clone(), ty);
+                        .add_type(content_ident.clone(), ty, true, false)?;
 
                     ci.min_occurs = ci.min_occurs.min(min_occurs);
                     ci.max_occurs = ci.max_occurs.max(max_occurs);
@@ -1548,14 +1555,16 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                     let element_ident = match output {
                         Output::Cached(ident) => ident,
                         Output::Type(ty) => {
-                            self.owner.state.add_type(type_ident.clone(), ty, false)?;
+                            self.owner
+                                .state
+                                .add_type(type_ident.clone(), ty, false, false)?;
 
                             type_ident.clone()
                         }
                     };
 
                     let content_ident = ci.content.as_ref().unwrap();
-                    let content_type = self.owner.state.types.items.get_mut(content_ident).unwrap();
+                    let content_type = self.owner.state.get_type_mut(content_ident).unwrap();
                     let content_variant = &mut content_type.variant;
 
                     let (MetaTypeVariant::All(si)
@@ -1565,9 +1574,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                         unreachable!();
                     };
 
-                    let ident = Ident::new(field_name)
-                        .with_ns(ns)
-                        .with_type(IdentType::Group);
+                    let ident = ElementIdent::new(field_name).with_ns(ns);
                     let element = si.elements.insert_checked(ident, |ident| {
                         ElementMeta::new(
                             ident,
@@ -1589,15 +1596,15 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 let element_ident = match output {
                     Output::Cached(ident) => ident,
                     Output::Type(ty) => {
-                        self.owner.state.add_type(type_ident.clone(), ty, false)?;
+                        self.owner
+                            .state
+                            .add_type(type_ident.clone(), ty, false, false)?;
 
                         type_ident.clone()
                     }
                 };
 
-                let ident = Ident::new(field_name)
-                    .with_ns(ns)
-                    .with_type(IdentType::Group);
+                let ident = ElementIdent::new(field_name).with_ns(ns);
                 let element = si.elements.insert_checked(ident, |ident| {
                     ElementMeta::new(
                         ident,
@@ -1614,7 +1621,9 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 let content_ident = match output {
                     Output::Cached(ident) => ident,
                     Output::Type(ty) => {
-                        self.owner.state.add_type(type_ident.clone(), ty, false)?;
+                        self.owner
+                            .state
+                            .add_type(type_ident.clone(), ty, false, false)?;
 
                         type_ident.clone()
                     }
@@ -1638,7 +1647,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
         Ok(())
     }
 
-    fn make_field_name_and_type(&mut self, ty: &GroupType) -> (Name, Ident) {
+    fn make_field_name_and_type(&mut self, ty: &GroupType) -> (Name, TypeIdent) {
         let name = self
             .state
             .name_builder()
@@ -1661,7 +1670,12 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
             .remove_suffix("Content")
             .or(name)
             .finish();
-        let type_ = Ident::new(type_name).with_ns(self.state.current_ns());
+        let type_ = TypeIdent {
+            ns: self.current_ns(),
+            schema: self.current_schema(),
+            name: type_name,
+            type_: IdentType::Type,
+        };
 
         (field_name, type_)
     }
@@ -1684,13 +1698,13 @@ impl DerefMut for VariantBuilder<'_, '_, '_> {
 /* ElementsMeta */
 
 impl ElementsMeta {
-    fn insert_checked<F>(&mut self, ident: Ident, f: F) -> &mut ElementMeta
+    fn insert_checked<F>(&mut self, ident: ElementIdent, f: F) -> &mut ElementMeta
     where
-        F: FnOnce(Ident) -> ElementMeta,
+        F: FnOnce(ElementIdent) -> ElementMeta,
     {
         let vec = &mut **self;
 
-        let Some(index) = vec.iter().position(|x| x.ident == ident) else {
+        let Some(index) = vec.iter().position(|x| x.ident.eq(&ident)) else {
             vec.push(f(ident));
 
             return vec.last_mut().unwrap();
@@ -1707,7 +1721,7 @@ impl ElementsMeta {
             let mut new_ident = ident.clone();
             *new_ident.name.as_mut() = format!("{}_{next}", ident.name.as_str());
 
-            if !vec.iter().any(|x| x.ident == new_ident) {
+            if !vec.iter().any(|x| x.ident.eq(&new_ident)) {
                 vec.push(f(new_ident));
 
                 return vec.last_mut().unwrap();

@@ -1,6 +1,6 @@
 use thiserror::Error;
 
-use crate::models::{code::InvalidIdentPath, schema::NamespaceId, Ident};
+use crate::models::{code::InvalidIdentPath, schema::NamespaceId, TypeIdent};
 
 /// Error that might be raised by the [`Generator`](super::Generator).
 #[derive(Debug, Error)]
@@ -10,7 +10,7 @@ pub enum Error {
     /// Is raised if a specific identifier could not be resolved to it's
     /// corresponding type information.
     #[error("Unknown type identifier: {0}!")]
-    UnknownType(Ident),
+    UnknownType(TypeIdent),
 
     /// Unknown namespace.
     ///
@@ -24,7 +24,7 @@ pub enum Error {
     /// Is raised if the default value for an attribute defined in the schema
     /// could not be converted to a suitable default code snippet.
     #[error("Invalid default value for type {0:?}: {1}!")]
-    InvalidDefaultValue(Ident, String),
+    InvalidDefaultValue(TypeIdent, String),
 
     /// Invalid identifier.
     ///

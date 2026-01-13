@@ -7,7 +7,7 @@ use crate::{
     models::{
         meta::{ElementMeta, MetaTypeVariant},
         schema::MaxOccurs,
-        Ident,
+        ElementIdent, TypeIdent,
     },
     Name,
 };
@@ -46,7 +46,7 @@ impl Optimizer {
     /// ```rust
     #[doc = include_str!("../../../tests/optimizer/expected1/simplify_mixed_types.rs")]
     /// ```
-    pub fn simplify_mixed_type(mut self, ident: Ident) -> Result<Self, Error> {
+    pub fn simplify_mixed_type(mut self, ident: TypeIdent) -> Result<Self, Error> {
         tracing::debug!("simplify_mixed_type(ident={ident:?})");
 
         let Some(ty) = self.types.items.get(&ident) else {
@@ -74,11 +74,12 @@ impl Optimizer {
 
                 let need_text_element = !gi.elements.iter().any(ElementMeta::is_text);
                 if need_text_element {
-                    gi.elements.push(ElementMeta::text(Ident::element("text")));
+                    gi.elements
+                        .push(ElementMeta::text(ElementIdent::named("text")));
                 }
             }
             MetaTypeVariant::Sequence(gi) => {
-                let mut text_before = ElementMeta::text(Ident::element("text_before"));
+                let mut text_before = ElementMeta::text(ElementIdent::named("text_before"));
                 text_before.min_occurs = 0;
 
                 let pairs = take(&mut gi.elements.0).into_iter().map(
@@ -90,7 +91,7 @@ impl Optimizer {
                         }
 
                         let name = Name::new_named(format!("text_after_{}", e.ident.name));
-                        let ident = Ident::new(name);
+                        let ident = ElementIdent::new(name);
 
                         let mut text_after = ElementMeta::text(ident);
                         text_after.min_occurs = 0;

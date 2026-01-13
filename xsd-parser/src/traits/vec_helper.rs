@@ -2,7 +2,7 @@ use std::ops::DerefMut;
 
 use crate::models::{
     meta::{AttributeMeta, ElementMeta, EnumerationMetaVariant},
-    Ident,
+    PropertyIdent,
 };
 
 /// Helper trait that implements additional methods for vectors.
@@ -12,15 +12,15 @@ pub trait VecHelper {
 
     /// Try to find the object with the passed `ident` in the vector. If it was
     /// not found `None` is returned.
-    fn find(&mut self, ident: Ident) -> Option<&mut Self::Item>;
+    fn find(&mut self, ident: PropertyIdent) -> Option<&mut Self::Item>;
 
     /// Try to find the object with the passed `ident` in the vector. If it was
     /// not found, a new one is created by invoking `f`.
     ///
     /// Returns a mutable reference either to the found or the newly created object.
-    fn find_or_insert<F>(&mut self, ident: Ident, f: F) -> &mut Self::Item
+    fn find_or_insert<F>(&mut self, ident: PropertyIdent, f: F) -> &mut Self::Item
     where
-        F: FnOnce(Ident) -> Self::Item;
+        F: FnOnce(PropertyIdent) -> Self::Item;
 }
 
 impl<X, T> VecHelper for X
@@ -30,17 +30,17 @@ where
 {
     type Item = T;
 
-    fn find(&mut self, ident: Ident) -> Option<&mut Self::Item> {
-        self.iter_mut().find(|x| x.ident() == &ident)
+    fn find(&mut self, ident: PropertyIdent) -> Option<&mut Self::Item> {
+        self.iter_mut().find(|x| x.ident().eq(&ident))
     }
 
-    fn find_or_insert<F>(&mut self, ident: Ident, f: F) -> &mut Self::Item
+    fn find_or_insert<F>(&mut self, ident: PropertyIdent, f: F) -> &mut Self::Item
     where
-        F: FnOnce(Ident) -> Self::Item,
+        F: FnOnce(PropertyIdent) -> Self::Item,
     {
         let vec = &mut **self;
 
-        if let Some(i) = vec.iter().position(|x| x.ident() == &ident) {
+        if let Some(i) = vec.iter().position(|x| x.ident().eq(&ident)) {
             &mut vec[i]
         } else {
             vec.push(f(ident));
@@ -53,23 +53,23 @@ where
 /// Helper trait that adds name information to the implementing object.
 pub trait WithIdent {
     /// Returns the name of the object.
-    fn ident(&self) -> &Ident;
+    fn ident(&self) -> &PropertyIdent;
 }
 
 impl WithIdent for EnumerationMetaVariant {
-    fn ident(&self) -> &Ident {
+    fn ident(&self) -> &PropertyIdent {
         &self.ident
     }
 }
 
 impl WithIdent for ElementMeta {
-    fn ident(&self) -> &Ident {
+    fn ident(&self) -> &PropertyIdent {
         &self.ident
     }
 }
 
 impl WithIdent for AttributeMeta {
-    fn ident(&self) -> &Ident {
+    fn ident(&self) -> &PropertyIdent {
         &self.ident
     }
 }

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:bar="Bar" xmlns:baz="Baz">
+  <xs:import schemaLocation="bar.xsd" namespace="Bar" />
+  <xs:import schemaLocation="baz.xsd" namespace="Baz" />
+  <xs:complexType name="Outer">
+    <xs:sequence>
+      <xs:group ref="bar:Inner" />
+      <xs:group ref="baz:Inner" />
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

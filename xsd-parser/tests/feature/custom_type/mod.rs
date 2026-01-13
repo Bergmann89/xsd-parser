@@ -5,11 +5,8 @@ use quote::quote;
 
 use xsd_parser::{
     config::{Config, IdentTriple, NamespaceIdent},
-    models::{
-        meta::{CustomMeta, MetaType, ReferenceMeta},
-        Ident,
-    },
-    IdentType,
+    models::meta::{CustomMeta, MetaType, ReferenceMeta},
+    IdentType, TypeIdent,
 };
 use xsd_parser_types::quick_xml::{DeserializeBytesFromStr, SerializeBytesToString};
 
@@ -35,7 +32,7 @@ fn config() -> Config {
         ),
         (
             IdentTriple::from((IdentType::Type, "xs:decimal")),
-            MetaType::from(ReferenceMeta::new(Ident::type_("Decimal"))),
+            MetaType::from(ReferenceMeta::new(TypeIdent::type_("Decimal"))),
         ),
     ];
 

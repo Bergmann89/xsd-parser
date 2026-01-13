@@ -3,7 +3,7 @@
 use std::hash::{Hash, Hasher};
 use std::ops::{Deref, DerefMut};
 
-use crate::models::Ident;
+use crate::models::TypeIdent;
 
 use super::{Base, Constrains, MetaTypes, TypeEq};
 
@@ -24,7 +24,7 @@ pub struct UnionMeta {
 #[derive(Debug, Clone)]
 pub struct UnionMetaType {
     /// Target type of this type variant.
-    pub type_: Ident,
+    pub type_: TypeIdent,
 
     /// Name of the variant to use inside the generated code.
     pub display_name: Option<String>,
@@ -67,7 +67,7 @@ impl TypeEq for UnionMeta {
 impl UnionMetaType {
     /// Create a new [`UnionMetaType`] from the passed `type_`.
     #[must_use]
-    pub fn new(type_: Ident) -> Self {
+    pub fn new(type_: TypeIdent) -> Self {
         Self {
             type_,
             display_name: None,

@@ -5,7 +5,7 @@ use bitflags::bitflags;
 use crate::models::meta::MetaType;
 use crate::traits::Naming;
 
-use super::IdentTriple;
+use super::IdentQuadruple;
 
 /// Configuration for the schema interpreter.
 #[derive(Debug)]
@@ -14,7 +14,7 @@ pub struct InterpreterConfig {
     /// are actually interpreted.
     ///
     /// See [`with_type`](crate::Interpreter::with_type) for more details.
-    pub types: Vec<(IdentTriple, MetaType)>,
+    pub types: Vec<(IdentQuadruple, MetaType)>,
 
     /// Additional flags to control the interpreter.
     pub flags: InterpreterFlags,
