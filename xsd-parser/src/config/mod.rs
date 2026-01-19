@@ -461,7 +461,7 @@ impl Config {
     where
         S: Into<String>,
     {
-        self.generator.type_postfix.element = value.into();
+        self.generator.type_postfix.element_type = value.into();
 
         self
     }
