@@ -717,8 +717,8 @@ impl DeserializeHelper {
         if store.is_some() {
             Err(ErrorKind::DuplicateAttribute(RawByteStr::from(name)))?;
         }
-
-        let value = T::deserialize_bytes(self, value)?;
+        let value = unescape(from_utf8(value)?)?;
+        let value = T::deserialize_bytes(self, value.as_bytes())?;
         *store = Some(value);
 
         Ok(())
