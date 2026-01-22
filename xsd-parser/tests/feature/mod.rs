@@ -5,6 +5,7 @@ mod all;
 mod any;
 mod any_type;
 mod any_type_nested;
+mod attribute;
 mod build_in;
 mod choice;
 mod choice_flatten_content;
