@@ -701,6 +701,10 @@ impl DeserializeHelper {
 
     /// Helper function to convert and store an attribute from the XML event.
     ///
+    /// Since attributes needs to be escaped this will convert the passed
+    /// `value` bytes to a UTF-8 string, unescape it and then deserialize
+    /// it using the [`DeserializeBytes::deserialize_str`] method.
+    ///
     /// # Errors
     ///
     /// Returns an [`struct@Error`] with [`ErrorKind::DuplicateAttribute`] if `store`
@@ -718,7 +722,10 @@ impl DeserializeHelper {
             Err(ErrorKind::DuplicateAttribute(RawByteStr::from(name)))?;
         }
 
-        let value = T::deserialize_bytes(self, value)?;
+        let value = from_utf8(value)?;
+        let value = unescape(value)?;
+        let value = T::deserialize_str(self, &value)?;
+
         *store = Some(value);
 
         Ok(())
