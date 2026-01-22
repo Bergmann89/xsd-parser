@@ -496,7 +496,7 @@ where
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         let s = from_utf8(bytes).map_err(Error::from)?;
 
-        Self::deserialize_str(helper, &unescape(s)?)
+        Self::deserialize_str(helper, s)
     }
 
     fn deserialize_str(helper: &mut DeserializeHelper, s: &str) -> Result<Self, Error> {
