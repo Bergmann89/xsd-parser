@@ -1,4 +1,4 @@
-<document xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="foo" count="43">
+<document xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="foo&gt;" count="43">
 	<info>message 1</info>
 	<info>message 2</info>
 	<info>blah blah</info>
