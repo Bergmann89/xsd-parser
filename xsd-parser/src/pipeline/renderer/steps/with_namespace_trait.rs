@@ -1,6 +1,7 @@
 use proc_macro2::{Ident as Ident2, TokenStream};
 use quote::quote;
 
+use crate::config::TypedefMode;
 use crate::models::data::{
     ComplexData, ComplexDataEnum, ComplexDataStruct, DynamicData, EnumerationData, ReferenceData,
     SimpleData, UnionData,
@@ -55,6 +56,12 @@ impl DynamicData<'_> {
 
 impl ReferenceData<'_> {
     pub(crate) fn render_with_namespace_trait(&self, ctx: &mut Context<'_, '_>) {
+        // Skip generating impl for type aliases - they share the underlying type's impl.
+        // Only newtypes (tuple structs) need their own impl.
+        if self.mode == TypedefMode::Typedef {
+            return;
+        }
+
         if let Some(code) = render_trait_with_namespace(ctx, &self.type_ident) {
             ctx.current_module().append(code);
         }
