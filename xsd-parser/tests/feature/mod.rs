@@ -44,6 +44,7 @@ mod mixed_unexpected_text;
 mod namespaces_qualified;
 mod nested_group_reuse;
 mod nillable;
+mod trailing_underscore_group;
 mod nillable_dynamic_types;
 mod nonzero_int;
 mod num_big_int;
