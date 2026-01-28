@@ -86,6 +86,20 @@ pub trait Naming: Debug {
         name
     }
 
+    /// Format the passed string `s` as attribute field name.
+    ///
+    /// The default implementation simply uses [`format_field_name`](Naming::format_field_name).
+    fn format_attribute_field_name(&self, s: &str) -> String {
+        self.format_field_name(s)
+    }
+
+    /// Format the passed string `s` as element field name.
+    ///
+    /// The default implementation simply uses [`format_field_name`](Naming::format_field_name).
+    fn format_element_field_name(&self, s: &str) -> String {
+        self.format_field_name(s)
+    }
+
     /// Format the passed string `s` as variant name.
     ///
     /// The default implementation uses [`format_type_name`](Naming::format_type_name) here.
@@ -118,6 +132,26 @@ pub trait Naming: Debug {
     /// and formats it using [`format_field_name`](Naming::format_field_name).
     fn format_field_ident(&self, name: &Name, display_name: Option<&str>) -> Ident2 {
         let ident = self.format_field_name(display_name.unwrap_or(name.as_str()));
+
+        format_ident!("{ident}")
+    }
+
+    /// Create a suitable identifier for the passed attribute field name `name`
+    /// respecting user defined names stored in `display_name`.
+    ///
+    /// The default implementation uses [`format_attribute_field_name`](Naming::format_attribute_field_name).
+    fn format_attribute_field_ident(&self, name: &Name, display_name: Option<&str>) -> Ident2 {
+        let ident = self.format_attribute_field_name(display_name.unwrap_or(name.as_str()));
+
+        format_ident!("{ident}")
+    }
+
+    /// Create a suitable identifier for the passed element field name `name`
+    /// respecting user defined names stored in `display_name`.
+    ///
+    /// The default implementation uses [`format_element_field_name`](Naming::format_element_field_name).
+    fn format_element_field_ident(&self, name: &Name, display_name: Option<&str>) -> Ident2 {
+        let ident = self.format_element_field_name(display_name.unwrap_or(name.as_str()));
 
         format_ident!("{ident}")
     }
@@ -240,6 +274,24 @@ pub trait NameBuilder: Debug + Any {
     /// force the builder to generate the id to shared it between different copies
     /// of the builder.
     fn generate_unique_id(&mut self);
+
+    /// Prepare the builder to create a type name.
+    fn prepare_type_name(&mut self) {
+        self.strip_suffix("Type");
+        self.strip_suffix("Content");
+    }
+
+    /// Prepare the builder to create a field name.
+    fn prepare_field_name(&mut self) {
+        self.strip_suffix("Type");
+        self.strip_suffix("Content");
+    }
+
+    /// Prepare the builder to create a content type name.
+    fn prepare_content_type_name(&mut self) {
+        self.strip_suffix("Type");
+        self.strip_suffix("Content");
+    }
 }
 
 impl NameBuilder for Box<dyn NameBuilder> {
@@ -296,6 +348,21 @@ impl NameBuilder for Box<dyn NameBuilder> {
     #[inline]
     fn generate_unique_id(&mut self) {
         (**self).generate_unique_id();
+    }
+
+    #[inline]
+    fn prepare_type_name(&mut self) {
+        (**self).prepare_type_name();
+    }
+
+    #[inline]
+    fn prepare_field_name(&mut self) {
+        (**self).prepare_field_name();
+    }
+
+    #[inline]
+    fn prepare_content_type_name(&mut self) {
+        (**self).prepare_content_type_name();
     }
 }
 
@@ -354,6 +421,18 @@ pub trait NameBuilderExt: Sized {
     where
         F: FnOnce() -> T,
         T: NameFallback;
+
+    /// Prepare the builder to create a type name.
+    #[must_use]
+    fn type_name(self) -> Self;
+
+    /// Prepare the builder to create a field name.
+    #[must_use]
+    fn field_name(self) -> Self;
+
+    /// Prepare the builder to create a content type name.
+    #[must_use]
+    fn content_type_name(self) -> Self;
 }
 
 impl<X> NameBuilderExt for X
@@ -427,6 +506,24 @@ where
         if !self.has_name() {
             fallback().apply(&mut self);
         }
+
+        self
+    }
+
+    fn type_name(mut self) -> Self {
+        self.prepare_type_name();
+
+        self
+    }
+
+    fn field_name(mut self) -> Self {
+        self.prepare_field_name();
+
+        self
+    }
+
+    fn content_type_name(mut self) -> Self {
+        self.prepare_content_type_name();
 
         self
     }

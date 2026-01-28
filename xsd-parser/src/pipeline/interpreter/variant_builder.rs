@@ -1653,8 +1653,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
             .name_builder()
             .or(ty.name.clone())
             .or_else(|| self.state.named_group())
-            .remove_suffix("Type")
-            .remove_suffix("Content")
+            .field_name()
             .or_else(|| {
                 self.state
                     .name_builder()
@@ -1666,8 +1665,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
             .state
             .name_builder()
             .auto_extend(false, true, self.state)
-            .remove_suffix("Type")
-            .remove_suffix("Content")
+            .type_name()
             .or(name)
             .finish();
         let type_ = TypeIdent {

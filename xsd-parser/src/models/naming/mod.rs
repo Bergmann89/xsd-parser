@@ -1,3 +1,5 @@
+mod explicit;
+
 use std::any::Any;
 use std::sync::{
     atomic::{AtomicUsize, Ordering},
@@ -7,6 +9,8 @@ use std::sync::{
 use crate::traits::{NameBuilder as NameBuilderTrait, Naming as NamingTrait};
 
 use super::Name;
+
+pub use self::explicit::{ExplicitNameBuilder, ExplicitNaming};
 
 /// Default name generation and formatting implementation.
 ///
@@ -188,6 +192,21 @@ impl NameBuilderTrait for NameBuilder {
         if self.my_id.is_none() {
             self.my_id = Some(self.id.fetch_add(1, Ordering::Release));
         }
+    }
+
+    fn prepare_type_name(&mut self) {
+        self.strip_suffix("Type");
+        self.strip_suffix("Content");
+    }
+
+    fn prepare_field_name(&mut self) {
+        self.strip_suffix("Type");
+        self.strip_suffix("Content");
+    }
+
+    fn prepare_content_type_name(&mut self) {
+        self.strip_suffix("Type");
+        self.strip_suffix("Content");
     }
 }
 

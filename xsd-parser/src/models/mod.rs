@@ -26,4 +26,4 @@ pub use self::ident::{
 };
 pub use self::ident_cache::IdentCache;
 pub use self::name::Name;
-pub use self::naming::{NameBuilder, Naming};
+pub use self::naming::{ExplicitNameBuilder, ExplicitNaming, NameBuilder, Naming};
