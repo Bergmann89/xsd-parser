@@ -36,8 +36,15 @@ pub trait Naming: Debug {
         // e.g., "Base_" should remain distinct from "Base"
         let trailing_underscores = s.chars().rev().take_while(|&c| c == '_').count();
         
+        // Remove trailing underscores before processing to avoid doubling them
+        let s_without_trailing = if trailing_underscores > 0 {
+            &s[..s.len() - trailing_underscores]
+        } else {
+            s
+        };
+        
         let mut done = true;
-        let s = s.replace(
+        let s_processed = s_without_trailing.replace(
             |c: char| {
                 let replace = !c.is_alphanumeric();
                 if c != '_' && !replace {
@@ -50,12 +57,12 @@ pub trait Naming: Debug {
         );
 
         let result = if done {
-            s
+            s_processed
         } else {
-            s.to_screaming_snake_case().to_pascal_case()
+            s_processed.to_screaming_snake_case().to_pascal_case()
         };
         
-        // Re-append the trailing underscores that were stripped during case conversion
+        // Re-append the trailing underscores that were removed before processing
         if trailing_underscores > 0 {
             format!("{}{}", result, "_".repeat(trailing_underscores))
         } else {
@@ -717,6 +724,18 @@ mod tests {
         
         // Test with multiple trailing underscores
         assert_eq!(naming.unify("Type__"), "Type__");
+        
+        // Test inputs consisting only of underscores
+        assert_eq!(naming.unify("_"), "_");
+        assert_eq!(naming.unify("___"), "___");
+        
+        // Test inputs with both internal and trailing underscores
+        assert_eq!(naming.unify("my_type_"), "MyType_");
+        assert_eq!(naming.unify("MY_TYPE_"), "MyType_");
+        
+        // Test inputs with non-alphanumeric characters and trailing underscores
+        assert_eq!(naming.unify("+_"), "__");  // + becomes _, then add back 1 trailing = __
+        assert_eq!(naming.unify("-__"), "___"); // - becomes _, then add back 2 trailing = ___
         
         // Test that the function still works for normal cases
         assert_eq!(naming.unify("my_type"), "MyType");
