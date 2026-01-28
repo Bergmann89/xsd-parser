@@ -189,6 +189,21 @@ impl NameBuilderTrait for NameBuilder {
             self.my_id = Some(self.id.fetch_add(1, Ordering::Release));
         }
     }
+
+    fn prepare_type_name(&mut self) {
+        self.strip_suffix("Type");
+        self.strip_suffix("Content");
+    }
+
+    fn prepare_field_name(&mut self) {
+        self.strip_suffix("Type");
+        self.strip_suffix("Content");
+    }
+
+    fn prepare_content_type_name(&mut self) {
+        self.strip_suffix("Type");
+        self.strip_suffix("Content");
+    }
 }
 
 #[cfg(test)]

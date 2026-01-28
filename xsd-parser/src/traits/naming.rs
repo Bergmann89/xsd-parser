@@ -274,6 +274,24 @@ pub trait NameBuilder: Debug + Any {
     /// force the builder to generate the id to shared it between different copies
     /// of the builder.
     fn generate_unique_id(&mut self);
+
+    /// Prepare the builder to create a type name.
+    fn prepare_type_name(&mut self) {
+        self.strip_suffix("Type");
+        self.strip_suffix("Content");
+    }
+
+    /// Prepare the builder to create a field name.
+    fn prepare_field_name(&mut self) {
+        self.strip_suffix("Type");
+        self.strip_suffix("Content");
+    }
+
+    /// Prepare the builder to create a content type name.
+    fn prepare_content_type_name(&mut self) {
+        self.strip_suffix("Type");
+        self.strip_suffix("Content");
+    }
 }
 
 impl NameBuilder for Box<dyn NameBuilder> {
@@ -330,6 +348,21 @@ impl NameBuilder for Box<dyn NameBuilder> {
     #[inline]
     fn generate_unique_id(&mut self) {
         (**self).generate_unique_id();
+    }
+
+    #[inline]
+    fn prepare_type_name(&mut self) {
+        (**self).prepare_type_name();
+    }
+
+    #[inline]
+    fn prepare_field_name(&mut self) {
+        (**self).prepare_field_name();
+    }
+
+    #[inline]
+    fn prepare_content_type_name(&mut self) {
+        (**self).prepare_content_type_name();
     }
 }
 
@@ -388,6 +421,18 @@ pub trait NameBuilderExt: Sized {
     where
         F: FnOnce() -> T,
         T: NameFallback;
+
+    /// Prepare the builder to create a type name.
+    #[must_use]
+    fn type_name(self) -> Self;
+
+    /// Prepare the builder to create a field name.
+    #[must_use]
+    fn field_name(self) -> Self;
+
+    /// Prepare the builder to create a content type name.
+    #[must_use]
+    fn content_type_name(self) -> Self;
 }
 
 impl<X> NameBuilderExt for X
@@ -461,6 +506,24 @@ where
         if !self.has_name() {
             fallback().apply(&mut self);
         }
+
+        self
+    }
+
+    fn type_name(mut self) -> Self {
+        self.prepare_type_name();
+
+        self
+    }
+
+    fn field_name(mut self) -> Self {
+        self.prepare_field_name();
+
+        self
+    }
+
+    fn content_type_name(mut self) -> Self {
+        self.prepare_content_type_name();
 
         self
     }
