@@ -32,6 +32,10 @@ pub trait Naming: Debug {
     /// The default implementation uses pascal case to unify all different kind
     /// of names.
     fn unify(&self, s: &str) -> String {
+        // Preserve trailing underscores to avoid name collisions
+        // e.g., "Base_" should remain distinct from "Base"
+        let trailing_underscores = s.chars().rev().take_while(|&c| c == '_').count();
+        
         let mut done = true;
         let s = s.replace(
             |c: char| {
@@ -45,10 +49,17 @@ pub trait Naming: Debug {
             "_",
         );
 
-        if done {
+        let result = if done {
             s
         } else {
             s.to_screaming_snake_case().to_pascal_case()
+        };
+        
+        // Re-append the trailing underscores that were stripped during case conversion
+        if trailing_underscores > 0 {
+            format!("{}{}", result, "_".repeat(trailing_underscores))
+        } else {
+            result
         }
     }
 
@@ -685,11 +696,30 @@ const KEYWORDS: &[(&str, &str)] = &[
 #[cfg(test)]
 mod tests {
     use super::KEYWORDS;
+    use crate::models::Naming as DefaultNaming;
+    use super::Naming;
 
     #[test]
     fn verify_keyword_order() {
         for i in 1..KEYWORDS.len() {
             assert!(dbg!(KEYWORDS[i - 1].0) < dbg!(KEYWORDS[i].0));
         }
+    }
+    
+    #[test]
+    fn test_unify_preserves_trailing_underscores() {
+        let naming = DefaultNaming::default();
+        
+        // Test that trailing underscores are preserved
+        assert_eq!(naming.unify("Base_"), "Base_");
+        assert_eq!(naming.unify("Base"), "Base");
+        assert_ne!(naming.unify("Base_"), naming.unify("Base"));
+        
+        // Test with multiple trailing underscores
+        assert_eq!(naming.unify("Type__"), "Type__");
+        
+        // Test that the function still works for normal cases
+        assert_eq!(naming.unify("my_type"), "MyType");
+        assert_eq!(naming.unify("MY_TYPE"), "MyType");
     }
 }
