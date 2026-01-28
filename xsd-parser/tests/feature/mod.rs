@@ -42,6 +42,7 @@ mod mixed_content;
 mod mixed_content_groups;
 mod mixed_unexpected_text;
 mod namespaces_qualified;
+mod nested_group_reuse;
 mod nillable;
 mod nillable_dynamic_types;
 mod nonzero_int;

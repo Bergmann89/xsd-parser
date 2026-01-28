@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:tns="http://ex"
+           targetNamespace="http://ex"
+           elementFormDefault="qualified">
+
+  <!-- One reusable group -->
+  <xs:group name="g_additionalData">
+    <xs:sequence>
+      <xs:element name="userData" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="include"  type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="dataQuality" type="xs:string" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:group>
+
+  <!-- Root element -->
+  <xs:element name="OpenDRIVE">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="road" type="tns:t_road"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- Road type: references the group TWICE within the same type -->
+  <xs:complexType name="t_road">
+    <xs:sequence>
+      <xs:element name="id" type="xs:string"/>
+      <xs:element name="name" type="xs:string" minOccurs="0"/>
+      <!-- First reference to the group -->
+      <xs:group ref="tns:g_additionalData"/>
+      <xs:element name="midSection" type="xs:string" minOccurs="0"/>
+      <!-- Second reference to the SAME group in the SAME parent -->
+      <xs:group ref="tns:g_additionalData"/>
+    </xs:sequence>
+    <xs:attribute name="length" type="xs:decimal" use="required"/>
+  </xs:complexType>
+</xs:schema>
