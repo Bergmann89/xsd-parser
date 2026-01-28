@@ -1,3 +1,5 @@
+mod explicit;
+
 use std::any::Any;
 use std::sync::{
     atomic::{AtomicUsize, Ordering},
@@ -7,6 +9,8 @@ use std::sync::{
 use crate::traits::{NameBuilder as NameBuilderTrait, Naming as NamingTrait};
 
 use super::Name;
+
+pub use self::explicit::{ExplicitNameBuilder, ExplicitNaming};
 
 /// Default name generation and formatting implementation.
 ///
