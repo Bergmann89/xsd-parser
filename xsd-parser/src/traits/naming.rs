@@ -86,6 +86,20 @@ pub trait Naming: Debug {
         name
     }
 
+    /// Format the passed string `s` as attribute field name.
+    ///
+    /// The default implementation simply uses [`format_field_name`](Naming::format_field_name).
+    fn format_attribute_field_name(&self, s: &str) -> String {
+        self.format_field_name(s)
+    }
+
+    /// Format the passed string `s` as element field name.
+    ///
+    /// The default implementation simply uses [`format_field_name`](Naming::format_field_name).
+    fn format_element_field_name(&self, s: &str) -> String {
+        self.format_field_name(s)
+    }
+
     /// Format the passed string `s` as variant name.
     ///
     /// The default implementation uses [`format_type_name`](Naming::format_type_name) here.
@@ -118,6 +132,26 @@ pub trait Naming: Debug {
     /// and formats it using [`format_field_name`](Naming::format_field_name).
     fn format_field_ident(&self, name: &Name, display_name: Option<&str>) -> Ident2 {
         let ident = self.format_field_name(display_name.unwrap_or(name.as_str()));
+
+        format_ident!("{ident}")
+    }
+
+    /// Create a suitable identifier for the passed attribute field name `name`
+    /// respecting user defined names stored in `display_name`.
+    ///
+    /// The default implementation uses [`format_attribute_field_name`](Naming::format_attribute_field_name).
+    fn format_attribute_field_ident(&self, name: &Name, display_name: Option<&str>) -> Ident2 {
+        let ident = self.format_attribute_field_name(display_name.unwrap_or(name.as_str()));
+
+        format_ident!("{ident}")
+    }
+
+    /// Create a suitable identifier for the passed element field name `name`
+    /// respecting user defined names stored in `display_name`.
+    ///
+    /// The default implementation uses [`format_element_field_name`](Naming::format_element_field_name).
+    fn format_element_field_ident(&self, name: &Name, display_name: Option<&str>) -> Ident2 {
+        let ident = self.format_element_field_name(display_name.unwrap_or(name.as_str()));
 
         format_ident!("{ident}")
     }

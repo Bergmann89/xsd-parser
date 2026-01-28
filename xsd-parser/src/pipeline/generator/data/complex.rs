@@ -594,7 +594,7 @@ impl<'types> ComplexDataElement<'types> {
         let field_ident = ctx
             .types
             .naming
-            .format_field_ident(&meta.ident.name, meta.display_name.as_deref());
+            .format_element_field_ident(&meta.ident.name, meta.display_name.as_deref());
         let variant_ident = ctx
             .types
             .naming
@@ -688,7 +688,10 @@ impl<'types> ComplexDataElement<'types> {
             documentation: Vec::new(),
         };
 
-        let field_ident = ctx.types.naming.format_field_ident(&meta.ident.name, None);
+        let field_ident = ctx
+            .types
+            .naming
+            .format_element_field_ident(&meta.ident.name, None);
         let variant_ident = ctx
             .types
             .naming
@@ -770,7 +773,7 @@ impl<'types> ComplexDataAttribute<'types> {
         let ident = ctx
             .types
             .naming
-            .format_field_ident(&meta.ident.name, meta.display_name.as_deref());
+            .format_attribute_field_ident(&meta.ident.name, meta.display_name.as_deref());
 
         let (target_type, default_value) = match &meta.variant {
             AttributeMetaVariant::Any(_) => {
