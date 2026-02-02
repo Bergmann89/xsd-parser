@@ -80,7 +80,12 @@ macro_rules! test_obj {
                 },
                 ChoiceType {
                     any_attribute: AnyAttributes::default(),
-                    content: ChoiceTypeContent::Any(Element::default().name(b"AnyElement2")),
+                    content: ChoiceTypeContent::Any(
+                        Element::default()
+                            .name(b"AnyElement2")
+                            .namespace(b"tns", b"http://example.com")
+                            .namespace(b"anyNs", b"http://example.com/anyNs"),
+                    ),
                 },
                 ChoiceType {
                     any_attribute: AnyAttributes::default(),

@@ -10,7 +10,7 @@ use quick_xml::{
     name::QName,
 };
 
-use crate::misc::format_utf8_slice;
+use crate::misc::{format_utf8_slice, Namespace, NamespacePrefix};
 
 #[cfg(feature = "quick-xml")]
 use crate::quick_xml::{
@@ -93,6 +93,29 @@ impl<'a> Element<'a> {
 
         self
     }
+
+    /// Add a namespace to the namespace context of this element.
+    ///
+    /// This will not add a namespace attribute to the element itself. It only
+    /// tells the serializer that this namespace must be valid in the context of
+    /// this element. If the namespace is not already declared in a parent element,
+    /// a suitable `xmlns` attribute will be added automatically.
+    ///
+    /// If you want to add a namespace declaration attribute to the element in
+    /// any case, use the [`Element::attribute`] method instead.
+    #[must_use]
+    pub fn namespace<P, N>(mut self, prefix: P, namespace: N) -> Self
+    where
+        P: Into<Cow<'a, [u8]>>,
+        N: Into<Cow<'a, [u8]>>,
+    {
+        let mut namespaces = self.namespaces.into_owned();
+        namespaces.insert(prefix.into().into(), namespace.into().into());
+
+        self.namespaces = namespaces.into_shared();
+
+        self
+    }
 }
 
 impl Debug for Element<'_> {
@@ -172,6 +195,7 @@ impl<'ser, 'el> ElementSerializer<'ser, 'el> {
         Self::Start { name, element }
     }
 
+    #[allow(clippy::too_many_lines)]
     fn next_item(&mut self, helper: &mut SerializeHelper) -> Result<Option<Event<'ser>>, Error> {
         loop {
             match replace(self, Self::Done) {
@@ -183,9 +207,19 @@ impl<'ser, 'el> ElementSerializer<'ser, 'el> {
                     });
 
                     let mut start = BytesStart::new(element_name);
+
+                    helper.begin_ns_scope();
+                    for (prefix, ns) in &**element.namespaces {
+                        let prefix = NamespacePrefix::new(prefix.0.clone().into_owned());
+                        let ns = Namespace::new(ns.0.clone().into_owned());
+                        helper.write_xmlns(&mut start, Some(&prefix), &ns);
+                    }
+
                     start.extend_attributes(attributes);
 
                     let event = if element.values.is_empty() {
+                        helper.end_ns_scope();
+
                         Event::Empty(start)
                     } else {
                         let values = element.values.iter();
@@ -205,6 +239,8 @@ impl<'ser, 'el> ElementSerializer<'ser, 'el> {
                     let element_name = name.map_or_else(|| from_utf8(&element.name), Ok)?;
                     let end = BytesEnd::new(element_name);
                     let event = Event::End(end);
+
+                    helper.end_ns_scope();
 
                     return Ok(Some(event));
                 }

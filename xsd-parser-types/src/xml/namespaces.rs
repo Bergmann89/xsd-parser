@@ -12,11 +12,17 @@ use crate::misc::format_utf8_slice;
 #[derive(Default, Debug, Clone, Eq, PartialEq)]
 pub struct Namespaces<'a>(pub HashMap<Key<'a>, Value<'a>>);
 
-impl Namespaces<'_> {
+impl<'a> Namespaces<'a> {
     /// Create a new [`Namespaces`] instance.
     #[must_use]
     pub fn new() -> Self {
         Self::default()
+    }
+
+    /// Convert this list into a shared version ([`NamespacesShared`]).
+    #[must_use]
+    pub fn into_shared(self) -> NamespacesShared<'a> {
+        NamespacesShared::new(self)
     }
 }
 
@@ -78,6 +84,12 @@ impl From<Vec<u8>> for Key<'static> {
 impl<'a> From<&'a [u8]> for Key<'a> {
     fn from(value: &'a [u8]) -> Self {
         Self(Cow::Borrowed(value))
+    }
+}
+
+impl<'a> From<Cow<'a, [u8]>> for Key<'a> {
+    fn from(value: Cow<'a, [u8]>) -> Self {
+        Self(value)
     }
 }
 
@@ -143,6 +155,24 @@ impl AsRef<[u8]> for Value<'_> {
 impl Borrow<[u8]> for Value<'_> {
     fn borrow(&self) -> &[u8] {
         &self.0
+    }
+}
+
+impl From<Vec<u8>> for Value<'static> {
+    fn from(value: Vec<u8>) -> Self {
+        Self(Cow::Owned(value))
+    }
+}
+
+impl<'a> From<&'a [u8]> for Value<'a> {
+    fn from(value: &'a [u8]) -> Self {
+        Self(Cow::Borrowed(value))
+    }
+}
+
+impl<'a> From<Cow<'a, [u8]>> for Value<'a> {
+    fn from(value: Cow<'a, [u8]>) -> Self {
+        Self(value)
     }
 }
 
