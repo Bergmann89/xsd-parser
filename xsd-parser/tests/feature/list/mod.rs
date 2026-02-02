@@ -78,6 +78,21 @@ fn read_quick_xml() {
 
 #[test]
 #[cfg(not(feature = "update-expectations"))]
+fn read_quick_xml_different_separators() {
+    use quick_xml::Foo;
+
+    let obj = crate::utils::quick_xml_read_test::<Foo, _>(
+        "tests/feature/list/example/different_separators.xml",
+    );
+
+    assert_eq!(
+        obj.a_list.0,
+        vec![String::from("one,two"), String::from("three")]
+    );
+}
+
+#[test]
+#[cfg(not(feature = "update-expectations"))]
 fn write_quick_xml() {
     let obj = test_obj!(quick_xml);
 

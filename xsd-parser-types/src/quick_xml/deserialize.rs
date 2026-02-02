@@ -746,7 +746,7 @@ impl DeserializeHelper {
         }
 
         let values = bytes
-            .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
+            .split(|b| *b == b' ' || *b == b'\t' || *b == b'\r' || *b == b'\n')
             .map(|bytes| T::deserialize_bytes(self, bytes))
             .collect::<Result<Vec<_>, _>>()?;
 
