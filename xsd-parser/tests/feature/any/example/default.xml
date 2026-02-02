@@ -6,7 +6,7 @@
     <tns:Name>def</tns:Name>
   </tns:Choice>
   <tns:Choice>
-    <AnyElement2 />
+    <AnyElement2 xmlns:anyNs="http://example.com/anyNs" />
   </tns:Choice>
   <tns:Choice>
     <AnotherElement2 />
