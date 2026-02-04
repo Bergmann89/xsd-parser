@@ -3,7 +3,10 @@ use xsd_parser::{config::SerdeXmlRsVersion, Config, IdentType};
 use crate::utils::{generate_test, ConfigEx};
 
 fn config() -> Config {
-    Config::test_default().with_generate([(IdentType::Element, "tns:Foo")])
+    Config::test_default().with_generate([
+        (IdentType::Element, "tns:Foo"),
+        (IdentType::Element, "tns:ListOfMyStrings"),
+    ])
 }
 
 #[cfg(not(feature = "update-expectations"))]
@@ -89,6 +92,23 @@ fn read_quick_xml_different_separators() {
         obj.a_list.0,
         vec![String::from("one,two"), String::from("three")]
     );
+}
+
+#[test]
+#[cfg(not(feature = "update-expectations"))]
+fn read_quick_xml_list_of_my_strings() {
+    use quick_xml::ListOfMyStrings;
+
+    let obj = crate::utils::quick_xml_read_test::<ListOfMyStrings, _>(
+        "tests/feature/list/example/list_of_my_strings.xml",
+    );
+
+    let expected = ["1", "2", "3", "4", "5,6", "7.8", "9"]
+        .into_iter()
+        .map(String::from)
+        .collect::<Vec<_>>();
+
+    assert_eq!(obj.0, expected);
 }
 
 #[test]

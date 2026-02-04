@@ -966,10 +966,7 @@ impl Deref for NotNamespaceType {
 }
 impl DeserializeBytes for NotNamespaceType {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
-        let inner = bytes
-            .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
-            .map(|bytes| BasicNamespaceListItemType::deserialize_bytes(helper, bytes))
-            .collect::<Result<Vec<_>, _>>()?;
+        let inner = helper.deserialize_list(bytes)?;
         Ok(Self::new(inner).map_err(|error| (bytes, error))?)
     }
 }

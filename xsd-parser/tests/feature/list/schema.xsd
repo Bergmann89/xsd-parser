@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:tns="http://example.com"
-           targetNamespace="http://example.com"
-           elementFormDefault="qualified"
-           finalDefault="">
+    xmlns:tns="http://example.com"
+    targetNamespace="http://example.com"
+    elementFormDefault="qualified"
+    finalDefault="">
 
     <xs:simpleType name="ListType">
         <xs:list itemType="xs:string" />
@@ -14,4 +14,21 @@
     </xs:complexType>
 
     <xs:element name="Foo" type="tns:FooType" />
+
+    <xs:simpleType name="MyString">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="\d" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="ListOfMyStringsType">
+		<xs:restriction>
+			<xs:simpleType>
+				<xs:list itemType="tns:MyString" />
+			</xs:simpleType>
+			<xs:minLength value="1" />
+		</xs:restriction>
+	</xs:simpleType>
+
+    <xs:element name="ListOfMyStrings" type="tns:ListOfMyStringsType" />
 </xs:schema>

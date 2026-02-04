@@ -766,7 +766,7 @@ impl DeserializeHelper {
     {
         let parts = bytes
             .trim_ascii()
-            .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
+            .split(|b| *b == b' ' || *b == b'\t' || *b == b'\r' || *b == b'\n')
             .map(|bytes| T::deserialize_bytes(self, bytes));
         let mut arr: [Option<T>; N] = std::array::from_fn(|_| None);
         let mut index = 0;
