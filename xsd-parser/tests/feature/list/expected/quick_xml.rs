@@ -1,8 +1,9 @@
+use core::ops::Deref;
 use std::borrow::Cow;
 use xsd_parser_types::{
     misc::{Namespace, NamespacePrefix},
     quick_xml::{
-        DeserializeBytes, DeserializeHelper, Error, SerializeBytes, SerializeHelper,
+        DeserializeBytes, DeserializeHelper, Error, SerializeBytes, SerializeHelper, ValidateError,
         WithDeserializer, WithSerializer,
     },
 };
@@ -66,6 +67,66 @@ impl DeserializeBytes for ListType {
     }
 }
 pub type StringType = String;
+pub type ListOfMyStrings = ListOfMyStringsType;
+#[derive(Debug)]
+pub struct ListOfMyStringsType(pub Vec<MyStringType>);
+impl ListOfMyStringsType {
+    pub fn new(inner: Vec<MyStringType>) -> Result<Self, ValidateError> {
+        Self::validate_value(&inner)?;
+        Ok(Self(inner))
+    }
+    #[must_use]
+    pub fn into_inner(self) -> Vec<MyStringType> {
+        self.0
+    }
+    pub fn validate_value(value: &Vec<MyStringType>) -> Result<(), ValidateError> {
+        if value.is_empty() {
+            return Err(ValidateError::MinLength(1usize));
+        }
+        Ok(())
+    }
+}
+impl From<ListOfMyStringsType> for Vec<MyStringType> {
+    fn from(value: ListOfMyStringsType) -> Vec<MyStringType> {
+        value.0
+    }
+}
+impl TryFrom<Vec<MyStringType>> for ListOfMyStringsType {
+    type Error = ValidateError;
+    fn try_from(value: Vec<MyStringType>) -> Result<Self, ValidateError> {
+        Self::new(value)
+    }
+}
+impl Deref for ListOfMyStringsType {
+    type Target = Vec<MyStringType>;
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+impl SerializeBytes for ListOfMyStringsType {
+    fn serialize_bytes(&self, helper: &mut SerializeHelper) -> Result<Option<Cow<'_, str>>, Error> {
+        if self.0.is_empty() {
+            return Ok(None);
+        }
+        let mut data = String::new();
+        for item in &self.0 {
+            if let Some(bytes) = item.serialize_bytes(helper)? {
+                if !data.is_empty() {
+                    data.push(' ');
+                }
+                data.push_str(&bytes);
+            }
+        }
+        Ok(Some(Cow::Owned(data)))
+    }
+}
+impl DeserializeBytes for ListOfMyStringsType {
+    fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
+        let inner = helper.deserialize_list(bytes)?;
+        Ok(Self::new(inner).map_err(|error| (bytes, error))?)
+    }
+}
+pub type MyStringType = String;
 pub mod quick_xml_deserialize {
     use core::mem::replace;
     use xsd_parser_types::quick_xml::{

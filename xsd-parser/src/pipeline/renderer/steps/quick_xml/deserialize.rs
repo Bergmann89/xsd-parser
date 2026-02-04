@@ -613,7 +613,6 @@ impl SimpleData<'_> {
 
         let target_type = ctx.resolve_type_for_module(target_type);
 
-        let vec = resolve_build_in!(ctx, "::alloc::vec::Vec");
         let u8_ = resolve_build_in!(ctx, "::core::primitive::u8");
         let result = resolve_build_in!(ctx, "::core::result::Result");
 
@@ -638,10 +637,7 @@ impl SimpleData<'_> {
             }
             (false, Occurs::DynamicList) => {
                 quote! {
-                    let inner = bytes
-                        .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
-                        .map(|bytes| #target_type::deserialize_bytes(helper, bytes))
-                        .collect::<#result<#vec<_>, _>>()?;
+                    let inner = helper.deserialize_list(bytes)?;
                 }
             }
             (need_str, occurs) => {
