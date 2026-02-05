@@ -22,6 +22,7 @@ fn main() -> Result<(), Error> {
         RenderStep::Types,
         RenderStep::Defaults,
         RenderStep::NamespaceConstants,
+        RenderStep::PrefixConstants,
         RenderStep::QuickXmlDeserialize {
             boxed_deserializer: false,
         },

@@ -27,7 +27,10 @@ impl RenderStep for PrefixConstantsRenderStep {
     }
 
     fn initialize(&mut self, meta: &mut MetaData<'_>) {
-        if meta.types.meta.types.modules.is_empty() {
+        // Don't skip initialization even if modules are empty, 
+        // because we might still need to generate XSI constant
+        if meta.types.meta.types.modules.is_empty() 
+            && !meta.check_generator_flags(GeneratorFlags::NILLABLE_TYPE_SUPPORT) {
             self.0 = State::Done;
         }
     }
