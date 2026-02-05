@@ -1,0 +1,11 @@
+[package]
+name = "ifc"
+version = "0.1.0"
+edition = "2021"
+
+[build-dependencies]
+xsd-parser = { path = "../../" }
+
+[dependencies]
+xsd-parser = { path = "../../" }
+num = "0.4.3"

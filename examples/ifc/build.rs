@@ -1,0 +1,149 @@
+use xsd_parser::{
+    Config, Error, IdentType, MetaTypes, Schemas,
+    config::{GeneratorFlags, InterpreterFlags, OptimizerFlags},
+    config::{IdentTriple, ParserFlags, Schema},
+    exec_generator, exec_interpreter, exec_optimizer, exec_parser, exec_render,
+    models::meta::{AttributeMetaVariant, MetaTypeVariant},
+};
+
+fn main() -> Result<(), Error> {
+    println!("cargo::rerun-if-changed=schema.xsd");
+
+    let mut config = Config::default()
+        .with_parser_flags(ParserFlags::all())
+        .with_interpreter_flags(InterpreterFlags::all() - InterpreterFlags::WITH_NUM_BIG_INT)
+        .with_optimizer_flags(OptimizerFlags::all())
+        .with_generator_flags(GeneratorFlags::all())
+        .with_quick_xml_serialize()
+        .with_quick_xml_deserialize_config(true)
+        .with_schema(Schema::File("schema.xsd".into()))
+        .with_generate([(IdentType::Element, "ifc:ifcXML")]);
+
+    config.generator.type_postfix.type_ = "XType".into();
+    config.generator.type_postfix.element = "XElement".into();
+    config.generator.type_postfix.element_type = "XElementType".into();
+
+    config.parser.debug_output = Some("target/parser.log".into());
+    config.interpreter.debug_output = Some("target/interpreter.log".into());
+    config.optimizer.debug_output = Some("target/optimizer.log".into());
+
+    generate(config)?;
+
+    Ok(())
+}
+
+fn generate(config: Config) -> Result<(), Error> {
+    let schemas = exec_parser(config.parser)?;
+    let meta_types = exec_interpreter(config.interpreter, &schemas)?;
+    let meta_types = resolve_hex_binary_conflict(&schemas, meta_types);
+    let meta_types = resolve_compound_plane_angle_measure_conflict(&schemas, meta_types);
+    let meta_types = resolve_naming_conflicts(&schemas, meta_types);
+    let meta_types = exec_optimizer(config.optimizer, meta_types)?;
+    let data_types = exec_generator(config.generator, &schemas, &meta_types)?;
+    let modules = exec_render(config.renderer, &data_types)?;
+
+    modules.write_to_files("src/schema")?;
+
+    Ok(())
+}
+
+// The schema incorrectly uses the complex type `ifc:IfcBinary` as item type for a list.
+// Lists can only have simple types, not complex types!
+fn resolve_hex_binary_conflict(schemas: &Schemas, mut types: MetaTypes) -> MetaTypes {
+    // Resolve `IfcPixelTexture` Type
+    let ident = IdentTriple::from((IdentType::Type, "ifc:IfcPixelTexture"))
+        .resolve(schemas)
+        .unwrap();
+    let ty = types.items.get(&ident).unwrap();
+    let MetaTypeVariant::ComplexType(ci) = &ty.variant else {
+        panic!("Unexpected type variant!");
+    };
+
+    // Resolve `Pixel` Attribute
+    let attribute = ci
+        .attributes
+        .iter()
+        .find(|a| a.ident.name.as_str() == "Pixel")
+        .unwrap();
+    let AttributeMetaVariant::Type(ident) = &attribute.variant else {
+        panic!("Unexpected attribute variant!");
+    };
+    let ident = ident.clone();
+
+    // Resolve Type of `Pixel` Attribute
+    let ty = types.items.get_mut(&ident).unwrap();
+    let MetaTypeVariant::Reference(ri) = &mut ty.variant else {
+        panic!("Unexpected type variant!");
+    };
+    ri.type_ = IdentTriple::from((IdentType::Type, "xs:hexBinary"))
+        .resolve(schemas)
+        .unwrap();
+
+    types
+}
+
+// `IfcCompoundPlaneAngleMeasure` is a complex type and can't be used as type for attributes.
+// We implement a fallback to it's simple base type `List-IfcCompoundPlaneAngleMeasure`.
+fn resolve_compound_plane_angle_measure_conflict(
+    schemas: &Schemas,
+    mut types: MetaTypes,
+) -> MetaTypes {
+    let ident = IdentTriple::from((IdentType::Type, "ifc:IfcCompoundPlaneAngleMeasure"))
+        .resolve(schemas)
+        .unwrap();
+    let list_ident = IdentTriple::from((IdentType::Type, "ifc:List-IfcCompoundPlaneAngleMeasure"))
+        .resolve(schemas)
+        .unwrap();
+
+    for ty in types.items.values_mut() {
+        let MetaTypeVariant::ComplexType(ci) = &mut ty.variant else {
+            continue;
+        };
+
+        for attrib in &mut *ci.attributes {
+            if matches!(&attrib.variant, AttributeMetaVariant::Type(x) if *x == ident) {
+                attrib.variant = AttributeMetaVariant::Type(list_ident.clone());
+            }
+        }
+    }
+
+    types
+}
+
+fn resolve_naming_conflicts(schemas: &Schemas, mut types: MetaTypes) -> MetaTypes {
+    rename_attribute(
+        schemas,
+        &mut types,
+        (IdentType::Type, "ifc:IfcTextLiteral"),
+        "Path",
+        "text_path",
+    );
+    rename_attribute(
+        schemas,
+        &mut types,
+        (IdentType::Type, "ifc:IfcTextLiteralWithExtent"),
+        "Path",
+        "text_path",
+    );
+
+    types
+}
+
+fn rename_attribute<T, S>(schemas: &Schemas, types: &mut MetaTypes, ty: T, old: &str, new: S)
+where
+    IdentTriple: From<T>,
+    S: Into<String>,
+{
+    let ident = IdentTriple::from(ty).resolve(schemas).unwrap();
+    let ty = types.items.get_mut(&ident).unwrap();
+    let MetaTypeVariant::ComplexType(ci) = &mut ty.variant else {
+        panic!("Unexpected type variant");
+    };
+
+    for attrib in &mut *ci.attributes {
+        if attrib.ident.name.as_str() == old {
+            attrib.display_name = Some(new.into());
+            break;
+        }
+    }
+}
