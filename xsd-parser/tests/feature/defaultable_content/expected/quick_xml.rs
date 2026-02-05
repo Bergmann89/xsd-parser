@@ -4,8 +4,10 @@ use xsd_parser_types::{
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
+pub const NS_XSI: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema-instance");
 pub const PREFIX_XS: NamespacePrefix = NamespacePrefix::new_const(b"xs");
 pub const PREFIX_XML: NamespacePrefix = NamespacePrefix::new_const(b"xml");
+pub const PREFIX_XSI: NamespacePrefix = NamespacePrefix::new_const(b"xsi");
 pub type Simple = SimpleType;
 #[derive(Debug)]
 pub struct SimpleType {
@@ -2161,12 +2163,9 @@ pub mod quick_xml_deserialize {
     }
 }
 pub mod quick_xml_serialize {
-    use xsd_parser_types::{
-        misc::{Namespace, NamespacePrefix},
-        quick_xml::{
-            BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
-            WithSerializer,
-        },
+    use xsd_parser_types::quick_xml::{
+        BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
+        WithSerializer,
     };
     #[derive(Debug)]
     pub struct SimpleTypeSerializer<'ser> {
@@ -2199,8 +2198,8 @@ pub mod quick_xml_serialize {
                         if self.is_root {
                             helper.write_xmlns(
                                 &mut bytes,
-                                Some(&NamespacePrefix::XSI),
-                                &Namespace::XSI,
+                                Some(&super::PREFIX_XSI),
+                                &super::NS_XSI,
                             );
                         }
                         helper.write_attrib_opt(&mut bytes, "attrib-a", &self.value.attrib_a)?;
@@ -2265,8 +2264,8 @@ pub mod quick_xml_serialize {
                         if self.is_root {
                             helper.write_xmlns(
                                 &mut bytes,
-                                Some(&NamespacePrefix::XSI),
-                                &Namespace::XSI,
+                                Some(&super::PREFIX_XSI),
+                                &super::NS_XSI,
                             );
                         }
                         helper.write_attrib_opt(&mut bytes, "attrib-a", &self.value.attrib_a)?;
@@ -2399,8 +2398,8 @@ pub mod quick_xml_serialize {
                         if self.is_root {
                             helper.write_xmlns(
                                 &mut bytes,
-                                Some(&NamespacePrefix::XSI),
-                                &Namespace::XSI,
+                                Some(&super::PREFIX_XSI),
+                                &super::NS_XSI,
                             );
                         }
                         helper.write_attrib_opt(&mut bytes, "attrib-a", &self.value.attrib_a)?;

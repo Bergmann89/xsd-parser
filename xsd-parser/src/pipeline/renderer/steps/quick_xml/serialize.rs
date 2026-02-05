@@ -715,7 +715,14 @@ impl ComplexBase<'_> {
                 });
 
                 let xsi = ctx.check_generator_flags(GeneratorFlags::NILLABLE_TYPE_SUPPORT).then(|| {
-                    quote!(helper.write_xmlns(&mut bytes, Some(&super::PREFIX_XSI), &super::NS_XSI);)
+                    let ns_xsi_ident = format_ident!("NS_XSI");
+                    let prefix_xsi_ident = format_ident!("PREFIX_XSI");
+                    let ns_xsi_path = PathData::from_path(IdentPath::from_parts([], ns_xsi_ident));
+                    let prefix_xsi_path = PathData::from_path(IdentPath::from_parts([], prefix_xsi_ident));
+                    let ns_xsi_resolved = ctx.resolve_type_for_serialize_module(&ns_xsi_path);
+                    let prefix_xsi_resolved = ctx.resolve_type_for_serialize_module(&prefix_xsi_path);
+                    
+                    quote!(helper.write_xmlns(&mut bytes, Some(&#prefix_xsi_resolved), &#ns_xsi_resolved);)
                 });
 
                 let global_xmlns = collector
