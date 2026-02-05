@@ -1,11 +1,12 @@
 [package]
 name = "ifc"
 version = "0.1.0"
-edition = "2021"
+edition.workspace = true
+publish = false
 
 [build-dependencies]
-xsd-parser = { path = "../../" }
+xsd-parser = { workspace = true }
 
 [dependencies]
-xsd-parser = { path = "../../" }
-num = "0.4.3"
+xsd-parser-types = { workspace = true, features = [ "quick-xml" ] }
+num = { workspace = true }

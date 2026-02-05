@@ -17,7 +17,7 @@ mod schema;
 
 use std::{env::args, fs::File, io::BufReader, thread::Builder};
 
-use xsd_parser::quick_xml::{DeserializeSync, IoReader, XmlReader};
+use xsd_parser_types::quick_xml::{DeserializeSync, IoReader, XmlReader};
 
 fn main() {
     let stack_size = args().skip(1).next().unwrap().parse().unwrap();

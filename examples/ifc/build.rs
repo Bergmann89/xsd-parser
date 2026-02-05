@@ -1,13 +1,16 @@
 use xsd_parser::{
     Config, Error, IdentType, MetaTypes, Schemas,
     config::{GeneratorFlags, InterpreterFlags, OptimizerFlags},
-    config::{IdentTriple, ParserFlags, Schema},
+    config::{IdentQuadruple, ParserFlags, Schema},
     exec_generator, exec_interpreter, exec_optimizer, exec_parser, exec_render,
     models::meta::{AttributeMetaVariant, MetaTypeVariant},
 };
 
 fn main() -> Result<(), Error> {
-    println!("cargo::rerun-if-changed=schema.xsd");
+    let cargo_dir = std::env::var("CARGO_MANIFEST_DIR").expect("CARGO_MANIFEST_DIR not set");
+    let schema_path = std::path::Path::new(&cargo_dir).join("schema.xsd");
+    
+    println!("cargo::rerun-if-changed={}", schema_path.display());
 
     let mut config = Config::default()
         .with_parser_flags(ParserFlags::all())
@@ -16,16 +19,17 @@ fn main() -> Result<(), Error> {
         .with_generator_flags(GeneratorFlags::all())
         .with_quick_xml_serialize()
         .with_quick_xml_deserialize_config(true)
-        .with_schema(Schema::File("schema.xsd".into()))
+        .with_schema(Schema::File(schema_path))
         .with_generate([(IdentType::Element, "ifc:ifcXML")]);
 
     config.generator.type_postfix.type_ = "XType".into();
     config.generator.type_postfix.element = "XElement".into();
     config.generator.type_postfix.element_type = "XElementType".into();
 
-    config.parser.debug_output = Some("target/parser.log".into());
-    config.interpreter.debug_output = Some("target/interpreter.log".into());
-    config.optimizer.debug_output = Some("target/optimizer.log".into());
+    let target_dir = std::path::Path::new(&cargo_dir).join("target");
+    config.parser.debug_output = Some(target_dir.join("parser.log"));
+    config.interpreter.debug_output = Some(target_dir.join("interpreter.log"));
+    config.optimizer.debug_output = Some(target_dir.join("optimizer.log"));
 
     generate(config)?;
 
@@ -42,7 +46,9 @@ fn generate(config: Config) -> Result<(), Error> {
     let data_types = exec_generator(config.generator, &schemas, &meta_types)?;
     let modules = exec_render(config.renderer, &data_types)?;
 
-    modules.write_to_files("src/schema")?;
+    let cargo_dir = std::env::var("CARGO_MANIFEST_DIR").expect("CARGO_MANIFEST_DIR not set");
+    let output_path = std::path::Path::new(&cargo_dir).join("src/schema");
+    modules.write_to_files(output_path)?;
 
     Ok(())
 }
@@ -51,7 +57,7 @@ fn generate(config: Config) -> Result<(), Error> {
 // Lists can only have simple types, not complex types!
 fn resolve_hex_binary_conflict(schemas: &Schemas, mut types: MetaTypes) -> MetaTypes {
     // Resolve `IfcPixelTexture` Type
-    let ident = IdentTriple::from((IdentType::Type, "ifc:IfcPixelTexture"))
+    let ident = IdentQuadruple::from((IdentType::Type, "ifc:IfcPixelTexture"))
         .resolve(schemas)
         .unwrap();
     let ty = types.items.get(&ident).unwrap();
@@ -75,7 +81,7 @@ fn resolve_hex_binary_conflict(schemas: &Schemas, mut types: MetaTypes) -> MetaT
     let MetaTypeVariant::Reference(ri) = &mut ty.variant else {
         panic!("Unexpected type variant!");
     };
-    ri.type_ = IdentTriple::from((IdentType::Type, "xs:hexBinary"))
+    ri.type_ = IdentQuadruple::from((IdentType::Type, "xs:hexBinary"))
         .resolve(schemas)
         .unwrap();
 
@@ -88,10 +94,10 @@ fn resolve_compound_plane_angle_measure_conflict(
     schemas: &Schemas,
     mut types: MetaTypes,
 ) -> MetaTypes {
-    let ident = IdentTriple::from((IdentType::Type, "ifc:IfcCompoundPlaneAngleMeasure"))
+    let ident = IdentQuadruple::from((IdentType::Type, "ifc:IfcCompoundPlaneAngleMeasure"))
         .resolve(schemas)
         .unwrap();
-    let list_ident = IdentTriple::from((IdentType::Type, "ifc:List-IfcCompoundPlaneAngleMeasure"))
+    let list_ident = IdentQuadruple::from((IdentType::Type, "ifc:List-IfcCompoundPlaneAngleMeasure"))
         .resolve(schemas)
         .unwrap();
 
@@ -131,10 +137,10 @@ fn resolve_naming_conflicts(schemas: &Schemas, mut types: MetaTypes) -> MetaType
 
 fn rename_attribute<T, S>(schemas: &Schemas, types: &mut MetaTypes, ty: T, old: &str, new: S)
 where
-    IdentTriple: From<T>,
+    IdentQuadruple: From<T>,
     S: Into<String>,
 {
-    let ident = IdentTriple::from(ty).resolve(schemas).unwrap();
+    let ident = IdentQuadruple::from(ty).resolve(schemas).unwrap();
     let ty = types.items.get_mut(&ident).unwrap();
     let MetaTypeVariant::ComplexType(ci) = &mut ty.variant else {
         panic!("Unexpected type variant");
