@@ -46,6 +46,7 @@ mod namespaces_qualified;
 mod nested_group_reuse;
 mod nillable;
 mod nillable_dynamic_types;
+mod nillable_global_namespace;
 mod nonzero_int;
 mod num_big_int;
 mod numeric_fields;

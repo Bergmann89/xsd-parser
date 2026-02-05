@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestElement xmlns="http://test.example.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <value xsi:nil="true"/>
+</TestElement>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="http://test.example.com"
+           xmlns:tns="http://test.example.com"
+           elementFormDefault="qualified">
+    
+    <xs:element name="TestElement" type="tns:TestType"/>
+    
+    <xs:complexType name="TestType">
+        <xs:sequence>
+            <xs:element name="value" type="xs:string" nillable="true"/>
+            <xs:element name="count" type="xs:int" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>
