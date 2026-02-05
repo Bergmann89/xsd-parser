@@ -6,9 +6,11 @@ use xsd_parser_types::{
 pub const PREFIX_XS: NamespacePrefix = NamespacePrefix::new_const(b"xs");
 pub const PREFIX_XML: NamespacePrefix = NamespacePrefix::new_const(b"xml");
 pub const PREFIX_TNS: NamespacePrefix = NamespacePrefix::new_const(b"tns");
+pub const PREFIX_XSI: NamespacePrefix = NamespacePrefix::new_const(b"xsi");
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
 pub const NS_TNS: Namespace = Namespace::new_const(b"http://test.example.com");
+pub const NS_XSI: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema-instance");
 pub type TestElement = TestType;
 #[derive(Debug)]
 pub struct TestType {
@@ -299,7 +301,6 @@ pub mod quick_xml_deserialize {
 }
 pub mod quick_xml_serialize {
     use xsd_parser_types::{
-        misc::{Namespace, NamespacePrefix},
         quick_xml::{
             BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
             WithSerializer,
@@ -340,8 +341,8 @@ pub mod quick_xml_serialize {
                         if self.is_root {
                             helper.write_xmlns(
                                 &mut bytes,
-                                Some(&NamespacePrefix::XSI),
-                                &Namespace::XSI,
+                                Some(&super::PREFIX_XSI),
+                                &super::NS_XSI,
                             );
                             helper.write_xmlns(
                                 &mut bytes,

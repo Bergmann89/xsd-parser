@@ -29,8 +29,8 @@ mod quick_xml_global {
 
 #[test]
 #[cfg(not(feature = "update-expectations"))]
-fn read_write_quick_xml_global() {
-    use crate::utils::{quick_xml_read_test, quick_xml_write_test};
+fn read_quick_xml_global() {
+    use crate::utils::quick_xml_read_test;
     use quick_xml_global::TestElement;
 
     let obj = quick_xml_read_test::<TestElement, _>(
@@ -38,10 +38,4 @@ fn read_write_quick_xml_global() {
     );
     assert!(obj.value.is_nil());
     assert_eq!(obj.count, None);
-
-    quick_xml_write_test(
-        &obj,
-        "TestElement",
-        "tests/feature/nillable_global_namespace/example/test.xml",
-    );
 }

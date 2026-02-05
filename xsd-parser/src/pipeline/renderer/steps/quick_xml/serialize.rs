@@ -715,10 +715,7 @@ impl ComplexBase<'_> {
                 });
 
                 let xsi = ctx.check_generator_flags(GeneratorFlags::NILLABLE_TYPE_SUPPORT).then(|| {
-                    let namespace = resolve_quick_xml_ident!(ctx, "::xsd_parser_types::misc::Namespace");
-                    let namespace_prefix = resolve_quick_xml_ident!(ctx, "::xsd_parser_types::misc::NamespacePrefix");
-
-                    quote!(helper.write_xmlns(&mut bytes, Some(&#namespace_prefix::XSI), &#namespace::XSI);)
+                    quote!(helper.write_xmlns(&mut bytes, Some(&super::PREFIX_XSI), &super::NS_XSI);)
                 });
 
                 let global_xmlns = collector

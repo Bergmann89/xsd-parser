@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<TestElement xmlns="http://test.example.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    <value xsi:nil="true"/>
-</TestElement>
+<tns:TestElement xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tns="http://test.example.com">
+    <tns:value xsi:nil="true"/>
+</tns:TestElement>

@@ -3,6 +3,7 @@ use std::mem::replace;
 use proc_macro2::Literal;
 use quote::quote;
 
+use crate::config::GeneratorFlags;
 use crate::models::code::IdentPath;
 
 use super::super::{Context, MetaData, Module, RenderStep, RenderStepType};
@@ -55,6 +56,13 @@ impl RenderStep for NamespaceConstantsRenderStep {
             })
         });
 
-        module.prepend(quote! { #( #namespace_constants )* });
+        let xsi_constant = meta.check_generator_flags(GeneratorFlags::NILLABLE_TYPE_SUPPORT).then(|| {
+            let xsi_literal = Literal::byte_string(b"http://www.w3.org/2001/XMLSchema-instance");
+            quote! {
+                pub const NS_XSI: #namespace = #namespace::new_const(#xsi_literal);
+            }
+        });
+
+        module.prepend(quote! { #( #namespace_constants )* #xsi_constant });
     }
 }

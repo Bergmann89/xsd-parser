@@ -3,6 +3,7 @@ use std::mem::replace;
 use proc_macro2::Literal;
 use quote::quote;
 
+use crate::config::GeneratorFlags;
 use crate::models::code::IdentPath;
 
 use super::super::{Context, MetaData, Module, RenderStep, RenderStepType};
@@ -55,6 +56,13 @@ impl RenderStep for PrefixConstantsRenderStep {
             })
         });
 
-        module.prepend(quote! { #( #prefix_constants )* });
+        let xsi_prefix_constant = meta.check_generator_flags(GeneratorFlags::NILLABLE_TYPE_SUPPORT).then(|| {
+            let xsi_prefix_literal = Literal::byte_string(b"xsi");
+            quote! {
+                pub const PREFIX_XSI: #prefix = #prefix::new_const(#xsi_prefix_literal);
+            }
+        });
+
+        module.prepend(quote! { #( #prefix_constants )* #xsi_prefix_constant });
     }
 }
