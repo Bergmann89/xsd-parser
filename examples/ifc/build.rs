@@ -22,6 +22,8 @@ fn main() -> Result<(), Error> {
         .with_schema(Schema::File(schema_path))
         .with_generate([(IdentType::Element, "ifc:ifcXML")]);
 
+    // Use custom type postfixes to avoid conflicts with standard Rust type names
+    // and to make the generated types more descriptive for the IFC schema
     config.generator.type_postfix.type_ = "XType".into();
     config.generator.type_postfix.element = "XElement".into();
     config.generator.type_postfix.element_type = "XElementType".into();
@@ -53,8 +55,10 @@ fn generate(config: Config) -> Result<(), Error> {
     Ok(())
 }
 
-// The schema incorrectly uses the complex type `ifc:IfcBinary` as item type for a list.
-// Lists can only have simple types, not complex types!
+// The IFC schema incorrectly uses the complex type `ifc:IfcBinary` as the type for the 
+// `Pixel` attribute in `ifc:IfcPixelTexture`. This function corrects this by replacing
+// the reference to IfcBinary with xs:hexBinary, which is the correct simple type for
+// binary data in XML Schema. Lists can only have simple types, not complex types.
 fn resolve_hex_binary_conflict(schemas: &Schemas, mut types: MetaTypes) -> MetaTypes {
     // Resolve `IfcPixelTexture` Type
     let ident = IdentQuadruple::from((IdentType::Type, "ifc:IfcPixelTexture"))

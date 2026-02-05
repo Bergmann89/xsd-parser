@@ -20,18 +20,24 @@ use std::{env::args, fs::File, io::BufReader, thread::Builder};
 use xsd_parser_types::quick_xml::{DeserializeSync, IoReader, XmlReader};
 
 fn main() {
-    let stack_size = args().skip(1).next().unwrap().parse().unwrap();
+    let stack_size = args()
+        .skip(1)
+        .next()
+        .expect("Missing stack_size argument")
+        .parse()
+        .expect("Invalid stack_size: expected integer");
     Builder::new()
         .stack_size(stack_size)
         .spawn(parse)
-        .unwrap()
+        .expect("Failed to spawn thread")
         .join()
-        .unwrap();
+        .expect("Thread panicked");
 }
 
 fn parse() {
-    let file = File::open("example.xml").unwrap();
+    let file = File::open("example.xml").expect("Failed to open example.xml");
     let reader = BufReader::new(file);
     let mut reader = IoReader::new(reader).with_error_info();
-    let _doc = schema::ifc::IfcXmlXElement::deserialize(&mut reader).unwrap();
+    let _doc = schema::ifc::IfcXmlXElement::deserialize(&mut reader)
+        .expect("Failed to deserialize IFC XML");
 }
