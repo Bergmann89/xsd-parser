@@ -1,228 +1,127 @@
+mod default;
 mod explicit;
 
-use std::any::Any;
-use std::sync::{
-    atomic::{AtomicUsize, Ordering},
-    Arc,
-};
+use std::borrow::Cow;
 
-use crate::traits::{NameBuilder as NameBuilderTrait, Naming as NamingTrait};
+use inflector::Inflector;
+use proc_macro2::Ident as Ident2;
+use quote::format_ident;
 
 use super::Name;
 
+pub use self::default::{NameBuilder, Naming};
 pub use self::explicit::{ExplicitNameBuilder, ExplicitNaming};
 
-/// Default name generation and formatting implementation.
-///
-/// This type implements the [`Naming`](NamingTrait) trait that is used for
-/// naming generation and formatting.
-#[derive(Default, Debug, Clone)]
-pub struct Naming(Arc<AtomicUsize>);
-
-impl NamingTrait for Naming {
-    fn clone_boxed(&self) -> Box<dyn NamingTrait> {
-        Box::new(self.clone())
-    }
-
-    fn builder(&self) -> Box<dyn NameBuilderTrait> {
-        Box::new(NameBuilder::new(self.0.clone(), self.clone_boxed()))
-    }
-}
-
-/// Default implementation for the [`NameBuilder`](NameBuilderTrait) trait.
+/// Unify the passed string `s` into a standard format.
 #[must_use]
-#[derive(Debug)]
-pub struct NameBuilder {
-    id: Arc<AtomicUsize>,
-    my_id: Option<usize>,
-    with_id: bool,
-    generated: bool,
+pub fn unify_string(s: &str) -> String {
+    let mut done = true;
+    let s = s.replace(
+        |c: char| {
+            let replace = !c.is_alphanumeric();
+            if c != '_' && !replace {
+                done = false;
+            }
 
-    name: Option<String>,
-    extension: Option<String>,
+            c != '_' && replace
+        },
+        "_",
+    );
 
-    naming: Box<dyn NamingTrait>,
-}
-
-impl NameBuilder {
-    /// Create a new [`NameBuilder`] instance.
-    ///
-    /// The passed `id` is used to generate unique ids for unnamed types.
-    pub fn new(id: Arc<AtomicUsize>, naming: Box<dyn NamingTrait>) -> Self {
-        Self {
-            id,
-            my_id: None,
-            with_id: true,
-            generated: false,
-            name: None,
-            extension: None,
-            naming,
-        }
+    if done {
+        s
+    } else {
+        s.to_screaming_snake_case().to_pascal_case()
     }
 }
 
-impl Clone for NameBuilder {
-    fn clone(&self) -> Self {
-        Self {
-            id: self.id.clone(),
-            my_id: self.my_id,
-            with_id: self.with_id,
-            generated: self.generated,
-            name: self.name.clone(),
-            extension: self.extension.clone(),
-            naming: self.naming.clone_boxed(),
-        }
-    }
+/// Format an unknown variant identifier based on the passed `id`.
+#[must_use]
+pub fn format_unknown_variant(id: usize) -> Ident2 {
+    format_ident!("Unknown{id}")
 }
 
-impl NameBuilderTrait for NameBuilder {
-    fn finish(&self) -> Name {
-        let Self {
-            id,
-            my_id,
-            with_id,
-            mut generated,
-            name,
-            extension,
-            naming,
-        } = self;
-
-        let mut ret = String::new();
-        if let Some(s) = extension {
-            generated = true;
-            ret.push_str(&naming.unify(s));
-        }
-
-        if let Some(s) = name {
-            if ret.is_empty() {
-                ret.push_str(s);
-            } else {
-                ret.push_str(&naming.unify(s));
-            }
-        }
-
-        if ret.is_empty() {
-            generated = true;
-            ret.push_str("Unnamed");
-        }
-
-        if *with_id {
-            generated = true;
-            let id = my_id.unwrap_or_else(|| id.fetch_add(1, Ordering::Relaxed));
-            ret = format!("{ret}{id}");
-        }
-
-        if generated {
-            Name::new_generated(ret)
-        } else {
-            Name::new_named(ret)
-        }
+/// Format the passed string `s` into a valid Rust identifier by adding an
+/// underscore if it starts with a numeric character or is a Rust keyword.
+#[must_use]
+pub fn format_ident<'a, S>(s: S) -> String
+where
+    S: Into<Cow<'a, str>>,
+{
+    let mut s = s.into();
+    if let Ok(idx) = KEYWORDS.binary_search_by(|(key, _)| key.cmp(&&*s)) {
+        s = Cow::Borrowed(KEYWORDS[idx].1);
     }
 
-    fn merge(&mut self, other: &dyn NameBuilderTrait) {
-        let other: &Self = (other as &dyn Any).downcast_ref().unwrap();
-
-        if let Some(name) = other.name.clone() {
-            self.name.get_or_insert(name);
-            self.with_id = other.with_id;
-            self.generated = other.generated;
-
-            if let Some(id) = other.my_id {
-                self.with_id = other.with_id;
-                self.my_id.get_or_insert(id);
-            }
-
-            if let Some(ext) = other.extension.clone() {
-                self.extension.get_or_insert(ext);
-            }
-        }
+    if s.starts_with(char::is_numeric) {
+        s = Cow::Owned(format!("_{s}"));
     }
 
-    fn clone_boxed(&self) -> Box<dyn NameBuilderTrait> {
-        Box::new(self.clone())
-    }
-
-    fn has_name(&self) -> bool {
-        self.name.is_some()
-    }
-
-    fn has_extension(&self) -> bool {
-        self.extension.is_some()
-    }
-
-    fn set_name(&mut self, name: String) {
-        self.name = Some(name);
-    }
-
-    fn set_with_id(&mut self, value: bool) {
-        self.with_id = value;
-    }
-
-    fn set_generated(&mut self, value: bool) {
-        self.generated = value;
-    }
-
-    fn add_extension(&mut self, replace: bool, extension: String) {
-        let s = self.naming.unify(&extension);
-
-        if replace {
-            self.extension = Some(s);
-        } else if let Some(prefix) = &self.extension {
-            self.extension = Some(format!("{s}{prefix}"));
-        } else {
-            self.extension = Some(s);
-        }
-    }
-
-    fn strip_suffix(&mut self, suffix: &str) {
-        if let Some(s) = &mut self.name {
-            if let Some(x) = s.strip_suffix(suffix) {
-                *s = x.into();
-            }
-        }
-
-        if let Some(s) = &mut self.extension {
-            if let Some(x) = s.strip_suffix(suffix) {
-                *s = x.into();
-            }
-        }
-    }
-
-    fn generate_unique_id(&mut self) {
-        if self.my_id.is_none() {
-            self.my_id = Some(self.id.fetch_add(1, Ordering::Release));
-        }
-    }
-
-    fn prepare_type_name(&mut self) {
-        self.strip_suffix("Type");
-        self.strip_suffix("Content");
-    }
-
-    fn prepare_field_name(&mut self) {
-        self.strip_suffix("Type");
-        self.strip_suffix("Content");
-    }
-
-    fn prepare_content_type_name(&mut self) {
-        self.strip_suffix("Type");
-        self.strip_suffix("Content");
-    }
+    s.replace(|c: char| !c.is_alphanumeric(), "_")
 }
+
+/// List of keywords that needs to be replaced by something else.
+/// This list needs to be sorted, because we use it in [`core::slice::binary_search_by`]
+const KEYWORDS: &[(&str, &str)] = &[
+    ("Self", "Self_"),
+    ("abstract", "abstract_"),
+    ("as", "as_"),
+    ("become", "become_"),
+    ("box", "box_"),
+    ("break", "break_"),
+    ("const", "const_"),
+    ("continue", "continue_"),
+    ("crate", "crate_"),
+    ("do", "do_"),
+    ("else", "else_"),
+    ("enum", "enum_"),
+    ("extern", "extern_"),
+    ("false", "false_"),
+    ("final", "final_"),
+    ("fn", "fn_"),
+    ("for", "for_"),
+    ("if", "if_"),
+    ("impl", "impl_"),
+    ("in", "in_"),
+    ("let", "let_"),
+    ("loop", "loop_"),
+    ("macro", "macro_"),
+    ("match", "match_"),
+    ("mod", "mod_"),
+    ("move", "move_"),
+    ("mut", "mut_"),
+    ("override", "override_"),
+    ("priv", "priv_"),
+    ("pub", "pub_"),
+    ("ref", "ref_"),
+    ("return", "return_"),
+    ("self", "self_"),
+    ("static", "static_"),
+    ("struct", "struct_"),
+    ("super", "super_"),
+    ("trait", "trait_"),
+    ("true", "true_"),
+    ("try", "try_"),
+    ("type", "type_"),
+    ("typeof", "typeof_"),
+    ("union", "union_"),
+    ("unsafe", "unsafe_"),
+    ("unsized", "unsized_"),
+    ("use", "use_"),
+    ("virtual", "virtual_"),
+    ("where", "where_"),
+    ("while", "while_"),
+    ("yield", "yield_"),
+];
 
 #[cfg(test)]
 mod tests {
-    use crate::traits::Naming as _;
-
-    use super::Naming;
+    use super::KEYWORDS;
 
     #[test]
-    fn unify() {
-        let naming = Naming::default();
-
-        assert_eq!("_", naming.unify("+"));
-        assert_eq!("FuuBarBaz", naming.unify("Fuu_BAR_BAZ"));
-        assert_eq!("FuuBarBaz", naming.unify("fuu_bar_baz"));
-        assert_eq!("FuuBarBaz", naming.unify("fuu+Bar-BAZ"));
+    fn verify_keyword_order() {
+        for i in 1..KEYWORDS.len() {
+            assert!(dbg!(KEYWORDS[i - 1].0) < dbg!(KEYWORDS[i].0));
+        }
     }
 }

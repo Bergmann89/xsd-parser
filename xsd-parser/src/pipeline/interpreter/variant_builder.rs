@@ -731,7 +731,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                     .state
                     .name_builder()
                     .extend(true, ty.name.clone())
-                    .auto_extend(true, false, self.state);
+                    .auto_extend(true, false, self.state); // TODO
                 let type_name = if type_name.has_extension() {
                     type_name.with_id(false)
                 } else {

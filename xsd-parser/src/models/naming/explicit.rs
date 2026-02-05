@@ -1,6 +1,9 @@
 use std::any::Any;
 use std::sync::{atomic::AtomicUsize, Arc};
 
+use inflector::Inflector;
+use proc_macro2::Ident as Ident2;
+
 use crate::config::MetaType;
 use crate::traits::{NameBuilder as NameBuilderTrait, Naming as NamingTrait};
 use crate::TypeIdent;
@@ -13,9 +16,10 @@ use super::{Name, NameBuilder};
 ///
 /// This may result in repeated string inside the generated names (like
 /// `FooTypeType`), but will reduce naming conflicts in most cases.
-#[derive(Default, Debug, Clone)]
+#[derive(Debug, Clone)]
 pub struct ExplicitNaming {
     id: Arc<AtomicUsize>,
+    unify_names: bool,
     element_field_postfix: Option<String>,
     attribute_field_postfix: Option<String>,
 }
@@ -25,6 +29,20 @@ impl ExplicitNaming {
     #[must_use]
     pub fn new() -> Self {
         Self::default()
+    }
+
+    /// Set whether to unify names the names for all types or not.
+    ///
+    /// Unifying names means that all names will be expressed as pascal case to
+    /// match the naming convention for types in Rust. This may lead to naming
+    /// conflicts.
+    ///
+    /// Default is `true`.
+    #[must_use]
+    pub fn unify_names(mut self, value: bool) -> Self {
+        self.unify_names = value;
+
+        self
     }
 
     /// Set the postfix to add to generated element field names.
@@ -48,6 +66,17 @@ impl ExplicitNaming {
     }
 }
 
+impl Default for ExplicitNaming {
+    fn default() -> Self {
+        Self {
+            id: Arc::new(AtomicUsize::new(0)),
+            unify_names: true,
+            element_field_postfix: None,
+            attribute_field_postfix: None,
+        }
+    }
+}
+
 impl NamingTrait for ExplicitNaming {
     fn clone_boxed(&self) -> Box<dyn NamingTrait> {
         Box::new(self.clone())
@@ -58,6 +87,14 @@ impl NamingTrait for ExplicitNaming {
             self.id.clone(),
             self.clone_boxed(),
         ))
+    }
+
+    fn unify(&self, s: &str) -> String {
+        if self.unify_names {
+            super::unify_string(s)
+        } else {
+            s.replace(|c: char| !c.is_alphanumeric(), "_")
+        }
     }
 
     fn make_type_name(&self, postfixes: &[String], ty: &MetaType, ident: &TypeIdent) -> Name {
@@ -71,6 +108,34 @@ impl NamingTrait for ExplicitNaming {
         } else {
             s
         })
+    }
+
+    fn make_unknown_variant(&self, id: usize) -> Ident2 {
+        super::format_unknown_variant(id)
+    }
+
+    fn format_module_name(&self, s: &str) -> String {
+        let s = self.unify(s).to_snake_case();
+
+        super::format_ident(s)
+    }
+
+    fn format_type_name(&self, s: &str) -> String {
+        let s = self.unify(s);
+
+        super::format_ident(s)
+    }
+
+    fn format_field_name(&self, s: &str) -> String {
+        let s = self.unify(s).to_snake_case();
+
+        super::format_ident(s)
+    }
+
+    fn format_variant_name(&self, s: &str) -> String {
+        let s = self.unify(s);
+
+        super::format_ident(s)
     }
 
     fn format_element_field_name(&self, s: &str) -> String {
