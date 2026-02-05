@@ -26,6 +26,8 @@ use std::fmt::Debug;
 use std::fs::write;
 use std::io::Error as IoError;
 
+pub use proc_macro2::Ident as Ident2;
+
 pub use self::config::Config;
 pub use self::meta_types_printer::MetaTypesPrinter;
 pub use self::models::{

@@ -2,13 +2,12 @@ use std::any::Any;
 use std::fmt::{Debug, Display};
 use std::mem::take;
 
-use inflector::Inflector;
 use proc_macro2::Ident as Ident2;
 use quote::format_ident;
 
 use crate::models::{
-    meta::{MetaType, MetaTypeVariant, MetaTypes},
-    schema::{MaxOccurs, NamespaceId},
+    meta::{MetaType, MetaTypes},
+    schema::NamespaceId,
     Name, TypeIdent,
 };
 
@@ -31,60 +30,28 @@ pub trait Naming: Debug {
     ///
     /// The default implementation uses pascal case to unify all different kind
     /// of names.
-    fn unify(&self, s: &str) -> String {
-        let mut done = true;
-        let s = s.replace(
-            |c: char| {
-                let replace = !c.is_alphanumeric();
-                if c != '_' && !replace {
-                    done = false;
-                }
+    fn unify(&self, s: &str) -> String;
 
-                c != '_' && replace
-            },
-            "_",
-        );
+    /// Generate a name for the passed type `ty` identified by `ident` respecting the
+    /// configured type postfixes.
+    fn make_type_name(&self, postfixes: &[String], ty: &MetaType, ident: &TypeIdent) -> Name;
 
-        if done {
-            s
-        } else {
-            s.to_screaming_snake_case().to_pascal_case()
-        }
-    }
+    /// Create an unknown enum variant using the provided id.
+    ///
+    /// The default implementation generated `Unknown{id}` here.
+    fn make_unknown_variant(&self, id: usize) -> Ident2;
+
+    /// Format the passed string `s` as module name.
+    fn format_module_name(&self, s: &str) -> String;
 
     /// Format the passed string `s` as type name.
-    ///
-    /// The default implementation uses pascal case here.
-    fn format_type_name(&self, s: &str) -> String {
-        let mut name = self.unify(s);
-
-        if let Ok(idx) = KEYWORDS.binary_search_by(|(key, _)| key.cmp(&&*name)) {
-            name = KEYWORDS[idx].1.into();
-        }
-
-        if name.starts_with(char::is_numeric) {
-            name = format!("_{name}");
-        }
-
-        name
-    }
+    fn format_type_name(&self, s: &str) -> String;
 
     /// Format the passed string `s` as field name.
-    ///
-    /// The default implementation uses snake case here.
-    fn format_field_name(&self, s: &str) -> String {
-        let mut name = self.unify(s).to_snake_case();
+    fn format_field_name(&self, s: &str) -> String;
 
-        if let Ok(idx) = KEYWORDS.binary_search_by(|(key, _)| key.cmp(&&*name)) {
-            name = KEYWORDS[idx].1.into();
-        }
-
-        if name.starts_with(char::is_numeric) {
-            name = format!("_{name}");
-        }
-
-        name
-    }
+    /// Format the passed string `s` as variant name.
+    fn format_variant_name(&self, s: &str) -> String;
 
     /// Format the passed string `s` as attribute field name.
     ///
@@ -100,18 +67,14 @@ pub trait Naming: Debug {
         self.format_field_name(s)
     }
 
-    /// Format the passed string `s` as variant name.
+    /// Create a suitable identifier for the passed module name `name`.
     ///
-    /// The default implementation uses [`format_type_name`](Naming::format_type_name) here.
-    fn format_variant_name(&self, s: &str) -> String {
-        self.format_type_name(s)
-    }
+    /// The default implementation uses [`format_module_ident`](Naming::format_module_ident)
+    /// with `display_name` set to `None` here.
+    fn format_module_ident(&self, name: &Name) -> Ident2 {
+        let ident = self.format_module_name(name.as_str());
 
-    /// Format the passed string `s` as module name.
-    ///
-    /// The default implementation uses [`format_field_name`](Naming::format_field_name) here.
-    fn format_module_name(&self, s: &str) -> String {
-        self.format_field_name(s)
+        format_ident!("{ident}")
     }
 
     /// Create a suitable identifier for the passed type name `name` respecting
@@ -136,6 +99,16 @@ pub trait Naming: Debug {
         format_ident!("{ident}")
     }
 
+    /// Create a suitable identifier for the passed variant name `name` respecting
+    /// user defined names stored in `display_name`.
+    ///
+    /// The default implementation uses [`format_type_ident`](Naming::format_type_ident) here.
+    fn format_variant_ident(&self, name: &Name, display_name: Option<&str>) -> Ident2 {
+        let ident = self.format_variant_name(display_name.unwrap_or(name.as_str()));
+
+        format_ident!("{ident}")
+    }
+
     /// Create a suitable identifier for the passed attribute field name `name`
     /// respecting user defined names stored in `display_name`.
     ///
@@ -156,22 +129,6 @@ pub trait Naming: Debug {
         format_ident!("{ident}")
     }
 
-    /// Create a suitable identifier for the passed variant name `name` respecting
-    /// user defined names stored in `display_name`.
-    ///
-    /// The default implementation uses [`format_type_ident`](Naming::format_type_ident) here.
-    fn format_variant_ident(&self, name: &Name, display_name: Option<&str>) -> Ident2 {
-        self.format_type_ident(name, display_name)
-    }
-
-    /// Create a suitable identifier for the passed module name `name`.
-    ///
-    /// The default implementation uses [`format_module_ident`](Naming::format_module_ident)
-    /// with `display_name` set to `None` here.
-    fn format_module_ident(&self, name: &Name) -> Ident2 {
-        self.format_field_ident(name, None)
-    }
-
     /// Generate a identifier for the module identified by `ns`.
     fn format_module(&self, types: &MetaTypes, ns: Option<NamespaceId>) -> Option<Ident2> {
         let ns = ns?;
@@ -179,41 +136,6 @@ pub trait Naming: Debug {
         let name = module.name.as_ref()?;
 
         Some(self.format_module_ident(name))
-    }
-
-    /// Generate a name for the passed type `ty` identified by `ident` respecting the
-    /// configured type postfixes.
-    fn make_type_name(&self, postfixes: &[String], ty: &MetaType, ident: &TypeIdent) -> Name {
-        if let MetaTypeVariant::Reference(ti) = &ty.variant {
-            if ident.name.is_generated() && ti.type_.name.is_named() {
-                let s = self.format_type_name(ti.type_.name.as_str());
-
-                if ti.max_occurs > MaxOccurs::Bounded(1) {
-                    return Name::new_generated(format!("{s}List"));
-                } else if ti.min_occurs == 0 {
-                    return Name::new_generated(format!("{s}Opt"));
-                }
-            }
-        }
-
-        let postfix = postfixes
-            .get(ident.type_ as usize)
-            .map_or("", |s| s.as_str());
-
-        let s = self.format_type_name(ident.name.as_str());
-
-        if s.ends_with(postfix) {
-            ident.name.clone()
-        } else {
-            Name::new_generated(format!("{s}{postfix}"))
-        }
-    }
-
-    /// Create an unknown enum variant using the provided id.
-    ///
-    /// The default implementation generated `Unknown{id}` here.
-    fn make_unknown_variant(&self, id: usize) -> Ident2 {
-        format_ident!("Unknown{id}")
     }
 }
 
@@ -276,22 +198,13 @@ pub trait NameBuilder: Debug + Any {
     fn generate_unique_id(&mut self);
 
     /// Prepare the builder to create a type name.
-    fn prepare_type_name(&mut self) {
-        self.strip_suffix("Type");
-        self.strip_suffix("Content");
-    }
+    fn prepare_type_name(&mut self);
 
     /// Prepare the builder to create a field name.
-    fn prepare_field_name(&mut self) {
-        self.strip_suffix("Type");
-        self.strip_suffix("Content");
-    }
+    fn prepare_field_name(&mut self);
 
     /// Prepare the builder to create a content type name.
-    fn prepare_content_type_name(&mut self) {
-        self.strip_suffix("Type");
-        self.strip_suffix("Content");
-    }
+    fn prepare_content_type_name(&mut self);
 }
 
 impl NameBuilder for Box<dyn NameBuilder> {
@@ -624,72 +537,6 @@ impl NameFallback for Option<&str> {
     fn apply(self, builder: &mut dyn NameBuilder) {
         if let Some(x) = self {
             x.apply(builder);
-        }
-    }
-}
-
-/// List of keywords that needs to be replaced by something else.
-/// This list needs to be sorted, because we use it in [`core::slice::binary_search_by`]
-const KEYWORDS: &[(&str, &str)] = &[
-    ("Self", "Self_"),
-    ("abstract", "abstract_"),
-    ("as", "as_"),
-    ("become", "become_"),
-    ("box", "box_"),
-    ("break", "break_"),
-    ("const", "const_"),
-    ("continue", "continue_"),
-    ("crate", "crate_"),
-    ("do", "do_"),
-    ("else", "else_"),
-    ("enum", "enum_"),
-    ("extern", "extern_"),
-    ("false", "false_"),
-    ("final", "final_"),
-    ("fn", "fn_"),
-    ("for", "for_"),
-    ("if", "if_"),
-    ("impl", "impl_"),
-    ("in", "in_"),
-    ("let", "let_"),
-    ("loop", "loop_"),
-    ("macro", "macro_"),
-    ("match", "match_"),
-    ("mod", "mod_"),
-    ("move", "move_"),
-    ("mut", "mut_"),
-    ("override", "override_"),
-    ("priv", "priv_"),
-    ("pub", "pub_"),
-    ("ref", "ref_"),
-    ("return", "return_"),
-    ("self", "self_"),
-    ("static", "static_"),
-    ("struct", "struct_"),
-    ("super", "super_"),
-    ("trait", "trait_"),
-    ("true", "true_"),
-    ("try", "try_"),
-    ("type", "type_"),
-    ("typeof", "typeof_"),
-    ("union", "union_"),
-    ("unsafe", "unsafe_"),
-    ("unsized", "unsized_"),
-    ("use", "use_"),
-    ("virtual", "virtual_"),
-    ("where", "where_"),
-    ("while", "while_"),
-    ("yield", "yield_"),
-];
-
-#[cfg(test)]
-mod tests {
-    use super::KEYWORDS;
-
-    #[test]
-    fn verify_keyword_order() {
-        for i in 1..KEYWORDS.len() {
-            assert!(dbg!(KEYWORDS[i - 1].0) < dbg!(KEYWORDS[i].0));
         }
     }
 }

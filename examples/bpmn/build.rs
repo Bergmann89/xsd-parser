@@ -28,7 +28,6 @@ fn main() -> Result<(), Error> {
         .set_optimizer_flags(OptimizerFlags::all())
         .set_generator_flags(GeneratorFlags::all())
         .with_type_postfix("XType")
-        // TODO .with_element_type_postfix("XElementType")
         .with_quick_xml()
         .with_generate([(
             IdentType::Element,

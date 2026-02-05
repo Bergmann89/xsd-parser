@@ -62,7 +62,11 @@ impl Optimizer {
 
             match self.types.items.entry(content_ident) {
                 Entry::Vacant(e) => {
-                    e.insert(MetaType::new(MetaTypeVariant::Choice(si)));
+                    e.insert(MetaType::new(if si.elements.is_empty() {
+                        MetaTypeVariant::Sequence(si)
+                    } else {
+                        MetaTypeVariant::Choice(si)
+                    }));
                 }
                 Entry::Occupied(_) => crate::unreachable!(),
             }
