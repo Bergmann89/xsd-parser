@@ -13,6 +13,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "NeTEx"
+version = "0.0.0"
+dependencies = [
+ "Inflector",
+ "anyhow",
+ "xsd-parser",
+ "xsd-parser-types",
+]
+
+[[package]]
 name = "addr2line"
 version = "0.24.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"

@@ -3,6 +3,7 @@ resolver = "3"
 members = [
     "benchmark",
     "examples/bpmn",
+    "examples/NeTEx",
     "examples/read_write",
     "xsd-parser-types",
     "xsd-parser",

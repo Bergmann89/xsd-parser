@@ -1,0 +1,3 @@
+[submodule "examples/NeTEx/schema"]
+	path = examples/NeTEx/schema
+	url = git@github.com:ITxPT/NeTEx.git
