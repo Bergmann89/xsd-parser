@@ -2,10 +2,14 @@ pub const NS_XS: xsd_parser_types::misc::Namespace =
     xsd_parser_types::misc::Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: xsd_parser_types::misc::Namespace =
     xsd_parser_types::misc::Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
+pub const NS_XSI: xsd_parser_types::misc::Namespace =
+    xsd_parser_types::misc::Namespace::new_const(b"http://www.w3.org/2001/XMLSchema-instance");
 pub const PREFIX_XS: xsd_parser_types::misc::NamespacePrefix =
     xsd_parser_types::misc::NamespacePrefix::new_const(b"xs");
 pub const PREFIX_XML: xsd_parser_types::misc::NamespacePrefix =
     xsd_parser_types::misc::NamespacePrefix::new_const(b"xml");
+pub const PREFIX_XSI: xsd_parser_types::misc::NamespacePrefix =
+    xsd_parser_types::misc::NamespacePrefix::new_const(b"xsi");
 pub type AsMut = TestType;
 pub type AsRef = TestType;
 pub type Box = TestType;
@@ -133,39 +137,7 @@ impl ::xsd_parser_types::quick_xml::DeserializeBytes for EntitiesType {
         Ok(Self(helper.deserialize_list(bytes)?))
     }
 }
-#[derive(Debug, Default)]
-pub struct EntityType(pub ::std::vec::Vec<::std::string::String>);
-impl ::xsd_parser_types::quick_xml::SerializeBytes for EntityType {
-    fn serialize_bytes(
-        &self,
-        helper: &mut ::xsd_parser_types::quick_xml::SerializeHelper,
-    ) -> ::core::result::Result<
-        ::core::option::Option<::std::borrow::Cow<'_, ::core::primitive::str>>,
-        ::xsd_parser_types::quick_xml::Error,
-    > {
-        if self.0.is_empty() {
-            return Ok(None);
-        }
-        let mut data = ::std::string::String::new();
-        for item in &self.0 {
-            if let Some(bytes) = item.serialize_bytes(helper)? {
-                if !data.is_empty() {
-                    data.push(' ');
-                }
-                data.push_str(&bytes);
-            }
-        }
-        Ok(Some(::std::borrow::Cow::Owned(data)))
-    }
-}
-impl ::xsd_parser_types::quick_xml::DeserializeBytes for EntityType {
-    fn deserialize_bytes(
-        helper: &mut ::xsd_parser_types::quick_xml::DeserializeHelper,
-        bytes: &[::core::primitive::u8],
-    ) -> ::core::result::Result<Self, ::xsd_parser_types::quick_xml::Error> {
-        Ok(Self(helper.deserialize_list(bytes)?))
-    }
-}
+pub type EntityType = ::std::string::String;
 pub type IdType = ::std::string::String;
 pub type IdrefType = ::std::string::String;
 #[derive(Debug, Default)]

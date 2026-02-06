@@ -4,12 +4,14 @@ use xsd_parser_types::{
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
-pub const NS_UNNAMED_4: Namespace = Namespace::new_const(b"Foo");
+pub const NS_XSI: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema-instance");
+pub const NS_UNNAMED_5: Namespace = Namespace::new_const(b"Foo");
 pub const NS_BAR: Namespace = Namespace::new_const(b"Bar");
 pub const NS_BAZ: Namespace = Namespace::new_const(b"Baz");
 pub const NS_BIZ: Namespace = Namespace::new_const(b"Biz");
 pub const PREFIX_XS: NamespacePrefix = NamespacePrefix::new_const(b"xs");
 pub const PREFIX_XML: NamespacePrefix = NamespacePrefix::new_const(b"xml");
+pub const PREFIX_XSI: NamespacePrefix = NamespacePrefix::new_const(b"xsi");
 pub const PREFIX_BAR: NamespacePrefix = NamespacePrefix::new_const(b"bar");
 pub const PREFIX_BAZ: NamespacePrefix = NamespacePrefix::new_const(b"baz");
 pub const PREFIX_BIZ: NamespacePrefix = NamespacePrefix::new_const(b"biz");

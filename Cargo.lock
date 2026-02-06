@@ -2776,6 +2776,7 @@ dependencies = [
 name = "xsd-parser-types"
 version = "0.1.2"
 dependencies = [
+ "base64",
  "encoding_rs",
  "futures",
  "indexmap",

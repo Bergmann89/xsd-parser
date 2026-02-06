@@ -1,9 +1,11 @@
 use xsd_parser_types::misc::{Namespace, NamespacePrefix};
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
-pub const NS_UNNAMED_4: Namespace = Namespace::new_const(b"Test");
+pub const NS_XSI: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema-instance");
+pub const NS_UNNAMED_5: Namespace = Namespace::new_const(b"Test");
 pub const PREFIX_XS: NamespacePrefix = NamespacePrefix::new_const(b"xs");
 pub const PREFIX_XML: NamespacePrefix = NamespacePrefix::new_const(b"xml");
+pub const PREFIX_XSI: NamespacePrefix = NamespacePrefix::new_const(b"xsi");
 pub mod bar {
     use xsd_parser_types::quick_xml::{Error, WithDeserializer, WithSerializer};
     pub type Inner = InnerType;
@@ -192,7 +194,7 @@ pub mod bar {
                         (S::B(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"B",
                                 false,
                             )?;
@@ -370,7 +372,7 @@ pub mod bar {
                         (S::Inner(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Inner",
                                 false,
                             )?;
@@ -446,7 +448,7 @@ pub mod bar {
                             )?);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         InnerTypeSerializerState::B(x) => match x.next(helper).transpose()? {
@@ -507,7 +509,7 @@ pub mod bar {
                                 )?);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         OuterTypeSerializerState::Inner(x) => match x.next(helper).transpose()? {
@@ -727,7 +729,7 @@ pub mod foo {
                         (S::A(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"A",
                                 false,
                             )?;
@@ -905,7 +907,7 @@ pub mod foo {
                         (S::Inner(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Inner",
                                 false,
                             )?;
@@ -981,7 +983,7 @@ pub mod foo {
                             )?);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         InnerTypeSerializerState::A(x) => match x.next(helper).transpose()? {
@@ -1042,7 +1044,7 @@ pub mod foo {
                                 )?);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         OuterTypeSerializerState::Inner(x) => match x.next(helper).transpose()? {
@@ -1107,33 +1109,7 @@ pub mod xs {
             Ok(Self(helper.deserialize_list(bytes)?))
         }
     }
-    #[derive(Debug, Default)]
-    pub struct EntityType(pub Vec<String>);
-    impl SerializeBytes for EntityType {
-        fn serialize_bytes(
-            &self,
-            helper: &mut SerializeHelper,
-        ) -> Result<Option<Cow<'_, str>>, Error> {
-            if self.0.is_empty() {
-                return Ok(None);
-            }
-            let mut data = String::new();
-            for item in &self.0 {
-                if let Some(bytes) = item.serialize_bytes(helper)? {
-                    if !data.is_empty() {
-                        data.push(' ');
-                    }
-                    data.push_str(&bytes);
-                }
-            }
-            Ok(Some(Cow::Owned(data)))
-        }
-    }
-    impl DeserializeBytes for EntityType {
-        fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
-            Ok(Self(helper.deserialize_list(bytes)?))
-        }
-    }
+    pub type EntityType = String;
     pub type IdType = String;
     pub type IdrefType = String;
     #[derive(Debug, Default)]

@@ -4,9 +4,11 @@ use xsd_parser_types::{
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
-pub const NS_UNNAMED_4: Namespace = Namespace::new_const(b"http://example.com");
+pub const NS_XSI: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema-instance");
+pub const NS_UNNAMED_5: Namespace = Namespace::new_const(b"http://example.com");
 pub const PREFIX_XS: NamespacePrefix = NamespacePrefix::new_const(b"xs");
 pub const PREFIX_XML: NamespacePrefix = NamespacePrefix::new_const(b"xml");
+pub const PREFIX_XSI: NamespacePrefix = NamespacePrefix::new_const(b"xsi");
 pub type Foo = FooType;
 #[derive(Debug)]
 pub struct FooType {
@@ -361,7 +363,7 @@ pub mod quick_xml_deserialize {
                     (S::Once(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_4),
+                            Some(&super::NS_UNNAMED_5),
                             b"Once",
                             false,
                         )?;
@@ -378,7 +380,7 @@ pub mod quick_xml_deserialize {
                     (S::Optional(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_4),
+                            Some(&super::NS_UNNAMED_5),
                             b"Optional",
                             false,
                         )?;
@@ -395,7 +397,7 @@ pub mod quick_xml_deserialize {
                     (S::OnceSpecify(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_4),
+                            Some(&super::NS_UNNAMED_5),
                             b"OnceSpecify",
                             false,
                         )?;
@@ -412,7 +414,7 @@ pub mod quick_xml_deserialize {
                     (S::TwiceOrMore(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_4),
+                            Some(&super::NS_UNNAMED_5),
                             b"TwiceOrMore",
                             false,
                         )?;
@@ -495,7 +497,7 @@ pub mod quick_xml_serialize {
                         )?);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_4);
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_5);
                         return Ok(Some(Event::Start(bytes)));
                     }
                     FooTypeSerializerState::Once(x) => match x.next(helper).transpose()? {

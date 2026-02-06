@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://example.com"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    targetNamespace="http://example.com"
+    elementFormDefault="unqualified">
+    <xs:complexType name="FooType">
+        <xs:sequence>
+            <xs:element name="Value" type="xs:anySimpleType" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:element name="Foo" type="tns:FooType" />
+</xs:schema>

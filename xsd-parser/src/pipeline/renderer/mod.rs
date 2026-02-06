@@ -234,12 +234,15 @@ impl<'types> Renderer<'types> {
             step.initialize(&mut meta);
         }
 
+        let mut values = Values::new();
         for (ident, data) in &meta.types.items {
-            let mut ctx = Context::new(&meta, data, ident, &mut module);
+            let mut ctx = Context::new(&meta, data, ident, &mut module, values);
 
             for step in &mut steps {
                 step.render_type(&mut ctx);
             }
+
+            values = ctx.values;
         }
 
         for step in &mut steps {

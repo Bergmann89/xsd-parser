@@ -3,6 +3,7 @@
 mod absolute_paths;
 mod all;
 mod any;
+mod any_simple_type;
 mod any_type;
 mod any_type_nested;
 mod attribute;

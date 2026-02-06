@@ -9,7 +9,6 @@
 pub mod xs;
 
 mod occurs;
-mod qname;
 
 use std::collections::btree_map::{BTreeMap, Iter, IterMut};
 
@@ -19,8 +18,9 @@ use xsd_parser_types::misc::{Namespace, NamespacePrefix};
 
 use self::xs::Schema;
 
+pub use xsd_parser_types::xml::QName;
+
 pub use self::occurs::{MaxOccurs, MinOccurs};
-pub use self::qname::QName;
 
 /// Top-level structure for managing loaded XML schema files and associated namespaces.
 ///

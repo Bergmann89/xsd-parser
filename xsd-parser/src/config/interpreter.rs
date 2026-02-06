@@ -83,5 +83,10 @@ bitflags! {
         ///
         /// See [`with_nonzero_typedefs`](crate::Interpreter::with_nonzero_typedefs) for details.
         const NONZERO_TYPEDEFS = 1 << 4;
+
+        /// Whether to add a default type definitions for `xs:anySimpleType` or not.
+        ///
+        /// See [`with_xs_any_simple_type`](crate::Interpreter::with_xs_any_simple_type) for details.
+        const WITH_XS_ANY_SIMPLE_TYPE = 1 << 5;
     }
 }

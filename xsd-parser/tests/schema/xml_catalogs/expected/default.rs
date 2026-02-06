@@ -130,7 +130,7 @@ pub mod er {
 pub mod xs {
     #[derive(Debug, Default)]
     pub struct EntitiesType(pub Vec<String>);
-    pub type EntityType = EntitiesType;
+    pub type EntityType = String;
     pub type IdType = String;
     pub type IdrefType = String;
     pub type IdrefsType = EntitiesType;

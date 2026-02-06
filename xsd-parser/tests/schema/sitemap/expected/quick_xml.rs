@@ -8,10 +8,12 @@ use xsd_parser_types::{
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
-pub const NS_UNNAMED_4: Namespace =
+pub const NS_XSI: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema-instance");
+pub const NS_UNNAMED_5: Namespace =
     Namespace::new_const(b"http://www.sitemaps.org/schemas/sitemap/0.9");
 pub const PREFIX_XS: NamespacePrefix = NamespacePrefix::new_const(b"xs");
 pub const PREFIX_XML: NamespacePrefix = NamespacePrefix::new_const(b"xml");
+pub const PREFIX_XSI: NamespacePrefix = NamespacePrefix::new_const(b"xsi");
 pub type Urlset = UrlsetType;
 #[derive(Debug)]
 pub struct UrlsetType {
@@ -241,7 +243,7 @@ pub mod quick_xml_deserialize {
                     (S::Url(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_4),
+                            Some(&super::NS_UNNAMED_5),
                             b"url",
                             true,
                         )?;
@@ -599,7 +601,7 @@ pub mod quick_xml_deserialize {
                     (S::Loc(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_4),
+                            Some(&super::NS_UNNAMED_5),
                             b"loc",
                             true,
                         )?;
@@ -616,7 +618,7 @@ pub mod quick_xml_deserialize {
                     (S::Lastmod(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_4),
+                            Some(&super::NS_UNNAMED_5),
                             b"lastmod",
                             true,
                         )?;
@@ -633,7 +635,7 @@ pub mod quick_xml_deserialize {
                     (S::Changefreq(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_4),
+                            Some(&super::NS_UNNAMED_5),
                             b"changefreq",
                             true,
                         )?;
@@ -650,7 +652,7 @@ pub mod quick_xml_deserialize {
                     (S::Priority(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_UNNAMED_4),
+                            Some(&super::NS_UNNAMED_5),
                             b"priority",
                             true,
                         )?;
@@ -730,7 +732,7 @@ pub mod quick_xml_serialize {
                         ));
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_4);
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_5);
                         return Ok(Some(Event::Start(bytes)));
                     }
                     UrlsetTypeSerializerState::Url(x) => match x.next(helper).transpose()? {
@@ -795,7 +797,7 @@ pub mod quick_xml_serialize {
                         )?);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_4);
+                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_5);
                         return Ok(Some(Event::Start(bytes)));
                     }
                     TUrlTypeSerializerState::Loc(x) => match x.next(helper).transpose()? {

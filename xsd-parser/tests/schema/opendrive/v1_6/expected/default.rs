@@ -1164,8 +1164,7 @@ pub struct TRoadObjectsObjectLaneValidityXType {
 }
 #[derive(Debug, Default)]
 pub struct EntitiesXType(pub Vec<String>);
-#[derive(Debug, Default)]
-pub struct EntityXType(pub Vec<String>);
+pub type EntityXType = String;
 pub type IdXType = String;
 pub type IdrefXType = String;
 #[derive(Debug, Default)]

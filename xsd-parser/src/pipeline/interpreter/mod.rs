@@ -40,9 +40,12 @@ use xsd_parser_types::misc::Namespace;
 use crate::models::{
     meta::{
         AnyAttributeMeta, AnyMeta, AttributeMeta, BuildInMeta, ComplexMeta, CustomMeta,
-        ElementMeta, GroupMeta, MetaType, MetaTypeVariant, MetaTypes, ReferenceMeta,
+        ElementMeta, GroupMeta, MetaType, MetaTypeVariant, MetaTypes, ReferenceMeta, SimpleMeta,
     },
-    schema::{xs::ProcessContentsType, MaxOccurs, Schemas},
+    schema::{
+        xs::{FormChoiceType, ProcessContentsType},
+        MaxOccurs, Schemas,
+    },
     AttributeIdent, ElementIdent, IdentCache, Name, TypeIdent,
 };
 use crate::traits::{NameBuilderExt as _, Naming};
@@ -257,12 +260,12 @@ impl<'a> Interpreter<'a> {
         add!("NCName", STRING);
         add!("ID", STRING);
         add!("IDREF", STRING);
+        add!("ENTITY", STRING);
 
         add!("anySimpleType", STRING);
 
         add_list!("NMTOKENS", STRING);
         add_list!("IDREFS", STRING);
-        add_list!("ENTITY", STRING);
         add_list!("ENTITIES", STRING);
 
         Ok(self)
@@ -334,6 +337,60 @@ impl<'a> Interpreter<'a> {
         };
         complex.attributes.push(any_attribute);
 
+        let variant = MetaTypeVariant::ComplexType(complex);
+        let type_ = MetaType::new(variant);
+
+        self.state.add_type(ident, type_, true, true)?;
+
+        Ok(self)
+    }
+
+    /// Adds a default type definition for `xs:anySimpleType`.
+    ///
+    /// # Errors
+    ///
+    /// Returns a suitable [`Error`] if the operation was not successful.
+    #[instrument(err, level = "trace", skip(self))]
+    pub fn with_xs_any_simple_type(mut self) -> Result<Self, Error> {
+        let xs = self
+            .schemas
+            .resolve_namespace(&Some(Namespace::XS))
+            .ok_or_else(|| Error::UnknownNamespace(Namespace::XS.clone()))?;
+        let xsi = self
+            .schemas
+            .resolve_namespace(&Some(Namespace::XSI))
+            .ok_or_else(|| Error::UnknownNamespace(Namespace::XSI.clone()))?;
+
+        /* content type */
+
+        let content_name = self.state.name_builder().shared_name("Content").finish();
+        let content_ident = TypeIdent::new(content_name).with_ns(xs);
+        let content_type = MetaType::new(MetaTypeVariant::SimpleType(SimpleMeta::new(
+            TypeIdent::STRING,
+        )));
+
+        self.state
+            .add_type(content_ident.clone(), content_type, true, false)?;
+
+        /* xs:anySimpleType */
+
+        let type_attribute_ident = AttributeIdent::new(Name::TYPE).with_ns(xsi);
+        let type_attribute = AttributeMeta::new(
+            type_attribute_ident,
+            TypeIdent::STRING,
+            FormChoiceType::Qualified,
+        );
+
+        let mut complex = ComplexMeta {
+            content: Some(content_ident),
+            is_mixed: true,
+            min_occurs: 1,
+            max_occurs: MaxOccurs::Bounded(1),
+            ..Default::default()
+        };
+        complex.attributes.push(type_attribute);
+
+        let ident = TypeIdent::new(Name::ANY_SIMPLE_TYPE).with_ns(xs);
         let variant = MetaTypeVariant::ComplexType(complex);
         let type_ = MetaType::new(variant);
 

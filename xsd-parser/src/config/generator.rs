@@ -196,7 +196,7 @@ bitflags! {
         #[doc = include_str!("../../tests/generator/generator_flags/schema.xsd")]
         /// ```
         ///
-        /// Enable the `MIXED_TYPE_SUPPORT` feature only will result in the following code:
+        /// Enable the `ANY_TYPE_SUPPORT` feature only will result in the following code:
         /// ```rust,ignore
         #[doc = include_str!("../../tests/generator/generator_flags/expected/any_type_support.rs")]
         /// ```

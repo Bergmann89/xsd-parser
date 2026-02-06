@@ -12,7 +12,10 @@ pub use xsd_parser_types::misc::{Namespace, NamespacePrefix};
 
 pub use crate::models::{meta::MetaType, schema::NamespaceId, IdentType, Name, TypeIdent};
 
-use crate::models::schema::xs::SchemaContent;
+use crate::models::{
+    meta::CustomMeta,
+    schema::{xs::SchemaContent, SchemaId, Schemas},
+};
 use crate::pipeline::renderer::NamespaceSerialization;
 use crate::traits::Naming;
 use crate::InterpreterError;
@@ -26,8 +29,6 @@ pub use self::parser::{ParserConfig, ParserFlags, Resolver, Schema};
 pub use self::renderer::{
     DynTypeTraits, RenderStep, RenderStepConfig, RendererConfig, RendererFlags, SerdeXmlRsVersion,
 };
-
-use crate::models::schema::{SchemaId, Schemas};
 
 /// Configuration structure for the [`generate`](super::generate) method.
 #[must_use]
@@ -428,6 +429,47 @@ impl Config {
         self.interpreter.naming = Some(Box::new(naming));
 
         self
+    }
+
+    /// Add a type to the interpreter.
+    ///
+    /// This can be used to add or overwrite type definitions to the interpreter,
+    /// for example to support `xs:anySimpleType` with a custom type.
+    ///
+    /// # Parameters
+    /// - `ident`: Identifier quadruple for the type to add/overwrite, for example
+    ///   `(IdentType::Type, Namespace::XS, "anySimpleType")` for `xs:anySimpleType`.
+    /// - `meta`: The type definition to use for the specified identifier.
+    pub fn with_type<I, M>(mut self, ident: I, meta: M) -> Self
+    where
+        I: Into<IdentQuadruple>,
+        M: Into<MetaType>,
+    {
+        self.interpreter.types.push((ident.into(), meta.into()));
+
+        self
+    }
+
+    /// Add a type to the interpreter that should be used to handle `xs:anySimpleType`.
+    ///
+    /// This is a convenient method for adding support for `xs:anySimpleType` with a custom type.
+    ///
+    /// # Parameters
+    /// - `path`: The path to the type to use for handling `xs:anySimpleType`, for example
+    ///   `"xsd_parser_types::xml::AnySimpleType"`.
+    pub fn with_xs_any_simple_type<S>(self, path: S) -> Self
+    where
+        S: AsRef<str>,
+    {
+        let path = path.as_ref();
+        let name = path.rsplit_once("::").map_or(path, |(_, name)| name);
+
+        let ident = (IdentType::Type, Namespace::XS, "anySimpleType");
+        let meta = CustomMeta::new(name)
+            .include_from(path)
+            .with_namespace(Namespace::XSI);
+
+        self.with_type(ident, meta)
     }
 
     /// Set the postfix that should be applied to the name of types.

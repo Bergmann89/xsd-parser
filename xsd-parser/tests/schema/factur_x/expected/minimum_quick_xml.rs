@@ -4,6 +4,7 @@ use xsd_parser_types::{
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
+pub const NS_XSI: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema-instance");
 pub const NS_RSM: Namespace =
     Namespace::new_const(b"urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100");
 pub const NS_QDT: Namespace =
@@ -15,6 +16,7 @@ pub const NS_UDT: Namespace =
     Namespace::new_const(b"urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100");
 pub const PREFIX_XS: NamespacePrefix = NamespacePrefix::new_const(b"xs");
 pub const PREFIX_XML: NamespacePrefix = NamespacePrefix::new_const(b"xml");
+pub const PREFIX_XSI: NamespacePrefix = NamespacePrefix::new_const(b"xsi");
 pub const PREFIX_RSM: NamespacePrefix = NamespacePrefix::new_const(b"rsm");
 pub const PREFIX_QDT: NamespacePrefix = NamespacePrefix::new_const(b"qdt");
 pub const PREFIX_RAM: NamespacePrefix = NamespacePrefix::new_const(b"ram");

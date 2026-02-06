@@ -12,8 +12,6 @@ use quote::{format_ident, quote};
 use xsd_parser_types::misc::Namespace;
 
 use crate::config::{GeneratorFlags, TypedefMode};
-use crate::models::schema::xs::FormChoiceType;
-use crate::models::schema::NamespaceId;
 use crate::models::{
     code::IdentPath,
     data::{
@@ -22,7 +20,8 @@ use crate::models::{
         EnumerationTypeVariant, Occurs, PathData, ReferenceData, SimpleData, UnionData,
         UnionTypeVariant,
     },
-    meta::{ElementMetaVariant, MetaTypeVariant, MetaTypes},
+    meta::{CustomMetaNamespace, ElementMetaVariant, MetaTypeVariant, MetaTypes},
+    schema::{xs::FormChoiceType, NamespaceId},
     TypeIdent,
 };
 
@@ -100,6 +99,8 @@ impl ValueKey for SerializerConfig {
 #[derive(Default, Debug)]
 struct NamespaceCollector {
     cache: HashMap<TypeIdent, Option<SharedGlobalNamespaces>>,
+    xsi_namespace: Option<NamespaceId>,
+    nillable_type_support: bool,
 }
 
 #[derive(Debug, Clone, Copy, Eq, PartialEq, Ord, PartialOrd, Hash)]
@@ -699,7 +700,14 @@ impl ComplexBase<'_> {
                 })
             }
             NamespaceSerialization::Global => {
-                let collector = ctx.get_or_create::<NamespaceCollector>().clone();
+                let nillable_type_support =
+                    ctx.check_generator_flags(GeneratorFlags::NILLABLE_TYPE_SUPPORT);
+                let types: &MetaTypes = ctx.types;
+                let collector = ctx
+                    .get_or_create_with::<NamespaceCollector, _>(|| {
+                        NamespaceCollector::new(types, nillable_type_support)
+                    })
+                    .clone();
                 let mut collector = collector.borrow_mut();
 
                 let xmlns = self.tag_name.as_ref().and_then(|tag| {
@@ -714,7 +722,9 @@ impl ComplexBase<'_> {
                     Some(quote!(helper.write_xmlns(&mut bytes, None, &#ns_const);))
                 });
 
-                let xsi = ctx.check_generator_flags(GeneratorFlags::NILLABLE_TYPE_SUPPORT).then(|| {
+                let need_xsi_namespace =
+                    nillable_type_support && !collector.provides_xsi_namespace();
+                let xsi = need_xsi_namespace.then(|| {
                     let namespace = resolve_quick_xml_ident!(ctx, "::xsd_parser_types::misc::Namespace");
                     let namespace_prefix = resolve_quick_xml_ident!(ctx, "::xsd_parser_types::misc::NamespacePrefix");
 
@@ -1357,6 +1367,26 @@ enum GetNamespaceState {
 }
 
 impl NamespaceCollector {
+    fn new(types: &MetaTypes, nillable_type_support: bool) -> Rc<RefCell<Self>> {
+        let xsi_namespace = types.modules.iter().find_map(|(id, module)| {
+            if matches!(module.namespace.as_ref(), Some(ns) if *ns == Namespace::XSI) {
+                Some(*id)
+            } else {
+                None
+            }
+        });
+
+        Rc::new(RefCell::new(Self {
+            cache: HashMap::new(),
+            xsi_namespace,
+            nillable_type_support,
+        }))
+    }
+
+    fn provides_xsi_namespace(&self) -> bool {
+        self.xsi_namespace.is_some()
+    }
+
     fn get_namespaces(
         &mut self,
         types: &MetaTypes,
@@ -1366,6 +1396,7 @@ impl NamespaceCollector {
         self.get_namespaces_impl(types, ident, default_ns).unwrap()
     }
 
+    #[allow(clippy::too_many_lines)]
     fn get_namespaces_impl(
         &mut self,
         types: &MetaTypes,
@@ -1384,6 +1415,12 @@ impl NamespaceCollector {
         let new_value = if create {
             let ty = types.items.get(ident).unwrap();
             let mut state = GetNamespaceState::Empty;
+
+            if self.nillable_type_support {
+                if let Some(id) = &self.xsi_namespace {
+                    Self::add_ns(&mut state, types, NamespaceKey::Normal(*id));
+                }
+            }
 
             match &ty.variant {
                 MetaTypeVariant::Union(x) => {
@@ -1422,13 +1459,31 @@ impl NamespaceCollector {
 
                     for attrib in &*x.attributes {
                         if attrib.form == FormChoiceType::Qualified {
-                            Self::add_ns(&mut state, types, NamespaceKey::Normal(ident.ns));
+                            Self::add_ns(&mut state, types, NamespaceKey::Normal(attrib.ident.ns));
                         }
                     }
                 }
-                MetaTypeVariant::BuildIn(_)
-                | MetaTypeVariant::Custom(_)
-                | MetaTypeVariant::SimpleType(_) => (),
+                MetaTypeVariant::Custom(x) => {
+                    for ns in x.namespaces() {
+                        let key = match ns {
+                            CustomMetaNamespace::Id(id) => NamespaceKey::Default(*id),
+                            CustomMetaNamespace::Namespace(ns) => {
+                                let id = types.modules.iter().find_map(|(id, module)| {
+                                    matches!(module.namespace.as_ref(), Some(x) if x == ns)
+                                        .then_some(*id)
+                                });
+                                let Some(id) = id else {
+                                    continue;
+                                };
+
+                                NamespaceKey::Normal(id)
+                            }
+                        };
+
+                        Self::add_ns(&mut state, types, key);
+                    }
+                }
+                MetaTypeVariant::BuildIn(_) | MetaTypeVariant::SimpleType(_) => (),
             }
 
             if ty.form() == FormChoiceType::Qualified {

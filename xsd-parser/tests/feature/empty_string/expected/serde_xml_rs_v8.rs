@@ -17,8 +17,7 @@ pub struct SimpleContentType {
 }
 #[derive(Debug, Default, Deserialize, Serialize)]
 pub struct EntitiesType(pub Vec<String>);
-#[derive(Debug, Default, Deserialize, Serialize)]
-pub struct EntityType(pub Vec<String>);
+pub type EntityType = String;
 pub type IdType = String;
 pub type IdrefType = String;
 #[derive(Debug, Default, Deserialize, Serialize)]
