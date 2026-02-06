@@ -10,8 +10,8 @@ use crate::models::{
     meta::{BuildInMeta, MetaType, MetaTypeVariant},
     schema::{
         xs::{
-            AttributeGroupType, AttributeType, ComplexBaseType, ElementType, GroupType, Schema,
-            SchemaContent, SimpleBaseType,
+            AttributeGroupType, AttributeType, ComplexBaseType, ElementType, GroupType,
+            RedefineContent, Schema, SchemaContent, SimpleBaseType,
         },
         NamespaceId, QName, SchemaId, Schemas,
     },
@@ -60,8 +60,22 @@ impl<'schema, 'state> SchemaInterpreter<'schema, 'state> {
                 | SchemaContent::Import(_)
                 | SchemaContent::Include(_)
                 | SchemaContent::Notation(_)
-                | SchemaContent::Override(_)
-                | SchemaContent::Redefine(_) => (),
+                | SchemaContent::Override(_) => (),
+                SchemaContent::Redefine(x) => {
+                    for c in &x.content {
+                        match c {
+                            RedefineContent::Annotation(_)
+                            | RedefineContent::AttributeGroup(_)
+                            | RedefineContent::Group(_) => (),
+                            RedefineContent::SimpleType(x) => {
+                                this.create_simple_type(target_namespace, None, x)?;
+                            }
+                            RedefineContent::ComplexType(x) => {
+                                this.create_complex_type(target_namespace, None, x)?;
+                            }
+                        }
+                    }
+                }
                 SchemaContent::Element(x) => {
                     this.create_element(namespace_id, schema_id, None, x)?;
                 }
