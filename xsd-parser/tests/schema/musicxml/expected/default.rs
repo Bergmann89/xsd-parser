@@ -4158,8 +4158,7 @@ pub mod xml {
 pub mod xs {
     #[derive(Debug, Default)]
     pub struct Entities(pub ::std::vec::Vec<::std::string::String>);
-    #[derive(Debug, Default)]
-    pub struct Entity(pub ::std::vec::Vec<::std::string::String>);
+    pub type Entity = ::std::string::String;
     pub type Id = ::std::string::String;
     pub type Idref = ::std::string::String;
     #[derive(Debug, Default)]
@@ -4171,7 +4170,11 @@ pub mod xs {
     pub type Notation = ::std::string::String;
     pub type Name = ::std::string::String;
     pub type QName = ::std::string::String;
-    pub type AnySimpleType = ::std::string::String;
+    #[derive(Debug)]
+    pub struct AnySimpleType {
+        pub type_: ::core::option::Option<::std::string::String>,
+        pub content: ::std::string::String,
+    }
     pub type AnyUri = ::std::string::String;
     pub type Base64Binary = ::std::string::String;
     pub type Boolean = ::core::primitive::bool;

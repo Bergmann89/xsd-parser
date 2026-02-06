@@ -186,6 +186,16 @@ impl<'a, 'types> Context<'a, 'types> {
         self.values.get_or_create::<K>()
     }
 
+    /// Get a mutable reference to the value that was stored for the specified key `K`.
+    /// If no value is available a new one is created with the provided function `f`.
+    pub fn get_or_create_with<K, F>(&mut self, f: F) -> &mut K::Type
+    where
+        K: ValueKey,
+        F: FnOnce() -> K::Type,
+    {
+        self.values.get_or_create_with::<K, _>(f)
+    }
+
     /// Extracts the value stored for the specified key `K`.
     ///
     /// Panics if the key was not set before.
@@ -304,6 +314,7 @@ impl<'a, 'types> Context<'a, 'types> {
         data: &'a DataType<'types>,
         ident: &'a TypeIdent,
         module: &'a mut Module,
+        values: Values,
     ) -> Self {
         let module_ident = ModuleIdent::new(
             meta.types,
@@ -329,7 +340,7 @@ impl<'a, 'types> Context<'a, 'types> {
             serialize_module_path,
             deserialize_module_path,
 
-            values: Values::new(),
+            values,
         }
     }
 
@@ -456,8 +467,18 @@ impl Values {
         K: ValueKey,
         K::Type: Default,
     {
+        self.get_or_create_with::<K, _>(Default::default)
+    }
+
+    /// Get a mutable reference to the value that was stored for the specified key `K`.
+    /// If no value is available a new one is created with the provided function `f`.
+    pub fn get_or_create_with<K, F>(&mut self, f: F) -> &mut K::Type
+    where
+        K: ValueKey,
+        F: FnOnce() -> K::Type,
+    {
         match self.0.entry(TypeId::of::<K>()) {
-            Entry::Vacant(e) => e.insert(Box::new(<K::Type as Default>::default())),
+            Entry::Vacant(e) => e.insert(Box::new(f())),
             Entry::Occupied(e) => e.into_mut(),
         }
         .downcast_mut::<K::Type>()

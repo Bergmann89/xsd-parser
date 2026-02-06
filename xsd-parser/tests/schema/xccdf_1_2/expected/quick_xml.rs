@@ -1,11 +1,13 @@
 use xsd_parser_types::misc::{Namespace, NamespacePrefix};
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
+pub const NS_XSI: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema-instance");
 pub const NS_CDF: Namespace = Namespace::new_const(b"http://checklists.nist.gov/xccdf/1.2");
 pub const NS_CPE: Namespace = Namespace::new_const(b"http://cpe.mitre.org/language/2.0");
 pub const NS_CPE_NAME: Namespace = Namespace::new_const(b"http://cpe.mitre.org/naming/2.0");
 pub const PREFIX_XS: NamespacePrefix = NamespacePrefix::new_const(b"xs");
 pub const PREFIX_XML: NamespacePrefix = NamespacePrefix::new_const(b"xml");
+pub const PREFIX_XSI: NamespacePrefix = NamespacePrefix::new_const(b"xsi");
 pub const PREFIX_CDF: NamespacePrefix = NamespacePrefix::new_const(b"cdf");
 pub const PREFIX_CPE: NamespacePrefix = NamespacePrefix::new_const(b"cpe");
 pub const PREFIX_CPE_NAME: NamespacePrefix = NamespacePrefix::new_const(b"cpe-name");

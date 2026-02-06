@@ -195,7 +195,7 @@ pub mod xs {
     use serde::{Deserialize, Serialize};
     #[derive(Debug, Default, Deserialize, Serialize)]
     pub struct EntitiesType(pub Vec<String>);
-    pub type EntityType = EntitiesType;
+    pub type EntityType = String;
     pub type IdType = String;
     pub type IdrefType = String;
     pub type IdrefsType = EntitiesType;

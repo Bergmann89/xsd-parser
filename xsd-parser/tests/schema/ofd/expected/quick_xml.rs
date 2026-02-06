@@ -1,9 +1,11 @@
 use xsd_parser_types::misc::{Namespace, NamespacePrefix};
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
-pub const NS_UNNAMED_4: Namespace = Namespace::new_const(b"http://www.ofdspec.org/2016");
+pub const NS_XSI: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema-instance");
+pub const NS_UNNAMED_5: Namespace = Namespace::new_const(b"http://www.ofdspec.org/2016");
 pub const PREFIX_XS: NamespacePrefix = NamespacePrefix::new_const(b"xs");
 pub const PREFIX_XML: NamespacePrefix = NamespacePrefix::new_const(b"xml");
+pub const PREFIX_XSI: NamespacePrefix = NamespacePrefix::new_const(b"xsi");
 pub mod annotations {
     use xsd_parser_types::quick_xml::{Error, WithDeserializer, WithSerializer};
     pub type Annotations = AnnotationsXElementType;
@@ -195,7 +197,7 @@ pub mod annotations {
                         (S::Page(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Page",
                                 false,
                             )?;
@@ -262,7 +264,7 @@ pub mod annotations {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"PageID")
                     ) {
                         helper.read_attrib(&mut page_id, b"PageID", &attrib.value)?;
@@ -389,7 +391,7 @@ pub mod annotations {
                         (S::FileLoc(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"FileLoc",
                                 false,
                             )?;
@@ -477,7 +479,7 @@ pub mod annotations {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         AnnotationsXElementTypeSerializerState::Page(x) => {
@@ -541,7 +543,7 @@ pub mod annotations {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib(&mut bytes, "PageID", &self.value.page_id)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -928,7 +930,7 @@ pub mod annotion {
                         (S::Annot(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Annot",
                                 false,
                             )?;
@@ -1027,52 +1029,52 @@ pub mod annotion {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ID")
                     ) {
                         helper.read_attrib(&mut id, b"ID", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Type")
                     ) {
                         helper.read_attrib(&mut type_, b"Type", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Creator")
                     ) {
                         helper.read_attrib(&mut creator, b"Creator", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"LastModDate")
                     ) {
                         helper.read_attrib(&mut last_mod_date, b"LastModDate", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Visible")
                     ) {
                         helper.read_attrib(&mut visible, b"Visible", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Subtype")
                     ) {
                         helper.read_attrib(&mut subtype, b"Subtype", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Print")
                     ) {
                         helper.read_attrib(&mut print, b"Print", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"NoZoom")
                     ) {
                         helper.read_attrib(&mut no_zoom, b"NoZoom", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"NoRotate")
                     ) {
                         helper.read_attrib(&mut no_rotate, b"NoRotate", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ReadOnly")
                     ) {
                         helper.read_attrib(&mut read_only, b"ReadOnly", &attrib.value)?;
@@ -1338,7 +1340,7 @@ pub mod annotion {
                         (S::Remark(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Remark",
                                 false,
                             )?;
@@ -1355,7 +1357,7 @@ pub mod annotion {
                         (S::Parameters(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Parameters",
                                 false,
                             )?;
@@ -1372,7 +1374,7 @@ pub mod annotion {
                         (S::Appearance(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Appearance",
                                 true,
                             )?;
@@ -1573,7 +1575,7 @@ pub mod annotion {
                         (S::Parameter(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Parameter",
                                 false,
                             )?;
@@ -1638,7 +1640,7 @@ pub mod annotion {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Boundary")
                     ) {
                         helper.read_attrib(&mut boundary, b"Boundary", &attrib.value)?;
@@ -1797,28 +1799,28 @@ pub mod annotion {
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"TextObject")
                     ) {
                         let output = < super :: super :: page :: CtPageBlockTextObjectXElementType as WithDeserializer > :: init (helper , event) ? ;
                         return self.handle_text_object(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"PathObject")
                     ) {
                         let output = < super :: super :: page :: CtPageBlockPathObjectXElementType as WithDeserializer > :: init (helper , event) ? ;
                         return self.handle_path_object(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"ImageObject")
                     ) {
                         let output = < super :: super :: page :: CtPageBlockImageObjectXElementType as WithDeserializer > :: init (helper , event) ? ;
                         return self.handle_image_object(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"CompositeObject")
                     ) {
                         let output = < super :: super :: page :: CtPageBlockCompositeObjectXElementType as WithDeserializer > :: init (helper , event) ? ;
@@ -1830,7 +1832,7 @@ pub mod annotion {
                         );
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"PageBlock")
                     ) {
                         let output = < super :: super :: page :: CtPageBlockPageBlockXElementType as WithDeserializer > :: init (helper , event) ? ;
@@ -2259,7 +2261,7 @@ pub mod annotion {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"TextObject",
                                 true,
                             )?;
@@ -2276,7 +2278,7 @@ pub mod annotion {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"PathObject",
                                 true,
                             )?;
@@ -2293,7 +2295,7 @@ pub mod annotion {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"ImageObject",
                                 true,
                             )?;
@@ -2310,7 +2312,7 @@ pub mod annotion {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"CompositeObject",
                                 true,
                             )?;
@@ -2327,7 +2329,7 @@ pub mod annotion {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"PageBlock",
                                 true,
                             )?;
@@ -2387,7 +2389,7 @@ pub mod annotion {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Name")
                     ) {
                         helper.read_attrib(&mut name, b"Name", &attrib.value)?;
@@ -2552,7 +2554,7 @@ pub mod annotion {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         PageAnnotXElementTypeSerializerState::Annot(x) => {
@@ -2626,7 +2628,7 @@ pub mod annotion {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib(&mut bytes, "ID", &self.value.id)?;
                             helper.write_attrib(&mut bytes, "Type", &self.value.type_)?;
                             helper.write_attrib(&mut bytes, "Creator", &self.value.creator)?;
@@ -2742,7 +2744,7 @@ pub mod annotion {
                                 );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         PageAnnotAnnotParametersXElementTypeSerializerState::Parameter(x) => {
@@ -2817,7 +2819,7 @@ pub mod annotion {
                                 );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib_opt(
                                 &mut bytes,
                                 "Boundary",
@@ -2920,7 +2922,7 @@ pub mod annotion {
                             * self . state = PageAnnotAnnotParametersParameterXElementTypeSerializerState :: Content__ (WithSerializer :: serializer (& self . value . content , None , false) ?) ;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib(&mut bytes, "Name", &self.value.name)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -3166,7 +3168,7 @@ pub mod attachments {
                         (S::Attachment(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Attachment",
                                 false,
                             )?;
@@ -3249,42 +3251,42 @@ pub mod attachments {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ID")
                     ) {
                         helper.read_attrib(&mut id, b"ID", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Name")
                     ) {
                         helper.read_attrib(&mut name, b"Name", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Format")
                     ) {
                         helper.read_attrib(&mut format, b"Format", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"CreationDate")
                     ) {
                         helper.read_attrib(&mut creation_date, b"CreationDate", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ModDate")
                     ) {
                         helper.read_attrib(&mut mod_date, b"ModDate", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Size")
                     ) {
                         helper.read_attrib(&mut size, b"Size", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Visible")
                     ) {
                         helper.read_attrib(&mut visible, b"Visible", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Usage")
                     ) {
                         helper.read_attrib(&mut usage, b"Usage", &attrib.value)?;
@@ -3416,7 +3418,7 @@ pub mod attachments {
                         (S::FileLoc(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"FileLoc",
                                 false,
                             )?;
@@ -3511,7 +3513,7 @@ pub mod attachments {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         AttachmentsXElementTypeSerializerState::Attachment(x) => {
@@ -3575,7 +3577,7 @@ pub mod attachments {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib(&mut bytes, "ID", &self.value.id)?;
                             helper.write_attrib(&mut bytes, "Name", &self.value.name)?;
                             helper.write_attrib_opt(&mut bytes, "Format", &self.value.format)?;
@@ -3815,7 +3817,7 @@ pub mod custom_tags {
                         (S::CustomTag(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"CustomTag",
                                 false,
                             )?;
@@ -3886,7 +3888,7 @@ pub mod custom_tags {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"NameSpace")
                     ) {
                         helper.read_attrib(&mut name_space, b"NameSpace", &attrib.value)?;
@@ -4073,7 +4075,7 @@ pub mod custom_tags {
                         (S::SchemaLoc(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"SchemaLoc",
                                 false,
                             )?;
@@ -4090,7 +4092,7 @@ pub mod custom_tags {
                         (S::FileLoc(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"FileLoc",
                                 false,
                             )?;
@@ -4183,7 +4185,7 @@ pub mod custom_tags {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CustomTagsXElementTypeSerializerState::CustomTag(x) => {
@@ -4248,7 +4250,7 @@ pub mod custom_tags {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib(&mut bytes, "NameSpace", &self.value.name_space)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -4881,7 +4883,7 @@ pub mod definition {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Event")
                     ) {
                         helper.read_attrib(&mut event, b"Event", &attrib.value)?;
@@ -5070,7 +5072,7 @@ pub mod definition {
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"Region")
                     ) {
                         let output =
@@ -5078,7 +5080,7 @@ pub mod definition {
                         return self.handle_region(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"Goto")
                     ) {
                         let output = <super::CtActionGotoXElementType as WithDeserializer>::init(
@@ -5087,7 +5089,7 @@ pub mod definition {
                         return self.handle_goto(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"URI")
                     ) {
                         let output = <super::CtActionUriXElementType as WithDeserializer>::init(
@@ -5096,7 +5098,7 @@ pub mod definition {
                         return self.handle_uri(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"GotoA")
                     ) {
                         let output = <super::CtActionGotoAxElementType as WithDeserializer>::init(
@@ -5105,7 +5107,7 @@ pub mod definition {
                         return self.handle_goto_a(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"Sound")
                     ) {
                         let output = <super::CtActionSoundXElementType as WithDeserializer>::init(
@@ -5114,7 +5116,7 @@ pub mod definition {
                         return self.handle_sound(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"Movie")
                     ) {
                         let output = <super::CtActionMovieXElementType as WithDeserializer>::init(
@@ -5579,7 +5581,7 @@ pub mod definition {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Region",
                                 true,
                             )?;
@@ -5596,7 +5598,7 @@ pub mod definition {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Goto",
                                 false,
                             )?;
@@ -5613,7 +5615,7 @@ pub mod definition {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"URI",
                                 false,
                             )?;
@@ -5630,7 +5632,7 @@ pub mod definition {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"GotoA",
                                 false,
                             )?;
@@ -5647,7 +5649,7 @@ pub mod definition {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Sound",
                                 false,
                             )?;
@@ -5664,7 +5666,7 @@ pub mod definition {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Movie",
                                 false,
                             )?;
@@ -5734,37 +5736,37 @@ pub mod definition {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Type")
                     ) {
                         helper.read_attrib(&mut type_, b"Type", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"PageID")
                     ) {
                         helper.read_attrib(&mut page_id, b"PageID", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Left")
                     ) {
                         helper.read_attrib(&mut left, b"Left", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Top")
                     ) {
                         helper.read_attrib(&mut top, b"Top", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Right")
                     ) {
                         helper.read_attrib(&mut right, b"Right", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Bottom")
                     ) {
                         helper.read_attrib(&mut bottom, b"Bottom", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Zoom")
                     ) {
                         helper.read_attrib(&mut zoom, b"Zoom", &attrib.value)?;
@@ -6154,7 +6156,7 @@ pub mod definition {
                         (S::PhysicalBox(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"PhysicalBox",
                                 false,
                             )?;
@@ -6171,7 +6173,7 @@ pub mod definition {
                         (S::ApplicationBox(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"ApplicationBox",
                                 false,
                             )?;
@@ -6188,7 +6190,7 @@ pub mod definition {
                         (S::ContentBox(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"ContentBox",
                                 false,
                             )?;
@@ -6205,7 +6207,7 @@ pub mod definition {
                         (S::BleedBox(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"BleedBox",
                                 false,
                             )?;
@@ -6389,7 +6391,7 @@ pub mod definition {
                         (S::Area(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Area",
                                 true,
                             )?;
@@ -6464,14 +6466,14 @@ pub mod definition {
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"Dest")
                     ) {
                         let output = <super::CtDestXType as WithDeserializer>::init(helper, event)?;
                         return self.handle_dest(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"Bookmark")
                     ) {
                         let output =
@@ -6675,7 +6677,7 @@ pub mod definition {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Dest",
                                 false,
                             )?;
@@ -6692,7 +6694,7 @@ pub mod definition {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Bookmark",
                                 false,
                             )?;
@@ -6754,17 +6756,17 @@ pub mod definition {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"URI")
                     ) {
                         helper.read_attrib(&mut uri, b"URI", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Base")
                     ) {
                         helper.read_attrib(&mut base, b"Base", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Target")
                     ) {
                         helper.read_attrib(&mut target, b"Target", &attrib.value)?;
@@ -6852,12 +6854,12 @@ pub mod definition {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"AttachID")
                     ) {
                         helper.read_attrib(&mut attach_id, b"AttachID", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"NewWindow")
                     ) {
                         helper.read_attrib(&mut new_window, b"NewWindow", &attrib.value)?;
@@ -6949,22 +6951,22 @@ pub mod definition {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ResourceID")
                     ) {
                         helper.read_attrib(&mut resource_id, b"ResourceID", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Volume")
                     ) {
                         helper.read_attrib(&mut volume, b"Volume", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Repeat")
                     ) {
                         helper.read_attrib(&mut repeat, b"Repeat", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Synchronous")
                     ) {
                         helper.read_attrib(&mut synchronous, b"Synchronous", &attrib.value)?;
@@ -7055,12 +7057,12 @@ pub mod definition {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ResourceID")
                     ) {
                         helper.read_attrib(&mut resource_id, b"ResourceID", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Operator")
                     ) {
                         helper.read_attrib(&mut operator, b"Operator", &attrib.value)?;
@@ -7149,7 +7151,7 @@ pub mod definition {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Start")
                     ) {
                         helper.read_attrib(&mut start, b"Start", &attrib.value)?;
@@ -7306,7 +7308,7 @@ pub mod definition {
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"Move")
                     ) {
                         let output =
@@ -7316,7 +7318,7 @@ pub mod definition {
                         return self.handle_move_(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"Line")
                     ) {
                         let output =
@@ -7326,7 +7328,7 @@ pub mod definition {
                         return self.handle_line(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"OuadraticBezier")
                     ) {
                         let output = < super :: CtRegionAreaOuadraticBezierXElementType as WithDeserializer > :: init (helper , event) ? ;
@@ -7338,7 +7340,7 @@ pub mod definition {
                         );
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"CubicBezier")
                     ) {
                         let output =
@@ -7348,7 +7350,7 @@ pub mod definition {
                         return self.handle_cubic_bezier(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"Arc")
                     ) {
                         let output =
@@ -7358,7 +7360,7 @@ pub mod definition {
                         return self.handle_arc(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"Close")
                     ) {
                         let output = <AnyElement as WithDeserializer>::init(helper, event)?;
@@ -7823,7 +7825,7 @@ pub mod definition {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Move",
                                 false,
                             )?;
@@ -7840,7 +7842,7 @@ pub mod definition {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Line",
                                 false,
                             )?;
@@ -7857,7 +7859,7 @@ pub mod definition {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"OuadraticBezier",
                                 false,
                             )?;
@@ -7874,7 +7876,7 @@ pub mod definition {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"CubicBezier",
                                 false,
                             )?;
@@ -7891,7 +7893,7 @@ pub mod definition {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Arc",
                                 false,
                             )?;
@@ -7908,7 +7910,7 @@ pub mod definition {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Close",
                                 true,
                             )?;
@@ -7966,7 +7968,7 @@ pub mod definition {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Name")
                     ) {
                         helper.read_attrib(&mut name, b"Name", &attrib.value)?;
@@ -8046,7 +8048,7 @@ pub mod definition {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Point1")
                     ) {
                         helper.read_attrib(&mut point_1, b"Point1", &attrib.value)?;
@@ -8130,12 +8132,12 @@ pub mod definition {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Pointl")
                     ) {
                         helper.read_attrib(&mut pointl, b"Pointl", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Point2")
                     ) {
                         helper.read_attrib(&mut point_2, b"Point2", &attrib.value)?;
@@ -8227,17 +8229,17 @@ pub mod definition {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Point1")
                     ) {
                         helper.read_attrib(&mut point_1, b"Point1", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Point2")
                     ) {
                         helper.read_attrib(&mut point_2, b"Point2", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Point3")
                     ) {
                         helper.read_attrib(&mut point_3, b"Point3", &attrib.value)?;
@@ -8331,7 +8333,7 @@ pub mod definition {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"SweepDirection")
                     ) {
                         helper.read_attrib(
@@ -8340,12 +8342,12 @@ pub mod definition {
                             &attrib.value,
                         )?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"LargeArc")
                     ) {
                         helper.read_attrib(&mut large_arc, b"LargeArc", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"RotationAnglet")
                     ) {
                         helper.read_attrib(
@@ -8354,12 +8356,12 @@ pub mod definition {
                             &attrib.value,
                         )?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"EllipseSize")
                     ) {
                         helper.read_attrib(&mut ellipse_size, b"EllipseSize", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"EndPoint")
                     ) {
                         helper.read_attrib(&mut end_point, b"EndPoint", &attrib.value)?;
@@ -8478,7 +8480,7 @@ pub mod definition {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib(&mut bytes, "Event", &self.value.event)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -8645,7 +8647,7 @@ pub mod definition {
                             *self.state = CtDestXTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib(&mut bytes, "Type", &self.value.type_)?;
                             helper.write_attrib(&mut bytes, "PageID", &self.value.page_id)?;
                             helper.write_attrib_opt(&mut bytes, "Left", &self.value.left)?;
@@ -8709,7 +8711,7 @@ pub mod definition {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtPageAreaXTypeSerializerState::PhysicalBox(x) => {
@@ -8819,7 +8821,7 @@ pub mod definition {
                             ));
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtRegionXTypeSerializerState::Area(x) => {
@@ -8893,7 +8895,7 @@ pub mod definition {
                             }
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtActionGotoXElementTypeSerializerState::Dest(x) => {
@@ -8959,7 +8961,7 @@ pub mod definition {
                             *self.state = CtActionUriXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib(&mut bytes, "URI", &self.value.uri)?;
                             helper.write_attrib_opt(&mut bytes, "Base", &self.value.base)?;
                             helper.write_attrib_opt(&mut bytes, "Target", &self.value.target)?;
@@ -9008,7 +9010,7 @@ pub mod definition {
                             *self.state = CtActionGotoAxElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib(&mut bytes, "AttachID", &self.value.attach_id)?;
                             helper.write_attrib(&mut bytes, "NewWindow", &self.value.new_window)?;
                             helper.end_ns_scope();
@@ -9056,7 +9058,7 @@ pub mod definition {
                             *self.state = CtActionSoundXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib(
                                 &mut bytes,
                                 "ResourceID",
@@ -9114,7 +9116,7 @@ pub mod definition {
                             *self.state = CtActionMovieXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib(
                                 &mut bytes,
                                 "ResourceID",
@@ -9176,7 +9178,7 @@ pub mod definition {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib(&mut bytes, "Start", &self.value.start)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -9376,7 +9378,7 @@ pub mod definition {
                             *self.state = CtActionGotoBookmarkXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib(&mut bytes, "Name", &self.value.name)?;
                             helper.end_ns_scope();
                             return Ok(Some(Event::Empty(bytes)));
@@ -9425,7 +9427,7 @@ pub mod definition {
                             *self.state = CtRegionAreaLineXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib(&mut bytes, "Point1", &self.value.point_1)?;
                             helper.end_ns_scope();
                             return Ok(Some(Event::Empty(bytes)));
@@ -9473,7 +9475,7 @@ pub mod definition {
                                 CtRegionAreaOuadraticBezierXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib(&mut bytes, "Pointl", &self.value.pointl)?;
                             helper.write_attrib(&mut bytes, "Point2", &self.value.point_2)?;
                             helper.end_ns_scope();
@@ -9527,7 +9529,7 @@ pub mod definition {
                                 CtRegionAreaCubicBezierXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib_opt(&mut bytes, "Point1", &self.value.point_1)?;
                             helper.write_attrib_opt(&mut bytes, "Point2", &self.value.point_2)?;
                             helper.write_attrib(&mut bytes, "Point3", &self.value.point_3)?;
@@ -9580,7 +9582,7 @@ pub mod definition {
                             *self.state = CtRegionAreaArcXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib(
                                 &mut bytes,
                                 "SweepDirection",
@@ -10205,7 +10207,7 @@ pub mod document {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Name")
                     ) {
                         helper.read_attrib(&mut name, b"Name", &attrib.value)?;
@@ -10329,7 +10331,7 @@ pub mod document {
                         (S::Dest(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Dest",
                                 false,
                             )?;
@@ -10400,17 +10402,17 @@ pub mod document {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Title")
                     ) {
                         helper.read_attrib(&mut title, b"Title", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Count")
                     ) {
                         helper.read_attrib(&mut count, b"Count", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Expanded")
                     ) {
                         helper.read_attrib(&mut expanded, b"Expanded", &attrib.value)?;
@@ -10597,7 +10599,7 @@ pub mod document {
                         (S::Actions(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Actions",
                                 true,
                             )?;
@@ -10614,7 +10616,7 @@ pub mod document {
                         (S::OutlineElem(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"OutlineElem",
                                 true,
                             )?;
@@ -11232,7 +11234,7 @@ pub mod document {
                         (S::Edit(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Edit",
                                 false,
                             )?;
@@ -11249,7 +11251,7 @@ pub mod document {
                         (S::Annot(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Annot",
                                 false,
                             )?;
@@ -11266,7 +11268,7 @@ pub mod document {
                         (S::Export(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Export",
                                 false,
                             )?;
@@ -11283,7 +11285,7 @@ pub mod document {
                         (S::Signature(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Signature",
                                 false,
                             )?;
@@ -11300,7 +11302,7 @@ pub mod document {
                         (S::Watermark(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Watermark",
                                 false,
                             )?;
@@ -11317,7 +11319,7 @@ pub mod document {
                         (S::PrintScreen(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"PrintScreen",
                                 false,
                             )?;
@@ -11334,7 +11336,7 @@ pub mod document {
                         (S::Print(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Print",
                                 false,
                             )?;
@@ -11351,7 +11353,7 @@ pub mod document {
                         (S::ValidPeriod(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"ValidPeriod",
                                 false,
                             )?;
@@ -11635,7 +11637,7 @@ pub mod document {
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"PageMode")
                     ) {
                         let output =
@@ -11645,35 +11647,35 @@ pub mod document {
                         return self.handle_page_mode(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"PageLayout")
                     ) {
                         let output = < super :: CtVPreferencesPageLayoutXElementType as WithDeserializer > :: init (helper , event) ? ;
                         return self.handle_page_layout(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"TabDisplay")
                     ) {
                         let output = < super :: CtVPreferencesTabDisplayXElementType as WithDeserializer > :: init (helper , event) ? ;
                         return self.handle_tab_display(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"HideToolbar")
                     ) {
                         let output = <bool as WithDeserializer>::init(helper, event)?;
                         return self.handle_hide_toolbar(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"HideMenubar")
                     ) {
                         let output = <bool as WithDeserializer>::init(helper, event)?;
                         return self.handle_hide_menubar(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"HideWindowUI")
                     ) {
                         let output = <bool as WithDeserializer>::init(helper, event)?;
@@ -11685,7 +11687,7 @@ pub mod document {
                         );
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"ZoomMode")
                     ) {
                         let output =
@@ -11695,7 +11697,7 @@ pub mod document {
                         return self.handle_zoom_mode(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"Zoom")
                     ) {
                         let output = <f64 as WithDeserializer>::init(helper, event)?;
@@ -12279,7 +12281,7 @@ pub mod document {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"PageMode",
                                 false,
                             )?;
@@ -12296,7 +12298,7 @@ pub mod document {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"PageLayout",
                                 false,
                             )?;
@@ -12313,7 +12315,7 @@ pub mod document {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"TabDisplay",
                                 false,
                             )?;
@@ -12330,7 +12332,7 @@ pub mod document {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"HideToolbar",
                                 false,
                             )?;
@@ -12347,7 +12349,7 @@ pub mod document {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"HideMenubar",
                                 false,
                             )?;
@@ -12364,7 +12366,7 @@ pub mod document {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"HideWindowUI",
                                 false,
                             )?;
@@ -12381,7 +12383,7 @@ pub mod document {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"ZoomMode",
                                 false,
                             )?;
@@ -12398,7 +12400,7 @@ pub mod document {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Zoom",
                                 false,
                             )?;
@@ -13194,7 +13196,7 @@ pub mod document {
                         (S::CommonData(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"CommonData",
                                 false,
                             )?;
@@ -13211,7 +13213,7 @@ pub mod document {
                         (S::Pages(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Pages",
                                 false,
                             )?;
@@ -13228,7 +13230,7 @@ pub mod document {
                         (S::Outlines(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Outlines",
                                 true,
                             )?;
@@ -13245,7 +13247,7 @@ pub mod document {
                         (S::Permissions(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Permissions",
                                 false,
                             )?;
@@ -13262,7 +13264,7 @@ pub mod document {
                         (S::Actions(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Actions",
                                 true,
                             )?;
@@ -13279,7 +13281,7 @@ pub mod document {
                         (S::VPreferences(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"VPreferences",
                                 false,
                             )?;
@@ -13296,7 +13298,7 @@ pub mod document {
                         (S::Bookmarks(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Bookmarks",
                                 false,
                             )?;
@@ -13313,7 +13315,7 @@ pub mod document {
                         (S::Annotations(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Annotations",
                                 false,
                             )?;
@@ -13330,7 +13332,7 @@ pub mod document {
                         (S::CustomTags(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"CustomTags",
                                 false,
                             )?;
@@ -13347,7 +13349,7 @@ pub mod document {
                         (S::Attachments(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Attachments",
                                 false,
                             )?;
@@ -13364,7 +13366,7 @@ pub mod document {
                         (S::Extensions(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Extensions",
                                 false,
                             )?;
@@ -13442,12 +13444,12 @@ pub mod document {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Printable")
                     ) {
                         helper.read_attrib(&mut printable, b"Printable", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Copies")
                     ) {
                         helper.read_attrib(&mut copies, b"Copies", &attrib.value)?;
@@ -13535,12 +13537,12 @@ pub mod document {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"StartDate")
                     ) {
                         helper.read_attrib(&mut start_date, b"StartDate", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"EndDate")
                     ) {
                         helper.read_attrib(&mut end_date, b"EndDate", &attrib.value)?;
@@ -14034,7 +14036,7 @@ pub mod document {
                         (S::MaxUnitId(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"MaxUnitID",
                                 false,
                             )?;
@@ -14051,7 +14053,7 @@ pub mod document {
                         (S::PageArea(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"PageArea",
                                 false,
                             )?;
@@ -14068,7 +14070,7 @@ pub mod document {
                         (S::PublicRes(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"PublicRes",
                                 false,
                             )?;
@@ -14085,7 +14087,7 @@ pub mod document {
                         (S::DocumentRes(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"DocumentRes",
                                 false,
                             )?;
@@ -14102,7 +14104,7 @@ pub mod document {
                         (S::TemplatePage(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"TemplatePage",
                                 false,
                             )?;
@@ -14119,7 +14121,7 @@ pub mod document {
                         (S::DefaultCs(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"DefaultCs",
                                 false,
                             )?;
@@ -14310,7 +14312,7 @@ pub mod document {
                         (S::Page(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Page",
                                 false,
                             )?;
@@ -14498,7 +14500,7 @@ pub mod document {
                         (S::OutlineElem(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"OutlineElem",
                                 true,
                             )?;
@@ -14683,7 +14685,7 @@ pub mod document {
                         (S::Bookmark(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Bookmark",
                                 false,
                             )?;
@@ -14755,22 +14757,22 @@ pub mod document {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ID")
                     ) {
                         helper.read_attrib(&mut id, b"ID", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Name")
                     ) {
                         helper.read_attrib(&mut name, b"Name", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ZOrder")
                     ) {
                         helper.read_attrib(&mut z_order, b"ZOrder", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"BaseLoc")
                     ) {
                         helper.read_attrib(&mut base_loc, b"BaseLoc", &attrib.value)?;
@@ -14865,12 +14867,12 @@ pub mod document {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ID")
                     ) {
                         helper.read_attrib(&mut id, b"ID", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"BaseLoc")
                     ) {
                         helper.read_attrib(&mut base_loc, b"BaseLoc", &attrib.value)?;
@@ -14970,7 +14972,7 @@ pub mod document {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib(&mut bytes, "Name", &self.value.name)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -15043,7 +15045,7 @@ pub mod document {
                                 ));
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib(&mut bytes, "Title", &self.value.title)?;
                             helper.write_attrib_opt(&mut bytes, "Count", &self.value.count)?;
                             helper.write_attrib(&mut bytes, "Expanded", &self.value.expanded)?;
@@ -15139,7 +15141,7 @@ pub mod document {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtPermissionXTypeSerializerState::Edit(x) => {
@@ -15303,7 +15305,7 @@ pub mod document {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtVPreferencesXTypeSerializerState::Content__(x) => {
@@ -15566,7 +15568,7 @@ pub mod document {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         DocumentXElementTypeSerializerState::CommonData(x) => {
@@ -15762,7 +15764,7 @@ pub mod document {
                             *self.state = CtPermissionPrintXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib(&mut bytes, "Printable", &self.value.printable)?;
                             helper.write_attrib(&mut bytes, "Copies", &self.value.copies)?;
                             helper.end_ns_scope();
@@ -15813,7 +15815,7 @@ pub mod document {
                                 CtPermissionValidPeriodXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib_opt(
                                 &mut bytes,
                                 "StartDate",
@@ -15890,7 +15892,7 @@ pub mod document {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         DocumentCommonDataXElementTypeSerializerState::MaxUnitId(x) => {
@@ -16036,7 +16038,7 @@ pub mod document {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         DocumentPagesXElementTypeSerializerState::Page(x) => match x
@@ -16103,7 +16105,7 @@ pub mod document {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         DocumentOutlinesXElementTypeSerializerState::OutlineElem(x) => {
@@ -16169,7 +16171,7 @@ pub mod document {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         DocumentBookmarksXElementTypeSerializerState::Bookmark(x) => {
@@ -16231,7 +16233,7 @@ pub mod document {
                                 DocumentCommonDataTemplatePageXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib(&mut bytes, "ID", &self.value.id)?;
                             helper.write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
                             helper.write_attrib_opt(&mut bytes, "ZOrder", &self.value.z_order)?;
@@ -16286,7 +16288,7 @@ pub mod document {
                             *self.state = DocumentPagesPageXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib(&mut bytes, "ID", &self.value.id)?;
                             helper.write_attrib(&mut bytes, "BaseLoc", &self.value.base_loc)?;
                             helper.end_ns_scope();
@@ -16463,27 +16465,27 @@ pub mod extensions {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"AppName")
                     ) {
                         helper.read_attrib(&mut app_name, b"AppName", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Company")
                     ) {
                         helper.read_attrib(&mut company, b"Company", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"AppVersion")
                     ) {
                         helper.read_attrib(&mut app_version, b"AppVersion", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Date")
                     ) {
                         helper.read_attrib(&mut date, b"Date", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"RefId")
                     ) {
                         helper.read_attrib(&mut ref_id, b"RefId", &attrib.value)?;
@@ -16665,7 +16667,7 @@ pub mod extensions {
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"Property")
                     ) {
                         let output =
@@ -16675,14 +16677,14 @@ pub mod extensions {
                         return self.handle_property(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"Data")
                     ) {
                         let output = <AnyElement as WithDeserializer>::init(helper, event)?;
                         return self.handle_data(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"ExtendData")
                     ) {
                         let output = <String as WithDeserializer>::init(helper, event)?;
@@ -16946,7 +16948,7 @@ pub mod extensions {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Property",
                                 false,
                             )?;
@@ -16963,7 +16965,7 @@ pub mod extensions {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Data",
                                 true,
                             )?;
@@ -16980,7 +16982,7 @@ pub mod extensions {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"ExtendData",
                                 false,
                             )?;
@@ -17155,7 +17157,7 @@ pub mod extensions {
                         (S::Extension(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Extension",
                                 true,
                             )?;
@@ -17225,12 +17227,12 @@ pub mod extensions {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Name")
                     ) {
                         helper.read_attrib(&mut name, b"Name", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Type")
                     ) {
                         helper.read_attrib(&mut type_, b"Type", &attrib.value)?;
@@ -17394,7 +17396,7 @@ pub mod extensions {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib(&mut bytes, "AppName", &self.value.app_name)?;
                             helper.write_attrib_opt(&mut bytes, "Company", &self.value.company)?;
                             helper.write_attrib_opt(
@@ -17549,7 +17551,7 @@ pub mod extensions {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         ExtensionsXElementTypeSerializerState::Extension(x) => {
@@ -17609,7 +17611,7 @@ pub mod extensions {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib(&mut bytes, "Name", &self.value.name)?;
                             helper.write_attrib_opt(&mut bytes, "Type", &self.value.type_)?;
                             return Ok(Some(Event::Start(bytes)));
@@ -18747,7 +18749,7 @@ pub mod ofd {
                         (S::DocId(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"DocID",
                                 false,
                             )?;
@@ -18764,7 +18766,7 @@ pub mod ofd {
                         (S::Title(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Title",
                                 false,
                             )?;
@@ -18781,7 +18783,7 @@ pub mod ofd {
                         (S::Author(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Author",
                                 false,
                             )?;
@@ -18798,7 +18800,7 @@ pub mod ofd {
                         (S::Subject(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Subject",
                                 false,
                             )?;
@@ -18815,7 +18817,7 @@ pub mod ofd {
                         (S::Abstract(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Abstract",
                                 false,
                             )?;
@@ -18832,7 +18834,7 @@ pub mod ofd {
                         (S::CreationDate(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"CreationDate",
                                 false,
                             )?;
@@ -18849,7 +18851,7 @@ pub mod ofd {
                         (S::ModDate(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"ModDate",
                                 false,
                             )?;
@@ -18866,7 +18868,7 @@ pub mod ofd {
                         (S::DocUsage(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"DocUsage",
                                 false,
                             )?;
@@ -18883,7 +18885,7 @@ pub mod ofd {
                         (S::Cover(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Cover",
                                 false,
                             )?;
@@ -18900,7 +18902,7 @@ pub mod ofd {
                         (S::Keywords(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Keywords",
                                 false,
                             )?;
@@ -18917,7 +18919,7 @@ pub mod ofd {
                         (S::Creator(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Creator",
                                 false,
                             )?;
@@ -18934,7 +18936,7 @@ pub mod ofd {
                         (S::CreatorVersion(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"CreatorVersion",
                                 false,
                             )?;
@@ -18951,7 +18953,7 @@ pub mod ofd {
                         (S::CustomDatas(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"CustomDatas",
                                 false,
                             )?;
@@ -19034,12 +19036,12 @@ pub mod ofd {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Version")
                     ) {
                         helper.read_attrib(&mut version, b"Version", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DocType")
                     ) {
                         helper.read_attrib(&mut doc_type, b"DocType", &attrib.value)?;
@@ -19169,7 +19171,7 @@ pub mod ofd {
                         (S::DocBody(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"DocBody",
                                 false,
                             )?;
@@ -19356,7 +19358,7 @@ pub mod ofd {
                         (S::Keyword(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Keyword",
                                 false,
                             )?;
@@ -19543,7 +19545,7 @@ pub mod ofd {
                         (S::CustomData(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"CustomData",
                                 false,
                             )?;
@@ -19918,7 +19920,7 @@ pub mod ofd {
                         (S::DocInfo(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"DocInfo",
                                 false,
                             )?;
@@ -19935,7 +19937,7 @@ pub mod ofd {
                         (S::DocRoot(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"DocRoot",
                                 false,
                             )?;
@@ -19952,7 +19954,7 @@ pub mod ofd {
                         (S::Versions(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Versions",
                                 false,
                             )?;
@@ -19969,7 +19971,7 @@ pub mod ofd {
                         (S::Signatures(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Signatures",
                                 false,
                             )?;
@@ -20156,7 +20158,7 @@ pub mod ofd {
                         (S::Version(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Version",
                                 false,
                             )?;
@@ -20228,22 +20230,22 @@ pub mod ofd {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ID")
                     ) {
                         helper.read_attrib(&mut id, b"ID", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Index")
                     ) {
                         helper.read_attrib(&mut index, b"Index", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Current")
                     ) {
                         helper.read_attrib(&mut current, b"Current", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"BaseLoc")
                     ) {
                         helper.read_attrib(&mut base_loc, b"BaseLoc", &attrib.value)?;
@@ -20378,7 +20380,7 @@ pub mod ofd {
                                 )?);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtDocInfoXTypeSerializerState::DocId(x) => {
@@ -20609,7 +20611,7 @@ pub mod ofd {
                                 ));
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib(&mut bytes, "Version", &self.value.version)?;
                             helper.write_attrib(&mut bytes, "DocType", &self.value.doc_type)?;
                             return Ok(Some(Event::Start(bytes)));
@@ -20675,7 +20677,7 @@ pub mod ofd {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtDocInfoKeywordsXElementTypeSerializerState::Keyword(x) => {
@@ -20751,7 +20753,7 @@ pub mod ofd {
                                 );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtDocInfoCustomDatasXElementTypeSerializerState::CustomData(x) => {
@@ -20829,7 +20831,7 @@ pub mod ofd {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         OfdDocBodyXElementTypeSerializerState::DocInfo(x) => {
@@ -20941,7 +20943,7 @@ pub mod ofd {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         OfdDocBodyVersionsXElementTypeSerializerState::Version(x) => {
@@ -21003,7 +21005,7 @@ pub mod ofd {
                                 OfdDocBodyVersionsVersionXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib(&mut bytes, "ID", &self.value.id)?;
                             helper.write_attrib(&mut bytes, "Index", &self.value.index)?;
                             helper.write_attrib(&mut bytes, "Current", &self.value.current)?;
@@ -23055,27 +23057,27 @@ pub mod page {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"MapType")
                     ) {
                         helper.read_attrib(&mut map_type, b"MapType", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"MapUnit")
                     ) {
                         helper.read_attrib(&mut map_unit, b"MapUnit", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Extend")
                     ) {
                         helper.read_attrib(&mut extend, b"Extend", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"StartPoint")
                     ) {
                         helper.read_attrib(&mut start_point, b"StartPoint", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"EndPoint")
                     ) {
                         helper.read_attrib(&mut end_point, b"EndPoint", &attrib.value)?;
@@ -23208,7 +23210,7 @@ pub mod page {
                         (S::Segment(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Segment",
                                 true,
                             )?;
@@ -23286,17 +23288,17 @@ pub mod page {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"CodePosition")
                     ) {
                         helper.read_attrib(&mut code_position, b"CodePosition", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"CodeCount")
                     ) {
                         helper.read_attrib(&mut code_count, b"CodeCount", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"GlyphCount")
                     ) {
                         helper.read_attrib(&mut glyph_count, b"GlyphCount", &attrib.value)?;
@@ -23423,7 +23425,7 @@ pub mod page {
                         (S::Glyphs(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Glyphs",
                                 false,
                             )?;
@@ -23607,7 +23609,7 @@ pub mod page {
                         (S::Area(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Area",
                                 true,
                             )?;
@@ -23679,22 +23681,22 @@ pub mod page {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Value")
                     ) {
                         helper.read_attrib(&mut value, b"Value", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Index")
                     ) {
                         helper.read_attrib(&mut index, b"Index", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ColorSpace")
                     ) {
                         helper.read_attrib(&mut color_space, b"ColorSpace", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Alpha")
                     ) {
                         helper.read_attrib(&mut alpha, b"Alpha", &attrib.value)?;
@@ -23878,7 +23880,7 @@ pub mod page {
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"Pattern")
                     ) {
                         let output =
@@ -23886,7 +23888,7 @@ pub mod page {
                         return self.handle_pattern(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"AxialShd")
                     ) {
                         let output =
@@ -23894,7 +23896,7 @@ pub mod page {
                         return self.handle_axial_shd(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"RadialShd")
                     ) {
                         let output =
@@ -23902,7 +23904,7 @@ pub mod page {
                         return self.handle_radial_shd(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"GouraudShd")
                     ) {
                         let output =
@@ -23910,7 +23912,7 @@ pub mod page {
                         return self.handle_gouraud_shd(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"LaGourandShd")
                     ) {
                         let output =
@@ -24309,7 +24311,7 @@ pub mod page {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Pattern",
                                 true,
                             )?;
@@ -24326,7 +24328,7 @@ pub mod page {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"AxialShd",
                                 true,
                             )?;
@@ -24343,7 +24345,7 @@ pub mod page {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"RadialShd",
                                 true,
                             )?;
@@ -24360,7 +24362,7 @@ pub mod page {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"GouraudShd",
                                 true,
                             )?;
@@ -24377,7 +24379,7 @@ pub mod page {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"LaGourandShd",
                                 true,
                             )?;
@@ -24468,67 +24470,67 @@ pub mod page {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Boundary")
                     ) {
                         helper.read_attrib(&mut boundary, b"Boundary", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Name")
                     ) {
                         helper.read_attrib(&mut name, b"Name", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Visible")
                     ) {
                         helper.read_attrib(&mut visible, b"Visible", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"CTM")
                     ) {
                         helper.read_attrib(&mut ctm, b"CTM", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DrawParam")
                     ) {
                         helper.read_attrib(&mut draw_param, b"DrawParam", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"LineWidth")
                     ) {
                         helper.read_attrib(&mut line_width, b"LineWidth", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Cap")
                     ) {
                         helper.read_attrib(&mut cap, b"Cap", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Join")
                     ) {
                         helper.read_attrib(&mut join, b"Join", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"MiterLimit")
                     ) {
                         helper.read_attrib(&mut miter_limit, b"MiterLimit", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DashOffset")
                     ) {
                         helper.read_attrib(&mut dash_offset, b"DashOffset", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DashPattern")
                     ) {
                         helper.read_attrib(&mut dash_pattern, b"DashPattern", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Alpha")
                     ) {
                         helper.read_attrib(&mut alpha, b"Alpha", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ResourceID")
                     ) {
                         helper.read_attrib(&mut resource_id, b"ResourceID", &attrib.value)?;
@@ -24732,7 +24734,7 @@ pub mod page {
                         (S::Actions(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Actions",
                                 true,
                             )?;
@@ -24749,7 +24751,7 @@ pub mod page {
                         (S::Clips(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Clips",
                                 true,
                             )?;
@@ -24834,7 +24836,7 @@ pub mod page {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Extend")
                     ) {
                         helper.read_attrib(&mut extend, b"Extend", &attrib.value)?;
@@ -25020,7 +25022,7 @@ pub mod page {
                         (S::Point(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Point",
                                 true,
                             )?;
@@ -25037,7 +25039,7 @@ pub mod page {
                         (S::BackColor(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"BackColor",
                                 true,
                             )?;
@@ -25136,62 +25138,62 @@ pub mod page {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Boundary")
                     ) {
                         helper.read_attrib(&mut boundary, b"Boundary", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Name")
                     ) {
                         helper.read_attrib(&mut name, b"Name", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Visible")
                     ) {
                         helper.read_attrib(&mut visible, b"Visible", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"CTM")
                     ) {
                         helper.read_attrib(&mut ctm, b"CTM", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DrawParam")
                     ) {
                         helper.read_attrib(&mut draw_param, b"DrawParam", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"LineWidth")
                     ) {
                         helper.read_attrib(&mut line_width, b"LineWidth", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Cap")
                     ) {
                         helper.read_attrib(&mut cap, b"Cap", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Join")
                     ) {
                         helper.read_attrib(&mut join, b"Join", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"MiterLimit")
                     ) {
                         helper.read_attrib(&mut miter_limit, b"MiterLimit", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DashOffset")
                     ) {
                         helper.read_attrib(&mut dash_offset, b"DashOffset", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DashPattern")
                     ) {
                         helper.read_attrib(&mut dash_pattern, b"DashPattern", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Alpha")
                     ) {
                         helper.read_attrib(&mut alpha, b"Alpha", &attrib.value)?;
@@ -25393,7 +25395,7 @@ pub mod page {
                         (S::Actions(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Actions",
                                 true,
                             )?;
@@ -25410,7 +25412,7 @@ pub mod page {
                         (S::Clips(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Clips",
                                 true,
                             )?;
@@ -25528,77 +25530,77 @@ pub mod page {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Boundary")
                     ) {
                         helper.read_attrib(&mut boundary, b"Boundary", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Name")
                     ) {
                         helper.read_attrib(&mut name, b"Name", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Visible")
                     ) {
                         helper.read_attrib(&mut visible, b"Visible", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"CTM")
                     ) {
                         helper.read_attrib(&mut ctm, b"CTM", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DrawParam")
                     ) {
                         helper.read_attrib(&mut draw_param, b"DrawParam", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"LineWidth")
                     ) {
                         helper.read_attrib(&mut line_width, b"LineWidth", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Cap")
                     ) {
                         helper.read_attrib(&mut cap, b"Cap", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Join")
                     ) {
                         helper.read_attrib(&mut join, b"Join", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"MiterLimit")
                     ) {
                         helper.read_attrib(&mut miter_limit, b"MiterLimit", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DashOffset")
                     ) {
                         helper.read_attrib(&mut dash_offset, b"DashOffset", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DashPattern")
                     ) {
                         helper.read_attrib(&mut dash_pattern, b"DashPattern", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Alpha")
                     ) {
                         helper.read_attrib(&mut alpha, b"Alpha", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ResourceID")
                     ) {
                         helper.read_attrib(&mut resource_id, b"ResourceID", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Substitution")
                     ) {
                         helper.read_attrib(&mut substitution, b"Substitution", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ImageMask")
                     ) {
                         helper.read_attrib(&mut image_mask, b"ImageMask", &attrib.value)?;
@@ -25865,7 +25867,7 @@ pub mod page {
                         (S::Actions(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Actions",
                                 true,
                             )?;
@@ -25882,7 +25884,7 @@ pub mod page {
                         (S::Clips(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Clips",
                                 true,
                             )?;
@@ -25899,7 +25901,7 @@ pub mod page {
                         (S::Border(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Border",
                                 true,
                             )?;
@@ -25988,7 +25990,7 @@ pub mod page {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"VerticesPerRow")
                     ) {
                         helper.read_attrib(
@@ -25997,7 +25999,7 @@ pub mod page {
                             &attrib.value,
                         )?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Extend")
                     ) {
                         helper.read_attrib(&mut extend, b"Extend", &attrib.value)?;
@@ -26185,7 +26187,7 @@ pub mod page {
                         (S::Point(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Point",
                                 true,
                             )?;
@@ -26202,7 +26204,7 @@ pub mod page {
                         (S::BackColor(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"BackColor",
                                 true,
                             )?;
@@ -26276,12 +26278,12 @@ pub mod page {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Type")
                     ) {
                         helper.read_attrib(&mut type_, b"Type", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DrawParam")
                     ) {
                         helper.read_attrib(&mut draw_param, b"DrawParam", &attrib.value)?;
@@ -26431,7 +26433,7 @@ pub mod page {
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"TextObject")
                     ) {
                         let output =
@@ -26441,7 +26443,7 @@ pub mod page {
                         return self.handle_text_object(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"PathObject")
                     ) {
                         let output =
@@ -26451,7 +26453,7 @@ pub mod page {
                         return self.handle_path_object(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"ImageObject")
                     ) {
                         let output =
@@ -26461,7 +26463,7 @@ pub mod page {
                         return self.handle_image_object(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"CompositeObject")
                     ) {
                         let output = < super :: CtPageBlockCompositeObjectXElementType as WithDeserializer > :: init (helper , event) ? ;
@@ -26473,7 +26475,7 @@ pub mod page {
                         );
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"PageBlock")
                     ) {
                         let output =
@@ -26878,7 +26880,7 @@ pub mod page {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"TextObject",
                                 true,
                             )?;
@@ -26895,7 +26897,7 @@ pub mod page {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"PathObject",
                                 true,
                             )?;
@@ -26912,7 +26914,7 @@ pub mod page {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"ImageObject",
                                 true,
                             )?;
@@ -26929,7 +26931,7 @@ pub mod page {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"CompositeObject",
                                 true,
                             )?;
@@ -26946,7 +26948,7 @@ pub mod page {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"PageBlock",
                                 true,
                             )?;
@@ -27151,7 +27153,7 @@ pub mod page {
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"TextObject")
                     ) {
                         let output =
@@ -27161,7 +27163,7 @@ pub mod page {
                         return self.handle_text_object(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"PathObject")
                     ) {
                         let output =
@@ -27171,7 +27173,7 @@ pub mod page {
                         return self.handle_path_object(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"ImageObject")
                     ) {
                         let output =
@@ -27181,7 +27183,7 @@ pub mod page {
                         return self.handle_image_object(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"CompositeObject")
                     ) {
                         let output = < super :: CtPageBlockCompositeObjectXElementType as WithDeserializer > :: init (helper , event) ? ;
@@ -27193,7 +27195,7 @@ pub mod page {
                         );
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"PageBlock")
                     ) {
                         let output =
@@ -27603,7 +27605,7 @@ pub mod page {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"TextObject",
                                 true,
                             )?;
@@ -27620,7 +27622,7 @@ pub mod page {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"PathObject",
                                 true,
                             )?;
@@ -27637,7 +27639,7 @@ pub mod page {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"ImageObject",
                                 true,
                             )?;
@@ -27654,7 +27656,7 @@ pub mod page {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"CompositeObject",
                                 true,
                             )?;
@@ -27671,7 +27673,7 @@ pub mod page {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"PageBlock",
                                 true,
                             )?;
@@ -27772,77 +27774,77 @@ pub mod page {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Boundary")
                     ) {
                         helper.read_attrib(&mut boundary, b"Boundary", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Name")
                     ) {
                         helper.read_attrib(&mut name, b"Name", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Visible")
                     ) {
                         helper.read_attrib(&mut visible, b"Visible", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"CTM")
                     ) {
                         helper.read_attrib(&mut ctm, b"CTM", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DrawParam")
                     ) {
                         helper.read_attrib(&mut draw_param, b"DrawParam", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"LineWidth")
                     ) {
                         helper.read_attrib(&mut line_width, b"LineWidth", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Cap")
                     ) {
                         helper.read_attrib(&mut cap, b"Cap", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Join")
                     ) {
                         helper.read_attrib(&mut join, b"Join", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"MiterLimit")
                     ) {
                         helper.read_attrib(&mut miter_limit, b"MiterLimit", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DashOffset")
                     ) {
                         helper.read_attrib(&mut dash_offset, b"DashOffset", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DashPattern")
                     ) {
                         helper.read_attrib(&mut dash_pattern, b"DashPattern", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Alpha")
                     ) {
                         helper.read_attrib(&mut alpha, b"Alpha", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Stroke")
                     ) {
                         helper.read_attrib(&mut stroke, b"Stroke", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Fill")
                     ) {
                         helper.read_attrib(&mut fill, b"Fill", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Rule")
                     ) {
                         helper.read_attrib(&mut rule, b"Rule", &attrib.value)?;
@@ -28226,7 +28228,7 @@ pub mod page {
                         (S::Actions(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Actions",
                                 true,
                             )?;
@@ -28243,7 +28245,7 @@ pub mod page {
                         (S::Clips(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Clips",
                                 true,
                             )?;
@@ -28260,7 +28262,7 @@ pub mod page {
                         (S::StrokeColor(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"StrokeColor",
                                 true,
                             )?;
@@ -28277,7 +28279,7 @@ pub mod page {
                         (S::FillColor(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"FillColor",
                                 true,
                             )?;
@@ -28294,7 +28296,7 @@ pub mod page {
                         (S::AbbreviatedData(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"AbbreviatedData",
                                 false,
                             )?;
@@ -28394,37 +28396,37 @@ pub mod page {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Width")
                     ) {
                         helper.read_attrib(&mut width, b"Width", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Height")
                     ) {
                         helper.read_attrib(&mut height, b"Height", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"XStep")
                     ) {
                         helper.read_attrib(&mut x_step, b"XStep", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"YStep")
                     ) {
                         helper.read_attrib(&mut y_step, b"YStep", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ReflectMethod")
                     ) {
                         helper.read_attrib(&mut reflect_method, b"ReflectMethod", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"RelativeTo")
                     ) {
                         helper.read_attrib(&mut relative_to, b"RelativeTo", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"CTM")
                     ) {
                         helper.read_attrib(&mut ctm, b"CTM", &attrib.value)?;
@@ -28560,7 +28562,7 @@ pub mod page {
                         (S::CellContent(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"CellContent",
                                 true,
                             )?;
@@ -28654,47 +28656,47 @@ pub mod page {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"MapType")
                     ) {
                         helper.read_attrib(&mut map_type, b"MapType", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"MapUnit")
                     ) {
                         helper.read_attrib(&mut map_unit, b"MapUnit", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Eccentricity")
                     ) {
                         helper.read_attrib(&mut eccentricity, b"Eccentricity", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Angle")
                     ) {
                         helper.read_attrib(&mut angle, b"Angle", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"StartPoint")
                     ) {
                         helper.read_attrib(&mut start_point, b"StartPoint", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"StartRadius")
                     ) {
                         helper.read_attrib(&mut start_radius, b"StartRadius", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"EndPoint")
                     ) {
                         helper.read_attrib(&mut end_point, b"EndPoint", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"EndRadius")
                     ) {
                         helper.read_attrib(&mut end_radius, b"EndRadius", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Extend")
                     ) {
                         helper.read_attrib(&mut extend, b"Extend", &attrib.value)?;
@@ -28834,7 +28836,7 @@ pub mod page {
                         (S::Seqment(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Seqment",
                                 true,
                             )?;
@@ -28952,107 +28954,107 @@ pub mod page {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Boundary")
                     ) {
                         helper.read_attrib(&mut boundary, b"Boundary", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Name")
                     ) {
                         helper.read_attrib(&mut name, b"Name", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Visible")
                     ) {
                         helper.read_attrib(&mut visible, b"Visible", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"CTM")
                     ) {
                         helper.read_attrib(&mut ctm, b"CTM", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DrawParam")
                     ) {
                         helper.read_attrib(&mut draw_param, b"DrawParam", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"LineWidth")
                     ) {
                         helper.read_attrib(&mut line_width, b"LineWidth", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Cap")
                     ) {
                         helper.read_attrib(&mut cap, b"Cap", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Join")
                     ) {
                         helper.read_attrib(&mut join, b"Join", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"MiterLimit")
                     ) {
                         helper.read_attrib(&mut miter_limit, b"MiterLimit", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DashOffset")
                     ) {
                         helper.read_attrib(&mut dash_offset, b"DashOffset", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DashPattern")
                     ) {
                         helper.read_attrib(&mut dash_pattern, b"DashPattern", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Alpha")
                     ) {
                         helper.read_attrib(&mut alpha, b"Alpha", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Font")
                     ) {
                         helper.read_attrib(&mut font, b"Font", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Size")
                     ) {
                         helper.read_attrib(&mut size, b"Size", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Stroke")
                     ) {
                         helper.read_attrib(&mut stroke, b"Stroke", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Fill")
                     ) {
                         helper.read_attrib(&mut fill, b"Fill", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"HScale")
                     ) {
                         helper.read_attrib(&mut h_scale, b"HScale", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ReadDirection")
                     ) {
                         helper.read_attrib(&mut read_direction, b"ReadDirection", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"CharDirection")
                     ) {
                         helper.read_attrib(&mut char_direction, b"CharDirection", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Weight")
                     ) {
                         helper.read_attrib(&mut weight, b"Weight", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Italic")
                     ) {
                         helper.read_attrib(&mut italic, b"Italic", &attrib.value)?;
@@ -29278,7 +29280,7 @@ pub mod page {
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"Actions")
                     ) {
                         let output =
@@ -29288,7 +29290,7 @@ pub mod page {
                         return self.handle_actions(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"Clips")
                     ) {
                         let output =
@@ -29298,7 +29300,7 @@ pub mod page {
                         return self.handle_clips(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"FillColor")
                     ) {
                         let output =
@@ -29306,7 +29308,7 @@ pub mod page {
                         return self.handle_fill_color(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"StrokeColor")
                     ) {
                         let output =
@@ -29314,7 +29316,7 @@ pub mod page {
                         return self.handle_stroke_color(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"CGTransform")
                     ) {
                         let output =
@@ -29322,7 +29324,7 @@ pub mod page {
                         return self.handle_cg_transform(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"TextCode")
                     ) {
                         let output = <super::CtTextTextCodeXElementType as WithDeserializer>::init(
@@ -29787,7 +29789,7 @@ pub mod page {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Actions",
                                 true,
                             )?;
@@ -29804,7 +29806,7 @@ pub mod page {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Clips",
                                 true,
                             )?;
@@ -29821,7 +29823,7 @@ pub mod page {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"FillColor",
                                 true,
                             )?;
@@ -29838,7 +29840,7 @@ pub mod page {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"StrokeColor",
                                 true,
                             )?;
@@ -29855,7 +29857,7 @@ pub mod page {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"CGTransform",
                                 false,
                             )?;
@@ -29872,7 +29874,7 @@ pub mod page {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"TextCode",
                                 false,
                             )?;
@@ -30293,7 +30295,7 @@ pub mod page {
                         (S::Template(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Template",
                                 false,
                             )?;
@@ -30310,7 +30312,7 @@ pub mod page {
                         (S::PageRes(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"PageRes",
                                 false,
                             )?;
@@ -30327,7 +30329,7 @@ pub mod page {
                         (S::Area(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Area",
                                 false,
                             )?;
@@ -30344,7 +30346,7 @@ pub mod page {
                         (S::Content(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Content",
                                 true,
                             )?;
@@ -30361,7 +30363,7 @@ pub mod page {
                         (S::Actions(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Actions",
                                 true,
                             )?;
@@ -30434,7 +30436,7 @@ pub mod page {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Position")
                     ) {
                         helper.read_attrib(&mut position, b"Position", &attrib.value)?;
@@ -30561,7 +30563,7 @@ pub mod page {
                         (S::Color(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Color",
                                 true,
                             )?;
@@ -30633,12 +30635,12 @@ pub mod page {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DrawParam")
                     ) {
                         helper.read_attrib(&mut draw_param, b"DrawParam", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"CTM")
                     ) {
                         helper.read_attrib(&mut ctm, b"CTM", &attrib.value)?;
@@ -30810,14 +30812,14 @@ pub mod page {
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"Path")
                     ) {
                         let output = <super::CtPathXType as WithDeserializer>::init(helper, event)?;
                         return self.handle_path(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"Text")
                     ) {
                         let output = <super::CtTextXType as WithDeserializer>::init(helper, event)?;
@@ -31019,7 +31021,7 @@ pub mod page {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Path",
                                 true,
                             )?;
@@ -31036,7 +31038,7 @@ pub mod page {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Text",
                                 true,
                             )?;
@@ -31218,7 +31220,7 @@ pub mod page {
                         (S::Action(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Action",
                                 true,
                             )?;
@@ -31401,7 +31403,7 @@ pub mod page {
                         (S::Clip(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Clip",
                                 true,
                             )?;
@@ -31474,17 +31476,17 @@ pub mod page {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"X")
                     ) {
                         helper.read_attrib(&mut x, b"X", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"y")
                     ) {
                         helper.read_attrib(&mut y, b"y", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"EdgeFlag")
                     ) {
                         helper.read_attrib(&mut edge_flag, b"EdgeFlag", &attrib.value)?;
@@ -31613,7 +31615,7 @@ pub mod page {
                         (S::Color(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Color",
                                 true,
                             )?;
@@ -31693,12 +31695,12 @@ pub mod page {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"LineWidth")
                     ) {
                         helper.read_attrib(&mut line_width, b"LineWidth", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"HorizonalCornerRadius")
                     ) {
                         helper.read_attrib(
@@ -31707,7 +31709,7 @@ pub mod page {
                             &attrib.value,
                         )?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"VerticalCornerRadius")
                     ) {
                         helper.read_attrib(
@@ -31716,12 +31718,12 @@ pub mod page {
                             &attrib.value,
                         )?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DashOffset")
                     ) {
                         helper.read_attrib(&mut dash_offset, b"DashOffset", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DashPattern")
                     ) {
                         helper.read_attrib(&mut dash_pattern, b"DashPattern", &attrib.value)?;
@@ -31855,7 +31857,7 @@ pub mod page {
                         (S::BorderColor(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"BorderColor",
                                 true,
                             )?;
@@ -31931,12 +31933,12 @@ pub mod page {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"X")
                     ) {
                         helper.read_attrib(&mut x, b"X", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"y")
                     ) {
                         helper.read_attrib(&mut y, b"y", &attrib.value)?;
@@ -32064,7 +32066,7 @@ pub mod page {
                         (S::Color(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Color",
                                 true,
                             )?;
@@ -32179,112 +32181,112 @@ pub mod page {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Boundary")
                     ) {
                         helper.read_attrib(&mut boundary, b"Boundary", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Name")
                     ) {
                         helper.read_attrib(&mut name, b"Name", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Visible")
                     ) {
                         helper.read_attrib(&mut visible, b"Visible", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"CTM")
                     ) {
                         helper.read_attrib(&mut ctm, b"CTM", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DrawParam")
                     ) {
                         helper.read_attrib(&mut draw_param, b"DrawParam", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"LineWidth")
                     ) {
                         helper.read_attrib(&mut line_width, b"LineWidth", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Cap")
                     ) {
                         helper.read_attrib(&mut cap, b"Cap", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Join")
                     ) {
                         helper.read_attrib(&mut join, b"Join", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"MiterLimit")
                     ) {
                         helper.read_attrib(&mut miter_limit, b"MiterLimit", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DashOffset")
                     ) {
                         helper.read_attrib(&mut dash_offset, b"DashOffset", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DashPattern")
                     ) {
                         helper.read_attrib(&mut dash_pattern, b"DashPattern", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Alpha")
                     ) {
                         helper.read_attrib(&mut alpha, b"Alpha", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Font")
                     ) {
                         helper.read_attrib(&mut font, b"Font", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Size")
                     ) {
                         helper.read_attrib(&mut size, b"Size", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Stroke")
                     ) {
                         helper.read_attrib(&mut stroke, b"Stroke", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Fill")
                     ) {
                         helper.read_attrib(&mut fill, b"Fill", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"HScale")
                     ) {
                         helper.read_attrib(&mut h_scale, b"HScale", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ReadDirection")
                     ) {
                         helper.read_attrib(&mut read_direction, b"ReadDirection", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"CharDirection")
                     ) {
                         helper.read_attrib(&mut char_direction, b"CharDirection", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Weight")
                     ) {
                         helper.read_attrib(&mut weight, b"Weight", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Italic")
                     ) {
                         helper.read_attrib(&mut italic, b"Italic", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ID")
                     ) {
                         helper.read_attrib(&mut id, b"ID", &attrib.value)?;
@@ -32534,7 +32536,7 @@ pub mod page {
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"Actions")
                     ) {
                         let output =
@@ -32544,7 +32546,7 @@ pub mod page {
                         return self.handle_actions(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"Clips")
                     ) {
                         let output =
@@ -32554,7 +32556,7 @@ pub mod page {
                         return self.handle_clips(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"FillColor")
                     ) {
                         let output =
@@ -32562,7 +32564,7 @@ pub mod page {
                         return self.handle_fill_color(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"StrokeColor")
                     ) {
                         let output =
@@ -32570,7 +32572,7 @@ pub mod page {
                         return self.handle_stroke_color(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"CGTransform")
                     ) {
                         let output =
@@ -32578,7 +32580,7 @@ pub mod page {
                         return self.handle_cg_transform(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"TextCode")
                     ) {
                         let output = <super::CtTextTextCodeXElementType as WithDeserializer>::init(
@@ -33056,7 +33058,7 @@ pub mod page {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Actions",
                                 true,
                             )?;
@@ -33073,7 +33075,7 @@ pub mod page {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Clips",
                                 true,
                             )?;
@@ -33090,7 +33092,7 @@ pub mod page {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"FillColor",
                                 true,
                             )?;
@@ -33107,7 +33109,7 @@ pub mod page {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"StrokeColor",
                                 true,
                             )?;
@@ -33124,7 +33126,7 @@ pub mod page {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"CGTransform",
                                 false,
                             )?;
@@ -33141,7 +33143,7 @@ pub mod page {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"TextCode",
                                 false,
                             )?;
@@ -33244,82 +33246,82 @@ pub mod page {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Boundary")
                     ) {
                         helper.read_attrib(&mut boundary, b"Boundary", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Name")
                     ) {
                         helper.read_attrib(&mut name, b"Name", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Visible")
                     ) {
                         helper.read_attrib(&mut visible, b"Visible", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"CTM")
                     ) {
                         helper.read_attrib(&mut ctm, b"CTM", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DrawParam")
                     ) {
                         helper.read_attrib(&mut draw_param, b"DrawParam", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"LineWidth")
                     ) {
                         helper.read_attrib(&mut line_width, b"LineWidth", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Cap")
                     ) {
                         helper.read_attrib(&mut cap, b"Cap", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Join")
                     ) {
                         helper.read_attrib(&mut join, b"Join", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"MiterLimit")
                     ) {
                         helper.read_attrib(&mut miter_limit, b"MiterLimit", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DashOffset")
                     ) {
                         helper.read_attrib(&mut dash_offset, b"DashOffset", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DashPattern")
                     ) {
                         helper.read_attrib(&mut dash_pattern, b"DashPattern", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Alpha")
                     ) {
                         helper.read_attrib(&mut alpha, b"Alpha", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Stroke")
                     ) {
                         helper.read_attrib(&mut stroke, b"Stroke", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Fill")
                     ) {
                         helper.read_attrib(&mut fill, b"Fill", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Rule")
                     ) {
                         helper.read_attrib(&mut rule, b"Rule", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ID")
                     ) {
                         helper.read_attrib(&mut id, b"ID", &attrib.value)?;
@@ -33716,7 +33718,7 @@ pub mod page {
                         (S::Actions(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Actions",
                                 true,
                             )?;
@@ -33733,7 +33735,7 @@ pub mod page {
                         (S::Clips(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Clips",
                                 true,
                             )?;
@@ -33750,7 +33752,7 @@ pub mod page {
                         (S::StrokeColor(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"StrokeColor",
                                 true,
                             )?;
@@ -33767,7 +33769,7 @@ pub mod page {
                         (S::FillColor(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"FillColor",
                                 true,
                             )?;
@@ -33784,7 +33786,7 @@ pub mod page {
                         (S::AbbreviatedData(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"AbbreviatedData",
                                 false,
                             )?;
@@ -33912,82 +33914,82 @@ pub mod page {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Boundary")
                     ) {
                         helper.read_attrib(&mut boundary, b"Boundary", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Name")
                     ) {
                         helper.read_attrib(&mut name, b"Name", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Visible")
                     ) {
                         helper.read_attrib(&mut visible, b"Visible", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"CTM")
                     ) {
                         helper.read_attrib(&mut ctm, b"CTM", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DrawParam")
                     ) {
                         helper.read_attrib(&mut draw_param, b"DrawParam", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"LineWidth")
                     ) {
                         helper.read_attrib(&mut line_width, b"LineWidth", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Cap")
                     ) {
                         helper.read_attrib(&mut cap, b"Cap", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Join")
                     ) {
                         helper.read_attrib(&mut join, b"Join", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"MiterLimit")
                     ) {
                         helper.read_attrib(&mut miter_limit, b"MiterLimit", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DashOffset")
                     ) {
                         helper.read_attrib(&mut dash_offset, b"DashOffset", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DashPattern")
                     ) {
                         helper.read_attrib(&mut dash_pattern, b"DashPattern", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Alpha")
                     ) {
                         helper.read_attrib(&mut alpha, b"Alpha", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ResourceID")
                     ) {
                         helper.read_attrib(&mut resource_id, b"ResourceID", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Substitution")
                     ) {
                         helper.read_attrib(&mut substitution, b"Substitution", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ImageMask")
                     ) {
                         helper.read_attrib(&mut image_mask, b"ImageMask", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ID")
                     ) {
                         helper.read_attrib(&mut id, b"ID", &attrib.value)?;
@@ -34264,7 +34266,7 @@ pub mod page {
                         (S::Actions(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Actions",
                                 true,
                             )?;
@@ -34281,7 +34283,7 @@ pub mod page {
                         (S::Clips(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Clips",
                                 true,
                             )?;
@@ -34298,7 +34300,7 @@ pub mod page {
                         (S::Border(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Border",
                                 true,
                             )?;
@@ -34417,72 +34419,72 @@ pub mod page {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Boundary")
                     ) {
                         helper.read_attrib(&mut boundary, b"Boundary", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Name")
                     ) {
                         helper.read_attrib(&mut name, b"Name", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Visible")
                     ) {
                         helper.read_attrib(&mut visible, b"Visible", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"CTM")
                     ) {
                         helper.read_attrib(&mut ctm, b"CTM", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DrawParam")
                     ) {
                         helper.read_attrib(&mut draw_param, b"DrawParam", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"LineWidth")
                     ) {
                         helper.read_attrib(&mut line_width, b"LineWidth", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Cap")
                     ) {
                         helper.read_attrib(&mut cap, b"Cap", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Join")
                     ) {
                         helper.read_attrib(&mut join, b"Join", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"MiterLimit")
                     ) {
                         helper.read_attrib(&mut miter_limit, b"MiterLimit", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DashOffset")
                     ) {
                         helper.read_attrib(&mut dash_offset, b"DashOffset", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DashPattern")
                     ) {
                         helper.read_attrib(&mut dash_pattern, b"DashPattern", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Alpha")
                     ) {
                         helper.read_attrib(&mut alpha, b"Alpha", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ResourceID")
                     ) {
                         helper.read_attrib(&mut resource_id, b"ResourceID", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ID")
                     ) {
                         helper.read_attrib(&mut id, b"ID", &attrib.value)?;
@@ -34703,7 +34705,7 @@ pub mod page {
                         (S::Actions(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Actions",
                                 true,
                             )?;
@@ -34720,7 +34722,7 @@ pub mod page {
                         (S::Clips(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Clips",
                                 true,
                             )?;
@@ -34806,7 +34808,7 @@ pub mod page {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ID")
                     ) {
                         helper.read_attrib(&mut id, b"ID", &attrib.value)?;
@@ -34962,7 +34964,7 @@ pub mod page {
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"TextObject")
                     ) {
                         let output =
@@ -34972,7 +34974,7 @@ pub mod page {
                         return self.handle_text_object(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"PathObject")
                     ) {
                         let output =
@@ -34982,7 +34984,7 @@ pub mod page {
                         return self.handle_path_object(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"ImageObject")
                     ) {
                         let output =
@@ -34992,7 +34994,7 @@ pub mod page {
                         return self.handle_image_object(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"CompositeObject")
                     ) {
                         let output = < super :: CtPageBlockCompositeObjectXElementType as WithDeserializer > :: init (helper , event) ? ;
@@ -35004,7 +35006,7 @@ pub mod page {
                         );
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"PageBlock")
                     ) {
                         let output =
@@ -35420,7 +35422,7 @@ pub mod page {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"TextObject",
                                 true,
                             )?;
@@ -35437,7 +35439,7 @@ pub mod page {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"PathObject",
                                 true,
                             )?;
@@ -35454,7 +35456,7 @@ pub mod page {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"ImageObject",
                                 true,
                             )?;
@@ -35471,7 +35473,7 @@ pub mod page {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"CompositeObject",
                                 true,
                             )?;
@@ -35488,7 +35490,7 @@ pub mod page {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"PageBlock",
                                 true,
                             )?;
@@ -35551,7 +35553,7 @@ pub mod page {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Thumbnail")
                     ) {
                         helper.read_attrib(&mut thumbnail, b"Thumbnail", &attrib.value)?;
@@ -35707,7 +35709,7 @@ pub mod page {
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"TextObject")
                     ) {
                         let output =
@@ -35717,7 +35719,7 @@ pub mod page {
                         return self.handle_text_object(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"PathObject")
                     ) {
                         let output =
@@ -35727,7 +35729,7 @@ pub mod page {
                         return self.handle_path_object(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"ImageObject")
                     ) {
                         let output =
@@ -35737,7 +35739,7 @@ pub mod page {
                         return self.handle_image_object(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"CompositeObject")
                     ) {
                         let output = < super :: CtPageBlockCompositeObjectXElementType as WithDeserializer > :: init (helper , event) ? ;
@@ -35749,7 +35751,7 @@ pub mod page {
                         );
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"PageBlock")
                     ) {
                         let output =
@@ -36165,7 +36167,7 @@ pub mod page {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"TextObject",
                                 true,
                             )?;
@@ -36182,7 +36184,7 @@ pub mod page {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"PathObject",
                                 true,
                             )?;
@@ -36199,7 +36201,7 @@ pub mod page {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"ImageObject",
                                 true,
                             )?;
@@ -36216,7 +36218,7 @@ pub mod page {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"CompositeObject",
                                 true,
                             )?;
@@ -36233,7 +36235,7 @@ pub mod page {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"PageBlock",
                                 true,
                             )?;
@@ -36299,22 +36301,22 @@ pub mod page {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"X")
                     ) {
                         helper.read_attrib(&mut x, b"X", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"y")
                     ) {
                         helper.read_attrib(&mut y, b"y", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DeltaX")
                     ) {
                         helper.read_attrib(&mut delta_x, b"DeltaX", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Deltay")
                     ) {
                         helper.read_attrib(&mut deltay, b"Deltay", &attrib.value)?;
@@ -36459,12 +36461,12 @@ pub mod page {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"TemplateID")
                     ) {
                         helper.read_attrib(&mut template_id, b"TemplateID", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ZOrder")
                     ) {
                         helper.read_attrib(&mut z_order, b"ZOrder", &attrib.value)?;
@@ -36672,7 +36674,7 @@ pub mod page {
                         (S::Layer(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Layer",
                                 true,
                             )?;
@@ -36747,17 +36749,17 @@ pub mod page {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Type")
                     ) {
                         helper.read_attrib(&mut type_, b"Type", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DrawParam")
                     ) {
                         helper.read_attrib(&mut draw_param, b"DrawParam", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ID")
                     ) {
                         helper.read_attrib(&mut id, b"ID", &attrib.value)?;
@@ -36917,7 +36919,7 @@ pub mod page {
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"TextObject")
                     ) {
                         let output =
@@ -36927,7 +36929,7 @@ pub mod page {
                         return self.handle_text_object(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"PathObject")
                     ) {
                         let output =
@@ -36937,7 +36939,7 @@ pub mod page {
                         return self.handle_path_object(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"ImageObject")
                     ) {
                         let output =
@@ -36947,7 +36949,7 @@ pub mod page {
                         return self.handle_image_object(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"CompositeObject")
                     ) {
                         let output = < super :: CtPageBlockCompositeObjectXElementType as WithDeserializer > :: init (helper , event) ? ;
@@ -36959,7 +36961,7 @@ pub mod page {
                         );
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"PageBlock")
                     ) {
                         let output =
@@ -37369,7 +37371,7 @@ pub mod page {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"TextObject",
                                 true,
                             )?;
@@ -37386,7 +37388,7 @@ pub mod page {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"PathObject",
                                 true,
                             )?;
@@ -37403,7 +37405,7 @@ pub mod page {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"ImageObject",
                                 true,
                             )?;
@@ -37420,7 +37422,7 @@ pub mod page {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"CompositeObject",
                                 true,
                             )?;
@@ -37437,7 +37439,7 @@ pub mod page {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"PageBlock",
                                 true,
                             )?;
@@ -37519,7 +37521,7 @@ pub mod page {
                                 ));
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib(&mut bytes, "MapType", &self.value.map_type)?;
                             helper.write_attrib_opt(&mut bytes, "MapUnit", &self.value.map_unit)?;
                             helper.write_attrib(&mut bytes, "Extend", &self.value.extend)?;
@@ -37591,7 +37593,7 @@ pub mod page {
                                 ));
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib(
                                 &mut bytes,
                                 "CodePosition",
@@ -37670,7 +37672,7 @@ pub mod page {
                             ));
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtClipXTypeSerializerState::Area(x) => match x.next(helper).transpose()? {
@@ -37734,7 +37736,7 @@ pub mod page {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib_opt(&mut bytes, "Value", &self.value.value)?;
                             helper.write_attrib_opt(&mut bytes, "Index", &self.value.index)?;
                             helper.write_attrib_opt(
@@ -37916,7 +37918,7 @@ pub mod page {
                                 ));
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
                             helper.write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
                             helper.write_attrib(&mut bytes, "Visible", &self.value.visible)?;
@@ -38029,7 +38031,7 @@ pub mod page {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib_opt(&mut bytes, "Extend", &self.value.extend)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -38120,7 +38122,7 @@ pub mod page {
                                 ));
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
                             helper.write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
                             helper.write_attrib(&mut bytes, "Visible", &self.value.visible)?;
@@ -38245,7 +38247,7 @@ pub mod page {
                                 ));
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
                             helper.write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
                             helper.write_attrib(&mut bytes, "Visible", &self.value.visible)?;
@@ -38381,7 +38383,7 @@ pub mod page {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib(
                                 &mut bytes,
                                 "VerticesPerRow",
@@ -38467,7 +38469,7 @@ pub mod page {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib(&mut bytes, "Type", &self.value.type_)?;
                             helper.write_attrib_opt(
                                 &mut bytes,
@@ -38647,7 +38649,7 @@ pub mod page {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtPageBlockXTypeSerializerState::Content__(x) => {
@@ -38850,7 +38852,7 @@ pub mod page {
                             ));
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
                             helper.write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
                             helper.write_attrib(&mut bytes, "Visible", &self.value.visible)?;
@@ -38998,7 +39000,7 @@ pub mod page {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib(&mut bytes, "Width", &self.value.width)?;
                             helper.write_attrib(&mut bytes, "Height", &self.value.height)?;
                             helper.write_attrib_opt(&mut bytes, "XStep", &self.value.x_step)?;
@@ -39082,7 +39084,7 @@ pub mod page {
                                 ));
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib(&mut bytes, "MapType", &self.value.map_type)?;
                             helper.write_attrib_opt(&mut bytes, "MapUnit", &self.value.map_unit)?;
                             helper.write_attrib(
@@ -39165,7 +39167,7 @@ pub mod page {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
                             helper.write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
                             helper.write_attrib(&mut bytes, "Visible", &self.value.visible)?;
@@ -39411,7 +39413,7 @@ pub mod page {
                                 ));
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         PageXElementTypeSerializerState::Template(x) => {
@@ -39530,7 +39532,7 @@ pub mod page {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib_opt(
                                 &mut bytes,
                                 "Position",
@@ -39600,7 +39602,7 @@ pub mod page {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib_opt(
                                 &mut bytes,
                                 "DrawParam",
@@ -39742,7 +39744,7 @@ pub mod page {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtGraphicUnitActionsXElementTypeSerializerState::Action(x) => {
@@ -39807,7 +39809,7 @@ pub mod page {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtGraphicUnitClipsXElementTypeSerializerState::Clip(x) => {
@@ -39876,7 +39878,7 @@ pub mod page {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib(&mut bytes, "X", &self.value.x)?;
                             helper.write_attrib(&mut bytes, "y", &self.value.y)?;
                             helper.write_attrib_opt(
@@ -39954,7 +39956,7 @@ pub mod page {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib(&mut bytes, "LineWidth", &self.value.line_width)?;
                             helper.write_attrib(
                                 &mut bytes,
@@ -40040,7 +40042,7 @@ pub mod page {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib_opt(&mut bytes, "X", &self.value.x)?;
                             helper.write_attrib_opt(&mut bytes, "y", &self.value.y)?;
                             return Ok(Some(Event::Start(bytes)));
@@ -40114,7 +40116,7 @@ pub mod page {
                                 );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
                             helper.write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
                             helper.write_attrib(&mut bytes, "Visible", &self.value.visible)?;
@@ -40289,7 +40291,7 @@ pub mod page {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
                             helper.write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
                             helper.write_attrib(&mut bytes, "Visible", &self.value.visible)?;
@@ -40470,7 +40472,7 @@ pub mod page {
                                 );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
                             helper.write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
                             helper.write_attrib(&mut bytes, "Visible", &self.value.visible)?;
@@ -40629,7 +40631,7 @@ pub mod page {
                                 );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
                             helper.write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
                             helper.write_attrib(&mut bytes, "Visible", &self.value.visible)?;
@@ -40753,7 +40755,7 @@ pub mod page {
                                 );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib(&mut bytes, "ID", &self.value.id)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -40875,7 +40877,7 @@ pub mod page {
                                 );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib_opt(
                                 &mut bytes,
                                 "Thumbnail",
@@ -40994,7 +40996,7 @@ pub mod page {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib_opt(&mut bytes, "X", &self.value.x)?;
                             helper.write_attrib_opt(&mut bytes, "y", &self.value.y)?;
                             helper.write_attrib_opt(&mut bytes, "DeltaX", &self.value.delta_x)?;
@@ -41055,7 +41057,7 @@ pub mod page {
                             *self.state = PageTemplateXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib(
                                 &mut bytes,
                                 "TemplateID",
@@ -41117,7 +41119,7 @@ pub mod page {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         PageContentXElementTypeSerializerState::Layer(x) => {
@@ -41183,7 +41185,7 @@ pub mod page {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib(&mut bytes, "Type", &self.value.type_)?;
                             helper.write_attrib_opt(
                                 &mut bytes,
@@ -42020,12 +42022,12 @@ pub mod res {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Type")
                     ) {
                         helper.read_attrib(&mut type_, b"Type", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"BitsPerComponent")
                     ) {
                         helper.read_attrib(
@@ -42034,7 +42036,7 @@ pub mod res {
                             &attrib.value,
                         )?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Profile")
                     ) {
                         helper.read_attrib(&mut profile, b"Profile", &attrib.value)?;
@@ -42162,7 +42164,7 @@ pub mod res {
                         (S::Palette(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Palette",
                                 false,
                             )?;
@@ -42250,37 +42252,37 @@ pub mod res {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Relative")
                     ) {
                         helper.read_attrib(&mut relative, b"Relative", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"LineWidth")
                     ) {
                         helper.read_attrib(&mut line_width, b"LineWidth", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Join")
                     ) {
                         helper.read_attrib(&mut join, b"Join", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Cap")
                     ) {
                         helper.read_attrib(&mut cap, b"Cap", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DashOffset")
                     ) {
                         helper.read_attrib(&mut dash_offset, b"DashOffset", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DashPattern")
                     ) {
                         helper.read_attrib(&mut dash_pattern, b"DashPattern", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"MiterLimit")
                     ) {
                         helper.read_attrib(&mut miter_limit, b"MiterLimit", &attrib.value)?;
@@ -42476,7 +42478,7 @@ pub mod res {
                         (S::FillColor(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"FillColor",
                                 true,
                             )?;
@@ -42493,7 +42495,7 @@ pub mod res {
                         (S::StrokeColor(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"StrokeColor",
                                 true,
                             )?;
@@ -42582,37 +42584,37 @@ pub mod res {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"FontName")
                     ) {
                         helper.read_attrib(&mut font_name, b"FontName", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"FamilyName")
                     ) {
                         helper.read_attrib(&mut family_name, b"FamilyName", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Charset")
                     ) {
                         helper.read_attrib(&mut charset, b"Charset", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Italic")
                     ) {
                         helper.read_attrib(&mut italic, b"Italic", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Bold")
                     ) {
                         helper.read_attrib(&mut bold, b"Bold", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Serif")
                     ) {
                         helper.read_attrib(&mut serif, b"Serif", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"FixedWidth")
                     ) {
                         helper.read_attrib(&mut fixed_width, b"FixedWidth", &attrib.value)?;
@@ -42742,7 +42744,7 @@ pub mod res {
                         (S::FontFile(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"FontFile",
                                 false,
                             )?;
@@ -42817,12 +42819,12 @@ pub mod res {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Type")
                     ) {
                         helper.read_attrib(&mut type_, b"Type", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Format")
                     ) {
                         helper.read_attrib(&mut format, b"Format", &attrib.value)?;
@@ -42948,7 +42950,7 @@ pub mod res {
                         (S::MediaFile(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"MediaFile",
                                 false,
                             )?;
@@ -43027,12 +43029,12 @@ pub mod res {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Width")
                     ) {
                         helper.read_attrib(&mut width, b"Width", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Height")
                     ) {
                         helper.read_attrib(&mut height, b"Height", &attrib.value)?;
@@ -43279,7 +43281,7 @@ pub mod res {
                         (S::Thumbnail(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Thumbnail",
                                 false,
                             )?;
@@ -43296,7 +43298,7 @@ pub mod res {
                         (S::Substitution(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Substitution",
                                 false,
                             )?;
@@ -43313,7 +43315,7 @@ pub mod res {
                         (S::Content(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Content",
                                 true,
                             )?;
@@ -43386,7 +43388,7 @@ pub mod res {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"BaseLoc")
                     ) {
                         helper.read_attrib(&mut base_loc, b"BaseLoc", &attrib.value)?;
@@ -43570,7 +43572,7 @@ pub mod res {
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"ColorSpaces")
                     ) {
                         let output = <super::ResColorSpacesXElementType as WithDeserializer>::init(
@@ -43579,7 +43581,7 @@ pub mod res {
                         return self.handle_color_spaces(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"DrawParams")
                     ) {
                         let output = <super::ResDrawParamsXElementType as WithDeserializer>::init(
@@ -43588,7 +43590,7 @@ pub mod res {
                         return self.handle_draw_params(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"Fonts")
                     ) {
                         let output =
@@ -43596,7 +43598,7 @@ pub mod res {
                         return self.handle_fonts(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"MultiMedias")
                     ) {
                         let output = <super::ResMultiMediasXElementType as WithDeserializer>::init(
@@ -43605,7 +43607,7 @@ pub mod res {
                         return self.handle_multi_medias(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"CompositeGraphicUnits")
                     ) {
                         let output = < super :: ResCompositeGraphicUnitsXElementType as WithDeserializer > :: init (helper , event) ? ;
@@ -44019,7 +44021,7 @@ pub mod res {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"ColorSpaces",
                                 false,
                             )?;
@@ -44036,7 +44038,7 @@ pub mod res {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"DrawParams",
                                 true,
                             )?;
@@ -44053,7 +44055,7 @@ pub mod res {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Fonts",
                                 false,
                             )?;
@@ -44070,7 +44072,7 @@ pub mod res {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"MultiMedias",
                                 false,
                             )?;
@@ -44087,7 +44089,7 @@ pub mod res {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"CompositeGraphicUnits",
                                 false,
                             )?;
@@ -44264,7 +44266,7 @@ pub mod res {
                         (S::Cv(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"CV",
                                 false,
                             )?;
@@ -44456,7 +44458,7 @@ pub mod res {
                         (S::ColorSpace(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"ColorSpace",
                                 false,
                             )?;
@@ -44648,7 +44650,7 @@ pub mod res {
                         (S::DrawParam(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"DrawParam",
                                 true,
                             )?;
@@ -44829,7 +44831,7 @@ pub mod res {
                         (S::Font(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Font",
                                 false,
                             )?;
@@ -45021,7 +45023,7 @@ pub mod res {
                         (S::MultiMedia(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"MultiMedia",
                                 false,
                             )?;
@@ -45218,7 +45220,7 @@ pub mod res {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"CompositeGraphicUnit",
                                 false,
                             )?;
@@ -45303,12 +45305,12 @@ pub mod res {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Type")
                     ) {
                         helper.read_attrib(&mut type_, b"Type", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"BitsPerComponent")
                     ) {
                         helper.read_attrib(
@@ -45317,12 +45319,12 @@ pub mod res {
                             &attrib.value,
                         )?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Profile")
                     ) {
                         helper.read_attrib(&mut profile, b"Profile", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ID")
                     ) {
                         helper.read_attrib(&mut id, b"ID", &attrib.value)?;
@@ -45456,7 +45458,7 @@ pub mod res {
                         (S::Palette(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Palette",
                                 false,
                             )?;
@@ -45547,42 +45549,42 @@ pub mod res {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Relative")
                     ) {
                         helper.read_attrib(&mut relative, b"Relative", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"LineWidth")
                     ) {
                         helper.read_attrib(&mut line_width, b"LineWidth", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Join")
                     ) {
                         helper.read_attrib(&mut join, b"Join", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Cap")
                     ) {
                         helper.read_attrib(&mut cap, b"Cap", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DashOffset")
                     ) {
                         helper.read_attrib(&mut dash_offset, b"DashOffset", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DashPattern")
                     ) {
                         helper.read_attrib(&mut dash_pattern, b"DashPattern", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"MiterLimit")
                     ) {
                         helper.read_attrib(&mut miter_limit, b"MiterLimit", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ID")
                     ) {
                         helper.read_attrib(&mut id, b"ID", &attrib.value)?;
@@ -45785,7 +45787,7 @@ pub mod res {
                         (S::FillColor(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"FillColor",
                                 true,
                             )?;
@@ -45802,7 +45804,7 @@ pub mod res {
                         (S::StrokeColor(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"StrokeColor",
                                 true,
                             )?;
@@ -45894,42 +45896,42 @@ pub mod res {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"FontName")
                     ) {
                         helper.read_attrib(&mut font_name, b"FontName", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"FamilyName")
                     ) {
                         helper.read_attrib(&mut family_name, b"FamilyName", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Charset")
                     ) {
                         helper.read_attrib(&mut charset, b"Charset", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Italic")
                     ) {
                         helper.read_attrib(&mut italic, b"Italic", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Bold")
                     ) {
                         helper.read_attrib(&mut bold, b"Bold", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Serif")
                     ) {
                         helper.read_attrib(&mut serif, b"Serif", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"FixedWidth")
                     ) {
                         helper.read_attrib(&mut fixed_width, b"FixedWidth", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ID")
                     ) {
                         helper.read_attrib(&mut id, b"ID", &attrib.value)?;
@@ -46063,7 +46065,7 @@ pub mod res {
                         (S::FontFile(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"FontFile",
                                 false,
                             )?;
@@ -46144,17 +46146,17 @@ pub mod res {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Type")
                     ) {
                         helper.read_attrib(&mut type_, b"Type", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Format")
                     ) {
                         helper.read_attrib(&mut format, b"Format", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ID")
                     ) {
                         helper.read_attrib(&mut id, b"ID", &attrib.value)?;
@@ -46285,7 +46287,7 @@ pub mod res {
                         (S::MediaFile(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"MediaFile",
                                 false,
                             )?;
@@ -46367,17 +46369,17 @@ pub mod res {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Width")
                     ) {
                         helper.read_attrib(&mut width, b"Width", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Height")
                     ) {
                         helper.read_attrib(&mut height, b"Height", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ID")
                     ) {
                         helper.read_attrib(&mut id, b"ID", &attrib.value)?;
@@ -46631,7 +46633,7 @@ pub mod res {
                         (S::Thumbnail(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Thumbnail",
                                 false,
                             )?;
@@ -46648,7 +46650,7 @@ pub mod res {
                         (S::Substitution(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Substitution",
                                 false,
                             )?;
@@ -46665,7 +46667,7 @@ pub mod res {
                         (S::Content(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Content",
                                 true,
                             )?;
@@ -46760,7 +46762,7 @@ pub mod res {
                                 ));
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib(&mut bytes, "Type", &self.value.type_)?;
                             helper.write_attrib(
                                 &mut bytes,
@@ -46843,7 +46845,7 @@ pub mod res {
                                 ));
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib_opt(
                                 &mut bytes,
                                 "Relative",
@@ -46943,7 +46945,7 @@ pub mod res {
                                 ));
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib(&mut bytes, "FontName", &self.value.font_name)?;
                             helper.write_attrib_opt(
                                 &mut bytes,
@@ -47022,7 +47024,7 @@ pub mod res {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib(&mut bytes, "Type", &self.value.type_)?;
                             helper.write_attrib_opt(&mut bytes, "Format", &self.value.format)?;
                             return Ok(Some(Event::Start(bytes)));
@@ -47089,7 +47091,7 @@ pub mod res {
                                 ));
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib(&mut bytes, "Width", &self.value.width)?;
                             helper.write_attrib(&mut bytes, "Height", &self.value.height)?;
                             return Ok(Some(Event::Start(bytes)));
@@ -47185,7 +47187,7 @@ pub mod res {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib(&mut bytes, "BaseLoc", &self.value.base_loc)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -47351,7 +47353,7 @@ pub mod res {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtColorSpacePaletteXElementTypeSerializerState::Cv(x) => {
@@ -47426,7 +47428,7 @@ pub mod res {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         ResColorSpacesXElementTypeSerializerState::ColorSpace(x) => match x
@@ -47497,7 +47499,7 @@ pub mod res {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         ResDrawParamsXElementTypeSerializerState::DrawParam(x) => match x
@@ -47564,7 +47566,7 @@ pub mod res {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         ResFontsXElementTypeSerializerState::Font(x) => {
@@ -47634,7 +47636,7 @@ pub mod res {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         ResMultiMediasXElementTypeSerializerState::MultiMedia(x) => match x
@@ -47694,7 +47696,7 @@ pub mod res {
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { ResCompositeGraphicUnitsXElementTypeSerializerState :: Init__ => { * self . state = ResCompositeGraphicUnitsXElementTypeSerializerState :: CompositeGraphicUnit (IterSerializer :: new (& self . value . composite_graphic_unit [..] , Some ("CompositeGraphicUnit") , false)) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns (& mut bytes , None , & super :: super :: NS_UNNAMED_4) ; return Ok (Some (Event :: Start (bytes))) } ResCompositeGraphicUnitsXElementTypeSerializerState :: CompositeGraphicUnit (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResCompositeGraphicUnitsXElementTypeSerializerState :: End__ , } ResCompositeGraphicUnitsXElementTypeSerializerState :: End__ => { * self . state = ResCompositeGraphicUnitsXElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } ResCompositeGraphicUnitsXElementTypeSerializerState :: Done__ => return Ok (None) , ResCompositeGraphicUnitsXElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { ResCompositeGraphicUnitsXElementTypeSerializerState :: Init__ => { * self . state = ResCompositeGraphicUnitsXElementTypeSerializerState :: CompositeGraphicUnit (IterSerializer :: new (& self . value . composite_graphic_unit [..] , Some ("CompositeGraphicUnit") , false)) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns (& mut bytes , None , & super :: super :: NS_UNNAMED_5) ; return Ok (Some (Event :: Start (bytes))) } ResCompositeGraphicUnitsXElementTypeSerializerState :: CompositeGraphicUnit (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResCompositeGraphicUnitsXElementTypeSerializerState :: End__ , } ResCompositeGraphicUnitsXElementTypeSerializerState :: End__ => { * self . state = ResCompositeGraphicUnitsXElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } ResCompositeGraphicUnitsXElementTypeSerializerState :: Done__ => return Ok (None) , ResCompositeGraphicUnitsXElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -47749,7 +47751,7 @@ pub mod res {
                                 );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib(&mut bytes, "Type", &self.value.type_)?;
                             helper.write_attrib(
                                 &mut bytes,
@@ -47843,7 +47845,7 @@ pub mod res {
                                 );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib_opt(
                                 &mut bytes,
                                 "Relative",
@@ -47951,7 +47953,7 @@ pub mod res {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib(&mut bytes, "FontName", &self.value.font_name)?;
                             helper.write_attrib_opt(
                                 &mut bytes,
@@ -48033,7 +48035,7 @@ pub mod res {
                                 );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib(&mut bytes, "Type", &self.value.type_)?;
                             helper.write_attrib_opt(&mut bytes, "Format", &self.value.format)?;
                             helper.write_attrib(&mut bytes, "ID", &self.value.id)?;
@@ -48102,7 +48104,7 @@ pub mod res {
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Init__ => { * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Thumbnail (IterSerializer :: new (self . value . thumbnail . as_ref () , Some ("Thumbnail") , false)) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns (& mut bytes , None , & super :: super :: NS_UNNAMED_4) ; helper . write_attrib (& mut bytes , "Width" , & self . value . width) ? ; helper . write_attrib (& mut bytes , "Height" , & self . value . height) ? ; helper . write_attrib (& mut bytes , "ID" , & self . value . id) ? ; return Ok (Some (Event :: Start (bytes))) } ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Thumbnail (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Substitution (IterSerializer :: new (self . value . substitution . as_ref () , Some ("Substitution") , false)) , } ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Substitution (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Content (WithSerializer :: serializer (& self . value . content , Some ("Content") , false) ?) , } ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Content (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: End__ , } ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: End__ => { * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Done__ => return Ok (None) , ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Init__ => { * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Thumbnail (IterSerializer :: new (self . value . thumbnail . as_ref () , Some ("Thumbnail") , false)) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns (& mut bytes , None , & super :: super :: NS_UNNAMED_5) ; helper . write_attrib (& mut bytes , "Width" , & self . value . width) ? ; helper . write_attrib (& mut bytes , "Height" , & self . value . height) ? ; helper . write_attrib (& mut bytes , "ID" , & self . value . id) ? ; return Ok (Some (Event :: Start (bytes))) } ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Thumbnail (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Substitution (IterSerializer :: new (self . value . substitution . as_ref () , Some ("Substitution") , false)) , } ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Substitution (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Content (WithSerializer :: serializer (& self . value . content , Some ("Content") , false) ?) , } ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Content (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: End__ , } ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: End__ => { * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Done__ => return Ok (None) , ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -48530,7 +48532,7 @@ pub mod signature {
                         (S::SiqnedInfo(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"SiqnedInfo",
                                 false,
                             )?;
@@ -48547,7 +48549,7 @@ pub mod signature {
                         (S::SignedValue(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"SignedValue",
                                 false,
                             )?;
@@ -49036,7 +49038,7 @@ pub mod signature {
                         (S::Provider(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Provider",
                                 false,
                             )?;
@@ -49053,7 +49055,7 @@ pub mod signature {
                         (S::SignatureMethod(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"SignatureMethod",
                                 false,
                             )?;
@@ -49073,7 +49075,7 @@ pub mod signature {
                         ) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"SianatureDateTime",
                                 false,
                             )?;
@@ -49090,7 +49092,7 @@ pub mod signature {
                         (S::References(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"References",
                                 false,
                             )?;
@@ -49107,7 +49109,7 @@ pub mod signature {
                         (S::StampAnnot(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"StampAnnot",
                                 false,
                             )?;
@@ -49124,7 +49126,7 @@ pub mod signature {
                         (S::Seal(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Seal",
                                 false,
                             )?;
@@ -49199,17 +49201,17 @@ pub mod signature {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ProviderName")
                     ) {
                         helper.read_attrib(&mut provider_name, b"ProviderName", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Version")
                     ) {
                         helper.read_attrib(&mut version, b"Version", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Company")
                     ) {
                         helper.read_attrib(&mut company, b"Company", &attrib.value)?;
@@ -49300,7 +49302,7 @@ pub mod signature {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"CheckMethod")
                     ) {
                         helper.read_attrib(&mut check_method, b"CheckMethod", &attrib.value)?;
@@ -49438,7 +49440,7 @@ pub mod signature {
                         (S::Reference(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Reference",
                                 false,
                             )?;
@@ -49511,22 +49513,22 @@ pub mod signature {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ID")
                     ) {
                         helper.read_attrib(&mut id, b"ID", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"PageRef")
                     ) {
                         helper.read_attrib(&mut page_ref, b"PageRef", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Boundary")
                     ) {
                         helper.read_attrib(&mut boundary, b"Boundary", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Clip")
                     ) {
                         helper.read_attrib(&mut clip, b"Clip", &attrib.value)?;
@@ -49740,7 +49742,7 @@ pub mod signature {
                         (S::BaseLoc(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"BaseLoc",
                                 false,
                             )?;
@@ -49809,7 +49811,7 @@ pub mod signature {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"FileRef")
                     ) {
                         helper.read_attrib(&mut file_ref, b"FileRef", &attrib.value)?;
@@ -49943,7 +49945,7 @@ pub mod signature {
                         (S::CheckValue(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"CheckValue",
                                 false,
                             )?;
@@ -50033,7 +50035,7 @@ pub mod signature {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         SianatureXElementTypeSerializerState::SiqnedInfo(x) => {
@@ -50125,7 +50127,7 @@ pub mod signature {
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { SianatureSiqnedInfoXElementTypeSerializerState :: Init__ => { * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: Provider (WithSerializer :: serializer (& self . value . provider , Some ("Provider") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns (& mut bytes , None , & super :: super :: NS_UNNAMED_4) ; return Ok (Some (Event :: Start (bytes))) } SianatureSiqnedInfoXElementTypeSerializerState :: Provider (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: SignatureMethod (IterSerializer :: new (self . value . signature_method . as_ref () , Some ("SignatureMethod") , false)) , } SianatureSiqnedInfoXElementTypeSerializerState :: SignatureMethod (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: SianatureDateTime (IterSerializer :: new (self . value . sianature_date_time . as_ref () , Some ("SianatureDateTime") , false)) , } SianatureSiqnedInfoXElementTypeSerializerState :: SianatureDateTime (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: References (WithSerializer :: serializer (& self . value . references , Some ("References") , false) ?) , } SianatureSiqnedInfoXElementTypeSerializerState :: References (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: StampAnnot (IterSerializer :: new (& self . value . stamp_annot [..] , Some ("StampAnnot") , false)) , } SianatureSiqnedInfoXElementTypeSerializerState :: StampAnnot (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: Seal (IterSerializer :: new (self . value . seal . as_ref () , Some ("Seal") , false)) , } SianatureSiqnedInfoXElementTypeSerializerState :: Seal (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: End__ , } SianatureSiqnedInfoXElementTypeSerializerState :: End__ => { * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } SianatureSiqnedInfoXElementTypeSerializerState :: Done__ => return Ok (None) , SianatureSiqnedInfoXElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { SianatureSiqnedInfoXElementTypeSerializerState :: Init__ => { * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: Provider (WithSerializer :: serializer (& self . value . provider , Some ("Provider") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns (& mut bytes , None , & super :: super :: NS_UNNAMED_5) ; return Ok (Some (Event :: Start (bytes))) } SianatureSiqnedInfoXElementTypeSerializerState :: Provider (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: SignatureMethod (IterSerializer :: new (self . value . signature_method . as_ref () , Some ("SignatureMethod") , false)) , } SianatureSiqnedInfoXElementTypeSerializerState :: SignatureMethod (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: SianatureDateTime (IterSerializer :: new (self . value . sianature_date_time . as_ref () , Some ("SianatureDateTime") , false)) , } SianatureSiqnedInfoXElementTypeSerializerState :: SianatureDateTime (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: References (WithSerializer :: serializer (& self . value . references , Some ("References") , false) ?) , } SianatureSiqnedInfoXElementTypeSerializerState :: References (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: StampAnnot (IterSerializer :: new (& self . value . stamp_annot [..] , Some ("StampAnnot") , false)) , } SianatureSiqnedInfoXElementTypeSerializerState :: StampAnnot (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: Seal (IterSerializer :: new (self . value . seal . as_ref () , Some ("Seal") , false)) , } SianatureSiqnedInfoXElementTypeSerializerState :: Seal (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: End__ , } SianatureSiqnedInfoXElementTypeSerializerState :: End__ => { * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } SianatureSiqnedInfoXElementTypeSerializerState :: Done__ => return Ok (None) , SianatureSiqnedInfoXElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -50166,7 +50168,7 @@ pub mod signature {
                                 SianatureSiqnedInfoProviderXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib(
                                 &mut bytes,
                                 "ProviderName",
@@ -50239,7 +50241,7 @@ pub mod signature {
                                 );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib(
                                 &mut bytes,
                                 "CheckMethod",
@@ -50308,7 +50310,7 @@ pub mod signature {
                                 SianatureSiqnedInfoStampAnnotXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib(&mut bytes, "ID", &self.value.id)?;
                             helper.write_attrib(&mut bytes, "PageRef", &self.value.page_ref)?;
                             helper.write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
@@ -50372,7 +50374,7 @@ pub mod signature {
                                 );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         SianatureSiqnedInfoSealXElementTypeSerializerState::BaseLoc(x) => {
@@ -50434,7 +50436,7 @@ pub mod signature {
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: Init__ => { * self . state = SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: CheckValue (WithSerializer :: serializer (& self . value . check_value , Some ("CheckValue") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns (& mut bytes , None , & super :: super :: NS_UNNAMED_4) ; helper . write_attrib (& mut bytes , "FileRef" , & self . value . file_ref) ? ; return Ok (Some (Event :: Start (bytes))) } SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: CheckValue (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: End__ , } SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: End__ => { * self . state = SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: Done__ => return Ok (None) , SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: Init__ => { * self . state = SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: CheckValue (WithSerializer :: serializer (& self . value . check_value , Some ("CheckValue") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns (& mut bytes , None , & super :: super :: NS_UNNAMED_5) ; helper . write_attrib (& mut bytes , "FileRef" , & self . value . file_ref) ? ; return Ok (Some (Event :: Start (bytes))) } SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: CheckValue (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: End__ , } SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: End__ => { * self . state = SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: Done__ => return Ok (None) , SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -50745,7 +50747,7 @@ pub mod signatures {
                         (S::MaxSignId(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"MaxSignId",
                                 false,
                             )?;
@@ -50762,7 +50764,7 @@ pub mod signatures {
                         (S::Signature(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"Signature",
                                 false,
                             )?;
@@ -50833,17 +50835,17 @@ pub mod signatures {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ID")
                     ) {
                         helper.read_attrib(&mut id, b"ID", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Type")
                     ) {
                         helper.read_attrib(&mut type_, b"Type", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"BaseLoc")
                     ) {
                         helper.read_attrib(&mut base_loc, b"BaseLoc", &attrib.value)?;
@@ -50956,7 +50958,7 @@ pub mod signatures {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         SiqnaturesXElementTypeSerializerState::MaxSignId(x) => {
@@ -51026,7 +51028,7 @@ pub mod signatures {
                             *self.state = SiqnaturesSignatureXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib(&mut bytes, "ID", &self.value.id)?;
                             helper.write_attrib(&mut bytes, "Type", &self.value.type_)?;
                             helper.write_attrib(&mut bytes, "BaseLoc", &self.value.base_loc)?;
@@ -51168,22 +51170,22 @@ pub mod version {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ID")
                     ) {
                         helper.read_attrib(&mut id, b"ID", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Version")
                     ) {
                         helper.read_attrib(&mut version, b"Version", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Name")
                     ) {
                         helper.read_attrib(&mut name, b"Name", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"CreationDate")
                     ) {
                         helper.read_attrib(&mut creation_date, b"CreationDate", &attrib.value)?;
@@ -51376,7 +51378,7 @@ pub mod version {
                         (S::FileList(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"FileList",
                                 false,
                             )?;
@@ -51393,7 +51395,7 @@ pub mod version {
                         (S::DocRoot(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"DocRoot",
                                 false,
                             )?;
@@ -51588,7 +51590,7 @@ pub mod version {
                         (S::File(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = helper.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_UNNAMED_4),
+                                Some(&super::super::NS_UNNAMED_5),
                                 b"File",
                                 false,
                             )?;
@@ -51656,7 +51658,7 @@ pub mod version {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_4),
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ID")
                     ) {
                         helper.read_attrib(&mut id, b"ID", &attrib.value)?;
@@ -51815,7 +51817,7 @@ pub mod version {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib(&mut bytes, "ID", &self.value.id)?;
                             helper.write_attrib_opt(&mut bytes, "Version", &self.value.version)?;
                             helper.write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
@@ -51903,7 +51905,7 @@ pub mod version {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             return Ok(Some(Event::Start(bytes)));
                         }
                         DocVersionFileListXElementTypeSerializerState::File(x) => {
@@ -51969,7 +51971,7 @@ pub mod version {
                                 );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_4);
+                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
                             helper.write_attrib(&mut bytes, "ID", &self.value.id)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -52017,6 +52019,7 @@ pub mod xs {
     use std::borrow::Cow;
     use xsd_parser_types::quick_xml::{
         DeserializeBytes, DeserializeHelper, Error, SerializeBytes, SerializeHelper,
+        WithDeserializer, WithSerializer,
     };
     #[derive(Debug, Default)]
     pub struct EntitiesXType(pub Vec<String>);
@@ -52045,7 +52048,7 @@ pub mod xs {
             Ok(Self(helper.deserialize_list(bytes)?))
         }
     }
-    pub type EntityXType = EntitiesXType;
+    pub type EntityXType = String;
     pub type IdXType = String;
     pub type IdrefXType = String;
     pub type IdrefsXType = EntitiesXType;
@@ -52055,7 +52058,29 @@ pub mod xs {
     pub type NotationXType = String;
     pub type NameXType = String;
     pub type QNameXType = String;
-    pub type AnySimpleTypeXType = String;
+    #[derive(Debug)]
+    pub struct AnySimpleTypeXType {
+        pub type_: Option<String>,
+        pub content: String,
+    }
+    impl WithSerializer for AnySimpleTypeXType {
+        type Serializer<'x> = quick_xml_serialize::AnySimpleTypeXTypeSerializer<'x>;
+        fn serializer<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
+            Ok(quick_xml_serialize::AnySimpleTypeXTypeSerializer {
+                value: self,
+                state: Box::new(quick_xml_serialize::AnySimpleTypeXTypeSerializerState::Init__),
+                name: name.unwrap_or("anySimpleType"),
+                is_root,
+            })
+        }
+    }
+    impl WithDeserializer for AnySimpleTypeXType {
+        type Deserializer = quick_xml_deserialize::AnySimpleTypeXTypeDeserializer;
+    }
     pub type AnyUriXType = String;
     pub type Base64BinaryXType = String;
     pub type BooleanXType = bool;
@@ -52089,4 +52114,220 @@ pub mod xs {
     pub type UnsignedIntXType = u32;
     pub type UnsignedLongXType = u64;
     pub type UnsignedShortXType = u16;
+    pub mod quick_xml_deserialize {
+        use core::mem::replace;
+        use xsd_parser_types::quick_xml::{
+            BytesStart, ContentDeserializer, DeserializeHelper, Deserializer, DeserializerArtifact,
+            DeserializerEvent, DeserializerOutput, DeserializerResult, Error, ErrorKind, Event,
+            WithDeserializer,
+        };
+        #[derive(Debug)]
+        pub struct AnySimpleTypeXTypeDeserializer {
+            type_: Option<String>,
+            content: Option<String>,
+            state__: Box<AnySimpleTypeXTypeDeserializerState>,
+        }
+        #[derive(Debug)]
+        enum AnySimpleTypeXTypeDeserializerState {
+            Init__,
+            Content__(<String as WithDeserializer>::Deserializer),
+            Unknown__,
+        }
+        impl AnySimpleTypeXTypeDeserializer {
+            fn from_bytes_start(
+                helper: &mut DeserializeHelper,
+                bytes_start: &BytesStart<'_>,
+            ) -> Result<Self, Error> {
+                let mut type_: Option<String> = None;
+                for attrib in helper.filter_xmlns_attributes(bytes_start) {
+                    let attrib = attrib?;
+                    if matches!(
+                        helper.resolve_local_name(attrib.key, &super::super::NS_XSI),
+                        Some(b"type")
+                    ) {
+                        helper.read_attrib(&mut type_, b"type", &attrib.value)?;
+                    } else {
+                        helper.raise_unexpected_attrib_checked(&attrib)?;
+                    }
+                }
+                Ok(Self {
+                    type_: type_,
+                    content: None,
+                    state__: Box::new(AnySimpleTypeXTypeDeserializerState::Init__),
+                })
+            }
+            fn finish_state(
+                &mut self,
+                helper: &mut DeserializeHelper,
+                state: AnySimpleTypeXTypeDeserializerState,
+            ) -> Result<(), Error> {
+                if let AnySimpleTypeXTypeDeserializerState::Content__(deserializer) = state {
+                    self.store_content(deserializer.finish(helper)?)?;
+                }
+                Ok(())
+            }
+            fn store_content(&mut self, value: String) -> Result<(), Error> {
+                if self.content.is_some() {
+                    Err(ErrorKind::DuplicateContent)?;
+                }
+                self.content = Some(value);
+                Ok(())
+            }
+            fn handle_content<'de>(
+                mut self,
+                helper: &mut DeserializeHelper,
+                output: DeserializerOutput<'de, String>,
+            ) -> DeserializerResult<'de, super::AnySimpleTypeXType> {
+                use AnySimpleTypeXTypeDeserializerState as S;
+                let DeserializerOutput {
+                    artifact,
+                    event,
+                    allow_any,
+                } = output;
+                match artifact {
+                    DeserializerArtifact::None => Ok(DeserializerOutput {
+                        artifact: DeserializerArtifact::None,
+                        event,
+                        allow_any,
+                    }),
+                    DeserializerArtifact::Data(data) => {
+                        self.store_content(data)?;
+                        let data = self.finish(helper)?;
+                        Ok(DeserializerOutput {
+                            artifact: DeserializerArtifact::Data(data),
+                            event,
+                            allow_any,
+                        })
+                    }
+                    DeserializerArtifact::Deserializer(deserializer) => {
+                        *self.state__ = S::Content__(deserializer);
+                        Ok(DeserializerOutput {
+                            artifact: DeserializerArtifact::Deserializer(self),
+                            event,
+                            allow_any,
+                        })
+                    }
+                }
+            }
+        }
+        impl<'de> Deserializer<'de, super::AnySimpleTypeXType> for AnySimpleTypeXTypeDeserializer {
+            fn init(
+                helper: &mut DeserializeHelper,
+                event: Event<'de>,
+            ) -> DeserializerResult<'de, super::AnySimpleTypeXType> {
+                let (Event::Start(x) | Event::Empty(x)) = &event else {
+                    return Ok(DeserializerOutput {
+                        artifact: DeserializerArtifact::None,
+                        event: DeserializerEvent::Break(event),
+                        allow_any: false,
+                    });
+                };
+                Self::from_bytes_start(helper, x)?.next(helper, event)
+            }
+            fn next(
+                mut self,
+                helper: &mut DeserializeHelper,
+                event: Event<'de>,
+            ) -> DeserializerResult<'de, super::AnySimpleTypeXType> {
+                use AnySimpleTypeXTypeDeserializerState as S;
+                match replace(&mut *self.state__, S::Unknown__) {
+                    S::Unknown__ => unreachable!(),
+                    S::Init__ => {
+                        let output = ContentDeserializer::init(helper, event)?;
+                        self.handle_content(helper, output)
+                    }
+                    S::Content__(deserializer) => {
+                        let output = deserializer.next(helper, event)?;
+                        self.handle_content(helper, output)
+                    }
+                }
+            }
+            fn finish(
+                mut self,
+                helper: &mut DeserializeHelper,
+            ) -> Result<super::AnySimpleTypeXType, Error> {
+                let state = replace(
+                    &mut *self.state__,
+                    AnySimpleTypeXTypeDeserializerState::Unknown__,
+                );
+                self.finish_state(helper, state)?;
+                Ok(super::AnySimpleTypeXType {
+                    type_: self.type_,
+                    content: helper.finish_content(self.content)?,
+                })
+            }
+        }
+    }
+    pub mod quick_xml_serialize {
+        use xsd_parser_types::quick_xml::{
+            BytesEnd, BytesStart, Error, Event, SerializeHelper, Serializer, WithSerializer,
+        };
+        #[derive(Debug)]
+        pub struct AnySimpleTypeXTypeSerializer<'ser> {
+            pub(super) value: &'ser super::AnySimpleTypeXType,
+            pub(super) state: Box<AnySimpleTypeXTypeSerializerState<'ser>>,
+            pub(super) name: &'ser str,
+            pub(super) is_root: bool,
+        }
+        #[derive(Debug)]
+        pub(super) enum AnySimpleTypeXTypeSerializerState<'ser> {
+            Init__,
+            Content__(<String as WithSerializer>::Serializer<'ser>),
+            End__,
+            Done__,
+            Phantom__(&'ser ()),
+        }
+        impl<'ser> AnySimpleTypeXTypeSerializer<'ser> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
+                loop {
+                    match &mut *self.state {
+                        AnySimpleTypeXTypeSerializerState::Init__ => {
+                            *self.state = AnySimpleTypeXTypeSerializerState::Content__(
+                                WithSerializer::serializer(&self.value.content, None, false)?,
+                            );
+                            let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
+                            if self.is_root {
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_XSI),
+                                    &super::super::NS_XSI,
+                                );
+                            }
+                            helper.write_attrib_opt(&mut bytes, "xsi:type", &self.value.type_)?;
+                            return Ok(Some(Event::Start(bytes)));
+                        }
+                        AnySimpleTypeXTypeSerializerState::Content__(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = AnySimpleTypeXTypeSerializerState::End__,
+                            }
+                        }
+                        AnySimpleTypeXTypeSerializerState::End__ => {
+                            *self.state = AnySimpleTypeXTypeSerializerState::Done__;
+                            helper.end_ns_scope();
+                            return Ok(Some(Event::End(BytesEnd::new(self.name))));
+                        }
+                        AnySimpleTypeXTypeSerializerState::Done__ => return Ok(None),
+                        AnySimpleTypeXTypeSerializerState::Phantom__(_) => unreachable!(),
+                    }
+                }
+            }
+        }
+        impl<'ser> Serializer<'ser> for AnySimpleTypeXTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
+                    Ok(Some(event)) => Some(Ok(event)),
+                    Ok(None) => None,
+                    Err(error) => {
+                        *self.state = AnySimpleTypeXTypeSerializerState::Done__;
+                        Some(Err(error))
+                    }
+                }
+            }
+        }
+    }
 }

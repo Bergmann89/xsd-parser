@@ -1,9 +1,11 @@
 use xsd_parser_types::misc::{Namespace, NamespacePrefix};
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
+pub const NS_XSI: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema-instance");
 pub const NS_ER: Namespace = Namespace::new_const(b"urn:oasis:names:tc:entity:xmlns:xml:catalog");
 pub const PREFIX_XS: NamespacePrefix = NamespacePrefix::new_const(b"xs");
 pub const PREFIX_XML: NamespacePrefix = NamespacePrefix::new_const(b"xml");
+pub const PREFIX_XSI: NamespacePrefix = NamespacePrefix::new_const(b"xsi");
 pub const PREFIX_ER: NamespacePrefix = NamespacePrefix::new_const(b"er");
 pub mod er {
     use std::borrow::Cow;
@@ -5416,7 +5418,7 @@ pub mod xs {
             Ok(Self(helper.deserialize_list(bytes)?))
         }
     }
-    pub type EntityType = EntitiesType;
+    pub type EntityType = String;
     pub type IdType = String;
     pub type IdrefType = String;
     pub type IdrefsType = EntitiesType;

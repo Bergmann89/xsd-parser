@@ -74,8 +74,7 @@ pub type Unpin = TestType;
 pub type Vec = TestType;
 #[derive(Debug, Default)]
 pub struct EntitiesType(pub ::std::vec::Vec<::std::string::String>);
-#[derive(Debug, Default)]
-pub struct EntityType(pub ::std::vec::Vec<::std::string::String>);
+pub type EntityType = ::std::string::String;
 pub type IdType = ::std::string::String;
 pub type IdrefType = ::std::string::String;
 #[derive(Debug, Default)]

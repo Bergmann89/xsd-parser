@@ -25,6 +25,7 @@ xml = [ "dep:indexmap", "dep:encoding_rs" ]
 quick-xml = [ "xml", "dep:quick-xml", "dep:regex", "dep:thiserror" ]
 
 [dependencies]
+base64 = { workspace = true, optional = true }
 encoding_rs = { workspace = true, optional = true }
 futures = { workspace = true, optional = true }
 indexmap = { workspace = true, optional = true }

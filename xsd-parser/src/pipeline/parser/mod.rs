@@ -200,6 +200,7 @@ where
         self.with_anonymous_namespace()
             .with_namespace(NamespacePrefix::XS, Namespace::XS)
             .with_namespace(NamespacePrefix::XML, Namespace::XML)
+            .with_namespace(NamespacePrefix::XSI, Namespace::XSI)
     }
 
     /// Add a new namespace to this parser.

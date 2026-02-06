@@ -1,10 +1,12 @@
 use std::borrow::Cow;
-use std::fmt::{Debug, Formatter, Result as FmtResult};
+use std::fmt::{Debug, Display, Formatter, Result as FmtResult};
 
 use quick_xml::name::{QName as QuickXmlQName, ResolveResult};
-use xsd_parser_types::misc::{format_utf8_slice, Namespace};
 
-use xsd_parser_types::quick_xml::{DeserializeBytes, DeserializeHelper, Error};
+use crate::misc::{format_utf8_slice, Namespace};
+
+#[cfg(feature = "quick-xml")]
+use crate::quick_xml::{DeserializeBytes, DeserializeHelper, Error};
 
 /// Type that represents a a resolved [`QName`].
 ///
@@ -17,9 +19,16 @@ pub struct QName {
 }
 
 impl QName {
+    /// Get the raw bytes of the [`QName`].
+    #[must_use]
+    pub fn as_bytes(&self) -> &[u8] {
+        &self.raw
+    }
+
     /// Create a new [`QName`] instance from the passed `reader` and `raw` data.
     #[must_use]
-    pub fn from_helper(helper: &mut DeserializeHelper, raw: &[u8]) -> Self {
+    #[cfg(feature = "quick-xml")]
+    pub fn from_helper(helper: &DeserializeHelper, raw: &[u8]) -> Self {
         let index = raw.iter().position(|x| *x == b':');
         let ns = match helper.resolve(QuickXmlQName(raw), false).0 {
             ResolveResult::Unbound | ResolveResult::Unknown(_) => None,
@@ -53,6 +62,13 @@ impl QName {
     }
 }
 
+impl AsRef<[u8]> for QName {
+    fn as_ref(&self) -> &[u8] {
+        self.as_bytes()
+    }
+}
+
+#[cfg(feature = "quick-xml")]
 impl DeserializeBytes for QName {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         Ok(Self::from_helper(helper, bytes))
@@ -78,5 +94,11 @@ impl Debug for QName {
             .field("raw", &Helper(&self.raw))
             .field("ns", &self.ns)
             .finish()
+    }
+}
+
+impl Display for QName {
+    fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
+        format_utf8_slice(&self.raw, f)
     }
 }

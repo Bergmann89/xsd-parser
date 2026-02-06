@@ -1,7 +1,6 @@
 #[derive(Debug, Default)]
 pub struct ENTITIESType(pub Vec<String>);
-#[derive(Debug, Default)]
-pub struct ENTITYType(pub Vec<String>);
+pub type ENTITYType = String;
 pub type IDType = String;
 pub type IDREFType = String;
 #[derive(Debug, Default)]

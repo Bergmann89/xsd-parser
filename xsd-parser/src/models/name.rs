@@ -17,6 +17,9 @@ pub enum Name {
 impl Name {
     pub const ANY: Self = Self::named("any");
     pub const ANY_TYPE: Self = Self::named("anyType");
+    pub const ANY_SIMPLE_TYPE: Self = Self::named("anySimpleType");
+
+    pub const TYPE: Self = Self::named("type");
     pub const ANY_ATTRIBUTE: Self = Self::named("any_attribute");
 }
 

@@ -4,13 +4,31 @@ use std::fmt::{Debug, Formatter, Result as FmtResult};
 use std::hash::{Hash, Hasher};
 
 use proc_macro2::TokenStream;
+use xsd_parser_types::misc::Namespace;
+
+use crate::config::NamespaceId;
 
 /// Type information for a custom defined type.
 pub struct CustomMeta {
-    name: String,
-    include: Option<String>,
-    default: Option<Box<dyn CustomDefaultImpl>>,
-    allow_any: bool,
+    /// Name of the custom defined type.
+    pub name: String,
+
+    /// The path the type should be included from.
+    ///
+    /// The path should be absolute, or relative to the root of the generated code.
+    pub include: Option<String>,
+
+    /// The handler for the default values for this custom defined type.
+    ///
+    /// This is used to translate default values specified in the XSD schema,
+    /// to suitable rust code.
+    pub default: Option<Box<dyn CustomDefaultImpl>>,
+
+    /// The namespaces needed by this custom type.
+    pub namespaces: Vec<CustomMetaNamespace>,
+
+    /// Wether this custom type contains `xs:any` elements or not.
+    pub allow_any: bool,
 }
 
 impl CustomMeta {
@@ -24,6 +42,7 @@ impl CustomMeta {
             name: name.into(),
             include: None,
             default: None,
+            namespaces: Vec::new(),
             allow_any: false,
         }
     }
@@ -70,6 +89,25 @@ impl CustomMeta {
         self
     }
 
+    /// Add a namespace that is needed by this custom type.
+    ///
+    /// The namespace may be added to the root element during serialization.
+    #[must_use]
+    pub fn with_namespace<N>(mut self, ns: N) -> Self
+    where
+        N: Into<CustomMetaNamespace>,
+    {
+        self.namespaces.push(ns.into());
+
+        self
+    }
+
+    /// Returns the namespaces needed by this custom type.
+    #[must_use]
+    pub fn namespaces(&self) -> &[CustomMetaNamespace] {
+        &self.namespaces
+    }
+
     /// Returns `true` if this type contains `xs:any` elements, `false` otherwise.
     #[must_use]
     pub fn allow_any(&self) -> bool {
@@ -94,6 +132,7 @@ impl Clone for CustomMeta {
                 .default
                 .as_ref()
                 .map(|x| CustomDefaultImpl::clone(&**x)),
+            namespaces: self.namespaces.clone(),
             allow_any: self.allow_any,
         }
     }
@@ -105,6 +144,7 @@ impl Debug for CustomMeta {
             .field("name", &self.name)
             .field("include", &self.include)
             .field("default", &self.default.is_some())
+            .field("namespaces", &self.namespaces)
             .field("allow_any", &self.allow_any)
             .finish()
     }
@@ -149,5 +189,27 @@ where
 
     fn clone(&self) -> Box<dyn CustomDefaultImpl> {
         Box::new(self.clone())
+    }
+}
+
+/// Namespace information for a custom defined type.
+#[derive(Debug, Clone, Eq, PartialEq, Hash)]
+pub enum CustomMetaNamespace {
+    /// A namespace that is identified by its id.
+    Id(NamespaceId),
+
+    /// A namespace that is identified by the namespace information itself.
+    Namespace(Namespace),
+}
+
+impl From<NamespaceId> for CustomMetaNamespace {
+    fn from(value: NamespaceId) -> Self {
+        Self::Id(value)
+    }
+}
+
+impl From<Namespace> for CustomMetaNamespace {
+    fn from(value: Namespace) -> Self {
+        Self::Namespace(value)
     }
 }

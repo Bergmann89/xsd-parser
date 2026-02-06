@@ -205,29 +205,24 @@ pub fn exec_interpreter_with_ident_cache(
 
     let mut interpreter = Interpreter::new(schemas);
 
+    macro_rules! eval_flag {
+        ($flag:ident, $fn:ident) => {
+            if config.flags.contains(InterpreterFlags::$flag) {
+                interpreter = interpreter.$fn()?;
+            }
+        };
+    }
+
     if let Some(naming) = config.naming {
         interpreter = interpreter.with_naming_boxed(naming);
     }
 
-    if config.flags.contains(InterpreterFlags::BUILDIN_TYPES) {
-        interpreter = interpreter.with_buildin_types()?;
-    }
-
-    if config.flags.contains(InterpreterFlags::DEFAULT_TYPEDEFS) {
-        interpreter = interpreter.with_default_typedefs()?;
-    }
-
-    if config.flags.contains(InterpreterFlags::WITH_XS_ANY_TYPE) {
-        interpreter = interpreter.with_xs_any_type()?;
-    }
-
-    if config.flags.contains(InterpreterFlags::WITH_NUM_BIG_INT) {
-        interpreter = interpreter.with_num_big_int()?;
-    }
-
-    if config.flags.contains(InterpreterFlags::NONZERO_TYPEDEFS) {
-        interpreter = interpreter.with_nonzero_typedefs()?;
-    }
+    eval_flag!(BUILDIN_TYPES, with_buildin_types);
+    eval_flag!(DEFAULT_TYPEDEFS, with_default_typedefs);
+    eval_flag!(WITH_XS_ANY_TYPE, with_xs_any_type);
+    eval_flag!(WITH_XS_ANY_SIMPLE_TYPE, with_xs_any_simple_type);
+    eval_flag!(WITH_NUM_BIG_INT, with_num_big_int);
+    eval_flag!(NONZERO_TYPEDEFS, with_nonzero_typedefs);
 
     for (ident, ty) in config.types {
         let ident = ident.resolve(schemas)?;

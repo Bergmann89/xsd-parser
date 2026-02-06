@@ -1199,7 +1199,7 @@ pub mod xs {
     use num::{BigInt, BigUint};
     #[derive(Debug, Default)]
     pub struct EntitiesXType(pub Vec<String>);
-    pub type EntityXType = EntitiesXType;
+    pub type EntityXType = String;
     pub type IdXType = String;
     pub type IdrefXType = String;
     pub type IdrefsXType = EntitiesXType;
@@ -1209,7 +1209,11 @@ pub mod xs {
     pub type NotationXType = String;
     pub type NameXType = String;
     pub type QNameXType = String;
-    pub type AnySimpleTypeXType = String;
+    #[derive(Debug)]
+    pub struct AnySimpleTypeXType {
+        pub type_: Option<String>,
+        pub content: String,
+    }
     pub type AnyUriXType = String;
     pub type Base64BinaryXType = String;
     pub type BooleanXType = bool;

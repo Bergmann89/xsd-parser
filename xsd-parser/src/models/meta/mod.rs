@@ -24,7 +24,7 @@ use std::ops::{Bound, Range};
 pub use self::attribute::{AnyAttributeMeta, AttributeMeta, AttributeMetaVariant, AttributesMeta};
 pub use self::base::Base;
 pub use self::complex::{ComplexMeta, GroupMeta};
-pub use self::custom::{CustomDefaultImpl, CustomMeta};
+pub use self::custom::{CustomDefaultImpl, CustomMeta, CustomMetaNamespace};
 pub use self::dynamic::DynamicMeta;
 pub use self::element::{AnyMeta, ElementMeta, ElementMetaVariant, ElementMode, ElementsMeta};
 pub use self::enumeration::{EnumerationMeta, EnumerationMetaVariant, EnumerationMetaVariants};

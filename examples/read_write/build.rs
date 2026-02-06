@@ -2,34 +2,19 @@ use std::fs::File;
 use std::io::Write;
 use std::process::{Command, Output, Stdio};
 
-use xsd_parser::pipeline::renderer::NamespaceSerialization;
 use xsd_parser::{
-    config::{GeneratorFlags, InterpreterFlags, OptimizerFlags, RenderStep, Schema},
+    config::{GeneratorFlags, InterpreterFlags, OptimizerFlags, Schema},
     generate, Config, Error,
 };
 
 fn main() -> Result<(), Error> {
     // This is almost the starting point defined in the main `[README.md]`.
-    let mut config = Config::default();
-    config.parser.schemas = vec![Schema::File("my-schema.xsd".into())];
-    config.interpreter.flags = InterpreterFlags::all();
-    config.optimizer.flags = OptimizerFlags::all();
-    config.generator.flags = GeneratorFlags::all();
-    config.renderer.xsd_parser_types = "xsd_parser_types".into();
-
-    // Add renderers for `quick-xml` serializer and deserializer.
-    let config = config.with_render_steps([
-        RenderStep::Types,
-        RenderStep::Defaults,
-        RenderStep::NamespaceConstants,
-        RenderStep::QuickXmlDeserialize {
-            boxed_deserializer: false,
-        },
-        RenderStep::QuickXmlSerialize {
-            namespaces: NamespaceSerialization::Global,
-            default_namespace: None,
-        },
-    ]);
+    let config = Config::default()
+        .with_schema(Schema::File("my-schema.xsd".into()))
+        .with_interpreter_flags(InterpreterFlags::all())
+        .with_optimizer_flags(OptimizerFlags::all())
+        .with_generator_flags(GeneratorFlags::all())
+        .with_quick_xml();
 
     // Generate the code based on the configuration above.
     let code = generate(config)?;

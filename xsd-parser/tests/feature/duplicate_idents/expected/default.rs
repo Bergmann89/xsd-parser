@@ -25,8 +25,7 @@ pub mod foo {
 pub mod xs {
     #[derive(Debug, Default)]
     pub struct EntitiesType(pub Vec<String>);
-    #[derive(Debug, Default)]
-    pub struct EntityType(pub Vec<String>);
+    pub type EntityType = String;
     pub type IdType = String;
     pub type IdrefType = String;
     #[derive(Debug, Default)]
