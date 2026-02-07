@@ -2,6 +2,7 @@
 resolver = "3"
 members = [
     "benchmark",
+    "examples/aixm",
     "examples/bpmn",
     "examples/read_write",
     "examples/vsme",

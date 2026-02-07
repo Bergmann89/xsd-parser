@@ -48,6 +48,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "aixm"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "num",
+ "xsd-parser",
+ "xsd-parser-types",
+]
+
+[[package]]
 name = "anstream"
 version = "0.6.21"
 source = "registry+https://github.com/rust-lang/crates.io-index"
