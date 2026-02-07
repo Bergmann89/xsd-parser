@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xbrli:xbrl
+  xmlns:xbrli="http://www.xbrl.org/2003/instance"
+  xmlns:link="http://www.xbrl.org/2003/linkbase"
+  xmlns:xlink="http://www.w3.org/1999/xlink"
+  xmlns:iso4217="http://www.xbrl.org/2003/iso4217"
+  xmlns:vsme="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/vsme">
+
+  <link:schemaRef
+    xlink:type="simple"
+    xlink:href="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/vsme-all.xsd" />
+
+  <!-- Duration context (e.g., training hours over the year) -->
+  <xbrli:context id="c-dur-2025">
+    <xbrli:entity>
+      <xbrli:identifier scheme="http://example.com/company-id">
+        EXAMPLE-SME-001
+      </xbrli:identifier>
+    </xbrli:entity>
+    <xbrli:period>
+      <xbrli:startDate>2025-01-01</xbrli:startDate>
+      <xbrli:endDate>2025-12-31</xbrli:endDate>
+    </xbrli:period>
+  </xbrli:context>
+
+  <!-- Instant context (e.g., balance-sheet style values at year-end) -->
+  <xbrli:context id="c-inst-2025-12-31">
+    <xbrli:entity>
+      <xbrli:identifier scheme="http://example.com/company-id">
+        EXAMPLE-SME-001
+      </xbrli:identifier>
+    </xbrli:entity>
+    <xbrli:period>
+      <xbrli:instant>2025-12-31</xbrli:instant>
+    </xbrli:period>
+  </xbrli:context>
+
+  <xbrli:unit id="u-eur">
+    <xbrli:measure>iso4217:EUR</xbrli:measure>
+  </xbrli:unit>
+
+  <xbrli:unit id="u-pure">
+    <xbrli:measure>xbrli:pure</xbrli:measure>
+  </xbrli:unit>
+
+  <!-- Facts -->
+  <vsme:Assets contextRef="c-inst-2025-12-31" unitRef="u-eur" decimals="0">
+    600000
+  </vsme:Assets>
+
+  <vsme:AverageNumberOfAnnualTrainingHoursPerMaleEmployee
+    contextRef="c-dur-2025"
+    unitRef="u-pure"
+    decimals="0">
+    100
+  </vsme:AverageNumberOfAnnualTrainingHoursPerMaleEmployee>
+
+</xbrli:xbrl>

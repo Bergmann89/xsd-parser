@@ -60,3 +60,7 @@ jobs:
     - name: example BPMN
       working-directory: examples/bpmn
       run: cargo run --release
+
+    - name: example VSME
+      working-directory: examples/vsme
+      run: cargo run --release

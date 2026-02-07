@@ -1,0 +1,718 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- (C) Copyright EFRAG - https://efrag.org/ -->
+<xsd:schema xmlns:country="https://xbrl.org/2024/iso3166" xmlns:dtr-types="http://www.xbrl.org/dtr/type/2024-01-31" xmlns:enum2="http://xbrl.org/2020/extensible-enumerations-2.0" xmlns:link="http://www.xbrl.org/2003/linkbase" xmlns:nace="https://xbrl.efrag.org/taxonomy/nace/2025-01-01" xmlns:ref="http://www.xbrl.org/2006/ref" xmlns:vsme="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/vsme" xmlns:waste="https://xbrl.efrag.org/taxonomy/waste/2014-12-18/waste" xmlns:xbrldt="http://xbrl.org/2005/xbrldt" xmlns:xbrli="http://www.xbrl.org/2003/instance" xmlns:xl="http://www.xbrl.org/2003/XLink" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" elementFormDefault="qualified" targetNamespace="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/vsme">
+  <xsd:annotation>
+    <xsd:appinfo>
+      <link:linkbaseRef xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" xlink:href="vsme-generic-label-bg.xml" xlink:type="simple"/>
+      <link:linkbaseRef xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" xlink:href="vsme-generic-label-cs.xml" xlink:type="simple"/>
+      <link:linkbaseRef xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" xlink:href="vsme-generic-label-da.xml" xlink:type="simple"/>
+      <link:linkbaseRef xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" xlink:href="vsme-generic-label-de.xml" xlink:type="simple"/>
+      <link:linkbaseRef xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" xlink:href="vsme-generic-label-el.xml" xlink:type="simple"/>
+      <link:linkbaseRef xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" xlink:href="vsme-generic-label-es.xml" xlink:type="simple"/>
+      <link:linkbaseRef xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" xlink:href="vsme-generic-label-et.xml" xlink:type="simple"/>
+      <link:linkbaseRef xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" xlink:href="vsme-generic-label-fi.xml" xlink:type="simple"/>
+      <link:linkbaseRef xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" xlink:href="vsme-generic-label-fr.xml" xlink:type="simple"/>
+      <link:linkbaseRef xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" xlink:href="vsme-generic-label-ga.xml" xlink:type="simple"/>
+      <link:linkbaseRef xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" xlink:href="vsme-generic-label-hr.xml" xlink:type="simple"/>
+      <link:linkbaseRef xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" xlink:href="vsme-generic-label-hu.xml" xlink:type="simple"/>
+      <link:linkbaseRef xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" xlink:href="vsme-generic-label-it.xml" xlink:type="simple"/>
+      <link:linkbaseRef xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" xlink:href="vsme-generic-label-lt.xml" xlink:type="simple"/>
+      <link:linkbaseRef xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" xlink:href="vsme-generic-label-lv.xml" xlink:type="simple"/>
+      <link:linkbaseRef xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" xlink:href="vsme-generic-label-mt.xml" xlink:type="simple"/>
+      <link:linkbaseRef xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" xlink:href="vsme-generic-label-nl.xml" xlink:type="simple"/>
+      <link:linkbaseRef xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" xlink:href="vsme-generic-label-pl.xml" xlink:type="simple"/>
+      <link:linkbaseRef xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" xlink:href="vsme-generic-label-pt.xml" xlink:type="simple"/>
+      <link:linkbaseRef xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" xlink:href="vsme-generic-label-ro.xml" xlink:type="simple"/>
+      <link:linkbaseRef xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" xlink:href="vsme-generic-label-sk.xml" xlink:type="simple"/>
+      <link:linkbaseRef xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" xlink:href="vsme-generic-label-sl.xml" xlink:type="simple"/>
+      <link:linkbaseRef xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" xlink:href="vsme-generic-label-sv.xml" xlink:type="simple"/>
+      <link:linkbaseRef xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" xlink:href="vsme-presentation.xml" xlink:role="http://www.xbrl.org/2003/role/presentationLinkbaseRef" xlink:type="simple"/>
+      <link:linkbaseRef xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" xlink:href="vsme-calculation.xml" xlink:role="http://www.xbrl.org/2003/role/calculationLinkbaseRef" xlink:type="simple"/>
+      <link:linkbaseRef xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" xlink:href="vsme-definition.xml" xlink:role="http://www.xbrl.org/2003/role/definitionLinkbaseRef" xlink:type="simple"/>
+      <link:linkbaseRef xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" xlink:href="vsme-label-en.xml" xlink:role="http://www.xbrl.org/2003/role/labelLinkbaseRef" xlink:type="simple"/>
+      <link:linkbaseRef xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" xlink:href="vsme-label-bg.xml" xlink:role="http://www.xbrl.org/2003/role/labelLinkbaseRef" xlink:type="simple"/>
+      <link:linkbaseRef xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" xlink:href="vsme-label-cs.xml" xlink:role="http://www.xbrl.org/2003/role/labelLinkbaseRef" xlink:type="simple"/>
+      <link:linkbaseRef xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" xlink:href="vsme-label-da.xml" xlink:role="http://www.xbrl.org/2003/role/labelLinkbaseRef" xlink:type="simple"/>
+      <link:linkbaseRef xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" xlink:href="vsme-label-de.xml" xlink:role="http://www.xbrl.org/2003/role/labelLinkbaseRef" xlink:type="simple"/>
+      <link:linkbaseRef xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" xlink:href="vsme-label-el.xml" xlink:role="http://www.xbrl.org/2003/role/labelLinkbaseRef" xlink:type="simple"/>
+      <link:linkbaseRef xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" xlink:href="vsme-label-es.xml" xlink:role="http://www.xbrl.org/2003/role/labelLinkbaseRef" xlink:type="simple"/>
+      <link:linkbaseRef xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" xlink:href="vsme-label-et.xml" xlink:role="http://www.xbrl.org/2003/role/labelLinkbaseRef" xlink:type="simple"/>
+      <link:linkbaseRef xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" xlink:href="vsme-label-fi.xml" xlink:role="http://www.xbrl.org/2003/role/labelLinkbaseRef" xlink:type="simple"/>
+      <link:linkbaseRef xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" xlink:href="vsme-label-fr.xml" xlink:role="http://www.xbrl.org/2003/role/labelLinkbaseRef" xlink:type="simple"/>
+      <link:linkbaseRef xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" xlink:href="vsme-label-ga.xml" xlink:role="http://www.xbrl.org/2003/role/labelLinkbaseRef" xlink:type="simple"/>
+      <link:linkbaseRef xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" xlink:href="vsme-label-hr.xml" xlink:role="http://www.xbrl.org/2003/role/labelLinkbaseRef" xlink:type="simple"/>
+      <link:linkbaseRef xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" xlink:href="vsme-label-hu.xml" xlink:role="http://www.xbrl.org/2003/role/labelLinkbaseRef" xlink:type="simple"/>
+      <link:linkbaseRef xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" xlink:href="vsme-label-it.xml" xlink:role="http://www.xbrl.org/2003/role/labelLinkbaseRef" xlink:type="simple"/>
+      <link:linkbaseRef xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" xlink:href="vsme-label-lt.xml" xlink:role="http://www.xbrl.org/2003/role/labelLinkbaseRef" xlink:type="simple"/>
+      <link:linkbaseRef xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" xlink:href="vsme-label-lv.xml" xlink:role="http://www.xbrl.org/2003/role/labelLinkbaseRef" xlink:type="simple"/>
+      <link:linkbaseRef xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" xlink:href="vsme-label-mt.xml" xlink:role="http://www.xbrl.org/2003/role/labelLinkbaseRef" xlink:type="simple"/>
+      <link:linkbaseRef xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" xlink:href="vsme-label-nl.xml" xlink:role="http://www.xbrl.org/2003/role/labelLinkbaseRef" xlink:type="simple"/>
+      <link:linkbaseRef xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" xlink:href="vsme-label-pl.xml" xlink:role="http://www.xbrl.org/2003/role/labelLinkbaseRef" xlink:type="simple"/>
+      <link:linkbaseRef xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" xlink:href="vsme-label-pt.xml" xlink:role="http://www.xbrl.org/2003/role/labelLinkbaseRef" xlink:type="simple"/>
+      <link:linkbaseRef xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" xlink:href="vsme-label-ro.xml" xlink:role="http://www.xbrl.org/2003/role/labelLinkbaseRef" xlink:type="simple"/>
+      <link:linkbaseRef xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" xlink:href="vsme-label-sk.xml" xlink:role="http://www.xbrl.org/2003/role/labelLinkbaseRef" xlink:type="simple"/>
+      <link:linkbaseRef xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" xlink:href="vsme-label-sl.xml" xlink:role="http://www.xbrl.org/2003/role/labelLinkbaseRef" xlink:type="simple"/>
+      <link:linkbaseRef xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" xlink:href="vsme-label-sv.xml" xlink:role="http://www.xbrl.org/2003/role/labelLinkbaseRef" xlink:type="simple"/>
+      <link:linkbaseRef xlink:arcrole="http://www.w3.org/1999/xlink/properties/linkbase" xlink:href="vsme-reference.xml" xlink:role="http://www.xbrl.org/2003/role/referenceLinkbaseRef" xlink:type="simple"/>
+      <link:roleType id="role-b01000" roleURI="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/role-b01000">
+        <link:definition>[B01.000] - General information - Basis for Preparation</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+        <link:usedOn>link:calculationLink</link:usedOn>
+        <link:usedOn>link:definitionLink</link:usedOn>
+        <link:usedOn>link:labelLink</link:usedOn>
+        <link:usedOn>link:referenceLink</link:usedOn>
+      </link:roleType>
+      <link:roleType id="enum-99001" roleURI="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/enum-99001">
+        <link:definition>[99001] Enumeration - Basis for preparation</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType id="enum-99002" roleURI="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/enum-99002">
+        <link:definition>[99002] Enumeration - List of disclosures</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType id="enum-99003" roleURI="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/enum-99003">
+        <link:definition>[99003] Enumeration - Undertakings Legal Form</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType id="enum-99005" roleURI="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/enum-99005">
+        <link:definition>[99005] Enumeration - Type of number of employees</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType id="role-b01100" roleURI="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/role-b01100">
+        <link:definition>[B01.100] - General information - List of subsidiaries</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType id="role-b01200" roleURI="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/role-b01200">
+        <link:definition>[B01.200] - General information - List of sites</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType id="role-b02000" roleURI="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/role-b02000">
+        <link:definition>[B02.000] - General information - Practices, policies and/or future initiatives for transitioning towards a more sustainable economy</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType id="role-c01000" roleURI="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/role-c01000">
+        <link:definition>[C01.000] - General information - Strategy: Business Model and Sustainability – Related Initiatives</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType id="enum-99007" roleURI="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/enum-99007">
+        <link:definition>[99007] Enumeration - Type of practice, policy and future initiative</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType id="enum-99008" roleURI="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/enum-99008">
+        <link:definition>[99008] Enumeration - Sustainability issues addressed</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType id="role-c02000" roleURI="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/role-c02000">
+        <link:definition>[C02.000] - General information - Description of practices, policies and/or future initiatives for transitioning towards a more sustainable economy</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType id="role-b08000" roleURI="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/role-b08000">
+        <link:definition>[B08.000] - Social - Workforce - General characteristics: type of contract</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+        <link:usedOn>link:calculationLink</link:usedOn>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType id="role-b09000" roleURI="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/role-b09000">
+        <link:definition>[B09.000] - Social - Workforce - Health and safety</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+        <link:usedOn>link:calculationLink</link:usedOn>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType id="role-b10000" roleURI="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/role-b10000">
+        <link:definition>[B10.000] - Social - Workforce - Remuneration, collective bargaining and training</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+        <link:usedOn>link:calculationLink</link:usedOn>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType id="role-c05000" roleURI="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/role-c05000">
+        <link:definition>[C05.000] - Social - Additional (general) workforce characteristics</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+        <link:usedOn>link:calculationLink</link:usedOn>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType id="role-c06000" roleURI="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/role-c06000">
+        <link:definition>[C06.000] - Social - Additional own workforce information - Human rights policies and processes</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType id="enum-99009" roleURI="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/enum-99009">
+        <link:definition>[99009] Enumeration - Type of content covered by the code of conduct or human rights policy for its own workforce</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType id="role-c07000" roleURI="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/role-c07000">
+        <link:definition>[C07.000] - Social - Severe negative human rights incidents</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType id="enum-99010" roleURI="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/enum-99010">
+        <link:definition>[99010] Enumeration - Basis for reporting</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType id="role-other" roleURI="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/role-other">
+        <link:definition>[D99.000] - Other and/or entity specific information</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType id="role-b11000" roleURI="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/role-b11000">
+        <link:definition>[B11.000] - Governance - Convictions and fines for corruption and bribery</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+        <link:usedOn>link:calculationLink</link:usedOn>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType id="role-c08000" roleURI="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/role-c08000">
+        <link:definition>[C08.000] - Governance - Revenues derived from activities</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+        <link:usedOn>link:calculationLink</link:usedOn>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType id="role-c08100" roleURI="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/role-c08100">
+        <link:definition>[C08.100] - Governance - Exclusion from EU benchmarks</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType id="role-c09000" roleURI="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/role-c09000">
+        <link:definition>[C09.000] - Governance - Gender diversity ratio in the governance body</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+        <link:usedOn>link:calculationLink</link:usedOn>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType id="role-b03000" roleURI="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/role-b03000">
+        <link:definition>[B03.000] - Environment - Total Energy Consumption</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType id="role-b03200" roleURI="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/role-b03200">
+        <link:definition>[B03.200] - Environment - Estimated Greenhouse Gas Emissions</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+        <link:usedOn>link:calculationLink</link:usedOn>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType id="role-b03100" roleURI="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/role-b03100">
+        <link:definition>[B03.100] - Environment - Breakdown of energy consumption</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType id="role-c03100" roleURI="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/role-c03100">
+        <link:definition>[C03.100] - Environment - Greenhouse Gas Emission Reduction Targets</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+        <link:usedOn>link:calculationLink</link:usedOn>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType id="role-c03200" roleURI="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/role-c03200">
+        <link:definition>[C03.200] - Environment - Disclosure of list of main actions the entity seeks to achieve its targets</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType id="role-c03300" roleURI="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/role-c03300">
+        <link:definition>[C03.300] - Environment - Transition plan for undertakings operating in high climate impact sectors</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType id="role-b03300" roleURI="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/role-b03300">
+        <link:definition>[B03.300] - Environment - Greenhouse Gas Emissions intensity</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+        <link:usedOn>link:calculationLink</link:usedOn>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType id="role-b05000" roleURI="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/role-b05000">
+        <link:definition>[B05.000] - Environment - Sites in biodiversity sensitive areas</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType id="role-b04000" roleURI="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/role-b04000">
+        <link:definition>[B04.000] - Environment - Pollution of air, water and soil: availability of public disclosure</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+        <link:usedOn>link:calculationLink</link:usedOn>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType id="enum-99012" roleURI="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/enum-99012">
+        <link:definition>[99012] Enumeration - Type of pollutant</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType id="role-b05100" roleURI="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/role-b05100">
+        <link:definition>[B05.100] - Environment - Biodiversity - on Land-use</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+        <link:usedOn>link:calculationLink</link:usedOn>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType id="role-b06000" roleURI="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/role-b06000">
+        <link:definition>[B06.000] - Environment - Water Withdrawal</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+        <link:usedOn>link:calculationLink</link:usedOn>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType id="role-b06100" roleURI="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/role-b06100">
+        <link:definition>[B06.100] - Environment - Water Consumption</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+        <link:usedOn>link:calculationLink</link:usedOn>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType id="role-b07000" roleURI="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/role-b07000">
+        <link:definition>[B07.000] - Environment - Description of circular economy principles</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType id="role-c04000" roleURI="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/role-c04000">
+        <link:definition>[C04.000] - Environment - Climate risks </link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType id="enum-99014" roleURI="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/enum-99014">
+        <link:definition>[99014] Enumeration - Employee counting methodology</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType id="role-b07100" roleURI="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/role-b07100">
+        <link:definition>[B07.100] - Environment - Breakdown of waste by type</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+        <link:usedOn>link:calculationLink</link:usedOn>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType id="role-b07200" roleURI="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/role-b07200">
+        <link:definition>[B07.200] - Environment - Total Hazardous and Non-Hazardous waste</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+        <link:usedOn>link:calculationLink</link:usedOn>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType id="role-b07300" roleURI="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/role-b07300">
+        <link:definition>[B07.300] - Environment - Breakdown of annual mass-flow of relevant materials used by the undertaking </link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+        <link:usedOn>link:calculationLink</link:usedOn>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType id="role-b07400" roleURI="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/role-b07400">
+        <link:definition>[B07.400] - Environment - Total annual mass-flow of materials used by the undertaking</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+        <link:usedOn>link:calculationLink</link:usedOn>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType id="role-b08200" roleURI="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/role-b08200">
+        <link:definition>[B08.200] - Social - Workforce - General characteristics: country of employment</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+        <link:usedOn>link:calculationLink</link:usedOn>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType id="role-b08100" roleURI="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/role-b08100">
+        <link:definition>[B08.100] - Social - Workforce - General characteristics: gender</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+        <link:usedOn>link:calculationLink</link:usedOn>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType id="role-b04100" roleURI="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/role-b04100">
+        <link:definition>[B04.100] - Environment - Pollution of air, water and soil: amount of emissions</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType id="role-default-dimensions" roleURI="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/role-default-dimensions">
+        <link:definition>[000.000] Default Dimensions</link:definition>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType id="role-b08300" roleURI="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/role-b08300">
+        <link:definition>[B08.300] - Social - Workforce - General characteristics: turnover rate</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+        <link:usedOn>link:definitionLink</link:usedOn>
+      </link:roleType>
+      <link:roleType id="role-c03000" roleURI="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/role-c03000">
+        <link:definition>[C03.000] - Environment - Greenhouse Gas Emissions Reduction Baseline and Target Year</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+      </link:roleType>
+      <link:roleType id="role-b02100" roleURI="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/role-b02100">
+        <link:definition>[B02.100] - General information - Cooperative specific disclosures</link:definition>
+        <link:usedOn>link:presentationLink</link:usedOn>
+        <link:usedOn>link:definitionLink</link:usedOn>
+        <link:usedOn>link:labelLink</link:usedOn>
+        <link:usedOn>link:referenceLink</link:usedOn>
+      </link:roleType>
+    </xsd:appinfo>
+  </xsd:annotation>
+  <xsd:import namespace="http://www.xbrl.org/2003/instance" schemaLocation="../../../../www.xbrl.org/2003/xbrl-instance-2003-12-31.xsd"/>
+  <xsd:import namespace="http://xbrl.org/2020/extensible-enumerations-2.0" schemaLocation="../../../../www.xbrl.org/2020/extensible-enumerations-2.0.xsd"/>
+  <xsd:import namespace="http://www.xbrl.org/2006/ref" schemaLocation="../../../../www.xbrl.org/2006/ref-2006-02-27.xsd"/>
+  <xsd:import namespace="http://xbrl.org/2005/xbrldt" schemaLocation="../../../../www.xbrl.org/2005/xbrldt-2005.xsd"/>
+  <xsd:import namespace="http://www.xbrl.org/dtr/type/2024-01-31" schemaLocation="../../../../www.xbrl.org/dtr/type/2024-01-31/types.xsd"/>
+  <xsd:import namespace="http://www.xbrl.org/2003/linkbase" schemaLocation="../../../../www.xbrl.org/2003/xbrl-linkbase-2003-12-31.xsd"/>
+  <xsd:import namespace="https://xbrl.org/2024/iso3166/entry-en" schemaLocation="../../../../www.xbrl.org/taxonomy/int/country/current/entry-en.xsd"/>
+  <xsd:import namespace="https://xbrl.efrag.org/taxonomy/nace/2025-01-01" schemaLocation="../../nace/2025-01-01/nace-codes.xsd"/>
+  <xsd:import namespace="https://xbrl.efrag.org/taxonomy/waste/2014-12-18/waste" schemaLocation="../../waste/2014-12-18/waste.xsd"/>
+  <xsd:element id="vsme_BasisForPreparation" name="BasisForPreparation" nillable="true" substitutionGroup="xbrli:item" type="enum2:enumerationItemType" enum2:domain="vsme:BasisForPreparationMember" enum2:headUsable="false" enum2:linkrole="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/enum-99001" xbrli:periodType="duration"/>
+  <xsd:element abstract="true" id="vsme_ReportingScopeDomain" name="ReportingScopeDomain" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_AnnualMassFlowOfRelevantMaterialsUsedByTheUndertakingAbstract" name="AnnualMassFlowOfRelevantMaterialsUsedByTheUndertakingAbstract" nillable="true" substitutionGroup="xbrli:item" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="false" id="vsme_WeightOfMaterialUsed" name="WeightOfMaterialUsed" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:massItemType" xbrli:periodType="duration"/>
+  <xsd:element abstract="false" id="vsme_TotalMassOfMaterialUsed" name="TotalMassOfMaterialUsed" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:massItemType" xbrli:periodType="duration"/>
+  <xsd:element abstract="false" id="vsme_TotalVolumeOfMaterialUsed" name="TotalVolumeOfMaterialUsed" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:volumeItemType" xbrli:periodType="duration"/>
+  <xsd:element abstract="false" id="vsme_VolumeOfMaterialUsed" name="VolumeOfMaterialUsed" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:volumeItemType" xbrli:periodType="duration"/>
+  <xsd:element abstract="true" id="vsme_BreakdownOfAnnualMassFlowOfRelevantMaterialsUsedByTheUndertakingLineItems" name="BreakdownOfAnnualMassFlowOfRelevantMaterialsUsedByTheUndertakingLineItems" nillable="true" substitutionGroup="xbrli:item" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element id="vsme_NameOfMaterialUsed" name="NameOfMaterialUsed" nillable="true" substitutionGroup="xbrli:item" type="xbrli:stringItemType" xbrli:periodType="duration"/>
+  <xsd:element abstract="true" id="vsme_BreakdownOfAnnualMassFlowOfRelevantMaterialsUsedByTheUndertakingHypercube" name="BreakdownOfAnnualMassFlowOfRelevantMaterialsUsedByTheUndertakingHypercube" nillable="true" substitutionGroup="xbrldt:hypercubeItem" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element id="vsme_BasisForReporting" name="BasisForReporting" nillable="true" substitutionGroup="xbrli:item" type="enum2:enumerationItemType" enum2:domain="vsme:BasisForReportingMember" enum2:headUsable="false" enum2:linkrole="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/enum-99010" xbrli:periodType="duration"/>
+  <xsd:element abstract="true" id="vsme_ConsolidatedMember" name="ConsolidatedMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_IndividualMember" name="IndividualMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_ListOfSubsidiariesAbstract" name="ListOfSubsidiariesAbstract" nillable="true" substitutionGroup="xbrli:item" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_ConvictionsAndFinesForCorruptionAndBriberyAbstract" name="ConvictionsAndFinesForCorruptionAndBriberyAbstract" nillable="true" substitutionGroup="xbrli:item" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element id="vsme_NameOfTheSubsidiary" name="NameOfTheSubsidiary" nillable="true" substitutionGroup="xbrli:item" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element id="vsme_URLOrLinkToThePubliclyAvailableDisclosure" name="URLOrLinkToThePubliclyAvailableDisclosure" nillable="true" substitutionGroup="xbrli:item" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_BasisForReportingMember" name="BasisForReportingMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_TypeOfPollutantMember" name="TypeOfPollutantMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_AlachlorMember" name="AlachlorMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_AldrinMember" name="AldrinMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_AmmoniaNH3Member" name="AmmoniaNH3Member" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_AnthraceneMember" name="AnthraceneMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_ArsenicAndCompoundsAsMember" name="ArsenicAndCompoundsAsMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_AsbestosMember" name="AsbestosMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_AtrazineMember" name="AtrazineMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_BenzeneMember" name="BenzeneMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_BenzoghiperyleneMember" name="BenzoghiperyleneMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_BrominatedDiphenylethersPBDEMember" name="BrominatedDiphenylethersPBDEMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_CadmiumAndCompoundsCdMember" name="CadmiumAndCompoundsCdMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_CarbonDioxideCO2Member" name="CarbonDioxideCO2Member" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_CarbonMonoxideCOMember" name="CarbonMonoxideCOMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_ChlordaneMember" name="ChlordaneMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_ChlordeconeMember" name="ChlordeconeMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_ChlorfenvinphosMember" name="ChlorfenvinphosMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_ChloridesTotalClMember" name="ChloridesTotalClMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_ChlorineAndInorganicCompoundsHClMember" name="ChlorineAndInorganicCompoundsHClMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_ChloroAlkanesC10C13Member" name="ChloroAlkanesC10C13Member" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_ChlorofluorocarbonsCFCsMember" name="ChlorofluorocarbonsCFCsMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_ChlorpyrifosMember" name="ChlorpyrifosMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_ChromiumAndCompoundsCrMember" name="ChromiumAndCompoundsCrMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_CopperAndCompoundsCuMember" name="CopperAndCompoundsCuMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_CyanidesTotalCNMember" name="CyanidesTotalCNMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_DDTMember" name="DDTMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_EDC12DichloroethaneMember" name="EDC12DichloroethaneMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_Di2EthylHexylPhthalateDEHPMember" name="Di2EthylHexylPhthalateDEHPMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_DichloromethaneDCMMember" name="DichloromethaneDCMMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_DieldrinMember" name="DieldrinMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_DiuronMember" name="DiuronMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_DicofolMember" name="DicofolMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_EndosulphanMember" name="EndosulphanMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_EndrinMember" name="EndrinMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_EthylBenzeneMember" name="EthylBenzeneMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_FluorantheneMember" name="FluorantheneMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_FluoridesTotalFMember" name="FluoridesTotalFMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_HalogenatedOrganicCompoundsAOXMember" name="HalogenatedOrganicCompoundsAOXMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_FluorineAndInorganicCompoundsHFMember" name="FluorineAndInorganicCompoundsHFMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_EthyleneOxideMember" name="EthyleneOxideMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_HalonsMember" name="HalonsMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_HeptachlorMember" name="HeptachlorMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_HexabromobiphenylMember" name="HexabromobiphenylMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_HexachlorobenzeneHCBMember" name="HexachlorobenzeneHCBMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_HexachlorobutadieneHCBDMember" name="HexachlorobutadieneHCBDMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_HCH123456HexachlorocyclohexaneMember" name="HCH123456HexachlorocyclohexaneMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_HydroFluorocarbonsHFCsMember" name="HydroFluorocarbonsHFCsMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_HydrochlorofluorocarbonsHCFCsMember" name="HydrochlorofluorocarbonsHCFCsMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_HydrogenCyanideHCNMember" name="HydrogenCyanideHCNMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_IsodrinMember" name="IsodrinMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_IsoproturonMember" name="IsoproturonMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_LeadAndCompoundsPbMember" name="LeadAndCompoundsPbMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_LindaneMember" name="LindaneMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_MercuryAndCompoundsHgMember" name="MercuryAndCompoundsHgMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_MethaneCH4Member" name="MethaneCH4Member" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_MirexMember" name="MirexMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_NaphthaleneMember" name="NaphthaleneMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_NickelAndCompoundsNiMember" name="NickelAndCompoundsNiMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_NitrogenOxidesNOxNO2Member" name="NitrogenOxidesNOxNO2Member" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_NitrousOxideN2OMember" name="NitrousOxideN2OMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_NonMethaneVolatileOrganicCompoundsNMVOCMember" name="NonMethaneVolatileOrganicCompoundsNMVOCMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_NonylphenolAndNonylphenolEthoxylatesNPNPEsMember" name="NonylphenolAndNonylphenolEthoxylatesNPNPEsMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_OctylphenolsAndOctylphenolEthoxylatesMember" name="OctylphenolsAndOctylphenolEthoxylatesMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_OrganotinCompoundsTotalSnMember" name="OrganotinCompoundsTotalSnMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_ParticulateMatterPMMember" name="ParticulateMatterPMMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_PCDDPCDFDioxinsFuransTeqMember" name="PCDDPCDFDioxinsFuransTeqMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_PentachlorobenzeneMember" name="PentachlorobenzeneMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_PentachlorophenolPCPMember" name="PentachlorophenolPCPMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_PerfluorocarbonsPFCsMember" name="PerfluorocarbonsPFCsMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_Perfluorohexane1SulfonicAcidPFHxSAndItsSaltsMember" name="Perfluorohexane1SulfonicAcidPFHxSAndItsSaltsMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_PerfluorooctanoicAcidPFOAAndItsSaltsMember" name="PerfluorooctanoicAcidPFOAAndItsSaltsMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_PhenolsTotalCMember" name="PhenolsTotalCMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_PolychlorinatedBiphenylsPCBsMember" name="PolychlorinatedBiphenylsPCBsMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_PolycyclicAromaticHydrocarbonsPAHsMember" name="PolycyclicAromaticHydrocarbonsPAHsMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_SulphurHexafluorideSF6Member" name="SulphurHexafluorideSF6Member" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_SimazineMember" name="SimazineMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_SulphurOxidesSOxSO2Member" name="SulphurOxidesSOxSO2Member" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_TetrachloroethylenePERMember" name="TetrachloroethylenePERMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_TetrachloromethaneTCMMember" name="TetrachloromethaneTCMMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_Tetrachloroethane1122Member" name="Tetrachloroethane1122Member" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_TolueneMember" name="TolueneMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_TotalNitrogenMember" name="TotalNitrogenMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_TotalOrganicCarbonTOCTotalCOrCOD3Member" name="TotalOrganicCarbonTOCTotalCOrCOD3Member" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_TotalPhosphorusMember" name="TotalPhosphorusMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_ToxapheneMember" name="ToxapheneMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_TributyltinAndCompoundsMember" name="TributyltinAndCompoundsMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_TrichlorobenzenesTCBsAllIsomersMember" name="TrichlorobenzenesTCBsAllIsomersMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_Trichloroethane111Member" name="Trichloroethane111Member" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_TrichloroethyleneMember" name="TrichloroethyleneMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_TrichloromethaneMember" name="TrichloromethaneMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_TrifluralinMember" name="TrifluralinMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_VinylChlorideMember" name="VinylChlorideMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_XylenesMember" name="XylenesMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_TriphenyltinAndCompoundsMember" name="TriphenyltinAndCompoundsMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_ZincAndCompoundsZnMember" name="ZincAndCompoundsZnMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_B3-EnergyAndGreenhouseGasEmissionsMember" name="B3-EnergyAndGreenhouseGasEmissionsMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element id="vsme_RegisteredAddressOfTheSubsidiary" name="RegisteredAddressOfTheSubsidiary" nillable="true" substitutionGroup="xbrli:item" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_ListOfSubsidiaryTable" name="ListOfSubsidiaryTable" nillable="true" substitutionGroup="xbrldt:hypercubeItem" type="xbrli:stringItemType" xbrldt:contextElement="scenario" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_CountryOfEmploymentContractAxis" name="CountryOfEmploymentContractAxis" nillable="true" substitutionGroup="xbrldt:dimensionItem" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_TypeOfPollutantAxis" name="TypeOfPollutantAxis" nillable="true" substitutionGroup="xbrldt:dimensionItem" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_TypeOfWasteAxis" name="TypeOfWasteAxis" nillable="true" substitutionGroup="xbrldt:dimensionItem" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_BreakdownOfEnergyConsumptionAxis" name="BreakdownOfEnergyConsumptionAxis" nillable="true" substitutionGroup="xbrldt:dimensionItem" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_ReportingScopesAxis" name="ReportingScopesAxis" nillable="true" substitutionGroup="xbrldt:dimensionItem" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_CurrentlyStatedMember" name="CurrentlyStatedMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_BaselineYearMember" name="BaselineYearMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element id="vsme_GreenhouseGasEmissionReductionTargetBaseYear" name="GreenhouseGasEmissionReductionTargetBaseYear" nillable="true" substitutionGroup="xbrli:item" type="xbrli:gYearItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_TargetYearMember" name="TargetYearMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element id="vsme_GreenhouseGasEmissionReductionTargetYear" name="GreenhouseGasEmissionReductionTargetYear" nillable="true" substitutionGroup="xbrli:item" type="xbrli:gYearItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_ListOfSitesAbstract" name="ListOfSitesAbstract" nillable="true" substitutionGroup="xbrli:item" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_ListOfSitesLineItems" name="ListOfSitesLineItems" nillable="true" substitutionGroup="xbrli:item" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_RevenuesDerivedFromActivitiesAbstract" name="RevenuesDerivedFromActivitiesAbstract" nillable="true" substitutionGroup="xbrli:item" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_ExclusionFromEUReferenceBenchmarksAbstract" name="ExclusionFromEUReferenceBenchmarksAbstract" nillable="true" substitutionGroup="xbrli:item" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_IdentifierOfSiteTypedAxis" name="IdentifierOfSiteTypedAxis" nillable="true" substitutionGroup="xbrldt:dimensionItem" type="xbrli:stringItemType" xbrldt:typedDomainRef="#vsme_TYP" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_IdentifierOfMaterialTypedAxis" name="IdentifierOfMaterialTypedAxis" nillable="true" substitutionGroup="xbrldt:dimensionItem" type="xbrli:stringItemType" xbrldt:typedDomainRef="#vsme_TYP" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_SitesInBiodiversitySensitiveAreasTable" name="SitesInBiodiversitySensitiveAreasTable" nillable="true" substitutionGroup="xbrldt:hypercubeItem" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_ListOfSitesTable" name="ListOfSitesTable" nillable="true" substitutionGroup="xbrldt:hypercubeItem" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element id="vsme_NumberOfPermanentContractEmployees" name="NumberOfPermanentContractEmployees" nillable="true" substitutionGroup="xbrli:item" type="xbrli:decimalItemType" xbrli:periodType="instant"/>
+  <xsd:element id="vsme_TotalNumberOfConvictionsForTheViolationOfAntiCorruptionAndAntiBriberyLaws" name="TotalNumberOfConvictionsForTheViolationOfAntiCorruptionAndAntiBriberyLaws" nillable="true" substitutionGroup="xbrli:item" type="xbrli:decimalItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_TotalAmountOfFinesForTheViolationOfAnticorruptionAndAntibriberyLaws" name="TotalAmountOfFinesForTheViolationOfAnticorruptionAndAntibriberyLaws" nillable="true" substitutionGroup="xbrli:item" type="xbrli:monetaryItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_RevenueDerivedFromControversialWeaponsAntiPersonnelMinesClusterMunitionsChemicalWeaponsAndBiologicalWeapons" name="RevenueDerivedFromControversialWeaponsAntiPersonnelMinesClusterMunitionsChemicalWeaponsAndBiologicalWeapons" nillable="true" substitutionGroup="xbrli:item" type="xbrli:monetaryItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_TotalRevenuesDerivedFromFossilFuelCoalOilAndGasSector" name="TotalRevenuesDerivedFromFossilFuelCoalOilAndGasSector" nillable="true" substitutionGroup="xbrli:item" type="xbrli:monetaryItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_RevenueDerivedFromCoal" name="RevenueDerivedFromCoal" nillable="true" substitutionGroup="xbrli:item" type="xbrli:monetaryItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_RevenueDerivedFromOil" name="RevenueDerivedFromOil" nillable="true" substitutionGroup="xbrli:item" type="xbrli:monetaryItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_RevenueDerivedFromGas" name="RevenueDerivedFromGas" nillable="true" substitutionGroup="xbrli:item" type="xbrli:monetaryItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_RevenueDerivedFromCultivationAndProductionOfTobacco" name="RevenueDerivedFromCultivationAndProductionOfTobacco" nillable="true" substitutionGroup="xbrli:item" type="xbrli:monetaryItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_RevenueDerivedFromChemicalProduction" name="RevenueDerivedFromChemicalProduction" nillable="true" substitutionGroup="xbrli:item" type="xbrli:monetaryItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_NumberOfMaleEmployees" name="NumberOfMaleEmployees" nillable="true" substitutionGroup="xbrli:item" type="xbrli:decimalItemType" xbrli:periodType="instant"/>
+  <xsd:element id="vsme_AverageNumberOfAnnualTrainingHoursPerMaleEmployee" name="AverageNumberOfAnnualTrainingHoursPerMaleEmployee" nillable="true" substitutionGroup="xbrli:item" type="xbrli:decimalItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_TotalEnergyConsumption" name="TotalEnergyConsumption" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:energyItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_AmountOfEmissionToAir" name="AmountOfEmissionToAir" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:massItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_TotalUseOfLand" name="TotalUseOfLand" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:areaItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_TotalNatureOrientedAreaOffSite" name="TotalNatureOrientedAreaOffSite" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:areaItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_TotalNatureOrientedAreaOnSite" name="TotalNatureOrientedAreaOnSite" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:areaItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_TotalSealedArea" name="TotalSealedArea" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:areaItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_AreaOfSiteInBiodiversitySensitiveArea" name="AreaOfSiteInBiodiversitySensitiveArea" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:areaItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_TotalNumberOfSelfEmployedWorkersWithoutPersonnelThatAreWorkingExclusivelyForTheUndertaking" name="TotalNumberOfSelfEmployedWorkersWithoutPersonnelThatAreWorkingExclusivelyForTheUndertaking" nillable="true" substitutionGroup="xbrli:item" type="xbrli:decimalItemType" xbrli:periodType="instant"/>
+  <xsd:element id="vsme_TotalNumberOfTemporaryWorkersProvidedByUndertakingsPrimarilyEngagedInEmploymentActivities" name="TotalNumberOfTemporaryWorkersProvidedByUndertakingsPrimarilyEngagedInEmploymentActivities" nillable="true" substitutionGroup="xbrli:item" type="xbrli:decimalItemType" xbrli:periodType="instant"/>
+  <xsd:element id="vsme_AverageNumberOfAnnualTrainingHoursPerFemaleEmployee" name="AverageNumberOfAnnualTrainingHoursPerFemaleEmployee" nillable="true" substitutionGroup="xbrli:item" type="xbrli:decimalItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_AverageNumberOfAnnualTrainingHoursPerOtherGenderEmployee" name="AverageNumberOfAnnualTrainingHoursPerOtherGenderEmployee" nillable="true" substitutionGroup="xbrli:item" type="xbrli:decimalItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_AverageNumberOfAnnualTrainingHoursPerNonReportedGenderEmployee" name="AverageNumberOfAnnualTrainingHoursPerNonReportedGenderEmployee" nillable="true" substitutionGroup="xbrli:item" type="xbrli:decimalItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_EmployeeTurnoverRate" name="EmployeeTurnoverRate" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:percentItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_RateOfRecordableWorkRelatedAccidentsInTheReportingPeriod" name="RateOfRecordableWorkRelatedAccidentsInTheReportingPeriod" nillable="true" substitutionGroup="xbrli:item" type="xbrli:decimalItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_NumberOfFatalitiesAsAResultOfWorkRelatedInjuriesAndWorkRelatedIllHealth" name="NumberOfFatalitiesAsAResultOfWorkRelatedInjuriesAndWorkRelatedIllHealth" nillable="true" substitutionGroup="xbrli:item" type="xbrli:decimalItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_FemaleToMaleRatioAtManagementLevelForTheReportingPeriod" name="FemaleToMaleRatioAtManagementLevelForTheReportingPeriod" nillable="true" substitutionGroup="xbrli:item" type="xbrli:decimalItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_NumberOfFemaleEmployees" name="NumberOfFemaleEmployees" nillable="true" substitutionGroup="xbrli:item" type="xbrli:decimalItemType" xbrli:periodType="instant"/>
+  <xsd:element id="vsme_NumberOfOtherGenderEmployees" name="NumberOfOtherGenderEmployees" nillable="true" substitutionGroup="xbrli:item" type="xbrli:decimalItemType" xbrli:periodType="instant"/>
+  <xsd:element id="vsme_NumberOfNonReportedGenderEmployees" name="NumberOfNonReportedGenderEmployees" nillable="true" substitutionGroup="xbrli:item" type="xbrli:decimalItemType" xbrli:periodType="instant"/>
+  <xsd:element id="vsme_NumberOfEmployeesForCountryOfEmploymentContract" name="NumberOfEmployeesForCountryOfEmploymentContract" nillable="true" substitutionGroup="xbrli:item" type="xbrli:decimalItemType" xbrli:periodType="instant"/>
+  <xsd:element id="vsme_EnergyConsumptionFromElectricity" name="EnergyConsumptionFromElectricity" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:energyItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_GrossScope1GreenhouseGasEmissions" name="GrossScope1GreenhouseGasEmissions" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:ghgEmissionsItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_GrossLocationBasedScope2GreenhouseGasEmissions" name="GrossLocationBasedScope2GreenhouseGasEmissions" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:ghgEmissionsItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_GrossMarketBasedScope2GreenhouseGasEmissions" name="GrossMarketBasedScope2GreenhouseGasEmissions" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:ghgEmissionsItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_GrossScope3GreenhouseGasEmissions" name="GrossScope3GreenhouseGasEmissions" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:ghgEmissionsItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_TotalGrossLocationBasedScope1AndScope2GHGEmissions" name="TotalGrossLocationBasedScope1AndScope2GHGEmissions" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:ghgEmissionsItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_TotalGrossMarketBasedScope1AndScope2GHGEmissions" name="TotalGrossMarketBasedScope1AndScope2GHGEmissions" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:ghgEmissionsItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_TotalGrossLocationBasedGHGEmissions" name="TotalGrossLocationBasedGHGEmissions" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:ghgEmissionsItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_TotalGrossMarketBasedGHGEmissions" name="TotalGrossMarketBasedGHGEmissions" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:ghgEmissionsItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_EnergyConsumptionFromSelfGeneratedElectricity" name="EnergyConsumptionFromSelfGeneratedElectricity" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:energyItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_EnergyConsumptionFromFuels" name="EnergyConsumptionFromFuels" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:energyItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_NumberOfRecordableWorkRelatedAccidentsInTheReportingPeriod" name="NumberOfRecordableWorkRelatedAccidentsInTheReportingPeriod" nillable="true" substitutionGroup="xbrli:item" type="xbrli:decimalItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_EmployeesReceivePayEqualOrAboveMinimumWageDeterminedByNationalLawOrCollectiveAgreement" name="EmployeesReceivePayEqualOrAboveMinimumWageDeterminedByNationalLawOrCollectiveAgreement" nillable="true" substitutionGroup="xbrli:item" type="xbrli:booleanItemType" xbrli:periodType="instant"/>
+  <xsd:element id="vsme_PercentageGapInPayBetweenFemaleAndMaleEmployees" name="PercentageGapInPayBetweenFemaleAndMaleEmployees" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:percentItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_GenderDiversityRatioInGovernanceBody" name="GenderDiversityRatioInGovernanceBody" nillable="true" substitutionGroup="xbrli:item" type="xbrli:decimalItemType" xbrli:periodType="instant"/>
+  <xsd:element id="vsme_PercentageOfEmployeesCoveredByCollectiveBargainingAgreements" name="PercentageOfEmployeesCoveredByCollectiveBargainingAgreements" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:percentItemType" xbrli:periodType="instant"/>
+  <xsd:element id="vsme_Scope1AndScope2GreenhouseGasEmissionsIntensityValueMarketBased" name="Scope1AndScope2GreenhouseGasEmissionsIntensityValueMarketBased" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:ghgEmissionsPerMonetaryItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_Scope1AndScope2GreenhouseGasEmissionsIntensityValueLocationBased" name="Scope1AndScope2GreenhouseGasEmissionsIntensityValueLocationBased" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:ghgEmissionsPerMonetaryItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_TotalLocationBasedGreenhouseGasEmissionsIntensityValue" name="TotalLocationBasedGreenhouseGasEmissionsIntensityValue" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:ghgEmissionsPerMonetaryItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_TotalMarketBasedGreenhouseGasEmissionsIntensityValue" name="TotalMarketBasedGreenhouseGasEmissionsIntensityValue" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:ghgEmissionsPerMonetaryItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_NumberOfTemporaryContractEmployees" name="NumberOfTemporaryContractEmployees" nillable="true" substitutionGroup="xbrli:item" type="xbrli:decimalItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_NumberOfEmployeesForTypeOfContractAbstract" name="NumberOfEmployeesForTypeOfContractAbstract" nillable="true" substitutionGroup="xbrli:item" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_NumberOfEmployeesForCountryOfEmploymentContractLineItems" name="NumberOfEmployeesForCountryOfEmploymentContractLineItems" nillable="true" substitutionGroup="xbrli:item" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_NumberOfEmployeesForCountryOfEmploymentContractAbstract" name="NumberOfEmployeesForCountryOfEmploymentContractAbstract" nillable="true" substitutionGroup="xbrli:item" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_EmployeesTurnoverAbstract" name="EmployeesTurnoverAbstract" nillable="true" substitutionGroup="xbrli:item" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_WorkforceHealthAndSafetyAbstract" name="WorkforceHealthAndSafetyAbstract" nillable="true" substitutionGroup="xbrli:item" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_AdditionalWorkforceHealthAndSafetyAbstract" name="AdditionalWorkforceHealthAndSafetyAbstract" nillable="true" substitutionGroup="xbrli:item" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_NumberOfEmployeesByGenderAbstract" name="NumberOfEmployeesByGenderAbstract" nillable="true" substitutionGroup="xbrli:item" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_NumberOfAnnualTrainingHoursPerEmployeeAbstract" name="NumberOfAnnualTrainingHoursPerEmployeeAbstract" nillable="true" substitutionGroup="xbrli:item" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_AdditionalOwnWorkforceInformationHumanRightsPoliciesAndProcessesAbstract" name="AdditionalOwnWorkforceInformationHumanRightsPoliciesAndProcessesAbstract" nillable="true" substitutionGroup="xbrli:item" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_SevereNegativeHumanRightsIncidentsAbstract" name="SevereNegativeHumanRightsIncidentsAbstract" nillable="true" substitutionGroup="xbrli:item" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element id="vsme_UndertakingHasConfirmedHumanRightsIncidentsInItsOwnWorkforce" name="UndertakingHasConfirmedHumanRightsIncidentsInItsOwnWorkforce" nillable="true" substitutionGroup="xbrli:item" type="xbrli:booleanItemType" enum2:domain="vsme:PracticePolicyOrFutureInitiativeMember" enum2:headUsable="false" enum2:linkrole="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/enum-99008" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_UndertakingHasACodeOfConductOrHumanRightsPolicyForItsOwnWorkforce" name="UndertakingHasACodeOfConductOrHumanRightsPolicyForItsOwnWorkforce" nillable="true" substitutionGroup="xbrli:item" type="xbrli:booleanItemType" enum2:domain="vsme:PracticePolicyOrFutureInitiativeMember" enum2:headUsable="false" enum2:linkrole="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/enum-99008" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_UndertakingHasAComplaintHandlingMechanismForItsOwnWorkforce" name="UndertakingHasAComplaintHandlingMechanismForItsOwnWorkforce" nillable="true" substitutionGroup="xbrli:item" type="xbrli:booleanItemType" enum2:domain="vsme:PracticePolicyOrFutureInitiativeMember" enum2:headUsable="false" enum2:linkrole="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/enum-99008" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_UndertakingIsAwareOfAnyConfirmedIncidentsInvolvingWorkersInTheValueChainAffectedCommunitiesConsumersAndEndUsers" name="UndertakingIsAwareOfAnyConfirmedIncidentsInvolvingWorkersInTheValueChainAffectedCommunitiesConsumersAndEndUsers" nillable="true" substitutionGroup="xbrli:item" type="xbrli:booleanItemType" enum2:domain="vsme:PracticePolicyOrFutureInitiativeMember" enum2:headUsable="false" enum2:linkrole="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/enum-99008" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_SustainabilityIssueAddressedByPracticePolicyAndOrFutureInitiative" name="SustainabilityIssueAddressedByPracticePolicyAndOrFutureInitiative" nillable="true" substitutionGroup="xbrli:item" type="enum2:enumerationSetItemType" enum2:domain="vsme:SustainabilityIssuesAddressedMember" enum2:headUsable="false" enum2:linkrole="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/enum-99008" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_UndertakingsAreExcludedFromAnyEuReferenceBenchmarksThatAreAlignedWithTheParisAgreement" name="UndertakingsAreExcludedFromAnyEuReferenceBenchmarksThatAreAlignedWithTheParisAgreement" nillable="true" substitutionGroup="xbrli:item" type="xbrli:booleanItemType" enum2:domain="vsme:PracticePolicyOrFutureInitiativeMember" enum2:headUsable="false" enum2:linkrole="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/enum-99008" xbrli:periodType="duration"/>
+  <xsd:element abstract="true" id="vsme_GenderDiversityRatioInGovernanceBodyAbstract" name="GenderDiversityRatioInGovernanceBodyAbstract" nillable="true" substitutionGroup="xbrli:item" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_TotalEnergyConsumptionAbstract" name="TotalEnergyConsumptionAbstract" nillable="true" substitutionGroup="xbrli:item" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_BreakdownOfEnergyConsumptionAbstract" name="BreakdownOfEnergyConsumptionAbstract" nillable="true" substitutionGroup="xbrli:item" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_BreakdownOfEnergyConsumptionLineItems" name="BreakdownOfEnergyConsumptionLineItems" nillable="true" substitutionGroup="xbrli:item" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_EstimatedGreenhouseGasEmissionsLineItems" name="EstimatedGreenhouseGasEmissionsLineItems" nillable="true" substitutionGroup="xbrli:item" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_DisclosureOfListOfMainActionsTheEntitySeeksToAchieveItsTargetsAbstract" name="DisclosureOfListOfMainActionsTheEntitySeeksToAchieveItsTargetsAbstract" nillable="true" substitutionGroup="xbrli:item" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_TransitionPlanForUndertakingsOperatingInHighClimateImpactSectorsAbstract" name="TransitionPlanForUndertakingsOperatingInHighClimateImpactSectorsAbstract" nillable="true" substitutionGroup="xbrli:item" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_EstimatedGreenhouseGasEmissionsAbstract" name="EstimatedGreenhouseGasEmissionsAbstract" nillable="true" substitutionGroup="xbrli:item" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_GreenhouseGasEmissionReductionTargetsAbstract" name="GreenhouseGasEmissionReductionTargetsAbstract" nillable="true" substitutionGroup="xbrli:item" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_GreenhouseGasEmissionsIntensityAbstract" name="GreenhouseGasEmissionsIntensityAbstract" nillable="true" substitutionGroup="xbrli:item" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_PollutionOfAirWaterAndSoilAbstract" name="PollutionOfAirWaterAndSoilAbstract" nillable="true" substitutionGroup="xbrli:item" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_AmountOfEmissionAbstract" name="AmountOfEmissionAbstract" nillable="true" substitutionGroup="xbrli:item" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_AmountOfEmissionLineItems" name="AmountOfEmissionLineItems" nillable="true" substitutionGroup="xbrli:item" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element id="vsme_DescriptionOfSustainabilityRelatedCertificationsOrLabels" name="DescriptionOfSustainabilityRelatedCertificationsOrLabels" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:textBlockItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_DescriptionOfATransitionPlanForClimateChangeMitigationIncludingAnExplanationOfHowItIsContributingToReduceGhgEmissions" name="DescriptionOfATransitionPlanForClimateChangeMitigationIncludingAnExplanationOfHowItIsContributingToReduceGhgEmissions" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:textBlockItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_DescriptionOfTheEffectiveParticipationOfWorkersUsersOrOtherInterestedPartiesOrCommunitiesInGovernance" name="DescriptionOfTheEffectiveParticipationOfWorkersUsersOrOtherInterestedPartiesOrCommunitiesInGovernance" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:textBlockItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_DescriptionOfLimitsToTheDistributionOfProfitsConnectedToTheMutualisticNatureOrToTheNatureOfTheActivitiesConsistingInServicesOfGeneralEconomicInterestSGEI" name="DescriptionOfLimitsToTheDistributionOfProfitsConnectedToTheMutualisticNatureOrToTheNatureOfTheActivitiesConsistingInServicesOfGeneralEconomicInterestSGEI" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:textBlockItemType" xbrli:periodType="duration"/>
+  <xsd:element abstract="true" id="vsme_PracticesPoliciesAndOrFutureInitiativesForTransitioningTowardsAMoreSustainableEconomyAbstract" name="PracticesPoliciesAndOrFutureInitiativesForTransitioningTowardsAMoreSustainableEconomyAbstract" nillable="true" substitutionGroup="xbrli:item" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_WaterAndMarineResourcesMember" name="WaterAndMarineResourcesMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_SitesInBiodiversitySensitiveAreasAbstract" name="SitesInBiodiversitySensitiveAreasAbstract" nillable="true" substitutionGroup="xbrli:item" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_SitesInBiodiversitySensitiveAreasLineItems" name="SitesInBiodiversitySensitiveAreasLineItems" nillable="true" substitutionGroup="xbrli:item" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_BiodiversityMetricsOnLandUseAbstract" name="BiodiversityMetricsOnLandUseAbstract" nillable="true" substitutionGroup="xbrli:item" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element id="vsme_PracticePolicyAndOrFutureInitiativeIsPubliclyAvailable" name="PracticePolicyAndOrFutureInitiativeIsPubliclyAvailable" nillable="true" substitutionGroup="xbrli:item" type="xbrli:booleanItemType" enum2:domain="vsme:PracticePolicyOrFutureInitiativeMember" enum2:headUsable="false" enum2:linkrole="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/enum-99008" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_UndertakingAppliesCircularEconomyPrinciples" name="UndertakingAppliesCircularEconomyPrinciples" nillable="true" substitutionGroup="xbrli:item" type="xbrli:booleanItemType" enum2:domain="vsme:PracticePolicyOrFutureInitiativeMember" enum2:headUsable="false" enum2:linkrole="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/enum-99008" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_PubliclyAvailableDisclosure" name="PubliclyAvailableDisclosure" nillable="true" substitutionGroup="xbrli:item" type="xbrli:booleanItemType" enum2:domain="vsme:PracticePolicyOrFutureInitiativeMember" enum2:headUsable="false" enum2:linkrole="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/enum-99008" xbrli:periodType="instant"/>
+  <xsd:element id="vsme_UndertakingHasSetATargetWhichIsRelatedToAPolicy" name="UndertakingHasSetATargetWhichIsRelatedToAPolicy" nillable="true" substitutionGroup="xbrli:item" type="xbrli:booleanItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_SiteLocatedInABiodiversitySensitiveArea" name="SiteLocatedInABiodiversitySensitiveArea" nillable="true" substitutionGroup="xbrli:item" type="xbrli:booleanItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_SiteLocatedNearABiodiversitySensitiveArea" name="SiteLocatedNearABiodiversitySensitiveArea" nillable="true" substitutionGroup="xbrli:item" type="xbrli:booleanItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_DescriptionOfATargetRelatedToAPolicy" name="DescriptionOfATargetRelatedToAPolicy" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:textBlockItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_DescriptionOfClimateRelatedHazardsAndClimateRelatedTransitionEvents" name="DescriptionOfClimateRelatedHazardsAndClimateRelatedTransitionEvents" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:textBlockItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_DisclosureOfHowItHasAssessedTheExposureAndSensitivityOfItsAssetsActivitiesAndValueChainToTheseHazardsAndTransitionEvents" name="DisclosureOfHowItHasAssessedTheExposureAndSensitivityOfItsAssetsActivitiesAndValueChainToTheseHazardsAndTransitionEvents" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:textBlockItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_TimeHorizonsOfAnyClimateRelatedHazardsAndTransitionEventsIdentified" name="TimeHorizonsOfAnyClimateRelatedHazardsAndTransitionEventsIdentified" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:textBlockItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_DisclosureOfWhetherItHasUndertakenClimateChangeAdaptationActionsForAnyClimateRelatedHazardsAndTransitionEvents" name="DisclosureOfWhetherItHasUndertakenClimateChangeAdaptationActionsForAnyClimateRelatedHazardsAndTransitionEvents" nillable="true" substitutionGroup="xbrli:item" type="xbrli:booleanItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_PotentialAdverseEffectsOfClimateRisksThatMayAffectItsFinancialPerformanceOrBusinessOperationsInTheShortMediumOrLongTermIndicatingWhetherItAssessesTheRisksToBeHighMediumOrLow" name="PotentialAdverseEffectsOfClimateRisksThatMayAffectItsFinancialPerformanceOrBusinessOperationsInTheShortMediumOrLongTermIndicatingWhetherItAssessesTheRisksToBeHighMediumOrLow" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:textBlockItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_DescriptionOfHowCircularEconomyPrinciplesAreApplied" name="DescriptionOfHowCircularEconomyPrinciplesAreApplied" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:textBlockItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_MostSeniorLevelAccountableForImplementationOfPolicies" name="MostSeniorLevelAccountableForImplementationOfPolicies" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:textBlockItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_DescriptionOfPracticesPoliciesAndOrFutureInitiatives" name="DescriptionOfPracticesPoliciesAndOrFutureInitiatives" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:textBlockItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_CountryOfSite" name="CountryOfSite" nillable="true" substitutionGroup="xbrli:item" type="enum2:enumerationItemType" enum2:domain="country:CountryDomain" enum2:headUsable="false" enum2:linkrole="http://www.xbrl.org/taxonomy/int/country/roles/domain" xbrli:periodType="instant"/>
+  <xsd:element id="vsme_GPSLocationOfSite" name="GPSLocationOfSite" nillable="true" substitutionGroup="xbrli:item" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element id="vsme_AddressOfSite" name="AddressOfSite" nillable="true" substitutionGroup="xbrli:item" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element id="vsme_PostalCodeOfSite" name="PostalCodeOfSite" nillable="true" substitutionGroup="xbrli:item" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element id="vsme_CityOfSite" name="CityOfSite" nillable="true" substitutionGroup="xbrli:item" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element id="vsme_RelatedVsmeGuidance" name="RelatedVsmeGuidance" substitutionGroup="link:part" type="xsd:string"/>
+  <xsd:element id="vsme_ReportContainsDisclosuresFromThePreviousReportingPeriodThatRemainUnchanged" name="ReportContainsDisclosuresFromThePreviousReportingPeriodThatRemainUnchanged" nillable="true" substitutionGroup="xbrli:item" type="xbrli:booleanItemType" xbrli:periodType="instant"/>
+  <xsd:element id="vsme_NaceSectorClassificationCodes" name="NaceSectorClassificationCodes" nillable="true" substitutionGroup="xbrli:item" type="enum2:enumerationSetItemType" enum2:domain="nace:NACE_AllEconomicActivitiesNAMember" enum2:headUsable="false" enum2:linkrole="https://xbrl.efrag.org/taxonomy/nace/2025-01-01/roles/domain" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_B1-BasisForPreparationMember" name="B1-BasisForPreparationMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element id="vsme_DescriptionOfKeyElementsOfStrategyThatRelatesToOrAffectsSustainabilityIssues" name="DescriptionOfKeyElementsOfStrategyThatRelatesToOrAffectsSustainabilityIssues" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:textBlockItemType" xbrli:periodType="duration"/>
+  <xsd:element abstract="true" id="vsme_B2-PracticesPoliciesAndFutureInitiativesForTransitioningTowardsAMoreSustainableEconomyMember" name="B2-PracticesPoliciesAndFutureInitiativesForTransitioningTowardsAMoreSustainableEconomyMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_StrategyBusinessModelAndSustainabilityRelatedInitiativesAbstract" name="StrategyBusinessModelAndSustainabilityRelatedInitiativesAbstract" nillable="true" substitutionGroup="xbrli:item" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_DescriptionOfPracticesPoliciesAndFutureInitiativesForTransitioningTowardsAMoreSustainableEconomyAbstract" name="DescriptionOfPracticesPoliciesAndFutureInitiativesForTransitioningTowardsAMoreSustainableEconomyAbstract" nillable="true" substitutionGroup="xbrli:item" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_ClimateRisksAbstract" name="ClimateRisksAbstract" nillable="true" substitutionGroup="xbrli:item" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element id="vsme_SpecificationOfOtherTypesOfContentCoveredByTheCodeOfConductOrHumanRightsPolicy" name="SpecificationOfOtherTypesOfContentCoveredByTheCodeOfConductOrHumanRightsPolicy" nillable="true" substitutionGroup="xbrli:item" type="xbrli:stringItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_SpecificationOfOtherHumanRightsRelatedToTheConfirmedIncident" name="SpecificationOfOtherHumanRightsRelatedToTheConfirmedIncident" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:textBlockItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_DescriptionOfActionsTakeToAddressTheConfirmedIncidents" name="DescriptionOfActionsTakeToAddressTheConfirmedIncidents" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:textBlockItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_SpecificationOfAnyConfirmedIncidentInvolvingWorkersInTheValueChainAffectedCommunitiesConsumersAndEndUsers" name="SpecificationOfAnyConfirmedIncidentInvolvingWorkersInTheValueChainAffectedCommunitiesConsumersAndEndUsers" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:textBlockItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_DisclosureOfAnyOtherGeneralAndOrEntitySpecificInformation" name="DisclosureOfAnyOtherGeneralAndOrEntitySpecificInformation" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:textBlockItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_DisclosureOfAnyOtherEnvironmentalAndOrEntitySpecificEnvironmentalDisclosures" name="DisclosureOfAnyOtherEnvironmentalAndOrEntitySpecificEnvironmentalDisclosures" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:textBlockItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_DisclosureOfAnyOtherSocialAndOrEntitySpecificSocialDisclosures" name="DisclosureOfAnyOtherSocialAndOrEntitySpecificSocialDisclosures" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:textBlockItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_DisclosureOfAnyOtherGovernanceAndOrEntitySpecificGovernanceDisclosures" name="DisclosureOfAnyOtherGovernanceAndOrEntitySpecificGovernanceDisclosures" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:textBlockItemType" xbrli:periodType="duration"/>
+  <xsd:element abstract="true" id="vsme_IdentifierOfSubsidiaryTypedAxis" name="IdentifierOfSubsidiaryTypedAxis" nillable="true" substitutionGroup="xbrldt:dimensionItem" type="xbrli:stringItemType" xbrldt:typedDomainRef="#vsme_TYP" xbrli:periodType="instant"/>
+  <xsd:element id="vsme_ListOfDisclosuresForWhichNoChangesAreReportedComparedToThePreviousPeriodReporting" name="ListOfDisclosuresForWhichNoChangesAreReportedComparedToThePreviousPeriodReporting" nillable="true" substitutionGroup="xbrli:item" type="enum2:enumerationSetItemType" enum2:domain="vsme:ListOfDisclosuresMember" enum2:headUsable="false" enum2:linkrole="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/enum-99002" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_B4-PollutionOfAirWaterAndSoilMember" name="B4-PollutionOfAirWaterAndSoilMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_B5-BiodiversityMember" name="B5-BiodiversityMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_B6-WaterMember" name="B6-WaterMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_B7-ResourceUseCircularEconomyAndWasteManagementMember" name="B7-ResourceUseCircularEconomyAndWasteManagementMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_B8-WorkforceGeneralCharacteristicsMember" name="B8-WorkforceGeneralCharacteristicsMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_B10-WorkforceRemunerationCollectiveBargainingAndTrainingMember" name="B10-WorkforceRemunerationCollectiveBargainingAndTrainingMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_B11-ConvictionsAndFinesForCorruptionAndBriberyMember" name="B11-ConvictionsAndFinesForCorruptionAndBriberyMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_C1-StrategyBusinessModelAndSustainabilityRelatedInitiativesMember" name="C1-StrategyBusinessModelAndSustainabilityRelatedInitiativesMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element id="vsme_Assets" name="Assets" nillable="true" substitutionGroup="xbrli:item" type="xbrli:monetaryItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_DescriptionOfSignificantGroupsOfProductsAndOrServicesOffered" name="DescriptionOfSignificantGroupsOfProductsAndOrServicesOffered" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:textBlockItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_DisclosureOfListOfMainActionsTheEntitySeeksInOrderToAchieveItsTargets" name="DisclosureOfListOfMainActionsTheEntitySeeksInOrderToAchieveItsTargets" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:textBlockItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_DescriptionOfSignificantMarketsTheUndertakingOperatesIn" name="DescriptionOfSignificantMarketsTheUndertakingOperatesIn" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:textBlockItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_DescriptionOfMainBusinessRelationships" name="DescriptionOfMainBusinessRelationships" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:textBlockItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_NumberOfEmployees" name="NumberOfEmployees" nillable="true" substitutionGroup="xbrli:item" type="xbrli:decimalItemType" xbrli:periodType="instant"/>
+  <xsd:element id="vsme_DateOfAdoptionOfTransitionPlanForUndertakingNotHavingAdoptedTransitionPlanYet" name="DateOfAdoptionOfTransitionPlanForUndertakingNotHavingAdoptedTransitionPlanYet" nillable="true" substitutionGroup="xbrli:item" type="xbrli:dateItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_Turnover" name="Turnover" nillable="true" substitutionGroup="xbrli:item" type="xbrli:monetaryItemType" xbrli:periodType="duration"/>
+  <xsd:element abstract="true" id="vsme_C2-DescriptionOfPracticesPoliciesAndFutureInitiativesForTransitioningTowardsAMoreSustainableEconomyMember" name="C2-DescriptionOfPracticesPoliciesAndFutureInitiativesForTransitioningTowardsAMoreSustainableEconomyMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_ListOfSubsidiariesLineItemsAbstract" name="ListOfSubsidiariesLineItemsAbstract" nillable="true" substitutionGroup="xbrli:item" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_C3-GhgReductionTargetsAndClimateTransitionMember" name="C3-GhgReductionTargetsAndClimateTransitionMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_C4-ClimateRisksMember" name="C4-ClimateRisksMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_C5-AdditionalGeneralWorkforceCharacteristicsMember" name="C5-AdditionalGeneralWorkforceCharacteristicsMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_C8-RevenuesFromCertainSectorsAndExclusionFromEuReferenceBenchmarksMember" name="C8-RevenuesFromCertainSectorsAndExclusionFromEuReferenceBenchmarksMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_C6-AdditionalOwnWorkforceInformationHumanRightsPoliciesAndProcessesMember" name="C6-AdditionalOwnWorkforceInformationHumanRightsPoliciesAndProcessesMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_C7-SevereNegativeHumanRightsIncidentsMember" name="C7-SevereNegativeHumanRightsIncidentsMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_C9-GenderDiversityRatioInTheGovernanceBodyMember" name="C9-GenderDiversityRatioInTheGovernanceBodyMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_B9-WorkforceHealthAndSafetyMember" name="B9-WorkforceHealthAndSafetyMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_ListOfDisclosuresMember" name="ListOfDisclosuresMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_TypeOfNumberOfEmployeesMember" name="TypeOfNumberOfEmployeesMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_Full-TimeEquivalentFTEMember" name="Full-TimeEquivalentFTEMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_HeadcountMember" name="HeadcountMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element id="vsme_LinkToPreviousReportContainingDisclosuresThatRemainUnchanged" name="LinkToPreviousReportContainingDisclosuresThatRemainUnchanged" nillable="true" substitutionGroup="xbrli:item" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element id="vsme_ListOfOmittedDisclosuresDeemedToBeClassifiedOrSensitiveInformation" name="ListOfOmittedDisclosuresDeemedToBeClassifiedOrSensitiveInformation" nillable="true" substitutionGroup="xbrli:item" type="enum2:enumerationSetItemType" enum2:domain="vsme:ListOfDisclosuresMember" enum2:headUsable="false" enum2:linkrole="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/enum-99002" xbrli:periodType="instant"/>
+  <xsd:element id="vsme_TypeOfContentCoveredByTheCodeOfConductOrHumanRightsPolicyForItsOwnWorkforce" name="TypeOfContentCoveredByTheCodeOfConductOrHumanRightsPolicyForItsOwnWorkforce" nillable="true" substitutionGroup="xbrli:item" type="enum2:enumerationSetItemType" enum2:domain="vsme:TypeOfContentCoveredByTheCodeOfConductOrHumanRightsPolicyForItsOwnWorkforceMember" enum2:headUsable="false" enum2:linkrole="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/enum-99009" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_TypeOfHumanRightRelatedToTheConfirmedIncident" name="TypeOfHumanRightRelatedToTheConfirmedIncident" nillable="true" substitutionGroup="xbrli:item" type="enum2:enumerationSetItemType" enum2:domain="vsme:TypeOfContentCoveredByTheCodeOfConductOrHumanRightsPolicyForItsOwnWorkforceMember" enum2:headUsable="false" enum2:linkrole="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/enum-99009" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_UndertakingsLegalForm" name="UndertakingsLegalForm" nillable="true" substitutionGroup="xbrli:item" type="enum2:enumerationItemType" enum2:domain="vsme:ListOfUndertakingsLegalFormsMember" enum2:headUsable="false" enum2:linkrole="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/enum-99003" xbrli:periodType="instant"/>
+  <xsd:element id="vsme_TypeOfNumberOfEmployees" name="TypeOfNumberOfEmployees" nillable="true" substitutionGroup="xbrli:item" type="enum2:enumerationItemType" enum2:domain="vsme:TypeOfNumberOfEmployeesMember" enum2:headUsable="false" enum2:linkrole="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/enum-99005" xbrli:periodType="instant"/>
+  <xsd:element id="vsme_FinancialInvestmentInTheCapitalOrAssetsOfSocialEconomyEntities" name="FinancialInvestmentInTheCapitalOrAssetsOfSocialEconomyEntities" nillable="true" substitutionGroup="xbrli:item" type="xbrli:monetaryItemType" enum2:domain="vsme:TypeOfNumberOfEmployeesMember" enum2:headUsable="false" enum2:linkrole="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/enum-99005" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_EmployeeCountingMethodology" name="EmployeeCountingMethodology" nillable="true" substitutionGroup="xbrli:item" type="enum2:enumerationItemType" enum2:domain="vsme:EmployeeCountingMethodologyMember" enum2:headUsable="false" enum2:linkrole="https://xbrl.efrag.org/taxonomy/vsme/2025-07-30/enum-99014" xbrli:periodType="instant"/>
+  <xsd:element id="vsme_CountryOfPrimaryOperationsAndLocationOfSignificantAssets" name="CountryOfPrimaryOperationsAndLocationOfSignificantAssets" nillable="true" substitutionGroup="xbrli:item" type="enum2:enumerationItemType" enum2:domain="country:CountryDomain" enum2:headUsable="false" enum2:linkrole="http://www.xbrl.org/taxonomy/int/country/roles/domain" xbrli:periodType="duration"/>
+  <xsd:element abstract="true" id="vsme_ListOfUndertakingsLegalFormsMember" name="ListOfUndertakingsLegalFormsMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_EmployeeCountingMethodologyMember" name="EmployeeCountingMethodologyMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_AtTheEndOfTheReportingPeriodMember" name="AtTheEndOfTheReportingPeriodMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_AverageDuringTheReportingPeriodMember" name="AverageDuringTheReportingPeriodMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_PrivateLimitedLiabilityUndertakingMember" name="PrivateLimitedLiabilityUndertakingMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_AllCountriesMember" name="AllCountriesMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_TotalRenewableAndNonRenewableEnergyMember" name="TotalRenewableAndNonRenewableEnergyMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_NonRenewableEnergyMember" name="NonRenewableEnergyMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_RenewableEnergyMember" name="RenewableEnergyMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element id="vsme_OtherUndertakingsLegalForm" name="OtherUndertakingsLegalForm" nillable="true" substitutionGroup="xbrli:item" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_SoleProprietorshipMember" name="SoleProprietorshipMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_PartnershipMember" name="PartnershipMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_CooperativeMember" name="CooperativeMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_CooperativeSpecificDisclosuresAbstract" name="CooperativeSpecificDisclosuresAbstract" nillable="true" substitutionGroup="xbrli:item" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_OtherUndertakingsLegalFormMember" name="OtherUndertakingsLegalFormMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_BasisForPreparationAbstract" name="BasisForPreparationAbstract" nillable="true" substitutionGroup="xbrli:item" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_OtherAndOrEntitySpecificInformationAbstract" name="OtherAndOrEntitySpecificInformationAbstract" nillable="true" substitutionGroup="xbrli:item" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_BasisForPreparationMember" name="BasisForPreparationMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_TypeOfPracticePolicyAndFutureInitiativeMember" name="TypeOfPracticePolicyAndFutureInitiativeMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_SustainabilityIssuesAddressedMember" name="SustainabilityIssuesAddressedMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_TypeOfContentCoveredByTheCodeOfConductOrHumanRightsPolicyForItsOwnWorkforceMember" name="TypeOfContentCoveredByTheCodeOfConductOrHumanRightsPolicyForItsOwnWorkforceMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_ClimateChangeMember" name="ClimateChangeMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_ChildLabourMember" name="ChildLabourMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_ForcedLabourMember" name="ForcedLabourMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_HumanTraffickingMember" name="HumanTraffickingMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_DiscriminationMember" name="DiscriminationMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_AccidentPreventionMember" name="AccidentPreventionMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_OtherContentMember" name="OtherContentMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_PollutionMember" name="PollutionMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_BiodiversityAndEcosystemsMember" name="BiodiversityAndEcosystemsMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_CircularEconomyMember" name="CircularEconomyMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_OwnWorkforceMember" name="OwnWorkforceMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_AffectedCommunitiesMember" name="AffectedCommunitiesMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_WorkersInTheValueChainMember" name="WorkersInTheValueChainMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_ConsumersAndEndUsersMember" name="ConsumersAndEndUsersMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_BusinessConductMember" name="BusinessConductMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_OptionABasicModuleOnlyMember" name="OptionABasicModuleOnlyMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_PracticeMember" name="PracticeMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_PolicyMember" name="PolicyMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_FutureInitiativesMember" name="FutureInitiativesMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_OptionBBasicModuleAndComprehensiveModuleMember" name="OptionBBasicModuleAndComprehensiveModuleMember" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:domainItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="false" id="vsme_TYP" name="TYP" nillable="true" type="xsd:string"/>
+  <xsd:element abstract="true" id="vsme_NumberOfEmployeesForCountryOfEmploymentContractTable" name="NumberOfEmployeesForCountryOfEmploymentContractTable" nillable="true" substitutionGroup="xbrldt:hypercubeItem" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_AmountOfEmissionsTable" name="AmountOfEmissionsTable" nillable="true" substitutionGroup="xbrldt:hypercubeItem" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_WasteGeneratedTable" name="WasteGeneratedTable" nillable="true" substitutionGroup="xbrldt:hypercubeItem" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_EstimatedGreenhouseGasEmissionsTable" name="EstimatedGreenhouseGasEmissionsTable" nillable="true" substitutionGroup="xbrldt:hypercubeItem" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_BreakdownOfEnergyConsumptionTable" name="BreakdownOfEnergyConsumptionTable" nillable="true" substitutionGroup="xbrldt:hypercubeItem" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element id="vsme_TotalAmountOfWaterWithdrawnFromAllSites" name="TotalAmountOfWaterWithdrawnFromAllSites" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:volumeItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_WaterDischargeFromUndertakingProductionProcesses" name="WaterDischargeFromUndertakingProductionProcesses" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:volumeItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_TotalWaterConsumption" name="TotalWaterConsumption" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:volumeItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_AmountOfWaterWithdrawnAtSitesLocatedInAreasOfHighWaterStress" name="AmountOfWaterWithdrawnAtSitesLocatedInAreasOfHighWaterStress" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:volumeItemType" xbrli:periodType="instant"/>
+  <xsd:element id="vsme_AmountOfEmissionToWater" name="AmountOfEmissionToWater" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:massItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_AmountOfEmissionToSoil" name="AmountOfEmissionToSoil" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:massItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_TotalHazardousWasteGeneratedVolume" name="TotalHazardousWasteGeneratedVolume" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:volumeItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_TotalWasteRecycledReusedAndDirectedToDisposalVolume" name="TotalWasteRecycledReusedAndDirectedToDisposalVolume" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:volumeItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_WasteDirectedToDisposalMass" name="WasteDirectedToDisposalMass" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:massItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_WasteDirectedToDisposalVolume" name="WasteDirectedToDisposalVolume" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:volumeItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_WasteDivertedToRecycleOrReuseMass" name="WasteDivertedToRecycleOrReuseMass" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:massItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_WasteDivertedToRecycleOrReuseVolume" name="WasteDivertedToRecycleOrReuseVolume" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:volumeItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_TotalWasteRecycledReusedAndDirectedToDisposalMass" name="TotalWasteRecycledReusedAndDirectedToDisposalMass" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:massItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_TotalHazardousWasteGeneratedMass" name="TotalHazardousWasteGeneratedMass" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:massItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_TotalNonHazardousWasteGeneratedMass" name="TotalNonHazardousWasteGeneratedMass" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:massItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_TotalWasteGeneratedMass" name="TotalWasteGeneratedMass" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:massItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_TotalNonHazardousWasteGeneratedVolume" name="TotalNonHazardousWasteGeneratedVolume" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:volumeItemType" xbrli:periodType="duration"/>
+  <xsd:element id="vsme_TotalWasteGeneratedVolume" name="TotalWasteGeneratedVolume" nillable="true" substitutionGroup="xbrli:item" type="dtr-types:volumeItemType" xbrli:periodType="duration"/>
+  <xsd:element abstract="true" id="vsme_RemunerationAndCollectiveBargainingAbstract" name="RemunerationAndCollectiveBargainingAbstract" nillable="true" substitutionGroup="xbrli:item" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_RemunerationCollectiveBargainingAndTrainingAbstract" name="RemunerationCollectiveBargainingAndTrainingAbstract" nillable="true" substitutionGroup="xbrli:item" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_DescriptionOfCircularEconomyPrincipleAbstract" name="DescriptionOfCircularEconomyPrincipleAbstract" nillable="true" substitutionGroup="xbrli:item" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_WasteGeneratedLineItems" name="WasteGeneratedLineItems" nillable="true" substitutionGroup="xbrli:item" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_WasteGeneratedAbstract" name="WasteGeneratedAbstract" nillable="true" substitutionGroup="xbrli:item" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_TotalHazardousAndNonHazardousWasteGeneratedAbstract" name="TotalHazardousAndNonHazardousWasteGeneratedAbstract" nillable="true" substitutionGroup="xbrli:item" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_WaterWithdrawalAbstract" name="WaterWithdrawalAbstract" nillable="true" substitutionGroup="xbrli:item" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+  <xsd:element abstract="true" id="vsme_WaterConsumptionAbstract" name="WaterConsumptionAbstract" nillable="true" substitutionGroup="xbrli:item" type="xbrli:stringItemType" xbrli:periodType="instant"/>
+</xsd:schema>
