@@ -195,8 +195,8 @@ impl<'a> MetaTypesPrinter<'a> {
 
                 s.level += 1;
 
-                for ty in &*x.derived_types {
-                    indentln!("{}", ty);
+                for meta in &*x.derived_types {
+                    indentln!("{}", meta.type_);
                 }
 
                 s.level -= 2;

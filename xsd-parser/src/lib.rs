@@ -284,18 +284,25 @@ pub fn exec_optimizer(config: OptimizerConfig, types: MetaTypes) -> Result<MetaT
     );
     exec!(REMOVE_EMPTY_ENUM_VARIANTS, remove_empty_enum_variants);
     exec!(REMOVE_EMPTY_ENUMS, remove_empty_enums);
-    exec!(
-        REMOVE_DUPLICATE_UNION_VARIANTS,
-        remove_duplicate_union_variants
-    );
-    exec!(REMOVE_EMPTY_UNIONS, remove_empty_unions);
     exec!(CONVERT_DYNAMIC_TO_CHOICE, convert_dynamic_to_choice);
     exec!(FLATTEN_COMPLEX_TYPES, flatten_complex_types);
     exec!(FLATTEN_UNIONS, flatten_unions);
     exec!(MERGE_ENUM_UNIONS, merge_enum_unions);
     exec!(RESOLVE_TYPEDEFS, resolve_typedefs);
+    exec!(
+        REMOVE_DUPLICATE_UNION_VARIANTS,
+        remove_duplicate_union_variants
+    );
+    exec!(REMOVE_EMPTY_UNIONS, remove_empty_unions);
     exec!(REMOVE_DUPLICATES, remove_duplicates);
     exec!(RESOLVE_TYPEDEFS, resolve_typedefs);
+    exec!(REMOVE_EMPTY_ENUM_VARIANTS, remove_empty_enum_variants);
+    exec!(REMOVE_EMPTY_ENUMS, remove_empty_enums);
+    exec!(
+        REMOVE_DUPLICATE_UNION_VARIANTS,
+        remove_duplicate_union_variants
+    );
+    exec!(REMOVE_EMPTY_UNIONS, remove_empty_unions);
     exec!(MERGE_CHOICE_CARDINALITIES, merge_choice_cardinalities);
     exec!(SIMPLIFY_MIXED_TYPES, simplify_mixed_types);
 

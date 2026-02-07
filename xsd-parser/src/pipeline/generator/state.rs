@@ -69,15 +69,15 @@ impl TraitInfos {
                 continue;
             };
 
-            for type_ident in &ai.derived_types {
+            for meta in &ai.derived_types {
                 ret.0
-                    .entry(type_ident.clone())
+                    .entry(meta.type_.clone())
                     .or_default()
                     .traits_all
                     .insert(base_ident.clone());
 
                 #[allow(clippy::single_match)]
-                match types.get_variant(type_ident) {
+                match types.get_variant(&meta.type_) {
                     Some(MetaTypeVariant::Dynamic(DynamicMeta {
                         type_: Some(type_ident),
                         ..

@@ -81,15 +81,22 @@ impl Optimizer {
             crate::unreachable!();
         };
 
-        for derived in &x.derived_types {
-            let derived_ty = self.types.get_resolved_type(derived).unwrap();
+        for meta in &x.derived_types {
+            let derived_ty = self.types.get_resolved_type(&meta.type_).unwrap();
             if let MetaTypeVariant::Dynamic(_) = &derived_ty.variant {
                 self.add_elements(group, derived_ty);
             } else {
                 group
                     .elements
-                    .find_or_insert(derived.to_property_ident(), |ident| {
-                        ElementMeta::new(ident, derived.clone(), ElementMode::Element, form)
+                    .find_or_insert(meta.type_.to_property_ident(), |ident| {
+                        let mut el =
+                            ElementMeta::new(ident, meta.type_.clone(), ElementMode::Element, form);
+
+                        if let Some(display_name) = &meta.display_name {
+                            el.display_name = Some(display_name.clone());
+                        }
+
+                        el
                     });
             }
         }

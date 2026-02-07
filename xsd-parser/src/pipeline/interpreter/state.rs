@@ -312,8 +312,8 @@ impl<'a> State<'a> {
                     *ty = self.resolve_type_ident_allow_unknown(ty.clone())?;
                 }
 
-                for ty in &mut x.derived_types {
-                    *ty = self.resolve_type_ident_allow_unknown(ty.clone())?;
+                for meta in &mut x.derived_types {
+                    meta.type_ = self.resolve_type_ident_allow_unknown(meta.type_.clone())?;
                 }
             }
             MetaTypeVariant::Reference(x) => {

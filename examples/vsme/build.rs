@@ -38,9 +38,9 @@ fn main() -> Result<(), Error> {
     let modules = generate_modules(config)?;
 
     // Write the generated code to the module directory specified by Cargo.
-    let target_dir = cargo_dir.join("src/vsme");
+    let target_dir = cargo_dir.join("src/schema");
     let _ = remove_dir_all(&target_dir);
-    create_dir_all(&target_dir).context("Unable to create `src/vsme` directory!")?;
+    create_dir_all(&target_dir).context("Unable to create `src/schema` directory!")?;
     modules
         .write_to_files(&target_dir)
         .context("Error while writing generated code")?;
