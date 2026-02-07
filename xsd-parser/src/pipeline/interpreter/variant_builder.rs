@@ -5,6 +5,7 @@ use std::str::from_utf8;
 
 use tracing::instrument;
 
+use crate::models::meta::DerivedTypeMeta;
 use crate::models::{
     meta::{
         AnyAttributeMeta, AnyMeta, AttributeMeta, Base, DynamicMeta, ElementMeta,
@@ -274,7 +275,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 if let MetaTypeVariant::Reference(ti) = &mut base_ty.variant {
                     base_ty.variant = MetaTypeVariant::Dynamic(DynamicMeta {
                         type_: Some(ti.type_.clone()),
-                        derived_types: vec![ti.type_.clone()],
+                        derived_types: vec![DerivedTypeMeta::new(ti.type_.clone())],
                     });
                 }
 
@@ -282,7 +283,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                     return Err(Error::ExpectedDynamicElement(base_ident.clone()));
                 };
 
-                ai.derived_types.push(ident);
+                ai.derived_types.push(DerivedTypeMeta::new(ident));
 
                 Ok(())
             })?;
@@ -730,7 +731,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                     .state
                     .name_builder()
                     .extend(true, ty.name.clone())
-                    .auto_extend(true, false, self.state); // TODO
+                    .auto_extend(true, false, self.state);
                 let type_name = if type_name.has_extension() {
                     type_name.with_id(false)
                 } else {

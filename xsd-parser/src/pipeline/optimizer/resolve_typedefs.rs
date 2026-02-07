@@ -60,8 +60,8 @@ impl Optimizer {
                 MetaTypeVariant::Dynamic(x) => {
                     x.type_ = x.type_.as_ref().map(|x| typedefs.resolve(x)).cloned();
 
-                    for x in &mut x.derived_types {
-                        *x = typedefs.resolve(x).clone();
+                    for meta in &mut x.derived_types {
+                        meta.type_ = typedefs.resolve(&meta.type_).clone();
                     }
                 }
                 MetaTypeVariant::Enumeration(x) => {
@@ -104,9 +104,9 @@ impl Optimizer {
                 continue;
             };
 
-            for derived in &mut di.derived_types {
-                if let Some(new_type) = replaced_references.get(derived) {
-                    *derived = new_type.clone();
+            for meta in &mut di.derived_types {
+                if let Some(new_type) = replaced_references.get(&meta.type_) {
+                    meta.type_ = new_type.clone();
                 }
             }
         }

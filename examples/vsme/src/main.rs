@@ -2,7 +2,7 @@
 
 #[allow(clippy::all, dead_code, missing_docs, unreachable_pub, unused)]
 #[rustfmt::skip]
-mod vsme;
+mod schema;
 
 use std::fs::File;
 use std::io::BufReader;
@@ -10,7 +10,7 @@ use std::io::BufReader;
 use anyhow::{Context, Error};
 use xsd_parser_types::quick_xml::{DeserializeSync, IoReader, XmlReader};
 
-use vsme::xbrli::Xbrl;
+use schema::xbrli::Xbrl;
 
 fn main() -> Result<(), Error> {
     let input_file =

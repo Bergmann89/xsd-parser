@@ -1439,8 +1439,8 @@ impl NamespaceCollector {
                     }
                 }
                 MetaTypeVariant::Dynamic(x) => {
-                    for ident in &x.derived_types {
-                        self.merge(&mut state, types, ident, default_ns);
+                    for meta in &x.derived_types {
+                        self.merge(&mut state, types, &meta.type_, default_ns);
                     }
                 }
                 MetaTypeVariant::All(x)

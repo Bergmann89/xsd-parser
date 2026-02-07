@@ -3,8 +3,7 @@ use quote::format_ident;
 
 use crate::models::{
     data::{DerivedType, DynamicData, PathData},
-    meta::{DynamicMeta, MetaTypeVariant},
-    TypeIdent,
+    meta::{DerivedTypeMeta, DynamicMeta, MetaTypeVariant},
 };
 
 use super::super::{Context, Error};
@@ -39,7 +38,7 @@ impl<'types> DynamicData<'types> {
         let derived_types = meta
             .derived_types
             .iter()
-            .map(|ident| make_derived_type_data(ctx, ident))
+            .map(|x| make_derived_type_data(ctx, x))
             .collect::<Result<Vec<_>, _>>()?;
 
         let deserializer_ident = format_ident!("{type_ident}Deserializer");
@@ -57,16 +56,16 @@ impl<'types> DynamicData<'types> {
 
 fn make_derived_type_data<'types>(
     ctx: &mut Context<'_, 'types>,
-    ident: &'types TypeIdent,
+    meta: &'types DerivedTypeMeta,
 ) -> Result<DerivedType, Error> {
-    let s_name = ident.name.to_string();
+    let s_name = meta.type_.name.to_string();
     let b_name = Literal::byte_string(s_name.as_bytes());
 
     let ty = ctx
         .types
         .items
-        .get(ident)
-        .ok_or_else(|| Error::UnknownType(ident.clone()))?;
+        .get(&meta.type_)
+        .ok_or_else(|| Error::UnknownType(meta.type_.clone()))?;
 
     let base_ident = if let MetaTypeVariant::Dynamic(di) = &ty.variant {
         di.type_.clone()
@@ -74,10 +73,13 @@ fn make_derived_type_data<'types>(
         None
     };
 
-    let ident = base_ident.unwrap_or(ident.clone());
+    let ident = base_ident.unwrap_or(meta.type_.clone());
     let target_ref = ctx.get_or_create_type_ref(&ident)?;
     let target_type = target_ref.path.clone();
-    let variant_ident = ctx.types.naming.format_variant_ident(&ident.name, None);
+    let variant_ident = ctx
+        .types
+        .naming
+        .format_variant_ident(&ident.name, meta.display_name.as_deref());
 
     Ok(DerivedType {
         ident,
