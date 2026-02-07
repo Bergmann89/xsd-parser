@@ -4,6 +4,7 @@ members = [
     "benchmark",
     "examples/bpmn",
     "examples/read_write",
+    "examples/vsme",
     "xsd-parser-types",
     "xsd-parser",
 ]

@@ -5,7 +5,6 @@ use std::str::from_utf8;
 
 use tracing::instrument;
 
-use crate::models::EnumerationIdent;
 use crate::models::{
     meta::{
         AnyAttributeMeta, AnyMeta, AttributeMeta, Base, DynamicMeta, ElementMeta,
@@ -21,7 +20,7 @@ use crate::models::{
         },
         MaxOccurs, MinOccurs,
     },
-    AttributeIdent, ElementIdent, IdentType, Name, NodeIdent, TypeIdent,
+    AttributeIdent, ElementIdent, EnumerationIdent, IdentType, Name, NodeIdent, TypeIdent,
 };
 use crate::traits::{NameBuilderExt as _, VecHelper};
 
