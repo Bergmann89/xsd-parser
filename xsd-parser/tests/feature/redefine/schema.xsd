@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://example.com"
+    targetNamespace="http://example.com"
+    elementFormDefault="qualified"
+>
+
+    <xs:redefine schemaLocation="reference.xsd">
+		<xs:simpleType name="EnumType">
+			<xs:restriction base="EnumType">
+				<xs:enumeration value="1" />
+			</xs:restriction>
+		</xs:simpleType>
+    </xs:redefine>
+
+    <xs:element name="Foo" type="EnumType" />
+</xs:schema>
