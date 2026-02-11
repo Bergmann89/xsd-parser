@@ -228,17 +228,20 @@ impl ConstrainsData<'_> {
 
         let sz = self.meta.patterns.len();
         let patterns = self.meta.patterns.iter().map(|x| {
-            let rx = Literal::string(x);
+            let pa = Literal::string(x);
 
-            quote!(#regex::new(#rx).unwrap())
+            // Make sure the pattern is anchored, otherwise it would be possible to match only a part of the string
+            let rx = Literal::string(&format!("^(?:{})$", x));
+
+            quote!((#pa, #regex::new(#rx).unwrap()))
         });
 
         Some(quote! {
-            static PATTERNS: #lazy_lock<[#regex; #sz]> = #lazy_lock::new(|| [ #( #patterns )* ]);
+            static PATTERNS: #lazy_lock<[(&str, #regex); #sz]> = #lazy_lock::new(|| [ #( #patterns )* ]);
 
-            for pattern in PATTERNS.iter() {
-                if !pattern.is_match(s) {
-                    return Err(#validate_error::Pattern(pattern.as_str()));
+            for (pattern, regex) in PATTERNS.iter() {
+                if !regex.is_match(s) {
+                    return Err(#validate_error::Pattern(pattern));
                 }
             }
         })
