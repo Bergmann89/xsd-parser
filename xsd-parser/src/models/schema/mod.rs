@@ -76,6 +76,9 @@ pub struct SchemaInfo {
 
     /// Id of the namespace this schema belongs to.
     pub(crate) namespace_id: NamespaceId,
+
+    /// Dependencies of this schema, mapping schema paths to their IDs.
+    pub(crate) dependencies: BTreeMap<String, SchemaId>,
 }
 
 /// Represents an unique id for a XML schema.
@@ -172,6 +175,13 @@ impl Schemas {
     pub fn resolve_namespace(&self, ns: &Option<Namespace>) -> Option<NamespaceId> {
         Some(*self.known_namespaces.get(ns)?)
     }
+
+    #[must_use]
+    pub(crate) fn next_schema_id(&mut self) -> SchemaId {
+        self.last_schema_id = self.last_schema_id.wrapping_add(1);
+
+        SchemaId(self.last_schema_id)
+    }
 }
 
 impl Default for Schemas {
@@ -222,6 +232,18 @@ impl SchemaInfo {
     #[must_use]
     pub fn namespace_id(&self) -> NamespaceId {
         self.namespace_id
+    }
+
+    /// Get the dependencies of this schema, mapping schema paths to their IDs.
+    #[must_use]
+    pub fn dependencies(&self) -> &BTreeMap<String, SchemaId> {
+        &self.dependencies
+    }
+
+    /// Returns `true` if this schema depends on the given schema id, `false` otherwise.
+    #[must_use]
+    pub fn depends_on(&self, schema_id: &SchemaId) -> bool {
+        self.dependencies.values().any(|id| id == schema_id)
     }
 }
 

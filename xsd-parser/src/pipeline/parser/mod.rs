@@ -25,6 +25,7 @@ use std::borrow::Cow;
 use std::collections::{btree_map::Entry, BTreeMap, HashMap, HashSet, VecDeque};
 use std::fmt::Debug;
 use std::io::BufRead;
+use std::mem::take;
 use std::path::Path;
 
 use quick_xml::events::Event;
@@ -64,15 +65,19 @@ pub use self::resolver::Resolver;
 #[must_use]
 #[derive(Default, Debug)]
 pub struct Parser<TResolver = NoOpResolver> {
-    cache: HashSet<Url>,
+    cache: HashMap<Url, HashSet<TempSchemaId>>,
     entries: Vec<ParserEntry>,
-    pending: VecDeque<ResolveRequest>,
+    pending: VecDeque<(TempSchemaId, ResolveRequest)>,
+    next_temp_id: TempSchemaId,
 
     resolver: TResolver,
     resolve_includes: bool,
     generate_prefixes: bool,
     alternative_prefixes: bool,
 }
+
+#[derive(Default, Debug, Clone, Copy, Hash, Eq, PartialEq, Ord, PartialOrd)]
+struct TempSchemaId(usize);
 
 #[derive(Debug)]
 #[allow(clippy::large_enum_variant)]
@@ -83,18 +88,24 @@ enum ParserEntry {
         namespace: Namespace,
     },
     Schema {
+        id: TempSchemaId,
         name: Option<String>,
         schema: Schema,
         location: Option<Url>,
         target_ns: Option<Namespace>,
         namespaces: Namespaces,
+        dependencies: BTreeMap<String, TempSchemaId>,
     },
 }
 
 #[derive(Debug)]
 struct SchemasBuilder {
     schemas: Schemas,
+    entries: Vec<ParserEntry>,
+
+    id_cache: HashMap<TempSchemaId, SchemaId>,
     prefix_cache: HashMap<Option<Namespace>, PrefixEntry>,
+    location_cache: HashMap<Url, HashSet<TempSchemaId>>,
 
     generate_prefixes: bool,
     alternative_prefixes: bool,
@@ -128,13 +139,14 @@ impl<TResolver> Parser<TResolver> {
     ) -> Parser<XResolver> {
         let Self { entries, .. } = self;
 
-        let cache = HashSet::new();
+        let cache = HashMap::new();
         let pending = VecDeque::new();
 
         Parser {
             cache,
             entries,
             pending,
+            next_temp_id: TempSchemaId(0),
 
             resolver,
             resolve_includes: true,
@@ -172,13 +184,17 @@ impl<TResolver> Parser<TResolver> {
     pub fn finish(self) -> Schemas {
         let builder = SchemasBuilder {
             schemas: Schemas::default(),
+            entries: self.entries,
+
+            id_cache: HashMap::new(),
             prefix_cache: HashMap::new(),
+            location_cache: self.cache,
 
             generate_prefixes: self.generate_prefixes,
             alternative_prefixes: self.alternative_prefixes,
         };
 
-        builder.build(self.entries)
+        builder.build()
     }
 }
 
@@ -282,8 +298,9 @@ where
         let mut reader = SchemaReader::new(reader);
 
         let schema = Schema::deserialize(&mut reader).map_err(XmlErrorWithLocation::from)?;
+        let id = self.temp_schema_id();
 
-        self.add_schema(name, schema, None, reader.namespaces);
+        self.add_schema(id, name, schema, None, reader.namespaces);
         self.resolve_pending()?;
 
         Ok(self)
@@ -333,8 +350,9 @@ where
         let mut reader = SchemaReader::new(reader);
 
         let schema = Schema::deserialize(&mut reader).map_err(XmlErrorWithLocation::from)?;
+        let id = self.temp_schema_id();
 
-        self.add_schema(name, schema, None, reader.namespaces);
+        self.add_schema(id, name, schema, None, reader.namespaces);
         self.resolve_pending()?;
 
         Ok(self)
@@ -392,29 +410,46 @@ where
     #[instrument(err, level = "trace", skip(self))]
     pub fn add_schema_from_url(mut self, url: Url) -> Result<Self, Error<TResolver::Error>> {
         let req = ResolveRequest::new(url, ResolveRequestType::UserDefined);
+        let id = self.temp_schema_id();
 
-        self.resolve_location(req)?;
+        self.resolve_location(id, req)?;
         self.resolve_pending()?;
 
         Ok(self)
     }
 
-    fn add_pending(&mut self, req: ResolveRequest) {
+    fn temp_schema_id(&mut self) -> TempSchemaId {
+        let id = self.next_temp_id;
+
+        self.next_temp_id.0 = self.next_temp_id.0.wrapping_add(1);
+
+        id
+    }
+
+    fn add_pending(&mut self, req: ResolveRequest) -> TempSchemaId {
         tracing::debug!("Add pending resolve request: {req:#?}");
 
-        self.pending.push_back(req);
+        let id = self.temp_schema_id();
+
+        self.pending.push_back((id, req));
+
+        id
     }
 
     fn resolve_pending(&mut self) -> Result<(), Error<TResolver::Error>> {
-        while let Some(req) = self.pending.pop_front() {
-            self.resolve_location(req)?;
+        while let Some((id, req)) = self.pending.pop_front() {
+            self.resolve_location(id, req)?;
         }
 
         Ok(())
     }
 
     #[instrument(err, level = "trace", skip(self))]
-    fn resolve_location(&mut self, req: ResolveRequest) -> Result<(), Error<TResolver::Error>> {
+    fn resolve_location(
+        &mut self,
+        id: TempSchemaId,
+        req: ResolveRequest,
+    ) -> Result<(), Error<TResolver::Error>> {
         tracing::debug!("Process resolve request: {req:#?}");
 
         let Some((name, location, buffer)) =
@@ -422,7 +457,10 @@ where
         else {
             return Err(Error::UnableToResolve(Box::new(req)));
         };
-        if self.cache.contains(&location) {
+
+        if let Some(ids) = self.cache.get_mut(&location) {
+            ids.insert(id);
+
             return Ok(());
         }
 
@@ -447,14 +485,15 @@ where
 
         let reader = reader.into_inner();
 
-        self.add_schema(name, schema, Some(location.clone()), reader.namespaces);
-        self.cache.insert(location);
+        self.add_schema(id, name, schema, Some(location.clone()), reader.namespaces);
+        self.cache.insert(location, HashSet::from([id]));
 
         Ok(())
     }
 
     fn add_schema(
         &mut self,
+        id: TempSchemaId,
         name: Option<String>,
         schema: Schema,
         location: Option<Url>,
@@ -470,17 +509,23 @@ where
             .target_namespace
             .as_deref()
             .map(|ns| Namespace::from(ns.as_bytes().to_owned()));
+        let mut dependencies = BTreeMap::new();
 
         if self.resolve_includes {
             for content in &schema.content {
                 match content {
                     SchemaContent::Import(x) => {
                         if let Some(req) = import_req(x, target_ns.clone(), location.as_ref()) {
-                            self.add_pending(req);
+                            let location = req.requested_location.clone();
+                            let id = self.add_pending(req);
+                            dependencies.insert(location, id);
                         }
                     }
                     SchemaContent::Include(x) => {
-                        self.add_pending(include_req(x, target_ns.clone(), location.as_ref()));
+                        let req = include_req(x, target_ns.clone(), location.as_ref());
+                        let location = req.requested_location.clone();
+                        let id = self.add_pending(req);
+                        dependencies.insert(location, id);
                     }
                     _ => (),
                 }
@@ -488,11 +533,13 @@ where
         }
 
         self.entries.push(ParserEntry::Schema {
+            id,
             name,
             schema,
             location,
             target_ns,
             namespaces,
+            dependencies,
         });
     }
 }
@@ -549,10 +596,11 @@ where
 }
 
 impl SchemasBuilder {
-    fn build(mut self, entries: Vec<ParserEntry>) -> Schemas {
-        self.build_cache(&entries);
+    fn build(mut self) -> Schemas {
+        self.build_id_cache();
+        self.build_prefix_cache();
 
-        for entry in entries {
+        for entry in take(&mut self.entries) {
             match entry {
                 ParserEntry::AnonymousNamespace => {
                     self.get_or_create_namespace_info_mut(None);
@@ -561,13 +609,15 @@ impl SchemasBuilder {
                     self.get_or_create_namespace_info_mut(Some(namespace));
                 }
                 ParserEntry::Schema {
+                    id,
                     name,
                     schema,
                     location,
                     target_ns,
-                    ..
+                    namespaces: _,
+                    dependencies,
                 } => {
-                    self.add_schema(target_ns, name, location, schema);
+                    self.add_schema(id, target_ns, name, location, schema, dependencies);
                 }
             }
         }
@@ -577,8 +627,30 @@ impl SchemasBuilder {
         self.schemas
     }
 
-    fn build_cache(&mut self, entries: &[ParserEntry]) {
-        for entry in entries {
+    fn build_id_cache(&mut self) {
+        for entry in &self.entries {
+            if let ParserEntry::Schema {
+                id: temp_id,
+                location,
+                ..
+            } = entry
+            {
+                let id = self.schemas.next_schema_id();
+                self.id_cache.insert(*temp_id, id);
+
+                if let Some(alternative_ids) =
+                    location.as_ref().and_then(|x| self.location_cache.get(x))
+                {
+                    for temp_id in alternative_ids {
+                        self.id_cache.insert(*temp_id, id);
+                    }
+                }
+            }
+        }
+    }
+
+    fn build_prefix_cache(&mut self) {
+        for entry in &self.entries {
             match entry {
                 ParserEntry::AnonymousNamespace => {
                     self.prefix_cache.entry(None).or_default();
@@ -622,16 +694,26 @@ impl SchemasBuilder {
 
     fn add_schema(
         &mut self,
+        id: TempSchemaId,
         namespace: Option<Namespace>,
         name: Option<String>,
         location: Option<Url>,
         schema: Schema,
+        dependencies: BTreeMap<String, TempSchemaId>,
     ) {
         self.schemas.last_schema_id = self.schemas.last_schema_id.wrapping_add(1);
-        let schema_id = SchemaId(self.schemas.last_schema_id);
+        let schema_id = *self.id_cache.get(&id).unwrap();
 
         let (namespace_id, namespace_info) = self.get_or_create_namespace_info_mut(namespace);
         namespace_info.schemas.push(schema_id);
+
+        let dependencies = dependencies
+            .into_iter()
+            .filter_map(|(location, temp_id)| {
+                let id = *self.id_cache.get(&temp_id)?;
+                Some((location, id))
+            })
+            .collect();
 
         match self.schemas.schemas.entry(schema_id) {
             Entry::Vacant(e) => e.insert(SchemaInfo {
@@ -639,6 +721,7 @@ impl SchemasBuilder {
                 schema,
                 location,
                 namespace_id,
+                dependencies,
             }),
             Entry::Occupied(_) => crate::unreachable!(),
         };
