@@ -222,23 +222,27 @@ impl ConstrainsData<'_> {
             return None;
         }
 
+        let str_ = ctx.resolve_build_in("::core::primitive::str");
         let regex = ctx.resolve_ident_path("::regex::Regex");
         let lazy_lock = ctx.resolve_ident_path("::std::sync::LazyLock");
         let validate_error = ctx.resolve_ident_path("::xsd_parser_types::quick_xml::ValidateError");
 
         let sz = self.meta.patterns.len();
         let patterns = self.meta.patterns.iter().map(|x| {
-            let rx = Literal::string(x);
+            let pa = Literal::string(x);
 
-            quote!(#regex::new(#rx).unwrap())
+            // Make sure the pattern is anchored, otherwise it would be possible to match only a part of the string
+            let rx = Literal::string(&format!("^(?:{})$", x));
+
+            quote!((#pa, #regex::new(#rx).unwrap()))
         });
 
         Some(quote! {
-            static PATTERNS: #lazy_lock<[#regex; #sz]> = #lazy_lock::new(|| [ #( #patterns )* ]);
+            static PATTERNS: #lazy_lock<[(&#str_, #regex); #sz]> = #lazy_lock::new(|| [ #( #patterns )* ]);
 
-            for pattern in PATTERNS.iter() {
-                if !pattern.is_match(s) {
-                    return Err(#validate_error::Pattern(pattern.as_str()));
+            for (pattern, regex) in PATTERNS.iter() {
+                if !regex.is_match(s) {
+                    return Err(#validate_error::Pattern(pattern));
                 }
             }
         })

@@ -13,11 +13,11 @@ pub enum UnionType {
 }
 impl UnionType {
     pub fn validate_str(s: &str) -> Result<(), ValidateError> {
-        static PATTERNS: LazyLock<[Regex; 1usize]> =
-            LazyLock::new(|| [Regex::new("[a-z0-9]+").unwrap()]);
-        for pattern in PATTERNS.iter() {
-            if !pattern.is_match(s) {
-                return Err(ValidateError::Pattern(pattern.as_str()));
+        static PATTERNS: LazyLock<[(&str, Regex); 1usize]> =
+            LazyLock::new(|| [("[a-z0-9]+", Regex::new("^(?:[a-z0-9]+)$").unwrap())]);
+        for (pattern, regex) in PATTERNS.iter() {
+            if !regex.is_match(s) {
+                return Err(ValidateError::Pattern(pattern));
             }
         }
         Ok(())
