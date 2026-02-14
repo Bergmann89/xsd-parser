@@ -27,6 +27,7 @@ pub(super) struct State<'a> {
 
 #[derive(Debug)]
 pub(super) enum StackEntry {
+    RootSchema(SchemaId),
     Type(TypeIdent, HashMap<TypeIdent, TypeIdent>),
     GroupRef(TypeIdent, Option<String>),
     AttributeGroupRef,
@@ -125,7 +126,7 @@ impl<'a> State<'a> {
 
     pub(super) fn current_schema(&self) -> Option<SchemaId> {
         self.type_stack.iter().rev().find_map(|x| match x {
-            StackEntry::Type(x, _) => Some(x.schema),
+            StackEntry::RootSchema(id) => Some(*id),
             _ => None,
         })
     }
@@ -348,6 +349,62 @@ impl<'a> State<'a> {
                     C::ComplexType(x @ ComplexBaseType { name: Some(name), .. }) => (name, Node::ComplexType(x)),
                     C::Group(x @ GroupType { name: Some(name), .. }) => (name, Node::Group(x)),
                     C::AttributeGroup(x @ AttributeGroupType { name: Some(name), .. }) => (name, Node::AttributeGroup(x)),
+                    C::Redefine(x) => {
+                        use crate::models::schema::xs::RedefineContent as C;
+
+                        for c in &x.content {
+                            let (name, node) = match c {
+                                C::SimpleType(x @ SimpleBaseType { name: Some(name), .. }) => (name, Node::SimpleType(x)),
+                                C::ComplexType(x @ ComplexBaseType { name: Some(name), .. }) => (name, Node::ComplexType(x)),
+                                C::Group(x @ GroupType { name: Some(name), .. }) => (name, Node::Group(x)),
+                                C::AttributeGroup(x @ AttributeGroupType { name: Some(name), .. }) => (name, Node::AttributeGroup(x)),
+                                _ => continue,
+                            };
+
+                            let name = Name::new_named(name.clone());
+                            let type_ = node.ident_type();
+                            let ident = TypeIdent {
+                                ns,
+                                schema,
+                                name,
+                                type_,
+                            };
+
+                            self.ident_cache.insert(ident.clone());
+                            self.node_cache.insert(ident, node);
+                        }
+
+                        continue;
+                    }
+                    C::Override(x) => {
+                        use crate::models::schema::xs::OverrideContent as C;
+
+                        for c in &x.content {
+                            let (name, node) = match c {
+                                C::SimpleType(x @ SimpleBaseType { name: Some(name), .. }) => (name, Node::SimpleType(x)),
+                                C::ComplexType(x @ ComplexBaseType { name: Some(name), .. }) => (name, Node::ComplexType(x)),
+                                C::Group(x @ GroupType { name: Some(name), .. }) => (name, Node::Group(x)),
+                                C::AttributeGroup(x @ AttributeGroupType { name: Some(name), .. }) => (name, Node::AttributeGroup(x)),
+                                C::Element(x @ ElementType { name: Some(name), .. }) => (name, Node::Element(x)),
+                                C::Attribute(x @ AttributeType { name: Some(name), .. }) => (name, Node::Attribute(x)),
+                                _ => continue,
+                            };
+
+                            let name = Name::new_named(name.clone());
+                            let type_ = node.ident_type();
+                            let ident = TypeIdent {
+                                ns,
+                                schema,
+                                name,
+                                type_,
+                            };
+
+                            self.ident_cache.insert(ident.clone());
+                            self.node_cache.insert(ident, node);
+                        }
+
+                        continue;
+                    }
                     _ => continue,
                 };
 

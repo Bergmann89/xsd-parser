@@ -51,6 +51,8 @@ impl<'schema, 'state> SchemaInterpreter<'schema, 'state> {
             pending_element_types: VecDeque::new(),
         };
 
+        this.state.push_stack(StackEntry::RootSchema(schema_id));
+
         for c in &this.schema.content {
             match c {
                 SchemaContent::Annotation(_)
@@ -80,6 +82,8 @@ impl<'schema, 'state> SchemaInterpreter<'schema, 'state> {
         while let Some((ident, ty)) = this.pending_element_types.pop_front() {
             this.create_type(ident, |builder| builder.apply_element(ty, false))?;
         }
+
+        this.state.pop_stack();
 
         Ok(())
     }

@@ -68,6 +68,16 @@ where
     generate_test_validate(actual, expected_rs);
 }
 
+pub fn generate_test_no_input<P>(expected_rs: P, config: Config)
+where
+    P: AsRef<Path>,
+{
+    let actual = generate(config).unwrap();
+    let actual = actual.to_string();
+
+    generate_test_validate(actual, expected_rs);
+}
+
 pub fn generate_test_validate<P1, P2>(actual: P1, expected_rs: P2)
 where
     P1: AsRef<str>,

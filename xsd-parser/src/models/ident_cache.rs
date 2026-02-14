@@ -1,6 +1,7 @@
 use std::borrow::Cow;
 use std::collections::{HashMap, HashSet};
 
+use crate::models::schema::Dependency;
 use crate::InterpreterError;
 
 use super::{
@@ -32,7 +33,7 @@ struct SchemaEntry {
     ns: NamespaceId,
     schema: SchemaId,
     types: HashSet<(IdentType, Cow<'static, str>)>,
-    dependencies: Vec<SchemaId>,
+    dependencies: Vec<Dependency<SchemaId>>,
 }
 
 impl IdentCache {
@@ -85,7 +86,7 @@ impl IdentCache {
     /// # Returns
     /// Returns `true` if the dependency was added, or `false` if it already
     /// existed or if `schema` is not known to the cache.
-    pub fn add_dependency(&mut self, schema: SchemaId, dependency: SchemaId) -> bool {
+    pub fn add_dependency(&mut self, schema: SchemaId, dependency: Dependency<SchemaId>) -> bool {
         if let Some(entry) = self.schemas.get_mut(&schema) {
             if !entry.dependencies.contains(&dependency) {
                 entry.dependencies.push(dependency);
@@ -232,7 +233,7 @@ impl IdentCache {
         }
 
         for dep in &entry.dependencies {
-            if let Some(found) = self.search_in_schema(visited, *dep, ident) {
+            if let Some(found) = self.search_in_schema(visited, **dep, ident) {
                 return Some(found);
             }
         }

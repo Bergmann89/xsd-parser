@@ -39,10 +39,10 @@ use xsd_parser_types::quick_xml::{
 };
 
 use crate::models::schema::{
-    xs::{Import, Include, Schema, SchemaContent},
+    xs::{Import, Schema, SchemaContent},
     NamespaceId, NamespaceInfo, Schemas,
 };
-use crate::models::schema::{SchemaId, SchemaInfo};
+use crate::models::schema::{Dependency, SchemaId, SchemaInfo};
 use crate::pipeline::parser::resolver::ResolveRequestType;
 
 pub use self::error::{Error, XmlErrorWithLocation};
@@ -94,7 +94,7 @@ enum ParserEntry {
         location: Option<Url>,
         target_ns: Option<Namespace>,
         namespaces: Namespaces,
-        dependencies: BTreeMap<String, TempSchemaId>,
+        dependencies: BTreeMap<String, Dependency<TempSchemaId>>,
     },
 }
 
@@ -474,10 +474,18 @@ where
                 location: Some(location.clone()),
             })?;
 
-        if schema.target_namespace.is_none()
-            && ResolveRequestType::IncludeRequest == req.request_type
-        {
-            if let Some(current_ns) = req.current_ns {
+        if let Some(current_ns) = req.current_ns {
+            if let Some(ns) = schema.target_namespace.as_ref() {
+                if req.request_type == ResolveRequestType::IncludeRequest
+                    && ns.as_bytes() != current_ns.as_ref()
+                {
+                    return Err(Error::MismatchingTargetNamespace {
+                        location,
+                        found: Namespace::new(ns.as_bytes().to_vec()),
+                        expected: current_ns,
+                    });
+                }
+            } else {
                 let inherited_ns = current_ns.to_string();
                 schema.target_namespace = Some(inherited_ns);
             }
@@ -518,14 +526,29 @@ where
                         if let Some(req) = import_req(x, target_ns.clone(), location.as_ref()) {
                             let location = req.requested_location.clone();
                             let id = self.add_pending(req);
-                            dependencies.insert(location, id);
+                            dependencies.insert(location, Dependency::Import(id));
                         }
                     }
                     SchemaContent::Include(x) => {
-                        let req = include_req(x, target_ns.clone(), location.as_ref());
+                        let req =
+                            include_req(&x.schema_location, target_ns.clone(), location.as_ref());
                         let location = req.requested_location.clone();
                         let id = self.add_pending(req);
-                        dependencies.insert(location, id);
+                        dependencies.insert(location, Dependency::Include(id));
+                    }
+                    SchemaContent::Redefine(x) => {
+                        let req =
+                            include_req(&x.schema_location, target_ns.clone(), location.as_ref());
+                        let location = req.requested_location.clone();
+                        let id = self.add_pending(req);
+                        dependencies.insert(location, Dependency::Redefine(id));
+                    }
+                    SchemaContent::Override(x) => {
+                        let req =
+                            include_req(&x.schema_location, target_ns.clone(), location.as_ref());
+                        let location = req.requested_location.clone();
+                        let id = self.add_pending(req);
+                        dependencies.insert(location, Dependency::Override(id));
                     }
                     _ => (),
                 }
@@ -699,7 +722,7 @@ impl SchemasBuilder {
         name: Option<String>,
         location: Option<Url>,
         schema: Schema,
-        dependencies: BTreeMap<String, TempSchemaId>,
+        dependencies: BTreeMap<String, Dependency<TempSchemaId>>,
     ) {
         self.schemas.last_schema_id = self.schemas.last_schema_id.wrapping_add(1);
         let schema_id = *self.id_cache.get(&id).unwrap();
@@ -709,9 +732,10 @@ impl SchemasBuilder {
 
         let dependencies = dependencies
             .into_iter()
-            .filter_map(|(location, temp_id)| {
-                let id = *self.id_cache.get(&temp_id)?;
-                Some((location, id))
+            .filter_map(|(location, dep)| {
+                let id = *self.id_cache.get(&*dep)?;
+                let dep = dep.map(|_| id);
+                Some((location, dep))
             })
             .collect();
 
@@ -845,11 +869,11 @@ fn import_req(
 }
 
 fn include_req(
-    include: &Include,
+    schema_location: &str,
     current_ns: Option<Namespace>,
     current_location: Option<&Url>,
 ) -> ResolveRequest {
-    let mut req = ResolveRequest::new(&include.schema_location, ResolveRequestType::IncludeRequest);
+    let mut req = ResolveRequest::new(schema_location, ResolveRequestType::IncludeRequest);
 
     if let Some(ns) = current_ns {
         req = req.current_ns(ns);
