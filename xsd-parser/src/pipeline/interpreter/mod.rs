@@ -44,7 +44,7 @@ use crate::models::{
     },
     schema::{
         xs::{FormChoiceType, ProcessContentsType},
-        MaxOccurs, Schemas,
+        MaxOccurs, NamespaceId, Schemas,
     },
     AttributeIdent, ElementIdent, IdentCache, Name, TypeIdent,
 };
@@ -412,10 +412,10 @@ impl<'a> Interpreter<'a> {
             .ok_or_else(|| Error::UnknownNamespace(Namespace::XS.clone()))?;
 
         macro_rules! add {
-            ($src:expr, $dst:literal) => {{
+            ($src:expr, $dst:expr) => {{
                 self.state.add_type(
                     TypeIdent::type_($src).with_ns(xs),
-                    ReferenceMeta::new(TypeIdent::type_($dst)),
+                    ReferenceMeta::new($dst),
                     true,
                     true,
                 )?;
@@ -442,16 +442,20 @@ impl<'a> Interpreter<'a> {
                 Some(code)
             });
 
-        self.state
-            .add_type(TypeIdent::type_("BigInt"), big_int, true, false)?;
-        self.state
-            .add_type(TypeIdent::type_("BigUint"), big_uint, true, false)?;
+        let ident_big_int = TypeIdent::type_("BigInt").with_ns(NamespaceId::ANONYMOUS);
+        let ident_big_uint = TypeIdent::type_("BigUint").with_ns(NamespaceId::ANONYMOUS);
 
-        add!("integer", "BigInt");
-        add!("positiveInteger", "BigUint");
-        add!("nonNegativeInteger", "BigUint");
-        add!("negativeInteger", "BigInt");
-        add!("nonPositiveInteger", "BigInt");
+        self.state
+            .add_type(ident_big_int.clone(), big_int, true, false)?;
+        self.state
+            .add_type(ident_big_uint.clone(), big_uint, true, false)?;
+
+        add!("integer", ident_big_int.clone());
+        add!("negativeInteger", ident_big_int.clone());
+        add!("nonPositiveInteger", ident_big_int);
+
+        add!("positiveInteger", ident_big_uint.clone());
+        add!("nonNegativeInteger", ident_big_uint);
 
         Ok(self)
     }
@@ -470,10 +474,10 @@ impl<'a> Interpreter<'a> {
             .ok_or_else(|| Error::UnknownNamespace(Namespace::XS.clone()))?;
 
         macro_rules! add {
-            ($src:expr, $dst:literal) => {{
+            ($src:expr, $dst:expr) => {{
                 self.state.add_type(
                     TypeIdent::type_($src).with_ns(xs),
-                    ReferenceMeta::new(TypeIdent::type_($dst)),
+                    ReferenceMeta::new($dst),
                     true,
                     true,
                 )?;
@@ -500,13 +504,16 @@ impl<'a> Interpreter<'a> {
                 Some(code)
             });
 
-        self.state
-            .add_type(TypeIdent::type_("NonZeroUsize"), non_zero_usize, true, true)?;
-        self.state
-            .add_type(TypeIdent::type_("NonZeroIsize"), non_zero_isize, true, true)?;
+        let ident_non_zero_usize = TypeIdent::type_("NonZeroUsize").with_ns(NamespaceId::ANONYMOUS);
+        let ident_non_zero_isize = TypeIdent::type_("NonZeroIsize").with_ns(NamespaceId::ANONYMOUS);
 
-        add!("positiveInteger", "NonZeroUsize");
-        add!("negativeInteger", "NonZeroIsize");
+        self.state
+            .add_type(ident_non_zero_usize.clone(), non_zero_usize, true, true)?;
+        self.state
+            .add_type(ident_non_zero_isize.clone(), non_zero_isize, true, true)?;
+
+        add!("positiveInteger", ident_non_zero_usize);
+        add!("negativeInteger", ident_non_zero_isize);
 
         Ok(self)
     }

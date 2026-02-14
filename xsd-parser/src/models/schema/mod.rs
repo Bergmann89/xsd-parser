@@ -256,7 +256,18 @@ impl SchemaId {
     /// Returns `true` if this schema id is unknown, `false` otherwise.
     #[must_use]
     pub fn is_unknown(&self) -> bool {
-        self.0 == 0
+        self.eq(&Self::UNKNOWN)
+    }
+
+    /// Returns `other` if this schema id is unknown, `self` otherwise.
+    #[inline]
+    #[must_use]
+    pub fn or(self, other: Self) -> Self {
+        if self.is_unknown() {
+            other
+        } else {
+            self
+        }
     }
 }
 
@@ -276,10 +287,21 @@ impl NamespaceId {
         self.eq(&Self::UNKNOWN)
     }
 
-    /// Returns `true` if this namespace id is unknown, `false` otherwise.
+    /// Returns `true` if this namespace id is anonymous, `false` otherwise.
     #[inline]
     #[must_use]
     pub fn is_anonymous(&self) -> bool {
         self.eq(&Self::ANONYMOUS)
+    }
+
+    /// Returns `other` if this namespace id is unknown, `self` otherwise.
+    #[inline]
+    #[must_use]
+    pub fn or(self, other: Self) -> Self {
+        if self.is_unknown() {
+            other
+        } else {
+            self
+        }
     }
 }

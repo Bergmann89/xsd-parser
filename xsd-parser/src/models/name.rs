@@ -134,3 +134,18 @@ impl From<&'static str> for Name {
         Self::Named(Cow::Borrowed(value))
     }
 }
+
+impl From<Name> for String {
+    fn from(value: Name) -> Self {
+        value.as_str().to_owned()
+    }
+}
+
+impl From<Name> for Cow<'static, str> {
+    fn from(value: Name) -> Self {
+        match value {
+            Name::Named(s) => s,
+            Name::Generated(s) => s,
+        }
+    }
+}

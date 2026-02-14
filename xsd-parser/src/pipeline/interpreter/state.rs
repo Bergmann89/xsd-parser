@@ -1,5 +1,7 @@
 use std::collections::{btree_map::Entry, BTreeMap, HashMap};
 
+use xsd_parser_types::misc::Namespace;
+
 use crate::models::{
     meta::{ElementMetaVariant, MetaType, MetaTypeVariant, MetaTypes, ModuleMeta, SchemaMeta},
     schema::{
@@ -224,9 +226,7 @@ impl<'a> State<'a> {
         }
 
         let ident = entry.key().clone();
-        let ns = ident.ns;
-        let schema = ident.schema;
-        self.ident_cache.insert(ident, ns, schema);
+        self.ident_cache.insert(ident);
 
         match entry {
             Entry::Vacant(e) => {
@@ -258,6 +258,14 @@ impl<'a> State<'a> {
         }
     }
 
+    pub(super) fn resolve_type_ident(&self, ident: TypeIdent) -> Result<TypeIdent, Error> {
+        if let Some(schema) = self.current_schema() {
+            self.ident_cache.resolve_for_schema(schema, ident)
+        } else {
+            self.ident_cache.resolve(ident)
+        }
+    }
+
     pub(super) fn resolve_type_ident_allow_unknown(
         &self,
         ident: TypeIdent,
@@ -267,26 +275,6 @@ impl<'a> State<'a> {
             Err(Error::UnknownType(ident)) => Ok(ident),
             Err(error) => Err(error),
         }
-    }
-
-    pub(super) fn resolve_type_ident(&self, mut ident: TypeIdent) -> Result<TypeIdent, Error> {
-        if ident.schema.is_unknown() {
-            if let Some(schema) = self.current_schema() {
-                ident.schema = schema;
-
-                if let Some(entry) = self.ident_cache.get(&ident) {
-                    return entry.resolve(ident);
-                }
-
-                ident.schema = SchemaId::UNKNOWN;
-            }
-        }
-
-        if let Some(entry) = self.ident_cache.get(&ident) {
-            return entry.resolve(ident);
-        }
-
-        Err(Error::UnknownType(ident))
     }
 
     /// This method is used to patch types that were defined by the user
@@ -341,9 +329,25 @@ impl<'a> State<'a> {
     }
 
     fn create_ident_cache(&mut self, schemas: &'a Schemas) {
-        for (schema, info) in &schemas.schemas {
+        for (ns, info) in schemas.namespaces() {
+            for schema in &info.schemas {
+                self.ident_cache.add_schema(*ns, *schema);
+            }
+
+            if matches!(&info.namespace, Some(ns) if ns.eq(&Namespace::XML) || ns.eq(&Namespace::XS) || ns.eq(&Namespace::XSI))
+            {
+                self.ident_cache.add_global_namespace(*ns);
+            }
+        }
+
+        for (schema, info) in schemas.schemas() {
             let ns = info.namespace_id;
             let schema = *schema;
+
+            self.ident_cache.add_schema(ns, schema);
+            for dep in info.dependencies.values() {
+                self.ident_cache.add_dependency(schema, *dep);
+            }
 
             for c in &info.schema.content {
                 let (type_, name) = match c {
@@ -369,7 +373,7 @@ impl<'a> State<'a> {
                     type_,
                 };
 
-                self.ident_cache.insert(ident, ns, schema);
+                self.ident_cache.insert(ident);
             }
         }
     }

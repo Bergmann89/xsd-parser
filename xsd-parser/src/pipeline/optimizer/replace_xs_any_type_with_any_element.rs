@@ -54,7 +54,7 @@ impl Optimizer {
                 matches!(&meta.namespace, Some(ns) if *ns == Namespace::XS)
                     .then_some(meta.namespace_id)
             })
-            .unwrap_or(NamespaceId::UNKNOWN);
+            .unwrap_or(NamespaceId::ANONYMOUS);
         let ident = TypeIdent {
             ns,
             schema: SchemaId::UNKNOWN,
