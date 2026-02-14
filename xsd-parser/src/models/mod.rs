@@ -21,8 +21,8 @@ mod naming;
 pub type Ident = TypeIdent;
 
 pub use self::ident::{
-    AttributeIdent, ElementIdent, EnumerationIdent, IdentType, NodeIdent, NodeIdentType,
-    PropertyIdent, TypeIdent, TypeIdentType,
+    AttributeIdent, ElementIdent, EnumerationIdent, IdentType, PropertyIdent, TypeIdent,
+    TypeIdentType,
 };
 pub use self::ident_cache::IdentCache;
 pub use self::name::Name;

@@ -6,12 +6,12 @@ use crate::models::{
     meta::{ElementMetaVariant, MetaType, MetaTypeVariant, MetaTypes, ModuleMeta, SchemaMeta},
     schema::{
         xs::{
-            AttributeGroupType, AttributeType, ComplexBaseType, ElementType, GroupType, Schema,
+            AttributeGroupType, AttributeType, ComplexBaseType, ElementType, GroupType,
             SchemaContent, SimpleBaseType,
         },
         NamespaceId, SchemaId, Schemas,
     },
-    IdentCache, IdentType, Name, NodeIdent, TypeIdent,
+    IdentCache, IdentType, Name, TypeIdent,
 };
 use crate::traits::{NameBuilder, NameBuilderExt as _, Naming};
 
@@ -21,14 +21,14 @@ use super::{name_builder::NameBuilderExt as _, Error, SchemaInterpreter};
 pub(super) struct State<'a> {
     types: MetaTypes,
     type_stack: Vec<StackEntry>,
-    node_cache: BTreeMap<(SchemaId, NodeIdent), (SchemaId, Node<'a>)>,
+    node_cache: BTreeMap<TypeIdent, Node<'a>>,
     ident_cache: IdentCache,
 }
 
 #[derive(Debug)]
 pub(super) enum StackEntry {
-    Type(TypeIdent, HashMap<NodeIdent, TypeIdent>),
-    GroupRef(NodeIdent, Option<String>),
+    Type(TypeIdent, HashMap<TypeIdent, TypeIdent>),
+    GroupRef(TypeIdent, Option<String>),
     AttributeGroupRef,
     Mixed(bool),
     Group,
@@ -84,7 +84,7 @@ impl<'a> State<'a> {
         self.types.naming = naming;
     }
 
-    pub(super) fn group_cache(&self) -> Option<&HashMap<NodeIdent, TypeIdent>> {
+    pub(super) fn group_cache(&self) -> Option<&HashMap<TypeIdent, TypeIdent>> {
         self.type_stack.iter().rev().find_map(|x| {
             if let StackEntry::Type(_, cache) = x {
                 Some(cache)
@@ -94,7 +94,7 @@ impl<'a> State<'a> {
         })
     }
 
-    pub(super) fn group_cache_mut(&mut self) -> Option<&mut HashMap<NodeIdent, TypeIdent>> {
+    pub(super) fn group_cache_mut(&mut self) -> Option<&mut HashMap<TypeIdent, TypeIdent>> {
         self.type_stack.iter_mut().rev().find_map(|x| {
             if let StackEntry::Type(_, cache) = x {
                 Some(cache)
@@ -240,20 +240,13 @@ impl<'a> State<'a> {
         Ok(())
     }
 
-    pub(super) fn get_node(
-        &mut self,
-        schemas: &'a Schemas,
-        schema: SchemaId,
-        ident: NodeIdent,
-    ) -> Result<Option<(SchemaId, Node<'a>)>, Error> {
-        match self.node_cache.entry((schema, ident)) {
-            Entry::Occupied(e) => Ok(Some(*e.get())),
+    pub(super) fn get_node(&mut self, schemas: &'a Schemas, ident: TypeIdent) -> Option<Node<'a>> {
+        match self.node_cache.entry(ident) {
+            Entry::Occupied(e) => Some(*e.get()),
             Entry::Vacant(e) => {
-                if let Some((schema, node)) = search_in_schemas(schemas, schema, &e.key().1)? {
-                    Ok(Some(*e.insert((schema, node))))
-                } else {
-                    Ok(None)
-                }
+                let node = search_in_schemas(schemas, e.key())?;
+
+                Some(*e.insert(node))
             }
         }
     }
@@ -363,6 +356,12 @@ impl<'a> State<'a> {
                     SchemaContent::ComplexType(ComplexBaseType {
                         name: Some(name), ..
                     }) => (IdentType::Type, Name::new_named(name.clone())),
+                    SchemaContent::Group(GroupType {
+                        name: Some(name), ..
+                    }) => (IdentType::Group, Name::new_named(name.clone())),
+                    SchemaContent::AttributeGroup(AttributeGroupType {
+                        name: Some(name), ..
+                    }) => (IdentType::AttributeGroup, Name::new_named(name.clone())),
                     _ => continue,
                 };
 
@@ -417,57 +416,12 @@ impl<'a> State<'a> {
     }
 }
 
-fn search_in_schemas<'a>(
-    schemas: &'a Schemas,
-    schema: SchemaId,
-    ident: &NodeIdent,
-) -> Result<Option<(SchemaId, Node<'a>)>, Error> {
-    let Some(name) = ident.name.as_named_str() else {
-        return Ok(None);
-    };
+fn search_in_schemas<'a>(schemas: &'a Schemas, ident: &TypeIdent) -> Option<Node<'a>> {
+    let name = ident.name.as_named_str()?;
+    let info = schemas.get_schema(&ident.schema)?;
 
-    let type_ = ident.type_;
-
-    let Some(ns_info) = schemas.get_namespace_info(&ident.ns) else {
-        return Ok(None);
-    };
-
-    let mut err = false;
-    let mut ret = None;
-
-    for id in &ns_info.schemas {
-        if let Some(info) = schemas.get_schema(id) {
-            if let Some(node) = search_in_schema(&info.schema, name, type_) {
-                if *id == schema {
-                    // If the node was defined in the current schema we
-                    // can ignore any other node we might find in other
-                    // schemas and return instantly.
-                    return Ok(Some((*id, node)));
-                }
-
-                if ret.is_some() {
-                    err = true;
-                    // If the node was already set, we have more than one
-                    // matching type, so we should return an error, but we
-                    // still continue if we find another matching node in the
-                    // current schema
-                } else {
-                    ret = Some((*id, node));
-                }
-            }
-        }
-    }
-
-    if err {
-        Err(Error::AmbiguousNode(ident.clone()))
-    } else {
-        Ok(ret)
-    }
-}
-
-fn search_in_schema<'a>(schema: &'a Schema, name: &str, type_: IdentType) -> Option<Node<'a>> {
-    for c in &schema.content {
-        match (type_, c) {
+    for c in &info.schema.content {
+        match (ident.type_, c) {
             (IdentType::Element, SchemaContent::Element(x)) if matches!(&x.name, Some(n) if n == name) =>
             {
                 return Some(Node::Element(x));

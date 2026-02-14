@@ -4,7 +4,7 @@ use xsd_parser_types::misc::{Namespace, NamespacePrefix, RawByteStr};
 
 use crate::models::{
     schema::xs::{AttributeType, Facet},
-    NodeIdent, TypeIdent,
+    TypeIdent,
 };
 
 /// error raised by the [`Interpreter`](super::Interpreter).
@@ -25,25 +25,18 @@ pub enum Error {
     #[error("Ambiguous type: {0}!")]
     AmbiguousType(TypeIdent),
 
-    /// Ambiguous node definition
-    ///
-    /// Is raised by the interpreter if it tries to resolve a certain type
-    /// definition inside the schemas, but multiple matching types were found.
-    #[error("Ambiguous node: {0}!")]
-    AmbiguousNode(NodeIdent),
-
     /// Expected dynamic element.
     ///
     /// Expected the specified element to be dynamic because it is referenced
     /// as substitution group.
     #[error("Expected dynamic element: {0}!")]
-    ExpectedDynamicElement(NodeIdent),
+    ExpectedDynamicElement(TypeIdent),
 
     /// Unknown node.
     ///
     /// Is raised if a specific node could not be found inside the schema definitions.
     #[error("Unknown node: {0}!")]
-    UnknownNode(NodeIdent),
+    UnknownNode(TypeIdent),
 
     /// Unknown type.
     ///

@@ -15,7 +15,7 @@ use crate::models::{
         },
         NamespaceId, QName, SchemaId, Schemas,
     },
-    IdentType, Name, NodeIdent, TypeIdent,
+    IdentType, Name, TypeIdent,
 };
 use crate::traits::NameBuilderExt as _;
 
@@ -91,32 +91,30 @@ impl SchemaInterpreter<'_, '_> {
     #[instrument(level = "trace", skip(self))]
     pub(super) fn get_substitution_group_element_mut(
         &mut self,
-        ident: &NodeIdent,
+        mut ident: TypeIdent,
     ) -> Result<&mut MetaType, Error> {
-        let mut type_ident = self.resolve_node_ident(ident)?;
-        if self.state.get_type(&type_ident).is_none() {
-            let (schema, ty) = self.find_element(ident.clone())?;
-            type_ident = self.create_element(ident.ns, schema, None, ty)?;
+        if self.state.get_type(&ident).is_none() {
+            let ty = self.find_element(ident.clone())?;
+            ident = self.create_element(ident.ns, ident.schema, None, ty)?;
         }
 
-        Ok(self.state.get_type_mut(&type_ident).unwrap())
+        Ok(self.state.get_type_mut(&ident).unwrap())
     }
 
     #[instrument(level = "trace", skip(self))]
     pub(super) fn get_simple_type_variant(
         &mut self,
-        ident: &NodeIdent,
+        mut ident: TypeIdent,
     ) -> Result<(TypeIdent, Cow<'_, MetaTypeVariant>), Error> {
-        let mut type_ident = self.resolve_node_ident(ident)?;
-        if self.state.get_type(&type_ident).is_none() {
-            let (schema, ty) = self.find_simple_type(ident.clone())?;
-            type_ident = self.create_simple_type(ident.ns, schema, None, ty)?;
+        if self.state.get_type(&ident).is_none() {
+            let ty = self.find_simple_type(ident.clone())?;
+            ident = self.create_simple_type(ident.ns, ident.schema, None, ty)?;
         }
 
-        match self.state.get_variant(&type_ident) {
+        match self.state.get_variant(&ident) {
             Some(ty) if ty.is_mixed(self.state.types()) && ty.is_emptiable(self.state.types()) => {
                 Ok((
-                    type_ident,
+                    ident,
                     Cow::Owned(MetaTypeVariant::BuildIn(BuildInMeta::String)),
                 ))
             }
@@ -135,22 +133,21 @@ impl SchemaInterpreter<'_, '_> {
                 | MetaTypeVariant::Union(_)
                 | MetaTypeVariant::Reference(_)
                 | MetaTypeVariant::SimpleType(_)),
-            ) => Ok((type_ident, Cow::Borrowed(ty))),
+            ) => Ok((ident, Cow::Borrowed(ty))),
         }
     }
 
     #[instrument(level = "trace", skip(self))]
     pub(super) fn get_complex_type_variant(
         &mut self,
-        ident: &NodeIdent,
+        mut ident: TypeIdent,
     ) -> Result<(TypeIdent, &MetaTypeVariant), Error> {
-        let mut type_ident = self.resolve_node_ident(ident)?;
-        if self.state.get_type(&type_ident).is_none() {
-            let (schema, ty) = self.find_complex_type(ident.clone())?;
-            type_ident = self.create_complex_type(ident.ns, schema, None, ty)?;
+        if self.state.get_type(&ident).is_none() {
+            let ty = self.find_complex_type(ident.clone())?;
+            ident = self.create_complex_type(ident.ns, ident.schema, None, ty)?;
         }
 
-        match self.state.get_variant(&type_ident) {
+        match self.state.get_variant(&ident) {
             None
             | Some(
                 MetaTypeVariant::Enumeration(_)
@@ -166,7 +163,7 @@ impl SchemaInterpreter<'_, '_> {
                 | MetaTypeVariant::Choice(_)
                 | MetaTypeVariant::Sequence(_)
                 | MetaTypeVariant::Dynamic(_)),
-            ) => Ok((type_ident, ty)),
+            ) => Ok((ident, ty)),
         }
     }
 }
@@ -299,17 +296,10 @@ impl<'schema> SchemaInterpreter<'schema, '_> {
 
 macro_rules! impl_find_node {
     ($name:ident, $result:ty, $variant:ident) => {
-        pub(super) fn $name(
-            &mut self,
-            ident: NodeIdent,
-        ) -> Result<(SchemaId, &'schema $result), Error> {
-            match self
-                .state
-                .get_node(self.schemas, self.current_schema(), ident.clone())
-            {
-                Ok(Some((schema, Node::$variant(x)))) => Ok((schema, x)),
-                Ok(_) => Err(Error::UnknownNode(ident)),
-                Err(error) => Err(error),
+        pub(super) fn $name(&mut self, ident: TypeIdent) -> Result<&'schema $result, Error> {
+            match self.state.get_node(self.schemas, ident.clone()) {
+                Some(Node::$variant(x)) => Ok(x),
+                _ => Err(Error::UnknownNode(ident)),
             }
         }
     };
@@ -334,13 +324,17 @@ impl SchemaInterpreter<'_, '_> {
         self.state.current_schema().unwrap_or(self.schema_id)
     }
 
-    #[allow(clippy::unnecessary_literal_unwrap)]
-    pub(super) fn parse_node_ident(&self, qname: &QName) -> Result<NodeIdent, Error> {
+    pub(super) fn parse_type_ident(
+        &self,
+        qname: &QName,
+        type_: IdentType,
+    ) -> Result<TypeIdent, Error> {
         let ns = qname
             .namespace()
             .map(|ns| {
                 let ns = Some(ns.clone());
 
+                #[allow(clippy::unnecessary_literal_unwrap)]
                 self.schemas
                     .resolve_namespace(&ns)
                     .ok_or_else(|| Error::UnknownNamespace(ns.unwrap()))
@@ -353,22 +347,22 @@ impl SchemaInterpreter<'_, '_> {
             from_utf8(name).map_err(|_| Error::InvalidLocalName(RawByteStr::from_slice(name)))?;
         let name = name.to_owned();
 
-        Ok(NodeIdent {
-            name: Name::new_named(name),
+        Ok(TypeIdent {
             ns,
-            type_: IdentType::Type,
+            schema: SchemaId::UNKNOWN,
+            name: Name::new_named(name),
+            type_,
         })
     }
 
-    pub(super) fn parse_type_ident(&self, qname: &QName) -> Result<TypeIdent, Error> {
-        let ident = self.parse_node_ident(qname)?;
+    pub(super) fn resolve_type_ident(
+        &self,
+        qname: &QName,
+        type_: IdentType,
+    ) -> Result<TypeIdent, Error> {
+        let ident = self.parse_type_ident(qname, type_)?;
 
-        self.resolve_node_ident(&ident)
-    }
-
-    pub(super) fn resolve_node_ident(&self, ident: &NodeIdent) -> Result<TypeIdent, Error> {
-        self.state
-            .resolve_type_ident(ident.to_type_ident(SchemaId::UNKNOWN))
+        self.state.resolve_type_ident(ident)
     }
 
     pub(super) fn resolve_xs_type(&self, name: Name) -> Result<TypeIdent, Error> {

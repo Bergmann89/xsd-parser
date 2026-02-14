@@ -7,29 +7,6 @@ use crate::models::schema::{NamespaceId, SchemaId};
 
 use super::Name;
 
-/// Identifier used to identify types in the [`Schemas`](crate::Schemas) structure.
-///
-/// Type definitions in a schema - so called nodes - are identified by the
-/// namespace, the name of the definition and the type of the definition.
-/// This is normally created from a [`QName`](crate::models::schema::QName)
-/// and is then resolved by the [`Interpreter`](crate::Interpreter) into a
-/// [`TypeIdent`] by respecting the local context of the original
-/// [`QName`](crate::models::schema::QName).
-#[derive(Debug, Clone, Eq, PartialEq, Ord, PartialOrd, Hash)]
-pub struct NodeIdent {
-    /// Namespace the type is defined in
-    pub ns: NamespaceId,
-
-    /// Name of the type.
-    pub name: Name,
-
-    /// Type of the identifier (because pure names are not unique in XSD).
-    pub type_: NodeIdentType,
-}
-
-/// Defines the type of the [`NodeIdent`].
-pub type NodeIdentType = IdentType;
-
 /// Type that is used to identify types in the schema definition.
 #[derive(Debug, Clone, Eq, PartialEq, Ord, PartialOrd, Hash)]
 pub struct TypeIdent {
@@ -109,52 +86,6 @@ pub enum IdentType {
 
     /// One concrete element in a substitution group.
     DynamicElement = 9,
-}
-
-/* NodeIdent */
-
-impl NodeIdent {
-    /// Change the [`IdentType`] of this node identifier.
-    #[must_use]
-    pub fn with_type(mut self, type_: IdentType) -> Self {
-        self.type_ = type_;
-
-        self
-    }
-
-    /// Convert this node identifier into a [`TypeIdent`] by adding the passed
-    /// `schema`.
-    #[must_use]
-    pub fn to_type_ident(&self, schema: SchemaId) -> TypeIdent {
-        let Self { ns, name, type_ } = self;
-
-        TypeIdent {
-            ns: *ns,
-            schema,
-            name: name.clone(),
-            type_: *type_,
-        }
-    }
-
-    /// Convert this node identifier into a [`TypeIdent`] by adding the passed
-    /// `schema`.
-    #[must_use]
-    pub fn into_type_ident(self, schema: SchemaId) -> TypeIdent {
-        let Self { ns, name, type_ } = self;
-
-        TypeIdent {
-            ns,
-            schema,
-            name,
-            type_,
-        }
-    }
-}
-
-impl Display for NodeIdent {
-    fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
-        fmt_ident(f, Some(self.ns), None, &self.name, Some(self.type_))
-    }
 }
 
 /* TypeIdent */
@@ -316,38 +247,6 @@ impl TypeIdent {
             ns: *ns,
             name: name.clone(),
         }
-    }
-
-    /// Convert this type identifier into a [`NodeIdent`] by dropping the schema
-    /// information.
-    #[must_use]
-    pub fn to_node_ident(&self) -> NodeIdent {
-        let Self {
-            ns,
-            schema: _,
-            name,
-            type_,
-        } = self;
-
-        NodeIdent {
-            ns: *ns,
-            name: name.clone(),
-            type_: *type_,
-        }
-    }
-
-    /// Convert this type identifier into a [`NodeIdent`] by dropping the schema
-    /// information.
-    #[must_use]
-    pub fn into_node_ident(self) -> NodeIdent {
-        let Self {
-            ns,
-            schema: _,
-            name,
-            type_,
-        } = self;
-
-        NodeIdent { ns, name, type_ }
     }
 
     /// Returns `true` if this is build-in type of the rust language, `false` otherwise.

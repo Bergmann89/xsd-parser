@@ -21,7 +21,7 @@ use crate::models::{
         },
         MaxOccurs, MinOccurs,
     },
-    AttributeIdent, ElementIdent, EnumerationIdent, IdentType, Name, NodeIdent, TypeIdent,
+    AttributeIdent, ElementIdent, EnumerationIdent, IdentType, Name, TypeIdent,
 };
 use crate::traits::{NameBuilderExt as _, VecHelper};
 
@@ -191,7 +191,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
         use crate::models::schema::xs::ElementTypeContent as C;
 
         if let Some(type_) = &ty.type_ {
-            let type_ = self.parse_type_ident(type_)?;
+            let type_ = self.resolve_type_ident(type_, IdentType::Type)?;
 
             init_any!(self, Reference, ReferenceMeta::new(type_), true);
         } else if !ty.content.is_empty() {
@@ -270,7 +270,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
 
             self.walk_substitution_groups(substitution_group, |builder, base_ident| {
                 let ident = builder.state.current_ident().unwrap().clone();
-                let base_ty = builder.get_substitution_group_element_mut(base_ident)?;
+                let base_ty = builder.get_substitution_group_element_mut(base_ident.clone())?;
 
                 if let MetaTypeVariant::Reference(ti) = &mut base_ty.variant {
                     base_ty.variant = MetaTypeVariant::Dynamic(DynamicMeta {
@@ -306,7 +306,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
     #[instrument(err, level = "trace", skip(self))]
     pub(super) fn apply_attribute(&mut self, ty: &'schema AttributeType) -> Result<(), Error> {
         if let Some(type_) = &ty.type_ {
-            let type_ = self.parse_type_ident(type_)?;
+            let type_ = self.resolve_type_ident(type_, IdentType::Type)?;
 
             init_any!(self, Reference, ReferenceMeta::new(type_), false);
         } else if let Some(x) = &ty.simple_type {
@@ -346,9 +346,9 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
             .base
             .as_ref()
             .map(|base| {
-                let base = self.parse_node_ident(base)?;
+                let base = self.resolve_type_ident(base, IdentType::Type)?;
 
-                self.copy_base_type(&base, UpdateMode::Restriction)
+                self.copy_base_type(base, UpdateMode::Restriction)
             })
             .transpose()?;
 
@@ -480,8 +480,8 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
 
     #[instrument(err, level = "trace", skip(self))]
     fn apply_simple_content_extension(&mut self, ty: &'schema ExtensionType) -> Result<(), Error> {
-        let base = self.parse_node_ident(&ty.base)?;
-        let base = self.copy_base_type(&base, UpdateMode::Extension)?;
+        let base = self.resolve_type_ident(&ty.base, IdentType::Type)?;
+        let base = self.copy_base_type(base, UpdateMode::Extension)?;
 
         self.apply_extension(ty)?;
 
@@ -501,8 +501,8 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
         &mut self,
         ty: &'schema RestrictionType,
     ) -> Result<(), Error> {
-        let base = self.parse_node_ident(&ty.base)?;
-        let base = self.copy_base_type(&base, UpdateMode::Restriction)?;
+        let base = self.resolve_type_ident(&ty.base, IdentType::Type)?;
+        let base = self.copy_base_type(base, UpdateMode::Restriction)?;
 
         self.apply_restriction(ty)?;
 
@@ -519,8 +519,8 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
 
     #[instrument(err, level = "trace", skip(self))]
     fn apply_complex_content_extension(&mut self, ty: &'schema ExtensionType) -> Result<(), Error> {
-        let base = self.parse_node_ident(&ty.base)?;
-        let base = self.copy_base_type(&base, UpdateMode::Extension)?;
+        let base = self.resolve_type_ident(&ty.base, IdentType::Type)?;
+        let base = self.copy_base_type(base, UpdateMode::Extension)?;
 
         self.apply_extension(ty)?;
 
@@ -535,8 +535,8 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
         &mut self,
         ty: &'schema RestrictionType,
     ) -> Result<(), Error> {
-        let base = self.parse_node_ident(&ty.base)?;
-        let base = self.copy_base_type(&base, UpdateMode::Restriction)?;
+        let base = self.resolve_type_ident(&ty.base, IdentType::Type)?;
+        let base = self.copy_base_type(base, UpdateMode::Restriction)?;
 
         self.apply_restriction(ty)?;
 
@@ -703,8 +703,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 name,
                 ..
             } => {
-                let type_ = self.parse_node_ident(ref_)?.with_type(IdentType::Element);
-                let type_ = self.resolve_node_ident(&type_)?;
+                let type_ = self.resolve_type_ident(ref_, IdentType::Element)?;
                 let name = self.state.name_builder().or(name).or(&type_.name).finish();
                 let ident = ElementIdent::new(name).with_ns(type_.ns);
                 let form = ty.form.unwrap_or(self.schema.element_form_default);
@@ -741,7 +740,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
 
                 let ns = self.current_ns();
                 let type_ = if let Some(type_) = &ty.type_ {
-                    self.parse_type_ident(type_)?
+                    self.resolve_type_ident(type_, IdentType::Type)?
                 } else {
                     self.create_element_lazy(ns, Some(type_name), ty)?
                 };
@@ -785,8 +784,8 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
 
         let ref_ = ty.ref_.as_ref().ok_or(Error::GroupMissingRef)?;
         let prefix = ref_.prefix();
-        let ref_ = self.parse_node_ident(ref_)?.with_type(IdentType::Group);
-        let (_schema, group) = self.find_group(ref_.clone())?;
+        let ref_ = self.resolve_type_ident(ref_, IdentType::Group)?;
+        let group = self.find_group(ref_.clone())?;
 
         let mut ret = Ok(());
 
@@ -826,10 +825,8 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
         use crate::models::schema::xs::AttributeGroupTypeContent as C;
 
         let ref_ = ty.ref_.as_ref().ok_or(Error::AttributeGroupMissingRef)?;
-        let ref_ = self
-            .parse_node_ident(ref_)?
-            .with_type(IdentType::AttributeGroup);
-        let (_schema, group) = self.find_attribute_group(ref_.clone())?;
+        let ref_ = self.resolve_type_ident(ref_, IdentType::AttributeGroup)?;
+        let group = self.find_attribute_group(ref_.clone())?;
 
         self.state.push_stack(StackEntry::AttributeGroupRef);
 
@@ -864,7 +861,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 type_: Some(type_),
                 ..
             } => {
-                let type_ = self.parse_type_ident(type_)?;
+                let type_ = self.resolve_type_ident(type_, IdentType::Type)?;
                 let name = Name::from(name.clone());
                 let ident = AttributeIdent::new(name).with_ns(self.current_ns());
                 let form = ty.form.unwrap_or(self.schema.attribute_form_default);
@@ -878,8 +875,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 name,
                 ..
             } => {
-                let type_ = self.parse_node_ident(ref_)?.with_type(IdentType::Attribute);
-                let type_ = self.resolve_node_ident(&type_)?;
+                let type_ = self.resolve_type_ident(ref_, IdentType::Attribute)?;
                 let name = self.state.name_builder().or(name).or(&type_.name).finish();
                 let ident = AttributeIdent::new(name).with_ns(type_.ns);
                 let form = ty.form.unwrap_or(self.schema.attribute_form_default);
@@ -1136,7 +1132,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
 
             if let Some(types) = &ty.member_types {
                 for type_ in &types.0 {
-                    let type_ = builder.owner.parse_type_ident(type_)?;
+                    let type_ = builder.owner.resolve_type_ident(type_, IdentType::Type)?;
                     ui.types.push(UnionMetaType::new(type_));
                 }
             }
@@ -1173,7 +1169,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
         let mut type_ = None;
 
         if let Some(s) = &ty.item_type {
-            type_ = Some(self.owner.parse_type_ident(s)?);
+            type_ = Some(self.owner.resolve_type_ident(s, IdentType::Type)?);
         }
 
         if let Some(x) = &ty.simple_type {
@@ -1223,7 +1219,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
         }
     }
 
-    fn copy_base_type(&mut self, base: &NodeIdent, mode: UpdateMode) -> Result<TypeIdent, Error> {
+    fn copy_base_type(&mut self, base: TypeIdent, mode: UpdateMode) -> Result<TypeIdent, Error> {
         enum BaseIdent {
             Simple(TypeIdent),
             Complex(TypeIdent),
@@ -1237,7 +1233,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 (BaseIdent::Simple(ident), ty)
             }
             (TypeMode::Complex, ContentMode::Simple) => {
-                match self.owner.get_simple_type_variant(base) {
+                match self.owner.get_simple_type_variant(base.clone()) {
                     Ok((ident, ty)) => {
                         self.fixed = false;
 
@@ -1331,7 +1327,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
 
     fn walk_substitution_groups<F>(&mut self, groups: &QNameList, mut f: F) -> Result<(), Error>
     where
-        F: FnMut(&mut Self, &NodeIdent) -> Result<(), Error>,
+        F: FnMut(&mut Self, &TypeIdent) -> Result<(), Error>,
     {
         fn inner<'x, 'y, 'z, F>(
             builder: &mut VariantBuilder<'x, 'y, 'z>,
@@ -1339,16 +1335,14 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
             f: &mut F,
         ) -> Result<(), Error>
         where
-            F: FnMut(&mut VariantBuilder<'x, 'y, 'z>, &NodeIdent) -> Result<(), Error>,
+            F: FnMut(&mut VariantBuilder<'x, 'y, 'z>, &TypeIdent) -> Result<(), Error>,
         {
             for head in &groups.0 {
-                let ident = builder
-                    .parse_node_ident(head)?
-                    .with_type(IdentType::Element);
+                let ident = builder.resolve_type_ident(head, IdentType::Element)?;
 
                 f(builder, &ident)?;
 
-                let (_, element) = builder.find_element(ident)?;
+                let element = builder.find_element(ident)?;
                 if let Some(groups) = &element.substitution_group {
                     inner(builder, groups, f)?;
                 }
@@ -1379,9 +1373,8 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                     );
                 };
 
-                let content_ident = content_ident.into_node_ident();
                 let (mut content_ident, content) =
-                    self.owner.get_simple_type_variant(&content_ident)?;
+                    self.owner.get_simple_type_variant(content_ident)?;
                 let content = content.into_owned();
 
                 if !self.is_simple_content_unique {
