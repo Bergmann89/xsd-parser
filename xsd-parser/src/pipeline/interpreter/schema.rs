@@ -297,7 +297,7 @@ impl<'schema> SchemaInterpreter<'schema, '_> {
 macro_rules! impl_find_node {
     ($name:ident, $result:ty, $variant:ident) => {
         pub(super) fn $name(&mut self, ident: TypeIdent) -> Result<&'schema $result, Error> {
-            match self.state.get_node(self.schemas, ident.clone()) {
+            match self.state.get_node(&ident) {
                 Some(Node::$variant(x)) => Ok(x),
                 _ => Err(Error::UnknownNode(ident)),
             }

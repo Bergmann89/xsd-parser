@@ -7,7 +7,7 @@ use crate::models::{
     schema::{
         xs::{
             AttributeGroupType, AttributeType, ComplexBaseType, ElementType, GroupType,
-            SchemaContent, SimpleBaseType,
+            SimpleBaseType,
         },
         NamespaceId, SchemaId, Schemas,
     },
@@ -34,10 +34,12 @@ pub(super) enum StackEntry {
     Group,
 }
 
+#[allow(dead_code)]
 #[derive(Debug, Clone, Copy)]
 pub(super) enum Node<'a> {
     Group(&'a GroupType),
     Element(&'a ElementType),
+    Attribute(&'a AttributeType),
     SimpleType(&'a SimpleBaseType),
     ComplexType(&'a ComplexBaseType),
     AttributeGroup(&'a AttributeGroupType),
@@ -240,15 +242,8 @@ impl<'a> State<'a> {
         Ok(())
     }
 
-    pub(super) fn get_node(&mut self, schemas: &'a Schemas, ident: TypeIdent) -> Option<Node<'a>> {
-        match self.node_cache.entry(ident) {
-            Entry::Occupied(e) => Some(*e.get()),
-            Entry::Vacant(e) => {
-                let node = search_in_schemas(schemas, e.key())?;
-
-                Some(*e.insert(node))
-            }
-        }
+    pub(super) fn get_node(&mut self, ident: &TypeIdent) -> Option<Node<'a>> {
+        self.node_cache.get(ident).copied()
     }
 
     pub(super) fn resolve_type_ident(&self, ident: TypeIdent) -> Result<TypeIdent, Error> {
@@ -343,28 +338,21 @@ impl<'a> State<'a> {
             }
 
             for c in &info.schema.content {
-                let (type_, name) = match c {
-                    SchemaContent::Element(ElementType {
-                        name: Some(name), ..
-                    }) => (IdentType::Element, Name::new_named(name.clone())),
-                    SchemaContent::Attribute(AttributeType {
-                        name: Some(name), ..
-                    }) => (IdentType::Attribute, Name::new_named(name.clone())),
-                    SchemaContent::SimpleType(SimpleBaseType {
-                        name: Some(name), ..
-                    }) => (IdentType::Type, Name::new_named(name.clone())),
-                    SchemaContent::ComplexType(ComplexBaseType {
-                        name: Some(name), ..
-                    }) => (IdentType::Type, Name::new_named(name.clone())),
-                    SchemaContent::Group(GroupType {
-                        name: Some(name), ..
-                    }) => (IdentType::Group, Name::new_named(name.clone())),
-                    SchemaContent::AttributeGroup(AttributeGroupType {
-                        name: Some(name), ..
-                    }) => (IdentType::AttributeGroup, Name::new_named(name.clone())),
+                use crate::models::schema::xs::SchemaContent as C;
+
+                #[rustfmt::skip]
+                let (name, node) = match c {
+                    C::Element(x @ ElementType { name: Some(name), .. }) => (name, Node::Element(x)),
+                    C::Attribute(x @ AttributeType { name: Some(name), .. }) => (name, Node::Attribute(x)),
+                    C::SimpleType(x @ SimpleBaseType { name: Some(name), .. }) => (name, Node::SimpleType(x)),
+                    C::ComplexType(x @ ComplexBaseType { name: Some(name), .. }) => (name, Node::ComplexType(x)),
+                    C::Group(x @ GroupType { name: Some(name), .. }) => (name, Node::Group(x)),
+                    C::AttributeGroup(x @ AttributeGroupType { name: Some(name), .. }) => (name, Node::AttributeGroup(x)),
                     _ => continue,
                 };
 
+                let name = Name::new_named(name.clone());
+                let type_ = node.ident_type();
                 let ident = TypeIdent {
                     ns,
                     schema,
@@ -372,7 +360,8 @@ impl<'a> State<'a> {
                     type_,
                 };
 
-                self.ident_cache.insert(ident);
+                self.ident_cache.insert(ident.clone());
+                self.node_cache.insert(ident, node);
             }
         }
     }
@@ -416,35 +405,14 @@ impl<'a> State<'a> {
     }
 }
 
-fn search_in_schemas<'a>(schemas: &'a Schemas, ident: &TypeIdent) -> Option<Node<'a>> {
-    let name = ident.name.as_named_str()?;
-    let info = schemas.get_schema(&ident.schema)?;
-
-    for c in &info.schema.content {
-        match (ident.type_, c) {
-            (IdentType::Element, SchemaContent::Element(x)) if matches!(&x.name, Some(n) if n == name) =>
-            {
-                return Some(Node::Element(x));
-            }
-            (IdentType::Type, SchemaContent::SimpleType(x)) if matches!(&x.name, Some(n) if n == name) =>
-            {
-                return Some(Node::SimpleType(x));
-            }
-            (IdentType::Type, SchemaContent::ComplexType(x)) if matches!(&x.name, Some(n) if n == name) =>
-            {
-                return Some(Node::ComplexType(x));
-            }
-            (IdentType::Group, SchemaContent::Group(x)) if matches!(&x.name, Some(n) if n == name) =>
-            {
-                return Some(Node::Group(x));
-            }
-            (IdentType::AttributeGroup, SchemaContent::AttributeGroup(x)) if matches!(&x.name, Some(n) if n == name) =>
-            {
-                return Some(Node::AttributeGroup(x));
-            }
-            (_, _) => (),
+impl Node<'_> {
+    fn ident_type(&self) -> IdentType {
+        match self {
+            Node::Element(_) => IdentType::Element,
+            Node::Attribute(_) => IdentType::Attribute,
+            Node::SimpleType(_) | Node::ComplexType(_) => IdentType::Type,
+            Node::Group(_) => IdentType::Group,
+            Node::AttributeGroup(_) => IdentType::AttributeGroup,
         }
     }
-
-    None
 }
