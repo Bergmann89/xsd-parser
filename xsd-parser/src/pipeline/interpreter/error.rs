@@ -4,7 +4,7 @@ use xsd_parser_types::misc::{Namespace, NamespacePrefix, RawByteStr};
 
 use crate::models::{
     schema::xs::{AttributeType, Facet},
-    NodeIdent, TypeIdent,
+    TypeIdent,
 };
 
 /// error raised by the [`Interpreter`](super::Interpreter).
@@ -25,25 +25,26 @@ pub enum Error {
     #[error("Ambiguous type: {0}!")]
     AmbiguousType(TypeIdent),
 
-    /// Ambiguous node definition
+    /// Expected simple type.
     ///
-    /// Is raised by the interpreter if it tries to resolve a certain type
-    /// definition inside the schemas, but multiple matching types were found.
-    #[error("Ambiguous node: {0}!")]
-    AmbiguousNode(NodeIdent),
+    /// Expected the specified type to be simple because it is referenced
+    /// in a context that requires a simple type.
+    #[error("Expected simple type: {0}!")]
+    ExpectedSimpleType(TypeIdent),
+
+    /// Expected complex type.
+    ///
+    /// Expected the specified type to be complex because it is referenced
+    /// in a context that requires a complex type.
+    #[error("Expected complex type: {0}!")]
+    ExpectedComplexType(TypeIdent),
 
     /// Expected dynamic element.
     ///
     /// Expected the specified element to be dynamic because it is referenced
     /// as substitution group.
     #[error("Expected dynamic element: {0}!")]
-    ExpectedDynamicElement(NodeIdent),
-
-    /// Unknown node.
-    ///
-    /// Is raised if a specific node could not be found inside the schema definitions.
-    #[error("Unknown node: {0}!")]
-    UnknownNode(NodeIdent),
+    ExpectedDynamicElement(TypeIdent),
 
     /// Unknown type.
     ///
@@ -51,18 +52,6 @@ pub enum Error {
     /// type information.
     #[error("Unknown type: {0}!")]
     UnknownType(TypeIdent),
-
-    /// Unknown element.
-    ///
-    /// Is raised if an element referenced inside the XML schema could not be resolved.
-    #[error("Unknown element: {0}!")]
-    UnknownElement(TypeIdent),
-
-    /// Unknown attribute.
-    ///
-    /// Is raised if an attribute referenced inside the XML schema could not be resolved.
-    #[error("Unknown attribute: {0}!")]
-    UnknownAttribute(String),
 
     /// Unknown namespace.
     ///
@@ -86,12 +75,6 @@ pub enum Error {
     /// [`with_anonymous_namespace`](crate::pipeline::parser::Parser::with_anonymous_namespace)).
     #[error("Anonymous namespace is undefined!")]
     AnonymousNamespaceIsUndefined,
-
-    /// Invalid value.
-    ///
-    /// Is raised if a value from the XML schema is malformed or invalid.
-    #[error("Invalid value for `{0}`!")]
-    InvalidValue(&'static str),
 
     /// Invalid local name.
     ///
@@ -133,4 +116,11 @@ pub enum Error {
     /// The interpreter expected a group type (like `xs:all`, `xs:choice` or `xs:sequence`).
     #[error("Expected group type!")]
     ExpectedGroupType,
+
+    /// Circular dependency.
+    ///
+    /// Is raised if the interpreter detects a circular strong dependency between
+    /// types during type generation.
+    #[error("Circular dependency detected for type: {0}!")]
+    CircularDependency(TypeIdent),
 }

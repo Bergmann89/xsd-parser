@@ -502,6 +502,15 @@ where
             ParserError::InvalidFilePath(path) => {
                 Self::ParserError(ParserError::InvalidFilePath(path))
             }
+            ParserError::MismatchingTargetNamespace {
+                location,
+                found,
+                expected,
+            } => Self::ParserError(ParserError::MismatchingTargetNamespace {
+                location,
+                found,
+                expected,
+            }),
         }
     }
 }

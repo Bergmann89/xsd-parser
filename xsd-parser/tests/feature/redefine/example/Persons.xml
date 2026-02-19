@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Persons>
+    <Person>
+        <name>Rusty</name>
+        <gender>male</gender>
+    </Person>
+    <Person>
+        <name>Rustiene</name>
+        <gender>female</gender>
+    </Person>
+</Persons>

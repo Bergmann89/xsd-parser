@@ -68,6 +68,16 @@ where
     generate_test_validate(actual, expected_rs);
 }
 
+pub fn generate_test_no_input<P>(expected_rs: P, config: Config)
+where
+    P: AsRef<Path>,
+{
+    let actual = generate(config).unwrap();
+    let actual = actual.to_string();
+
+    generate_test_validate(actual, expected_rs);
+}
+
 pub fn generate_test_validate<P1, P2>(actual: P1, expected_rs: P2)
 where
     P1: AsRef<str>,
@@ -79,14 +89,11 @@ where
     #[cfg(not(feature = "update-expectations"))]
     {
         use std::fs::read_to_string;
-        use std::str::FromStr;
 
-        use proc_macro2::TokenStream;
         use text_diff::print_diff;
 
         let expected = read_to_string(expected_rs).unwrap();
-        let expected = TokenStream::from_str(&expected).unwrap();
-        let expected = fmt_code(&expected.to_string());
+        let expected = fmt_code(&expected);
 
         if expected != actual {
             println!("=== expected:\n{expected}");
@@ -418,41 +425,48 @@ where
 }
 
 fn fmt_code(s: &str) -> String {
-    let mut child = Command::new("rustfmt")
-        .args(["--emit", "stdout"])
-        .args(["--edition", "2021"])
-        .args(["--config", "normalize_doc_attributes=true"])
-        .stdin(Stdio::piped())
-        .stdout(Stdio::piped())
-        .spawn()
-        .map_err(|e| format!("Failed to spawn rustfmt: {}", e))
-        .expect("Unable to spawn rustfmt command");
+    fn exec(s: &str) -> String {
+        let mut child = Command::new("rustfmt")
+            .args(["--emit", "stdout"])
+            .args(["--edition", "2021"])
+            .args(["--config", "normalize_doc_attributes=true"])
+            .stdin(Stdio::piped())
+            .stdout(Stdio::piped())
+            .spawn()
+            .map_err(|e| format!("Failed to spawn rustfmt: {}", e))
+            .expect("Unable to spawn rustfmt command");
 
-    child
-        .stdin
-        .as_mut()
-        .unwrap()
-        .write_all(s.as_bytes())
-        .expect("Unable to write data to stdin");
-    let output = child
-        .wait_with_output()
-        .expect("Unable to get formatted output");
+        child
+            .stdin
+            .as_mut()
+            .unwrap()
+            .write_all(s.as_bytes())
+            .expect("Unable to write data to stdin");
+        let output = child
+            .wait_with_output()
+            .expect("Unable to get formatted output");
 
-    #[cfg(not(feature = "update-expectations"))]
-    if !output.status.success() {
-        panic!(
-            "rustfmt failed with status {}: {}",
-            output.status,
-            String::from_utf8_lossy(&output.stderr)
-        )
+        #[cfg(not(feature = "update-expectations"))]
+        if !output.status.success() {
+            panic!(
+                "rustfmt failed with status {}: {}",
+                output.status,
+                String::from_utf8_lossy(&output.stderr)
+            )
+        }
+
+        #[cfg(feature = "update-expectations")]
+        if !output.status.success() {
+            return s.into();
+        }
+
+        String::from_utf8(output.stdout).expect("Invalid output")
     }
 
-    #[cfg(feature = "update-expectations")]
-    if !output.status.success() {
-        return s.into();
-    }
-
-    String::from_utf8(output.stdout).expect("Invalid output")
+    // double format because rustfmt does not always format the same code the
+    // same way, especially when it comes to trailing newlines. By running it
+    // twice we can ensure that the output is consistent.
+    exec(&exec(s))
 }
 
 fn quick_xml_event_cmp(a: &Event<'_>, b: &Event<'_>) -> Option<bool> {

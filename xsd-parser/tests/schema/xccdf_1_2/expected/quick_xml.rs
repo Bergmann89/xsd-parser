@@ -3666,7 +3666,7 @@ pub mod cdf {
         pub import_xpath: Option<String>,
         pub text_before: Option<Text>,
         pub any: Option<AnyElement>,
-        pub text_after_any_36: Option<Text>,
+        pub text_after_any_40: Option<Text>,
     }
     impl WithSerializer for CheckImportType {
         type Serializer<'x> = quick_xml_serialize::CheckImportTypeSerializer<'x>;
@@ -6943,7 +6943,7 @@ pub mod cdf {
                             Self::store_any(&mut values, value)?;
                         }
                         Ok(super::HtmlTextWithSubTypeContent::Any(
-                            helper.finish_element("any17", values)?,
+                            helper.finish_element("any21", values)?,
                         ))
                     }
                     S::Text(mut values, None, deserializer) => {
@@ -6972,7 +6972,7 @@ pub mod cdf {
             fn store_any(values: &mut Option<AnyElement>, value: AnyElement) -> Result<(), Error> {
                 if values.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
-                        b"any17",
+                        b"any21",
                     )))?;
                 }
                 *values = Some(value);
@@ -17225,7 +17225,7 @@ pub mod cdf {
                             Self::store_any(&mut values, value)?;
                         }
                         Ok(super::TestResultTypeContent::Any(
-                            helper.finish_element("any54", values)?,
+                            helper.finish_element("any58", values)?,
                         ))
                     }
                     S::Platform(mut values, None, deserializer) => {
@@ -17424,7 +17424,7 @@ pub mod cdf {
             fn store_any(values: &mut Option<AnyElement>, value: AnyElement) -> Result<(), Error> {
                 if values.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
-                        b"any54",
+                        b"any58",
                     )))?;
                 }
                 *values = Some(value);
@@ -18772,7 +18772,7 @@ pub mod cdf {
             fn store_any(&mut self, value: AnyElement) -> Result<(), Error> {
                 if self.any.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
-                        b"any10",
+                        b"any14",
                     )))?;
                 }
                 self.any = Some(value);
@@ -18918,7 +18918,7 @@ pub mod cdf {
                 );
                 self.finish_state(helper, state)?;
                 Ok(super::SignatureType {
-                    any: helper.finish_element("any10", self.any)?,
+                    any: helper.finish_element("any14", self.any)?,
                 })
             }
         }
@@ -20704,7 +20704,7 @@ pub mod cdf {
                             Self::store_any(&mut values, value)?;
                         }
                         Ok(super::WarningTypeContent::Any(
-                            helper.finish_element("any17", values)?,
+                            helper.finish_element("any21", values)?,
                         ))
                     }
                     S::Text(mut values, None, deserializer) => {
@@ -20733,7 +20733,7 @@ pub mod cdf {
             fn store_any(values: &mut Option<AnyElement>, value: AnyElement) -> Result<(), Error> {
                 if values.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
-                        b"any17",
+                        b"any21",
                     )))?;
                 }
                 *values = Some(value);
@@ -22520,7 +22520,7 @@ pub mod cdf {
                             Self::store_any(&mut values, value)?;
                         }
                         Ok(super::ProfileNoteTypeContent::Any(
-                            helper.finish_element("any19", values)?,
+                            helper.finish_element("any23", values)?,
                         ))
                     }
                     S::Text(mut values, None, deserializer) => {
@@ -22549,7 +22549,7 @@ pub mod cdf {
             fn store_any(values: &mut Option<AnyElement>, value: AnyElement) -> Result<(), Error> {
                 if values.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
-                        b"any19",
+                        b"any23",
                     )))?;
                 }
                 *values = Some(value);
@@ -23102,7 +23102,7 @@ pub mod cdf {
                             Self::store_any(&mut values, value)?;
                         }
                         Ok(super::FixTextTypeContent::Any(
-                            helper.finish_element("any17", values)?,
+                            helper.finish_element("any21", values)?,
                         ))
                     }
                     S::Text(mut values, None, deserializer) => {
@@ -23131,7 +23131,7 @@ pub mod cdf {
             fn store_any(values: &mut Option<AnyElement>, value: AnyElement) -> Result<(), Error> {
                 if values.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
-                        b"any17",
+                        b"any21",
                     )))?;
                 }
                 *values = Some(value);
@@ -27056,7 +27056,7 @@ pub mod cdf {
             import_xpath: Option<String>,
             text_before: Option<Text>,
             any: Option<AnyElement>,
-            text_after_any_36: Option<Text>,
+            text_after_any_40: Option<Text>,
             state__: Box<CheckImportTypeDeserializerState>,
         }
         #[derive(Debug)]
@@ -27064,7 +27064,7 @@ pub mod cdf {
             Init__,
             TextBefore(Option<<Text as WithDeserializer>::Deserializer>),
             Any(Option<<AnyElement as WithDeserializer>::Deserializer>),
-            TextAfterAny36(Option<<Text as WithDeserializer>::Deserializer>),
+            TextAfterAny40(Option<<Text as WithDeserializer>::Deserializer>),
             Done__,
             Unknown__,
         }
@@ -27097,7 +27097,7 @@ pub mod cdf {
                     import_xpath: import_xpath,
                     text_before: None,
                     any: None,
-                    text_after_any_36: None,
+                    text_after_any_40: None,
                     state__: Box::new(CheckImportTypeDeserializerState::Init__),
                 })
             }
@@ -27112,8 +27112,8 @@ pub mod cdf {
                         self.store_text_before(deserializer.finish(helper)?)?
                     }
                     S::Any(Some(deserializer)) => self.store_any(deserializer.finish(helper)?)?,
-                    S::TextAfterAny36(Some(deserializer)) => {
-                        self.store_text_after_any_36(deserializer.finish(helper)?)?
+                    S::TextAfterAny40(Some(deserializer)) => {
+                        self.store_text_after_any_40(deserializer.finish(helper)?)?
                     }
                     _ => (),
                 }
@@ -27131,19 +27131,19 @@ pub mod cdf {
             fn store_any(&mut self, value: AnyElement) -> Result<(), Error> {
                 if self.any.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
-                        b"any36",
+                        b"any40",
                     )))?;
                 }
                 self.any = Some(value);
                 Ok(())
             }
-            fn store_text_after_any_36(&mut self, value: Text) -> Result<(), Error> {
-                if self.text_after_any_36.is_some() {
+            fn store_text_after_any_40(&mut self, value: Text) -> Result<(), Error> {
+                if self.text_after_any_40.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
-                        b"text_after_any36",
+                        b"text_after_any40",
                     )))?;
                 }
-                self.text_after_any_36 = Some(value);
+                self.text_after_any_40 = Some(value);
                 Ok(())
             }
             fn handle_text_before<'de>(
@@ -27194,7 +27194,7 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(S::Any(None));
-                    *self.state__ = S::TextAfterAny36(None);
+                    *self.state__ = S::TextAfterAny40(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -27204,17 +27204,17 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_any(data)?;
-                        *self.state__ = S::TextAfterAny36(None);
+                        *self.state__ = S::TextAfterAny40(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
                         fallback.get_or_insert(S::Any(Some(deserializer)));
-                        *self.state__ = S::TextAfterAny36(None);
+                        *self.state__ = S::TextAfterAny40(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                 }
             }
-            fn handle_text_after_any_36<'de>(
+            fn handle_text_after_any_40<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, Text>,
@@ -27227,7 +27227,7 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(S::TextAfterAny36(None));
+                    fallback.get_or_insert(S::TextAfterAny40(None));
                     *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -27237,12 +27237,12 @@ pub mod cdf {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_text_after_any_36(data)?;
+                        self.store_text_after_any_40(data)?;
                         *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(S::TextAfterAny36(Some(deserializer)));
+                        fallback.get_or_insert(S::TextAfterAny40(Some(deserializer)));
                         *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -27295,9 +27295,9 @@ pub mod cdf {
                                 }
                             }
                         }
-                        (S::TextAfterAny36(Some(deserializer)), event) => {
+                        (S::TextAfterAny40(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_text_after_any_36(helper, output, &mut fallback)? {
+                            match self.handle_text_after_any_40(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -27348,13 +27348,13 @@ pub mod cdf {
                                 }
                             } else {
                                 any_fallback.get_or_insert(S::Any(None));
-                                *self.state__ = S::TextAfterAny36(None);
+                                *self.state__ = S::TextAfterAny40(None);
                                 event
                             }
                         }
-                        (S::TextAfterAny36(None), event) => {
+                        (S::TextAfterAny40(None), event) => {
                             let output = <Text as WithDeserializer>::init(helper, event)?;
-                            match self.handle_text_after_any_36(helper, output, &mut fallback)? {
+                            match self.handle_text_after_any_40(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -27403,7 +27403,7 @@ pub mod cdf {
                     import_xpath: self.import_xpath,
                     text_before: self.text_before,
                     any: self.any,
-                    text_after_any_36: self.text_after_any_36,
+                    text_after_any_40: self.text_after_any_40,
                 })
             }
         }
@@ -27801,7 +27801,7 @@ pub mod cdf {
                             Self::store_any(&mut values, value)?;
                         }
                         Ok(super::CheckContentTypeContent::Any(
-                            helper.finish_element("any38", values)?,
+                            helper.finish_element("any42", values)?,
                         ))
                     }
                     S::Text(mut values, None, deserializer) => {
@@ -27820,7 +27820,7 @@ pub mod cdf {
             fn store_any(values: &mut Option<AnyElement>, value: AnyElement) -> Result<(), Error> {
                 if values.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
-                        b"any38",
+                        b"any42",
                     )))?;
                 }
                 *values = Some(value);
@@ -34730,7 +34730,7 @@ pub mod cdf {
             Init__,
             TextBefore(IterSerializer<'ser, Option<&'ser Text>, Text>),
             Any(IterSerializer<'ser, Option<&'ser AnyElement>, AnyElement>),
-            TextAfterAny36(IterSerializer<'ser, Option<&'ser Text>, Text>),
+            TextAfterAny40(IterSerializer<'ser, Option<&'ser Text>, Text>),
             End__,
             Done__,
             Phantom__(&'ser ()),
@@ -34784,17 +34784,17 @@ pub mod cdf {
                             match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
-                                    *self.state = CheckImportTypeSerializerState::TextAfterAny36(
+                                    *self.state = CheckImportTypeSerializerState::TextAfterAny40(
                                         IterSerializer::new(
-                                            self.value.text_after_any_36.as_ref(),
-                                            Some("text_after_any36"),
+                                            self.value.text_after_any_40.as_ref(),
+                                            Some("text_after_any40"),
                                             false,
                                         ),
                                     )
                                 }
                             }
                         }
-                        CheckImportTypeSerializerState::TextAfterAny36(x) => {
+                        CheckImportTypeSerializerState::TextAfterAny40(x) => {
                             match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = CheckImportTypeSerializerState::End__,
