@@ -121,7 +121,7 @@ pub mod onix {
         pub datestamp: Option<String>,
         pub sourcename: Option<String>,
         pub sourcetype: Option<List3>,
-        pub content_237: SenderContent237,
+        pub content_302: SenderContent302,
         pub contact_name: Option<ContactNameElementType>,
         pub telephone_number: Option<TelephoneNumberElementType>,
         pub email_address: Option<EmailAddressElementType>,
@@ -137,7 +137,7 @@ pub mod onix {
         pub datestamp: Option<String>,
         pub sourcename: Option<String>,
         pub sourcetype: Option<List3>,
-        pub content_4: AddresseeContent4,
+        pub content_70: AddresseeContent70,
         pub contact_name: Option<ContactNameElementType>,
         pub telephone_number: Option<TelephoneNumberElementType>,
         pub email_address: Option<EmailAddressElementType>,
@@ -279,8 +279,8 @@ pub mod onix {
         Sender,
     }
     #[derive(Debug)]
-    pub enum SenderContent237 {
-        Content238(SenderContent238),
+    pub enum SenderContent302 {
+        Content303(SenderContent303),
         SenderName(SenderNameElementType),
     }
     ///Standard attributes for all ONIX data elements
@@ -331,8 +331,8 @@ pub mod onix {
         Addressee,
     }
     #[derive(Debug)]
-    pub enum AddresseeContent4 {
-        Content5(AddresseeContent5),
+    pub enum AddresseeContent70 {
+        Content71(AddresseeContent71),
         AddresseeName(AddresseeNameElementType),
     }
     #[derive(Debug)]
@@ -2634,7 +2634,7 @@ pub mod onix {
         pub supply_detail: Vec<SupplyDetailElementType>,
     }
     #[derive(Debug)]
-    pub struct SenderContent238 {
+    pub struct SenderContent303 {
         pub sender_identifier: Vec<SenderIdentifierElementType>,
         pub sender_name: Option<SenderNameElementType>,
     }
@@ -2676,7 +2676,7 @@ pub mod onix {
         J272,
     }
     #[derive(Debug)]
-    pub struct AddresseeContent5 {
+    pub struct AddresseeContent71 {
         pub addressee_identifier: Vec<AddresseeIdentifierElementType>,
         pub addressee_name: Option<AddresseeNameElementType>,
     }
@@ -2835,16 +2835,16 @@ pub mod onix {
     }
     #[derive(Debug)]
     pub struct DescriptiveDetailGpCollections {
-        pub content_88: Option<DescriptiveDetailContent88>,
+        pub content_153: Option<DescriptiveDetailContent153>,
     }
     #[derive(Debug)]
     pub struct DescriptiveDetailGpTitles {
         pub title_detail: Vec<TitleDetailElementType>,
-        pub content_89: Option<DescriptiveDetailContent89>,
+        pub content_154: Option<DescriptiveDetailContent154>,
     }
     #[derive(Debug)]
     pub enum DescriptiveDetailGpAuthorship {
-        Content90(CollectionContent45),
+        Content155(CollectionContent110),
         NoContributor(Option<NoContributorElementType>),
     }
     #[derive(Debug)]
@@ -2853,7 +2853,7 @@ pub mod onix {
     }
     #[derive(Debug)]
     pub struct DescriptiveDetailGpEditions {
-        pub content_91: Option<DescriptiveDetailContent91>,
+        pub content_156: Option<DescriptiveDetailContent156>,
         pub religious_text: Option<ReligiousTextElementType>,
     }
     #[derive(Debug)]
@@ -2922,7 +2922,7 @@ pub mod onix {
         pub event_status: Option<EventStatusElementType>,
         pub content_audience: Vec<ContentAudienceElementType>,
         pub event_name: Vec<EventNameElementType>,
-        pub content_191: Option<PromotionalEventContent191>,
+        pub content_256: Option<PromotionalEventContent256>,
         pub event_description: Vec<EventDescriptionElementType>,
         pub event_occurrence: Vec<EventOccurrenceElementType>,
         pub supporting_resource: Vec<SupportingResourceElementType>,
@@ -2949,17 +2949,17 @@ pub mod onix {
         pub sourcename: Option<String>,
         pub sourcetype: Option<List3>,
         pub level_sequence_number: Option<LevelSequenceNumberElementType>,
-        pub content_53: ContentItemContent53,
+        pub content_118: ContentItemContent118,
         pub epub_usage_constraint: Vec<EpubUsageConstraintElementType>,
         pub epub_license: Vec<EpubLicenseWithDateType>,
-        pub content_54: ContentItemContent54,
+        pub content_119: ContentItemContent119,
         pub gp_authorship: Option<ContentItemGpAuthorship>,
         pub gp_languages: ContentItemGpLanguages,
         pub gp_subjects: ContentItemGpSubjects,
         pub gp_descriptions_and_marketing_resources:
             CollateralDetailGpDescriptionsAndMarketingResources,
         pub publisher: Vec<PublisherElementType>,
-        pub content_58: Option<ContentItemContent58>,
+        pub content_123: Option<ContentItemContent123>,
         pub gp_related_materials: ContentItemGpRelatedMaterials,
     }
     #[derive(Debug)]
@@ -2972,21 +2972,21 @@ pub mod onix {
     }
     #[derive(Debug)]
     pub struct PublishingDetailGpImprintsAndPublishers {
-        pub content_206: PublishingDetailContent206,
+        pub content_271: PublishingDetailContent271,
         pub city_of_publication: Vec<CityOfPublicationElementType>,
         pub country_of_publication: Option<CountryOfPublicationElementType>,
         pub product_contact: Vec<ProductContactElementType>,
     }
     #[derive(Debug)]
     pub struct PublishingDetailGpPublishingStatusDatesAndCopyright {
-        pub content_208: Option<PublishingDetailContent208>,
+        pub content_273: Option<PublishingDetailContent273>,
         pub publishing_date: Vec<PublishingDateElementType>,
         pub latest_reprint_number: Option<LatestReprintNumberElementType>,
-        pub content_209: Option<ContentItemContent58>,
+        pub content_274: Option<ContentItemContent123>,
     }
     #[derive(Debug)]
     pub struct PublishingDetailGpSalesRightsAndRestrictions {
-        pub content_210: Option<PublishingDetailContent210>,
+        pub content_275: Option<PublishingDetailContent275>,
     }
     #[derive(Debug)]
     pub enum RelatedMaterialRefname {
@@ -3023,7 +3023,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub product_relation_code: Vec<ProductRelationCodeElementType>,
         pub product_identifier: Vec<ProductIdentifierElementType>,
-        pub content_214: Option<RelatedProductContent214>,
+        pub content_279: Option<RelatedProductContent279>,
     }
     #[derive(Debug)]
     pub enum ProductionDetailRefname {
@@ -3129,8 +3129,8 @@ pub mod onix {
         pub stock: Vec<StockElementType>,
         pub pack_quantity: Option<PackQuantityElementType>,
         pub pallet_quantity: Option<PalletQuantityElementType>,
-        pub content_269: Option<SupplyDetailContent269>,
-        pub content_270: SupplyDetailContent270,
+        pub content_333: Option<SupplyDetailContent333>,
+        pub content_334: SupplyDetailContent334,
     }
     ///Standard attributes for all ONIX data elements
     ///● Date last changed or confirmed to be correct
@@ -3595,11 +3595,11 @@ pub mod onix {
         pub product_form_description: Vec<ProductFormDescriptionElementType>,
         pub product_content_type: Vec<ProductContentTypeElementType>,
         pub measure: Vec<MeasureElementType>,
-        pub content_184: ProductPartContent184,
+        pub content_249: ProductPartContent249,
         pub country_of_manufacture: Option<CountryOfManufactureElementType>,
     }
     #[derive(Debug)]
-    pub enum DescriptiveDetailContent88 {
+    pub enum DescriptiveDetailContent153 {
         Collection(Vec<CollectionElementType>),
         NoCollection(NoCollectionElementType),
     }
@@ -3619,13 +3619,13 @@ pub mod onix {
         pub title_statement: Option<TitleStatementElementType>,
     }
     #[derive(Debug)]
-    pub struct DescriptiveDetailContent89 {
+    pub struct DescriptiveDetailContent154 {
         pub thesis_type: ThesisTypeElementType,
         pub thesis_presented_to: Option<ThesisPresentedToElementType>,
         pub thesis_year: Option<ThesisYearElementType>,
     }
     #[derive(Debug)]
-    pub struct CollectionContent45 {
+    pub struct CollectionContent110 {
         pub contributor: Vec<ContributorElementType>,
         pub contributor_statement: Vec<ContributorStatementElementType>,
     }
@@ -3663,8 +3663,8 @@ pub mod onix {
         pub website: Vec<WebsiteElementType>,
     }
     #[derive(Debug)]
-    pub enum DescriptiveDetailContent91 {
-        Content92(DescriptiveDetailContent92),
+    pub enum DescriptiveDetailContent156 {
+        Content157(DescriptiveDetailContent157),
         NoEdition(Option<NoEditionElementType>),
     }
     ///Standard attributes for all ONIX data elements
@@ -3687,7 +3687,7 @@ pub mod onix {
     #[derive(Debug)]
     pub enum ReligiousTextElementTypeContent {
         Bible(BibleElementType),
-        Content217(ReligiousTextContent217),
+        Content282(ReligiousTextContent282),
     }
     ///Standard attributes for all ONIX data elements
     ///● Date last changed or confirmed to be correct
@@ -3718,7 +3718,7 @@ pub mod onix {
         pub sourcename: Option<String>,
         pub sourcetype: Option<List3>,
         pub extent_type: ExtentTypeElementType,
-        pub content_117: ExtentContent117,
+        pub content_182: ExtentContent182,
         pub extent_unit: ExtentUnitElementType,
     }
     ///Standard attributes for all ONIX data elements
@@ -3808,7 +3808,7 @@ pub mod onix {
         pub subject_scheme_identifier: SubjectSchemeIdentifierElementType,
         pub subject_scheme_name: Option<SubjectSchemeNameElementType>,
         pub subject_scheme_version: Option<SubjectSchemeVersionElementType>,
-        pub content_251: SubjectContent251,
+        pub content_315: SubjectContent315,
     }
     ///Standard attributes for all ONIX data elements
     ///● Date last changed or confirmed to be correct
@@ -3822,7 +3822,7 @@ pub mod onix {
         pub sourcename: Option<String>,
         pub sourcetype: Option<List3>,
         pub name_type: Option<NameTypeElementType>,
-        pub content_140: NameAsSubjectContent140,
+        pub content_205: NameAsSubjectContent205,
         pub alternative_name: Vec<AlternativeNameElementType>,
         pub subject_date: Vec<SubjectDateElementType>,
         pub professional_affiliation: Vec<ProfessionalAffiliationElementType>,
@@ -3841,7 +3841,7 @@ pub mod onix {
         pub main_audience: Option<MainAudienceElementType>,
         pub audience_code_type: AudienceCodeTypeElementType,
         pub audience_code_type_name: Option<AudienceCodeTypeNameElementType>,
-        pub content_22: AudienceContent22,
+        pub content_87: AudienceContent87,
     }
     ///Standard attributes for all ONIX data elements
     ///● Date last changed or confirmed to be correct
@@ -3857,7 +3857,7 @@ pub mod onix {
         pub audience_range_qualifier: AudienceRangeQualifierElementType,
         pub audience_range_precision: AudienceRangePrecisionElementType,
         pub audience_range_value: AudienceRangeValueElementType,
-        pub content_26: Option<AudienceRangeContent26>,
+        pub content_91: Option<AudienceRangeContent91>,
     }
     ///Standard attributes for all ONIX data elements
     ///● Date last changed or confirmed to be correct
@@ -3946,7 +3946,7 @@ pub mod onix {
         pub content_audience: Vec<ContentAudienceElementType>,
         pub territory: Option<TerritoryElementType>,
         pub source_type: Option<SourceTypeElementType>,
-        pub content_38: CitedContent38,
+        pub content_103: CitedContent103,
         pub citation_note: Vec<CitationNoteElementType>,
         pub resource_link: Vec<ResourceLinkElementType>,
         pub content_date: Vec<ContentDateElementType>,
@@ -4071,8 +4071,8 @@ pub mod onix {
         pub content: String,
     }
     #[derive(Debug)]
-    pub enum PromotionalEventContent191 {
-        Content192(PromotionalEventContent192),
+    pub enum PromotionalEventContent256 {
+        Content257(PromotionalEventContent257),
         NoContributor(NoContributorElementType),
     }
     ///Standard attributes for all ONIX data elements
@@ -4120,7 +4120,7 @@ pub mod onix {
         pub event_identifier: Vec<EventIdentifierElementType>,
         pub occurrence_date: Vec<OccurrenceDateElementType>,
         pub event_status: EventStatusElementType,
-        pub content_108: Option<EventOccurrenceContent108>,
+        pub content_173: Option<EventOccurrenceContent173>,
         pub event_description: Vec<EventDescriptionElementType>,
         pub supporting_resource: Vec<SupportingResourceElementType>,
         pub event_sponsor: Vec<EventSponsorElementType>,
@@ -4145,7 +4145,7 @@ pub mod onix {
     ///● Type of organization that is the source authority
     #[derive(Debug)]
     pub enum EventSponsorElementTypeContent {
-        Content113(EventSponsorContent113),
+        Content178(EventSponsorContent178),
         PersonName(PersonNameElementType),
         CorporateName(CorporateNameElementType),
     }
@@ -4186,18 +4186,18 @@ pub mod onix {
         pub content: String,
     }
     #[derive(Debug)]
-    pub enum ContentItemContent53 {
+    pub enum ContentItemContent118 {
         TextItem(TextItemElementType),
         AvItem(AvItemElementType),
     }
     #[derive(Debug)]
-    pub enum ContentItemContent54 {
-        Content55(ContentItemContent55),
-        Content56(ContentItemContent56),
+    pub enum ContentItemContent119 {
+        Content120(ContentItemContent120),
+        Content121(ContentItemContent121),
     }
     #[derive(Debug)]
     pub enum ContentItemGpAuthorship {
-        Content57(CollectionContent45),
+        Content122(CollectionContent110),
         NoContributor(Option<NoContributorElementType>),
     }
     ///Standard attributes for all ONIX data elements
@@ -4212,12 +4212,12 @@ pub mod onix {
         pub sourcename: Option<String>,
         pub sourcetype: Option<List3>,
         pub publishing_role: PublishingRoleElementType,
-        pub content_198: PublisherContent198,
+        pub content_263: PublisherContent263,
         pub funding: Vec<FundingElementType>,
         pub website: Vec<WebsiteElementType>,
     }
     #[derive(Debug)]
-    pub struct ContentItemContent58 {
+    pub struct ContentItemContent123 {
         pub copyright_statement: Vec<CopyrightStatementElementType>,
         pub copyright_statement_text: Vec<CopyrightStatementTextElementType>,
     }
@@ -4227,8 +4227,8 @@ pub mod onix {
         pub related_product: Vec<RelatedProductElementType>,
     }
     #[derive(Debug)]
-    pub enum PublishingDetailContent206 {
-        Content207(PublishingDetailContent207),
+    pub enum PublishingDetailContent271 {
+        Content272(PublishingDetailContent272),
         Publisher(Vec<PublisherElementType>),
     }
     ///Standard attributes for all ONIX data elements
@@ -4272,15 +4272,15 @@ pub mod onix {
         pub sourcename: Option<String>,
         pub sourcetype: Option<List3>,
         pub product_contact_role: ProductContactRoleElementType,
-        pub content_175: ProductContactContent175,
+        pub content_240: ProductContactContent240,
         pub contact_name: Option<ContactNameElementType>,
         pub telephone_number: Vec<TelephoneNumberElementType>,
         pub fax_number: Vec<FaxNumberElementType>,
         pub email_address: Vec<EmailAddressElementType>,
-        pub content_177: Option<ProductContactContent177>,
+        pub content_242: Option<ProductContactContent242>,
     }
     #[derive(Debug)]
-    pub struct PublishingDetailContent208 {
+    pub struct PublishingDetailContent273 {
         pub publishing_status: PublishingStatusElementType,
         pub publishing_status_note: Vec<PublishingStatusNoteElementType>,
     }
@@ -4312,7 +4312,7 @@ pub mod onix {
         pub content: usize,
     }
     #[derive(Debug)]
-    pub struct PublishingDetailContent210 {
+    pub struct PublishingDetailContent275 {
         pub sales_rights: Vec<SalesRightsElementType>,
         pub row_sales_rights_type: Option<RowSalesRightsTypeElementType>,
     }
@@ -4374,7 +4374,7 @@ pub mod onix {
         pub content: List51,
     }
     #[derive(Debug)]
-    pub struct RelatedProductContent214 {
+    pub struct RelatedProductContent279 {
         pub product_form: ProductFormElementType,
         pub product_form_detail: Vec<ProductFormDetailElementType>,
     }
@@ -4442,7 +4442,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub sequence_number: Option<SequenceNumberElementType>,
         pub sales_outlet: Vec<SalesOutletElementType>,
-        pub content_255: SupplementManifestContent255,
+        pub content_319: SupplementManifestContent319,
     }
     #[derive(Debug)]
     pub enum MarketReferenceRefname {
@@ -4479,8 +4479,8 @@ pub mod onix {
     ///● Type of organization that is the source authority
     #[derive(Debug)]
     pub enum TerritoryElementTypeContent {
-        Content277(TerritoryContent277),
-        Content278(TerritoryContent278),
+        Content341(TerritoryContent341),
+        Content342(TerritoryContent342),
     }
     ///Standard attributes for all ONIX data elements
     ///● Date last changed or confirmed to be correct
@@ -4519,7 +4519,7 @@ pub mod onix {
         pub sourcename: Option<String>,
         pub sourcetype: Option<List3>,
         pub agent_role: AgentRoleElementType,
-        pub content_202: PublisherRepresentativeContent202,
+        pub content_267: PublisherRepresentativeContent267,
         pub telephone_number: Vec<TelephoneNumberElementType>,
         pub fax_number: Vec<FaxNumberElementType>,
         pub email_address: Vec<EmailAddressElementType>,
@@ -4758,7 +4758,7 @@ pub mod onix {
         pub sourcename: Option<String>,
         pub sourcetype: Option<List3>,
         pub supplier_role: SupplierRoleElementType,
-        pub content_258: SupplierContent258,
+        pub content_322: SupplierContent322,
         pub telephone_number: Vec<TelephoneNumberElementType>,
         pub fax_number: Vec<FaxNumberElementType>,
         pub email_address: Vec<EmailAddressElementType>,
@@ -4776,12 +4776,12 @@ pub mod onix {
         pub sourcename: Option<String>,
         pub sourcetype: Option<List3>,
         pub supply_contact_role: SupplyContactRoleElementType,
-        pub content_263: SupplyContactContent263,
+        pub content_327: SupplyContactContent327,
         pub contact_name: Option<ContactNameElementType>,
         pub telephone_number: Vec<TelephoneNumberElementType>,
         pub fax_number: Vec<FaxNumberElementType>,
         pub email_address: Vec<EmailAddressElementType>,
-        pub content_265: Option<ProductContactContent177>,
+        pub content_329: Option<ProductContactContent242>,
     }
     ///Standard attributes for all ONIX data elements
     ///● Date last changed or confirmed to be correct
@@ -4865,7 +4865,7 @@ pub mod onix {
         pub datestamp: Option<String>,
         pub sourcename: Option<String>,
         pub sourcetype: Option<List3>,
-        pub content_150: NewSupplierContent150,
+        pub content_215: NewSupplierContent215,
         pub telephone_number: Vec<TelephoneNumberElementType>,
         pub fax_number: Vec<FaxNumberElementType>,
         pub email_address: Vec<EmailAddressElementType>,
@@ -4884,7 +4884,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub location_identifier: Vec<LocationIdentifierElementType>,
         pub location_name: Vec<LocationNameElementType>,
-        pub content_244: StockContent244,
+        pub content_308: StockContent308,
         pub on_order_detail: Vec<OnOrderDetailElementType>,
         pub velocity: Vec<VelocityElementType>,
     }
@@ -4915,12 +4915,12 @@ pub mod onix {
         pub content: usize,
     }
     #[derive(Debug)]
-    pub struct SupplyDetailContent269 {
+    pub struct SupplyDetailContent333 {
         pub order_quantity_minimum: Vec<OrderQuantityMinimumElementType>,
         pub order_quantity_multiple: Option<OrderQuantityMultipleElementType>,
     }
     #[derive(Debug)]
-    pub enum SupplyDetailContent270 {
+    pub enum SupplyDetailContent334 {
         UnpricedItemType(UnpricedItemTypeElementType),
         Price(Vec<PriceElementType>),
     }
@@ -7997,8 +7997,8 @@ pub mod onix {
         pub sourcetype: Option<List3>,
     }
     #[derive(Debug)]
-    pub enum ProductPartContent184 {
-        Content185(ProductPartContent185),
+    pub enum ProductPartContent249 {
+        Content250(ProductPartContent250),
         NumberOfCopies(NumberOfCopiesElementType),
     }
     ///Standard attributes for all ONIX data elements
@@ -8066,7 +8066,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub sequence_number: Option<SequenceNumberElementType>,
         pub title_element_level: TitleElementLevelElementType,
-        pub content_287: TitleElementContent287,
+        pub content_351: TitleElementContent351,
         pub subtitle: Option<SubtitleElementType>,
     }
     ///Standard attributes for all ONIX data elements
@@ -8161,7 +8161,7 @@ pub mod onix {
         pub from_language: Vec<FromLanguageElementType>,
         pub to_language: Vec<ToLanguageElementType>,
         pub name_type: Option<NameTypeElementType>,
-        pub content_60: ContributorContent60,
+        pub content_125: ContributorContent125,
         pub alternative_name: Vec<AlternativeNameElementType>,
         pub contributor_date: Vec<ContributorDateElementType>,
         pub professional_affiliation: Vec<ProfessionalAffiliationElementType>,
@@ -8309,9 +8309,9 @@ pub mod onix {
         pub content: String,
     }
     #[derive(Debug)]
-    pub struct DescriptiveDetailContent92 {
+    pub struct DescriptiveDetailContent157 {
         pub edition_type: Vec<EditionTypeElementType>,
-        pub content_93: Option<DescriptiveDetailContent93>,
+        pub content_158: Option<DescriptiveDetailContent158>,
         pub edition_statement: Vec<EditionStatementElementType>,
     }
     ///Standard attributes for all ONIX data elements
@@ -8354,7 +8354,7 @@ pub mod onix {
         pub bible_text_feature: Vec<BibleTextFeatureElementType>,
     }
     #[derive(Debug)]
-    pub struct ReligiousTextContent217 {
+    pub struct ReligiousTextContent282 {
         pub religious_text_identifier: ReligiousTextIdentifierElementType,
         pub religious_text_feature: Vec<ReligiousTextFeatureElementType>,
     }
@@ -8453,8 +8453,8 @@ pub mod onix {
         pub content: List23,
     }
     #[derive(Debug)]
-    pub enum ExtentContent117 {
-        Content118(ExtentContent118),
+    pub enum ExtentContent182 {
+        Content183(ExtentContent183),
         ExtentValueRoman(ExtentValueRomanElementType),
     }
     ///Standard attributes for all ONIX data elements
@@ -8699,8 +8699,8 @@ pub mod onix {
         pub content: String,
     }
     #[derive(Debug)]
-    pub enum SubjectContent251 {
-        Content252(SubjectContent252),
+    pub enum SubjectContent315 {
+        Content316(SubjectContent316),
         SubjectHeadingText(Vec<SubjectHeadingTextElementType>),
     }
     #[derive(Debug)]
@@ -8725,9 +8725,9 @@ pub mod onix {
         pub content: List18,
     }
     #[derive(Debug)]
-    pub enum NameAsSubjectContent140 {
-        Content141(NameAsSubjectContent141),
-        Content147(NameAsSubjectContent143),
+    pub enum NameAsSubjectContent205 {
+        Content206(NameAsSubjectContent206),
+        Content212(NameAsSubjectContent208),
         GpStructuredName(AlternativeNameGpStructuredName),
         GpCorporateName(NameAsSubjectGpCorporateName),
     }
@@ -8743,7 +8743,7 @@ pub mod onix {
         pub sourcename: Option<String>,
         pub sourcetype: Option<List3>,
         pub name_type: NameTypeElementType,
-        pub content_10: AlternativeNameContent10,
+        pub content_76: AlternativeNameContent76,
     }
     ///Standard attributes for all ONIX data elements
     ///● Date last changed or confirmed to be correct
@@ -8778,8 +8778,8 @@ pub mod onix {
     ///● Type of organization that is the source authority
     #[derive(Debug)]
     pub enum ProfessionalAffiliationElementTypeContent {
-        Content188(ProfessionalAffiliationContent188),
-        Content189(ProfessionalAffiliationContent189),
+        Content253(ProfessionalAffiliationContent253),
+        Content254(ProfessionalAffiliationContent254),
         Affiliation(AffiliationElementType),
     }
     #[derive(Debug)]
@@ -8832,8 +8832,8 @@ pub mod onix {
         pub content: String,
     }
     #[derive(Debug)]
-    pub enum AudienceContent22 {
-        Content23(AudienceContent23),
+    pub enum AudienceContent87 {
+        Content88(AudienceContent88),
         AudienceHeadingText(Vec<AudienceHeadingTextElementType>),
     }
     #[derive(Debug)]
@@ -8884,7 +8884,7 @@ pub mod onix {
         pub content: String,
     }
     #[derive(Debug)]
-    pub struct AudienceRangeContent26 {
+    pub struct AudienceRangeContent91 {
         pub audience_range_precision: AudienceRangePrecisionElementType,
         pub audience_range_value: AudienceRangeValueElementType,
     }
@@ -9154,10 +9154,10 @@ pub mod onix {
         pub content: List157,
     }
     #[derive(Debug)]
-    pub enum CitedContent38 {
-        Content39(CitedContent39),
-        Content40(CitedContent40),
-        Content42(CitedContent41),
+    pub enum CitedContent103 {
+        Content104(CitedContent104),
+        Content105(CitedContent105),
+        Content107(CitedContent106),
     }
     ///Standard attributes for all ONIX data elements
     ///● Date last changed or confirmed to be correct
@@ -9551,8 +9551,8 @@ pub mod onix {
         X516,
     }
     #[derive(Debug)]
-    pub struct PromotionalEventContent192 {
-        pub content_193: PromotionalEventContent193,
+    pub struct PromotionalEventContent257 {
+        pub content_258: PromotionalEventContent258,
         pub contributor_statement: Vec<ContributorStatementElementType>,
     }
     #[derive(Debug)]
@@ -9586,11 +9586,11 @@ pub mod onix {
         pub date: DateElementType,
     }
     #[derive(Debug)]
-    pub struct EventOccurrenceContent108 {
-        pub content_109: EventOccurrenceContent109,
+    pub struct EventOccurrenceContent173 {
+        pub content_174: EventOccurrenceContent174,
         pub location_name: Vec<LocationNameElementType>,
         pub venue_name: VenueNameElementType,
-        pub content_111: Option<EventOccurrenceContent111>,
+        pub content_176: Option<EventOccurrenceContent176>,
         pub venue_note: Vec<VenueNoteElementType>,
     }
     #[derive(Debug)]
@@ -9602,9 +9602,9 @@ pub mod onix {
         Eventsponsor,
     }
     #[derive(Debug)]
-    pub struct EventSponsorContent113 {
+    pub struct EventSponsorContent178 {
         pub event_sponsor_identifier: Vec<EventSponsorIdentifierElementType>,
-        pub content_114: Option<CopyrightOwnerContent78>,
+        pub content_179: Option<CopyrightOwnerContent143>,
     }
     ///Standard attributes for all ONIX data elements
     ///● Date last changed or confirmed to be correct
@@ -9759,13 +9759,13 @@ pub mod onix {
         pub av_duration: Option<AvDurationElementType>,
     }
     #[derive(Debug)]
-    pub struct ContentItemContent55 {
+    pub struct ContentItemContent120 {
         pub component_type_name: ComponentTypeNameElementType,
         pub component_number: Option<ComponentNumberElementType>,
         pub title_detail: Vec<TitleDetailElementType>,
     }
     #[derive(Debug)]
-    pub struct ContentItemContent56 {
+    pub struct ContentItemContent121 {
         pub component_number: Option<ComponentNumberElementType>,
         pub title_detail: Vec<TitleDetailElementType>,
     }
@@ -9791,8 +9791,8 @@ pub mod onix {
         pub content: List45,
     }
     #[derive(Debug)]
-    pub enum PublisherContent198 {
-        Content199(PublisherContent199),
+    pub enum PublisherContent263 {
+        Content264(PublisherContent264),
         PublisherName(Vec<PublisherNameElementType>),
     }
     ///Standard attributes for all ONIX data elements
@@ -9820,7 +9820,7 @@ pub mod onix {
         pub sourcename: Option<String>,
         pub sourcetype: Option<List3>,
         pub copyright_type: Option<CopyrightTypeElementType>,
-        pub content_81: CopyrightStatementContent81,
+        pub content_146: CopyrightStatementContent146,
     }
     ///Standard attributes for all ONIX data elements
     ///● Date last changed or confirmed to be correct
@@ -9854,7 +9854,7 @@ pub mod onix {
         Text(Text),
     }
     #[derive(Debug)]
-    pub struct PublishingDetailContent207 {
+    pub struct PublishingDetailContent272 {
         pub imprint: Vec<ImprintElementType>,
         pub publisher: Vec<PublisherElementType>,
     }
@@ -9896,8 +9896,8 @@ pub mod onix {
         pub content: List198,
     }
     #[derive(Debug)]
-    pub enum ProductContactContent175 {
-        Content176(ProductContactContent176),
+    pub enum ProductContactContent240 {
+        Content241(ProductContactContent241),
         ProductContactName(ProductContactNameElementType),
     }
     ///Standard attributes for all ONIX data elements
@@ -9914,7 +9914,7 @@ pub mod onix {
         pub content: String,
     }
     #[derive(Debug)]
-    pub struct ProductContactContent177 {
+    pub struct ProductContactContent242 {
         pub street_address: StreetAddressElementType,
         pub location_name: LocationNameElementType,
         pub postal_code: Option<PostalCodeElementType>,
@@ -10331,7 +10331,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub sequence_number: Option<SequenceNumberElementType>,
         pub sales_outlet: Vec<SalesOutletElementType>,
-        pub content_86: CoverResourceContent86,
+        pub content_151: CoverResourceContent151,
     }
     #[derive(Debug)]
     pub enum BodyManifestRefname {
@@ -10390,7 +10390,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub sequence_number: Option<SequenceNumberElementType>,
         pub sales_outlet: Vec<SalesOutletElementType>,
-        pub content_131: CoverResourceContent86,
+        pub content_196: CoverResourceContent151,
     }
     #[derive(Debug)]
     pub enum SupplementManifestRefname {
@@ -10411,11 +10411,11 @@ pub mod onix {
         pub datestamp: Option<String>,
         pub sourcename: Option<String>,
         pub sourcetype: Option<List3>,
-        pub content_230: SalesOutletContent230,
+        pub content_295: SalesOutletContent295,
     }
     #[derive(Debug)]
-    pub enum SupplementManifestContent255 {
-        Content256(SupplementManifestContent256),
+    pub enum SupplementManifestContent319 {
+        Content320(SupplementManifestContent320),
         NoSupplement(NoSupplementElementType),
     }
     #[derive(Debug)]
@@ -10427,13 +10427,13 @@ pub mod onix {
         Territory,
     }
     #[derive(Debug)]
-    pub struct TerritoryContent277 {
+    pub struct TerritoryContent341 {
         pub countries_included: CountriesIncludedElementType,
         pub regions_included: Option<RegionsIncludedElementType>,
         pub regions_excluded: Option<RegionsExcludedElementType>,
     }
     #[derive(Debug)]
-    pub struct TerritoryContent278 {
+    pub struct TerritoryContent342 {
         pub regions_included: RegionsIncludedElementType,
         pub countries_excluded: Option<CountriesExcludedElementType>,
         pub regions_excluded: Option<RegionsExcludedElementType>,
@@ -10544,8 +10544,8 @@ pub mod onix {
         pub content: List69,
     }
     #[derive(Debug)]
-    pub enum PublisherRepresentativeContent202 {
-        Content203(PublisherRepresentativeContent203),
+    pub enum PublisherRepresentativeContent267 {
+        Content268(PublisherRepresentativeContent268),
         AgentName(AgentNameElementType),
     }
     ///Market publishing status
@@ -10708,8 +10708,8 @@ pub mod onix {
         pub content: List93,
     }
     #[derive(Debug)]
-    pub enum SupplierContent258 {
-        Content259(NewSupplierContent151),
+    pub enum SupplierContent322 {
+        Content323(NewSupplierContent216),
         SupplierName(SupplierNameElementType),
     }
     #[derive(Debug)]
@@ -10734,8 +10734,8 @@ pub mod onix {
         pub content: List239,
     }
     #[derive(Debug)]
-    pub enum SupplyContactContent263 {
-        Content264(SupplyContactContent264),
+    pub enum SupplyContactContent327 {
+        Content328(SupplyContactContent328),
         SupplyContactName(SupplyContactNameElementType),
     }
     #[derive(Debug)]
@@ -10994,8 +10994,8 @@ pub mod onix {
         Newsupplier,
     }
     #[derive(Debug)]
-    pub enum NewSupplierContent150 {
-        Content151(NewSupplierContent151),
+    pub enum NewSupplierContent215 {
+        Content216(NewSupplierContent216),
         SupplierName(SupplierNameElementType),
     }
     #[derive(Debug)]
@@ -11038,9 +11038,9 @@ pub mod onix {
         pub content: String,
     }
     #[derive(Debug)]
-    pub enum StockContent244 {
+    pub enum StockContent308 {
         StockQuantityCoded(Vec<StockQuantityCodedElementType>),
-        Content245(StockContent245),
+        Content309(StockContent309),
     }
     ///Standard attributes for all ONIX data elements
     ///● Date last changed or confirmed to be correct
@@ -11152,12 +11152,12 @@ pub mod onix {
         pub discount_coded: Vec<DiscountCodedElementType>,
         pub discount: Vec<DiscountElementType>,
         pub price_status: Option<PriceStatusElementType>,
-        pub content_156: PriceContent156,
+        pub content_221: PriceContent221,
         pub currency_code: Option<CurrencyCodeElementType>,
         pub territory: Option<TerritoryElementType>,
         pub comparison_product_price: Vec<ComparisonProductPriceElementType>,
         pub price_date: Vec<PriceDateElementType>,
-        pub content_160: Option<PriceContent160>,
+        pub content_225: Option<PriceContent225>,
     }
     #[derive(Debug)]
     pub enum SenderIdTypeRefname {
@@ -11794,7 +11794,7 @@ pub mod onix {
         X457,
     }
     #[derive(Debug)]
-    pub struct ProductPartContent185 {
+    pub struct ProductPartContent250 {
         pub number_of_items_of_this_form: NumberOfItemsOfThisFormElementType,
         pub number_of_copies: Option<NumberOfCopiesElementType>,
     }
@@ -11891,7 +11891,7 @@ pub mod onix {
     }
     #[derive(Debug)]
     pub enum CollectionGpAuthorship {
-        Content45(CollectionContent45),
+        Content110(CollectionContent110),
         NoContributor(Option<NoContributorElementType>),
     }
     #[derive(Debug)]
@@ -11983,10 +11983,10 @@ pub mod onix {
         pub content: List149,
     }
     #[derive(Debug)]
-    pub enum TitleElementContent287 {
-        Content288(TitleElementContent288),
-        Content292(TitleElementContent292),
-        Content296(TitleElementContent296),
+    pub enum TitleElementContent351 {
+        Content352(TitleElementContent352),
+        Content356(TitleElementContent356),
+        Content360(TitleElementContent360),
         TitleText(TitleTextElementType),
     }
     ///Standard attributes for all ONIX data elements
@@ -12179,9 +12179,9 @@ pub mod onix {
         pub content: List74,
     }
     #[derive(Debug)]
-    pub enum ContributorContent60 {
-        Content61(ContributorContent61),
-        Content67(ContributorContent63),
+    pub enum ContributorContent125 {
+        Content126(ContributorContent126),
+        Content132(ContributorContent128),
         GpStructuredName(AlternativeNameGpStructuredName),
         GpCorporateName(ContributorGpCorporateName),
         UnnamedPersons(UnnamedPersonsElementType),
@@ -12274,7 +12274,7 @@ pub mod onix {
         pub sourcename: Option<String>,
         pub sourcetype: Option<List3>,
         pub contributor_place_relator: ContributorPlaceRelatorElementType,
-        pub content_71: ContributorPlaceContent71,
+        pub content_136: ContributorPlaceContent136,
         pub location_name: Vec<LocationNameElementType>,
     }
     #[derive(Debug)]
@@ -12373,7 +12373,7 @@ pub mod onix {
         pub content: List21,
     }
     #[derive(Debug)]
-    pub struct DescriptiveDetailContent93 {
+    pub struct DescriptiveDetailContent158 {
         pub edition_number: EditionNumberElementType,
         pub edition_version_number: Option<EditionVersionNumberElementType>,
     }
@@ -14025,7 +14025,7 @@ pub mod onix {
         B218,
     }
     #[derive(Debug)]
-    pub struct ExtentContent118 {
+    pub struct ExtentContent183 {
         pub extent_value: ExtentValueElementType,
         pub extent_value_roman: Option<ExtentValueRomanElementType>,
     }
@@ -14219,10 +14219,10 @@ pub mod onix {
         pub cellspacing: Option<String>,
         pub cellpadding: Option<String>,
         pub caption: Option<AbbrElementType>,
-        pub content_352: Option<TableContent352>,
+        pub content_48: Option<TableContent48>,
         pub thead: Option<TbodyElementType>,
         pub tfoot: Option<TbodyElementType>,
-        pub content_353: TableContent353,
+        pub content_49: TableContent49,
     }
     #[derive(Debug)]
     pub struct BdoElementType {
@@ -14341,8 +14341,8 @@ pub mod onix {
     }
     #[derive(Debug)]
     pub enum RubyElementTypeContent {
-        Content363(RubyContent363),
-        Content366(RubyContent366),
+        Content59(RubyContent59),
+        Content62(RubyContent62),
     }
     ///Illustration and other content type
     #[derive(Debug)]
@@ -14873,7 +14873,7 @@ pub mod onix {
         B068,
     }
     #[derive(Debug)]
-    pub struct SubjectContent252 {
+    pub struct SubjectContent316 {
         pub subject_code: SubjectCodeElementType,
         pub subject_heading_text: Vec<SubjectHeadingTextElementType>,
     }
@@ -14932,12 +14932,12 @@ pub mod onix {
         X414,
     }
     #[derive(Debug)]
-    pub struct NameAsSubjectContent141 {
+    pub struct NameAsSubjectContent206 {
         pub name_identifier: Vec<NameIdentifierElementType>,
-        pub content_142: Option<NameAsSubjectContent142>,
+        pub content_207: Option<NameAsSubjectContent207>,
     }
     #[derive(Debug)]
-    pub struct NameAsSubjectContent143 {
+    pub struct NameAsSubjectContent208 {
         pub gp_unstructured_name: NameAsSubjectGpUnstructuredName,
         pub gp_structured_name: Option<AlternativeNameGpStructuredName>,
     }
@@ -14954,7 +14954,7 @@ pub mod onix {
     }
     #[derive(Debug)]
     pub enum NameAsSubjectGpCorporateName {
-        Content146(AlternativeNameContent16),
+        Content211(AlternativeNameContent82),
         CorporateNameInverted(Vec<CorporateNameInvertedElementType>),
     }
     #[derive(Debug)]
@@ -14966,9 +14966,9 @@ pub mod onix {
         Alternativename,
     }
     #[derive(Debug)]
-    pub enum AlternativeNameContent10 {
-        Content11(AlternativeNameContent11),
-        Content17(AlternativeNameContent13),
+    pub enum AlternativeNameContent76 {
+        Content77(AlternativeNameContent77),
+        Content83(AlternativeNameContent79),
         GpStructuredName(AlternativeNameGpStructuredName),
         GpCorporateName(AlternativeNameGpCorporateName),
     }
@@ -15002,13 +15002,13 @@ pub mod onix {
         Professionalaffiliation,
     }
     #[derive(Debug)]
-    pub struct ProfessionalAffiliationContent188 {
+    pub struct ProfessionalAffiliationContent253 {
         pub professional_position: Vec<ProfessionalPositionElementType>,
         pub affiliation_identifier: Vec<AffiliationIdentifierElementType>,
         pub affiliation: Option<AffiliationElementType>,
     }
     #[derive(Debug)]
-    pub struct ProfessionalAffiliationContent189 {
+    pub struct ProfessionalAffiliationContent254 {
         pub affiliation_identifier: Vec<AffiliationIdentifierElementType>,
         pub affiliation: Option<AffiliationElementType>,
     }
@@ -15147,7 +15147,7 @@ pub mod onix {
         B205,
     }
     #[derive(Debug)]
-    pub struct AudienceContent23 {
+    pub struct AudienceContent88 {
         pub audience_code_value: AudienceCodeValueElementType,
         pub audience_heading_text: Vec<AudienceHeadingTextElementType>,
     }
@@ -15632,17 +15632,17 @@ pub mod onix {
         X431,
     }
     #[derive(Debug)]
-    pub struct CitedContent39 {
+    pub struct CitedContent104 {
         pub review_rating: ReviewRatingElementType,
         pub source_title: Vec<SourceTitleElementType>,
     }
     #[derive(Debug)]
-    pub struct CitedContent40 {
+    pub struct CitedContent105 {
         pub source_title: Vec<SourceTitleElementType>,
-        pub content_41: Option<CitedContent41>,
+        pub content_106: Option<CitedContent106>,
     }
     #[derive(Debug)]
-    pub struct CitedContent41 {
+    pub struct CitedContent106 {
         pub list_name: Vec<ListNameElementType>,
         pub position_on_list: Option<PositionOnListElementType>,
     }
@@ -16089,8 +16089,8 @@ pub mod onix {
         X547,
     }
     #[derive(Debug)]
-    pub enum PromotionalEventContent193 {
-        Content194(PromotionalEventContent194),
+    pub enum PromotionalEventContent258 {
+        Content259(PromotionalEventContent259),
         Contributor(Vec<ContributorElementType>),
     }
     #[derive(Debug)]
@@ -16115,8 +16115,8 @@ pub mod onix {
         pub content: List247,
     }
     #[derive(Debug)]
-    pub enum EventOccurrenceContent109 {
-        Content110(ContributorPlaceContent72),
+    pub enum EventOccurrenceContent174 {
+        Content175(ContributorPlaceContent137),
         RegionCode(RegionCodeElementType),
     }
     ///Standard attributes for all ONIX data elements
@@ -16136,7 +16136,7 @@ pub mod onix {
         pub content: String,
     }
     #[derive(Debug)]
-    pub struct EventOccurrenceContent111 {
+    pub struct EventOccurrenceContent176 {
         pub street_address: StreetAddressElementType,
         pub postal_code: Option<PostalCodeElementType>,
     }
@@ -16187,7 +16187,7 @@ pub mod onix {
         pub id_value: IdValueElementType,
     }
     #[derive(Debug)]
-    pub enum CopyrightOwnerContent78 {
+    pub enum CopyrightOwnerContent143 {
         PersonName(PersonNameElementType),
         CorporateName(CorporateNameElementType),
     }
@@ -16600,7 +16600,7 @@ pub mod onix {
         B291,
     }
     #[derive(Debug)]
-    pub struct PublisherContent199 {
+    pub struct PublisherContent264 {
         pub publisher_identifier: Vec<PublisherIdentifierElementType>,
         pub publisher_name: Vec<PublisherNameElementType>,
     }
@@ -16671,8 +16671,8 @@ pub mod onix {
         pub content: List219,
     }
     #[derive(Debug)]
-    pub enum CopyrightStatementContent81 {
-        Content82(CopyrightStatementContent82),
+    pub enum CopyrightStatementContent146 {
+        Content147(CopyrightStatementContent147),
         CopyrightOwner(Vec<CopyrightOwnerElementType>),
     }
     #[derive(Debug)]
@@ -16702,7 +16702,7 @@ pub mod onix {
     ///● Type of organization that is the source authority
     #[derive(Debug)]
     pub enum ImprintElementTypeContent {
-        Content125(ImprintContent125),
+        Content190(ImprintContent190),
         ImprintName(ImprintNameElementType),
     }
     ///Product contact role
@@ -16757,7 +16757,7 @@ pub mod onix {
         X482,
     }
     #[derive(Debug)]
-    pub struct ProductContactContent176 {
+    pub struct ProductContactContent241 {
         pub product_contact_identifier: Vec<ProductContactIdentifierElementType>,
         pub product_contact_name: Option<ProductContactNameElementType>,
     }
@@ -17137,7 +17137,7 @@ pub mod onix {
         Coverresource,
     }
     #[derive(Debug)]
-    pub enum CoverResourceContent86 {
+    pub enum CoverResourceContent151 {
         GpResourceSpecification(BodyResourceGpResourceSpecification),
         NoResource(NoResourceElementType),
     }
@@ -17211,12 +17211,12 @@ pub mod onix {
         Salesoutlet,
     }
     #[derive(Debug)]
-    pub enum SalesOutletContent230 {
-        Content231(SalesOutletContent231),
+    pub enum SalesOutletContent295 {
+        Content296(SalesOutletContent296),
         SalesOutletName(SalesOutletNameElementType),
     }
     #[derive(Debug)]
-    pub struct SupplementManifestContent256 {
+    pub struct SupplementManifestContent320 {
         pub product_identifier: Vec<ProductIdentifierElementType>,
         pub product_form: ProductFormElementType,
         pub product_form_detail: Vec<ProductFormDetailElementType>,
@@ -17429,7 +17429,7 @@ pub mod onix {
         J402,
     }
     #[derive(Debug)]
-    pub struct PublisherRepresentativeContent203 {
+    pub struct PublisherRepresentativeContent268 {
         pub agent_identifier: Vec<AgentIdentifierElementType>,
         pub agent_name: Option<AgentNameElementType>,
     }
@@ -17518,7 +17518,7 @@ pub mod onix {
         J292,
     }
     #[derive(Debug)]
-    pub struct NewSupplierContent151 {
+    pub struct NewSupplierContent216 {
         pub supplier_identifier: Vec<SupplierIdentifierElementType>,
         pub supplier_name: Option<SupplierNameElementType>,
     }
@@ -17566,7 +17566,7 @@ pub mod onix {
         X537,
     }
     #[derive(Debug)]
-    pub struct SupplyContactContent264 {
+    pub struct SupplyContactContent328 {
         pub supply_contact_identifier: Vec<SupplyContactIdentifierElementType>,
         pub supply_contact_name: Option<SupplyContactNameElementType>,
     }
@@ -17767,12 +17767,12 @@ pub mod onix {
         pub stock_quantity_code: StockQuantityCodeElementType,
     }
     #[derive(Debug)]
-    pub struct StockContent245 {
+    pub struct StockContent309 {
         pub on_hand: OnHandElementType,
         pub proximity: Option<ProximityElementType>,
-        pub content_246: Option<StockContent246>,
-        pub content_247: Option<StockContent247>,
-        pub content_248: Option<StockContent248>,
+        pub content_310: Option<StockContent310>,
+        pub content_311: Option<StockContent311>,
+        pub content_312: Option<StockContent312>,
     }
     #[derive(Debug)]
     pub enum OnOrderDetailRefname {
@@ -18087,8 +18087,8 @@ pub mod onix {
         pub sourcename: Option<String>,
         pub sourcetype: Option<List3>,
         pub discount_type: Option<DiscountTypeElementType>,
-        pub content_95: Option<DiscountContent95>,
-        pub content_96: DiscountContent96,
+        pub content_160: Option<DiscountContent160>,
+        pub content_161: DiscountContent161,
     }
     ///Standard attributes for all ONIX data elements
     ///● Date last changed or confirmed to be correct
@@ -18104,8 +18104,8 @@ pub mod onix {
         pub content: List61,
     }
     #[derive(Debug)]
-    pub enum PriceContent156 {
-        Content157(PriceContent157),
+    pub enum PriceContent221 {
+        Content222(PriceContent222),
         UnpricedItemType(UnpricedItemTypeElementType),
     }
     ///Standard attributes for all ONIX data elements
@@ -18152,7 +18152,7 @@ pub mod onix {
         pub date: DateElementType,
     }
     #[derive(Debug)]
-    pub struct PriceContent160 {
+    pub struct PriceContent225 {
         pub printed_on_product: PrintedOnProductElementType,
         pub position_on_product: Option<PositionOnProductElementType>,
     }
@@ -18562,19 +18562,19 @@ pub mod onix {
         X409,
     }
     #[derive(Debug)]
-    pub struct TitleElementContent288 {
+    pub struct TitleElementContent352 {
         pub part_number: PartNumberElementType,
         pub year_of_annual: Option<YearOfAnnualElementType>,
-        pub content_289: Option<TitleElementContent289>,
+        pub content_353: Option<TitleElementContent353>,
     }
     #[derive(Debug)]
-    pub struct TitleElementContent292 {
+    pub struct TitleElementContent356 {
         pub year_of_annual: YearOfAnnualElementType,
-        pub content_293: Option<TitleElementContent293>,
+        pub content_357: Option<TitleElementContent357>,
     }
     #[derive(Debug)]
-    pub struct TitleElementContent296 {
-        pub content_297: TitleElementContent291,
+    pub struct TitleElementContent360 {
+        pub content_361: TitleElementContent355,
         pub title_without_prefix: TitleWithoutPrefixElementType,
     }
     ///Standard attributes for all ONIX data elements
@@ -18992,18 +18992,18 @@ pub mod onix {
         X413,
     }
     #[derive(Debug)]
-    pub struct ContributorContent61 {
+    pub struct ContributorContent126 {
         pub name_identifier: Vec<NameIdentifierElementType>,
-        pub content_62: Option<ContributorContent62>,
+        pub content_127: Option<ContributorContent127>,
     }
     #[derive(Debug)]
-    pub struct ContributorContent63 {
+    pub struct ContributorContent128 {
         pub gp_unstructured_name: ContributorGpUnstructuredName,
         pub gp_structured_name: Option<AlternativeNameGpStructuredName>,
     }
     #[derive(Debug)]
     pub enum ContributorGpCorporateName {
-        Content66(AlternativeNameContent16),
+        Content131(AlternativeNameContent82),
         CorporateNameInverted(Vec<CorporateNameInvertedElementType>),
     }
     ///Standard attributes for all ONIX data elements
@@ -19078,8 +19078,8 @@ pub mod onix {
         pub content: List151,
     }
     #[derive(Debug)]
-    pub enum ContributorPlaceContent71 {
-        Content72(ContributorPlaceContent72),
+    pub enum ContributorPlaceContent136 {
+        Content137(ContributorPlaceContent137),
         RegionCode(RegionCodeElementType),
     }
     ///Edition type
@@ -19898,7 +19898,7 @@ pub mod onix {
         All,
     }
     #[derive(Debug)]
-    pub enum TableContent352 {
+    pub enum TableContent48 {
         Col(Vec<ColElementType>),
         Colgroup(Vec<ColgroupElementType>),
     }
@@ -19917,7 +19917,7 @@ pub mod onix {
         pub tr: Vec<TrElementType>,
     }
     #[derive(Debug)]
-    pub enum TableContent353 {
+    pub enum TableContent49 {
         Tbody(Vec<TbodyElementType>),
         Tr(Vec<TrElementType>),
     }
@@ -19955,12 +19955,12 @@ pub mod onix {
         Map(Box<MapElementType>),
     }
     #[derive(Debug)]
-    pub struct RubyContent363 {
+    pub struct RubyContent59 {
         pub rb: RbElementType,
-        pub content_364: RubyContent364,
+        pub content_60: RubyContent60,
     }
     #[derive(Debug)]
-    pub struct RubyContent366 {
+    pub struct RubyContent62 {
         pub rbc: RbcElementType,
         pub rtc: Option<RtcElementType>,
     }
@@ -20001,14 +20001,14 @@ pub mod onix {
         pub id_value: IdValueElementType,
     }
     #[derive(Debug)]
-    pub enum NameAsSubjectContent142 {
-        Content143(NameAsSubjectContent143),
+    pub enum NameAsSubjectContent207 {
+        Content208(NameAsSubjectContent208),
         GpStructuredName(AlternativeNameGpStructuredName),
         GpCorporateName(NameAsSubjectGpCorporateName),
     }
     #[derive(Debug)]
     pub struct NameAsSubjectGpUnstructuredName {
-        pub content_144: NameAsSubjectContent144,
+        pub content_209: NameAsSubjectContent209,
     }
     ///Standard attributes for all ONIX data elements
     ///● Date last changed or confirmed to be correct
@@ -20187,7 +20187,7 @@ pub mod onix {
         pub content: String,
     }
     #[derive(Debug)]
-    pub struct AlternativeNameContent16 {
+    pub struct AlternativeNameContent82 {
         pub corporate_name: Vec<CorporateNameElementType>,
         pub corporate_name_inverted: Vec<CorporateNameInvertedElementType>,
     }
@@ -20214,18 +20214,18 @@ pub mod onix {
         pub content: String,
     }
     #[derive(Debug)]
-    pub struct AlternativeNameContent11 {
+    pub struct AlternativeNameContent77 {
         pub name_identifier: Vec<NameIdentifierElementType>,
-        pub content_12: Option<AlternativeNameContent12>,
+        pub content_78: Option<AlternativeNameContent78>,
     }
     #[derive(Debug)]
-    pub struct AlternativeNameContent13 {
+    pub struct AlternativeNameContent79 {
         pub gp_unstructured_name: AlternativeNameGpUnstructuredName,
         pub gp_structured_name: Option<AlternativeNameGpStructuredName>,
     }
     #[derive(Debug)]
     pub enum AlternativeNameGpCorporateName {
-        Content16(AlternativeNameContent16),
+        Content82(AlternativeNameContent82),
         CorporateNameInverted(Vec<CorporateNameInvertedElementType>),
     }
     ///Person / organization date role
@@ -20527,7 +20527,7 @@ pub mod onix {
         X589,
     }
     #[derive(Debug)]
-    pub struct PromotionalEventContent194 {
+    pub struct PromotionalEventContent259 {
         pub contributor_reference: Vec<ContributorReferenceElementType>,
         pub contributor: Vec<ContributorElementType>,
     }
@@ -20550,7 +20550,7 @@ pub mod onix {
         X554,
     }
     #[derive(Debug)]
-    pub struct ContributorPlaceContent72 {
+    pub struct ContributorPlaceContent137 {
         pub country_code: CountryCodeElementType,
         pub region_code: Option<RegionCodeElementType>,
     }
@@ -20847,7 +20847,7 @@ pub mod onix {
         X512,
     }
     #[derive(Debug)]
-    pub struct CopyrightStatementContent82 {
+    pub struct CopyrightStatementContent147 {
         pub copyright_year: Vec<CopyrightYearElementType>,
         pub copyright_owner: Vec<CopyrightOwnerElementType>,
     }
@@ -20870,7 +20870,7 @@ pub mod onix {
     ///● Type of organization that is the source authority
     #[derive(Debug)]
     pub enum CopyrightOwnerElementTypeContent {
-        Content77(CopyrightOwnerContent77),
+        Content142(CopyrightOwnerContent142),
         PersonName(PersonNameElementType),
         CorporateName(CorporateNameElementType),
     }
@@ -20883,7 +20883,7 @@ pub mod onix {
         Imprint,
     }
     #[derive(Debug)]
-    pub struct ImprintContent125 {
+    pub struct ImprintContent190 {
         pub imprint_identifier: Vec<ImprintIdentifierElementType>,
         pub imprint_name: Option<ImprintNameElementType>,
     }
@@ -21254,7 +21254,7 @@ pub mod onix {
         X575,
     }
     #[derive(Debug)]
-    pub struct SalesOutletContent231 {
+    pub struct SalesOutletContent296 {
         pub sales_outlet_identifier: Vec<SalesOutletIdentifierElementType>,
         pub sales_outlet_name: Option<SalesOutletNameElementType>,
     }
@@ -21565,17 +21565,17 @@ pub mod onix {
         pub content: i32,
     }
     #[derive(Debug)]
-    pub struct StockContent246 {
+    pub struct StockContent310 {
         pub reserved: ReservedElementType,
         pub proximity: Option<ProximityElementType>,
     }
     #[derive(Debug)]
-    pub struct StockContent247 {
+    pub struct StockContent311 {
         pub on_order: OnOrderElementType,
         pub proximity: Option<ProximityElementType>,
     }
     #[derive(Debug)]
-    pub struct StockContent248 {
+    pub struct StockContent312 {
         pub cbo: CboElementType,
         pub proximity: Option<ProximityElementType>,
     }
@@ -21994,13 +21994,13 @@ pub mod onix {
         pub content: List170,
     }
     #[derive(Debug)]
-    pub struct DiscountContent95 {
+    pub struct DiscountContent160 {
         pub quantity: QuantityElementType,
         pub to_quantity: Option<ToQuantityElementType>,
     }
     #[derive(Debug)]
-    pub enum DiscountContent96 {
-        Content97(DiscountContent97),
+    pub enum DiscountContent161 {
+        Content162(DiscountContent162),
         DiscountAmount(DiscountAmountElementType),
     }
     ///Price status
@@ -22023,9 +22023,9 @@ pub mod onix {
         J266,
     }
     #[derive(Debug)]
-    pub struct PriceContent157 {
-        pub content_158: PriceContent158,
-        pub content_159: Option<PriceContent159>,
+    pub struct PriceContent222 {
+        pub content_223: PriceContent223,
+        pub content_224: Option<PriceContent224>,
     }
     #[derive(Debug)]
     pub enum CurrencyCodeRefname {
@@ -22236,17 +22236,17 @@ pub mod onix {
         pub content: String,
     }
     #[derive(Debug)]
-    pub enum TitleElementContent289 {
-        Content290(TitleElementContent290),
+    pub enum TitleElementContent353 {
+        Content354(TitleElementContent354),
         TitleText(TitleTextElementType),
     }
     #[derive(Debug)]
-    pub enum TitleElementContent293 {
-        Content294(TitleElementContent294),
+    pub enum TitleElementContent357 {
+        Content358(TitleElementContent358),
         TitleText(TitleTextElementType),
     }
     #[derive(Debug)]
-    pub enum TitleElementContent291 {
+    pub enum TitleElementContent355 {
         TitlePrefix(TitlePrefixElementType),
         NoPrefix(NoPrefixElementType),
     }
@@ -22283,15 +22283,15 @@ pub mod onix {
         B203,
     }
     #[derive(Debug)]
-    pub enum ContributorContent62 {
-        Content63(ContributorContent63),
+    pub enum ContributorContent127 {
+        Content128(ContributorContent128),
         GpStructuredName(AlternativeNameGpStructuredName),
         GpCorporateName(ContributorGpCorporateName),
         UnnamedPersons(UnnamedPersonsElementType),
     }
     #[derive(Debug)]
     pub struct ContributorGpUnstructuredName {
-        pub content_64: ContributorContent64,
+        pub content_129: ContributorContent129,
     }
     ///Unnamed person(s)
     #[derive(Debug)]
@@ -22561,9 +22561,9 @@ pub mod onix {
         Text(Text),
     }
     #[derive(Debug)]
-    pub enum RubyContent364 {
+    pub enum RubyContent60 {
         Rt(RtElementType),
-        Content365(RubyContent365),
+        Content61(RubyContent61),
     }
     #[derive(Debug)]
     pub struct RbcElementType {
@@ -22615,8 +22615,8 @@ pub mod onix {
         pub content: List44,
     }
     #[derive(Debug)]
-    pub enum NameAsSubjectContent144 {
-        Content145(AlternativeNameContent15),
+    pub enum NameAsSubjectContent209 {
+        Content210(AlternativeNameContent81),
         PersonNameInverted(PersonNameInvertedElementType),
     }
     #[derive(Debug)]
@@ -22692,14 +22692,14 @@ pub mod onix {
         X443,
     }
     #[derive(Debug)]
-    pub enum AlternativeNameContent12 {
-        Content13(AlternativeNameContent13),
+    pub enum AlternativeNameContent78 {
+        Content79(AlternativeNameContent79),
         GpStructuredName(AlternativeNameGpStructuredName),
         GpCorporateName(AlternativeNameGpCorporateName),
     }
     #[derive(Debug)]
     pub struct AlternativeNameGpUnstructuredName {
-        pub content_14: AlternativeNameContent14,
+        pub content_80: AlternativeNameContent80,
     }
     #[derive(Debug)]
     pub enum ProfessionalPositionRefname {
@@ -22984,9 +22984,9 @@ pub mod onix {
         Copyrightowner,
     }
     #[derive(Debug)]
-    pub struct CopyrightOwnerContent77 {
+    pub struct CopyrightOwnerContent142 {
         pub copyright_owner_identifier: Vec<CopyrightOwnerIdentifierElementType>,
-        pub content_78: Option<CopyrightOwnerContent78>,
+        pub content_143: Option<CopyrightOwnerContent143>,
     }
     ///Standard attributes for all ONIX data elements
     ///● Date last changed or confirmed to be correct
@@ -23755,7 +23755,7 @@ pub mod onix {
         pub content: f64,
     }
     #[derive(Debug)]
-    pub struct DiscountContent97 {
+    pub struct DiscountContent162 {
         pub discount_percent: DiscountPercentElementType,
         pub discount_amount: Option<DiscountAmountElementType>,
     }
@@ -23773,12 +23773,12 @@ pub mod onix {
         pub content: f64,
     }
     #[derive(Debug)]
-    pub enum PriceContent158 {
+    pub enum PriceContent223 {
         PriceAmount(PriceAmountElementType),
         PriceCoded(PriceCodedElementType),
     }
     #[derive(Debug)]
-    pub enum PriceContent159 {
+    pub enum PriceContent224 {
         Tax(Vec<TaxElementType>),
         TaxExempt(TaxExemptElementType),
     }
@@ -23846,13 +23846,13 @@ pub mod onix {
         B020,
     }
     #[derive(Debug)]
-    pub struct TitleElementContent290 {
-        pub content_291: TitleElementContent291,
+    pub struct TitleElementContent354 {
+        pub content_355: TitleElementContent355,
         pub title_without_prefix: TitleWithoutPrefixElementType,
     }
     #[derive(Debug)]
-    pub struct TitleElementContent294 {
-        pub content_295: TitleElementContent291,
+    pub struct TitleElementContent358 {
+        pub content_359: TitleElementContent355,
         pub title_without_prefix: TitleWithoutPrefixElementType,
     }
     ///Standard attributes for all ONIX data elements
@@ -23900,8 +23900,8 @@ pub mod onix {
         B031,
     }
     #[derive(Debug)]
-    pub enum ContributorContent64 {
-        Content65(AlternativeNameContent15),
+    pub enum ContributorContent129 {
+        Content130(AlternativeNameContent81),
         PersonNameInverted(PersonNameInvertedElementType),
     }
     #[derive(Debug)]
@@ -23950,7 +23950,7 @@ pub mod onix {
         Text(Text),
     }
     #[derive(Debug)]
-    pub struct RubyContent365 {
+    pub struct RubyContent61 {
         pub rp: RpElementType,
         pub rt: Box<RtElementType>,
     }
@@ -23963,7 +23963,7 @@ pub mod onix {
         X415,
     }
     #[derive(Debug)]
-    pub struct AlternativeNameContent15 {
+    pub struct AlternativeNameContent81 {
         pub person_name: PersonNameElementType,
         pub person_name_inverted: Option<PersonNameInvertedElementType>,
     }
@@ -23990,8 +23990,8 @@ pub mod onix {
         pub content: String,
     }
     #[derive(Debug)]
-    pub enum AlternativeNameContent14 {
-        Content15(AlternativeNameContent15),
+    pub enum AlternativeNameContent80 {
+        Content81(AlternativeNameContent81),
         PersonNameInverted(PersonNameInvertedElementType),
     }
     #[derive(Debug)]
@@ -24342,7 +24342,7 @@ pub mod onix {
         pub price_part_description: Vec<PricePartDescriptionElementType>,
         pub tax_type: Option<TaxTypeElementType>,
         pub tax_rate_code: Option<TaxRateCodeElementType>,
-        pub content_273: TaxContent273,
+        pub content_337: TaxContent337,
     }
     ///Standard attributes for all ONIX data elements
     ///● Date last changed or confirmed to be correct
@@ -24559,9 +24559,9 @@ pub mod onix {
         pub content: List62,
     }
     #[derive(Debug)]
-    pub enum TaxContent273 {
-        Content274(TaxContent274),
-        Content275(TaxContent275),
+    pub enum TaxContent337 {
+        Content338(TaxContent338),
+        Content339(TaxContent339),
     }
     #[derive(Debug)]
     pub enum TaxExemptRefname {
@@ -24674,13 +24674,13 @@ pub mod onix {
         X471,
     }
     #[derive(Debug)]
-    pub struct TaxContent274 {
+    pub struct TaxContent338 {
         pub tax_rate_percent: TaxRatePercentElementType,
         pub taxable_amount: Option<TaxableAmountElementType>,
         pub tax_amount: Option<TaxAmountElementType>,
     }
     #[derive(Debug)]
-    pub struct TaxContent275 {
+    pub struct TaxContent339 {
         pub taxable_amount: Option<TaxableAmountElementType>,
         pub tax_amount: TaxAmountElementType,
     }

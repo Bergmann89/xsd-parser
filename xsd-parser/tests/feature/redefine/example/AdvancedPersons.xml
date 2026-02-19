@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AdvancedPersons>
+    <Person>
+        <name>Rusty</name>
+        <gender>male</gender>
+        <lastName>Crab</lastName>
+        <age>24</age>
+    </Person>
+    <Person>
+        <name>Rustiene</name>
+        <gender>female</gender>
+        <lastName>Crab</lastName>
+        <age>22</age>
+    </Person>
+</AdvancedPersons>

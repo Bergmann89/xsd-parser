@@ -91,7 +91,7 @@ pub struct LaneXType {
     pub type_attrib: Option<LaneTypeXType>,
     pub level_attrib: Option<SingleSideXType>,
     pub link: Option<LaneLinkXElementType>,
-    pub content_9: LaneContent9XType,
+    pub content_73: LaneContent73XType,
     pub road_mark: Vec<LaneRoadMarkXElementType>,
     pub material: Vec<LaneMaterialXElementType>,
     pub visibility: Vec<LaneVisibilityXElementType>,
@@ -142,7 +142,7 @@ pub struct LaneValidityXType {
 }
 #[derive(Debug)]
 pub enum MaxXType {
-    Max2(Max2XType),
+    Max1(Max1XType),
     I32(i32),
 }
 #[derive(Debug)]
@@ -424,11 +424,11 @@ pub struct LaneLinkXElementType {
     pub include: Vec<IncludeXType>,
 }
 #[derive(Debug)]
-pub struct LaneContent9XType {
-    pub content: LaneContent9XTypeContent,
+pub struct LaneContent73XType {
+    pub content: LaneContent73XTypeContent,
 }
 #[derive(Debug)]
-pub enum LaneContent9XTypeContent {
+pub enum LaneContent73XTypeContent {
     Width(Vec<LaneWidthXElementType>),
     Border(Vec<LaneBorderXElementType>),
 }
@@ -496,7 +496,7 @@ pub struct LaneRuleXElementType {
     pub include: Vec<IncludeXType>,
 }
 #[derive(Debug)]
-pub enum Max2XType {
+pub enum Max1XType {
     NoLimit,
     Undefined,
 }
@@ -1002,7 +1002,7 @@ pub struct OpenDriveRoadObjectsObjectRepeatXElementType {
 }
 #[derive(Debug)]
 pub struct OpenDriveRoadObjectsObjectOutlineXElementType {
-    pub content_73: Option<OpenDriveRoadObjectsObjectOutlineContent73XType>,
+    pub content_29: Option<OpenDriveRoadObjectsObjectOutlineContent29XType>,
 }
 #[derive(Debug)]
 pub struct OpenDriveRoadObjectsObjectMaterialXElementType {
@@ -1037,11 +1037,11 @@ pub struct OpenDriveRoadRailroadSwitchPartnerXElementType {
     pub id_attrib: Option<String>,
 }
 #[derive(Debug)]
-pub struct OpenDriveRoadObjectsObjectOutlineContent73XType {
-    pub content: OpenDriveRoadObjectsObjectOutlineContent73XTypeContent,
+pub struct OpenDriveRoadObjectsObjectOutlineContent29XType {
+    pub content: OpenDriveRoadObjectsObjectOutlineContent29XTypeContent,
 }
 #[derive(Debug)]
-pub enum OpenDriveRoadObjectsObjectOutlineContent73XTypeContent {
+pub enum OpenDriveRoadObjectsObjectOutlineContent29XTypeContent {
     CornerRoad(Vec<OpenDriveRoadObjectsObjectOutlineCornerRoadXElementType>),
     CornerLocal(Vec<OpenDriveRoadObjectsObjectOutlineCornerLocalXElementType>),
     UserData(Vec<UserDataXType>),

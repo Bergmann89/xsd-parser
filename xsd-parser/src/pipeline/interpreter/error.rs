@@ -25,6 +25,20 @@ pub enum Error {
     #[error("Ambiguous type: {0}!")]
     AmbiguousType(TypeIdent),
 
+    /// Expected simple type.
+    ///
+    /// Expected the specified type to be simple because it is referenced
+    /// in a context that requires a simple type.
+    #[error("Expected simple type: {0}!")]
+    ExpectedSimpleType(TypeIdent),
+
+    /// Expected complex type.
+    ///
+    /// Expected the specified type to be complex because it is referenced
+    /// in a context that requires a complex type.
+    #[error("Expected complex type: {0}!")]
+    ExpectedComplexType(TypeIdent),
+
     /// Expected dynamic element.
     ///
     /// Expected the specified element to be dynamic because it is referenced
@@ -32,30 +46,12 @@ pub enum Error {
     #[error("Expected dynamic element: {0}!")]
     ExpectedDynamicElement(TypeIdent),
 
-    /// Unknown node.
-    ///
-    /// Is raised if a specific node could not be found inside the schema definitions.
-    #[error("Unknown node: {0}!")]
-    UnknownNode(TypeIdent),
-
     /// Unknown type.
     ///
     /// Is raised if a type identifier could not been resolved to the actual
     /// type information.
     #[error("Unknown type: {0}!")]
     UnknownType(TypeIdent),
-
-    /// Unknown element.
-    ///
-    /// Is raised if an element referenced inside the XML schema could not be resolved.
-    #[error("Unknown element: {0}!")]
-    UnknownElement(TypeIdent),
-
-    /// Unknown attribute.
-    ///
-    /// Is raised if an attribute referenced inside the XML schema could not be resolved.
-    #[error("Unknown attribute: {0}!")]
-    UnknownAttribute(String),
 
     /// Unknown namespace.
     ///
@@ -79,12 +75,6 @@ pub enum Error {
     /// [`with_anonymous_namespace`](crate::pipeline::parser::Parser::with_anonymous_namespace)).
     #[error("Anonymous namespace is undefined!")]
     AnonymousNamespaceIsUndefined,
-
-    /// Invalid value.
-    ///
-    /// Is raised if a value from the XML schema is malformed or invalid.
-    #[error("Invalid value for `{0}`!")]
-    InvalidValue(&'static str),
 
     /// Invalid local name.
     ///
@@ -126,4 +116,11 @@ pub enum Error {
     /// The interpreter expected a group type (like `xs:all`, `xs:choice` or `xs:sequence`).
     #[error("Expected group type!")]
     ExpectedGroupType,
+
+    /// Circular dependency.
+    ///
+    /// Is raised if the interpreter detects a circular strong dependency between
+    /// types during type generation.
+    #[error("Circular dependency detected for type: {0}!")]
+    CircularDependency(TypeIdent),
 }

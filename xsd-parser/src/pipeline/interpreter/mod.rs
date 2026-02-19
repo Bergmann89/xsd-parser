@@ -24,11 +24,7 @@
 //! ```
 
 mod error;
-mod name_builder;
-mod post_process;
-mod schema;
 mod state;
-mod variant_builder;
 
 use std::fmt::Debug;
 
@@ -37,24 +33,20 @@ use tracing::instrument;
 
 use xsd_parser_types::misc::Namespace;
 
-use crate::models::{
-    meta::{
-        AnyAttributeMeta, AnyMeta, AttributeMeta, BuildInMeta, ComplexMeta, CustomMeta,
-        ElementMeta, GroupMeta, MetaType, MetaTypeVariant, MetaTypes, ReferenceMeta, SimpleMeta,
-    },
-    schema::{
-        xs::{FormChoiceType, ProcessContentsType},
-        MaxOccurs, NamespaceId, Schemas,
-    },
-    AttributeIdent, ElementIdent, IdentCache, Name, TypeIdent,
+use crate::models::meta::{
+    AnyAttributeMeta, AnyMeta, AttributeMeta, BuildInMeta, ComplexMeta, CustomMeta, ElementMeta,
+    GroupMeta, MetaType, MetaTypeVariant, MetaTypes, ReferenceMeta, SimpleMeta,
 };
+use crate::models::schema::{
+    xs::{FormChoiceType, ProcessContentsType},
+    MaxOccurs, NamespaceId, Schemas,
+};
+use crate::models::{AttributeIdent, ElementIdent, IdentCache, Name, TypeIdent};
 use crate::traits::{NameBuilderExt as _, Naming};
 
 pub use error::Error;
 
-use self::schema::SchemaInterpreter;
-use self::state::{Node, StackEntry, State};
-use self::variant_builder::VariantBuilder;
+use self::state::State;
 
 /// The `Interpreter` transforms raw parsed XML schema data into semantically
 /// meaningful Rust-compatible type metadata.
@@ -69,7 +61,6 @@ use self::variant_builder::VariantBuilder;
 #[derive(Debug)]
 pub struct Interpreter<'a> {
     state: State<'a>,
-    schemas: &'a Schemas,
 }
 
 impl<'a> Interpreter<'a> {
@@ -77,7 +68,7 @@ impl<'a> Interpreter<'a> {
     pub fn new(schemas: &'a Schemas) -> Self {
         let state = State::new(schemas);
 
-        Self { state, schemas }
+        Self { state }
     }
 
     /// Add a custom [`MetaType`] information for the passed `ident`ifier to the
@@ -92,7 +83,7 @@ impl<'a> Interpreter<'a> {
         I: Into<TypeIdent> + Debug,
         T: Into<MetaType> + Debug,
     {
-        self.state.add_type(ident, type_, true, true)?;
+        self.state.add_type(ident, type_)?;
 
         Ok(self)
     }
@@ -110,8 +101,7 @@ impl<'a> Interpreter<'a> {
         I: Into<TypeIdent> + Debug,
         T: Into<TypeIdent> + Debug,
     {
-        self.state
-            .add_type(ident, ReferenceMeta::new(type_), true, true)?;
+        self.state.add_type(ident, ReferenceMeta::new(type_))?;
 
         Ok(self)
     }
@@ -124,7 +114,8 @@ impl<'a> Interpreter<'a> {
     #[instrument(err, level = "trace", skip(self))]
     pub fn with_buildin_types(mut self) -> Result<Self, Error> {
         let anonymous = self
-            .schemas
+            .state
+            .schemas()
             .resolve_namespace(&None)
             .ok_or_else(|| Error::AnonymousNamespaceIsUndefined)?;
 
@@ -133,7 +124,7 @@ impl<'a> Interpreter<'a> {
                 let ident = TypeIdent::$ident.with_ns(anonymous);
                 let ty = BuildInMeta::$type;
 
-                self.state.add_type(ident, ty, true, true)?;
+                self.state.add_type(ident, ty)?;
             }};
         }
 
@@ -169,11 +160,13 @@ impl<'a> Interpreter<'a> {
     #[instrument(err, level = "trace", skip(self))]
     pub fn with_default_typedefs(mut self) -> Result<Self, Error> {
         let anonymous = self
-            .schemas
+            .state
+            .schemas()
             .resolve_namespace(&None)
             .ok_or_else(|| Error::AnonymousNamespaceIsUndefined)?;
         let xs = self
-            .schemas
+            .state
+            .schemas()
             .resolve_namespace(&Some(Namespace::XS))
             .ok_or_else(|| Error::UnknownNamespace(Namespace::XS.clone()))?;
 
@@ -182,8 +175,7 @@ impl<'a> Interpreter<'a> {
                 let src = TypeIdent::type_($src).with_ns(xs);
                 let dst = TypeIdent::$dst.with_ns(anonymous);
 
-                self.state
-                    .add_type(src, ReferenceMeta::new(dst), true, true)?;
+                self.state.add_type(src, ReferenceMeta::new(dst))?;
             }};
         }
         macro_rules! add_list {
@@ -196,8 +188,6 @@ impl<'a> Interpreter<'a> {
                     ReferenceMeta::new(dst)
                         .min_occurs(0)
                         .max_occurs(MaxOccurs::Unbounded),
-                    true,
-                    true,
                 )?;
             }};
         }
@@ -279,7 +269,8 @@ impl<'a> Interpreter<'a> {
     #[instrument(err, level = "trace", skip(self))]
     pub fn with_xs_any_type(mut self) -> Result<Self, Error> {
         let xs = self
-            .schemas
+            .state
+            .schemas()
             .resolve_namespace(&Some(Namespace::XS))
             .ok_or_else(|| Error::UnknownNamespace(Namespace::XS.clone()))?;
 
@@ -310,8 +301,7 @@ impl<'a> Interpreter<'a> {
         let content_variant = MetaTypeVariant::Sequence(content_sequence);
         let content_type = MetaType::new(content_variant);
 
-        self.state
-            .add_type(content_ident.clone(), content_type, true, false)?;
+        self.state.add_type(content_ident.clone(), content_type)?;
 
         /* xs:anyType */
 
@@ -340,7 +330,7 @@ impl<'a> Interpreter<'a> {
         let variant = MetaTypeVariant::ComplexType(complex);
         let type_ = MetaType::new(variant);
 
-        self.state.add_type(ident, type_, true, true)?;
+        self.state.add_type(ident, type_)?;
 
         Ok(self)
     }
@@ -353,11 +343,13 @@ impl<'a> Interpreter<'a> {
     #[instrument(err, level = "trace", skip(self))]
     pub fn with_xs_any_simple_type(mut self) -> Result<Self, Error> {
         let xs = self
-            .schemas
+            .state
+            .schemas()
             .resolve_namespace(&Some(Namespace::XS))
             .ok_or_else(|| Error::UnknownNamespace(Namespace::XS.clone()))?;
         let xsi = self
-            .schemas
+            .state
+            .schemas()
             .resolve_namespace(&Some(Namespace::XSI))
             .ok_or_else(|| Error::UnknownNamespace(Namespace::XSI.clone()))?;
 
@@ -369,8 +361,7 @@ impl<'a> Interpreter<'a> {
             TypeIdent::STRING,
         )));
 
-        self.state
-            .add_type(content_ident.clone(), content_type, true, false)?;
+        self.state.add_type(content_ident.clone(), content_type)?;
 
         /* xs:anySimpleType */
 
@@ -394,7 +385,7 @@ impl<'a> Interpreter<'a> {
         let variant = MetaTypeVariant::ComplexType(complex);
         let type_ = MetaType::new(variant);
 
-        self.state.add_type(ident, type_, true, true)?;
+        self.state.add_type(ident, type_)?;
 
         Ok(self)
     }
@@ -407,18 +398,15 @@ impl<'a> Interpreter<'a> {
     /// Returns a suitable [`Error`] if the operation was not successful.
     pub fn with_num_big_int(mut self) -> Result<Self, Error> {
         let xs = self
-            .schemas
+            .state
+            .schemas()
             .resolve_namespace(&Some(Namespace::XS))
             .ok_or_else(|| Error::UnknownNamespace(Namespace::XS.clone()))?;
 
         macro_rules! add {
             ($src:expr, $dst:expr) => {{
-                self.state.add_type(
-                    TypeIdent::type_($src).with_ns(xs),
-                    ReferenceMeta::new($dst),
-                    true,
-                    true,
-                )?;
+                self.state
+                    .add_type(TypeIdent::type_($src).with_ns(xs), ReferenceMeta::new($dst))?;
             }};
         }
 
@@ -445,10 +433,8 @@ impl<'a> Interpreter<'a> {
         let ident_big_int = TypeIdent::type_("BigInt").with_ns(NamespaceId::ANONYMOUS);
         let ident_big_uint = TypeIdent::type_("BigUint").with_ns(NamespaceId::ANONYMOUS);
 
-        self.state
-            .add_type(ident_big_int.clone(), big_int, true, false)?;
-        self.state
-            .add_type(ident_big_uint.clone(), big_uint, true, false)?;
+        self.state.add_type(ident_big_int.clone(), big_int)?;
+        self.state.add_type(ident_big_uint.clone(), big_uint)?;
 
         add!("integer", ident_big_int.clone());
         add!("negativeInteger", ident_big_int.clone());
@@ -469,18 +455,15 @@ impl<'a> Interpreter<'a> {
     /// Returns a suitable [`Error`] if the operation was not successful.
     pub fn with_nonzero_typedefs(mut self) -> Result<Self, Error> {
         let xs = self
-            .schemas
+            .state
+            .schemas()
             .resolve_namespace(&Some(Namespace::XS))
             .ok_or_else(|| Error::UnknownNamespace(Namespace::XS.clone()))?;
 
         macro_rules! add {
             ($src:expr, $dst:expr) => {{
-                self.state.add_type(
-                    TypeIdent::type_($src).with_ns(xs),
-                    ReferenceMeta::new($dst),
-                    true,
-                    true,
-                )?;
+                self.state
+                    .add_type(TypeIdent::type_($src).with_ns(xs), ReferenceMeta::new($dst))?;
             }};
         }
 
@@ -508,9 +491,9 @@ impl<'a> Interpreter<'a> {
         let ident_non_zero_isize = TypeIdent::type_("NonZeroIsize").with_ns(NamespaceId::ANONYMOUS);
 
         self.state
-            .add_type(ident_non_zero_usize.clone(), non_zero_usize, true, true)?;
+            .add_type(ident_non_zero_usize.clone(), non_zero_usize)?;
         self.state
-            .add_type(ident_non_zero_isize.clone(), non_zero_isize, true, true)?;
+            .add_type(ident_non_zero_isize.clone(), non_zero_isize)?;
 
         add!("positiveInteger", ident_non_zero_usize);
         add!("negativeInteger", ident_non_zero_isize);
@@ -550,12 +533,6 @@ impl<'a> Interpreter<'a> {
     /// Returns a suitable [`Error`] if the operation was not successful.
     #[instrument(err, level = "trace", skip(self))]
     pub fn finish(self) -> Result<(MetaTypes, IdentCache), Error> {
-        let Self { schemas, state } = self;
-
-        let (mut types, ident_cache) = state.finish(schemas)?;
-
-        post_process::fix_element_naming_conflicts(self.schemas, &mut types);
-
-        Ok((types, ident_cache))
+        self.state.finish()
     }
 }

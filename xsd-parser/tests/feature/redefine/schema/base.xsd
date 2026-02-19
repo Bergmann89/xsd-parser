@@ -1,0 +1,22 @@
+<xs:schema
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://example.com"
+    targetNamespace="http://example.com"
+    elementFormDefault="unqualified">
+
+    <xs:simpleType name="GenderType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="male"/>
+            <xs:enumeration value="female"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="PersonType">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string" />
+            <xs:element name="gender" type="tns:GenderType" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:element name="Person" type="tns:PersonType" />
+</xs:schema>

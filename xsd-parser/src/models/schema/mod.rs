@@ -11,6 +11,7 @@ pub mod xs;
 mod occurs;
 
 use std::collections::btree_map::{BTreeMap, Iter, IterMut};
+use std::ops::Deref;
 
 use url::Url;
 
@@ -78,7 +79,23 @@ pub struct SchemaInfo {
     pub(crate) namespace_id: NamespaceId,
 
     /// Dependencies of this schema, mapping schema paths to their IDs.
-    pub(crate) dependencies: BTreeMap<String, SchemaId>,
+    pub(crate) dependencies: BTreeMap<String, Dependency<SchemaId>>,
+}
+
+/// Represents the different types of dependencies a schema can have on another schema.
+#[derive(Debug, Clone, Copy, Eq, PartialEq, Ord, PartialOrd, Hash)]
+pub enum Dependency<T> {
+    /// The schema is included by another schema.
+    Include(T),
+
+    /// The schema is imported by another schema.
+    Import(T),
+
+    /// The schema is overridden by another schema.
+    Override(T),
+
+    /// The schema is redefined by another schema.
+    Redefine(T),
 }
 
 /// Represents an unique id for a XML schema.
@@ -236,14 +253,57 @@ impl SchemaInfo {
 
     /// Get the dependencies of this schema, mapping schema paths to their IDs.
     #[must_use]
-    pub fn dependencies(&self) -> &BTreeMap<String, SchemaId> {
+    pub fn dependencies(&self) -> &BTreeMap<String, Dependency<SchemaId>> {
         &self.dependencies
     }
 
     /// Returns `true` if this schema depends on the given schema id, `false` otherwise.
     #[must_use]
     pub fn depends_on(&self, schema_id: &SchemaId) -> bool {
-        self.dependencies.values().any(|id| id == schema_id)
+        self.dependencies
+            .values()
+            .any(|id| id.as_ref() == schema_id)
+    }
+}
+
+/* Dependency */
+
+impl<T> Dependency<T> {
+    /// Maps the inner value of this dependency to another type using the provided function `f`.
+    pub fn map<F, U>(self, f: F) -> Dependency<U>
+    where
+        F: FnOnce(T) -> U,
+    {
+        match self {
+            Dependency::Include(x) => Dependency::Include(f(x)),
+            Dependency::Import(x) => Dependency::Import(f(x)),
+            Dependency::Override(x) => Dependency::Override(f(x)),
+            Dependency::Redefine(x) => Dependency::Redefine(f(x)),
+        }
+    }
+}
+
+impl<T> Deref for Dependency<T> {
+    type Target = T;
+
+    fn deref(&self) -> &Self::Target {
+        match self {
+            Dependency::Include(x)
+            | Dependency::Import(x)
+            | Dependency::Override(x)
+            | Dependency::Redefine(x) => x,
+        }
+    }
+}
+
+impl<T> AsRef<T> for Dependency<T> {
+    fn as_ref(&self) -> &T {
+        match self {
+            Dependency::Include(x)
+            | Dependency::Import(x)
+            | Dependency::Override(x)
+            | Dependency::Redefine(x) => x,
+        }
     }
 }
 

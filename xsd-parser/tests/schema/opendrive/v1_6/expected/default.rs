@@ -342,7 +342,7 @@ pub struct TRoadSignalsSignalXType {
     pub validity: Vec<TRoadObjectsObjectLaneValidityXType>,
     pub dependency: Vec<TRoadSignalsSignalDependencyXType>,
     pub reference: Vec<TRoadSignalsSignalReferenceXType>,
-    pub content_34: Option<TRoadSignalsSignalContent34XType>,
+    pub content_91: Option<TRoadSignalsSignalContent91XType>,
     pub g_additional_data: Vec<TRoadSignalsSignalGAdditionalDataXType>,
 }
 #[derive(Debug)]
@@ -796,7 +796,7 @@ pub struct TRoadObjectsObjectOutlinesOutlineXType {
     pub outer_attrib: Option<TBoolXType>,
     pub closed_attrib: Option<TBoolXType>,
     pub lane_type_attrib: Option<ELaneTypeXType>,
-    pub content_70: Option<TRoadObjectsObjectOutlinesOutlineContent70XType>,
+    pub content_61: Option<TRoadObjectsObjectOutlinesOutlineContent61XType>,
     pub g_additional_data: Vec<TRoadObjectsObjectOutlinesOutlineGAdditionalDataXType>,
 }
 #[derive(Debug)]
@@ -985,7 +985,7 @@ pub struct TRoadLanesLaneSectionCenterLaneXType {
     pub level_attrib: Option<TBoolXType>,
     pub id_attrib: i32,
     pub link: Option<TRoadLanesLaneSectionLcrLaneLinkXType>,
-    pub content_82: Vec<TRoadLanesLaneSectionLrLaneContent82XType>,
+    pub content_25: Vec<TRoadLanesLaneSectionLrLaneContent25XType>,
     pub road_mark: Vec<TRoadLanesLaneSectionLcrLaneRoadMarkXType>,
     pub material: Vec<TRoadLanesLaneSectionLrLaneMaterialXType>,
     pub speed: Vec<TRoadLanesLaneSectionLrLaneSpeedXType>,
@@ -1068,7 +1068,7 @@ pub struct TRoadLanesLaneSectionLeftLaneXType {
     pub level_attrib: Option<TBoolXType>,
     pub id_attrib: usize,
     pub link: Option<TRoadLanesLaneSectionLcrLaneLinkXType>,
-    pub content_82: Vec<TRoadLanesLaneSectionLrLaneContent82XType>,
+    pub content_25: Vec<TRoadLanesLaneSectionLrLaneContent25XType>,
     pub road_mark: Vec<TRoadLanesLaneSectionLcrLaneRoadMarkXType>,
     pub material: Vec<TRoadLanesLaneSectionLrLaneMaterialXType>,
     pub speed: Vec<TRoadLanesLaneSectionLrLaneSpeedXType>,
@@ -1082,7 +1082,7 @@ pub struct TRoadLanesLaneSectionLrLaneXType {
     pub type_attrib: ELaneTypeXType,
     pub level_attrib: Option<TBoolXType>,
     pub link: Option<TRoadLanesLaneSectionLcrLaneLinkXType>,
-    pub content_82: Vec<TRoadLanesLaneSectionLrLaneContent82XType>,
+    pub content_25: Vec<TRoadLanesLaneSectionLrLaneContent25XType>,
     pub road_mark: Vec<TRoadLanesLaneSectionLcrLaneRoadMarkXType>,
     pub material: Vec<TRoadLanesLaneSectionLrLaneMaterialXType>,
     pub speed: Vec<TRoadLanesLaneSectionLrLaneSpeedXType>,
@@ -1148,7 +1148,7 @@ pub struct TRoadLanesLaneSectionRightLaneXType {
     pub level_attrib: Option<TBoolXType>,
     pub id_attrib: isize,
     pub link: Option<TRoadLanesLaneSectionLcrLaneLinkXType>,
-    pub content_82: Vec<TRoadLanesLaneSectionLrLaneContent82XType>,
+    pub content_25: Vec<TRoadLanesLaneSectionLrLaneContent25XType>,
     pub road_mark: Vec<TRoadLanesLaneSectionLcrLaneRoadMarkXType>,
     pub material: Vec<TRoadLanesLaneSectionLrLaneMaterialXType>,
     pub speed: Vec<TRoadLanesLaneSectionLrLaneSpeedXType>,
@@ -1309,11 +1309,11 @@ pub struct TRoadSignalsGAdditionalDataXType {
     pub data_quality: Option<TDataQualityXType>,
 }
 #[derive(Debug)]
-pub struct TRoadSignalsSignalContent34XType {
-    pub content: TRoadSignalsSignalContent34XTypeContent,
+pub struct TRoadSignalsSignalContent91XType {
+    pub content: TRoadSignalsSignalContent91XTypeContent,
 }
 #[derive(Debug)]
-pub enum TRoadSignalsSignalContent34XTypeContent {
+pub enum TRoadSignalsSignalContent91XTypeContent {
     PositionRoad(TRoadSignalsSignalPositionRoadXType),
     PositionInertial(TRoadSignalsSignalPositionInertialXType),
 }
@@ -1432,11 +1432,11 @@ pub struct TRoadObjectsObjectOutlinesGAdditionalDataXType {
     pub data_quality: Option<TDataQualityXType>,
 }
 #[derive(Debug)]
-pub struct TRoadObjectsObjectOutlinesOutlineContent70XType {
-    pub content: TRoadObjectsObjectOutlinesOutlineContent70XTypeContent,
+pub struct TRoadObjectsObjectOutlinesOutlineContent61XType {
+    pub content: TRoadObjectsObjectOutlinesOutlineContent61XTypeContent,
 }
 #[derive(Debug)]
-pub enum TRoadObjectsObjectOutlinesOutlineContent70XTypeContent {
+pub enum TRoadObjectsObjectOutlinesOutlineContent61XTypeContent {
     CornerRoad(Vec<TRoadObjectsObjectOutlinesOutlineCornerRoadXType>),
     CornerLocal(Vec<TRoadObjectsObjectOutlinesOutlineCornerLocalXType>),
 }
@@ -1471,11 +1471,11 @@ pub struct TRoadLanesLaneSectionCenterGAdditionalDataXType {
     pub data_quality: Option<TDataQualityXType>,
 }
 #[derive(Debug)]
-pub struct TRoadLanesLaneSectionLrLaneContent82XType {
-    pub content: TRoadLanesLaneSectionLrLaneContent82XTypeContent,
+pub struct TRoadLanesLaneSectionLrLaneContent25XType {
+    pub content: TRoadLanesLaneSectionLrLaneContent25XTypeContent,
 }
 #[derive(Debug)]
-pub enum TRoadLanesLaneSectionLrLaneContent82XTypeContent {
+pub enum TRoadLanesLaneSectionLrLaneContent25XTypeContent {
     Border(Vec<TRoadLanesLaneSectionLrLaneBorderXType>),
     Width(Vec<TRoadLanesLaneSectionLrLaneWidthXType>),
 }

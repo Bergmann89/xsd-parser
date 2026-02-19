@@ -1,0 +1,17 @@
+<xs:schema
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://example.com"
+    targetNamespace="http://example.com"
+    elementFormDefault="unqualified">
+
+    <xs:include schemaLocation="base.xsd" />
+
+    <xs:complexType name="PersonsType">
+        <xs:sequence>
+            <xs:element ref="tns:Person" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:element name="Persons" type="tns:PersonsType" />
+
+</xs:schema>

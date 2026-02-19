@@ -50,6 +50,8 @@ mod nillable_dynamic_types;
 mod nonzero_int;
 mod num_big_int;
 mod numeric_fields;
+mod override_;
+mod redefine;
 mod ref_to_attribute;
 mod schema_display_name;
 mod schema_no_prefix;

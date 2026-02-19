@@ -1,5 +1,6 @@
 use std::borrow::Cow;
 use std::fmt::{Debug, Display, Formatter, Result as FmtResult};
+use std::hash::{Hash, Hasher};
 
 use quick_xml::name::{QName as QuickXmlQName, ResolveResult};
 
@@ -11,7 +12,7 @@ use crate::quick_xml::{DeserializeBytes, DeserializeHelper, Error};
 /// Type that represents a a resolved [`QName`].
 ///
 /// The namespace of this [`QName`] was resolved during deserialization.
-#[derive(Clone, Eq, PartialEq)]
+#[derive(Clone)]
 pub struct QName {
     raw: Vec<u8>,
     index: Option<usize>,
@@ -23,6 +24,22 @@ impl QName {
     #[must_use]
     pub fn as_bytes(&self) -> &[u8] {
         &self.raw
+    }
+
+    /// Create a new [`QName`] instance from the passed `bytes`.
+    #[must_use]
+    pub fn from_bytes<X>(bytes: X) -> Self
+    where
+        X: Into<Vec<u8>>,
+    {
+        let raw = bytes.into();
+        let index = raw.iter().position(|x| *x == b':');
+
+        Self {
+            raw,
+            index,
+            ns: None,
+        }
     }
 
     /// Create a new [`QName`] instance from the passed `reader` and `raw` data.
@@ -100,5 +117,28 @@ impl Debug for QName {
 impl Display for QName {
     fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
         format_utf8_slice(&self.raw, f)
+    }
+}
+
+impl Eq for QName {}
+
+impl PartialEq for QName {
+    fn eq(&self, other: &Self) -> bool {
+        if let (Some(ns1), Some(ns2)) = (&self.ns, &other.ns) {
+            ns1 == ns2 && self.local_name() == other.local_name()
+        } else {
+            self.raw == other.raw
+        }
+    }
+}
+
+impl Hash for QName {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        if let Some(ns) = &self.ns {
+            ns.hash(state);
+            self.local_name().hash(state);
+        } else {
+            self.raw.hash(state);
+        }
     }
 }

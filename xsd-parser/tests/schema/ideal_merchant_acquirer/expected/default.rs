@@ -91,7 +91,7 @@ pub struct X509DataType {
 }
 #[derive(Debug)]
 pub struct X509DataTypeContent {
-    pub content_43: X509DataContent43Type,
+    pub content_19: X509DataContent19Type,
 }
 #[derive(Debug)]
 pub struct PgpDataType {
@@ -99,8 +99,8 @@ pub struct PgpDataType {
 }
 #[derive(Debug)]
 pub enum PgpDataTypeContent {
-    Content47(PgpDataContent47Type),
-    Content49(PgpDataContent49Type),
+    Content23(PgpDataContent23Type),
+    Content25(PgpDataContent25Type),
 }
 #[derive(Debug)]
 pub struct SpkiDataType {
@@ -120,11 +120,11 @@ pub struct DigestMethodType {
 }
 #[derive(Debug)]
 pub struct DsaKeyValueType {
-    pub content_60: Option<DsaKeyValueContent60Type>,
+    pub content_36: Option<DsaKeyValueContent36Type>,
     pub g: Option<String>,
     pub y: String,
     pub j: Option<String>,
-    pub content_61: Option<DsaKeyValueContent61Type>,
+    pub content_37: Option<DsaKeyValueContent37Type>,
 }
 #[derive(Debug)]
 pub struct RsaKeyValueType {
@@ -132,11 +132,11 @@ pub struct RsaKeyValueType {
     pub exponent: String,
 }
 #[derive(Debug)]
-pub struct X509DataContent43Type {
-    pub content: X509DataContent43TypeContent,
+pub struct X509DataContent19Type {
+    pub content: X509DataContent19TypeContent,
 }
 #[derive(Debug)]
-pub enum X509DataContent43TypeContent {
+pub enum X509DataContent19TypeContent {
     X509IssuerSerial(X509IssuerSerialType),
     X509Ski(String),
     X509SubjectName(String),
@@ -144,12 +144,12 @@ pub enum X509DataContent43TypeContent {
     X509Crl(String),
 }
 #[derive(Debug)]
-pub struct PgpDataContent47Type {
+pub struct PgpDataContent23Type {
     pub pgp_key_id: String,
     pub pgp_key_packet: Option<String>,
 }
 #[derive(Debug)]
-pub struct PgpDataContent49Type {
+pub struct PgpDataContent25Type {
     pub pgp_key_packet: String,
 }
 #[derive(Debug)]
@@ -162,12 +162,12 @@ pub enum TransformTypeContent {
     XPath(String),
 }
 #[derive(Debug)]
-pub struct DsaKeyValueContent60Type {
+pub struct DsaKeyValueContent36Type {
     pub p: String,
     pub q: String,
 }
 #[derive(Debug)]
-pub struct DsaKeyValueContent61Type {
+pub struct DsaKeyValueContent37Type {
     pub seed: String,
     pub pgen_counter: String,
 }

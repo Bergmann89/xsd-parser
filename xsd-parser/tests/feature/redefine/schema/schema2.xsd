@@ -1,0 +1,28 @@
+<xs:schema
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://example.com"
+    targetNamespace="http://example.com"
+    elementFormDefault="unqualified">
+
+    <xs:redefine schemaLocation="base.xsd">
+        <xs:complexType name="PersonType">
+            <xs:complexContent>
+                <xs:extension base="tns:PersonType">
+                    <xs:sequence>
+                        <xs:element name="lastName" type="xs:string" />
+                        <xs:element name="age" type="xs:int" />
+                    </xs:sequence>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:redefine>
+
+    <xs:complexType name="AdvancedPersonsType">
+        <xs:sequence>
+            <xs:element ref="tns:Person" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:element name="AdvancedPersons" type="tns:AdvancedPersonsType" />
+
+</xs:schema>

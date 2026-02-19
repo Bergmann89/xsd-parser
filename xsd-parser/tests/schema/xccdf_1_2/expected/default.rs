@@ -1970,7 +1970,7 @@ pub mod cdf {
         pub import_xpath: Option<String>,
         pub text_before: Option<Text>,
         pub any: Option<AnyElement>,
-        pub text_after_any_36: Option<Text>,
+        pub text_after_any_40: Option<Text>,
     }
     /// Data type for the xccdf:check-export element,
     ///which specifies a mapping from an xccdf:Value element to a checking system

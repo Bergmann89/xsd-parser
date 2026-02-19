@@ -1,7 +1,10 @@
 use std::borrow::Cow;
-use std::collections::{HashMap, HashSet};
+use std::collections::{hash_set::Iter as HashSetIter, HashMap, HashSet};
+use std::iter::FusedIterator;
+use std::slice::Iter as SliceIter;
 
-use crate::InterpreterError;
+use crate::models::schema::Dependency;
+use crate::{InterpreterError, Name};
 
 use super::{
     schema::{NamespaceId, SchemaId},
@@ -27,13 +30,33 @@ pub struct IdentCache {
     global_namespaces: Vec<NamespaceId>,
 }
 
+/// Iterator over all identifiers that are known to the [`IdentCache`] in the
+/// context of the specified `schema` set. Not including the global namespaces,
+/// the unknown schema and the identifiers referenced by a `xs:include`.
+#[derive(Debug)]
+pub struct SchemaSetIter<'a> {
+    cache: &'a IdentCache,
+
+    visited: HashSet<SchemaId>,
+    emitted: HashSet<(IdentType, Cow<'a, str>)>,
+
+    types_iter: Option<TypesIterTuple<'a>>,
+    dependencies_iter: Vec<SliceIter<'a, Dependency<SchemaId>>>,
+}
+
 #[derive(Debug)]
 struct SchemaEntry {
     ns: NamespaceId,
     schema: SchemaId,
     types: HashSet<(IdentType, Cow<'static, str>)>,
-    dependencies: Vec<SchemaId>,
+    dependencies: Vec<Dependency<SchemaId>>,
 }
+
+type TypesIterTuple<'a> = (
+    NamespaceId,
+    SchemaId,
+    HashSetIter<'a, (IdentType, Cow<'static, str>)>,
+);
 
 impl IdentCache {
     /// Insert the passed `ident`ifier into the cache.
@@ -85,7 +108,7 @@ impl IdentCache {
     /// # Returns
     /// Returns `true` if the dependency was added, or `false` if it already
     /// existed or if `schema` is not known to the cache.
-    pub fn add_dependency(&mut self, schema: SchemaId, dependency: SchemaId) -> bool {
+    pub fn add_dependency(&mut self, schema: SchemaId, dependency: Dependency<SchemaId>) -> bool {
         if let Some(entry) = self.schemas.get_mut(&schema) {
             if !entry.dependencies.contains(&dependency) {
                 entry.dependencies.push(dependency);
@@ -175,6 +198,14 @@ impl IdentCache {
         }
     }
 
+    /// Get an iterator over all identifiers that are known to the cache in the
+    /// context of the specified `schema` set. Not including the global namespaces,
+    /// the unknown schema and the identifiers referenced by a `xs:include`.
+    #[must_use]
+    pub fn schema_set(&self, schema: SchemaId) -> SchemaSetIter<'_> {
+        SchemaSetIter::new(self, schema)
+    }
+
     /// Try to resolve the passed `ident`ifier to an actual existing identifier.
     ///
     /// In contrast to [`resolve`](IdentCache::resolve), this function will search
@@ -232,7 +263,7 @@ impl IdentCache {
         }
 
         for dep in &entry.dependencies {
-            if let Some(found) = self.search_in_schema(visited, *dep, ident) {
+            if let Some(found) = self.search_in_schema(visited, **dep, ident) {
                 return Some(found);
             }
         }
@@ -261,3 +292,61 @@ impl SchemaEntry {
         }
     }
 }
+
+impl<'a> SchemaSetIter<'a> {
+    fn new(cache: &'a IdentCache, schema: SchemaId) -> Self {
+        let schema = cache.schemas.get(&schema);
+        let types_iter = schema.map(|x| (x.ns, x.schema, x.types.iter()));
+        let dependencies_iter = schema.map(|x| x.dependencies.iter()).into_iter().collect();
+
+        Self {
+            cache,
+            visited: HashSet::new(),
+            emitted: HashSet::new(),
+            types_iter,
+            dependencies_iter,
+        }
+    }
+}
+
+impl Iterator for SchemaSetIter<'_> {
+    type Item = TypeIdent;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        #[allow(clippy::redundant_else)]
+        loop {
+            if let Some((ns, schema, types_iter)) = &mut self.types_iter {
+                if let Some((type_, name)) = types_iter.next() {
+                    if !self.emitted.insert((*type_, Cow::Borrowed(name.as_ref()))) {
+                        continue;
+                    }
+
+                    break Some(TypeIdent {
+                        ns: *ns,
+                        schema: *schema,
+                        type_: *type_,
+                        name: Name::new_named(name.clone()),
+                    });
+                } else {
+                    self.types_iter = None;
+                }
+            } else if let Some(dependencies_iter) = self.dependencies_iter.last_mut() {
+                if let Some(dep) = dependencies_iter.next() {
+                    if self.visited.insert(**dep) {
+                        let Some(entry) = self.cache.schemas.get(&**dep) else {
+                            continue;
+                        };
+                        self.types_iter = Some((entry.ns, entry.schema, entry.types.iter()));
+                        self.dependencies_iter.push(entry.dependencies.iter());
+                    }
+                } else {
+                    self.dependencies_iter.pop();
+                }
+            } else {
+                break None;
+            }
+        }
+    }
+}
+
+impl FusedIterator for SchemaSetIter<'_> {}

@@ -8,6 +8,7 @@ use quote::format_ident;
 
 use crate::models::code::IdentPath;
 use crate::models::schema::{xs::FormChoiceType, SchemaId};
+use crate::models::TypeIdent;
 
 use super::{
     ComplexMeta, CustomMeta, DynamicMeta, EnumerationMeta, GroupMeta, MetaTypes, ReferenceMeta,
@@ -32,6 +33,9 @@ pub struct MetaType {
 
     /// Name to use for rendering instead of the auto generated name.
     pub display_name: Option<String>,
+
+    /// Base type this type is redefined/overwritten from, if any.
+    pub redefined_base: Option<TypeIdent>,
 
     /// Documentation of the type extracted from `xs:documentation` nodes.
     pub documentation: Vec<String>,
@@ -129,6 +133,7 @@ impl MetaType {
             form: None,
             schema: None,
             display_name: None,
+            redefined_base: None,
             documentation: Vec::new(),
         }
     }
@@ -153,6 +158,13 @@ impl MetaType {
     #[must_use]
     pub fn is_mixed(&self, types: &MetaTypes) -> bool {
         self.variant.is_mixed(types)
+    }
+
+    /// Returns `true` if this type is a redefinition or override of another type,
+    /// `false` otherwise.
+    #[must_use]
+    pub fn is_redefinition(&self) -> bool {
+        self.redefined_base.is_some()
     }
 }
 

@@ -5,6 +5,7 @@ use std::path::PathBuf;
 use thiserror::Error;
 use url::{ParseError as UrlParseError, Url};
 
+use xsd_parser_types::misc::Namespace;
 use xsd_parser_types::quick_xml::Error as XmlError;
 
 use super::resolver::ResolveRequest;
@@ -27,6 +28,22 @@ pub enum Error<E> {
     /// Unable to resolve the requested resource.
     #[error("Unable to resolve requested resource: {0}")]
     UnableToResolve(Box<ResolveRequest>),
+
+    /// The target namespace of the included schema does not
+    /// match the target namespace of the including schema.
+    #[error(
+        "Mismatching target namespace (location={location}, found={found}, expected={expected})"
+    )]
+    MismatchingTargetNamespace {
+        /// Location of the schema that was processed.
+        location: Url,
+
+        /// Target namespace that was found in the included schema.
+        found: Namespace,
+
+        /// Target namespace that was expected (i.e. the target namespace of the including schema).
+        expected: Namespace,
+    },
 
     /// Error while resolving the requested resource.
     #[error("Resolver Error: {0}")]
