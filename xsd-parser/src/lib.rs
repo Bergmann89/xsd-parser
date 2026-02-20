@@ -3,6 +3,7 @@
 #![doc = include_str!(concat!(env!("OUT_DIR"), "/README.md"))]
 
 pub mod config;
+pub mod misc;
 pub mod models;
 pub mod pipeline;
 pub mod traits;

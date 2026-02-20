@@ -3,11 +3,14 @@ use std::ops::Deref;
 use bitflags::bitflags;
 use proc_macro2::{Ident as Ident2, Literal, TokenStream};
 
-use crate::models::{
-    data::TagName,
-    meta::{AttributeMeta, ElementMeta},
-    schema::{MaxOccurs, MinOccurs},
-    TypeIdent,
+use crate::{
+    models::{
+        data::TagName,
+        meta::{AttributeMeta, ElementMeta},
+        schema::{MaxOccurs, MinOccurs},
+        TypeIdent,
+    },
+    pipeline::renderer::ValueRendererBox,
 };
 
 use super::{Occurs, PathData};
@@ -277,7 +280,7 @@ pub struct ComplexDataAttribute<'types> {
     pub target_type: PathData,
 
     /// The default value of the attribute.
-    pub default_value: Option<TokenStream>,
+    pub default_value: Option<ValueRendererBox>,
 
     /// Additional attributes that will be added to the attribute.
     pub extra_attributes: Vec<TokenStream>,

@@ -28,6 +28,7 @@ fn config() -> Config {
         .with_optimizer_flags(OptimizerFlags::all())
         .with_generator_flags(
             GeneratorFlags::all()
+                - GeneratorFlags::ADVANCED_ENUMS
                 - GeneratorFlags::NILLABLE_TYPE_SUPPORT
                 - GeneratorFlags::BUILD_IN_ABSOLUTE_PATHS
                 - GeneratorFlags::ABSOLUTE_PATHS_INSTEAD_USINGS,

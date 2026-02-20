@@ -159,6 +159,9 @@ pub enum RenderStep {
     /// Renderer to add constants for the namespaces to the generated code.
     NamespaceConstants,
 
+    /// Renderer to add constants for each variant of an enumeration using its simple base type.
+    EnumConstants,
+
     /// Renderer to add constants for the namespace prefixes to the generated code.
     PrefixConstants,
 
@@ -232,6 +235,7 @@ impl RenderStepConfig for RenderStep {
             Self::TypesSerdeXmlRs { .. } => RenderStepType::Types,
             Self::TypesSerdeQuickXml => RenderStepType::Types,
             Self::Defaults => RenderStepType::ExtraImpls,
+            Self::EnumConstants => RenderStepType::ExtraImpls,
             Self::PrefixConstants => RenderStepType::ExtraImpls,
             Self::NamespaceConstants => RenderStepType::ExtraImpls,
             Self::WithNamespaceTrait => RenderStepType::ExtraImpls,
@@ -246,8 +250,8 @@ impl RenderStepConfig for RenderStep {
 
     fn into_render_step(self: Box<Self>) -> Box<dyn RenderStepTrait> {
         use crate::pipeline::renderer::{
-            DefaultsRenderStep, NamespaceConstantsRenderStep, PrefixConstantsRenderStep,
-            QuickXmlDeserializeRenderStep, QuickXmlSerializeRenderStep,
+            DefaultsRenderStep, EnumConstantsRenderStep, NamespaceConstantsRenderStep,
+            PrefixConstantsRenderStep, QuickXmlDeserializeRenderStep, QuickXmlSerializeRenderStep,
             SerdeQuickXmlTypesRenderStep, SerdeXmlRsV7TypesRenderStep, SerdeXmlRsV8TypesRenderStep,
             TypesRenderStep, WithNamespaceTraitRenderStep,
         };
@@ -262,6 +266,7 @@ impl RenderStepConfig for RenderStep {
             } => Box::new(SerdeXmlRsV8TypesRenderStep),
             Self::TypesSerdeQuickXml => Box::new(SerdeQuickXmlTypesRenderStep),
             Self::Defaults => Box::new(DefaultsRenderStep),
+            Self::EnumConstants => Box::new(EnumConstantsRenderStep),
             Self::PrefixConstants => Box::new(PrefixConstantsRenderStep::default()),
             Self::NamespaceConstants => Box::new(NamespaceConstantsRenderStep::default()),
             Self::WithNamespaceTrait => Box::new(WithNamespaceTraitRenderStep),

@@ -104,7 +104,7 @@ fn read_quick_xml_custom_type() {
     use xsd_parser_types::xml::{AnySimpleType, Integer};
 
     let obj = crate::utils::quick_xml_read_test::<Foo, _>(
-        "tests/feature/any_simple_type/example/default.xml",
+        "tests/feature/any_simple_type/example/custom.xml",
     );
 
     assert_eq!(2, obj.value.len());
@@ -128,7 +128,7 @@ fn write_quick_xml_custom_type() {
     crate::utils::quick_xml_write_test(
         &obj,
         "Foo",
-        "tests/feature/any_simple_type/example/default.xml",
+        "tests/feature/any_simple_type/example/custom.xml",
     );
 }
 

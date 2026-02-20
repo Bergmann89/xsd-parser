@@ -1,0 +1,4 @@
+<my-ns:Foo xmlns:my-ns="http://example.com">
+    <my-ns:StringEnum>ON</my-ns:StringEnum>
+    <my-ns:QNameEnum>my-ns:Bar</my-ns:QNameEnum>
+</my-ns:Foo>

@@ -35,7 +35,7 @@ pub use self::complex::{
 pub use self::constrains::ConstrainsData;
 pub use self::custom::CustomData;
 pub use self::dynamic::{DerivedType, DynamicData};
-pub use self::enumeration::{EnumerationData, EnumerationTypeVariant};
+pub use self::enumeration::{EnumerationData, EnumerationDataVariant, EnumerationVariantValue};
 pub use self::occurs::Occurs;
 pub use self::path_data::PathData;
 pub use self::reference::ReferenceData;

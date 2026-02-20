@@ -42,6 +42,10 @@ use crate::models::schema::{
     MaxOccurs, NamespaceId, Schemas,
 };
 use crate::models::{AttributeIdent, ElementIdent, IdentCache, Name, TypeIdent};
+use crate::pipeline::generator::{
+    Context as GeneratorContext, Error as GeneratorError, ValueGenerator, ValueGeneratorMode,
+};
+use crate::pipeline::renderer::{Context as RendererContext, ValueRendererBox};
 use crate::traits::{NameBuilderExt as _, Naming};
 
 pub use error::Error;
@@ -146,6 +150,7 @@ impl<'a> Interpreter<'a> {
         add!(F64, F64);
 
         add!(BOOL, Bool);
+        add!(STR, Str);
         add!(STRING, String);
 
         Ok(self)
@@ -390,6 +395,31 @@ impl<'a> Interpreter<'a> {
         Ok(self)
     }
 
+    /// Add a type definition for `xs:QName` that uses the
+    /// `xsd_parser_types::xml::QName` type.
+    pub fn with_qname_type(self) -> Result<Self, Error> {
+        self.with_qname_type_from("::xsd_parser_types::xml::QName")
+    }
+
+    /// Add a type definition for `xs:QName` that uses the type defined at the passed `path`.
+    pub fn with_qname_type_from(self, path: &str) -> Result<Self, Error> {
+        let xs = self
+            .state
+            .schemas()
+            .resolve_namespace(&Some(Namespace::XS))
+            .ok_or_else(|| Error::UnknownNamespace(Namespace::XS.clone()))?;
+
+        let name = path.rsplit_once("::").map_or(path, |(_, name)| name);
+
+        self.with_type(
+            TypeIdent::type_("QName").with_ns(xs),
+            CustomMeta::new(name)
+                .include_from(path)
+                .with_namespace(xs)
+                .with_default(crate::misc::qname_default),
+        )
+    }
+
     /// Add type definitions for numeric XML types (like `xs:int`) that
     /// uses `num::BigInt` and `num::BigUint` instead of build-in integer types.
     ///
@@ -412,23 +442,11 @@ impl<'a> Interpreter<'a> {
 
         let big_int = CustomMeta::new("BigInt")
             .include_from("::num::BigInt")
-            .with_default(|s: &str| {
-                let code = quote! {
-                    <num::BigInt as core::str::FromStr>::from_str(#s).unwrap()
-                };
-
-                Some(code)
-            });
+            .with_default(make_from_str_value_generator("::num::BigInt"));
 
         let big_uint = CustomMeta::new("BigUint")
             .include_from("::num::BigUint")
-            .with_default(|s: &str| {
-                let code = quote! {
-                    <num::BigUint as core::str::FromStr>::from_str(#s).unwrap()
-                };
-
-                Some(code)
-            });
+            .with_default(make_from_str_value_generator("::num::BigUint"));
 
         let ident_big_int = TypeIdent::type_("BigInt").with_ns(NamespaceId::ANONYMOUS);
         let ident_big_uint = TypeIdent::type_("BigUint").with_ns(NamespaceId::ANONYMOUS);
@@ -469,23 +487,10 @@ impl<'a> Interpreter<'a> {
 
         let non_zero_usize = CustomMeta::new("NonZeroUsize")
             .include_from("::core::num::NonZeroUsize")
-            .with_default(|s: &str| {
-                let code = quote! {
-                    <::core::num::NonZeroUsize as core::str::FromStr>::from_str(#s).unwrap()
-                };
-
-                Some(code)
-            });
-
+            .with_default(make_from_str_value_generator("::core::num::NonZeroUsize"));
         let non_zero_isize = CustomMeta::new("NonZeroIsize")
             .include_from("::core::num::NonZeroIsize")
-            .with_default(|s: &str| {
-                let code = quote! {
-                    <::core::num::NonZeroIsize as core::str::FromStr>::from_str(#s).unwrap()
-                };
-
-                Some(code)
-            });
+            .with_default(make_from_str_value_generator("::core::num::NonZeroIsize"));
 
         let ident_non_zero_usize = TypeIdent::type_("NonZeroUsize").with_ns(NamespaceId::ANONYMOUS);
         let ident_non_zero_isize = TypeIdent::type_("NonZeroIsize").with_ns(NamespaceId::ANONYMOUS);
@@ -534,5 +539,31 @@ impl<'a> Interpreter<'a> {
     #[instrument(err, level = "trace", skip(self))]
     pub fn finish(self) -> Result<(MetaTypes, IdentCache), Error> {
         self.state.finish()
+    }
+}
+
+fn make_from_str_value_generator(type_path: &'static str) -> impl ValueGenerator + 'static {
+    move |ctx: &GeneratorContext<'_, '_>,
+          value: &str,
+          mode: ValueGeneratorMode|
+          -> Result<ValueRendererBox, GeneratorError> {
+        if mode != ValueGeneratorMode::Value {
+            return Err(GeneratorError::InvalidDefaultValue {
+                ident: ctx.ident.clone(),
+                value: value.into(),
+                mode,
+            });
+        }
+
+        let s = value.to_string();
+
+        Ok(Box::new(move |ctx: &RendererContext<'_, '_>| {
+            let type_ = ctx.resolve_ident_path(type_path);
+            let from_str = ctx.resolve_ident_path("::core::str::FromStr");
+
+            quote! {
+                <#type_ as #from_str>::from_str(#s).unwrap()
+            }
+        }))
     }
 }

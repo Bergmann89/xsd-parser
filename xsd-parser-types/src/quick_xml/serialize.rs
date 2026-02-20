@@ -618,6 +618,22 @@ impl SerializeHelper {
 
         self.write_attrib(bytes, name, attrib)
     }
+
+    /// Get the namespace prefix for the passed `namespace`.
+    ///
+    /// If the namespace is not active in the current scope, an error is returned.
+    pub fn get_namespace_prefix(
+        &self,
+        namespace: &Namespace,
+    ) -> Result<Option<NamespacePrefix>, Error> {
+        for entry in self.namespaces.iter().rev() {
+            if &entry.namespace == namespace {
+                return Ok(entry.prefix.clone());
+            }
+        }
+
+        Err(ErrorKind::UnknownNamespace(namespace.clone()))?
+    }
 }
 
 /* SerializeImpl */

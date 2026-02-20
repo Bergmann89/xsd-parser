@@ -3,10 +3,10 @@
 use std::fmt::{Debug, Formatter, Result as FmtResult};
 use std::hash::{Hash, Hasher};
 
-use proc_macro2::TokenStream;
 use xsd_parser_types::misc::Namespace;
 
 use crate::config::NamespaceId;
+use crate::pipeline::generator::{ValueGenerator, ValueGeneratorBox};
 
 /// Type information for a custom defined type.
 pub struct CustomMeta {
@@ -22,7 +22,7 @@ pub struct CustomMeta {
     ///
     /// This is used to translate default values specified in the XSD schema,
     /// to suitable rust code.
-    pub default: Option<Box<dyn CustomDefaultImpl>>,
+    pub default: Option<ValueGeneratorBox>,
 
     /// The namespaces needed by this custom type.
     pub namespaces: Vec<CustomMetaNamespace>,
@@ -72,18 +72,9 @@ impl CustomMeta {
         self
     }
 
-    /// Try to get the default value (as code) for the given string.
-    ///
-    /// This is used to translate default values specified in the XSD schema,
-    /// to suitable rust code.
-    #[must_use]
-    pub fn default(&self, s: &str) -> Option<TokenStream> {
-        self.default.as_ref()?.exec(s)
-    }
-
     /// Set the handler for the default values for this custom defined type.
     #[must_use]
-    pub fn with_default<X: CustomDefaultImpl>(mut self, x: X) -> Self {
+    pub fn with_default<X: ValueGenerator>(mut self, x: X) -> Self {
         self.default = Some(Box::new(x));
 
         self
@@ -128,10 +119,7 @@ impl Clone for CustomMeta {
         Self {
             name: self.name.clone(),
             include: self.include.clone(),
-            default: self
-                .default
-                .as_ref()
-                .map(|x| CustomDefaultImpl::clone(&**x)),
+            default: self.default.as_ref().map(|x| ValueGenerator::clone(&**x)),
             namespaces: self.namespaces.clone(),
             allow_any: self.allow_any,
         }
@@ -161,34 +149,6 @@ impl PartialEq for CustomMeta {
 impl Hash for CustomMeta {
     fn hash<H: Hasher>(&self, state: &mut H) {
         self.name.hash(state);
-    }
-}
-
-/// Trait that converts the default value of a element specified in the XML
-/// schema to actual default code.
-///
-/// You can add a custom default implementation to your custom type using
-/// [`CustomMeta::with_default`].
-pub trait CustomDefaultImpl: Send + Sync + 'static {
-    /// Try to convert the passed string `s` that contains the default value from
-    /// the XML schema to actual default code. If the value could not be converted
-    /// to code `None` is returned.
-    fn exec(&self, s: &str) -> Option<TokenStream>;
-
-    /// Clone this instance and return it as a box.
-    fn clone(&self) -> Box<dyn CustomDefaultImpl>;
-}
-
-impl<X> CustomDefaultImpl for X
-where
-    X: Fn(&str) -> Option<TokenStream> + Clone + Send + Sync + 'static,
-{
-    fn exec(&self, s: &str) -> Option<TokenStream> {
-        (*self)(s)
-    }
-
-    fn clone(&self) -> Box<dyn CustomDefaultImpl> {
-        Box::new(self.clone())
     }
 }
 

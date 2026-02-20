@@ -112,6 +112,7 @@ impl TypeIdent {
     pub const F64: Self = Self::build_in("f64");
 
     pub const BOOL: Self = Self::build_in("bool");
+    pub const STR: Self = Self::build_in("str");
     pub const STRING: Self = Self::build_in("String");
 
     pub const ANY_TYPE: Self = Self::type_("anyType");
@@ -132,6 +133,7 @@ impl TypeIdent {
         Self::F32,
         Self::F64,
         Self::BOOL,
+        Self::STR,
         Self::STRING,
     ];
 }

@@ -11,16 +11,18 @@ use std::fs::write;
 use std::path::PathBuf;
 
 use anyhow::Error;
-use proc_macro2::TokenStream;
 use quote::quote;
 use tracing_subscriber::{fmt, EnvFilter};
 
-use xsd_parser::config::GeneratorFlags;
 use xsd_parser::config::{
-    Config, Generate, IdentQuadruple, InterpreterFlags, OptimizerFlags, ParserFlags, Resolver,
-    Schema,
+    Config, Generate, GeneratorFlags, IdentQuadruple, InterpreterFlags, OptimizerFlags,
+    ParserFlags, Resolver, Schema,
 };
 use xsd_parser::models::meta::{CustomMeta, MetaType};
+use xsd_parser::pipeline::generator::{
+    Context as GeneratorContext, Error as GeneratorError, ValueGeneratorMode,
+};
+use xsd_parser::pipeline::renderer::ValueRendererBox;
 use xsd_parser::{generate, IdentType};
 
 fn main() -> Result<(), Error> {
@@ -145,12 +147,22 @@ fn main() -> Result<(), Error> {
     Ok(())
 }
 
-fn max_occurs_default(s: &str) -> Option<TokenStream> {
-    if s == "unbound" {
-        return Some(quote!(MaxOccurs::Unbounded));
+fn max_occurs_default(
+    ctx: &GeneratorContext<'_, '_>,
+    value: &str,
+    mode: ValueGeneratorMode,
+) -> Result<ValueRendererBox, GeneratorError> {
+    if value == "unbound" {
+        return Ok(Box::new(quote!(MaxOccurs::Unbounded)));
     }
 
-    let val = s.parse::<usize>().ok()?;
+    let val = value
+        .parse::<usize>()
+        .map_err(|_| GeneratorError::InvalidDefaultValue {
+            ident: ctx.ident.clone(),
+            value: value.into(),
+            mode,
+        })?;
 
-    Some(quote!(MaxOccurs::Bounded(#val)))
+    Ok(Box::new(quote!(MaxOccurs::Bounded(#val))))
 }

@@ -53,6 +53,9 @@ pub trait Naming: Debug {
     /// Format the passed string `s` as variant name.
     fn format_variant_name(&self, s: &str) -> String;
 
+    /// Format the passed string `s` as constant name.
+    fn format_constant_name(&self, s: &str) -> String;
+
     /// Format the passed string `s` as attribute field name.
     ///
     /// The default implementation simply uses [`format_field_name`](Naming::format_field_name).
@@ -105,6 +108,16 @@ pub trait Naming: Debug {
     /// The default implementation uses [`format_type_ident`](Naming::format_type_ident) here.
     fn format_variant_ident(&self, name: &Name, display_name: Option<&str>) -> Ident2 {
         let ident = self.format_variant_name(display_name.unwrap_or(name.as_str()));
+
+        format_ident!("{ident}")
+    }
+
+    /// Create a suitable identifier for the passed constant name `name` respecting
+    /// user defined names stored in `display_name`.
+    ///
+    /// The default implementation uses [`format_constant_name`](Naming::format_constant_name) here.
+    fn format_constant_ident(&self, name: &Name, display_name: Option<&str>) -> Ident2 {
+        let ident = self.format_constant_name(display_name.unwrap_or(name.as_str()));
 
         format_ident!("{ident}")
     }

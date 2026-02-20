@@ -1,10 +1,15 @@
 use proc_macro2::Literal;
 use quote::format_ident;
 
-use crate::models::{
-    data::{ConstrainsData, EnumerationData, EnumerationTypeVariant},
-    meta::{EnumerationMeta, EnumerationMetaVariant},
-    schema::xs::Use,
+use crate::{
+    config::GeneratorFlags,
+    models::{
+        data::{ConstrainsData, EnumerationData, EnumerationDataVariant, EnumerationVariantValue},
+        meta::{BuildInMeta, EnumerationMeta, EnumerationMetaVariant, MetaTypeVariant, MetaTypes},
+        schema::xs::Use,
+        Name, TypeIdent,
+    },
+    pipeline::generator::ValueGeneratorMode,
 };
 
 use super::super::{Context, Error};
@@ -19,11 +24,22 @@ impl<'types> EnumerationData<'types> {
         let type_ident = ctx.current_type_ref().path.ident().clone();
         let trait_impls = ctx.make_trait_impls()?;
 
+        let simple_base_type = ctx
+            .check_generator_flags(GeneratorFlags::ADVANCED_ENUMS)
+            .then_some(())
+            .and_then(|()| meta.base.as_ident())
+            .and_then(|base| ctx.types.get_simple_enum_base_type(base));
+
         let variants = meta
             .variants
             .iter()
-            .filter_map(|var| var.make_variant(&mut unknown, ctx))
+            .filter_map(|var| var.make_variant(ctx, &mut unknown, simple_base_type.as_ref()))
             .collect::<Result<Vec<_>, _>>()?;
+
+        let simple_base_type = simple_base_type
+            .map(|base| ctx.get_or_create_type_ref_for_value(&base, true))
+            .transpose()?
+            .map(|x| x.path.clone());
 
         Ok(EnumerationData {
             meta,
@@ -31,6 +47,7 @@ impl<'types> EnumerationData<'types> {
             type_ident,
             variants,
             trait_impls,
+            simple_base_type,
         })
     }
 }
@@ -38,9 +55,10 @@ impl<'types> EnumerationData<'types> {
 impl EnumerationMetaVariant {
     fn make_variant<'types>(
         &'types self,
-        unknown: &mut usize,
         ctx: &mut Context<'_, 'types>,
-    ) -> Option<Result<EnumerationTypeVariant<'types>, Error>> {
+        unknown: &mut usize,
+        simple_base: Option<&TypeIdent>,
+    ) -> Option<Result<EnumerationDataVariant<'types>, Error>> {
         match self.use_ {
             Use::Prohibited => None,
             Use::Required | Use::Optional => {
@@ -73,15 +91,63 @@ impl EnumerationMetaVariant {
                 let target_type = type_ref.map(|x| x.path.clone());
                 let extra_attributes = Vec::new();
 
-                Some(Ok(EnumerationTypeVariant {
+                let value = self.ident.name.as_str();
+                let value = simple_base
+                    .and_then(|base| {
+                        ctx.make_value_renderer(base, value, ValueGeneratorMode::Literal)
+                            .ok()
+                            .map(|code| {
+                                let ident = types.naming.format_constant_ident(
+                                    &Name::new_named(variant_ident.to_string()),
+                                    None,
+                                );
+
+                                EnumerationVariantValue::ByteLiteral(ident, code)
+                            })
+                    })
+                    .or_else(|| {
+                        simple_base
+                            .and_then(|base| {
+                                ctx.make_value_renderer(base, value, ValueGeneratorMode::Constant)
+                                    .ok()
+                            })
+                            .map(|code| {
+                                let ident = types.naming.format_constant_ident(
+                                    &Name::new_named(variant_ident.to_string()),
+                                    None,
+                                );
+
+                                EnumerationVariantValue::Constant(ident, code)
+                            })
+                    })
+                    .unwrap_or(EnumerationVariantValue::None);
+
+                Some(Ok(EnumerationDataVariant {
                     meta: self,
                     s_name,
                     b_name,
+                    value,
                     variant_ident,
                     target_type,
                     extra_attributes,
                 }))
             }
+        }
+    }
+}
+
+impl MetaTypes {
+    fn get_simple_enum_base_type(&self, ident: &TypeIdent) -> Option<TypeIdent> {
+        match self.get_variant(ident)? {
+            MetaTypeVariant::BuildIn(BuildInMeta::String) => Some(TypeIdent::STR),
+            MetaTypeVariant::BuildIn(_)
+            | MetaTypeVariant::Custom(_)
+            | MetaTypeVariant::SimpleType(_) => Some(ident.clone()),
+            MetaTypeVariant::Enumeration(x) => {
+                let base = x.base.as_ident()?;
+                self.get_simple_enum_base_type(base)
+            }
+            _ => None,
         }
     }
 }

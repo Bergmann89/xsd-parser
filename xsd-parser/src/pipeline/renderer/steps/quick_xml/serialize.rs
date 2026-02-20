@@ -12,12 +12,13 @@ use quote::{format_ident, quote};
 use xsd_parser_types::misc::Namespace;
 
 use crate::config::{GeneratorFlags, TypedefMode};
+use crate::models::data::EnumerationVariantValue;
 use crate::models::{
     code::IdentPath,
     data::{
         ComplexBase, ComplexData, ComplexDataAttribute, ComplexDataContent, ComplexDataElement,
         ComplexDataEnum, ComplexDataStruct, DataTypeVariant, DynamicData, EnumerationData,
-        EnumerationTypeVariant, Occurs, PathData, ReferenceData, SimpleData, UnionData,
+        EnumerationDataVariant, Occurs, PathData, ReferenceData, SimpleData, UnionData,
         UnionTypeVariant,
     },
     meta::{CustomMetaNamespace, ElementMetaVariant, MetaTypeVariant, MetaTypes},
@@ -345,7 +346,7 @@ impl EnumerationData<'_> {
     }
 }
 
-impl EnumerationTypeVariant<'_> {
+impl EnumerationDataVariant<'_> {
     fn render_serializer_variant(&self, ctx: &Context<'_, '_>) -> TokenStream {
         let Self {
             s_name,
@@ -355,14 +356,30 @@ impl EnumerationTypeVariant<'_> {
         } = self;
 
         if target_type.is_some() {
-            quote! {
+            return quote! {
                 Self::#variant_ident(x) => x.serialize_bytes(helper),
-            }
-        } else {
-            let cow = resolve_ident!(ctx, "::alloc::borrow::Cow");
+            };
+        }
 
-            quote! {
-                Self::#variant_ident => Ok(Some(#cow::Borrowed(#s_name))),
+        match &self.value {
+            EnumerationVariantValue::None => {
+                let cow = resolve_ident!(ctx, "::alloc::borrow::Cow");
+
+                quote! {
+                    Self::#variant_ident => Ok(Some(#cow::Borrowed(#s_name))),
+                }
+            }
+            EnumerationVariantValue::ByteLiteral(ident, _) => {
+                let cow = resolve_ident!(ctx, "::alloc::borrow::Cow");
+
+                quote! {
+                    Self::#variant_ident => Ok(Some(#cow::Borrowed(Self::#ident))),
+                }
+            }
+            EnumerationVariantValue::Constant(ident, _) => {
+                quote! {
+                    Self::#variant_ident => Self::#ident.serialize_bytes(helper),
+                }
             }
         }
     }

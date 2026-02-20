@@ -101,6 +101,7 @@ pub enum BuildInMeta {
     F64,
 
     Bool,
+    Str,
     String,
 }
 
@@ -290,6 +291,7 @@ impl BuildInMeta {
             Self::F64 => "f64",
 
             Self::Bool => "bool",
+            Self::Str => "str",
             Self::String => "String",
         }
     }
@@ -316,6 +318,7 @@ impl BuildInMeta {
             Self::F64 => "::core::primitive::f64",
 
             Self::Bool => "::core::primitive::bool",
+            Self::Str => "::core::primitive::str",
             Self::String => "::std::string::String",
         }
     }

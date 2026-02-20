@@ -1,4 +1,5 @@
 mod defaults;
+mod enum_const;
 mod namespace_const;
 mod prefix_const;
 mod quick_xml;
@@ -22,6 +23,7 @@ use crate::models::{
 use super::Context;
 
 pub use self::defaults::DefaultsRenderStep;
+pub use self::enum_const::EnumConstantsRenderStep;
 pub use self::namespace_const::NamespaceConstantsRenderStep;
 pub use self::prefix_const::PrefixConstantsRenderStep;
 pub use self::quick_xml::{
@@ -320,6 +322,7 @@ impl ConstrainsData<'_> {
                     unreachable!();
                 };
 
+                let x = x.render(ctx);
                 let validate_error =
                     ctx.resolve_ident_path("::xsd_parser_types::quick_xml::ValidateError");
 
@@ -334,6 +337,7 @@ impl ConstrainsData<'_> {
                     unreachable!();
                 };
 
+                let x = x.render(ctx);
                 let validate_error =
                     ctx.resolve_ident_path("::xsd_parser_types::quick_xml::ValidateError");
 
@@ -354,6 +358,7 @@ impl ConstrainsData<'_> {
                     unreachable!();
                 };
 
+                let x = x.render(ctx);
                 let validate_error =
                     ctx.resolve_ident_path("::xsd_parser_types::quick_xml::ValidateError");
 
@@ -368,6 +373,7 @@ impl ConstrainsData<'_> {
                     unreachable!();
                 };
 
+                let x = x.render(ctx);
                 let validate_error =
                     ctx.resolve_ident_path("::xsd_parser_types::quick_xml::ValidateError");
 

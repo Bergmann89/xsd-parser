@@ -1,0 +1,4 @@
+<tns:Foo xmlns:tns="http://example.com">
+    <tns:StringEnum>ON</tns:StringEnum>
+    <tns:QNameEnum>tns:Bar</tns:QNameEnum>
+</tns:Foo>

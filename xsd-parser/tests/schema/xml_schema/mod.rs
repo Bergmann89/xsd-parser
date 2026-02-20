@@ -16,6 +16,7 @@ fn config() -> Config {
         )
         .with_generator_flags(
             GeneratorFlags::all()
+                - GeneratorFlags::ADVANCED_ENUMS
                 - GeneratorFlags::USE_NAMESPACE_MODULES
                 - GeneratorFlags::USE_SCHEMA_MODULES
                 - GeneratorFlags::BUILD_IN_ABSOLUTE_PATHS

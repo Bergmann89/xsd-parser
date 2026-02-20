@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://example.com"
+    targetNamespace="http://example.com"
+    elementFormDefault="qualified">
+
+    <xs:simpleType name="StringEnumType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="OFF" />
+            <xs:enumeration value="ON" />
+            <xs:enumeration value="AUTO" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="QNameEnumType">
+        <xs:restriction base="xs:QName">
+            <xs:enumeration value="tns:Foo" />
+            <xs:enumeration value="tns:Bar" />
+            <xs:enumeration value="tns:Baz" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="FooType">
+        <xs:sequence>
+            <xs:element name="StringEnum" type="tns:StringEnumType" />
+            <xs:element name="QNameEnum" type="tns:QNameEnumType" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:element name="Foo" type="tns:FooType" />
+</xs:schema>

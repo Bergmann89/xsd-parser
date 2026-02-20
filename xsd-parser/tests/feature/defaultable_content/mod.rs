@@ -12,6 +12,7 @@ fn config() -> Config {
         .without_optimizer_flags(OptimizerFlags::all())
         .with_generator_flags(
             GeneratorFlags::all()
+                - GeneratorFlags::ADVANCED_ENUMS
                 - GeneratorFlags::FLATTEN_CONTENT
                 - GeneratorFlags::BUILD_IN_ABSOLUTE_PATHS
                 - GeneratorFlags::ABSOLUTE_PATHS_INSTEAD_USINGS,

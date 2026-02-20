@@ -232,6 +232,22 @@ bitflags! {
         /// to use absolute paths for these also, you have to add the
         /// [`BUILD_IN_ABSOLUTE_PATHS`](Self::BUILD_IN_ABSOLUTE_PATHS) as well.
         const ABSOLUTE_PATHS_INSTEAD_USINGS = 1 << 8;
+
+        /// Enable support for advanced enums.
+        ///
+        /// This will enable support for advanced enums, which are enums that have
+        /// additional constants or associated functions for the expected values of
+        /// the enum. The values are then used to match the expected values of the
+        /// enum when deserializing instead of doing a simple match on the byte string
+        /// literal.
+        ///
+        /// Caution! If you enable this flag, you have to provide suitable constants
+        /// or associated functions for the expected values of the enum, otherwise
+        /// the generated code will not compile. You can use the
+        /// [`EnumConstantsRenderStep`](crate::pipeline::renderer::EnumConstantsRenderStep)
+        /// or the [`RenderStep::EnumConstants`](super::RenderStep::EnumConstants)
+        /// to generate suitable code for these constants and associated functions.
+        const ADVANCED_ENUMS = 1 << 9;
     }
 }
 

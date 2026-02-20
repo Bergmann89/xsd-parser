@@ -89,6 +89,12 @@ impl NamingTrait for Naming {
 
         super::format_ident(s)
     }
+
+    fn format_constant_name(&self, s: &str) -> String {
+        let s = self.unify(s).to_screaming_snake_case();
+
+        super::format_ident(s)
+    }
 }
 
 /// Default implementation for the [`NameBuilder`](NameBuilderTrait) trait.
