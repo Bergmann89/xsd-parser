@@ -17,7 +17,7 @@ use crate::models::{
     data::{
         ComplexBase, ComplexData, ComplexDataAttribute, ComplexDataContent, ComplexDataElement,
         ComplexDataEnum, ComplexDataStruct, DataTypeVariant, DynamicData, EnumerationData,
-        EnumerationTypeVariant, Occurs, PathData, ReferenceData, SimpleData, UnionData,
+        EnumerationDataVariant, Occurs, PathData, ReferenceData, SimpleData, UnionData,
         UnionTypeVariant,
     },
     meta::{CustomMetaNamespace, ElementMetaVariant, MetaTypeVariant, MetaTypes},
@@ -345,7 +345,7 @@ impl EnumerationData<'_> {
     }
 }
 
-impl EnumerationTypeVariant<'_> {
+impl EnumerationDataVariant<'_> {
     fn render_serializer_variant(&self, ctx: &Context<'_, '_>) -> TokenStream {
         let Self {
             s_name,

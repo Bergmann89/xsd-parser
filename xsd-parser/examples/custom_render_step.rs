@@ -40,7 +40,7 @@ use xsd_parser::{
         data::{
             ComplexData, ComplexDataAttribute, ComplexDataContent, ComplexDataElement,
             ComplexDataEnum, ComplexDataStruct, CustomData, DataTypeVariant, DynamicData,
-            EnumerationData, EnumerationTypeVariant, Occurs, ReferenceData, SimpleData, UnionData,
+            EnumerationData, EnumerationDataVariant, Occurs, ReferenceData, SimpleData, UnionData,
             UnionTypeVariant,
         },
     },
@@ -291,10 +291,10 @@ impl CustomRenderStep {
 
     fn render_enum_variant(
         &self,
-        var: &EnumerationTypeVariant<'_>,
+        var: &EnumerationDataVariant<'_>,
         ctx: &Context<'_, '_>,
     ) -> TokenStream {
-        let EnumerationTypeVariant {
+        let EnumerationDataVariant {
             variant_ident,
             target_type,
             ..

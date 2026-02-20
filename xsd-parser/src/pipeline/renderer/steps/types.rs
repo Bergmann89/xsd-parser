@@ -4,7 +4,7 @@ use quote::quote;
 use crate::config::{RendererFlags, TypedefMode};
 use crate::models::data::{
     ComplexData, ComplexDataAttribute, ComplexDataContent, ComplexDataElement, ComplexDataEnum,
-    ComplexDataStruct, DynamicData, EnumerationData, EnumerationTypeVariant, Occurs, ReferenceData,
+    ComplexDataStruct, DynamicData, EnumerationData, EnumerationDataVariant, Occurs, ReferenceData,
     SimpleData, UnionData, UnionTypeVariant,
 };
 
@@ -213,7 +213,7 @@ impl EnumerationData<'_> {
     }
 }
 
-impl EnumerationTypeVariant<'_> {
+impl EnumerationDataVariant<'_> {
     fn render_variant(&self, ctx: &Context<'_, '_>) -> TokenStream {
         let Self {
             meta,

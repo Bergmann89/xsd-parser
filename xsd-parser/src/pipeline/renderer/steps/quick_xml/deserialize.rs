@@ -11,7 +11,7 @@ use crate::models::{
     data::{
         ComplexBase, ComplexData, ComplexDataAttribute, ComplexDataContent, ComplexDataElement,
         ComplexDataEnum, ComplexDataStruct, ConstrainsData, DataTypeVariant, DerivedType,
-        DynamicData, EnumerationData, EnumerationTypeVariant, Occurs, ReferenceData, SimpleData,
+        DynamicData, EnumerationData, EnumerationDataVariant, Occurs, ReferenceData, SimpleData,
         StructMode, UnionData, UnionTypeVariant,
     },
     meta::{
@@ -573,7 +573,7 @@ impl EnumerationData<'_> {
     }
 }
 
-impl EnumerationTypeVariant<'_> {
+impl EnumerationDataVariant<'_> {
     fn render_deserializer_variant(
         &self,
         ctx: &Context<'_, '_>,

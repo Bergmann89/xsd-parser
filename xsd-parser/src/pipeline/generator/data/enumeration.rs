@@ -2,7 +2,7 @@ use proc_macro2::Literal;
 use quote::format_ident;
 
 use crate::models::{
-    data::{ConstrainsData, EnumerationData, EnumerationTypeVariant},
+    data::{ConstrainsData, EnumerationData, EnumerationDataVariant},
     meta::{EnumerationMeta, EnumerationMetaVariant},
     schema::xs::Use,
 };
@@ -40,7 +40,7 @@ impl EnumerationMetaVariant {
         &'types self,
         unknown: &mut usize,
         ctx: &mut Context<'_, 'types>,
-    ) -> Option<Result<EnumerationTypeVariant<'types>, Error>> {
+    ) -> Option<Result<EnumerationDataVariant<'types>, Error>> {
         match self.use_ {
             Use::Prohibited => None,
             Use::Required | Use::Optional => {
@@ -73,7 +73,7 @@ impl EnumerationMetaVariant {
                 let target_type = type_ref.map(|x| x.path.clone());
                 let extra_attributes = Vec::new();
 
-                Some(Ok(EnumerationTypeVariant {
+                Some(Ok(EnumerationDataVariant {
                     meta: self,
                     s_name,
                     b_name,

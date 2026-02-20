@@ -5,7 +5,7 @@ use crate::config::{RendererFlags, TypedefMode};
 use crate::models::{
     data::{
         ComplexData, ComplexDataAttribute, ComplexDataContent, ComplexDataElement, ComplexDataEnum,
-        ComplexDataStruct, DynamicData, EnumerationData, EnumerationTypeVariant, Occurs,
+        ComplexDataStruct, DynamicData, EnumerationData, EnumerationDataVariant, Occurs,
         ReferenceData, SimpleData, UnionData, UnionTypeVariant,
     },
     schema::xs::Use,
@@ -217,7 +217,7 @@ impl EnumerationData<'_> {
     }
 }
 
-impl EnumerationTypeVariant<'_> {
+impl EnumerationDataVariant<'_> {
     fn render_variant_serde_xml_rs_v7(&self, ctx: &Context<'_, '_>) -> TokenStream {
         let Self {
             meta,

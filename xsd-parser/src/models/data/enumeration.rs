@@ -20,7 +20,7 @@ pub struct EnumerationData<'types> {
     pub type_ident: Ident2,
 
     /// List of variants of this enumeration.
-    pub variants: Vec<EnumerationTypeVariant<'types>>,
+    pub variants: Vec<EnumerationDataVariant<'types>>,
 
     /// List of traits that needs to be implemented by this type.
     pub trait_impls: Vec<TokenStream>,
@@ -28,7 +28,7 @@ pub struct EnumerationData<'types> {
 
 /// Represents a enumeration variant used by [`EnumerationData`].
 #[derive(Debug)]
-pub struct EnumerationTypeVariant<'types> {
+pub struct EnumerationDataVariant<'types> {
     /// Reference to the original type information.
     pub meta: &'types EnumerationMetaVariant,
 
