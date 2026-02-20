@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Foo xmlns:xs="http://www.w3.org/2001/XMLSchema"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <Value xsi:type="xs:string">Test</Value>
+    <Value xsi:type="xs:integer">12345678</Value>
+</Foo>

@@ -337,6 +337,19 @@ impl Config {
         ])
     }
 
+    /// Enable support for advanced enums.
+    ///
+    /// Advanced enums will automatically add constants for each enum variant
+    /// using its simple base type. During deserialization, the base type is
+    /// deserialized first and then compared against the defined constants to
+    /// determine the actual enum variant. This is useful for type like `QName`
+    /// where the actual used prefix can change, but the name still refers to
+    /// the object.
+    pub fn with_advanced_enums(self) -> Self {
+        self.with_generator_flags(GeneratorFlags::ADVANCED_ENUMS)
+            .with_render_step(RenderStep::EnumConstants)
+    }
+
     /// Set the types the code should be generated for.
     pub fn with_generate<I>(mut self, types: I) -> Self
     where
@@ -467,7 +480,26 @@ impl Config {
         let ident = (IdentType::Type, Namespace::XS, "anySimpleType");
         let meta = CustomMeta::new(name)
             .include_from(path)
+            .with_namespace(Namespace::XS)
             .with_namespace(Namespace::XSI);
+
+        self.with_type(ident, meta)
+    }
+
+    /// Add a type definition for `xs:QName` that uses the `xsd_parser_types::xml::QName` type.
+    pub fn with_qname_type(self) -> Self {
+        self.with_qname_type_from("::xsd_parser_types::xml::QName")
+    }
+
+    /// Add a type definition for `xs:QName` that uses the type defined at the passed `path`.
+    pub fn with_qname_type_from(self, path: &str) -> Self {
+        let name = path.rsplit_once("::").map_or(path, |(_, name)| name);
+
+        let ident = (IdentType::Type, Namespace::XS, "QName");
+        let meta = CustomMeta::new(name)
+            .include_from(path)
+            .with_namespace(Namespace::XS)
+            .with_default(crate::misc::qname_default);
 
         self.with_type(ident, meta)
     }

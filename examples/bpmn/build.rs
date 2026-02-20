@@ -26,7 +26,7 @@ fn main() -> Result<(), Error> {
         .with_schema(schema_file)
         .set_interpreter_flags(InterpreterFlags::all() - InterpreterFlags::WITH_NUM_BIG_INT)
         .set_optimizer_flags(OptimizerFlags::all())
-        .set_generator_flags(GeneratorFlags::all())
+        .set_generator_flags(GeneratorFlags::all() - GeneratorFlags::ADVANCED_ENUMS)
         .with_type_postfix("XType")
         .with_quick_xml()
         .with_generate([(

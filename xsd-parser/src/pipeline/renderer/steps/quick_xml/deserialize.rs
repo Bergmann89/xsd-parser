@@ -11,8 +11,8 @@ use crate::models::{
     data::{
         ComplexBase, ComplexData, ComplexDataAttribute, ComplexDataContent, ComplexDataElement,
         ComplexDataEnum, ComplexDataStruct, ConstrainsData, DataTypeVariant, DerivedType,
-        DynamicData, EnumerationData, EnumerationDataVariant, Occurs, ReferenceData, SimpleData,
-        StructMode, UnionData, UnionTypeVariant,
+        DynamicData, EnumerationData, EnumerationDataVariant, EnumerationVariantValue, Occurs,
+        ReferenceData, SimpleData, StructMode, UnionData, UnionTypeVariant,
     },
     meta::{
         ComplexMeta, ElementMeta, ElementMetaVariant, ElementMode, MetaTypeVariant, MetaTypes,
@@ -520,14 +520,19 @@ impl EnumerationData<'_> {
         let Self {
             type_ident,
             variants,
+            simple_base_type,
             ..
         } = self;
 
         let mut other = None;
         let validation = self.constrains.render_validation(ctx);
-        let variants = variants
+        let variants_matcher = variants
             .iter()
-            .filter_map(|v| v.render_deserializer_variant(ctx, &mut other))
+            .filter_map(|v| v.render_deserializer_variant_matcher(ctx, &mut other))
+            .collect::<Vec<_>>();
+        let variants_simple = variants
+            .iter()
+            .filter_map(EnumerationDataVariant::render_deserializer_variant_simple)
             .collect::<Vec<_>>();
 
         let u8_ = resolve_build_in!(ctx, "::core::primitive::u8");
@@ -543,15 +548,54 @@ impl EnumerationData<'_> {
 
         let other = other.unwrap_or_else(|| {
             quote! {
-                x => Err(
+                Err(
                     #error::from(
                         #error_kind::UnknownOrInvalidValue(
                             #raw_byte_str::from_slice(x)
                         )
                     )
-                ),
+                )
             }
         });
+
+        let simple = variants_simple
+            .is_empty()
+            .not()
+            .then_some(())
+            .and(simple_base_type.as_ref())
+            .map(|base| {
+                let base = ctx.resolve_type_for_module(base);
+
+                let deserialize = if validation.is_some() {
+                    quote!(#base::deserialize_str(helper, s))
+                } else {
+                    quote!(#base::deserialize_bytes(helper, x))
+                };
+
+                quote! {
+                    if let Ok(value) = #deserialize {
+                        #( #variants_simple )*
+                    }
+                }
+            });
+
+        let body = if variants_matcher.is_empty() {
+            quote! {
+                let x = bytes;
+                #simple
+                #other
+            }
+        } else {
+            quote! {
+                match bytes {
+                    #( #variants_matcher )*
+                    x => {
+                        #simple
+                        #other
+                    }
+                }
+            }
+        };
 
         let code = quote! {
             impl #deserialize_bytes for #type_ident {
@@ -561,10 +605,7 @@ impl EnumerationData<'_> {
                 ) -> #result<Self, #error> {
                     #validation
 
-                    match bytes {
-                        #( #variants )*
-                        #other
-                    }
+                    #body
                 }
             }
         };
@@ -574,7 +615,7 @@ impl EnumerationData<'_> {
 }
 
 impl EnumerationDataVariant<'_> {
-    fn render_deserializer_variant(
+    fn render_deserializer_variant_matcher(
         &self,
         ctx: &Context<'_, '_>,
         other: &mut Option<TokenStream>,
@@ -589,16 +630,39 @@ impl EnumerationDataVariant<'_> {
         if let Some(target_type) = target_type {
             let target_type = ctx.resolve_type_for_module(target_type);
 
-            *other = Some(
-                quote! { x => Ok(Self::#variant_ident(#target_type::deserialize_bytes(helper, x)?)), },
-            );
+            *other =
+                Some(quote!(Ok(Self::#variant_ident(#target_type::deserialize_bytes(helper, x)?))));
 
             return None;
         }
 
-        Some(quote! {
-            #b_name => Ok(Self::#variant_ident),
-        })
+        match &self.value {
+            EnumerationVariantValue::None => Some(quote! {
+                #b_name => Ok(Self::#variant_ident),
+            }),
+            EnumerationVariantValue::ByteLiteral(_, renderer) => {
+                let b_name = renderer.render(ctx);
+
+                Some(quote! {
+                    #b_name => Ok(Self::#variant_ident),
+                })
+            }
+            EnumerationVariantValue::Constant(_, _) => None,
+        }
+    }
+
+    fn render_deserializer_variant_simple(&self) -> Option<TokenStream> {
+        let Self { variant_ident, .. } = self;
+
+        match &self.value {
+            EnumerationVariantValue::None => None,
+            EnumerationVariantValue::ByteLiteral(_, _) => None,
+            EnumerationVariantValue::Constant(ident, _) => Some(quote! {
+                if value == *Self::#ident {
+                    return Ok(Self::#variant_ident);
+                }
+            }),
+        }
     }
 }
 

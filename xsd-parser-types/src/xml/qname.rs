@@ -7,30 +7,44 @@ use quick_xml::name::{QName as QuickXmlQName, ResolveResult};
 use crate::misc::{format_utf8_slice, Namespace};
 
 #[cfg(feature = "quick-xml")]
-use crate::quick_xml::{DeserializeBytes, DeserializeHelper, Error};
+use crate::quick_xml::{
+    DeserializeBytes, DeserializeHelper, Error, SerializeBytes, SerializeHelper,
+};
 
 /// Type that represents a a resolved [`QName`].
 ///
 /// The namespace of this [`QName`] was resolved during deserialization.
 #[derive(Clone)]
 pub struct QName {
-    raw: Vec<u8>,
+    raw: Cow<'static, [u8]>,
     index: Option<usize>,
     ns: Option<Namespace>,
 }
 
 impl QName {
-    /// Get the raw bytes of the [`QName`].
+    /// Create a new [`QName`] instance from the passed `raw` data, `index` and `ns`.
+    ///
+    /// Caution! This is a const function and can be used during compile time, but
+    /// the `raw` data must be valid UTF-8 and the `index` must be correct, otherwise
+    /// the `QName` is not valid.
     #[must_use]
-    pub fn as_bytes(&self) -> &[u8] {
-        &self.raw
+    pub const fn new_const(
+        raw: &'static [u8],
+        index: Option<usize>,
+        ns: Option<Namespace>,
+    ) -> Self {
+        Self {
+            raw: Cow::Borrowed(raw),
+            index,
+            ns,
+        }
     }
 
     /// Create a new [`QName`] instance from the passed `bytes`.
     #[must_use]
     pub fn from_bytes<X>(bytes: X) -> Self
     where
-        X: Into<Vec<u8>>,
+        X: Into<Cow<'static, [u8]>>,
     {
         let raw = bytes.into();
         let index = raw.iter().position(|x| *x == b':');
@@ -51,9 +65,23 @@ impl QName {
             ResolveResult::Unbound | ResolveResult::Unknown(_) => None,
             ResolveResult::Bound(ns) => Some(Namespace(Cow::Owned(ns.0.to_owned()))),
         };
-        let raw = raw.to_owned();
+        let raw = Cow::Owned(raw.to_owned());
 
         Self { raw, index, ns }
+    }
+
+    /// Get the raw bytes of the [`QName`].
+    #[must_use]
+    pub fn as_bytes(&self) -> &[u8] {
+        &self.raw
+    }
+
+    /// Set the namespace of the [`QName`] to `ns`.
+    #[must_use]
+    pub fn with_namespace(mut self, ns: Namespace) -> Self {
+        self.ns = Some(ns);
+
+        self
     }
 
     /// Get the namespace of the [`QName`].
@@ -70,6 +98,12 @@ impl QName {
         Some(&self.raw[0..index])
     }
 
+    /// Get the index of the [`QName`].
+    #[must_use]
+    pub fn index(&self) -> Option<usize> {
+        self.index
+    }
+
     /// Get the local name of the [`QName`].
     #[must_use]
     pub fn local_name(&self) -> &[u8] {
@@ -82,6 +116,33 @@ impl QName {
 impl AsRef<[u8]> for QName {
     fn as_ref(&self) -> &[u8] {
         self.as_bytes()
+    }
+}
+
+#[cfg(feature = "quick-xml")]
+impl SerializeBytes for QName {
+    fn serialize_bytes(
+        &self,
+        helper: &mut SerializeHelper,
+    ) -> Result<Option<Cow<'static, str>>, Error> {
+        use std::str::from_utf8;
+
+        let prefix = if let Some(ns) = &self.ns.as_ref() {
+            helper.get_namespace_prefix(ns)?
+        } else {
+            use crate::misc::NamespacePrefix;
+
+            self.prefix().map(|x| NamespacePrefix::new(x.to_vec()))
+        };
+        let name = from_utf8(self.local_name())?;
+
+        let value = if let Some(prefix) = prefix {
+            format!("{prefix}:{name}")
+        } else {
+            name.to_string()
+        };
+
+        Ok(Some(Cow::Owned(value)))
     }
 }
 

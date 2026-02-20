@@ -30,7 +30,7 @@ fn main() -> Result<(), Error> {
         .with_schema(Schema::File(schema_file))
         .with_interpreter_flags(InterpreterFlags::all() - InterpreterFlags::WITH_NUM_BIG_INT)
         .with_optimizer_flags(OptimizerFlags::all())
-        .with_generator_flags(GeneratorFlags::all())
+        .with_generator_flags(GeneratorFlags::all() - GeneratorFlags::ADVANCED_ENUMS)
         .with_naming(CustomNaming::default())
         .with_quick_xml();
 
@@ -86,6 +86,10 @@ impl NamingTrait for CustomNaming {
 
     fn format_variant_name(&self, s: &str) -> String {
         self.0.format_variant_name(s)
+    }
+
+    fn format_constant_name(&self, s: &str) -> String {
+        self.0.format_constant_name(s)
     }
 
     fn format_attribute_field_name(&self, s: &str) -> String {
