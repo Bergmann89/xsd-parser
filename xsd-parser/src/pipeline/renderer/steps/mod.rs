@@ -320,6 +320,7 @@ impl ConstrainsData<'_> {
                     unreachable!();
                 };
 
+                let x = x.render(ctx);
                 let validate_error =
                     ctx.resolve_ident_path("::xsd_parser_types::quick_xml::ValidateError");
 
@@ -334,6 +335,7 @@ impl ConstrainsData<'_> {
                     unreachable!();
                 };
 
+                let x = x.render(ctx);
                 let validate_error =
                     ctx.resolve_ident_path("::xsd_parser_types::quick_xml::ValidateError");
 
@@ -354,6 +356,7 @@ impl ConstrainsData<'_> {
                     unreachable!();
                 };
 
+                let x = x.render(ctx);
                 let validate_error =
                     ctx.resolve_ident_path("::xsd_parser_types::quick_xml::ValidateError");
 
@@ -368,6 +371,7 @@ impl ConstrainsData<'_> {
                     unreachable!();
                 };
 
+                let x = x.render(ctx);
                 let validate_error =
                     ctx.resolve_ident_path("::xsd_parser_types::quick_xml::ValidateError");
 

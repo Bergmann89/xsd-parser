@@ -19,6 +19,7 @@
 //! ```
 
 mod context;
+mod custom;
 mod error;
 mod meta;
 mod steps;
@@ -38,6 +39,7 @@ use crate::models::{
 };
 
 pub use self::context::{Context, ValueKey, Values};
+pub use self::custom::{ValueRenderer, ValueRendererBox};
 pub use self::error::Error;
 pub use self::meta::MetaData;
 pub use self::steps::{

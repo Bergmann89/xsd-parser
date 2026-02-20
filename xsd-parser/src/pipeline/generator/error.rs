@@ -1,6 +1,9 @@
 use thiserror::Error;
 
-use crate::models::{code::InvalidIdentPath, schema::NamespaceId, TypeIdent};
+use crate::{
+    models::{code::InvalidIdentPath, schema::NamespaceId, TypeIdent},
+    pipeline::generator::ValueGeneratorMode,
+};
 
 /// Error that might be raised by the [`Generator`](super::Generator).
 #[derive(Debug, Error)]
@@ -23,8 +26,17 @@ pub enum Error {
     ///
     /// Is raised if the default value for an attribute defined in the schema
     /// could not be converted to a suitable default code snippet.
-    #[error("Invalid default value for type {0:?}: {1}!")]
-    InvalidDefaultValue(TypeIdent, String),
+    #[error("Invalid default value for type (ident={ident:?}, value={value}, mode: {mode:?})!")]
+    InvalidDefaultValue {
+        /// The identifier of the type for which the value should be generated.
+        ident: TypeIdent,
+
+        /// The value that should be generated.
+        value: String,
+
+        /// The mode that determines how the value should be generated.
+        mode: ValueGeneratorMode,
+    },
 
     /// Invalid identifier.
     ///

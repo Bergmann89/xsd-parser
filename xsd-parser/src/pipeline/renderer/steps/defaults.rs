@@ -73,7 +73,7 @@ impl ComplexDataStruct<'_> {
 
 impl ComplexDataAttribute<'_> {
     fn render_default_fn(&self, ctx: &Context<'_, '_>) -> Option<TokenStream> {
-        let default = self.default_value.as_ref()?;
+        let default = self.default_value.as_ref()?.render(ctx);
         let target_ident = ctx.resolve_type_for_module(&self.target_type);
         let default_fn_ident = format_ident!("default_{}", self.ident);
 

@@ -21,6 +21,7 @@ use crate::models::{
     },
     ElementIdent, TypeIdent,
 };
+use crate::pipeline::generator::ValueGeneratorMode;
 
 use super::super::{Context, Error};
 
@@ -769,7 +770,6 @@ impl<'types> ComplexDataAttribute<'types> {
             return Ok(None);
         }
 
-        let current_module = ctx.current_module();
         let ident = ctx
             .types
             .naming
@@ -796,7 +796,9 @@ impl<'types> ComplexDataAttribute<'types> {
                 let default_value = meta
                     .default
                     .as_ref()
-                    .map(|default| ctx.render_literal(current_module, default, type_))
+                    .map(|default| {
+                        ctx.make_value_renderer(type_, default, ValueGeneratorMode::Value)
+                    })
                     .transpose()?;
 
                 (target_type, default_value)

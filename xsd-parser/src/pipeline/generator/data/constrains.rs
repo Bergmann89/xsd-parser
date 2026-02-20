@@ -1,6 +1,7 @@
 use std::ops::{Bound, Range};
 
 use crate::models::{data::ConstrainsData, meta::Constrains, TypeIdent};
+use crate::pipeline::generator::ValueGeneratorMode;
 
 use super::super::{Context, Error};
 
@@ -10,18 +11,24 @@ impl<'types> ConstrainsData<'types> {
         base: Option<&TypeIdent>,
         ctx: &mut Context<'_, 'types>,
     ) -> Result<Self, Error> {
-        let current_ns = ctx.current_module();
-
         let range = if let Some(base) = base {
             let start = match &meta.range.start {
                 Bound::Unbounded => Bound::Unbounded,
-                Bound::Included(x) => Bound::Included(ctx.render_literal(current_ns, x, base)?),
-                Bound::Excluded(x) => Bound::Excluded(ctx.render_literal(current_ns, x, base)?),
+                Bound::Included(x) => {
+                    Bound::Included(ctx.make_value_renderer(base, x, ValueGeneratorMode::Value)?)
+                }
+                Bound::Excluded(x) => {
+                    Bound::Excluded(ctx.make_value_renderer(base, x, ValueGeneratorMode::Value)?)
+                }
             };
             let end = match &meta.range.end {
                 Bound::Unbounded => Bound::Unbounded,
-                Bound::Included(x) => Bound::Included(ctx.render_literal(current_ns, x, base)?),
-                Bound::Excluded(x) => Bound::Excluded(ctx.render_literal(current_ns, x, base)?),
+                Bound::Included(x) => {
+                    Bound::Included(ctx.make_value_renderer(base, x, ValueGeneratorMode::Value)?)
+                }
+                Bound::Excluded(x) => {
+                    Bound::Excluded(ctx.make_value_renderer(base, x, ValueGeneratorMode::Value)?)
+                }
             };
 
             Range { start, end }

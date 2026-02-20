@@ -21,6 +21,7 @@
 //! ```
 
 mod context;
+mod custom;
 mod data;
 mod error;
 mod meta;
@@ -43,6 +44,7 @@ use crate::models::{
 use crate::traits::Naming;
 
 pub use self::context::Context;
+pub use self::custom::{ValueGenerator, ValueGeneratorBox, ValueGeneratorMode};
 pub use self::error::Error;
 pub use self::meta::MetaData;
 
