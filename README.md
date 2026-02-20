@@ -97,6 +97,52 @@ The benchmarks were created on the following system:
 
 Below you can find a short list of the most important changes for each released version.
 
+## Version 1.5.0
+
+This release introduces several new schema features, a refactored identifier system, improved deserialization, and a range of bug fixes targeting real-world XSD compatibility.
+
+- **Support for `xs:anySimpleType`**
+  `xs:anySimpleType` is now handled as a distinct type instead of being silently mapped to `xs:string`. A new `AnySimpleType` runtime type was added to `xsd-parser-types`, and the generator can be configured to use any custom type in its place.
+
+- **Support for `xs:redefine` and `xs:override`**
+  The parser and interpreter now support the `xs:redefine` and `xs:override` schema composition mechanisms, enabling proper handling of schemas that redefine or override type definitions from imported schema files.
+
+- **Namespace-Aware Enum Serialization and Deserialization**
+  Enum values that carry namespace-prefixed content (e.g., `tns:Sender`) are now correctly serialized and deserialized by resolving the namespace URI at runtime rather than comparing literal prefix strings. This fixes incorrect behavior for enums derived from `xs:QName`-like patterns.
+
+- **Support for Duplicated Type Identifiers Across Schema Files**
+  The identifier system was restructured to distinguish between types from different schema files. The previous `Ident` type was split into `TypeIdent`, `NodeIdent`, and `PropertyIdent`. `TypeIdent` now carries a `SchemaId`, enabling correct resolution of types that share a name across multiple schema files.
+
+- **`DerivedTypeMeta` for Naming Conflict Resolution**
+  A new `DerivedTypeMeta` structure tracks derived types and their display names within `DynamicMeta`. This resolves naming conflicts that occurred when multiple derived types shared the same name across different schemas (e.g., AIXM schema).
+
+- **Support for Non-Zero Integer Types**
+  Integer types with matching XSD constraints can now be mapped to Rust's `NonZero*` types (e.g., `NonZeroU8`, `NonZeroI32`). This is independent of the `WITH_NUM_BIG_INT` feature and can be enabled via generator configuration.
+
+- **Improved Name Generation**
+  The `Naming` trait and its built-in implementations were improved to handle more edge cases, including duplicate group names and nested types that previously caused naming collisions in generated code.
+
+- **Anchored Regex Pattern Validation**
+  Pattern facets (`xs:pattern`) are now correctly anchored at the start and end (`^...$`) as required by the XSD specification. Additionally, patterns with alternation are wrapped in a non-capturing group to prevent partial anchoring issues.
+
+- **Improved `quick_xml` Deserialization**
+  The `quick_xml` deserializer received a comprehensive overhaul, improving correctness for complex schema patterns such as dynamic types, mixed content, and deeply nested structures.
+
+- **New Examples and Benchmarks**
+  - Added a `BPMN 2.0` example project
+  - Added a `VSME` schema example project
+  - Added memory usage and performance benchmarks to the `benchmark` crate
+
+- **Additional Bug Fixes**
+  - Fixed edge case in `quick_xml` deserialization of simple list types
+  - Fixed namespace serialization for the `Element` type
+  - Fixed list deserialization when using non-whitespace separators
+  - Fixed invalid character escaping when deserializing XML attributes
+  - Fixed naming collision for group types reused across inheritance hierarchies
+  - Fixed `WithNamespaceTrait` generating conflicting implementations for type aliases
+  - Fixed empty list handling (previously reported as an error)
+  - Fixed a typo in the `with_element_type_postfix` setter method
+
 ## Version 1.4.0
 
 This release focuses on extending customization options, improving `quick_xml` serialization/deserialization, and restructuring the crate into a more modular form. It also includes numerous fixes for naming, type handling, and schema interpretation issues found in real-world XSDs.
