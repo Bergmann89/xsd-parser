@@ -249,6 +249,7 @@ pub mod quick_xml_serialize {
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
                         if self.is_root {
+                            helper.write_xmlns(&mut bytes, Some(&super::PREFIX_XS), &super::NS_XS);
                             helper.write_xmlns(
                                 &mut bytes,
                                 Some(&super::PREFIX_XSI),

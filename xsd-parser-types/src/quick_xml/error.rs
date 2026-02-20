@@ -12,7 +12,7 @@ use quick_xml::{
 };
 use thiserror::Error;
 
-use crate::misc::RawByteStr;
+use crate::misc::{Namespace, RawByteStr};
 
 /// Quick XML Error
 #[derive(Debug)]
@@ -115,6 +115,18 @@ pub enum Kind {
     /// Invalid value.
     #[error("Invalid value `{0}`: {1}")]
     InvalidValue(RawByteStr, ValidateError),
+
+    /// Unknown namespace.
+    ///
+    /// The namespace was expected to be defined, but it was not.
+    #[error("Unknown namespace: {0}")]
+    UnknownNamespace(Namespace),
+
+    /// Unknown namespace prefix.
+    ///
+    /// The namespace prefix was expected to be defined, but it was not.
+    #[error("Unknown namespace prefix: {0}")]
+    UnknownNamespacePrefix(Namespace),
 
     /// Missing content.
     ///

@@ -14,7 +14,11 @@ fn config() -> Config {
         .with_parser_flags(ParserFlags::all())
         .with_interpreter_flags(InterpreterFlags::all())
         .with_optimizer_flags(OptimizerFlags::all() - OptimizerFlags::REMOVE_DUPLICATES)
-        .with_generator_flags(GeneratorFlags::all() - GeneratorFlags::FLATTEN_CONTENT);
+        .with_generator_flags(
+            GeneratorFlags::all()
+                - GeneratorFlags::FLATTEN_CONTENT
+                - GeneratorFlags::ADVANCED_ENUMS,
+        );
 
     config.generator.type_postfix = TypePostfix {
         type_: String::new(),

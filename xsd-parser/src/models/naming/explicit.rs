@@ -138,6 +138,12 @@ impl NamingTrait for ExplicitNaming {
         super::format_ident(s)
     }
 
+    fn format_constant_name(&self, s: &str) -> String {
+        let s = self.unify(s).to_screaming_snake_case();
+
+        super::format_ident(s)
+    }
+
     fn format_element_field_name(&self, s: &str) -> String {
         if let Some(postfix) = &self.element_field_postfix {
             self.format_field_name(&format!("{s}{postfix}"))

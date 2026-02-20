@@ -10,7 +10,7 @@ fn config() -> Config {
         .with_parser_flags(ParserFlags::all())
         .with_interpreter_flags(InterpreterFlags::all())
         .with_optimizer_flags(OptimizerFlags::all() - OptimizerFlags::REMOVE_DUPLICATES)
-        .with_generator_flags(GeneratorFlags::all())
+        .with_generator_flags(GeneratorFlags::all() - GeneratorFlags::ADVANCED_ENUMS)
         .with_schema(Schema::File(
             "tests/feature/override_/schema/schema1.xsd".into(),
         ))

@@ -395,6 +395,31 @@ impl<'a> Interpreter<'a> {
         Ok(self)
     }
 
+    /// Add a type definition for `xs:QName` that uses the
+    /// `xsd_parser_types::xml::QName` type.
+    pub fn with_qname_type(self) -> Result<Self, Error> {
+        self.with_qname_type_from("::xsd_parser_types::xml::QName")
+    }
+
+    /// Add a type definition for `xs:QName` that uses the type defined at the passed `path`.
+    pub fn with_qname_type_from(self, path: &str) -> Result<Self, Error> {
+        let xs = self
+            .state
+            .schemas()
+            .resolve_namespace(&Some(Namespace::XS))
+            .ok_or_else(|| Error::UnknownNamespace(Namespace::XS.clone()))?;
+
+        let name = path.rsplit_once("::").map_or(path, |(_, name)| name);
+
+        self.with_type(
+            TypeIdent::type_("QName").with_ns(xs),
+            CustomMeta::new(name)
+                .include_from(path)
+                .with_namespace(xs)
+                .with_default(crate::misc::qname_default),
+        )
+    }
+
     /// Add type definitions for numeric XML types (like `xs:int`) that
     /// uses `num::BigInt` and `num::BigUint` instead of build-in integer types.
     ///

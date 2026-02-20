@@ -15,6 +15,7 @@ fn config() -> Config {
     let mut config = Config::test_default()
         .with_generator_flags(
             GeneratorFlags::all()
+                - GeneratorFlags::ADVANCED_ENUMS
                 - GeneratorFlags::USE_SCHEMA_MODULES
                 - GeneratorFlags::BUILD_IN_ABSOLUTE_PATHS
                 - GeneratorFlags::NILLABLE_TYPE_SUPPORT
