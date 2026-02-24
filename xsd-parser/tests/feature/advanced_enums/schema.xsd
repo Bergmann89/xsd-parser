@@ -9,6 +9,7 @@
             <xs:enumeration value="OFF" />
             <xs:enumeration value="ON" />
             <xs:enumeration value="AUTO" />
+            <xs:enumeration value="X123" />
         </xs:restriction>
     </xs:simpleType>
 

@@ -44,18 +44,21 @@ pub enum StringEnumType {
     Off,
     On,
     Auto,
+    X123,
 }
 impl StringEnumType {
-    pub const OFF: &str = "OFF";
-    pub const ON: &str = "ON";
-    pub const AUTO: &str = "AUTO";
+    pub const VALUE_OFF: &str = "OFF";
+    pub const VALUE_ON: &str = "ON";
+    pub const VALUE_AUTO: &str = "AUTO";
+    pub const VALUE_X123: &str = "X123";
 }
 impl SerializeBytes for StringEnumType {
     fn serialize_bytes(&self, helper: &mut SerializeHelper) -> Result<Option<Cow<'_, str>>, Error> {
         match self {
-            Self::Off => Ok(Some(Cow::Borrowed(Self::OFF))),
-            Self::On => Ok(Some(Cow::Borrowed(Self::ON))),
-            Self::Auto => Ok(Some(Cow::Borrowed(Self::AUTO))),
+            Self::Off => Ok(Some(Cow::Borrowed(Self::VALUE_OFF))),
+            Self::On => Ok(Some(Cow::Borrowed(Self::VALUE_ON))),
+            Self::Auto => Ok(Some(Cow::Borrowed(Self::VALUE_AUTO))),
+            Self::X123 => Ok(Some(Cow::Borrowed(Self::VALUE_X123))),
         }
     }
 }
@@ -65,6 +68,7 @@ impl DeserializeBytes for StringEnumType {
             b"OFF" => Ok(Self::Off),
             b"ON" => Ok(Self::On),
             b"AUTO" => Ok(Self::Auto),
+            b"X123" => Ok(Self::X123),
             x => Err(Error::from(ErrorKind::UnknownOrInvalidValue(
                 RawByteStr::from_slice(x),
             ))),
@@ -78,17 +82,17 @@ pub enum QNameEnumType {
     TnsBaz,
 }
 impl QNameEnumType {
-    pub const TNS_FOO: &'static QName = &QName::new_const(
+    pub const VALUE_TNS_FOO: &'static QName = &QName::new_const(
         b"tns:Foo",
         Some(3usize),
         Some(Namespace::new_const(b"http://example.com")),
     );
-    pub const TNS_BAR: &'static QName = &QName::new_const(
+    pub const VALUE_TNS_BAR: &'static QName = &QName::new_const(
         b"tns:Bar",
         Some(3usize),
         Some(Namespace::new_const(b"http://example.com")),
     );
-    pub const TNS_BAZ: &'static QName = &QName::new_const(
+    pub const VALUE_TNS_BAZ: &'static QName = &QName::new_const(
         b"tns:Baz",
         Some(3usize),
         Some(Namespace::new_const(b"http://example.com")),
@@ -97,9 +101,9 @@ impl QNameEnumType {
 impl SerializeBytes for QNameEnumType {
     fn serialize_bytes(&self, helper: &mut SerializeHelper) -> Result<Option<Cow<'_, str>>, Error> {
         match self {
-            Self::TnsFoo => Self::TNS_FOO.serialize_bytes(helper),
-            Self::TnsBar => Self::TNS_BAR.serialize_bytes(helper),
-            Self::TnsBaz => Self::TNS_BAZ.serialize_bytes(helper),
+            Self::TnsFoo => Self::VALUE_TNS_FOO.serialize_bytes(helper),
+            Self::TnsBar => Self::VALUE_TNS_BAR.serialize_bytes(helper),
+            Self::TnsBaz => Self::VALUE_TNS_BAZ.serialize_bytes(helper),
         }
     }
 }
@@ -107,13 +111,13 @@ impl DeserializeBytes for QNameEnumType {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         let x = bytes;
         if let Ok(value) = QName::deserialize_bytes(helper, x) {
-            if value == *Self::TNS_FOO {
+            if value == *Self::VALUE_TNS_FOO {
                 return Ok(Self::TnsFoo);
             }
-            if value == *Self::TNS_BAR {
+            if value == *Self::VALUE_TNS_BAR {
                 return Ok(Self::TnsBar);
             }
-            if value == *Self::TNS_BAZ {
+            if value == *Self::VALUE_TNS_BAZ {
                 return Ok(Self::TnsBaz);
             }
         }
