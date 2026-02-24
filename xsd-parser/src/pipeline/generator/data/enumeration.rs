@@ -98,7 +98,7 @@ impl EnumerationMetaVariant {
                             .ok()
                             .map(|code| {
                                 let ident = types.naming.format_constant_ident(
-                                    &Name::new_named(variant_ident.to_string()),
+                                    &Name::new_named(format!("VALUE_{variant_ident}")),
                                     None,
                                 );
 
@@ -113,7 +113,7 @@ impl EnumerationMetaVariant {
                             })
                             .map(|code| {
                                 let ident = types.naming.format_constant_ident(
-                                    &Name::new_named(variant_ident.to_string()),
+                                    &Name::new_named(format!("VALUE_{variant_ident}")),
                                     None,
                                 );
 
