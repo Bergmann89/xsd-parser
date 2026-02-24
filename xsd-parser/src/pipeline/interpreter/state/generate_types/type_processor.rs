@@ -4,7 +4,7 @@ use std::{borrow::Cow, collections::btree_map::Entry};
 use tracing::instrument;
 use xsd_parser_types::{misc::Namespace, xml::QName};
 
-use crate::models::meta::{BuildInMeta, MetaType, MetaTypeVariant, MetaTypes};
+use crate::models::meta::{BuildInMeta, MetaType, MetaTypeVariant, MetaTypes, ReferenceMeta};
 use crate::models::schema::{xs::Schema, NamespaceId, SchemaId, Schemas};
 use crate::models::{IdentCache, IdentType, Name, TypeIdent};
 use crate::traits::{NameBuilder, NameBuilderExt as _};
@@ -100,6 +100,9 @@ impl<'state, 'schema> TypeProcessor<'state, 'schema> {
             ty if ty.is_mixed(self.types) && ty.is_emptiable(self.types) => {
                 Some(Cow::Owned(MetaTypeVariant::BuildIn(BuildInMeta::String)))
             }
+            MetaTypeVariant::Custom(_) => Some(Cow::Owned(MetaTypeVariant::Reference(
+                ReferenceMeta::new(ident.clone()),
+            ))),
             MetaTypeVariant::ComplexType(_)
             | MetaTypeVariant::All(_)
             | MetaTypeVariant::Choice(_)
@@ -107,7 +110,6 @@ impl<'state, 'schema> TypeProcessor<'state, 'schema> {
             | MetaTypeVariant::Dynamic(_) => None,
             ty @ (MetaTypeVariant::Enumeration(_)
             | MetaTypeVariant::BuildIn(_)
-            | MetaTypeVariant::Custom(_)
             | MetaTypeVariant::Union(_)
             | MetaTypeVariant::Reference(_)
             | MetaTypeVariant::SimpleType(_)) => Some(Cow::Borrowed(ty)),
