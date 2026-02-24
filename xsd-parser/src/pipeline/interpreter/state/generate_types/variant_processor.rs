@@ -434,9 +434,9 @@ impl<'a, 'state, 'schema> VariantProcessor<'a, 'state, 'schema> {
                     | MetaTypeVariant::Reference(_)
                     | MetaTypeVariant::SimpleType(_),
                 ) => (),
-                Some(MetaTypeVariant::Union(e)) => e.base = Base::Extension(base),
-                Some(MetaTypeVariant::Enumeration(e)) => e.base = Base::Extension(base),
-                Some(MetaTypeVariant::ComplexType(e)) => e.base = Base::Extension(base),
+                Some(MetaTypeVariant::Union(e)) => e.base = Base::Restriction(base),
+                Some(MetaTypeVariant::Enumeration(e)) => e.base = Base::Restriction(base),
+                Some(MetaTypeVariant::ComplexType(e)) => e.base = Base::Restriction(base),
                 e => crate::unreachable!("Unexpected type: {e:#?}"),
             }
         }
