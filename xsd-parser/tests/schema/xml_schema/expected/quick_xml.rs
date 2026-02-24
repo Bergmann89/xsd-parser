@@ -45,7 +45,7 @@ pub enum SchemaElementTypeContent {
 impl SchemaElementType {
     #[must_use]
     pub fn default_final_default() -> FullDerivationSetType {
-        FullDerivationSetType::TypeDerivationControlList(TypeDerivationControlList(Vec::new()))
+        FullDerivationSetType::BlockSetItemList(BlockSetItemList(Vec::new()))
     }
     #[must_use]
     pub fn default_block_default() -> BlockSetType {
@@ -75,21 +75,21 @@ impl WithDeserializer for SchemaElementTypeContent {
 #[derive(Debug)]
 pub enum FullDerivationSetType {
     All,
-    TypeDerivationControlList(TypeDerivationControlList),
+    BlockSetItemList(BlockSetItemList),
 }
 impl DeserializeBytes for FullDerivationSetType {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
             b"#all" => Ok(Self::All),
-            x => Ok(Self::TypeDerivationControlList(
-                TypeDerivationControlList::deserialize_bytes(helper, x)?,
-            )),
+            x => Ok(Self::BlockSetItemList(BlockSetItemList::deserialize_bytes(
+                helper, x,
+            )?)),
         }
     }
 }
 #[derive(Debug, Default)]
-pub struct TypeDerivationControlList(pub Vec<TypeDerivationControlType>);
-impl DeserializeBytes for TypeDerivationControlList {
+pub struct BlockSetItemList(pub Vec<BlockSetItemType>);
+impl DeserializeBytes for BlockSetItemList {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         Ok(Self(helper.deserialize_list(bytes)?))
     }
@@ -110,13 +110,6 @@ impl DeserializeBytes for BlockSetType {
                 helper, x,
             )?)),
         }
-    }
-}
-#[derive(Debug, Default)]
-pub struct BlockSetItemList(pub Vec<BlockSetItemType>);
-impl DeserializeBytes for BlockSetItemList {
-    fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
-        Ok(Self(helper.deserialize_list(bytes)?))
     }
 }
 ///A utility type, not for public use
@@ -502,45 +495,7 @@ pub struct NotationElementType {
 impl WithDeserializer for NotationElementType {
     type Deserializer = quick_xml_deserialize::NotationElementTypeDeserializer;
 }
-///A utility type, not for public use
-#[derive(Debug)]
-pub enum TypeDerivationControlType {
-    Extension,
-    Restriction,
-    List,
-    Union,
-}
-impl DeserializeBytes for TypeDerivationControlType {
-    fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
-        match bytes {
-            b"extension" => Ok(Self::Extension),
-            b"restriction" => Ok(Self::Restriction),
-            b"list" => Ok(Self::List),
-            b"union" => Ok(Self::Union),
-            x => Err(Error::from(ErrorKind::UnknownOrInvalidValue(
-                RawByteStr::from_slice(x),
-            ))),
-        }
-    }
-}
-#[derive(Debug)]
-pub enum BlockSetItemType {
-    Extension,
-    Restriction,
-    Substitution,
-}
-impl DeserializeBytes for BlockSetItemType {
-    fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
-        match bytes {
-            b"extension" => Ok(Self::Extension),
-            b"restriction" => Ok(Self::Restriction),
-            b"substitution" => Ok(Self::Substitution),
-            x => Err(Error::from(ErrorKind::UnknownOrInvalidValue(
-                RawByteStr::from_slice(x),
-            ))),
-        }
-    }
-}
+pub type BlockSetItemType = DerivationControlType;
 #[derive(Debug)]
 pub struct AppinfoElementType {
     pub source: Option<String>,
@@ -615,15 +570,15 @@ impl WithDeserializer for WildcardType {
 #[derive(Debug)]
 pub enum SimpleDerivationSetType {
     All,
-    SimpleDerivationSetItemList(SimpleDerivationSetItemList),
+    BlockSetItemList(BlockSetItemList),
 }
 impl DeserializeBytes for SimpleDerivationSetType {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
             b"#all" => Ok(Self::All),
-            x => Ok(Self::SimpleDerivationSetItemList(
-                SimpleDerivationSetItemList::deserialize_bytes(helper, x)?,
-            )),
+            x => Ok(Self::BlockSetItemList(BlockSetItemList::deserialize_bytes(
+                helper, x,
+            )?)),
         }
     }
 }
@@ -682,15 +637,15 @@ impl WithDeserializer for UnionElementType {
 #[derive(Debug)]
 pub enum DerivationSetType {
     All,
-    ReducedDerivationControlList(ReducedDerivationControlList),
+    BlockSetItemList(BlockSetItemList),
 }
 impl DeserializeBytes for DerivationSetType {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
             b"#all" => Ok(Self::All),
-            x => Ok(Self::ReducedDerivationControlList(
-                ReducedDerivationControlList::deserialize_bytes(helper, x)?,
-            )),
+            x => Ok(Self::BlockSetItemList(BlockSetItemList::deserialize_bytes(
+                helper, x,
+            )?)),
         }
     }
 }
@@ -914,6 +869,29 @@ impl DeserializeBytes for AttributeUseType {
 }
 ///A utility type, not for public use
 #[derive(Debug)]
+pub enum DerivationControlType {
+    Substitution,
+    Extension,
+    Restriction,
+    List,
+    Union,
+}
+impl DeserializeBytes for DerivationControlType {
+    fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
+        match bytes {
+            b"substitution" => Ok(Self::Substitution),
+            b"extension" => Ok(Self::Extension),
+            b"restriction" => Ok(Self::Restriction),
+            b"list" => Ok(Self::List),
+            b"union" => Ok(Self::Union),
+            x => Err(Error::from(ErrorKind::UnknownOrInvalidValue(
+                RawByteStr::from_slice(x),
+            ))),
+        }
+    }
+}
+///A utility type, not for public use
+#[derive(Debug)]
 pub enum NamespaceListType {
     Any,
     Other,
@@ -989,13 +967,6 @@ impl DeserializeBytes for ProcessContentsType {
         }
     }
 }
-#[derive(Debug, Default)]
-pub struct SimpleDerivationSetItemList(pub Vec<SimpleDerivationSetItemType>);
-impl DeserializeBytes for SimpleDerivationSetItemList {
-    fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
-        Ok(Self(helper.deserialize_list(bytes)?))
-    }
-}
 ///An abstract element, representing facets in general.
 ///The facets defined by this spec are substitutable for
 ///this element, and implementation-defined facets should
@@ -1019,13 +990,6 @@ pub enum Facet {
 }
 impl WithDeserializer for Facet {
     type Deserializer = quick_xml_deserialize::FacetDeserializer;
-}
-#[derive(Debug, Default)]
-pub struct ReducedDerivationControlList(pub Vec<ReducedDerivationControlType>);
-impl DeserializeBytes for ReducedDerivationControlList {
-    fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
-        Ok(Self(helper.deserialize_list(bytes)?))
-    }
 }
 #[derive(Debug)]
 pub struct RestrictionType {
@@ -1151,26 +1115,6 @@ impl DeserializeBytes for BasicNamespaceListItemType {
     }
 }
 #[derive(Debug)]
-pub enum SimpleDerivationSetItemType {
-    List,
-    Union,
-    Restriction,
-    Extension,
-}
-impl DeserializeBytes for SimpleDerivationSetItemType {
-    fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
-        match bytes {
-            b"list" => Ok(Self::List),
-            b"union" => Ok(Self::Union),
-            b"restriction" => Ok(Self::Restriction),
-            b"extension" => Ok(Self::Extension),
-            x => Err(Error::from(ErrorKind::UnknownOrInvalidValue(
-                RawByteStr::from_slice(x),
-            ))),
-        }
-    }
-}
-#[derive(Debug)]
 pub struct FacetType {
     pub any_attribute: AnyAttributes,
     pub id: Option<String>,
@@ -1186,23 +1130,6 @@ impl FacetType {
 }
 impl WithDeserializer for FacetType {
     type Deserializer = quick_xml_deserialize::FacetTypeDeserializer;
-}
-///A utility type, not for public use
-#[derive(Debug)]
-pub enum ReducedDerivationControlType {
-    Extension,
-    Restriction,
-}
-impl DeserializeBytes for ReducedDerivationControlType {
-    fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
-        match bytes {
-            b"extension" => Ok(Self::Extension),
-            b"restriction" => Ok(Self::Restriction),
-            x => Err(Error::from(ErrorKind::UnknownOrInvalidValue(
-                RawByteStr::from_slice(x),
-            ))),
-        }
-    }
 }
 #[derive(Debug)]
 pub enum QnameListAItemType {

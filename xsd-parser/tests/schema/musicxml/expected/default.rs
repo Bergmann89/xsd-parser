@@ -716,7 +716,7 @@ pub struct DegreeValue {
 pub struct Direction {
     pub placement: ::core::option::Option<AboveBelow>,
     pub directive: ::core::option::Option<YesNo>,
-    pub system: ::core::option::Option<SystemRelation>,
+    pub system: ::core::option::Option<SystemRelationNumber>,
     pub id: ::core::option::Option<::std::string::String>,
     pub content: DirectionContent,
 }
@@ -1033,7 +1033,7 @@ pub struct Ending {
     pub font_size: ::core::option::Option<FontSize>,
     pub font_weight: ::core::option::Option<FontWeight>,
     pub color: ::core::option::Option<::std::string::String>,
-    pub system: ::core::option::Option<SystemRelation>,
+    pub system: ::core::option::Option<SystemRelationNumber>,
     pub end_length: ::core::option::Option<::core::primitive::f64>,
     pub text_x: ::core::option::Option<::core::primitive::f64>,
     pub text_y: ::core::option::Option<::core::primitive::f64>,
@@ -1557,7 +1557,7 @@ pub struct Harmony {
     pub font_weight: ::core::option::Option<FontWeight>,
     pub color: ::core::option::Option<::std::string::String>,
     pub placement: ::core::option::Option<AboveBelow>,
-    pub system: ::core::option::Option<SystemRelation>,
+    pub system: ::core::option::Option<SystemRelationNumber>,
     pub id: ::core::option::Option<::std::string::String>,
     pub content: ::std::vec::Vec<HarmonyContent>,
 }
@@ -3486,14 +3486,10 @@ pub enum SwingContent {
     Straight(Empty),
     First(::core::num::NonZeroUsize),
     Second(::core::num::NonZeroUsize),
-    SwingType(SwingTypeValue),
+    SwingType(NoteTypeValue),
     SwingStyle(::std::string::String),
 }
-#[derive(Debug)]
-pub enum SwingTypeValue {
-    _16Th,
-    Eighth,
-}
+pub type SwingTypeValue = NoteTypeValue;
 #[derive(Debug)]
 pub enum Syllabic {
     Single,
@@ -3553,12 +3549,7 @@ pub struct SystemMarginsContent {
     pub left_margin: ::core::primitive::f64,
     pub right_margin: ::core::primitive::f64,
 }
-#[derive(Debug)]
-pub enum SystemRelation {
-    OnlyTop,
-    AlsoTop,
-    None,
-}
+pub type SystemRelation = SystemRelationNumber;
 #[derive(Debug)]
 pub enum SystemRelationNumber {
     OnlyTop,
