@@ -13,6 +13,18 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <!-- Type redefinition using restriction -->
+    <xs:simpleType name="RestrictedDecimal">
+        <xs:restriction base="xs:decimal">
+            <xs:annotation>
+                <xs:documentation>
+                    Restricting the base type without applying any facets.
+                    This should be treated as a custom type, not a simple type.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:restriction>
+    </xs:simpleType>
+
     <!-- Define a complex type with an attribute -->
     <xs:complexType name="CurrencyAmount">
         <xs:simpleContent>

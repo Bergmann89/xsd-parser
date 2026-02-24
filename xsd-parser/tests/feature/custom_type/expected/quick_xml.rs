@@ -33,6 +33,7 @@ impl WithSerializer for CurrencyAmountType {
 impl WithDeserializer for CurrencyAmountType {
     type Deserializer = quick_xml_deserialize::CurrencyAmountTypeDeserializer;
 }
+pub type RestrictedDecimalType = Decimal;
 pub mod quick_xml_deserialize {
     use core::mem::replace;
     use xsd_parser_types::quick_xml::{

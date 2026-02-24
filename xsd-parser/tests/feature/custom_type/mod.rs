@@ -7,8 +7,8 @@ use xsd_parser::pipeline::generator::ValueGeneratorMode;
 use xsd_parser::{
     config::{Config, IdentTriple, NamespaceIdent},
     models::{
-        meta::{CustomMeta, MetaType, ReferenceMeta},
-        IdentType, TypeIdent,
+        meta::{CustomMeta, MetaType},
+        IdentType,
     },
     pipeline::{
         generator::{Context as GeneratorContext, Error as GeneratorError},
@@ -20,39 +20,40 @@ use xsd_parser_types::quick_xml::{DeserializeBytesFromStr, SerializeBytesToStrin
 use crate::utils::{generate_test, ConfigEx};
 
 fn config() -> Config {
-    let mut config = Config::test_default().with_generate([(
-        IdentType::Element,
-        Some(NamespaceIdent::namespace(b"urn:example:minimal")),
-        "Amount",
-    )]);
-
-    config.interpreter.types = vec![
+    let mut config = Config::test_default().with_generate([
         (
-            IdentTriple::from((IdentType::Type, "Decimal")),
-            MetaType::from(CustomMeta::new("Decimal").with_default(
-                |ctx: &GeneratorContext<'_, '_>,
-                 value: &str,
-                 mode: ValueGeneratorMode|
-                 -> Result<ValueRendererBox, GeneratorError> {
-                    if mode != ValueGeneratorMode::Value {
-                        return Err(GeneratorError::InvalidDefaultValue {
-                            ident: ctx.ident.clone(),
-                            value: value.into(),
-                            mode,
-                        });
-                    }
-
-                    Ok(Box::new(quote! {
-                        <Decimal as core::str::FromStr>::from_str(#value).unwrap()
-                    }))
-                },
-            )),
+            IdentType::Element,
+            Some(NamespaceIdent::namespace(b"urn:example:minimal")),
+            "Amount",
         ),
         (
-            IdentTriple::from((IdentType::Type, "xs:decimal")),
-            MetaType::from(ReferenceMeta::new(TypeIdent::type_("Decimal"))),
+            IdentType::Type,
+            Some(NamespaceIdent::namespace(b"urn:example:minimal")),
+            "RestrictedDecimal",
         ),
-    ];
+    ]);
+
+    config.interpreter.types = vec![(
+        IdentTriple::from((IdentType::Type, "xs:decimal")),
+        MetaType::from(CustomMeta::new("Decimal").with_default(
+            |ctx: &GeneratorContext<'_, '_>,
+             value: &str,
+             mode: ValueGeneratorMode|
+             -> Result<ValueRendererBox, GeneratorError> {
+                if mode != ValueGeneratorMode::Value {
+                    return Err(GeneratorError::InvalidDefaultValue {
+                        ident: ctx.ident.clone(),
+                        value: value.into(),
+                        mode,
+                    });
+                }
+
+                Ok(Box::new(quote! {
+                    <Decimal as core::str::FromStr>::from_str(#value).unwrap()
+                }))
+            },
+        )),
+    )];
 
     config
 }

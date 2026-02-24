@@ -4,3 +4,4 @@ pub struct CurrencyAmountType {
     pub ccy: String,
     pub content: Decimal,
 }
+pub type RestrictedDecimalType = Decimal;
