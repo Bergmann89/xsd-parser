@@ -350,6 +350,39 @@ impl Config {
             .with_render_step(RenderStep::EnumConstants)
     }
 
+    /// Add a namespace to the parser config.
+    ///
+    /// See [`ParserConfig::namespaces`] for more details.
+    pub fn with_namespace<P, N>(mut self, prefix: P, namespace: N) -> Self
+    where
+        P: Into<NamespacePrefix>,
+        N: Into<Namespace>,
+    {
+        self.parser
+            .namespaces
+            .push((prefix.into(), namespace.into()));
+
+        self
+    }
+
+    /// Add multiple namespaces to the parser config.
+    ///
+    /// See [`ParserConfig::namespaces`] for more details.
+    pub fn with_namespaces<I, P, N>(mut self, namespaces: I) -> Self
+    where
+        I: IntoIterator<Item = (P, N)>,
+        P: Into<NamespacePrefix>,
+        N: Into<Namespace>,
+    {
+        for (prefix, namespace) in namespaces {
+            self.parser
+                .namespaces
+                .push((prefix.into(), namespace.into()));
+        }
+
+        self
+    }
+
     /// Set the types the code should be generated for.
     pub fn with_generate<I>(mut self, types: I) -> Self
     where
