@@ -1,3 +1,4 @@
+use std::borrow::Cow;
 use std::ops::Deref;
 
 use bitflags::bitflags;
@@ -259,7 +260,7 @@ pub enum ComplexDataElementOrigin<'types> {
 #[derive(Debug)]
 pub struct ComplexDataAttribute<'types> {
     /// Reference to the original type information.
-    pub meta: &'types AttributeMeta,
+    pub meta: Cow<'types, AttributeMeta>,
 
     /// Identifier of the attribute.
     pub ident: Ident2,

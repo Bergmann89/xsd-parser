@@ -7,6 +7,7 @@ mod simple;
 mod type_;
 mod union;
 
+use std::borrow::Cow;
 use std::mem::swap;
 
 use crate::models::{
@@ -19,13 +20,17 @@ use super::Context;
 
 impl<'types> BuildInData<'types> {
     fn new(meta: &'types BuildInMeta) -> Self {
-        Self { meta }
+        Self {
+            meta: Cow::Borrowed(meta),
+        }
     }
 }
 
 impl<'types> CustomData<'types> {
     fn new(meta: &'types CustomMeta) -> Self {
-        Self { meta }
+        Self {
+            meta: Cow::Borrowed(meta),
+        }
     }
 }
 

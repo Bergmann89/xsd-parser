@@ -1,3 +1,5 @@
+use std::borrow::Cow;
+
 use proc_macro2::Literal;
 use quote::format_ident;
 
@@ -41,6 +43,7 @@ impl<'types> DynamicData<'types> {
             .map(|x| make_derived_type_data(ctx, x))
             .collect::<Result<Vec<_>, _>>()?;
 
+        let meta = Cow::Borrowed(meta);
         let deserializer_ident = format_ident!("{type_ident}Deserializer");
 
         Ok(Self {

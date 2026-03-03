@@ -1,3 +1,5 @@
+use std::borrow::Cow;
+
 use crate::models::meta::CustomMeta;
 
 /// Contains additional information for the rendering process of a
@@ -6,5 +8,5 @@ use crate::models::meta::CustomMeta;
 #[derive(Debug)]
 pub struct CustomData<'types> {
     /// Reference to the original type information.
-    pub meta: &'types CustomMeta,
+    pub meta: Cow<'types, CustomMeta>,
 }

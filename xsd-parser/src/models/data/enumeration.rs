@@ -1,3 +1,5 @@
+use std::borrow::Cow;
+
 use proc_macro2::{Ident as Ident2, Literal, TokenStream};
 
 use crate::models::data::{ConstrainsData, PathData};
@@ -10,7 +12,7 @@ use crate::pipeline::renderer::ValueRendererBox;
 #[derive(Debug)]
 pub struct EnumerationData<'types> {
     /// Reference to the original type information.
-    pub meta: &'types EnumerationMeta,
+    pub meta: Cow<'types, EnumerationMeta>,
 
     /// Code generator data for the constrains of the type.
     pub constrains: ConstrainsData<'types>,
@@ -32,7 +34,7 @@ pub struct EnumerationData<'types> {
 #[derive(Debug)]
 pub struct EnumerationDataVariant<'types> {
     /// Reference to the original type information.
-    pub meta: &'types EnumerationMetaVariant,
+    pub meta: Cow<'types, EnumerationMetaVariant>,
 
     /// Name of the attribute as string.
     pub s_name: String,

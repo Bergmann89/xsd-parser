@@ -1,3 +1,5 @@
+use std::borrow::Cow;
+
 use proc_macro2::{Ident as Ident2, TokenStream};
 
 use crate::config::TypedefMode;
@@ -12,7 +14,7 @@ use crate::models::{
 #[derive(Debug)]
 pub struct ReferenceData<'types> {
     /// Reference to the original type information.
-    pub meta: &'types ReferenceMeta,
+    pub meta: Cow<'types, ReferenceMeta>,
 
     /// Typedef mode that should be used to render this reference type.
     pub mode: TypedefMode,

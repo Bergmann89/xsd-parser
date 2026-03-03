@@ -1,3 +1,5 @@
+use std::borrow::Cow;
+
 use proc_macro2::{Ident as Ident2, TokenStream};
 
 use crate::models::{
@@ -13,7 +15,7 @@ use super::PathData;
 #[derive(Debug)]
 pub struct SimpleData<'types> {
     /// Reference to the original type information.
-    pub meta: &'types SimpleMeta,
+    pub meta: Cow<'types, SimpleMeta>,
 
     /// Occurrence of the referenced type within this type.
     pub occurs: Occurs,

@@ -43,8 +43,8 @@ impl RenderStep for SerdeXmlRsV8TypesRenderStep {
 
 /* Context */
 
-impl<'types> Context<'_, 'types> {
-    fn get_resolved_complex_content(&self) -> Option<(&'types TypeIdent, &'types MetaType)> {
+impl<'a> Context<'a, '_> {
+    fn get_resolved_complex_content(&self) -> Option<(&'a TypeIdent, &'a MetaType)> {
         let MetaTypeVariant::ComplexType(cm) = &self.data.meta.variant else {
             return None;
         };

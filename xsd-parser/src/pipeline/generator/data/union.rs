@@ -1,3 +1,5 @@
+use std::borrow::Cow;
+
 use proc_macro2::Literal;
 
 use crate::models::{
@@ -20,6 +22,7 @@ impl<'types> UnionData<'types> {
             .iter()
             .map(|meta| meta.make_variant(ctx))
             .collect::<Result<_, _>>()?;
+        let meta = Cow::Borrowed(meta);
 
         Ok(Self {
             meta,
@@ -46,9 +49,10 @@ impl UnionMetaType {
             .naming
             .format_variant_ident(&self.type_.name, self.display_name.as_deref());
         let extra_attributes = Vec::new();
+        let meta = Cow::Borrowed(self);
 
         Ok(UnionTypeVariant {
-            meta: self,
+            meta,
             s_name,
             b_name,
             target_type,

@@ -1,3 +1,5 @@
+use std::borrow::Cow;
+
 use proc_macro2::Literal;
 use quote::format_ident;
 
@@ -40,6 +42,8 @@ impl<'types> EnumerationData<'types> {
             .map(|base| ctx.get_or_create_type_ref_for_value(&base, true))
             .transpose()?
             .map(|x| x.path.clone());
+
+        let meta = Cow::Borrowed(meta);
 
         Ok(EnumerationData {
             meta,
@@ -122,8 +126,10 @@ impl EnumerationMetaVariant {
                     })
                     .unwrap_or(EnumerationVariantValue::None);
 
+                let meta = Cow::Borrowed(self);
+
                 Some(Ok(EnumerationDataVariant {
-                    meta: self,
+                    meta,
                     s_name,
                     b_name,
                     value,

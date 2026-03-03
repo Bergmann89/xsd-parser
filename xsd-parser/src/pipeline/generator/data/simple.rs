@@ -1,3 +1,5 @@
+use std::borrow::Cow;
+
 use crate::models::{
     data::{ConstrainsData, Occurs, SimpleData},
     meta::SimpleMeta,
@@ -27,6 +29,7 @@ impl<'types> SimpleData<'types> {
         let target_ref = ctx.get_or_create_type_ref(&meta.base)?;
         let target_type = target_ref.path.clone();
 
+        let meta = Cow::Borrowed(meta);
         let trait_impls = ctx.make_trait_impls()?;
 
         Ok(Self {

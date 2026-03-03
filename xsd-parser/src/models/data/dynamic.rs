@@ -1,3 +1,5 @@
+use std::borrow::Cow;
+
 use proc_macro2::{Ident as Ident2, Literal};
 
 use crate::models::{data::PathData, meta::DynamicMeta, TypeIdent};
@@ -8,7 +10,7 @@ use crate::models::{data::PathData, meta::DynamicMeta, TypeIdent};
 #[derive(Debug)]
 pub struct DynamicData<'types> {
     /// Reference to the original type information.
-    pub meta: &'types DynamicMeta,
+    pub meta: Cow<'types, DynamicMeta>,
 
     /// The identifier of the rendered type.
     pub type_ident: Ident2,

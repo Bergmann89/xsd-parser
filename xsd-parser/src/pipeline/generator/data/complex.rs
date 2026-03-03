@@ -1,3 +1,4 @@
+use std::borrow::Cow;
 use std::mem::take;
 
 use proc_macro2::{Ident as Ident2, Literal};
@@ -805,6 +806,7 @@ impl<'types> ComplexDataAttribute<'types> {
             }
         };
 
+        let meta = Cow::Borrowed(meta);
         let s_name = meta.ident.name.to_string();
         let b_name = Literal::byte_string(s_name.as_bytes());
         let tag_name = TagName::new(ctx.types, meta.ident.ns, &meta.ident.name, meta.form);

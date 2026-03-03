@@ -1,3 +1,5 @@
+use std::borrow::Cow;
+
 use crate::config::{GeneratorFlags, TypedefMode};
 use crate::models::{
     data::{Occurs, ReferenceData},
@@ -23,6 +25,7 @@ impl<'types> ReferenceData<'types> {
 
         let trait_impls = ctx.make_trait_impls()?;
 
+        let meta = Cow::Borrowed(meta);
         let mode = match (ctx.typedef_mode, occurs) {
             (TypedefMode::Auto, Occurs::None | Occurs::Single) => TypedefMode::Typedef,
             (TypedefMode::Auto, _) => TypedefMode::NewType,
