@@ -1,3 +1,4 @@
+use std::borrow::Cow;
 use std::ops::{Bound, Range};
 
 use crate::models::{data::ConstrainsData, meta::Constrains, TypeIdent};
@@ -11,6 +12,7 @@ impl<'types> ConstrainsData<'types> {
         base: Option<&TypeIdent>,
         ctx: &mut Context<'_, 'types>,
     ) -> Result<Self, Error> {
+        let meta = Cow::Borrowed(meta);
         let range = if let Some(base) = base {
             let start = match &meta.range.start {
                 Bound::Unbounded => Bound::Unbounded,

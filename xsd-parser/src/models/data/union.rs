@@ -1,3 +1,5 @@
+use std::borrow::Cow;
+
 use proc_macro2::{Ident as Ident2, Literal, TokenStream};
 
 use crate::models::{
@@ -10,7 +12,7 @@ use crate::models::{
 #[derive(Debug)]
 pub struct UnionData<'types> {
     /// Reference to the original type information.
-    pub meta: &'types UnionMeta,
+    pub meta: Cow<'types, UnionMeta>,
 
     /// Code generator data for the constrains of the type.
     pub constrains: ConstrainsData<'types>,
@@ -29,7 +31,7 @@ pub struct UnionData<'types> {
 #[derive(Debug)]
 pub struct UnionTypeVariant<'types> {
     /// Reference to the original type information.
-    pub meta: &'types UnionMetaType,
+    pub meta: Cow<'types, UnionMetaType>,
 
     /// Name of the attribute as string.
     pub s_name: String,

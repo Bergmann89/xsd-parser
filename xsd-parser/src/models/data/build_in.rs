@@ -1,3 +1,5 @@
+use std::borrow::Cow;
+
 use crate::models::meta::BuildInMeta;
 
 /// Contains additional information for the rendering process of a
@@ -6,5 +8,5 @@ use crate::models::meta::BuildInMeta;
 #[derive(Debug)]
 pub struct BuildInData<'types> {
     /// Reference to the original type information.
-    pub meta: &'types BuildInMeta,
+    pub meta: Cow<'types, BuildInMeta>,
 }

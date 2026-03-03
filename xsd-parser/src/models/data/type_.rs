@@ -1,3 +1,4 @@
+use std::borrow::Cow;
 use std::ops::Deref;
 
 use proc_macro2::TokenStream;
@@ -21,7 +22,7 @@ use super::{
 #[derive(Debug)]
 pub struct DataType<'types> {
     /// Underlying meta type this data type contains additional information for.
-    pub meta: &'types MetaType,
+    pub meta: Cow<'types, MetaType>,
 
     /// Defines traits to derive the type from.
     pub derive: ConfigValue<Vec<IdentPath>>,
@@ -74,6 +75,6 @@ impl Deref for DataType<'_> {
     type Target = MetaType;
 
     fn deref(&self) -> &Self::Target {
-        self.meta
+        &self.meta
     }
 }
