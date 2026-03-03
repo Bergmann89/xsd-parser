@@ -16,7 +16,8 @@ pub mod cdf {
     use xsd_parser_types::{
         quick_xml::{
             DeserializeBytes, DeserializeHelper, Error, ErrorKind, RawByteStr, SerializeBytes,
-            SerializeHelper, WithDeserializer, WithSerializer,
+            SerializeHelper, WithDeserializer, WithDeserializerFromBytes, WithSerializeToBytes,
+            WithSerializer,
         },
         xml::{AnyAttributes, AnyElement, Mixed, Text},
     };
@@ -1612,6 +1613,7 @@ pub mod cdf {
             }
         }
     }
+    impl WithSerializeToBytes for StatusType {}
     impl DeserializeBytes for StatusType {
         fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
             match bytes {
@@ -1626,6 +1628,7 @@ pub mod cdf {
             }
         }
     }
+    impl WithDeserializerFromBytes for StatusType {}
     ///The type used for xccdf:sub elements. The
     ///xccdf:sub element identifies replacement content that should appear in place
     ///of the xccdf:sub element during text substitution. The subType consists of a
@@ -2017,6 +2020,7 @@ pub mod cdf {
             }
         }
     }
+    impl WithSerializeToBytes for ValueTypeType {}
     impl DeserializeBytes for ValueTypeType {
         fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
             match bytes {
@@ -2029,6 +2033,7 @@ pub mod cdf {
             }
         }
     }
+    impl WithDeserializerFromBytes for ValueTypeType {}
     /// This type enumerates allowed values of the @operator
     ///property of xccdf:Value elements. The specific interpretation of these
     ///operators depends on the checking system used.
@@ -2058,6 +2063,7 @@ pub mod cdf {
             }
         }
     }
+    impl WithSerializeToBytes for ValueOperatorType {}
     impl DeserializeBytes for ValueOperatorType {
         fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
             match bytes {
@@ -2074,6 +2080,7 @@ pub mod cdf {
             }
         }
     }
+    impl WithDeserializerFromBytes for ValueOperatorType {}
     /// Allowed interface hint values. xccdf:Value
     ///elements may contain a hint or recommendation to a benchmark consumer or producer
     ///about how the user might select or adjust the xccdf:Value. This type
@@ -2105,6 +2112,7 @@ pub mod cdf {
             }
         }
     }
+    impl WithSerializeToBytes for InterfaceHintType {}
     impl DeserializeBytes for InterfaceHintType {
         fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
             match bytes {
@@ -2119,6 +2127,7 @@ pub mod cdf {
             }
         }
     }
+    impl WithDeserializerFromBytes for InterfaceHintType {}
     /// Data type for the xccdf:warning element under
     ///the xccdf:Rule element. This element holds a note or caveat about the item
     ///intended to convey important cautionary information for the xccdf:Benchmark
@@ -2508,6 +2517,7 @@ pub mod cdf {
             }
         }
     }
+    impl WithSerializeToBytes for RoleEnumType {}
     impl DeserializeBytes for RoleEnumType {
         fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
             match bytes {
@@ -2520,6 +2530,7 @@ pub mod cdf {
             }
         }
     }
+    impl WithDeserializerFromBytes for RoleEnumType {}
     ///Allowed severity values for the @severity attribute of
     ///an xccdf:Rule. The value of this attribute provides an indication of the
     ///importance of the xccdf:Rule element's recommendation. This information is
@@ -2552,6 +2563,7 @@ pub mod cdf {
             }
         }
     }
+    impl WithSerializeToBytes for SeverityEnumType {}
     impl DeserializeBytes for SeverityEnumType {
         fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
             match bytes {
@@ -2566,6 +2578,7 @@ pub mod cdf {
             }
         }
     }
+    impl WithDeserializerFromBytes for SeverityEnumType {}
     /// Data type for the xccdf:ident element, a
     ///globally meaningful identifier for an xccdf:Rule. The body of
     ///xccdf:ident element is the name or identifier of a security configuration
@@ -3390,6 +3403,7 @@ pub mod cdf {
             }
         }
     }
+    impl WithSerializeToBytes for SubUseEnumType {}
     impl DeserializeBytes for SubUseEnumType {
         fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
             match bytes {
@@ -3402,6 +3416,7 @@ pub mod cdf {
             }
         }
     }
+    impl WithDeserializerFromBytes for SubUseEnumType {}
     /// Allowed warning category keywords for the
     ///xccdf:warning element used in xccdf:Rule elements.
     #[derive(Debug)]
@@ -3453,6 +3468,7 @@ pub mod cdf {
             }
         }
     }
+    impl WithSerializeToBytes for WarningCategoryEnumType {}
     impl DeserializeBytes for WarningCategoryEnumType {
         fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
             match bytes {
@@ -3471,6 +3487,7 @@ pub mod cdf {
             }
         }
     }
+    impl WithDeserializerFromBytes for WarningCategoryEnumType {}
     ///Data type that supports values that are lists of simple
     ///types. Each element in the list is represented by an instance of the
     ///xccdf:item child element. If there are no xccdf:item child elements
@@ -3549,6 +3566,7 @@ pub mod cdf {
             }
         }
     }
+    impl WithSerializeToBytes for FixStrategyEnumType {}
     impl DeserializeBytes for FixStrategyEnumType {
         fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
             match bytes {
@@ -3567,6 +3585,7 @@ pub mod cdf {
             }
         }
     }
+    impl WithDeserializerFromBytes for FixStrategyEnumType {}
     /// This type enumerates allowed rating values the
     ///disruption and complexity properties of an xccdf:Rule element's
     ///xccdf:fix or xccdf:fixtext elements.
@@ -3598,6 +3617,7 @@ pub mod cdf {
             }
         }
     }
+    impl WithSerializeToBytes for RatingEnumType {}
     impl DeserializeBytes for RatingEnumType {
         fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
             match bytes {
@@ -3611,6 +3631,7 @@ pub mod cdf {
             }
         }
     }
+    impl WithDeserializerFromBytes for RatingEnumType {}
     /// Type for an xccdf:instance element which may
     ///appear in an xccdf:fix element. The xccdf:instance element inside an
     ///xccdf:fix element designates a spot where the name of the instance should be
@@ -3835,6 +3856,7 @@ pub mod cdf {
             }
         }
     }
+    impl WithSerializeToBytes for CcOperatorEnumType {}
     impl DeserializeBytes for CcOperatorEnumType {
         fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
             match bytes {
@@ -3846,6 +3868,7 @@ pub mod cdf {
             }
         }
     }
+    impl WithDeserializerFromBytes for CcOperatorEnumType {}
     /// Data type for an xccdf:fact element, which
     ///holds information about a target system: a name-value pair with a type. The content
     ///of the element is the value, and the @name attribute indicates the name. The @name
@@ -3948,6 +3971,7 @@ pub mod cdf {
             }
         }
     }
+    impl WithSerializeToBytes for ResultEnumType {}
     impl DeserializeBytes for ResultEnumType {
         fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
             match bytes {
@@ -3966,6 +3990,7 @@ pub mod cdf {
             }
         }
     }
+    impl WithDeserializerFromBytes for ResultEnumType {}
     /// Type for an xccdf:override element in an
     ///xccdf:rule-result. This element is used to record manual modification or
     ///annotation of a particular xccdf:rule-result. All attributes and child
@@ -4105,6 +4130,7 @@ pub mod cdf {
             }
         }
     }
+    impl WithSerializeToBytes for MsgSevEnumType {}
     impl DeserializeBytes for MsgSevEnumType {
         fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
             match bytes {
@@ -4117,6 +4143,7 @@ pub mod cdf {
             }
         }
     }
+    impl WithDeserializerFromBytes for MsgSevEnumType {}
     pub mod quick_xml_deserialize {
         use core::mem::replace;
         use xsd_parser_types::{
@@ -35387,7 +35414,8 @@ pub mod cpe {
     use std::borrow::Cow;
     use xsd_parser_types::quick_xml::{
         DeserializeBytes, DeserializeHelper, Error, ErrorKind, RawByteStr, SerializeBytes,
-        SerializeHelper, WithDeserializer, WithSerializer,
+        SerializeHelper, WithDeserializer, WithDeserializerFromBytes, WithSerializeToBytes,
+        WithSerializer,
     };
     #[derive(Debug)]
     pub struct PlatformSpecificationType {
@@ -35536,6 +35564,7 @@ pub mod cpe {
             }
         }
     }
+    impl WithSerializeToBytes for OperatorEnumerationType {}
     impl DeserializeBytes for OperatorEnumerationType {
         fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
             match bytes {
@@ -35547,6 +35576,7 @@ pub mod cpe {
             }
         }
     }
+    impl WithDeserializerFromBytes for OperatorEnumerationType {}
     ///A reference to a CPE Name that always evaluates to a Boolean
     ///result.
     #[derive(Debug)]
@@ -37282,6 +37312,7 @@ pub mod xs {
     use std::borrow::Cow;
     use xsd_parser_types::quick_xml::{
         DeserializeBytes, DeserializeHelper, Error, SerializeBytes, SerializeHelper,
+        WithDeserializerFromBytes, WithSerializeToBytes,
     };
     #[derive(Debug, Default)]
     pub struct EntitiesType(pub Vec<String>);
@@ -37305,9 +37336,11 @@ pub mod xs {
             Ok(Some(Cow::Owned(data)))
         }
     }
+    impl WithSerializeToBytes for EntitiesType {}
     impl DeserializeBytes for EntitiesType {
         fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
             Ok(Self(helper.deserialize_list(bytes)?))
         }
     }
+    impl WithDeserializerFromBytes for EntitiesType {}
 }

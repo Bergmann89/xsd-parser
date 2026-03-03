@@ -3,7 +3,7 @@ use xsd_parser_types::{
     misc::Namespace,
     quick_xml::{
         DeserializeBytes, DeserializeHelper, Error, ErrorKind, RawByteStr, ValidateError,
-        WithDeserializer,
+        WithDeserializer, WithDeserializerFromBytes,
     },
     xml::{AnyAttributes, AnyElement, Mixed, Text},
 };
@@ -87,6 +87,7 @@ impl DeserializeBytes for FullDerivationSetType {
         }
     }
 }
+impl WithDeserializerFromBytes for FullDerivationSetType {}
 #[derive(Debug, Default)]
 pub struct BlockSetItemList(pub Vec<BlockSetItemType>);
 impl DeserializeBytes for BlockSetItemList {
@@ -94,6 +95,7 @@ impl DeserializeBytes for BlockSetItemList {
         Ok(Self(helper.deserialize_list(bytes)?))
     }
 }
+impl WithDeserializerFromBytes for BlockSetItemList {}
 ///A utility type, not for public use
 ///#all or (possibly empty) subset of {substitution, extension,
 ///restriction}
@@ -112,6 +114,7 @@ impl DeserializeBytes for BlockSetType {
         }
     }
 }
+impl WithDeserializerFromBytes for BlockSetType {}
 ///A utility type, not for public use
 #[derive(Debug)]
 pub enum FormChoiceType {
@@ -129,6 +132,7 @@ impl DeserializeBytes for FormChoiceType {
         }
     }
 }
+impl WithDeserializerFromBytes for FormChoiceType {}
 #[derive(Debug)]
 pub enum XpathDefaultNamespaceType {
     String(String),
@@ -146,6 +150,7 @@ impl DeserializeBytes for XpathDefaultNamespaceType {
         }
     }
 }
+impl WithDeserializerFromBytes for XpathDefaultNamespaceType {}
 #[derive(Debug)]
 pub struct IncludeElementType {
     pub any_attribute: AnyAttributes,
@@ -547,6 +552,7 @@ impl DeserializeBytes for DefaultOpenContentModeType {
         }
     }
 }
+impl WithDeserializerFromBytes for DefaultOpenContentModeType {}
 #[derive(Debug)]
 pub struct WildcardType {
     pub any_attribute: AnyAttributes,
@@ -582,6 +588,7 @@ impl DeserializeBytes for SimpleDerivationSetType {
         }
     }
 }
+impl WithDeserializerFromBytes for SimpleDerivationSetType {}
 ///base attribute and simpleType child are mutually
 ///exclusive, but one or other is required
 #[derive(Debug)]
@@ -649,6 +656,7 @@ impl DeserializeBytes for DerivationSetType {
         }
     }
 }
+impl WithDeserializerFromBytes for DerivationSetType {}
 #[derive(Debug)]
 pub struct SimpleContentElementType {
     pub any_attribute: AnyAttributes,
@@ -748,6 +756,7 @@ impl DeserializeBytes for AllNniType {
         }
     }
 }
+impl WithDeserializerFromBytes for AllNniType {}
 ///for all particles
 #[derive(Debug)]
 pub struct AnyElementType {
@@ -785,6 +794,7 @@ impl DeserializeBytes for EntitiesType {
         Ok(Self(helper.deserialize_list(bytes)?))
     }
 }
+impl WithDeserializerFromBytes for EntitiesType {}
 ///This type is used for 'alternative' elements.
 #[derive(Debug)]
 pub struct AltType {
@@ -867,6 +877,7 @@ impl DeserializeBytes for AttributeUseType {
         }
     }
 }
+impl WithDeserializerFromBytes for AttributeUseType {}
 ///A utility type, not for public use
 #[derive(Debug)]
 pub enum DerivationControlType {
@@ -890,6 +901,7 @@ impl DeserializeBytes for DerivationControlType {
         }
     }
 }
+impl WithDeserializerFromBytes for DerivationControlType {}
 ///A utility type, not for public use
 #[derive(Debug)]
 pub enum NamespaceListType {
@@ -908,6 +920,7 @@ impl DeserializeBytes for NamespaceListType {
         }
     }
 }
+impl WithDeserializerFromBytes for NamespaceListType {}
 #[derive(Debug)]
 pub struct NotNamespaceType(pub Vec<BasicNamespaceListItemType>);
 impl NotNamespaceType {
@@ -949,6 +962,7 @@ impl DeserializeBytes for NotNamespaceType {
         Ok(Self::new(inner).map_err(|error| (bytes, error))?)
     }
 }
+impl WithDeserializerFromBytes for NotNamespaceType {}
 #[derive(Debug)]
 pub enum ProcessContentsType {
     Skip,
@@ -967,6 +981,7 @@ impl DeserializeBytes for ProcessContentsType {
         }
     }
 }
+impl WithDeserializerFromBytes for ProcessContentsType {}
 ///An abstract element, representing facets in general.
 ///The facets defined by this spec are substitutable for
 ///this element, and implementation-defined facets should
@@ -1064,6 +1079,7 @@ impl DeserializeBytes for OpenContentModeType {
         }
     }
 }
+impl WithDeserializerFromBytes for OpenContentModeType {}
 ///A utility type, not for public use
 #[derive(Debug, Default)]
 pub struct QnameListAType(pub Vec<QnameListAItemType>);
@@ -1072,6 +1088,7 @@ impl DeserializeBytes for QnameListAType {
         Ok(Self(helper.deserialize_list(bytes)?))
     }
 }
+impl WithDeserializerFromBytes for QnameListAType {}
 ///A utility type, not for public use
 #[derive(Debug, Default)]
 pub struct QnameListType(pub Vec<QnameListItemType>);
@@ -1080,6 +1097,7 @@ impl DeserializeBytes for QnameListType {
         Ok(Self(helper.deserialize_list(bytes)?))
     }
 }
+impl WithDeserializerFromBytes for QnameListType {}
 #[derive(Debug)]
 pub struct FieldElementType {
     pub any_attribute: AnyAttributes,
@@ -1099,6 +1117,7 @@ impl DeserializeBytes for BasicNamespaceListType {
         Ok(Self(helper.deserialize_list(bytes)?))
     }
 }
+impl WithDeserializerFromBytes for BasicNamespaceListType {}
 #[derive(Debug)]
 pub enum BasicNamespaceListItemType {
     String(String),
@@ -1114,6 +1133,7 @@ impl DeserializeBytes for BasicNamespaceListItemType {
         }
     }
 }
+impl WithDeserializerFromBytes for BasicNamespaceListItemType {}
 #[derive(Debug)]
 pub struct FacetType {
     pub any_attribute: AnyAttributes,
@@ -1144,6 +1164,7 @@ impl DeserializeBytes for QnameListAItemType {
         }
     }
 }
+impl WithDeserializerFromBytes for QnameListAItemType {}
 #[derive(Debug)]
 pub enum QnameListItemType {
     String(String),
@@ -1159,6 +1180,7 @@ impl DeserializeBytes for QnameListItemType {
         }
     }
 }
+impl WithDeserializerFromBytes for QnameListItemType {}
 pub mod quick_xml_deserialize {
     use core::mem::replace;
     use xsd_parser_types::{

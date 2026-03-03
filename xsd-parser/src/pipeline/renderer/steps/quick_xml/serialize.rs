@@ -170,6 +170,8 @@ impl UnionData<'_> {
         let serialize_bytes = resolve_ident!(ctx, "::xsd_parser_types::quick_xml::SerializeBytes");
         let serialize_helper =
             resolve_ident!(ctx, "::xsd_parser_types::quick_xml::SerializeHelper");
+        let with_serializer_to_bytes =
+            resolve_ident!(ctx, "xsd_parser_types::quick_xml::WithSerializeToBytes");
 
         let code = quote! {
             impl #serialize_bytes for #type_ident {
@@ -179,6 +181,7 @@ impl UnionData<'_> {
                     }
                 }
             }
+            impl #with_serializer_to_bytes for #type_ident { }
         };
 
         ctx.current_module().append(code);
@@ -297,6 +300,8 @@ impl ReferenceData<'_> {
         let serialize_bytes = resolve_ident!(ctx, "::xsd_parser_types::quick_xml::SerializeBytes");
         let serialize_helper =
             resolve_ident!(ctx, "::xsd_parser_types::quick_xml::SerializeHelper");
+        let with_serializer_to_bytes =
+            resolve_ident!(ctx, "xsd_parser_types::quick_xml::WithSerializeToBytes");
 
         let code = quote! {
             impl #serialize_bytes for #type_ident {
@@ -304,6 +309,7 @@ impl ReferenceData<'_> {
                     #body
                 }
             }
+            impl #with_serializer_to_bytes for #type_ident { }
         };
 
         ctx.current_module().append(code);
@@ -331,6 +337,8 @@ impl EnumerationData<'_> {
         let serialize_bytes = resolve_ident!(ctx, "::xsd_parser_types::quick_xml::SerializeBytes");
         let serialize_helper =
             resolve_ident!(ctx, "::xsd_parser_types::quick_xml::SerializeHelper");
+        let with_serializer_to_bytes =
+            resolve_ident!(ctx, "xsd_parser_types::quick_xml::WithSerializeToBytes");
 
         let code = quote! {
             impl #serialize_bytes for #type_ident {
@@ -340,6 +348,7 @@ impl EnumerationData<'_> {
                     }
                 }
             }
+            impl #with_serializer_to_bytes for #type_ident { }
         };
 
         ctx.current_module().append(code);
@@ -400,6 +409,8 @@ impl SimpleData<'_> {
         let serialize_bytes = resolve_ident!(ctx, "::xsd_parser_types::quick_xml::SerializeBytes");
         let serialize_helper =
             resolve_ident!(ctx, "::xsd_parser_types::quick_xml::SerializeHelper");
+        let with_serializer_to_bytes =
+            resolve_ident!(ctx, "xsd_parser_types::quick_xml::WithSerializeToBytes");
 
         let body = if let Some(digits) = self.meta.constrains.fraction_digits {
             let format = format!("{{inner:.0{digits}}}");
@@ -442,6 +453,7 @@ impl SimpleData<'_> {
                     #body
                 }
             }
+            impl #with_serializer_to_bytes for #type_ident { }
         };
 
         ctx.current_module().append(code);

@@ -11,7 +11,8 @@ pub mod er {
     use std::borrow::Cow;
     use xsd_parser_types::quick_xml::{
         DeserializeBytes, DeserializeHelper, Error, ErrorKind, RawByteStr, SerializeBytes,
-        SerializeHelper, WithDeserializer, WithSerializer,
+        SerializeHelper, WithDeserializer, WithDeserializerFromBytes, WithSerializeToBytes,
+        WithSerializer,
     };
     #[derive(Debug)]
     pub struct CatalogType {
@@ -346,6 +347,7 @@ pub mod er {
             }
         }
     }
+    impl WithSerializeToBytes for SystemOrPublicType {}
     impl DeserializeBytes for SystemOrPublicType {
         fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
             match bytes {
@@ -357,6 +359,7 @@ pub mod er {
             }
         }
     }
+    impl WithDeserializerFromBytes for SystemOrPublicType {}
     #[derive(Debug)]
     pub struct SystemSuffixType {
         pub system_id_suffix: String,
@@ -5390,6 +5393,7 @@ pub mod xs {
     use std::borrow::Cow;
     use xsd_parser_types::quick_xml::{
         DeserializeBytes, DeserializeHelper, Error, SerializeBytes, SerializeHelper,
+        WithDeserializerFromBytes, WithSerializeToBytes,
     };
     #[derive(Debug, Default)]
     pub struct EntitiesType(pub Vec<String>);
@@ -5413,11 +5417,13 @@ pub mod xs {
             Ok(Some(Cow::Owned(data)))
         }
     }
+    impl WithSerializeToBytes for EntitiesType {}
     impl DeserializeBytes for EntitiesType {
         fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
             Ok(Self(helper.deserialize_list(bytes)?))
         }
     }
+    impl WithDeserializerFromBytes for EntitiesType {}
     pub type EntityType = String;
     pub type IdType = String;
     pub type IdrefType = String;

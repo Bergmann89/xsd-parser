@@ -14,6 +14,7 @@ pub const PREFIX_TNS: NamespacePrefix = NamespacePrefix::new_const(b"tns");
 pub type Foo = FooType;
 #[derive(Debug)]
 pub struct FooType {
+    pub test_attrib: Option<AnySimpleType>,
     pub value: Vec<AnySimpleType>,
 }
 impl WithSerializer for FooType {
@@ -46,6 +47,7 @@ pub mod quick_xml_deserialize {
     };
     #[derive(Debug)]
     pub struct FooTypeDeserializer {
+        test_attrib: Option<AnySimpleType>,
         value: Vec<AnySimpleType>,
         state__: Box<FooTypeDeserializerState>,
     }
@@ -61,11 +63,20 @@ pub mod quick_xml_deserialize {
             helper: &mut DeserializeHelper,
             bytes_start: &BytesStart<'_>,
         ) -> Result<Self, Error> {
+            let mut test_attrib: Option<AnySimpleType> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                helper.raise_unexpected_attrib_checked(&attrib)?;
+                if matches!(
+                    helper.resolve_local_name(attrib.key, &super::NS_TNS),
+                    Some(b"TestAttrib")
+                ) {
+                    helper.read_attrib(&mut test_attrib, b"TestAttrib", &attrib.value)?;
+                } else {
+                    helper.raise_unexpected_attrib_checked(&attrib)?;
+                }
             }
             Ok(Self {
+                test_attrib: test_attrib,
                 value: Vec::new(),
                 state__: Box::new(FooTypeDeserializerState::Init__),
             })
@@ -207,7 +218,10 @@ pub mod quick_xml_deserialize {
         fn finish(mut self, helper: &mut DeserializeHelper) -> Result<super::FooType, Error> {
             let state = replace(&mut *self.state__, FooTypeDeserializerState::Unknown__);
             self.finish_state(helper, state)?;
-            Ok(super::FooType { value: self.value })
+            Ok(super::FooType {
+                test_attrib: self.test_attrib,
+                value: self.value,
+            })
         }
     }
 }
@@ -256,6 +270,11 @@ pub mod quick_xml_serialize {
                                 &super::NS_XSI,
                             );
                         }
+                        helper.write_attrib_opt(
+                            &mut bytes,
+                            "TestAttrib",
+                            &self.value.test_attrib,
+                        )?;
                         return Ok(Some(Event::Start(bytes)));
                     }
                     FooTypeSerializerState::Value(x) => match x.next(helper).transpose()? {

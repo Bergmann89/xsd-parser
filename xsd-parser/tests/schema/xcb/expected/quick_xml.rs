@@ -3,7 +3,7 @@ use xsd_parser_types::{
     misc::{Namespace, NamespacePrefix},
     quick_xml::{
         DeserializeBytes, DeserializeHelper, Error, ErrorKind, SerializeBytes, SerializeHelper,
-        WithDeserializer, WithSerializer,
+        WithDeserializer, WithDeserializerFromBytes, WithSerializeToBytes, WithSerializer,
     },
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
@@ -1021,6 +1021,7 @@ impl SerializeBytes for DecOrHexIntegerType {
         }
     }
 }
+impl WithSerializeToBytes for DecOrHexIntegerType {}
 impl DeserializeBytes for DecOrHexIntegerType {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         let mut errors = Vec::new();
@@ -1035,6 +1036,7 @@ impl DeserializeBytes for DecOrHexIntegerType {
         Err(Error::from(ErrorKind::InvalidUnion(errors.into())))
     }
 }
+impl WithDeserializerFromBytes for DecOrHexIntegerType {}
 #[derive(Debug)]
 pub struct CaseexprType {
     pub name: Option<String>,

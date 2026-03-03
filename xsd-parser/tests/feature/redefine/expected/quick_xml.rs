@@ -61,6 +61,7 @@ pub mod tns {
                 }
             }
         }
+        impl xsd_parser_types::quick_xml::WithSerializeToBytes for GenderType {}
         impl ::xsd_parser_types::quick_xml::DeserializeBytes for GenderType {
             fn deserialize_bytes(
                 helper: &mut ::xsd_parser_types::quick_xml::DeserializeHelper,
@@ -77,6 +78,7 @@ pub mod tns {
                 }
             }
         }
+        impl xsd_parser_types::quick_xml::WithDeserializerFromBytes for GenderType {}
         pub mod quick_xml_deserialize {
             use xsd_parser_types::quick_xml::Deserializer as _;
             #[derive(Debug)]

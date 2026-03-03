@@ -3,7 +3,8 @@ use xsd_parser_types::{
     misc::{Namespace, NamespacePrefix},
     quick_xml::{
         DeserializeBytes, DeserializeHelper, Error, ErrorKind, RawByteStr, SerializeBytes,
-        SerializeHelper, WithDeserializer, WithSerializer,
+        SerializeHelper, WithDeserializer, WithDeserializerFromBytes, WithSerializeToBytes,
+        WithSerializer,
     },
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
@@ -85,6 +86,7 @@ impl SerializeBytes for TChangeFreqType {
         }
     }
 }
+impl WithSerializeToBytes for TChangeFreqType {}
 impl DeserializeBytes for TChangeFreqType {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
@@ -101,6 +103,7 @@ impl DeserializeBytes for TChangeFreqType {
         }
     }
 }
+impl WithDeserializerFromBytes for TChangeFreqType {}
 pub mod quick_xml_deserialize {
     use core::mem::replace;
     use xsd_parser_types::quick_xml::{

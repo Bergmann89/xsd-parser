@@ -5,7 +5,8 @@ use xsd_parser_types::{
     misc::{Namespace, NamespacePrefix},
     quick_xml::{
         DeserializeBytes, DeserializeHelper, Error, ErrorKind, RawByteStr, SerializeBytes,
-        SerializeHelper, ValidateError, WithDeserializer, WithSerializer,
+        SerializeHelper, ValidateError, WithDeserializer, WithDeserializerFromBytes,
+        WithSerializeToBytes, WithSerializer,
     },
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
@@ -66,6 +67,7 @@ impl SerializeBytes for EnumType {
         }
     }
 }
+impl WithSerializeToBytes for EnumType {}
 impl DeserializeBytes for EnumType {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         let s = from_utf8(bytes).map_err(Error::from)?;
@@ -80,6 +82,7 @@ impl DeserializeBytes for EnumType {
         }
     }
 }
+impl WithDeserializerFromBytes for EnumType {}
 pub mod quick_xml_deserialize {
     use core::mem::replace;
     use xsd_parser_types::quick_xml::{

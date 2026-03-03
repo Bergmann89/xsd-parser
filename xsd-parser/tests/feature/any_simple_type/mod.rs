@@ -12,7 +12,7 @@ fn config() -> Config {
 #[test]
 fn generate_default() {
     generate_test(
-        "tests/feature/any_simple_type/schema.xsd",
+        "tests/feature/any_simple_type/schema-default.xsd",
         "tests/feature/any_simple_type/expected/default.rs",
         config(),
     );
@@ -25,21 +25,21 @@ mod default {
     include!("expected/default.rs");
 }
 
-/* quick_xml */
+/* quick_xml_default */
 
 #[test]
-fn generate_quick_xml() {
+fn generate_quick_xml_default() {
     generate_test(
-        "tests/feature/any_simple_type/schema.xsd",
-        "tests/feature/any_simple_type/expected/quick_xml.rs",
+        "tests/feature/any_simple_type/schema-default.xsd",
+        "tests/feature/any_simple_type/expected/quick_xml_default.rs",
         config().with_quick_xml(),
     );
 }
 
 #[test]
 #[cfg(not(feature = "update-expectations"))]
-fn read_quick_xml() {
-    use quick_xml::Foo;
+fn read_quick_xml_default() {
+    use quick_xml_default::Foo;
 
     let obj = crate::utils::quick_xml_read_test::<Foo, _>(
         "tests/feature/any_simple_type/example/default.xml",
@@ -54,8 +54,8 @@ fn read_quick_xml() {
 
 #[test]
 #[cfg(not(feature = "update-expectations"))]
-fn write_quick_xml() {
-    use quick_xml::{AnySimpleType, Foo};
+fn write_quick_xml_default() {
+    use quick_xml_default::{AnySimpleType, Foo};
 
     let obj = Foo {
         value: vec![
@@ -78,10 +78,10 @@ fn write_quick_xml() {
 }
 
 #[cfg(not(feature = "update-expectations"))]
-mod quick_xml {
+mod quick_xml_default {
     #![allow(unused_imports)]
 
-    include!("expected/quick_xml.rs");
+    include!("expected/quick_xml_default.rs");
 }
 
 /* quick_xml_custom_type */
@@ -89,7 +89,7 @@ mod quick_xml {
 #[test]
 fn generate_quick_xml_custom_type() {
     generate_test(
-        "tests/feature/any_simple_type/schema.xsd",
+        "tests/feature/any_simple_type/schema-custom-type.xsd",
         "tests/feature/any_simple_type/expected/quick_xml_custom_type.rs",
         config()
             .with_quick_xml()
@@ -123,6 +123,7 @@ fn write_quick_xml_custom_type() {
             AnySimpleType::String(String::from("Test")),
             AnySimpleType::Integer(12345678.into()),
         ],
+        test_attrib: Some(AnySimpleType::Integer(87654321.into())),
     };
 
     crate::utils::quick_xml_write_test(

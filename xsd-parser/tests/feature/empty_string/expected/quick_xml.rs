@@ -3,7 +3,7 @@ use xsd_parser_types::{
     misc::{Namespace, NamespacePrefix},
     quick_xml::{
         DeserializeBytes, DeserializeHelper, Error, SerializeBytes, SerializeHelper,
-        WithDeserializer, WithSerializer,
+        WithDeserializer, WithDeserializerFromBytes, WithSerializeToBytes, WithSerializer,
     },
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
@@ -79,11 +79,13 @@ impl SerializeBytes for EntitiesType {
         Ok(Some(Cow::Owned(data)))
     }
 }
+impl WithSerializeToBytes for EntitiesType {}
 impl DeserializeBytes for EntitiesType {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         Ok(Self(helper.deserialize_list(bytes)?))
     }
 }
+impl WithDeserializerFromBytes for EntitiesType {}
 pub type EntityType = String;
 pub type IdType = String;
 pub type IdrefType = String;
@@ -106,11 +108,13 @@ impl SerializeBytes for IdrefsType {
         Ok(Some(Cow::Owned(data)))
     }
 }
+impl WithSerializeToBytes for IdrefsType {}
 impl DeserializeBytes for IdrefsType {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         Ok(Self(helper.deserialize_list(bytes)?))
     }
 }
+impl WithDeserializerFromBytes for IdrefsType {}
 pub type NcNameType = String;
 pub type NmtokenType = String;
 #[derive(Debug, Default)]
@@ -132,11 +136,13 @@ impl SerializeBytes for NmtokensType {
         Ok(Some(Cow::Owned(data)))
     }
 }
+impl WithSerializeToBytes for NmtokensType {}
 impl DeserializeBytes for NmtokensType {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         Ok(Self(helper.deserialize_list(bytes)?))
     }
 }
+impl WithDeserializerFromBytes for NmtokensType {}
 pub type NotationType = String;
 pub type NameType = String;
 pub type QNameType = String;

@@ -583,7 +583,8 @@ pub mod annotion {
     use std::borrow::Cow;
     use xsd_parser_types::quick_xml::{
         DeserializeBytes, DeserializeHelper, Error, ErrorKind, RawByteStr, SerializeBytes,
-        SerializeHelper, WithDeserializer, WithSerializer,
+        SerializeHelper, WithDeserializer, WithDeserializerFromBytes, WithSerializeToBytes,
+        WithSerializer,
     };
     pub type PageAnnot = PageAnnotXElementType;
     #[derive(Debug)]
@@ -688,6 +689,7 @@ pub mod annotion {
             }
         }
     }
+    impl WithSerializeToBytes for PageAnnotAnnotTypeXType {}
     impl DeserializeBytes for PageAnnotAnnotTypeXType {
         fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
             match bytes {
@@ -702,6 +704,7 @@ pub mod annotion {
             }
         }
     }
+    impl WithDeserializerFromBytes for PageAnnotAnnotTypeXType {}
     #[derive(Debug)]
     pub struct PageAnnotAnnotParametersXElementType {
         pub parameter: Vec<PageAnnotAnnotParametersParameterXElementType>,
@@ -4310,7 +4313,8 @@ pub mod definition {
     use xsd_parser_types::{
         quick_xml::{
             DeserializeBytes, DeserializeHelper, Error, ErrorKind, RawByteStr, SerializeBytes,
-            SerializeHelper, WithDeserializer, WithSerializer,
+            SerializeHelper, WithDeserializer, WithDeserializerFromBytes, WithSerializeToBytes,
+            WithSerializer,
         },
         xml::AnyElement,
     };
@@ -4463,6 +4467,7 @@ pub mod definition {
             }
         }
     }
+    impl WithSerializeToBytes for CtActionEventXType {}
     impl DeserializeBytes for CtActionEventXType {
         fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
             match bytes {
@@ -4475,6 +4480,7 @@ pub mod definition {
             }
         }
     }
+    impl WithDeserializerFromBytes for CtActionEventXType {}
     #[derive(Debug)]
     pub enum CtActionGotoXElementType {
         Dest(CtDestXType),
@@ -4637,6 +4643,7 @@ pub mod definition {
             }
         }
     }
+    impl WithSerializeToBytes for CtDestTypeXType {}
     impl DeserializeBytes for CtDestTypeXType {
         fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
             match bytes {
@@ -4651,6 +4658,7 @@ pub mod definition {
             }
         }
     }
+    impl WithDeserializerFromBytes for CtDestTypeXType {}
     #[derive(Debug)]
     pub struct CtRegionAreaXElementType {
         pub start: String,
@@ -4744,6 +4752,7 @@ pub mod definition {
             }
         }
     }
+    impl WithSerializeToBytes for CtActionMovieOperatorXType {}
     impl DeserializeBytes for CtActionMovieOperatorXType {
         fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
             match bytes {
@@ -4757,6 +4766,7 @@ pub mod definition {
             }
         }
     }
+    impl WithDeserializerFromBytes for CtActionMovieOperatorXType {}
     #[derive(Debug)]
     pub struct CtRegionAreaLineXElementType {
         pub point_1: String,
@@ -9627,7 +9637,8 @@ pub mod document {
     use std::borrow::Cow;
     use xsd_parser_types::quick_xml::{
         DeserializeBytes, DeserializeHelper, Error, ErrorKind, RawByteStr, SerializeBytes,
-        SerializeHelper, WithDeserializer, WithSerializer,
+        SerializeHelper, WithDeserializer, WithDeserializerFromBytes, WithSerializeToBytes,
+        WithSerializer,
     };
     #[derive(Debug)]
     pub struct CtBookmarkXType {
@@ -9879,6 +9890,7 @@ pub mod document {
             }
         }
     }
+    impl WithSerializeToBytes for CtVPreferencesPageModeXElementType {}
     impl DeserializeBytes for CtVPreferencesPageModeXElementType {
         fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
             match bytes {
@@ -9896,6 +9908,7 @@ pub mod document {
             }
         }
     }
+    impl WithDeserializerFromBytes for CtVPreferencesPageModeXElementType {}
     #[derive(Debug)]
     pub enum CtVPreferencesPageLayoutXElementType {
         OnePage,
@@ -9920,6 +9933,7 @@ pub mod document {
             }
         }
     }
+    impl WithSerializeToBytes for CtVPreferencesPageLayoutXElementType {}
     impl DeserializeBytes for CtVPreferencesPageLayoutXElementType {
         fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
             match bytes {
@@ -9935,6 +9949,7 @@ pub mod document {
             }
         }
     }
+    impl WithDeserializerFromBytes for CtVPreferencesPageLayoutXElementType {}
     #[derive(Debug)]
     pub enum CtVPreferencesTabDisplayXElementType {
         DocTitle,
@@ -9951,6 +9966,7 @@ pub mod document {
             }
         }
     }
+    impl WithSerializeToBytes for CtVPreferencesTabDisplayXElementType {}
     impl DeserializeBytes for CtVPreferencesTabDisplayXElementType {
         fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
             match bytes {
@@ -9962,6 +9978,7 @@ pub mod document {
             }
         }
     }
+    impl WithDeserializerFromBytes for CtVPreferencesTabDisplayXElementType {}
     #[derive(Debug)]
     pub enum CtVPreferencesZoomModeXElementType {
         Default,
@@ -9982,6 +9999,7 @@ pub mod document {
             }
         }
     }
+    impl WithSerializeToBytes for CtVPreferencesZoomModeXElementType {}
     impl DeserializeBytes for CtVPreferencesZoomModeXElementType {
         fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
             match bytes {
@@ -9995,6 +10013,7 @@ pub mod document {
             }
         }
     }
+    impl WithDeserializerFromBytes for CtVPreferencesZoomModeXElementType {}
     #[derive(Debug)]
     pub struct DocumentCommonDataXElementType {
         pub max_unit_id: u32,
@@ -10167,6 +10186,7 @@ pub mod document {
             }
         }
     }
+    impl WithSerializeToBytes for DocumentCommonDataTemplatePageZOrderXType {}
     impl DeserializeBytes for DocumentCommonDataTemplatePageZOrderXType {
         fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
             match bytes {
@@ -10178,6 +10198,7 @@ pub mod document {
             }
         }
     }
+    impl WithDeserializerFromBytes for DocumentCommonDataTemplatePageZOrderXType {}
     pub mod quick_xml_deserialize {
         use core::mem::replace;
         use xsd_parser_types::quick_xml::{
@@ -17656,7 +17677,8 @@ pub mod ofd {
     use std::borrow::Cow;
     use xsd_parser_types::quick_xml::{
         DeserializeBytes, DeserializeHelper, Error, ErrorKind, RawByteStr, SerializeBytes,
-        SerializeHelper, WithDeserializer, WithSerializer,
+        SerializeHelper, WithDeserializer, WithDeserializerFromBytes, WithSerializeToBytes,
+        WithSerializer,
     };
     #[derive(Debug)]
     pub struct CtDocInfoXType {
@@ -17774,6 +17796,7 @@ pub mod ofd {
             }
         }
     }
+    impl WithSerializeToBytes for OfdDocTypeXType {}
     impl DeserializeBytes for OfdDocTypeXType {
         fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
             match bytes {
@@ -17784,6 +17807,7 @@ pub mod ofd {
             }
         }
     }
+    impl WithDeserializerFromBytes for OfdDocTypeXType {}
     #[derive(Debug)]
     pub struct OfdDocBodyXElementType {
         pub doc_info: CtDocInfoXType,
@@ -21041,7 +21065,8 @@ pub mod page {
     use std::borrow::Cow;
     use xsd_parser_types::quick_xml::{
         DeserializeBytes, DeserializeHelper, Error, ErrorKind, RawByteStr, SerializeBytes,
-        SerializeHelper, WithDeserializer, WithSerializer,
+        SerializeHelper, WithDeserializer, WithDeserializerFromBytes, WithSerializeToBytes,
+        WithSerializer,
     };
     #[derive(Debug)]
     pub struct CtAxialShdXType {
@@ -21898,6 +21923,7 @@ pub mod page {
             }
         }
     }
+    impl WithSerializeToBytes for CtAxialShdMapTypeXType {}
     impl DeserializeBytes for CtAxialShdMapTypeXType {
         fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
             match bytes {
@@ -21910,6 +21936,7 @@ pub mod page {
             }
         }
     }
+    impl WithDeserializerFromBytes for CtAxialShdMapTypeXType {}
     #[derive(Debug)]
     pub enum CtAxialShdExtendXType {
         _0,
@@ -21930,6 +21957,7 @@ pub mod page {
             }
         }
     }
+    impl WithSerializeToBytes for CtAxialShdExtendXType {}
     impl DeserializeBytes for CtAxialShdExtendXType {
         fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
             match bytes {
@@ -21943,6 +21971,7 @@ pub mod page {
             }
         }
     }
+    impl WithDeserializerFromBytes for CtAxialShdExtendXType {}
     #[derive(Debug)]
     pub struct CtAxialShdSegmentXElementType {
         pub position: Option<f64>,
@@ -22039,6 +22068,7 @@ pub mod page {
             }
         }
     }
+    impl WithSerializeToBytes for CtGraphicUnitCapXType {}
     impl DeserializeBytes for CtGraphicUnitCapXType {
         fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
             match bytes {
@@ -22051,6 +22081,7 @@ pub mod page {
             }
         }
     }
+    impl WithDeserializerFromBytes for CtGraphicUnitCapXType {}
     #[derive(Debug)]
     pub enum CtGraphicUnitJoinXType {
         Miter,
@@ -22069,6 +22100,7 @@ pub mod page {
             }
         }
     }
+    impl WithSerializeToBytes for CtGraphicUnitJoinXType {}
     impl DeserializeBytes for CtGraphicUnitJoinXType {
         fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
             match bytes {
@@ -22081,6 +22113,7 @@ pub mod page {
             }
         }
     }
+    impl WithDeserializerFromBytes for CtGraphicUnitJoinXType {}
     #[derive(Debug)]
     pub struct CtGraphicUnitActionsXElementType {
         pub action: Vec<super::definition::CtActionXType>,
@@ -22248,6 +22281,7 @@ pub mod page {
             }
         }
     }
+    impl WithSerializeToBytes for CtLayerTypeXType {}
     impl DeserializeBytes for CtLayerTypeXType {
         fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
             match bytes {
@@ -22261,6 +22295,7 @@ pub mod page {
             }
         }
     }
+    impl WithDeserializerFromBytes for CtLayerTypeXType {}
     #[derive(Debug)]
     pub struct CtPageBlockTextObjectXElementType {
         pub boundary: String,
@@ -22651,6 +22686,7 @@ pub mod page {
             }
         }
     }
+    impl WithSerializeToBytes for CtPathRuleXType {}
     impl DeserializeBytes for CtPathRuleXType {
         fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
             match bytes {
@@ -22662,6 +22698,7 @@ pub mod page {
             }
         }
     }
+    impl WithDeserializerFromBytes for CtPathRuleXType {}
     #[derive(Debug)]
     pub enum CtPatternReflectMethodXType {
         Normal,
@@ -22682,6 +22719,7 @@ pub mod page {
             }
         }
     }
+    impl WithSerializeToBytes for CtPatternReflectMethodXType {}
     impl DeserializeBytes for CtPatternReflectMethodXType {
         fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
             match bytes {
@@ -22695,6 +22733,7 @@ pub mod page {
             }
         }
     }
+    impl WithDeserializerFromBytes for CtPatternReflectMethodXType {}
     #[derive(Debug)]
     pub enum CtPatternRelativeToXType {
         Page,
@@ -22711,6 +22750,7 @@ pub mod page {
             }
         }
     }
+    impl WithSerializeToBytes for CtPatternRelativeToXType {}
     impl DeserializeBytes for CtPatternRelativeToXType {
         fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
             match bytes {
@@ -22722,6 +22762,7 @@ pub mod page {
             }
         }
     }
+    impl WithDeserializerFromBytes for CtPatternRelativeToXType {}
     #[derive(Debug)]
     pub struct CtPatternCellContentXElementType {
         pub thumbnail: Option<u32>,
@@ -22799,6 +22840,7 @@ pub mod page {
             }
         }
     }
+    impl WithSerializeToBytes for CtTextWeightXType {}
     impl DeserializeBytes for CtTextWeightXType {
         fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
             match bytes {
@@ -22819,6 +22861,7 @@ pub mod page {
             }
         }
     }
+    impl WithDeserializerFromBytes for CtTextWeightXType {}
     #[derive(Debug)]
     pub struct CtTextTextCodeXElementType {
         pub x: Option<f64>,
@@ -22920,6 +22963,7 @@ pub mod page {
             }
         }
     }
+    impl WithSerializeToBytes for CtGouraudShdPointEdgeFlagXType {}
     impl DeserializeBytes for CtGouraudShdPointEdgeFlagXType {
         fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
             match bytes {
@@ -22932,6 +22976,7 @@ pub mod page {
             }
         }
     }
+    impl WithDeserializerFromBytes for CtGouraudShdPointEdgeFlagXType {}
     #[derive(Debug)]
     pub enum PageTemplateZOrderXType {
         Backqround,
@@ -22948,6 +22993,7 @@ pub mod page {
             }
         }
     }
+    impl WithSerializeToBytes for PageTemplateZOrderXType {}
     impl DeserializeBytes for PageTemplateZOrderXType {
         fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
             match bytes {
@@ -22959,6 +23005,7 @@ pub mod page {
             }
         }
     }
+    impl WithDeserializerFromBytes for PageTemplateZOrderXType {}
     #[derive(Debug)]
     pub struct PageContentLayerXElementType {
         pub type_: CtLayerTypeXType,
@@ -41335,7 +41382,8 @@ pub mod res {
     use std::borrow::Cow;
     use xsd_parser_types::quick_xml::{
         DeserializeBytes, DeserializeHelper, Error, ErrorKind, RawByteStr, SerializeBytes,
-        SerializeHelper, WithDeserializer, WithSerializer,
+        SerializeHelper, WithDeserializer, WithDeserializerFromBytes, WithSerializeToBytes,
+        WithSerializer,
     };
     #[derive(Debug)]
     pub struct CtColorSpaceXType {
@@ -41589,6 +41637,7 @@ pub mod res {
             }
         }
     }
+    impl WithSerializeToBytes for CtColorSpaceTypeXType {}
     impl DeserializeBytes for CtColorSpaceTypeXType {
         fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
             match bytes {
@@ -41601,6 +41650,7 @@ pub mod res {
             }
         }
     }
+    impl WithDeserializerFromBytes for CtColorSpaceTypeXType {}
     #[derive(Debug)]
     pub struct CtColorSpacePaletteXElementType {
         pub cv: Vec<String>,
@@ -41653,6 +41703,7 @@ pub mod res {
             }
         }
     }
+    impl WithSerializeToBytes for CtFontCharsetXType {}
     impl DeserializeBytes for CtFontCharsetXType {
         fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
             match bytes {
@@ -41669,6 +41720,7 @@ pub mod res {
             }
         }
     }
+    impl WithDeserializerFromBytes for CtFontCharsetXType {}
     #[derive(Debug)]
     pub enum CtMultiMediaTypeXType {
         Image,
@@ -41687,6 +41739,7 @@ pub mod res {
             }
         }
     }
+    impl WithSerializeToBytes for CtMultiMediaTypeXType {}
     impl DeserializeBytes for CtMultiMediaTypeXType {
         fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
             match bytes {
@@ -41699,6 +41752,7 @@ pub mod res {
             }
         }
     }
+    impl WithDeserializerFromBytes for CtMultiMediaTypeXType {}
     #[derive(Debug)]
     pub struct ResColorSpacesXElementType {
         pub color_space: Vec<ResColorSpacesColorSpaceXElementType>,
@@ -48128,7 +48182,8 @@ pub mod signature {
     use std::borrow::Cow;
     use xsd_parser_types::quick_xml::{
         DeserializeBytes, DeserializeHelper, Error, ErrorKind, RawByteStr, SerializeBytes,
-        SerializeHelper, WithDeserializer, WithSerializer,
+        SerializeHelper, WithDeserializer, WithDeserializerFromBytes, WithSerializeToBytes,
+        WithSerializer,
     };
     pub type Sianature = SianatureXElementType;
     #[derive(Debug)]
@@ -48288,6 +48343,7 @@ pub mod signature {
             }
         }
     }
+    impl WithSerializeToBytes for SianatureSiqnedInfoReferencesCheckMethodXType {}
     impl DeserializeBytes for SianatureSiqnedInfoReferencesCheckMethodXType {
         fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
             match bytes {
@@ -48299,6 +48355,7 @@ pub mod signature {
             }
         }
     }
+    impl WithDeserializerFromBytes for SianatureSiqnedInfoReferencesCheckMethodXType {}
     #[derive(Debug)]
     pub struct SianatureSiqnedInfoReferencesReferenceXElementType {
         pub file_ref: String,
@@ -50458,7 +50515,8 @@ pub mod signatures {
     use std::borrow::Cow;
     use xsd_parser_types::quick_xml::{
         DeserializeBytes, DeserializeHelper, Error, ErrorKind, RawByteStr, SerializeBytes,
-        SerializeHelper, WithDeserializer, WithSerializer,
+        SerializeHelper, WithDeserializer, WithDeserializerFromBytes, WithSerializeToBytes,
+        WithSerializer,
     };
     pub type Siqnatures = SiqnaturesXElementType;
     #[derive(Debug)]
@@ -50534,6 +50592,7 @@ pub mod signatures {
             }
         }
     }
+    impl WithSerializeToBytes for SiqnaturesSignatureTypeXType {}
     impl DeserializeBytes for SiqnaturesSignatureTypeXType {
         fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
             match bytes {
@@ -50545,6 +50604,7 @@ pub mod signatures {
             }
         }
     }
+    impl WithDeserializerFromBytes for SiqnaturesSignatureTypeXType {}
     pub mod quick_xml_deserialize {
         use core::mem::replace;
         use xsd_parser_types::quick_xml::{
@@ -52019,7 +52079,7 @@ pub mod xs {
     use std::borrow::Cow;
     use xsd_parser_types::quick_xml::{
         DeserializeBytes, DeserializeHelper, Error, SerializeBytes, SerializeHelper,
-        WithDeserializer, WithSerializer,
+        WithDeserializer, WithDeserializerFromBytes, WithSerializeToBytes, WithSerializer,
     };
     #[derive(Debug, Default)]
     pub struct EntitiesXType(pub Vec<String>);
@@ -52043,11 +52103,13 @@ pub mod xs {
             Ok(Some(Cow::Owned(data)))
         }
     }
+    impl WithSerializeToBytes for EntitiesXType {}
     impl DeserializeBytes for EntitiesXType {
         fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
             Ok(Self(helper.deserialize_list(bytes)?))
         }
     }
+    impl WithDeserializerFromBytes for EntitiesXType {}
     pub type EntityXType = String;
     pub type IdXType = String;
     pub type IdrefXType = String;

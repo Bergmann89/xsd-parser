@@ -1,6 +1,8 @@
 #![allow(missing_docs)]
 
+use std::borrow::Cow;
 use std::fmt::Display;
+use std::str::from_utf8;
 
 #[cfg(feature = "num")]
 use num::{BigInt, BigRational, BigUint};
@@ -16,6 +18,10 @@ use crate::{
         DeserializerEvent, DeserializerOutput, DeserializerResult, Error, ErrorKind,
         SerializeHelper, Serializer, WithDeserializer, WithSerializer,
     },
+};
+use crate::{
+    quick_xml::{DeserializeBytes, SerializeBytes},
+    xml::NamespacesShared,
 };
 
 use super::QName;
@@ -102,9 +108,87 @@ pub enum AnySimpleType {
     Entities(Vec<String>),
 
     Unknown {
+        /// Type of the value stored in `content`, if it was specified in the XML.
         type_: Option<QName>,
+
+        /// Actual content of the value, as a string.
         content: String,
+
+        /// Namespaces that were in scope when the value was parsed, which may be
+        /// needed to resolve the `type_` if it is present.
+        namespaces: NamespacesShared<'static>,
     },
+}
+
+impl AnySimpleType {
+    /// Converts the value to a string, which can be used for serialization.
+    ///
+    /// If the value is of a type that has a specific string representation
+    /// (e.g. `boolean`, `integer`, etc.), it will be converted to that representation.
+    /// Otherwise, the original string content will be returned.
+    #[must_use]
+    pub fn to_str(&self) -> Cow<'_, str> {
+        use AnySimpleType as S;
+
+        match self {
+            S::Boolean(x) => Cow::Owned(x.to_string()),
+
+            S::Float(x) => Cow::Owned(x.to_string()),
+            S::Double(x) => Cow::Owned(x.to_string()),
+            S::Decimal(x) => Cow::Owned(x.to_string()),
+
+            S::String(x)
+            | S::Duration(x)
+            | S::DateTime(x)
+            | S::Time(x)
+            | S::Date(x)
+            | S::GYearMonth(x)
+            | S::GYear(x)
+            | S::GMonthDay(x)
+            | S::GMonth(x)
+            | S::GDay(x)
+            | S::AnyURI(x)
+            | S::Notation(x)
+            | S::NormalizedString(x)
+            | S::Token(x)
+            | S::Language(x)
+            | S::NmToken(x)
+            | S::Name(x)
+            | S::NcName(x)
+            | S::Id(x)
+            | S::IdRef(x)
+            | S::Entity(x)
+            | S::Unknown { content: x, .. } => Cow::Borrowed(x),
+
+            S::HexBinary(x) => Cow::Owned(x.iter().fold(String::new(), |mut s, b| {
+                use std::fmt::Write;
+                let _ = write!(s, "{b:02X}");
+                s
+            })),
+            S::Base64Binary(x) => Cow::Owned(format_base64_binary(x)),
+            S::QName(x) => Cow::Owned(x.to_string()),
+
+            S::Integer(x) => Cow::Owned(x.to_string()),
+            S::PositiveInteger(x) => Cow::Owned(x.to_string()),
+            S::NegativeInteger(x) => Cow::Owned(x.to_string()),
+            S::NonNegativeInteger(x) => Cow::Owned(x.to_string()),
+            S::NonPositiveInteger(x) => Cow::Owned(x.to_string()),
+
+            S::Long(x) => Cow::Owned(x.to_string()),
+            S::Int(x) => Cow::Owned(x.to_string()),
+            S::Short(x) => Cow::Owned(x.to_string()),
+            S::Byte(x) => Cow::Owned(x.to_string()),
+
+            S::UnsignedLong(x) => Cow::Owned(x.to_string()),
+            S::UnsignedInt(x) => Cow::Owned(x.to_string()),
+            S::UnsignedShort(x) => Cow::Owned(x.to_string()),
+            S::UnsignedByte(x) => Cow::Owned(x.to_string()),
+
+            S::NmTokens(x) => Cow::Owned(format_vec(x)),
+            S::IdRefs(x) => Cow::Owned(format_vec(x)),
+            S::Entities(x) => Cow::Owned(format_vec(x)),
+        }
+    }
 }
 
 #[cfg(feature = "quick-xml")]
@@ -133,6 +217,28 @@ impl WithDeserializer for AnySimpleType {
     type Deserializer = AnySimpleTypeDeserializer;
 }
 
+impl SerializeBytes for AnySimpleType {
+    fn serialize_bytes(&self, helper: &mut SerializeHelper) -> Result<Option<Cow<'_, str>>, Error> {
+        let _helper = helper;
+
+        Ok(Some(self.to_str()))
+    }
+}
+
+impl DeserializeBytes for AnySimpleType {
+    fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
+        Self::deserialize_str(helper, from_utf8(bytes)?)
+    }
+
+    fn deserialize_str(helper: &mut DeserializeHelper, s: &str) -> Result<Self, Error> {
+        Ok(Self::Unknown {
+            type_: None,
+            content: s.to_string(),
+            namespaces: helper.namespaces().clone(),
+        })
+    }
+}
+
 #[derive(Debug)]
 #[cfg(feature = "quick-xml")]
 pub enum AnySimpleTypeSerializer<'ser> {
@@ -152,6 +258,7 @@ pub enum AnySimpleTypeSerializer<'ser> {
 
 #[cfg(feature = "quick-xml")]
 impl<'ser> Serializer<'ser> for AnySimpleTypeSerializer<'ser> {
+    #[allow(clippy::too_many_lines)]
     fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
         use core::mem::replace;
         use quick_xml::{
@@ -159,84 +266,124 @@ impl<'ser> Serializer<'ser> for AnySimpleTypeSerializer<'ser> {
             events::{BytesEnd, BytesStart, BytesText},
         };
 
-        use AnySimpleType as S;
+        let mut fixed_ns = false;
 
         match replace(self, Self::Done) {
             Self::Begin { name, value } => {
-                let (type_, content): (Option<&[u8]>, String) = match value {
-                    S::String(x) => (Some(b"xs:string"), x.to_string()),
-                    S::Boolean(x) => (Some(b"xs:boolean"), x.to_string()),
+                use AnySimpleType as S;
 
-                    S::Float(x) => (Some(b"xs:float"), x.to_string()),
-                    S::Double(x) => (Some(b"xs:double"), x.to_string()),
-                    S::Decimal(x) => (Some(b"xs:decimal"), x.to_string()),
+                let (type_, content): (Option<QName>, String) = match value {
+                    S::String(x) => (Some(QName::from_bytes(b"xs:string")), x.to_string()),
+                    S::Boolean(x) => (Some(QName::from_bytes(b"xs:boolean")), x.to_string()),
 
-                    S::Duration(x) => (Some(b"xs:duration"), x.to_string()),
-                    S::DateTime(x) => (Some(b"xs:dateTime"), x.to_string()),
-                    S::Time(x) => (Some(b"xs:time"), x.to_string()),
-                    S::Date(x) => (Some(b"xs:date"), x.to_string()),
-                    S::GYearMonth(x) => (Some(b"xs:gYearMonth"), x.to_string()),
-                    S::GYear(x) => (Some(b"xs:gYear"), x.to_string()),
-                    S::GMonthDay(x) => (Some(b"xs:gMonthDay"), x.to_string()),
-                    S::GMonth(x) => (Some(b"xs:gMonth"), x.to_string()),
-                    S::GDay(x) => (Some(b"xs:gDay"), x.to_string()),
+                    S::Float(x) => (Some(QName::from_bytes(b"xs:float")), x.to_string()),
+                    S::Double(x) => (Some(QName::from_bytes(b"xs:double")), x.to_string()),
+                    S::Decimal(x) => (Some(QName::from_bytes(b"xs:decimal")), x.to_string()),
+
+                    S::Duration(x) => (Some(QName::from_bytes(b"xs:duration")), x.to_string()),
+                    S::DateTime(x) => (Some(QName::from_bytes(b"xs:dateTime")), x.to_string()),
+                    S::Time(x) => (Some(QName::from_bytes(b"xs:time")), x.to_string()),
+                    S::Date(x) => (Some(QName::from_bytes(b"xs:date")), x.to_string()),
+                    S::GYearMonth(x) => (Some(QName::from_bytes(b"xs:gYearMonth")), x.to_string()),
+                    S::GYear(x) => (Some(QName::from_bytes(b"xs:gYear")), x.to_string()),
+                    S::GMonthDay(x) => (Some(QName::from_bytes(b"xs:gMonthDay")), x.to_string()),
+                    S::GMonth(x) => (Some(QName::from_bytes(b"xs:gMonth")), x.to_string()),
+                    S::GDay(x) => (Some(QName::from_bytes(b"xs:gDay")), x.to_string()),
 
                     S::HexBinary(x) => (
-                        Some(b"xs:hexBinary"),
+                        Some(QName::from_bytes(b"xs:hexBinary")),
                         x.iter().fold(String::new(), |mut s, b| {
                             use std::fmt::Write;
                             let _ = write!(s, "{b:02X}");
                             s
                         }),
                     ),
-                    S::Base64Binary(x) => (Some(b"xs:base64Binary"), format_base64_binary(x)),
+                    S::Base64Binary(x) => (
+                        Some(QName::from_bytes(b"xs:base64Binary")),
+                        format_base64_binary(x),
+                    ),
 
-                    S::AnyURI(x) => (Some(b"xs:anyURI"), x.to_string()),
-                    S::QName(x) => (Some(b"xs:QName"), x.to_string()),
-                    S::Notation(x) => (Some(b"xs:NOTATION"), x.to_string()),
+                    S::AnyURI(x) => (Some(QName::from_bytes(b"xs:anyURI")), x.to_string()),
+                    S::QName(x) => (Some(QName::from_bytes(b"xs:QName")), x.to_string()),
+                    S::Notation(x) => (Some(QName::from_bytes(b"xs:NOTATION")), x.to_string()),
 
-                    S::Integer(x) => (Some(b"xs:integer"), x.to_string()),
-                    S::PositiveInteger(x) => (Some(b"xs:positiveInteger"), x.to_string()),
-                    S::NegativeInteger(x) => (Some(b"xs:negativeInteger"), x.to_string()),
-                    S::NonNegativeInteger(x) => (Some(b"xs:nonNegativeInteger"), x.to_string()),
-                    S::NonPositiveInteger(x) => (Some(b"xs:nonPositiveInteger"), x.to_string()),
+                    S::Integer(x) => (Some(QName::from_bytes(b"xs:integer")), x.to_string()),
+                    S::PositiveInteger(x) => (
+                        Some(QName::from_bytes(b"xs:positiveInteger")),
+                        x.to_string(),
+                    ),
+                    S::NegativeInteger(x) => (
+                        Some(QName::from_bytes(b"xs:negativeInteger")),
+                        x.to_string(),
+                    ),
+                    S::NonNegativeInteger(x) => (
+                        Some(QName::from_bytes(b"xs:nonNegativeInteger")),
+                        x.to_string(),
+                    ),
+                    S::NonPositiveInteger(x) => (
+                        Some(QName::from_bytes(b"xs:nonPositiveInteger")),
+                        x.to_string(),
+                    ),
 
-                    S::Long(x) => (Some(b"xs:long"), x.to_string()),
-                    S::Int(x) => (Some(b"xs:int"), x.to_string()),
-                    S::Short(x) => (Some(b"xs:short"), x.to_string()),
-                    S::Byte(x) => (Some(b"xs:byte"), x.to_string()),
+                    S::Long(x) => (Some(QName::from_bytes(b"xs:long")), x.to_string()),
+                    S::Int(x) => (Some(QName::from_bytes(b"xs:int")), x.to_string()),
+                    S::Short(x) => (Some(QName::from_bytes(b"xs:short")), x.to_string()),
+                    S::Byte(x) => (Some(QName::from_bytes(b"xs:byte")), x.to_string()),
 
-                    S::UnsignedLong(x) => (Some(b"xs:unsignedLong"), x.to_string()),
-                    S::UnsignedInt(x) => (Some(b"xs:unsignedInt"), x.to_string()),
-                    S::UnsignedShort(x) => (Some(b"xs:unsignedShort"), x.to_string()),
-                    S::UnsignedByte(x) => (Some(b"xs:unsignedByte"), x.to_string()),
+                    S::UnsignedLong(x) => {
+                        (Some(QName::from_bytes(b"xs:unsignedLong")), x.to_string())
+                    }
+                    S::UnsignedInt(x) => {
+                        (Some(QName::from_bytes(b"xs:unsignedInt")), x.to_string())
+                    }
+                    S::UnsignedShort(x) => {
+                        (Some(QName::from_bytes(b"xs:unsignedShort")), x.to_string())
+                    }
+                    S::UnsignedByte(x) => {
+                        (Some(QName::from_bytes(b"xs:unsignedByte")), x.to_string())
+                    }
 
-                    S::NormalizedString(x) => (Some(b"xs:normalizedString"), x.to_string()),
-                    S::Token(x) => (Some(b"xs:token"), x.to_string()),
-                    S::Language(x) => (Some(b"xs:language"), x.to_string()),
-                    S::NmToken(x) => (Some(b"xs:NMTOKEN"), x.to_string()),
-                    S::Name(x) => (Some(b"xs:Name"), x.to_string()),
-                    S::NcName(x) => (Some(b"xs:NCName"), x.to_string()),
-                    S::Id(x) => (Some(b"xs:ID"), x.to_string()),
-                    S::IdRef(x) => (Some(b"xs:IDREF"), x.to_string()),
-                    S::Entity(x) => (Some(b"xs:ENTITY"), x.to_string()),
+                    S::NormalizedString(x) => (
+                        Some(QName::from_bytes(b"xs:normalizedString")),
+                        x.to_string(),
+                    ),
+                    S::Token(x) => (Some(QName::from_bytes(b"xs:token")), x.to_string()),
+                    S::Language(x) => (Some(QName::from_bytes(b"xs:language")), x.to_string()),
+                    S::NmToken(x) => (Some(QName::from_bytes(b"xs:NMTOKEN")), x.to_string()),
+                    S::Name(x) => (Some(QName::from_bytes(b"xs:Name")), x.to_string()),
+                    S::NcName(x) => (Some(QName::from_bytes(b"xs:NCName")), x.to_string()),
+                    S::Id(x) => (Some(QName::from_bytes(b"xs:ID")), x.to_string()),
+                    S::IdRef(x) => (Some(QName::from_bytes(b"xs:IDREF")), x.to_string()),
+                    S::Entity(x) => (Some(QName::from_bytes(b"xs:ENTITY")), x.to_string()),
 
-                    S::NmTokens(x) => (Some(b"xs:NMTOKENS"), format_vec(x)),
-                    S::IdRefs(x) => (Some(b"xs:IDREFS"), format_vec(x)),
-                    S::Entities(x) => (Some(b"xs:ENTITIES"), format_vec(x)),
+                    S::NmTokens(x) => (Some(QName::from_bytes(b"xs:NMTOKENS")), format_vec(x)),
+                    S::IdRefs(x) => (Some(QName::from_bytes(b"xs:IDREFS")), format_vec(x)),
+                    S::Entities(x) => (Some(QName::from_bytes(b"xs:ENTITIES")), format_vec(x)),
 
-                    S::Unknown { type_, content } => {
-                        (type_.as_ref().map(QName::as_bytes), content.to_string())
+                    S::Unknown {
+                        type_,
+                        content,
+                        namespaces: _,
+                    } => {
+                        fixed_ns = true;
+
+                        (type_.clone(), content.to_string())
                     }
                 };
 
-                helper.begin_ns_scope();
-
                 let mut bytes = BytesStart::new(name);
 
-                if let Some(type_) = type_ {
+                helper.begin_ns_scope();
+
+                if let Some(mut type_) = type_ {
+                    if !fixed_ns && type_.namespace().is_none() {
+                        type_ = type_.with_namespace(Namespace::XS);
+                    }
+
+                    let type_ = helper.add_qname_namespace(&mut bytes, type_);
+
                     helper.write_xmlns(&mut bytes, Some(&NamespacePrefix::XSI), &Namespace::XSI);
-                    bytes.push_attribute((&b"xsi:type"[..], type_));
+                    bytes.push_attribute((&b"xsi:type"[..], type_.as_ref()));
                 }
 
                 *self = Self::Content { name, content };
@@ -264,7 +411,7 @@ pub struct AnySimpleTypeDeserializer {
 #[cfg(feature = "quick-xml")]
 impl AnySimpleTypeDeserializer {
     fn handle_content_output<'a>(
-        helper: &DeserializeHelper,
+        helper: &mut DeserializeHelper,
         type_: Option<String>,
         output: DeserializerOutput<'a, String>,
     ) -> DeserializerResult<'a, AnySimpleType> {
@@ -292,7 +439,7 @@ impl AnySimpleTypeDeserializer {
     }
 
     fn finish_content(
-        helper: &DeserializeHelper,
+        helper: &mut DeserializeHelper,
         type_: Option<&str>,
         content: String,
     ) -> Result<AnySimpleType, Error> {
@@ -371,7 +518,11 @@ impl AnySimpleTypeDeserializer {
             Some(b"IDREFS") => Ok(S::IdRefs(parse_vec(&content))),
             Some(b"ENTITIES") => Ok(S::Entities(parse_vec(&content))),
 
-            _ => Ok(S::Unknown { type_, content }),
+            _ => Ok(S::Unknown {
+                type_,
+                content,
+                namespaces: helper.namespaces(),
+            }),
         }
     }
 }

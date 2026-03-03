@@ -1080,7 +1080,7 @@ pub mod xs {
     use std::borrow::Cow;
     use xsd_parser_types::quick_xml::{
         DeserializeBytes, DeserializeHelper, Error, SerializeBytes, SerializeHelper,
-        WithDeserializer, WithSerializer,
+        WithDeserializer, WithDeserializerFromBytes, WithSerializeToBytes, WithSerializer,
     };
     #[derive(Debug, Default)]
     pub struct EntitiesType(pub Vec<String>);
@@ -1104,11 +1104,13 @@ pub mod xs {
             Ok(Some(Cow::Owned(data)))
         }
     }
+    impl WithSerializeToBytes for EntitiesType {}
     impl DeserializeBytes for EntitiesType {
         fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
             Ok(Self(helper.deserialize_list(bytes)?))
         }
     }
+    impl WithDeserializerFromBytes for EntitiesType {}
     pub type EntityType = String;
     pub type IdType = String;
     pub type IdrefType = String;
@@ -1134,11 +1136,13 @@ pub mod xs {
             Ok(Some(Cow::Owned(data)))
         }
     }
+    impl WithSerializeToBytes for IdrefsType {}
     impl DeserializeBytes for IdrefsType {
         fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
             Ok(Self(helper.deserialize_list(bytes)?))
         }
     }
+    impl WithDeserializerFromBytes for IdrefsType {}
     pub type NcNameType = String;
     pub type NmtokenType = String;
     #[derive(Debug, Default)]
@@ -1163,11 +1167,13 @@ pub mod xs {
             Ok(Some(Cow::Owned(data)))
         }
     }
+    impl WithSerializeToBytes for NmtokensType {}
     impl DeserializeBytes for NmtokensType {
         fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
             Ok(Self(helper.deserialize_list(bytes)?))
         }
     }
+    impl WithDeserializerFromBytes for NmtokensType {}
     pub type NotationType = String;
     pub type NameType = String;
     pub type QNameType = String;

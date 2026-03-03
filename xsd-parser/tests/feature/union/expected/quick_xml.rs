@@ -5,7 +5,8 @@ use xsd_parser_types::{
     misc::{Namespace, NamespacePrefix},
     quick_xml::{
         DeserializeBytes, DeserializeHelper, Error, ErrorKind, SerializeBytes, SerializeHelper,
-        ValidateError, WithDeserializer, WithSerializer,
+        ValidateError, WithDeserializer, WithDeserializerFromBytes, WithSerializeToBytes,
+        WithSerializer,
     },
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
@@ -64,6 +65,7 @@ impl SerializeBytes for UnionType {
         }
     }
 }
+impl WithSerializeToBytes for UnionType {}
 impl DeserializeBytes for UnionType {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         let mut errors = Vec::new();
@@ -80,6 +82,7 @@ impl DeserializeBytes for UnionType {
         Err(Error::from(ErrorKind::InvalidUnion(errors.into())))
     }
 }
+impl WithDeserializerFromBytes for UnionType {}
 pub mod quick_xml_deserialize {
     use core::mem::replace;
     use xsd_parser_types::quick_xml::{

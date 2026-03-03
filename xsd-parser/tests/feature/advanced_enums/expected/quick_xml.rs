@@ -3,7 +3,8 @@ use xsd_parser_types::{
     misc::{Namespace, NamespacePrefix},
     quick_xml::{
         DeserializeBytes, DeserializeHelper, Error, ErrorKind, RawByteStr, SerializeBytes,
-        SerializeHelper, WithDeserializer, WithSerializer,
+        SerializeHelper, WithDeserializer, WithDeserializerFromBytes, WithSerializeToBytes,
+        WithSerializer,
     },
     xml::QName,
 };
@@ -62,6 +63,7 @@ impl SerializeBytes for StringEnumType {
         }
     }
 }
+impl WithSerializeToBytes for StringEnumType {}
 impl DeserializeBytes for StringEnumType {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
@@ -75,6 +77,7 @@ impl DeserializeBytes for StringEnumType {
         }
     }
 }
+impl WithDeserializerFromBytes for StringEnumType {}
 #[derive(Debug)]
 pub enum QNameEnumType {
     TnsFoo,
@@ -107,6 +110,7 @@ impl SerializeBytes for QNameEnumType {
         }
     }
 }
+impl WithSerializeToBytes for QNameEnumType {}
 impl DeserializeBytes for QNameEnumType {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         let x = bytes;
@@ -126,6 +130,7 @@ impl DeserializeBytes for QNameEnumType {
         )))
     }
 }
+impl WithDeserializerFromBytes for QNameEnumType {}
 pub mod quick_xml_deserialize {
     use core::mem::replace;
     use xsd_parser_types::quick_xml::{

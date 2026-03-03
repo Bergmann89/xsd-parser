@@ -1,7 +1,10 @@
 use std::borrow::Cow;
 use xsd_parser_types::{
     misc::{Namespace, NamespacePrefix},
-    quick_xml::{DeserializeBytes, DeserializeHelper, Error, SerializeBytes, SerializeHelper},
+    quick_xml::{
+        DeserializeBytes, DeserializeHelper, Error, SerializeBytes, SerializeHelper,
+        WithDeserializerFromBytes, WithSerializeToBytes,
+    },
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
@@ -18,8 +21,10 @@ impl SerializeBytes for Foo {
         self.0.serialize_bytes(helper)
     }
 }
+impl WithSerializeToBytes for Foo {}
 impl DeserializeBytes for Foo {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         Ok(Self(String::deserialize_bytes(helper, bytes)?))
     }
 }
+impl WithDeserializerFromBytes for Foo {}
