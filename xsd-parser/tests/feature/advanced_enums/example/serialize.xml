@@ -1,4 +1,4 @@
-<tns:Foo xmlns:tns="http://example.com">
-    <tns:StringEnum>ON</tns:StringEnum>
-    <tns:QNameEnum>tns:Bar</tns:QNameEnum>
-</tns:Foo>
+<test:Foo xmlns:test="http://example.com">
+    <test:StringEnum>ON</test:StringEnum>
+    <test:QNameEnum>test:Bar</test:QNameEnum>
+</test:Foo>

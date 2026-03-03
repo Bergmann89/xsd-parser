@@ -11,11 +11,11 @@ use xsd_parser_types::{
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
 pub const NS_XSI: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema-instance");
-pub const NS_TNS: Namespace = Namespace::new_const(b"http://example.com");
+pub const NS_TEST: Namespace = Namespace::new_const(b"http://example.com");
 pub const PREFIX_XS: NamespacePrefix = NamespacePrefix::new_const(b"xs");
 pub const PREFIX_XML: NamespacePrefix = NamespacePrefix::new_const(b"xml");
 pub const PREFIX_XSI: NamespacePrefix = NamespacePrefix::new_const(b"xsi");
-pub const PREFIX_TNS: NamespacePrefix = NamespacePrefix::new_const(b"tns");
+pub const PREFIX_TEST: NamespacePrefix = NamespacePrefix::new_const(b"test");
 pub type Foo = FooType;
 #[derive(Debug)]
 pub struct FooType {
@@ -32,7 +32,7 @@ impl WithSerializer for FooType {
         Ok(quick_xml_serialize::FooTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::FooTypeSerializerState::Init__),
-            name: name.unwrap_or("tns:FooType"),
+            name: name.unwrap_or("test:FooType"),
             is_root,
         })
     }
@@ -339,7 +339,7 @@ pub mod quick_xml_deserialize {
                     (S::StringEnum(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_TNS),
+                            Some(&super::NS_TEST),
                             b"StringEnum",
                             false,
                         )?;
@@ -356,7 +356,7 @@ pub mod quick_xml_deserialize {
                     (S::QNameEnum(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_TNS),
+                            Some(&super::NS_TEST),
                             b"QNameEnum",
                             false,
                         )?;
@@ -430,7 +430,7 @@ pub mod quick_xml_serialize {
                         *self.state =
                             FooTypeSerializerState::StringEnum(WithSerializer::serializer(
                                 &self.value.string_enum,
-                                Some("tns:StringEnum"),
+                                Some("test:StringEnum"),
                                 false,
                             )?);
                         let mut bytes = BytesStart::new(self.name);
@@ -438,8 +438,8 @@ pub mod quick_xml_serialize {
                         if self.is_root {
                             helper.write_xmlns(
                                 &mut bytes,
-                                Some(&super::PREFIX_TNS),
-                                &super::NS_TNS,
+                                Some(&super::PREFIX_TEST),
+                                &super::NS_TEST,
                             );
                         }
                         return Ok(Some(Event::Start(bytes)));
@@ -450,7 +450,7 @@ pub mod quick_xml_serialize {
                             *self.state =
                                 FooTypeSerializerState::QNameEnum(WithSerializer::serializer(
                                     &self.value.q_name_enum,
-                                    Some("tns:QNameEnum"),
+                                    Some("test:QNameEnum"),
                                     false,
                                 )?)
                         }

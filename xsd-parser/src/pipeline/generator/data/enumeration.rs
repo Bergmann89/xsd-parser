@@ -95,6 +95,10 @@ impl EnumerationMetaVariant {
                 let target_type = type_ref.map(|x| x.path.clone());
                 let extra_attributes = Vec::new();
 
+                if let Some(namespaces) = &self.namespaces {
+                    ctx.push_namespaces(namespaces.clone());
+                }
+
                 let value = self.ident.name.as_str();
                 let value = simple_base
                     .and_then(|base| {
@@ -125,6 +129,10 @@ impl EnumerationMetaVariant {
                             })
                     })
                     .unwrap_or(EnumerationVariantValue::None);
+
+                if self.namespaces.is_some() {
+                    ctx.pop_namespaces();
+                }
 
                 let meta = Cow::Borrowed(self);
 

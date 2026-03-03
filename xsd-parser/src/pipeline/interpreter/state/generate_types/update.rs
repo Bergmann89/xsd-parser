@@ -45,5 +45,6 @@ impl Update<AttributeType> for AttributeMeta {
     fn update(&mut self, other: &AttributeType) {
         self.use_ = other.use_;
         self.default.update(&other.default);
+        self.namespaces = Some(other.namespaces.clone());
     }
 }

@@ -1,6 +1,7 @@
 use std::borrow::{Borrow, Cow};
 use std::collections::HashMap;
 use std::fmt::{Debug, Formatter, Result as FmtResult};
+use std::hash::{Hash, Hasher};
 use std::ops::{Deref, DerefMut};
 use std::sync::Arc;
 
@@ -37,6 +38,18 @@ impl<'a> Deref for Namespaces<'a> {
 impl DerefMut for Namespaces<'_> {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.0
+    }
+}
+
+impl Hash for Namespaces<'_> {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        let mut items = self.iter().collect::<Vec<_>>();
+        items.sort_by(|a, b| a.0.cmp(b.0));
+
+        for (k, v) in items {
+            k.hash(state);
+            v.hash(state);
+        }
     }
 }
 
@@ -146,6 +159,14 @@ impl Debug for Value<'_> {
     }
 }
 
+impl Deref for Value<'_> {
+    type Target = [u8];
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
 impl AsRef<[u8]> for Value<'_> {
     fn as_ref(&self) -> &[u8] {
         &self.0
@@ -181,7 +202,7 @@ impl<'a> From<Cow<'a, [u8]>> for Value<'a> {
 /// This is useful to not store the same map again and again. Is uses an [`Arc`]
 /// under the hood, to maintain a reference to a shared list. If the list needs
 /// to be manipulated, a copy is created (like using [`Cow`]).
-#[derive(Default, Clone, Eq, PartialEq)]
+#[derive(Default, Clone, Hash)]
 pub struct NamespacesShared<'a>(pub Arc<Namespaces<'a>>);
 
 impl<'a> NamespacesShared<'a> {
@@ -224,5 +245,13 @@ impl DerefMut for NamespacesShared<'_> {
 impl Debug for NamespacesShared<'_> {
     fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
         self.0.fmt(f)
+    }
+}
+
+impl Eq for NamespacesShared<'_> {}
+
+impl PartialEq for NamespacesShared<'_> {
+    fn eq(&self, other: &Self) -> bool {
+        Arc::ptr_eq(&self.0, &other.0) || self.0.eq(&other.0)
     }
 }

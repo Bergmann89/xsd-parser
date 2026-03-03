@@ -3,6 +3,8 @@
 use std::hash::{Hash, Hasher};
 use std::ops::{Deref, DerefMut};
 
+use xsd_parser_types::xml::NamespacesShared;
+
 use crate::models::{
     meta::{MetaTypes, TypeEq},
     schema::xs::{
@@ -35,6 +37,9 @@ pub struct AttributeMeta {
 
     /// Documentation of the element extracted from `xs:documentation` nodes.
     pub documentation: Vec<String>,
+
+    /// Namespaces that are currently in scope for this attribute.
+    pub namespaces: Option<NamespacesShared<'static>>,
 }
 
 /// Variant of a [`AttributeMeta`]
@@ -79,6 +84,7 @@ impl AttributeMeta {
             default: None,
             display_name: None,
             documentation: Vec::new(),
+            namespaces: None,
         }
     }
 
@@ -93,6 +99,7 @@ impl AttributeMeta {
             default: None,
             display_name: None,
             documentation: Vec::new(),
+            namespaces: None,
         }
     }
 
@@ -131,6 +138,7 @@ impl TypeEq for AttributeMeta {
             default,
             display_name,
             documentation,
+            namespaces,
         } = self;
 
         ident.hash(hasher);
@@ -140,6 +148,7 @@ impl TypeEq for AttributeMeta {
         default.hash(hasher);
         display_name.hash(hasher);
         documentation.hash(hasher);
+        namespaces.hash(hasher);
     }
 
     fn type_eq(&self, other: &Self, types: &MetaTypes) -> bool {
@@ -151,6 +160,7 @@ impl TypeEq for AttributeMeta {
             default,
             display_name,
             documentation,
+            namespaces,
         } = self;
 
         ident.eq(&other.ident)
@@ -160,6 +170,7 @@ impl TypeEq for AttributeMeta {
             && default.eq(&other.default)
             && display_name.eq(&other.display_name)
             && documentation.eq(&other.documentation)
+            && namespaces.eq(&other.namespaces)
     }
 }
 

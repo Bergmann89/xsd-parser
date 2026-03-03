@@ -794,6 +794,10 @@ impl<'types> ComplexDataAttribute<'types> {
                 let target_ref = ctx.get_or_create_type_ref(type_)?;
                 let target_type = target_ref.path.clone();
 
+                if let Some(namespaces) = &meta.namespaces {
+                    ctx.push_namespaces(namespaces.clone());
+                }
+
                 let default_value = meta
                     .default
                     .as_ref()
@@ -801,6 +805,10 @@ impl<'types> ComplexDataAttribute<'types> {
                         ctx.make_value_renderer(type_, default, ValueGeneratorMode::Value)
                     })
                     .transpose()?;
+
+                if meta.namespaces.is_some() {
+                    ctx.pop_namespaces();
+                }
 
                 (target_type, default_value)
             }

@@ -25,15 +25,8 @@ pub fn default(
     let name = QName::from_bytes(value.as_bytes().to_owned());
     let ns = name
         .prefix()
-        .and_then(|prefix| {
-            ctx.types.modules.values().find(|module| {
-                module
-                    .prefix()
-                    .as_ref()
-                    .is_some_and(|p| p.as_str().as_bytes() == prefix)
-            })
-        })
-        .and_then(|module| module.namespace.clone());
+        .and_then(|prefix| ctx.namespaces()?.get(prefix))
+        .map(|ns| Namespace::new(ns.to_vec()));
 
     Ok(Box::new(
         move |ctx: &RendererContext<'_, '_>| -> TokenStream {

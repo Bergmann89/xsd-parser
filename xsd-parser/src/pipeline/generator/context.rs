@@ -4,6 +4,7 @@ use std::ops::Deref;
 use bit_set::BitSet;
 use proc_macro2::{Literal, TokenStream};
 use quote::{format_ident, quote};
+use xsd_parser_types::xml::NamespacesShared;
 
 use crate::config::GeneratorFlags;
 use crate::models::{
@@ -29,9 +30,16 @@ pub struct Context<'a, 'types> {
 
     state: &'a mut State<'types>,
     reachable: BitSet<u64>,
+    namespaces: Vec<NamespacesShared<'static>>,
 }
 
 impl<'a, 'types> Context<'a, 'types> {
+    /// Get the namespaces that are currently in scope.
+    #[must_use]
+    pub fn namespaces(&self) -> Option<&NamespacesShared<'static>> {
+        self.namespaces.last()
+    }
+
     pub(super) fn new(
         meta: &'a MetaData<'types>,
         ident: &'a TypeIdent,
@@ -44,6 +52,7 @@ impl<'a, 'types> Context<'a, 'types> {
             ident,
             state,
             reachable,
+            namespaces: Vec::new(),
         }
     }
 
@@ -313,6 +322,14 @@ impl<'a, 'types> Context<'a, 'types> {
             value: value.to_owned(),
             mode,
         })
+    }
+
+    pub(super) fn push_namespaces(&mut self, namespaces: NamespacesShared<'static>) {
+        self.namespaces.push(namespaces);
+    }
+
+    pub(super) fn pop_namespaces(&mut self) {
+        self.namespaces.pop();
     }
 }
 

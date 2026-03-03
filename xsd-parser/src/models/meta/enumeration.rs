@@ -3,6 +3,8 @@
 use std::hash::{Hash, Hasher};
 use std::ops::{Deref, DerefMut};
 
+use xsd_parser_types::xml::NamespacesShared;
+
 use crate::models::{schema::xs::Use, EnumerationIdent, TypeIdent};
 
 use super::{Base, Constrains, MetaTypes, TypeEq};
@@ -37,6 +39,9 @@ pub struct EnumerationMetaVariant {
 
     /// Documentation of the type extracted from `xs:documentation` nodes.
     pub documentation: Vec<String>,
+
+    /// Namespaces that are currently in scope for this variant.
+    pub namespaces: Option<NamespacesShared<'static>>,
 }
 
 /// Type information that represents a list of [`EnumerationMetaVariant`] instances.
@@ -83,6 +88,7 @@ impl EnumerationMetaVariant {
             type_: None,
             display_name: None,
             documentation: Vec::new(),
+            namespaces: None,
         }
     }
 
@@ -103,6 +109,7 @@ impl TypeEq for EnumerationMetaVariant {
             type_,
             display_name,
             documentation,
+            namespaces,
         } = self;
 
         ident.hash(hasher);
@@ -110,6 +117,7 @@ impl TypeEq for EnumerationMetaVariant {
         type_.type_hash(hasher, types);
         display_name.hash(hasher);
         documentation.hash(hasher);
+        namespaces.hash(hasher);
     }
 
     fn type_eq(&self, other: &Self, types: &MetaTypes) -> bool {
@@ -119,6 +127,7 @@ impl TypeEq for EnumerationMetaVariant {
             type_,
             display_name,
             documentation,
+            namespaces,
         } = self;
 
         ident.eq(&other.ident)
@@ -126,6 +135,7 @@ impl TypeEq for EnumerationMetaVariant {
             && type_.type_eq(&other.type_, types)
             && display_name.eq(&other.display_name)
             && documentation.eq(&other.documentation)
+            && namespaces.eq(&other.namespaces)
     }
 }
 
