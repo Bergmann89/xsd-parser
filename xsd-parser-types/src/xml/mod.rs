@@ -6,6 +6,7 @@ mod any_simple_type;
 mod attributes;
 mod element;
 mod mixed;
+mod namespace_scope;
 mod namespaces;
 mod nillable;
 mod qname;
@@ -18,6 +19,7 @@ pub use self::attributes::{
 };
 pub use self::element::{AnyElement, AnyElements, Element, Elements};
 pub use self::mixed::{Mixed, MixedDeserializer, MixedSerializer};
+pub use self::namespace_scope::NamespaceScope;
 pub use self::namespaces::{
     Key as NamespaceKey, Namespaces, NamespacesShared, Value as NamespaceValue,
 };

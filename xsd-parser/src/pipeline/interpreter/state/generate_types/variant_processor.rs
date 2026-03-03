@@ -11,9 +11,10 @@ use crate::models::meta::{
     MetaTypeVariant, ReferenceMeta, SimpleMeta, UnionMetaType, WhiteSpace,
 };
 use crate::models::schema::xs::{
-    Annotation, Any, AnyAttribute, AttributeGroupType, AttributeType, ComplexBaseType,
-    ComplexContent, ElementType, ExtensionType, Facet, FacetType, FormChoiceType, GroupType, List,
-    QNameList, Restriction, RestrictionType, SimpleBaseType, SimpleContent, Union, Use,
+    Annotation, Any, AnyAttribute, AttributeGroupType, AttributeInnerType, AttributeType,
+    ComplexBaseType, ComplexContent, ElementType, ExtensionType, Facet, FacetType, FormChoiceType,
+    GroupType, List, QNameList, Restriction, RestrictionType, SimpleBaseType, SimpleContent, Union,
+    Use,
 };
 use crate::models::schema::{MaxOccurs, MinOccurs};
 use crate::models::{AttributeIdent, ElementIdent, EnumerationIdent, IdentType, Name, TypeIdent};
@@ -806,8 +807,8 @@ impl<'a, 'state, 'schema> VariantProcessor<'a, 'state, 'schema> {
 
     #[instrument(err, level = "trace", skip(self))]
     fn apply_attribute_ref(&mut self, ty: &'schema AttributeType) -> Result<(), Error> {
-        let attribute = match ty {
-            AttributeType {
+        let attribute = match &ty.inner {
+            AttributeInnerType {
                 name: Some(name),
                 type_: Some(type_),
                 ..
@@ -823,7 +824,7 @@ impl<'a, 'state, 'schema> VariantProcessor<'a, 'state, 'schema> {
                     .attributes
                     .find_or_insert(ident, |ident| AttributeMeta::new(ident, type_, form))
             }
-            AttributeType {
+            AttributeInnerType {
                 ref_: Some(ref_),
                 name,
                 ..
@@ -839,7 +840,7 @@ impl<'a, 'state, 'schema> VariantProcessor<'a, 'state, 'schema> {
                     .attributes
                     .find_or_insert(ident, |ident| AttributeMeta::new(ident, type_, form))
             }
-            AttributeType {
+            AttributeInnerType {
                 name: Some(name),
                 simple_type,
                 ..
@@ -861,7 +862,7 @@ impl<'a, 'state, 'schema> VariantProcessor<'a, 'state, 'schema> {
                         AttributeMeta::new(ident, type_.unwrap_or(TypeIdent::STRING), form)
                     })
             }
-            e => return Err(Error::InvalidAttributeReference(Box::new(e.clone()))),
+            _ => return Err(Error::InvalidAttributeReference(Box::new(ty.clone()))),
         };
 
         attribute.update(ty);
@@ -1117,7 +1118,9 @@ impl<'a, 'state, 'schema> VariantProcessor<'a, 'state, 'schema> {
             let var = ei
                 .variants
                 .find_or_insert(ident, EnumerationMetaVariant::new);
+
             var.use_ = Use::Required;
+            var.namespaces = Some(ty.namespaces.clone());
 
             if let Some(x) = &ty.annotation {
                 if let Err(error) = x.extract_documentation_into(&mut var.documentation) {

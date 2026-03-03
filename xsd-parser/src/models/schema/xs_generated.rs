@@ -4,12 +4,13 @@ use xsd_parser_types::{
     misc::Namespace,
     quick_xml::{
         DeserializeBytes, DeserializeHelper, Error, ErrorKind, RawByteStr, ValidateError,
-        WithDeserializer,
+        WithDeserializer, WithDeserializerFromBytes,
     },
-    xml::AnyElement,
+    xml::{AnyElement, NamespaceScope},
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
+pub const NS_XSI: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema-instance");
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct Schema {
     pub target_namespace: Option<String>,
@@ -43,7 +44,7 @@ pub enum SchemaContent {
 impl Schema {
     #[must_use]
     pub fn default_final_default() -> FullDerivationSetType {
-        FullDerivationSetType::TypeDerivationControlList(TypeDerivationControlList(Vec::new()))
+        FullDerivationSetType::BlockSetItemList(BlockSetItemList(Vec::new()))
     }
     #[must_use]
     pub fn default_block_default() -> BlockSetType {
@@ -71,25 +72,27 @@ impl WithDeserializer for SchemaContent {
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum FullDerivationSetType {
     All,
-    TypeDerivationControlList(TypeDerivationControlList),
+    BlockSetItemList(BlockSetItemList),
 }
 impl DeserializeBytes for FullDerivationSetType {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
             b"#all" => Ok(Self::All),
-            x => Ok(Self::TypeDerivationControlList(
-                TypeDerivationControlList::deserialize_bytes(helper, x)?,
-            )),
+            x => Ok(Self::BlockSetItemList(BlockSetItemList::deserialize_bytes(
+                helper, x,
+            )?)),
         }
     }
 }
+impl WithDeserializerFromBytes for FullDerivationSetType {}
 #[derive(Clone, Debug, Default, Eq, PartialEq)]
-pub struct TypeDerivationControlList(pub Vec<TypeDerivationControlType>);
-impl DeserializeBytes for TypeDerivationControlList {
+pub struct BlockSetItemList(pub Vec<BlockSetItemType>);
+impl DeserializeBytes for BlockSetItemList {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         Ok(Self(helper.deserialize_list(bytes)?))
     }
 }
+impl WithDeserializerFromBytes for BlockSetItemList {}
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum BlockSetType {
     All,
@@ -105,13 +108,7 @@ impl DeserializeBytes for BlockSetType {
         }
     }
 }
-#[derive(Clone, Debug, Default, Eq, PartialEq)]
-pub struct BlockSetItemList(pub Vec<BlockSetItemType>);
-impl DeserializeBytes for BlockSetItemList {
-    fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
-        Ok(Self(helper.deserialize_list(bytes)?))
-    }
-}
+impl WithDeserializerFromBytes for BlockSetType {}
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum FormChoiceType {
     Qualified,
@@ -128,6 +125,7 @@ impl DeserializeBytes for FormChoiceType {
         }
     }
 }
+impl WithDeserializerFromBytes for FormChoiceType {}
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum XpathDefaultNamespaceType {
     String(String),
@@ -145,6 +143,7 @@ impl DeserializeBytes for XpathDefaultNamespaceType {
         }
     }
 }
+impl WithDeserializerFromBytes for XpathDefaultNamespaceType {}
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct Include {
     pub id: Option<String>,
@@ -410,8 +409,9 @@ impl WithDeserializer for ElementType {
 impl WithDeserializer for ElementTypeContent {
     type Deserializer = Box<quick_xml_deserialize::ElementTypeContentDeserializer>;
 }
+pub type AttributeType = NamespaceScope<AttributeInnerType>;
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct AttributeType {
+pub struct AttributeInnerType {
     pub id: Option<String>,
     pub name: Option<String>,
     pub ref_: Option<QName>,
@@ -425,14 +425,14 @@ pub struct AttributeType {
     pub annotation: Option<Annotation>,
     pub simple_type: Option<SimpleBaseType>,
 }
-impl AttributeType {
+impl AttributeInnerType {
     #[must_use]
     pub fn default_use_() -> AttributeUseType {
         AttributeUseType::Optional
     }
 }
-impl WithDeserializer for AttributeType {
-    type Deserializer = Box<quick_xml_deserialize::AttributeTypeDeserializer>;
+impl WithDeserializer for AttributeInnerType {
+    type Deserializer = Box<quick_xml_deserialize::AttributeInnerTypeDeserializer>;
 }
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct Notation {
@@ -445,44 +445,7 @@ pub struct Notation {
 impl WithDeserializer for Notation {
     type Deserializer = Box<quick_xml_deserialize::NotationDeserializer>;
 }
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub enum TypeDerivationControlType {
-    Extension,
-    Restriction,
-    List,
-    Union,
-}
-impl DeserializeBytes for TypeDerivationControlType {
-    fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
-        match bytes {
-            b"extension" => Ok(Self::Extension),
-            b"restriction" => Ok(Self::Restriction),
-            b"list" => Ok(Self::List),
-            b"union" => Ok(Self::Union),
-            x => Err(Error::from(ErrorKind::UnknownOrInvalidValue(
-                RawByteStr::from_slice(x),
-            ))),
-        }
-    }
-}
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub enum BlockSetItemType {
-    Extension,
-    Restriction,
-    Substitution,
-}
-impl DeserializeBytes for BlockSetItemType {
-    fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
-        match bytes {
-            b"extension" => Ok(Self::Extension),
-            b"restriction" => Ok(Self::Restriction),
-            b"substitution" => Ok(Self::Substitution),
-            x => Err(Error::from(ErrorKind::UnknownOrInvalidValue(
-                RawByteStr::from_slice(x),
-            ))),
-        }
-    }
-}
+pub type BlockSetItemType = DerivationControlType;
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum DefaultOpenContentModeType {
     Interleave,
@@ -499,6 +462,7 @@ impl DeserializeBytes for DefaultOpenContentModeType {
         }
     }
 }
+impl WithDeserializerFromBytes for DefaultOpenContentModeType {}
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct WildcardType {
     pub id: Option<String>,
@@ -519,18 +483,19 @@ impl WithDeserializer for WildcardType {
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum SimpleDerivationSetType {
     All,
-    SimpleDerivationSetItemList(SimpleDerivationSetItemList),
+    BlockSetItemList(BlockSetItemList),
 }
 impl DeserializeBytes for SimpleDerivationSetType {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
             b"#all" => Ok(Self::All),
-            x => Ok(Self::SimpleDerivationSetItemList(
-                SimpleDerivationSetItemList::deserialize_bytes(helper, x)?,
-            )),
+            x => Ok(Self::BlockSetItemList(BlockSetItemList::deserialize_bytes(
+                helper, x,
+            )?)),
         }
     }
 }
+impl WithDeserializerFromBytes for SimpleDerivationSetType {}
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct Restriction {
     pub id: Option<String>,
@@ -572,18 +537,19 @@ impl WithDeserializer for Union {
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum DerivationSetType {
     All,
-    ReducedDerivationControlList(ReducedDerivationControlList),
+    BlockSetItemList(BlockSetItemList),
 }
 impl DeserializeBytes for DerivationSetType {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
             b"#all" => Ok(Self::All),
-            x => Ok(Self::ReducedDerivationControlList(
-                ReducedDerivationControlList::deserialize_bytes(helper, x)?,
-            )),
+            x => Ok(Self::BlockSetItemList(BlockSetItemList::deserialize_bytes(
+                helper, x,
+            )?)),
         }
     }
 }
+impl WithDeserializerFromBytes for DerivationSetType {}
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct SimpleContent {
     pub id: Option<String>,
@@ -698,6 +664,7 @@ impl DeserializeBytes for QNameList {
         Ok(Self(helper.deserialize_list(bytes)?))
     }
 }
+impl WithDeserializerFromBytes for QNameList {}
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct AltType {
     pub id: Option<String>,
@@ -775,6 +742,30 @@ impl DeserializeBytes for AttributeUseType {
         }
     }
 }
+impl WithDeserializerFromBytes for AttributeUseType {}
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub enum DerivationControlType {
+    Substitution,
+    Extension,
+    Restriction,
+    List,
+    Union,
+}
+impl DeserializeBytes for DerivationControlType {
+    fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
+        match bytes {
+            b"substitution" => Ok(Self::Substitution),
+            b"extension" => Ok(Self::Extension),
+            b"restriction" => Ok(Self::Restriction),
+            b"list" => Ok(Self::List),
+            b"union" => Ok(Self::Union),
+            x => Err(Error::from(ErrorKind::UnknownOrInvalidValue(
+                RawByteStr::from_slice(x),
+            ))),
+        }
+    }
+}
+impl WithDeserializerFromBytes for DerivationControlType {}
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum NamespaceListType {
     Any,
@@ -792,6 +783,7 @@ impl DeserializeBytes for NamespaceListType {
         }
     }
 }
+impl WithDeserializerFromBytes for NamespaceListType {}
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct NotNamespaceType(pub Vec<BasicNamespaceListItemType>);
 impl NotNamespaceType {
@@ -829,13 +821,11 @@ impl Deref for NotNamespaceType {
 }
 impl DeserializeBytes for NotNamespaceType {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
-        let inner = bytes
-            .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
-            .map(|bytes| BasicNamespaceListItemType::deserialize_bytes(helper, bytes))
-            .collect::<Result<Vec<_>, _>>()?;
+        let inner = helper.deserialize_list(bytes)?;
         Ok(Self::new(inner).map_err(|error| (bytes, error))?)
     }
 }
+impl WithDeserializerFromBytes for NotNamespaceType {}
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum ProcessContentsType {
     Skip,
@@ -854,13 +844,7 @@ impl DeserializeBytes for ProcessContentsType {
         }
     }
 }
-#[derive(Clone, Debug, Default, Eq, PartialEq)]
-pub struct SimpleDerivationSetItemList(pub Vec<SimpleDerivationSetItemType>);
-impl DeserializeBytes for SimpleDerivationSetItemList {
-    fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
-        Ok(Self(helper.deserialize_list(bytes)?))
-    }
-}
+impl WithDeserializerFromBytes for ProcessContentsType {}
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum Facet {
     MinExclusive(FacetType),
@@ -880,13 +864,6 @@ pub enum Facet {
 }
 impl WithDeserializer for Facet {
     type Deserializer = Box<quick_xml_deserialize::FacetDeserializer>;
-}
-#[derive(Clone, Debug, Default, Eq, PartialEq)]
-pub struct ReducedDerivationControlList(pub Vec<ReducedDerivationControlType>);
-impl DeserializeBytes for ReducedDerivationControlList {
-    fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
-        Ok(Self(helper.deserialize_list(bytes)?))
-    }
 }
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct RestrictionType {
@@ -958,6 +935,7 @@ impl DeserializeBytes for OpenContentModeType {
         }
     }
 }
+impl WithDeserializerFromBytes for OpenContentModeType {}
 #[derive(Clone, Debug, Default, Eq, PartialEq)]
 pub struct QnameListAType(pub Vec<QnameListAItemType>);
 impl DeserializeBytes for QnameListAType {
@@ -965,6 +943,7 @@ impl DeserializeBytes for QnameListAType {
         Ok(Self(helper.deserialize_list(bytes)?))
     }
 }
+impl WithDeserializerFromBytes for QnameListAType {}
 #[derive(Clone, Debug, Default, Eq, PartialEq)]
 pub struct QnameListType(pub Vec<QnameListItemType>);
 impl DeserializeBytes for QnameListType {
@@ -972,6 +951,7 @@ impl DeserializeBytes for QnameListType {
         Ok(Self(helper.deserialize_list(bytes)?))
     }
 }
+impl WithDeserializerFromBytes for QnameListType {}
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct Field {
     pub id: Option<String>,
@@ -989,6 +969,7 @@ impl DeserializeBytes for BasicNamespaceListType {
         Ok(Self(helper.deserialize_list(bytes)?))
     }
 }
+impl WithDeserializerFromBytes for BasicNamespaceListType {}
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum BasicNamespaceListItemType {
     String(String),
@@ -1004,57 +985,23 @@ impl DeserializeBytes for BasicNamespaceListItemType {
         }
     }
 }
+impl WithDeserializerFromBytes for BasicNamespaceListItemType {}
+pub type FacetType = NamespaceScope<FacetInnerType>;
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub enum SimpleDerivationSetItemType {
-    List,
-    Union,
-    Restriction,
-    Extension,
-}
-impl DeserializeBytes for SimpleDerivationSetItemType {
-    fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
-        match bytes {
-            b"list" => Ok(Self::List),
-            b"union" => Ok(Self::Union),
-            b"restriction" => Ok(Self::Restriction),
-            b"extension" => Ok(Self::Extension),
-            x => Err(Error::from(ErrorKind::UnknownOrInvalidValue(
-                RawByteStr::from_slice(x),
-            ))),
-        }
-    }
-}
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub struct FacetType {
+pub struct FacetInnerType {
     pub id: Option<String>,
     pub value: String,
     pub fixed: bool,
     pub annotation: Option<Annotation>,
 }
-impl FacetType {
+impl FacetInnerType {
     #[must_use]
     pub fn default_fixed() -> bool {
         false
     }
 }
-impl WithDeserializer for FacetType {
-    type Deserializer = Box<quick_xml_deserialize::FacetTypeDeserializer>;
-}
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub enum ReducedDerivationControlType {
-    Extension,
-    Restriction,
-}
-impl DeserializeBytes for ReducedDerivationControlType {
-    fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
-        match bytes {
-            b"extension" => Ok(Self::Extension),
-            b"restriction" => Ok(Self::Restriction),
-            x => Err(Error::from(ErrorKind::UnknownOrInvalidValue(
-                RawByteStr::from_slice(x),
-            ))),
-        }
-    }
+impl WithDeserializer for FacetInnerType {
+    type Deserializer = Box<quick_xml_deserialize::FacetInnerTypeDeserializer>;
 }
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum QnameListAItemType {
@@ -1069,6 +1016,7 @@ impl DeserializeBytes for QnameListAItemType {
         }
     }
 }
+impl WithDeserializerFromBytes for QnameListAItemType {}
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum QnameListItemType {
     QName(QName),
@@ -1084,6 +1032,7 @@ impl DeserializeBytes for QnameListItemType {
         }
     }
 }
+impl WithDeserializerFromBytes for QnameListItemType {}
 pub mod quick_xml_deserialize {
     use crate::models::schema::{MaxOccurs, QName};
     use core::mem::replace;
@@ -10460,7 +10409,7 @@ pub mod quick_xml_deserialize {
         }
     }
     #[derive(Debug)]
-    pub struct AttributeTypeDeserializer {
+    pub struct AttributeInnerTypeDeserializer {
         id: Option<String>,
         name: Option<String>,
         ref_: Option<QName>,
@@ -10473,17 +10422,17 @@ pub mod quick_xml_deserialize {
         inheritable: Option<bool>,
         annotation: Option<super::Annotation>,
         simple_type: Option<super::SimpleBaseType>,
-        state__: Box<AttributeTypeDeserializerState>,
+        state__: Box<AttributeInnerTypeDeserializerState>,
     }
     #[derive(Debug)]
-    enum AttributeTypeDeserializerState {
+    enum AttributeInnerTypeDeserializerState {
         Init__,
         Annotation(Option<<super::Annotation as WithDeserializer>::Deserializer>),
         SimpleType(Option<<super::SimpleBaseType as WithDeserializer>::Deserializer>),
         Done__,
         Unknown__,
     }
-    impl AttributeTypeDeserializer {
+    impl AttributeInnerTypeDeserializer {
         fn from_bytes_start(
             helper: &mut DeserializeHelper,
             bytes_start: &BytesStart<'_>,
@@ -10557,7 +10506,7 @@ pub mod quick_xml_deserialize {
                 name: name,
                 ref_: ref_,
                 type_: type_,
-                use_: use_.unwrap_or_else(super::AttributeType::default_use_),
+                use_: use_.unwrap_or_else(super::AttributeInnerType::default_use_),
                 default: default,
                 fixed: fixed,
                 form: form,
@@ -10565,15 +10514,15 @@ pub mod quick_xml_deserialize {
                 inheritable: inheritable,
                 annotation: None,
                 simple_type: None,
-                state__: Box::new(AttributeTypeDeserializerState::Init__),
+                state__: Box::new(AttributeInnerTypeDeserializerState::Init__),
             }))
         }
         fn finish_state(
             &mut self,
             helper: &mut DeserializeHelper,
-            state: AttributeTypeDeserializerState,
+            state: AttributeInnerTypeDeserializerState,
         ) -> Result<(), Error> {
-            use AttributeTypeDeserializerState as S;
+            use AttributeInnerTypeDeserializerState as S;
             match state {
                 S::Annotation(Some(deserializer)) => {
                     self.store_annotation(deserializer.finish(helper)?)?
@@ -10607,9 +10556,9 @@ pub mod quick_xml_deserialize {
             &mut self,
             helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::Annotation>,
-            fallback: &mut Option<AttributeTypeDeserializerState>,
+            fallback: &mut Option<AttributeInnerTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
-            use AttributeTypeDeserializerState as S;
+            use AttributeInnerTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
@@ -10641,9 +10590,9 @@ pub mod quick_xml_deserialize {
             &mut self,
             helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::SimpleBaseType>,
-            fallback: &mut Option<AttributeTypeDeserializerState>,
+            fallback: &mut Option<AttributeInnerTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
-            use AttributeTypeDeserializerState as S;
+            use AttributeInnerTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
@@ -10672,22 +10621,22 @@ pub mod quick_xml_deserialize {
             }
         }
     }
-    impl<'de> Deserializer<'de, super::AttributeType> for Box<AttributeTypeDeserializer> {
+    impl<'de> Deserializer<'de, super::AttributeInnerType> for Box<AttributeInnerTypeDeserializer> {
         fn init(
             helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::AttributeType> {
+        ) -> DeserializerResult<'de, super::AttributeInnerType> {
             helper.init_deserializer_from_start_event(
                 event,
-                AttributeTypeDeserializer::from_bytes_start,
+                AttributeInnerTypeDeserializer::from_bytes_start,
             )
         }
         fn next(
             mut self,
             helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::AttributeType> {
-            use AttributeTypeDeserializerState as S;
+        ) -> DeserializerResult<'de, super::AttributeInnerType> {
+            use AttributeInnerTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
@@ -10787,13 +10736,16 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish(mut self, helper: &mut DeserializeHelper) -> Result<super::AttributeType, Error> {
+        fn finish(
+            mut self,
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::AttributeInnerType, Error> {
             let state = replace(
                 &mut *self.state__,
-                AttributeTypeDeserializerState::Unknown__,
+                AttributeInnerTypeDeserializerState::Unknown__,
             );
             self.finish_state(helper, state)?;
-            Ok(super::AttributeType {
+            Ok(super::AttributeInnerType {
                 id: self.id,
                 name: self.name,
                 ref_: self.ref_,
@@ -20308,21 +20260,21 @@ pub mod quick_xml_deserialize {
         }
     }
     #[derive(Debug)]
-    pub struct FacetTypeDeserializer {
+    pub struct FacetInnerTypeDeserializer {
         id: Option<String>,
         value: String,
         fixed: bool,
         annotation: Option<super::Annotation>,
-        state__: Box<FacetTypeDeserializerState>,
+        state__: Box<FacetInnerTypeDeserializerState>,
     }
     #[derive(Debug)]
-    enum FacetTypeDeserializerState {
+    enum FacetInnerTypeDeserializerState {
         Init__,
         Annotation(Option<<super::Annotation as WithDeserializer>::Deserializer>),
         Done__,
         Unknown__,
     }
-    impl FacetTypeDeserializer {
+    impl FacetInnerTypeDeserializer {
         fn from_bytes_start(
             helper: &mut DeserializeHelper,
             bytes_start: &BytesStart<'_>,
@@ -20352,17 +20304,17 @@ pub mod quick_xml_deserialize {
             Ok(Box::new(Self {
                 id: id,
                 value: value.ok_or_else(|| ErrorKind::MissingAttribute("value".into()))?,
-                fixed: fixed.unwrap_or_else(super::FacetType::default_fixed),
+                fixed: fixed.unwrap_or_else(super::FacetInnerType::default_fixed),
                 annotation: None,
-                state__: Box::new(FacetTypeDeserializerState::Init__),
+                state__: Box::new(FacetInnerTypeDeserializerState::Init__),
             }))
         }
         fn finish_state(
             &mut self,
             helper: &mut DeserializeHelper,
-            state: FacetTypeDeserializerState,
+            state: FacetInnerTypeDeserializerState,
         ) -> Result<(), Error> {
-            use FacetTypeDeserializerState as S;
+            use FacetInnerTypeDeserializerState as S;
             match state {
                 S::Annotation(Some(deserializer)) => {
                     self.store_annotation(deserializer.finish(helper)?)?
@@ -20384,9 +20336,9 @@ pub mod quick_xml_deserialize {
             &mut self,
             helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::Annotation>,
-            fallback: &mut Option<FacetTypeDeserializerState>,
+            fallback: &mut Option<FacetInnerTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
-            use FacetTypeDeserializerState as S;
+            use FacetInnerTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
@@ -20415,20 +20367,22 @@ pub mod quick_xml_deserialize {
             }
         }
     }
-    impl<'de> Deserializer<'de, super::FacetType> for Box<FacetTypeDeserializer> {
+    impl<'de> Deserializer<'de, super::FacetInnerType> for Box<FacetInnerTypeDeserializer> {
         fn init(
             helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::FacetType> {
-            helper
-                .init_deserializer_from_start_event(event, FacetTypeDeserializer::from_bytes_start)
+        ) -> DeserializerResult<'de, super::FacetInnerType> {
+            helper.init_deserializer_from_start_event(
+                event,
+                FacetInnerTypeDeserializer::from_bytes_start,
+            )
         }
         fn next(
             mut self,
             helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::FacetType> {
-            use FacetTypeDeserializerState as S;
+        ) -> DeserializerResult<'de, super::FacetInnerType> {
+            use FacetInnerTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
@@ -20499,10 +20453,16 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish(mut self, helper: &mut DeserializeHelper) -> Result<super::FacetType, Error> {
-            let state = replace(&mut *self.state__, FacetTypeDeserializerState::Unknown__);
+        fn finish(
+            mut self,
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::FacetInnerType, Error> {
+            let state = replace(
+                &mut *self.state__,
+                FacetInnerTypeDeserializerState::Unknown__,
+            );
             self.finish_state(helper, state)?;
-            Ok(super::FacetType {
+            Ok(super::FacetInnerType {
                 id: self.id,
                 value: self.value,
                 fixed: self.fixed,

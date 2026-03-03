@@ -6,7 +6,8 @@ fn config() -> Config {
     Config::test_default()
         .with_advanced_enums()
         .with_qname_type()
-        .with_generate([(IdentType::Element, "tns:Foo")])
+        .with_generate([(IdentType::Element, "test:Foo")])
+        .with_namespace(b"test", b"http://example.com")
 }
 
 /* default */
@@ -63,7 +64,7 @@ fn write_quick_xml() {
 
     crate::utils::quick_xml_write_test(
         &obj,
-        "tns:Foo",
+        "test:Foo",
         "tests/feature/advanced_enums/example/serialize.xml",
     );
 }

@@ -9,9 +9,9 @@ use xsd_parser_types::{
 
 use crate::models::meta::MetaTypes;
 use crate::models::schema::xs::{
-    AttributeGroupType, AttributeType, ComplexBaseType, ComplexContent, ElementType, ExtensionType,
-    GroupType, Import, List, Override, Redefine, Restriction, RestrictionType, SimpleBaseType,
-    SimpleContent, Union,
+    AttributeGroupType, AttributeInnerType, AttributeType, ComplexBaseType, ComplexContent,
+    ElementType, ExtensionType, GroupType, Import, List, Override, Redefine, Restriction,
+    RestrictionType, SimpleBaseType, SimpleContent, Union,
 };
 use crate::models::schema::{NamespaceId, SchemaId, SchemaInfo, Schemas};
 use crate::models::{IdentCache, IdentType, Name, TypeIdent};
@@ -173,7 +173,11 @@ impl<'schema> NodeCacheProcessor<'_, 'schema> {
                 }
                 C::Attribute(
                     x @ AttributeType {
-                        name: Some(name), ..
+                        inner:
+                            AttributeInnerType {
+                                name: Some(name), ..
+                            },
+                        ..
                     },
                 ) => {
                     self.new_entry(name.clone(), Node::Attribute(x), |s| s.process_attribute(x))?;
@@ -229,7 +233,11 @@ impl<'schema> NodeCacheProcessor<'_, 'schema> {
                 C::Notation(_) | C::Annotation(_) => continue,
                 C::Attribute(
                     x @ AttributeType {
-                        name: Some(name), ..
+                        inner:
+                            AttributeInnerType {
+                                name: Some(name), ..
+                            },
+                        ..
                     },
                 ) => self.new_redefined_entry(name.clone(), base, Node::Attribute(x), |s| {
                     s.process_attribute(x)

@@ -6,24 +6,35 @@
 
 #![allow(missing_docs)]
 
+use std::borrow::Cow;
 use std::env::{args, current_dir};
 use std::fs::write;
+use std::mem::swap;
 use std::path::PathBuf;
+use std::str::FromStr;
 
-use anyhow::Error;
-use quote::quote;
+use anyhow::{Context, Error};
+use quote::{format_ident, quote, ToTokens};
 use tracing_subscriber::{fmt, EnvFilter};
 
 use xsd_parser::config::{
     Config, Generate, GeneratorFlags, IdentQuadruple, InterpreterFlags, OptimizerFlags,
-    ParserFlags, Resolver, Schema,
+    ParserFlags, Resolver, Schema, TypedefMode,
 };
-use xsd_parser::models::meta::{CustomMeta, MetaType};
+use xsd_parser::models::code::IdentPath;
+use xsd_parser::models::data::{
+    ComplexData, ConfigValue, DataType, DataTypeVariant, Occurs, PathData, ReferenceData,
+};
+use xsd_parser::models::meta::{CustomMeta, MetaType, ReferenceMeta};
+use xsd_parser::models::schema::MaxOccurs;
 use xsd_parser::pipeline::generator::{
     Context as GeneratorContext, Error as GeneratorError, ValueGeneratorMode,
 };
 use xsd_parser::pipeline::renderer::ValueRendererBox;
-use xsd_parser::{generate, IdentType};
+use xsd_parser::{
+    exec_generator_with_ident_cache, exec_interpreter_with_ident_cache, exec_optimizer,
+    exec_parser, exec_render, DataTypes, IdentType, Name, Schemas, TypeIdent,
+};
 
 fn main() -> Result<(), Error> {
     // Initialize the logging framework. Log output can be controlled using the
@@ -139,10 +150,101 @@ fn main() -> Result<(), Error> {
     // config.interpreter.debug_output = Some(PathBuf::from("./interpreter.log"));
     // config.optimizer.debug_output = Some(PathBuf::from("./optimizer.log"));
 
-    let code = generate(config)?;
+    let schemas = exec_parser(config.parser)?;
+    let (meta_types, ident_cache) =
+        exec_interpreter_with_ident_cache(config.interpreter, &schemas)?;
+    let meta_types = exec_optimizer(config.optimizer, meta_types)?;
+    let data_types = exec_generator_with_ident_cache(
+        config.generator,
+        &schemas,
+        Some(&ident_cache),
+        &meta_types,
+    )?;
+    let data_types = patch_data_types(&schemas, data_types)?;
+    let module = exec_render(config.renderer, &data_types)?;
+    let code = module.to_token_stream().to_string();
 
     tracing::info!("Write Code");
-    write(output, code.to_string())?;
+    write(output, &code)?;
+
+    Ok(())
+}
+
+fn patch_data_types<'types>(
+    schemas: &Schemas,
+    mut types: DataTypes<'types>,
+) -> Result<DataTypes<'types>, Error> {
+    /* xs:attribute */
+    let ident = IdentQuadruple::from((IdentType::Type, "xs:attribute"));
+    let ident = ident.resolve(schemas)?;
+
+    wrap_struct(&mut types, ident, "Attribute", "AttributeInner")?;
+
+    /* xs:facet */
+    let ident = IdentQuadruple::from((IdentType::Type, "xs:facet"));
+    let ident = ident.resolve(schemas)?;
+
+    wrap_struct(&mut types, ident, "Facet", "FacetInner")?;
+
+    Ok(types)
+}
+
+fn wrap_struct(
+    types: &mut DataTypes<'_>,
+    ident: TypeIdent,
+    outer: &str,
+    inner: &str,
+) -> Result<(), Error> {
+    let index = types
+        .items
+        .get_index_of(&ident)
+        .context("Unable to get type for xs:attribute")?;
+    let inner_item = types.items.get_index_mut(index).unwrap().1;
+    let DataTypeVariant::Complex(inner_type) = &mut inner_item.variant else {
+        anyhow::bail!("Expected {outer} to be a complex type");
+    };
+    let ComplexData::Struct {
+        type_: inner_struct,
+        content_type: _,
+    } = inner_type
+    else {
+        anyhow::bail!("Expected {outer} to be a struct");
+    };
+    inner_struct.base.type_ident = format_ident!("{inner}Type");
+    inner_struct.base.serializer_ident = format_ident!("{inner}TypeSerializer");
+    inner_struct.base.serializer_state_ident = format_ident!("{inner}TypeSerializerState");
+    inner_struct.base.deserializer_ident = format_ident!("{inner}TypeDeserializer");
+    inner_struct.base.deserializer_state_ident = format_ident!("{inner}TypeDeserializerState");
+
+    let mut outer_item = DataType {
+        meta: inner_item.meta.clone(),
+        derive: ConfigValue::Default,
+        variant: DataTypeVariant::Reference(ReferenceData {
+            meta: Cow::Owned(ReferenceMeta {
+                type_: ident.clone(),
+                nillable: false,
+                min_occurs: 1,
+                max_occurs: MaxOccurs::Bounded(1),
+            }),
+            mode: TypedefMode::Typedef,
+            occurs: Occurs::Single,
+            type_ident: format_ident!("{outer}Type"),
+            target_type: PathData::from_path(IdentPath::from_str("NamespaceScope").unwrap())
+                .with_using("xsd_parser_types::xml::NamespaceScope")
+                .with_generic(IdentPath::from_ident(format_ident!("{inner}Type"))),
+            trait_impls: Vec::new(),
+        }),
+        extra_attributes: Vec::new(),
+    };
+
+    swap(inner_item, &mut outer_item);
+
+    let item = outer_item;
+    types.items.insert_before(
+        index + 1,
+        ident.with_name(Name::new_named(format!("{outer}Type"))),
+        item,
+    );
 
     Ok(())
 }

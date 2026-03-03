@@ -1,7 +1,8 @@
 use xsd_parser_types::misc::Namespace;
 
 use crate::models::schema::xs::{
-    AttributeGroupType, AttributeType, ComplexBaseType, ElementType, GroupType, SimpleBaseType,
+    AttributeGroupType, AttributeInnerType, AttributeType, ComplexBaseType, ElementType, GroupType,
+    SimpleBaseType,
 };
 use crate::models::{IdentType, Name, TypeIdent};
 
@@ -58,7 +59,7 @@ impl State<'_> {
                 #[rustfmt::skip]
                 let (name, type_) = match c {
                     C::Element(ElementType { name: Some(name), .. }) => (name, IdentType::Element),
-                    C::Attribute(AttributeType { name: Some(name), .. }) => (name, IdentType::Attribute),
+                    C::Attribute(AttributeType { inner: AttributeInnerType { name: Some(name), .. }, .. }) => (name, IdentType::Attribute),
                     C::SimpleType(SimpleBaseType { name: Some(name), .. }) => (name, IdentType::Type),
                     C::ComplexType(ComplexBaseType { name: Some(name), .. }) => (name, IdentType::Type),
                     C::Group(GroupType { name: Some(name), .. }) => (name, IdentType::Group),
@@ -98,7 +99,7 @@ impl State<'_> {
                                 C::Group(GroupType { name: Some(name), .. }) => (name, IdentType::Group),
                                 C::AttributeGroup(AttributeGroupType { name: Some(name), .. }) => (name, IdentType::AttributeGroup),
                                 C::Element(ElementType { name: Some(name), .. }) => (name, IdentType::Element),
-                                C::Attribute(AttributeType { name: Some(name), .. }) => (name, IdentType::Attribute),
+                                C::Attribute(AttributeType { inner: AttributeInnerType { name: Some(name), .. }, .. }) => (name, IdentType::Attribute),
                                 _ => continue,
                             };
 
