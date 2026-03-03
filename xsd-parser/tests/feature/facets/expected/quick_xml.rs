@@ -5,7 +5,8 @@ use xsd_parser_types::{
     misc::{Namespace, NamespacePrefix},
     quick_xml::{
         fraction_digits, whitespace_collapse, DeserializeBytes, DeserializeHelper, Error,
-        SerializeBytes, SerializeHelper, ValidateError, WithDeserializer, WithSerializer,
+        SerializeBytes, SerializeHelper, ValidateError, WithDeserializer,
+        WithDeserializerFromBytes, WithSerializeToBytes, WithSerializer,
     },
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
@@ -111,6 +112,7 @@ impl SerializeBytes for NegativeDecimalType {
         Ok(Some(Cow::Owned(format!("{inner:.02}"))))
     }
 }
+impl WithSerializeToBytes for NegativeDecimalType {}
 impl DeserializeBytes for NegativeDecimalType {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         let s = from_utf8(bytes).map_err(Error::from)?;
@@ -119,6 +121,7 @@ impl DeserializeBytes for NegativeDecimalType {
         Ok(Self::new(inner).map_err(|error| (bytes, error))?)
     }
 }
+impl WithDeserializerFromBytes for NegativeDecimalType {}
 #[derive(Debug)]
 pub struct PositiveDecimalType(pub f64);
 impl PositiveDecimalType {
@@ -167,6 +170,7 @@ impl SerializeBytes for PositiveDecimalType {
         Ok(Some(Cow::Owned(format!("{inner:.02}"))))
     }
 }
+impl WithSerializeToBytes for PositiveDecimalType {}
 impl DeserializeBytes for PositiveDecimalType {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         let s = from_utf8(bytes).map_err(Error::from)?;
@@ -175,6 +179,7 @@ impl DeserializeBytes for PositiveDecimalType {
         Ok(Self::new(inner).map_err(|error| (bytes, error))?)
     }
 }
+impl WithDeserializerFromBytes for PositiveDecimalType {}
 #[derive(Debug)]
 pub struct RestrictedStringType(pub String);
 impl RestrictedStringType {
@@ -232,6 +237,7 @@ impl SerializeBytes for RestrictedStringType {
         self.0.serialize_bytes(helper)
     }
 }
+impl WithSerializeToBytes for RestrictedStringType {}
 impl DeserializeBytes for RestrictedStringType {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         let s = from_utf8(bytes).map_err(Error::from)?;
@@ -242,6 +248,7 @@ impl DeserializeBytes for RestrictedStringType {
         Ok(Self::new(inner).map_err(|error| (bytes, error))?)
     }
 }
+impl WithDeserializerFromBytes for RestrictedStringType {}
 pub mod quick_xml_deserialize {
     use core::mem::replace;
     use xsd_parser_types::quick_xml::{

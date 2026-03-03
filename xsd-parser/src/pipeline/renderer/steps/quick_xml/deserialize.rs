@@ -108,6 +108,10 @@ impl UnionData<'_> {
             resolve_ident!(ctx, "xsd_parser_types::quick_xml::DeserializeBytes");
         let deserialize_helper =
             resolve_ident!(ctx, "xsd_parser_types::quick_xml::DeserializeHelper");
+        let with_deserializer_from_bytes = resolve_ident!(
+            ctx,
+            "xsd_parser_types::quick_xml::WithDeserializerFromBytes"
+        );
 
         let code = quote! {
             impl #deserialize_bytes for #type_ident {
@@ -124,6 +128,7 @@ impl UnionData<'_> {
                     Err(#error::from(#error_kind::InvalidUnion(errors.into())))
                 }
             }
+            impl #with_deserializer_from_bytes for #type_ident { }
         };
 
         ctx.current_module().append(code);
@@ -497,6 +502,10 @@ impl ReferenceData<'_> {
             resolve_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializeBytes");
         let deserialize_helper =
             resolve_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializeHelper");
+        let with_deserializer_from_bytes = resolve_ident!(
+            ctx,
+            "xsd_parser_types::quick_xml::WithDeserializerFromBytes"
+        );
 
         let code = quote! {
             impl #deserialize_bytes for #type_ident {
@@ -507,6 +516,7 @@ impl ReferenceData<'_> {
                     #body
                 }
             }
+            impl #with_deserializer_from_bytes for #type_ident { }
         };
 
         ctx.current_module().append(code);
@@ -545,6 +555,10 @@ impl EnumerationData<'_> {
             resolve_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializeBytes");
         let deserialize_helper =
             resolve_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializeHelper");
+        let with_deserializer_from_bytes = resolve_ident!(
+            ctx,
+            "xsd_parser_types::quick_xml::WithDeserializerFromBytes"
+        );
 
         let other = other.unwrap_or_else(|| {
             quote! {
@@ -608,6 +622,7 @@ impl EnumerationData<'_> {
                     #body
                 }
             }
+            impl #with_deserializer_from_bytes for #type_ident { }
         };
 
         ctx.current_module().append(code);
@@ -685,6 +700,10 @@ impl SimpleData<'_> {
             resolve_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializeBytes");
         let deserialize_helper =
             resolve_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializeHelper");
+        let with_deserializer_from_bytes = resolve_ident!(
+            ctx,
+            "xsd_parser_types::quick_xml::WithDeserializerFromBytes"
+        );
 
         let validation = self.constrains.render_validation(ctx);
 
@@ -722,6 +741,7 @@ impl SimpleData<'_> {
                     Ok(Self::new(inner).map_err(|error| (bytes, error))?)
                 }
             }
+            impl #with_deserializer_from_bytes for #type_ident { }
         };
 
         ctx.current_module().append(code);

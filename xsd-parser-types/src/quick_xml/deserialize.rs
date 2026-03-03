@@ -71,13 +71,6 @@ pub trait WithDeserializer: Sized {
     }
 }
 
-impl<X> WithDeserializer for X
-where
-    X: DeserializeBytes + Debug,
-{
-    type Deserializer = ContentDeserializer<X>;
-}
-
 /// Trait that defines a deserializer that can be used to construct a type from a
 /// XML [`Event`]s.
 pub trait Deserializer<'de, T>: Debug + Sized
@@ -484,6 +477,8 @@ impl DeserializeBytes for bool {
     }
 }
 
+impl WithDeserializerFromBytes for bool {}
+
 /// Marker trait used to automatically implement [`DeserializeBytes`] for any
 /// type that implements [`FromStr`].
 pub trait DeserializeBytesFromStr: FromStr {}
@@ -550,6 +545,24 @@ impl DeserializeBytesFromStr for num::BigInt {}
 #[cfg(feature = "num")]
 impl DeserializeBytesFromStr for num::BigUint {}
 
+/// Marker trait used to automatically implement [`WithDeserializer`] for any
+/// type that implements [`DeserializeBytes`].
+pub trait WithDeserializerFromBytes: DeserializeBytes {}
+
+impl<X> WithDeserializer for X
+where
+    X: WithDeserializerFromBytes + Debug,
+{
+    type Deserializer = ContentDeserializer<X>;
+}
+
+impl<X> WithDeserializerFromBytes for X
+where
+    X: DeserializeBytesFromStr,
+    X::Err: std::error::Error + Send + Sync + 'static,
+{
+}
+
 /// Implements a [`Deserializer`] for any type that implements [`DeserializeBytes`].
 #[derive(Debug)]
 pub struct ContentDeserializer<T> {
@@ -559,7 +572,7 @@ pub struct ContentDeserializer<T> {
 
 impl<'de, T> Deserializer<'de, T> for ContentDeserializer<T>
 where
-    T: DeserializeBytes + Debug,
+    T: WithDeserializerFromBytes + Debug,
 {
     fn init(helper: &mut DeserializeHelper, event: Event<'de>) -> DeserializerResult<'de, T> {
         match event {

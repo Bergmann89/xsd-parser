@@ -90,6 +90,11 @@ impl QName {
         self.ns.as_ref()
     }
 
+    /// Take the namespace of the [`QName`], leaving `None` in its place.
+    pub fn take_namespace(&mut self) -> Option<Namespace> {
+        self.ns.take()
+    }
+
     /// Get the prefix of the [`QName`].
     #[must_use]
     pub fn prefix(&self) -> Option<&[u8]> {

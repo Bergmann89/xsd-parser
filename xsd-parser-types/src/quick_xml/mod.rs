@@ -24,13 +24,14 @@ pub use self::deserialize::{
     ContentDeserializer, DeserializeBytes, DeserializeBytesFromStr, DeserializeHelper,
     DeserializeStrError, DeserializeSync, Deserializer, DeserializerArtifact, DeserializerEvent,
     DeserializerOutput, DeserializerResult, ElementHandlerOutput, WithDeserializer,
+    WithDeserializerFromBytes,
 };
 pub use self::error::{Error, Kind as ErrorKind, UnionError, ValidateError};
 pub use self::reader::{ErrorReader, IoReader, SliceReader, XmlReader, XmlReaderSync};
 pub use self::serialize::{
     BoxedSerializer, ContentSerializer, DerefIter, IterSerializer, SerializeBytes,
     SerializeBytesToString, SerializeHelper, SerializeSync, Serializer, WithBoxedSerializer,
-    WithSerializer,
+    WithSerializeToBytes, WithSerializer,
 };
 
 #[cfg(feature = "async")]

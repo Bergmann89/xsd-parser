@@ -3,7 +3,8 @@ use xsd_parser_types::{
     misc::{Namespace, NamespacePrefix},
     quick_xml::{
         DeserializeBytes, DeserializeHelper, Error, ErrorKind, RawByteStr, SerializeBytes,
-        SerializeHelper, WithDeserializer, WithSerializer,
+        SerializeHelper, WithDeserializer, WithDeserializerFromBytes, WithSerializeToBytes,
+        WithSerializer,
     },
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
@@ -76,6 +77,7 @@ impl SerializeBytes for TypeBmEcatVersion {
         }
     }
 }
+impl WithSerializeToBytes for TypeBmEcatVersion {}
 impl DeserializeBytes for TypeBmEcatVersion {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
@@ -87,6 +89,7 @@ impl DeserializeBytes for TypeBmEcatVersion {
         }
     }
 }
+impl WithDeserializerFromBytes for TypeBmEcatVersion {}
 #[derive(Debug)]
 pub struct HeaderElementType {
     pub generator_info: Option<String>,
@@ -787,6 +790,7 @@ impl SerializeBytes for DtCurrencies {
         }
     }
 }
+impl WithSerializeToBytes for DtCurrencies {}
 impl DeserializeBytes for DtCurrencies {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
@@ -954,6 +958,7 @@ impl DeserializeBytes for DtCurrencies {
         }
     }
 }
+impl WithDeserializerFromBytes for DtCurrencies {}
 #[derive(Debug)]
 pub struct TypePartyId {
     pub type_: Option<String>,
@@ -1040,6 +1045,7 @@ impl SerializeBytes for TNewCatalogProductMode {
         }
     }
 }
+impl WithSerializeToBytes for TNewCatalogProductMode {}
 impl DeserializeBytes for TNewCatalogProductMode {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
@@ -1050,6 +1056,7 @@ impl DeserializeBytes for TNewCatalogProductMode {
         }
     }
 }
+impl WithDeserializerFromBytes for TNewCatalogProductMode {}
 #[derive(Debug)]
 pub struct SupplierPidElementType {
     pub type_: Option<String>,
@@ -1302,6 +1309,7 @@ impl SerializeBytes for TUpdateProductsProductMode {
         }
     }
 }
+impl WithSerializeToBytes for TUpdateProductsProductMode {}
 impl DeserializeBytes for TUpdateProductsProductMode {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
@@ -1314,6 +1322,7 @@ impl DeserializeBytes for TUpdateProductsProductMode {
         }
     }
 }
+impl WithDeserializerFromBytes for TUpdateProductsProductMode {}
 #[derive(Debug)]
 pub enum TUpdatePricesProductMode {
     Update,
@@ -1325,6 +1334,7 @@ impl SerializeBytes for TUpdatePricesProductMode {
         }
     }
 }
+impl WithSerializeToBytes for TUpdatePricesProductMode {}
 impl DeserializeBytes for TUpdatePricesProductMode {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
@@ -1335,6 +1345,7 @@ impl DeserializeBytes for TUpdatePricesProductMode {
         }
     }
 }
+impl WithDeserializerFromBytes for TUpdatePricesProductMode {}
 #[derive(Debug)]
 pub enum DtLang {
     Aar,
@@ -2262,6 +2273,7 @@ impl SerializeBytes for DtLang {
         }
     }
 }
+impl WithSerializeToBytes for DtLang {}
 impl DeserializeBytes for DtLang {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
@@ -2730,6 +2742,7 @@ impl DeserializeBytes for DtLang {
         }
     }
 }
+impl WithDeserializerFromBytes for DtLang {}
 #[derive(Debug)]
 pub enum CatalogDatetimeType {
     GenerationDate,
@@ -2741,6 +2754,7 @@ impl SerializeBytes for CatalogDatetimeType {
         }
     }
 }
+impl WithSerializeToBytes for CatalogDatetimeType {}
 impl DeserializeBytes for CatalogDatetimeType {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
@@ -2751,6 +2765,7 @@ impl DeserializeBytes for CatalogDatetimeType {
         }
     }
 }
+impl WithDeserializerFromBytes for CatalogDatetimeType {}
 #[derive(Debug)]
 pub enum SupplierAddressType {
     Supplier,
@@ -2762,6 +2777,7 @@ impl SerializeBytes for SupplierAddressType {
         }
     }
 }
+impl WithSerializeToBytes for SupplierAddressType {}
 impl DeserializeBytes for SupplierAddressType {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
@@ -2772,6 +2788,7 @@ impl DeserializeBytes for SupplierAddressType {
         }
     }
 }
+impl WithDeserializerFromBytes for SupplierAddressType {}
 #[derive(Debug)]
 pub struct MimeElementType {
     pub mime_type: String,
@@ -3050,6 +3067,7 @@ impl SerializeBytes for DtPunit {
         }
     }
 }
+impl WithSerializeToBytes for DtPunit {}
 impl DeserializeBytes for DtPunit {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
@@ -3095,6 +3113,7 @@ impl DeserializeBytes for DtPunit {
         }
     }
 }
+impl WithDeserializerFromBytes for DtPunit {}
 #[derive(Debug)]
 pub struct ProductPriceDetailsDatetimeElementType {
     pub type_: ProductPriceDetailsDatetimeType,
@@ -3405,6 +3424,7 @@ impl SerializeBytes for ProductReferenceType {
         }
     }
 }
+impl WithSerializeToBytes for ProductReferenceType {}
 impl DeserializeBytes for ProductReferenceType {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
@@ -3424,6 +3444,7 @@ impl DeserializeBytes for ProductReferenceType {
         }
     }
 }
+impl WithDeserializerFromBytes for ProductReferenceType {}
 #[derive(Debug)]
 pub struct CustomsTariffNumberElementType {
     pub customs_number: String,
@@ -3475,6 +3496,7 @@ impl SerializeBytes for MimePurposeElementType {
         }
     }
 }
+impl WithSerializeToBytes for MimePurposeElementType {}
 impl DeserializeBytes for MimePurposeElementType {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
@@ -3492,6 +3514,7 @@ impl DeserializeBytes for MimePurposeElementType {
         }
     }
 }
+impl WithDeserializerFromBytes for MimePurposeElementType {}
 #[derive(Debug)]
 pub enum ProductStatusType {
     Bargain,
@@ -3517,6 +3540,7 @@ impl SerializeBytes for ProductStatusType {
         }
     }
 }
+impl WithSerializeToBytes for ProductStatusType {}
 impl DeserializeBytes for ProductStatusType {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
@@ -3534,6 +3558,7 @@ impl DeserializeBytes for ProductStatusType {
         }
     }
 }
+impl WithDeserializerFromBytes for ProductStatusType {}
 #[derive(Debug)]
 pub enum TypeClassificationGroupIdType {
     Flat,
@@ -3547,6 +3572,7 @@ impl SerializeBytes for TypeClassificationGroupIdType {
         }
     }
 }
+impl WithSerializeToBytes for TypeClassificationGroupIdType {}
 impl DeserializeBytes for TypeClassificationGroupIdType {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
@@ -3558,6 +3584,7 @@ impl DeserializeBytes for TypeClassificationGroupIdType {
         }
     }
 }
+impl WithDeserializerFromBytes for TypeClassificationGroupIdType {}
 #[derive(Debug)]
 pub enum ProductPriceDetailsDatetimeType {
     ValidStartDate,
@@ -3571,6 +3598,7 @@ impl SerializeBytes for ProductPriceDetailsDatetimeType {
         }
     }
 }
+impl WithSerializeToBytes for ProductPriceDetailsDatetimeType {}
 impl DeserializeBytes for ProductPriceDetailsDatetimeType {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
@@ -3582,6 +3610,7 @@ impl DeserializeBytes for ProductPriceDetailsDatetimeType {
         }
     }
 }
+impl WithDeserializerFromBytes for ProductPriceDetailsDatetimeType {}
 #[derive(Debug)]
 pub struct UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementType {
     pub type_: String,

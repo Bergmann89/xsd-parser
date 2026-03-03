@@ -3,7 +3,8 @@ use xsd_parser_types::{
     misc::{Namespace, NamespacePrefix},
     quick_xml::{
         DeserializeBytes, DeserializeHelper, Error, ErrorKind, RawByteStr, SerializeBytes,
-        SerializeHelper, WithDeserializer, WithSerializer,
+        SerializeHelper, WithDeserializer, WithDeserializerFromBytes, WithSerializeToBytes,
+        WithSerializer,
     },
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
@@ -75,6 +76,7 @@ impl SerializeBytes for TypeBmEcatVersion {
         }
     }
 }
+impl WithSerializeToBytes for TypeBmEcatVersion {}
 impl DeserializeBytes for TypeBmEcatVersion {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
@@ -85,6 +87,7 @@ impl DeserializeBytes for TypeBmEcatVersion {
         }
     }
 }
+impl WithDeserializerFromBytes for TypeBmEcatVersion {}
 #[derive(Debug)]
 pub struct HeaderElementType {
     pub generator_info: Option<String>,
@@ -980,6 +983,7 @@ impl SerializeBytes for DtCurrencies {
         }
     }
 }
+impl WithSerializeToBytes for DtCurrencies {}
 impl DeserializeBytes for DtCurrencies {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
@@ -1217,6 +1221,7 @@ impl DeserializeBytes for DtCurrencies {
         }
     }
 }
+impl WithDeserializerFromBytes for DtCurrencies {}
 #[derive(Debug)]
 pub struct TypePartyId {
     pub type_: String,
@@ -1303,6 +1308,7 @@ impl SerializeBytes for TypeBmEcatEtimVersion {
         }
     }
 }
+impl WithSerializeToBytes for TypeBmEcatEtimVersion {}
 impl DeserializeBytes for TypeBmEcatEtimVersion {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
@@ -1313,6 +1319,7 @@ impl DeserializeBytes for TypeBmEcatEtimVersion {
         }
     }
 }
+impl WithDeserializerFromBytes for TypeBmEcatEtimVersion {}
 #[derive(Debug)]
 pub enum TNewCatalogProductMode {
     New,
@@ -1324,6 +1331,7 @@ impl SerializeBytes for TNewCatalogProductMode {
         }
     }
 }
+impl WithSerializeToBytes for TNewCatalogProductMode {}
 impl DeserializeBytes for TNewCatalogProductMode {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
@@ -1334,6 +1342,7 @@ impl DeserializeBytes for TNewCatalogProductMode {
         }
     }
 }
+impl WithDeserializerFromBytes for TNewCatalogProductMode {}
 #[derive(Debug)]
 pub struct ProductDetailsElementType {
     pub description_short: Vec<DtMlstring>,
@@ -1576,6 +1585,7 @@ impl SerializeBytes for TUpdateProductsProductMode {
         }
     }
 }
+impl WithSerializeToBytes for TUpdateProductsProductMode {}
 impl DeserializeBytes for TUpdateProductsProductMode {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
@@ -1588,6 +1598,7 @@ impl DeserializeBytes for TUpdateProductsProductMode {
         }
     }
 }
+impl WithDeserializerFromBytes for TUpdateProductsProductMode {}
 #[derive(Debug)]
 pub enum TUpdatePricesProductMode {
     Update,
@@ -1599,6 +1610,7 @@ impl SerializeBytes for TUpdatePricesProductMode {
         }
     }
 }
+impl WithSerializeToBytes for TUpdatePricesProductMode {}
 impl DeserializeBytes for TUpdatePricesProductMode {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
@@ -1609,6 +1621,7 @@ impl DeserializeBytes for TUpdatePricesProductMode {
         }
     }
 }
+impl WithDeserializerFromBytes for TUpdatePricesProductMode {}
 #[derive(Debug)]
 pub enum TNewProductdataProductMode {
     New,
@@ -1620,6 +1633,7 @@ impl SerializeBytes for TNewProductdataProductMode {
         }
     }
 }
+impl WithSerializeToBytes for TNewProductdataProductMode {}
 impl DeserializeBytes for TNewProductdataProductMode {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
@@ -1630,6 +1644,7 @@ impl DeserializeBytes for TNewProductdataProductMode {
         }
     }
 }
+impl WithDeserializerFromBytes for TNewProductdataProductMode {}
 #[derive(Debug)]
 pub struct UdxProductdata {
     pub udx_edxf_mime_info: Option<UdxEdxfMimeInfoElementType>,
@@ -2595,6 +2610,7 @@ impl SerializeBytes for DtLang {
         }
     }
 }
+impl WithSerializeToBytes for DtLang {}
 impl DeserializeBytes for DtLang {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
@@ -3064,6 +3080,7 @@ impl DeserializeBytes for DtLang {
         }
     }
 }
+impl WithDeserializerFromBytes for DtLang {}
 #[derive(Debug)]
 pub enum CatalogDatetimeType {
     GenerationDate,
@@ -3075,6 +3092,7 @@ impl SerializeBytes for CatalogDatetimeType {
         }
     }
 }
+impl WithSerializeToBytes for CatalogDatetimeType {}
 impl DeserializeBytes for CatalogDatetimeType {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
@@ -3085,6 +3103,7 @@ impl DeserializeBytes for CatalogDatetimeType {
         }
     }
 }
+impl WithDeserializerFromBytes for CatalogDatetimeType {}
 #[derive(Debug)]
 pub enum SupplierAddressType {
     Supplier,
@@ -3096,6 +3115,7 @@ impl SerializeBytes for SupplierAddressType {
         }
     }
 }
+impl WithSerializeToBytes for SupplierAddressType {}
 impl DeserializeBytes for SupplierAddressType {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
@@ -3106,6 +3126,7 @@ impl DeserializeBytes for SupplierAddressType {
         }
     }
 }
+impl WithDeserializerFromBytes for SupplierAddressType {}
 #[derive(Debug)]
 pub struct MimeElementType {
     pub mime_source: Vec<DtMlstring>,
@@ -3246,6 +3267,7 @@ impl SerializeBytes for ProductTypeElementType {
         }
     }
 }
+impl WithSerializeToBytes for ProductTypeElementType {}
 impl DeserializeBytes for ProductTypeElementType {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
@@ -3259,6 +3281,7 @@ impl DeserializeBytes for ProductTypeElementType {
         }
     }
 }
+impl WithDeserializerFromBytes for ProductTypeElementType {}
 #[derive(Debug)]
 pub enum TypeClassificationSystemName {
     String(String),
@@ -3272,6 +3295,7 @@ impl SerializeBytes for TypeClassificationSystemName {
         }
     }
 }
+impl WithSerializeToBytes for TypeClassificationSystemName {}
 impl DeserializeBytes for TypeClassificationSystemName {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
@@ -3280,6 +3304,7 @@ impl DeserializeBytes for TypeClassificationSystemName {
         }
     }
 }
+impl WithDeserializerFromBytes for TypeClassificationSystemName {}
 #[derive(Debug)]
 pub struct FeatureElementType {
     pub fname: Vec<DtMlstring>,
@@ -3416,6 +3441,7 @@ impl SerializeBytes for DtUnit {
         }
     }
 }
+impl WithSerializeToBytes for DtUnit {}
 impl DeserializeBytes for DtUnit {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
@@ -3476,6 +3502,7 @@ impl DeserializeBytes for DtUnit {
         }
     }
 }
+impl WithDeserializerFromBytes for DtUnit {}
 #[derive(Debug)]
 pub struct ProductPriceDetailsDatetimeElementType {
     pub type_: ProductPriceDetailsDatetimeType,
@@ -3743,6 +3770,7 @@ impl SerializeBytes for UdxEdxfRohsIndicatorElementType {
         }
     }
 }
+impl WithSerializeToBytes for UdxEdxfRohsIndicatorElementType {}
 impl DeserializeBytes for UdxEdxfRohsIndicatorElementType {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
@@ -3755,6 +3783,7 @@ impl DeserializeBytes for UdxEdxfRohsIndicatorElementType {
         }
     }
 }
+impl WithDeserializerFromBytes for UdxEdxfRohsIndicatorElementType {}
 #[derive(Debug)]
 pub struct UdxEdxfReachElementType {
     pub udx_edxf_reach_listdate: Option<String>,
@@ -3961,6 +3990,7 @@ impl SerializeBytes for ProductReferenceType {
         }
     }
 }
+impl WithSerializeToBytes for ProductReferenceType {}
 impl DeserializeBytes for ProductReferenceType {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
@@ -3979,6 +4009,7 @@ impl DeserializeBytes for ProductReferenceType {
         }
     }
 }
+impl WithDeserializerFromBytes for ProductReferenceType {}
 #[derive(Debug)]
 pub struct CustomsTariffNumberElementType {
     pub customs_number: String,
@@ -4030,6 +4061,7 @@ impl SerializeBytes for ProductStatusType {
         }
     }
 }
+impl WithSerializeToBytes for ProductStatusType {}
 impl DeserializeBytes for ProductStatusType {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
@@ -4047,6 +4079,7 @@ impl DeserializeBytes for ProductStatusType {
         }
     }
 }
+impl WithDeserializerFromBytes for ProductStatusType {}
 #[derive(Debug)]
 pub enum ProductPriceDetailsDatetimeType {
     ValidStartDate,
@@ -4060,6 +4093,7 @@ impl SerializeBytes for ProductPriceDetailsDatetimeType {
         }
     }
 }
+impl WithSerializeToBytes for ProductPriceDetailsDatetimeType {}
 impl DeserializeBytes for ProductPriceDetailsDatetimeType {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
@@ -4071,6 +4105,7 @@ impl DeserializeBytes for ProductPriceDetailsDatetimeType {
         }
     }
 }
+impl WithDeserializerFromBytes for ProductPriceDetailsDatetimeType {}
 #[derive(Debug)]
 pub struct UdxEdxfMimeElementType {
     pub udx_edxf_mime_source: Vec<DtMlstring>,
@@ -4192,6 +4227,7 @@ impl SerializeBytes for UdxEdxfReachInfoElementType {
         }
     }
 }
+impl WithSerializeToBytes for UdxEdxfReachInfoElementType {}
 impl DeserializeBytes for UdxEdxfReachInfoElementType {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
@@ -4204,6 +4240,7 @@ impl DeserializeBytes for UdxEdxfReachInfoElementType {
         }
     }
 }
+impl WithDeserializerFromBytes for UdxEdxfReachInfoElementType {}
 #[derive(Debug)]
 pub struct UdxEdxfHazardousSubstancesElementType {
     pub udx_edxf_un_number: String,
@@ -4238,6 +4275,7 @@ impl SerializeBytes for UdxEdxfPackingGroupElementType {
         }
     }
 }
+impl WithSerializeToBytes for UdxEdxfPackingGroupElementType {}
 impl DeserializeBytes for UdxEdxfPackingGroupElementType {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
@@ -4250,6 +4288,7 @@ impl DeserializeBytes for UdxEdxfPackingGroupElementType {
         }
     }
 }
+impl WithDeserializerFromBytes for UdxEdxfPackingGroupElementType {}
 #[derive(Debug)]
 pub enum UdxEdxfAggregationStateElementType {
     L,
@@ -4265,6 +4304,7 @@ impl SerializeBytes for UdxEdxfAggregationStateElementType {
         }
     }
 }
+impl WithSerializeToBytes for UdxEdxfAggregationStateElementType {}
 impl DeserializeBytes for UdxEdxfAggregationStateElementType {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
@@ -4277,6 +4317,7 @@ impl DeserializeBytes for UdxEdxfAggregationStateElementType {
         }
     }
 }
+impl WithDeserializerFromBytes for UdxEdxfAggregationStateElementType {}
 #[derive(Debug)]
 pub enum UdxEdxfHazardClassElementType {
     _1,
@@ -4316,6 +4357,7 @@ impl SerializeBytes for UdxEdxfHazardClassElementType {
         }
     }
 }
+impl WithSerializeToBytes for UdxEdxfHazardClassElementType {}
 impl DeserializeBytes for UdxEdxfHazardClassElementType {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
@@ -4340,6 +4382,7 @@ impl DeserializeBytes for UdxEdxfHazardClassElementType {
         }
     }
 }
+impl WithDeserializerFromBytes for UdxEdxfHazardClassElementType {}
 #[derive(Debug)]
 pub enum UdxEdxfTunnelCodeElementType {
     A,
@@ -4359,6 +4402,7 @@ impl SerializeBytes for UdxEdxfTunnelCodeElementType {
         }
     }
 }
+impl WithSerializeToBytes for UdxEdxfTunnelCodeElementType {}
 impl DeserializeBytes for UdxEdxfTunnelCodeElementType {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
@@ -4373,6 +4417,7 @@ impl DeserializeBytes for UdxEdxfTunnelCodeElementType {
         }
     }
 }
+impl WithDeserializerFromBytes for UdxEdxfTunnelCodeElementType {}
 #[derive(Debug)]
 pub enum UdxEdxfGhsLabelCodeElementType {
     Ghs01,
@@ -4400,6 +4445,7 @@ impl SerializeBytes for UdxEdxfGhsLabelCodeElementType {
         }
     }
 }
+impl WithSerializeToBytes for UdxEdxfGhsLabelCodeElementType {}
 impl DeserializeBytes for UdxEdxfGhsLabelCodeElementType {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
@@ -4418,6 +4464,7 @@ impl DeserializeBytes for UdxEdxfGhsLabelCodeElementType {
         }
     }
 }
+impl WithDeserializerFromBytes for UdxEdxfGhsLabelCodeElementType {}
 #[derive(Debug)]
 pub enum UdxEdxfGhsSignalWordElementType {
     D,
@@ -4431,6 +4478,7 @@ impl SerializeBytes for UdxEdxfGhsSignalWordElementType {
         }
     }
 }
+impl WithSerializeToBytes for UdxEdxfGhsSignalWordElementType {}
 impl DeserializeBytes for UdxEdxfGhsSignalWordElementType {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
@@ -4442,6 +4490,7 @@ impl DeserializeBytes for UdxEdxfGhsSignalWordElementType {
         }
     }
 }
+impl WithDeserializerFromBytes for UdxEdxfGhsSignalWordElementType {}
 #[derive(Debug)]
 pub struct UdxEdxfSurchargeElementType {
     pub content: Vec<UdxEdxfSurchargeElementTypeContent>,
@@ -4522,6 +4571,7 @@ impl SerializeBytes for UdxEdxfBimStatusElementType {
         }
     }
 }
+impl WithSerializeToBytes for UdxEdxfBimStatusElementType {}
 impl DeserializeBytes for UdxEdxfBimStatusElementType {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
@@ -4534,6 +4584,7 @@ impl DeserializeBytes for UdxEdxfBimStatusElementType {
         }
     }
 }
+impl WithDeserializerFromBytes for UdxEdxfBimStatusElementType {}
 #[derive(Debug)]
 pub struct UdxEdxfFeatureMcElementType {
     pub content: Vec<UdxEdxfFeatureMcElementTypeContent>,
@@ -4778,6 +4829,7 @@ impl SerializeBytes for UdxEdxfMimeCodeElementType {
         }
     }
 }
+impl WithSerializeToBytes for UdxEdxfMimeCodeElementType {}
 impl DeserializeBytes for UdxEdxfMimeCodeElementType {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
@@ -4852,6 +4904,7 @@ impl DeserializeBytes for UdxEdxfMimeCodeElementType {
         }
     }
 }
+impl WithDeserializerFromBytes for UdxEdxfMimeCodeElementType {}
 #[derive(Debug)]
 pub enum DtPunit {
     Be,
@@ -4927,6 +4980,7 @@ impl SerializeBytes for DtPunit {
         }
     }
 }
+impl WithSerializeToBytes for DtPunit {}
 impl DeserializeBytes for DtPunit {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
@@ -4969,6 +5023,7 @@ impl DeserializeBytes for DtPunit {
         }
     }
 }
+impl WithDeserializerFromBytes for DtPunit {}
 #[derive(Debug)]
 pub enum UdxEdxfSurchargeMannerElementType {
     Base,
@@ -4982,6 +5037,7 @@ impl SerializeBytes for UdxEdxfSurchargeMannerElementType {
         }
     }
 }
+impl WithSerializeToBytes for UdxEdxfSurchargeMannerElementType {}
 impl DeserializeBytes for UdxEdxfSurchargeMannerElementType {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
@@ -4993,6 +5049,7 @@ impl DeserializeBytes for UdxEdxfSurchargeMannerElementType {
         }
     }
 }
+impl WithDeserializerFromBytes for UdxEdxfSurchargeMannerElementType {}
 #[derive(Debug)]
 pub enum UdxEdxfSurchargeUdxEdxfSurchargeCalculationElementType {
     _1,
@@ -5006,6 +5063,7 @@ impl SerializeBytes for UdxEdxfSurchargeUdxEdxfSurchargeCalculationElementType {
         }
     }
 }
+impl WithSerializeToBytes for UdxEdxfSurchargeUdxEdxfSurchargeCalculationElementType {}
 impl DeserializeBytes for UdxEdxfSurchargeUdxEdxfSurchargeCalculationElementType {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
@@ -5017,6 +5075,7 @@ impl DeserializeBytes for UdxEdxfSurchargeUdxEdxfSurchargeCalculationElementType
         }
     }
 }
+impl WithDeserializerFromBytes for UdxEdxfSurchargeUdxEdxfSurchargeCalculationElementType {}
 #[derive(Debug)]
 pub enum UdxEdxfSurchargeUdxEdxfMaterialBasisSurchargeShutterElementType {
     _1,
@@ -5030,6 +5089,7 @@ impl SerializeBytes for UdxEdxfSurchargeUdxEdxfMaterialBasisSurchargeShutterElem
         }
     }
 }
+impl WithSerializeToBytes for UdxEdxfSurchargeUdxEdxfMaterialBasisSurchargeShutterElementType {}
 impl DeserializeBytes for UdxEdxfSurchargeUdxEdxfMaterialBasisSurchargeShutterElementType {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
@@ -5041,6 +5101,7 @@ impl DeserializeBytes for UdxEdxfSurchargeUdxEdxfMaterialBasisSurchargeShutterEl
         }
     }
 }
+impl WithDeserializerFromBytes for UdxEdxfSurchargeUdxEdxfMaterialBasisSurchargeShutterElementType {}
 #[derive(Debug)]
 pub enum UdxEdxfSurchargeUdxEdxfMaterialBasisSurchargeCreditElementType {
     _1,
@@ -5054,6 +5115,7 @@ impl SerializeBytes for UdxEdxfSurchargeUdxEdxfMaterialBasisSurchargeCreditEleme
         }
     }
 }
+impl WithSerializeToBytes for UdxEdxfSurchargeUdxEdxfMaterialBasisSurchargeCreditElementType {}
 impl DeserializeBytes for UdxEdxfSurchargeUdxEdxfMaterialBasisSurchargeCreditElementType {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
@@ -5065,6 +5127,7 @@ impl DeserializeBytes for UdxEdxfSurchargeUdxEdxfMaterialBasisSurchargeCreditEle
         }
     }
 }
+impl WithDeserializerFromBytes for UdxEdxfSurchargeUdxEdxfMaterialBasisSurchargeCreditElementType {}
 #[derive(Debug)]
 pub struct UdxEdxfMatrixValuesElementType {
     pub udx_edxf_matrix_value: Vec<UdxEdxfMatrixValueElementType>,

@@ -16,6 +16,7 @@ use quick_xml::{
 };
 
 use crate::misc::{Namespace, NamespacePrefix};
+use crate::xml::QName;
 
 use super::{Error, ErrorKind, RawByteStr};
 
@@ -36,24 +37,6 @@ pub trait WithSerializer {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error>;
-}
-
-impl<X> WithSerializer for X
-where
-    X: SerializeBytes + Debug,
-{
-    type Serializer<'x>
-        = ContentSerializer<'x, X>
-    where
-        Self: 'x;
-
-    fn serializer<'ser>(
-        &'ser self,
-        name: Option<&'ser str>,
-        is_root: bool,
-    ) -> Result<Self::Serializer<'ser>, Error> {
-        Ok(ContentSerializer::new(self, name, is_root))
-    }
 }
 
 /// Trait that defines a serializer that can be used to destruct a type to
@@ -265,6 +248,30 @@ impl SerializeBytesToString for num::BigInt {}
 
 #[cfg(feature = "num")]
 impl SerializeBytesToString for num::BigUint {}
+
+/// Marker trait used to automatically implement [`WithSerializer`] for any type
+/// that implements [`SerializeBytes`].
+pub trait WithSerializeToBytes: SerializeBytes {}
+
+impl<X> WithSerializeToBytes for X where X: SerializeBytesToString {}
+
+impl<X> WithSerializer for X
+where
+    X: WithSerializeToBytes + Debug,
+{
+    type Serializer<'x>
+        = ContentSerializer<'x, X>
+    where
+        Self: 'x;
+
+    fn serializer<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
+        Ok(ContentSerializer::new(self, name, is_root))
+    }
+}
 
 /// Implements a [`Serializer`] for any type that implements [`SerializeBytes`].
 
@@ -546,6 +553,43 @@ impl SerializeHelper {
         }
     }
 
+    /// Add the xmlns needed by the passed `qname` to the current scope, if not
+    /// already active.
+    ///
+    /// The prefix of the namespace may be changed if the namespace is already
+    /// active with a different prefix. The updated qname is returned.
+    pub fn add_qname_namespace(&mut self, bytes: &mut BytesStart<'_>, mut qname: QName) -> QName {
+        let Some(ns) = qname.take_namespace() else {
+            return qname;
+        };
+
+        if let Some(entry) = self
+            .namespaces
+            .iter()
+            .rev()
+            .find(|entry| entry.namespace == ns)
+        {
+            qname = if let Some(prefix) = &entry.prefix {
+                QName::from_bytes(
+                    prefix
+                        .0
+                        .iter()
+                        .chain(Some(&b':'))
+                        .chain(qname.local_name())
+                        .copied()
+                        .collect::<Vec<u8>>(),
+                )
+            } else {
+                QName::from_bytes(qname.local_name().to_vec())
+            };
+            qname = qname.with_namespace(ns);
+        } else {
+            self.add_namespace_entry(bytes, qname.prefix(), ns.clone());
+        }
+
+        qname
+    }
+
     /// Write a suitable `xmlns` attribute to the passed `bytes` object, if the
     /// namespace is not already active in the current scope.
     pub fn write_xmlns(
@@ -564,19 +608,7 @@ impl SerializeHelper {
             }
         }
 
-        let xmlns = prefix.as_ref().map(|x| {
-            let mut xmlns = b"xmlns:".to_vec();
-            xmlns.extend_from_slice(&x.0);
-            xmlns
-        });
-        let xmlns = xmlns.as_deref().unwrap_or(b"xmlns");
-        bytes.push_attribute((xmlns, &***namespace));
-
-        self.namespaces.push(NamespaceEntry {
-            level: self.level,
-            prefix: prefix.cloned(),
-            namespace: namespace.clone(),
-        });
+        self.add_namespace_entry(bytes, prefix.map(|x| &x.0[..]), namespace.clone());
     }
 
     /// Write the passed `attrib` to the passed `bytes` object.
@@ -633,6 +665,23 @@ impl SerializeHelper {
         }
 
         Err(ErrorKind::UnknownNamespace(namespace.clone()))?
+    }
+
+    fn add_namespace_entry(
+        &mut self,
+        bytes: &mut BytesStart<'_>,
+        prefix: Option<&[u8]>,
+        namespace: Namespace,
+    ) {
+        let xmlns = prefix.map(|x| b"xmlns:".iter().chain(x).copied().collect::<Vec<u8>>());
+        let xmlns = xmlns.as_deref().unwrap_or(b"xmlns");
+        bytes.push_attribute((xmlns, &**namespace));
+
+        self.namespaces.push(NamespaceEntry {
+            level: self.level,
+            prefix: prefix.map(|x| NamespacePrefix::new(x.to_vec())),
+            namespace,
+        });
     }
 }
 

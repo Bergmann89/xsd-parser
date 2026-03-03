@@ -4,7 +4,7 @@ use xsd_parser_types::{
     misc::{Namespace, NamespacePrefix},
     quick_xml::{
         DeserializeBytes, DeserializeHelper, Error, SerializeBytes, SerializeHelper, ValidateError,
-        WithDeserializer, WithSerializer,
+        WithDeserializer, WithDeserializerFromBytes, WithSerializeToBytes, WithSerializer,
     },
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
@@ -63,11 +63,13 @@ impl SerializeBytes for ListType {
         Ok(Some(Cow::Owned(data)))
     }
 }
+impl WithSerializeToBytes for ListType {}
 impl DeserializeBytes for ListType {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         Ok(Self(helper.deserialize_list(bytes)?))
     }
 }
+impl WithDeserializerFromBytes for ListType {}
 pub type StringType = String;
 pub type ListOfMyStrings = ListOfMyStringsType;
 #[derive(Debug)]
@@ -122,12 +124,14 @@ impl SerializeBytes for ListOfMyStringsType {
         Ok(Some(Cow::Owned(data)))
     }
 }
+impl WithSerializeToBytes for ListOfMyStringsType {}
 impl DeserializeBytes for ListOfMyStringsType {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         let inner = helper.deserialize_list(bytes)?;
         Ok(Self::new(inner).map_err(|error| (bytes, error))?)
     }
 }
+impl WithDeserializerFromBytes for ListOfMyStringsType {}
 pub type MyStringType = String;
 pub mod quick_xml_deserialize {
     use core::mem::replace;

@@ -90,6 +90,7 @@ impl ::xsd_parser_types::quick_xml::SerializeBytes for TestType {
         self.0.serialize_bytes(helper)
     }
 }
+impl xsd_parser_types::quick_xml::WithSerializeToBytes for TestType {}
 impl ::xsd_parser_types::quick_xml::DeserializeBytes for TestType {
     fn deserialize_bytes(
         helper: &mut ::xsd_parser_types::quick_xml::DeserializeHelper,
@@ -99,6 +100,7 @@ impl ::xsd_parser_types::quick_xml::DeserializeBytes for TestType {
         Ok(Self::new(inner).map_err(|error| (bytes, error))?)
     }
 }
+impl xsd_parser_types::quick_xml::WithDeserializerFromBytes for TestType {}
 pub type ToString = TestType;
 pub type TryFrom = TestType;
 pub type TryInto = TestType;
@@ -129,6 +131,7 @@ impl ::xsd_parser_types::quick_xml::SerializeBytes for EntitiesType {
         Ok(Some(::std::borrow::Cow::Owned(data)))
     }
 }
+impl xsd_parser_types::quick_xml::WithSerializeToBytes for EntitiesType {}
 impl ::xsd_parser_types::quick_xml::DeserializeBytes for EntitiesType {
     fn deserialize_bytes(
         helper: &mut ::xsd_parser_types::quick_xml::DeserializeHelper,
@@ -137,6 +140,7 @@ impl ::xsd_parser_types::quick_xml::DeserializeBytes for EntitiesType {
         Ok(Self(helper.deserialize_list(bytes)?))
     }
 }
+impl xsd_parser_types::quick_xml::WithDeserializerFromBytes for EntitiesType {}
 pub type EntityType = ::std::string::String;
 pub type IdType = ::std::string::String;
 pub type IdrefType = ::std::string::String;
@@ -165,6 +169,7 @@ impl ::xsd_parser_types::quick_xml::SerializeBytes for IdrefsType {
         Ok(Some(::std::borrow::Cow::Owned(data)))
     }
 }
+impl xsd_parser_types::quick_xml::WithSerializeToBytes for IdrefsType {}
 impl ::xsd_parser_types::quick_xml::DeserializeBytes for IdrefsType {
     fn deserialize_bytes(
         helper: &mut ::xsd_parser_types::quick_xml::DeserializeHelper,
@@ -173,6 +178,7 @@ impl ::xsd_parser_types::quick_xml::DeserializeBytes for IdrefsType {
         Ok(Self(helper.deserialize_list(bytes)?))
     }
 }
+impl xsd_parser_types::quick_xml::WithDeserializerFromBytes for IdrefsType {}
 pub type NcNameType = ::std::string::String;
 pub type NmtokenType = ::std::string::String;
 #[derive(Debug, Default)]
@@ -200,6 +206,7 @@ impl ::xsd_parser_types::quick_xml::SerializeBytes for NmtokensType {
         Ok(Some(::std::borrow::Cow::Owned(data)))
     }
 }
+impl xsd_parser_types::quick_xml::WithSerializeToBytes for NmtokensType {}
 impl ::xsd_parser_types::quick_xml::DeserializeBytes for NmtokensType {
     fn deserialize_bytes(
         helper: &mut ::xsd_parser_types::quick_xml::DeserializeHelper,
@@ -208,6 +215,7 @@ impl ::xsd_parser_types::quick_xml::DeserializeBytes for NmtokensType {
         Ok(Self(helper.deserialize_list(bytes)?))
     }
 }
+impl xsd_parser_types::quick_xml::WithDeserializerFromBytes for NmtokensType {}
 pub type NotationType = ::std::string::String;
 pub type NameType = ::std::string::String;
 pub type QNameType = ::std::string::String;
