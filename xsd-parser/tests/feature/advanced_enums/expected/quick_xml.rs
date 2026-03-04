@@ -21,6 +21,7 @@ pub type Foo = FooType;
 pub struct FooType {
     pub string_enum: StringEnumType,
     pub q_name_enum: QNameEnumType,
+    pub q_name: QName,
 }
 impl WithSerializer for FooType {
     type Serializer<'x> = quick_xml_serialize::FooTypeSerializer<'x>;
@@ -133,15 +134,19 @@ impl DeserializeBytes for QNameEnumType {
 impl WithDeserializerFromBytes for QNameEnumType {}
 pub mod quick_xml_deserialize {
     use core::mem::replace;
-    use xsd_parser_types::quick_xml::{
-        BytesStart, DeserializeHelper, Deserializer, DeserializerArtifact, DeserializerEvent,
-        DeserializerOutput, DeserializerResult, ElementHandlerOutput, Error, ErrorKind, Event,
-        RawByteStr, WithDeserializer,
+    use xsd_parser_types::{
+        quick_xml::{
+            BytesStart, DeserializeHelper, Deserializer, DeserializerArtifact, DeserializerEvent,
+            DeserializerOutput, DeserializerResult, ElementHandlerOutput, Error, ErrorKind, Event,
+            RawByteStr, WithDeserializer,
+        },
+        xml::QName,
     };
     #[derive(Debug)]
     pub struct FooTypeDeserializer {
         string_enum: Option<super::StringEnumType>,
         q_name_enum: Option<super::QNameEnumType>,
+        q_name: Option<QName>,
         state__: Box<FooTypeDeserializerState>,
     }
     #[derive(Debug)]
@@ -149,6 +154,7 @@ pub mod quick_xml_deserialize {
         Init__,
         StringEnum(Option<<super::StringEnumType as WithDeserializer>::Deserializer>),
         QNameEnum(Option<<super::QNameEnumType as WithDeserializer>::Deserializer>),
+        QName(Option<<QName as WithDeserializer>::Deserializer>),
         Done__,
         Unknown__,
     }
@@ -164,6 +170,7 @@ pub mod quick_xml_deserialize {
             Ok(Self {
                 string_enum: None,
                 q_name_enum: None,
+                q_name: None,
                 state__: Box::new(FooTypeDeserializerState::Init__),
             })
         }
@@ -180,6 +187,7 @@ pub mod quick_xml_deserialize {
                 S::QNameEnum(Some(deserializer)) => {
                     self.store_q_name_enum(deserializer.finish(helper)?)?
                 }
+                S::QName(Some(deserializer)) => self.store_q_name(deserializer.finish(helper)?)?,
                 _ => (),
             }
             Ok(())
@@ -200,6 +208,15 @@ pub mod quick_xml_deserialize {
                 )))?;
             }
             self.q_name_enum = Some(value);
+            Ok(())
+        }
+        fn store_q_name(&mut self, value: QName) -> Result<(), Error> {
+            if self.q_name.is_some() {
+                Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                    b"QName",
+                )))?;
+            }
+            self.q_name = Some(value);
             Ok(())
         }
         fn handle_string_enum<'de>(
@@ -266,11 +283,48 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_q_name_enum(data)?;
-                    *self.state__ = S::Done__;
+                    *self.state__ = S::QName(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
                     fallback.get_or_insert(S::QNameEnum(Some(deserializer)));
+                    *self.state__ = S::QName(None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
+                }
+            }
+        }
+        fn handle_q_name<'de>(
+            &mut self,
+            helper: &mut DeserializeHelper,
+            output: DeserializerOutput<'de, QName>,
+            fallback: &mut Option<FooTypeDeserializerState>,
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use FooTypeDeserializerState as S;
+            let DeserializerOutput {
+                artifact,
+                event,
+                allow_any,
+            } = output;
+            if artifact.is_none() {
+                fallback.get_or_insert(S::QName(None));
+                if matches!(&fallback, Some(S::Init__)) {
+                    return Ok(ElementHandlerOutput::break_(event, allow_any));
+                } else {
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                }
+            }
+            if let Some(fallback) = fallback.take() {
+                self.finish_state(helper, fallback)?;
+            }
+            match artifact {
+                DeserializerArtifact::None => unreachable!(),
+                DeserializerArtifact::Data(data) => {
+                    self.store_q_name(data)?;
+                    *self.state__ = S::Done__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
+                }
+                DeserializerArtifact::Deserializer(deserializer) => {
+                    fallback.get_or_insert(S::QName(Some(deserializer)));
                     *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
@@ -312,6 +366,18 @@ pub mod quick_xml_deserialize {
                     (S::QNameEnum(Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
                         match self.handle_q_name_enum(helper, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
+                            }
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
+                        }
+                    }
+                    (S::QName(Some(deserializer)), event) => {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_q_name(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -370,6 +436,23 @@ pub mod quick_xml_deserialize {
                             }
                         }
                     }
+                    (S::QName(None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                        let output = helper.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_TEST),
+                            b"QName",
+                            false,
+                        )?;
+                        match self.handle_q_name(helper, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
+                            }
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
+                        }
+                    }
                     (S::Done__, event) => {
                         *self.state__ = S::Done__;
                         break (DeserializerEvent::Continue(event), allow_any_element);
@@ -395,13 +478,17 @@ pub mod quick_xml_deserialize {
             Ok(super::FooType {
                 string_enum: helper.finish_element("StringEnum", self.string_enum)?,
                 q_name_enum: helper.finish_element("QNameEnum", self.q_name_enum)?,
+                q_name: helper.finish_element("QName", self.q_name)?,
             })
         }
     }
 }
 pub mod quick_xml_serialize {
-    use xsd_parser_types::quick_xml::{
-        BytesEnd, BytesStart, Error, Event, SerializeHelper, Serializer, WithSerializer,
+    use xsd_parser_types::{
+        quick_xml::{
+            BytesEnd, BytesStart, Error, Event, SerializeHelper, Serializer, WithSerializer,
+        },
+        xml::QName,
     };
     #[derive(Debug)]
     pub struct FooTypeSerializer<'ser> {
@@ -415,6 +502,7 @@ pub mod quick_xml_serialize {
         Init__,
         StringEnum(<super::StringEnumType as WithSerializer>::Serializer<'ser>),
         QNameEnum(<super::QNameEnumType as WithSerializer>::Serializer<'ser>),
+        QName(<QName as WithSerializer>::Serializer<'ser>),
         End__,
         Done__,
         Phantom__(&'ser ()),
@@ -436,6 +524,7 @@ pub mod quick_xml_serialize {
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
                         if self.is_root {
+                            helper.write_xmlns(&mut bytes, Some(&super::PREFIX_XS), &super::NS_XS);
                             helper.write_xmlns(
                                 &mut bytes,
                                 Some(&super::PREFIX_TEST),
@@ -456,6 +545,16 @@ pub mod quick_xml_serialize {
                         }
                     },
                     FooTypeSerializerState::QNameEnum(x) => match x.next(helper).transpose()? {
+                        Some(event) => return Ok(Some(event)),
+                        None => {
+                            *self.state = FooTypeSerializerState::QName(WithSerializer::serializer(
+                                &self.value.q_name,
+                                Some("test:QName"),
+                                false,
+                            )?)
+                        }
+                    },
+                    FooTypeSerializerState::QName(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => *self.state = FooTypeSerializerState::End__,
                     },

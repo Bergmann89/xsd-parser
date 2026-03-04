@@ -5,6 +5,7 @@ use std::hash::{Hash, Hasher};
 use quick_xml::name::{QName as QuickXmlQName, ResolveResult};
 
 use crate::misc::{format_utf8_slice, Namespace};
+use crate::quick_xml::{WithDeserializerFromBytes, WithSerializeToBytes};
 
 #[cfg(feature = "quick-xml")]
 use crate::quick_xml::{
@@ -151,12 +152,16 @@ impl SerializeBytes for QName {
     }
 }
 
+impl WithSerializeToBytes for QName {}
+
 #[cfg(feature = "quick-xml")]
 impl DeserializeBytes for QName {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         Ok(Self::from_helper(helper, bytes))
     }
 }
+
+impl WithDeserializerFromBytes for QName {}
 
 #[allow(clippy::missing_fields_in_debug)]
 impl Debug for QName {
