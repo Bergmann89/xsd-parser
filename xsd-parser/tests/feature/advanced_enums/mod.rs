@@ -50,16 +50,19 @@ fn read_quick_xml() {
 
     assert!(matches!(obj.string_enum, StringEnumType::On));
     assert!(matches!(obj.q_name_enum, QNameEnumType::TnsBar));
+    assert_eq!(obj.q_name.as_ref(), b"my-ns:Bar");
 }
 
 #[test]
 #[cfg(not(feature = "update-expectations"))]
 fn write_quick_xml() {
     use quick_xml::{Foo, QNameEnumType, StringEnumType};
+    use xsd_parser_types::xml::QName;
 
     let obj = Foo {
         string_enum: StringEnumType::On,
         q_name_enum: QNameEnumType::TnsBar,
+        q_name: QName::from_bytes(b"test:Bar"),
     };
 
     crate::utils::quick_xml_write_test(

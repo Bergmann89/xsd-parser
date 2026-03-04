@@ -1,4 +1,5 @@
-<test:Foo xmlns:test="http://example.com">
+<test:Foo xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:test="http://example.com">
     <test:StringEnum>ON</test:StringEnum>
     <test:QNameEnum>test:Bar</test:QNameEnum>
+    <test:QName>test:Bar</test:QName>
 </test:Foo>

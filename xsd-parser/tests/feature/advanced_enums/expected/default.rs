@@ -4,6 +4,7 @@ pub type Foo = FooType;
 pub struct FooType {
     pub string_enum: StringEnumType,
     pub q_name_enum: QNameEnumType,
+    pub q_name: QName,
 }
 #[derive(Debug)]
 pub enum StringEnumType {

@@ -25,6 +25,7 @@
         <xs:sequence>
             <xs:element name="StringEnum" type="tns:StringEnumType" />
             <xs:element name="QNameEnum" type="tns:QNameEnumType" />
+            <xs:element name="QName" type="xs:QName" />
         </xs:sequence>
     </xs:complexType>
 
