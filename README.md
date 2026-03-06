@@ -11,7 +11,7 @@ If you enjoy the project and would like to support my work, you can [buy me a co
 
 This library is built around a staged transformation pipeline that converts XML schemas into Rust source code. Each stage handles a specific level of abstraction and produces a well-defined intermediate representation. This makes the library highly flexible, testable, and suitable for advanced customization or tooling.
 
-![overview](doc/overview.svg "Overview")
+![overview](./doc/overview.svg "Overview")
 
 ## Pipeline Stages
 
