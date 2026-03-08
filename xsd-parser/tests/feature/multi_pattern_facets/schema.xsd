@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:tns="http://example.com"
+           targetNamespace="http://example.com"
+           elementFormDefault="qualified">
+
+    <xs:simpleType name="VoltageType">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="\d+V"/>
+            <xs:pattern value="[0-9]+V"/>
+            <xs:pattern value="[0-9]{1,4}V"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:element name="Voltage" type="tns:VoltageType"/>
+
+</xs:schema>
