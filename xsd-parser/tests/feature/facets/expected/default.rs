@@ -115,10 +115,8 @@ impl RestrictedStringType {
                 Regex::new("^(?:[A-Z][a-z]{4,9})$").unwrap(),
             )]
         });
-        for (pattern, regex) in PATTERNS.iter() {
-            if !regex.is_match(s) {
-                return Err(ValidateError::Pattern(pattern));
-            }
+        if !PATTERNS.iter().any(|(_, regex)| regex.is_match(s)) {
+            return Err(ValidateError::Pattern(PATTERNS[0usize].0));
         }
         Ok(())
     }

@@ -21,10 +21,8 @@ impl EnumType {
     pub fn validate_str(s: &str) -> Result<(), ValidateError> {
         static PATTERNS: LazyLock<[(&str, Regex); 1usize]> =
             LazyLock::new(|| [("[A-Z]+", Regex::new("^(?:[A-Z]+)$").unwrap())]);
-        for (pattern, regex) in PATTERNS.iter() {
-            if !regex.is_match(s) {
-                return Err(ValidateError::Pattern(pattern));
-            }
+        if !PATTERNS.iter().any(|(_, regex)| regex.is_match(s)) {
+            return Err(ValidateError::Pattern(PATTERNS[0usize].0));
         }
         Ok(())
     }
