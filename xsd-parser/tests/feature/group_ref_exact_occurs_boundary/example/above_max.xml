@@ -1,0 +1,6 @@
+<tns:Collection xmlns:tns="http://example.com">
+    <tns:Code>A</tns:Code>
+    <tns:Code>B</tns:Code>
+    <tns:Code>C</tns:Code>
+    <tns:Name>Above Max</tns:Name>
+</tns:Collection>

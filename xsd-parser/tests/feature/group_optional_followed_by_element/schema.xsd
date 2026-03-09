@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://example.com"
+    targetNamespace="http://example.com"
+    elementFormDefault="qualified">
+
+    <!-- Optional group: all children are optional so it can be default-constructed -->
+    <xs:group name="Metadata">
+        <xs:sequence>
+            <xs:element name="Label" type="xs:string" minOccurs="0"/>
+            <xs:element name="Description" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+    </xs:group>
+
+    <!-- Optional group ref followed by required element -->
+    <xs:element name="Item">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:group ref="tns:Metadata" minOccurs="0"/>
+                <xs:element name="Name" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

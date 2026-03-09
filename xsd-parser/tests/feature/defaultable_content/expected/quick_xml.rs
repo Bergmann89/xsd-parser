@@ -589,7 +589,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::A(None));
                 *self.state__ = S::B(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -623,7 +622,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::B(None));
                 *self.state__ = S::C(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -657,7 +655,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::C(None));
                 *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -1070,7 +1067,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::InnerChoice(None));
                 *self.state__ = S::D(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -1104,7 +1100,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::D(None));
                 *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -1896,7 +1891,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::A(None));
                 *self.state__ = S::B(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -1930,7 +1924,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::B(None));
                 *self.state__ = S::C(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -1964,7 +1957,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::C(None));
                 *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }

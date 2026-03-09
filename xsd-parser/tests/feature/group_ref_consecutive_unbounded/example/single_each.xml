@@ -1,0 +1,6 @@
+<tns:Record xmlns:tns="http://example.com">
+    <tns:Email>a@example.com</tns:Email>
+    <tns:Street>123 Main St</tns:Street>
+    <tns:City>Springfield</tns:City>
+    <tns:Name>Test Record</tns:Name>
+</tns:Record>

@@ -6445,11 +6445,14 @@ pub mod cdf {
                 if artifact.is_none() {
                     if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
-                    } else if self.any.len() < 1usize {
+                    }
+                    if let Some(fallback) = fallback.take() {
+                        self.finish_state(helper, fallback)?;
+                    }
+                    if self.any.len() < 1usize {
                         fallback.get_or_insert(S::Any(None));
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                     } else {
-                        fallback.get_or_insert(S::Any(None));
                         *self.state__ = S::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
@@ -7357,7 +7360,6 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(S::TextBefore(None));
                     *self.state__ = S::Any(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -7391,7 +7393,6 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(S::Any(None));
                     *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -7637,7 +7638,6 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(S::TextBefore(None));
                     *self.state__ = S::Any(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -7671,7 +7671,6 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(S::Any(None));
                     *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -8244,11 +8243,14 @@ pub mod cdf {
                 if artifact.is_none() {
                     if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
-                    } else if self.any.len() < 1usize {
+                    }
+                    if let Some(fallback) = fallback.take() {
+                        self.finish_state(helper, fallback)?;
+                    }
+                    if self.any.len() < 1usize {
                         fallback.get_or_insert(S::Any(None));
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                     } else {
-                        fallback.get_or_insert(S::Any(None));
                         *self.state__ = S::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
@@ -8441,7 +8443,6 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(S::Param(None));
                     *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -19250,7 +19251,6 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(S::TextBefore(None));
                     *self.state__ = S::Sub(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -19284,7 +19284,6 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(S::Sub(None));
                     *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -19602,7 +19601,6 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(S::Remark(None));
                     *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -19788,7 +19786,6 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(S::Item(None));
                     *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -20129,7 +20126,6 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(S::Remark(None));
                     *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -20350,7 +20346,6 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(S::Remark(None));
                     *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -21218,7 +21213,6 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(S::Item(None));
                     *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -24142,7 +24136,6 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(S::CheckImport(None));
                     *self.state__ = S::CheckExport(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -24176,7 +24169,6 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(S::CheckExport(None));
                     *self.state__ = S::CheckContentRef(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -24210,7 +24202,6 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(S::CheckContentRef(None));
                     *self.state__ = S::CheckContent(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -24244,7 +24235,6 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(S::CheckContent(None));
                     *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -25319,7 +25309,6 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(S::Fact(None));
                     *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -26880,7 +26869,6 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(S::Item(None));
                     *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -27186,7 +27174,6 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(S::TextBefore(None));
                     *self.state__ = S::Any(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -27220,7 +27207,6 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(S::Any(None));
                     *self.state__ = S::TextAfterAny40(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -27254,7 +27240,6 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(S::TextAfterAny40(None));
                     *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -35701,11 +35686,14 @@ pub mod cpe {
                 if artifact.is_none() {
                     if matches!(&fallback, Some(S::Init__)) {
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
-                    } else if self.platform.len() < 1usize {
+                    }
+                    if let Some(fallback) = fallback.take() {
+                        self.finish_state(helper, fallback)?;
+                    }
+                    if self.platform.len() < 1usize {
                         fallback.get_or_insert(S::Platform(None));
                         return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                     } else {
-                        fallback.get_or_insert(S::Platform(None));
                         *self.state__ = S::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
@@ -35919,7 +35907,6 @@ pub mod cpe {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(S::Title(None));
                     *self.state__ = S::Remark(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -35953,7 +35940,6 @@ pub mod cpe {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(S::Remark(None));
                     *self.state__ = S::LogicalTest(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -36396,7 +36382,6 @@ pub mod cpe {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(S::LogicalTest(None));
                     *self.state__ = S::FactRef(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -36430,7 +36415,6 @@ pub mod cpe {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(S::FactRef(None));
                     *self.state__ = S::CheckFactRef(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -36464,7 +36448,6 @@ pub mod cpe {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    fallback.get_or_insert(S::CheckFactRef(None));
                     *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }

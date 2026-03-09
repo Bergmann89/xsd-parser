@@ -1,0 +1,5 @@
+<tns:Item xmlns:tns="http://example.com">
+    <tns:Label>Full Label</tns:Label>
+    <tns:Description>Full Description</tns:Description>
+    <tns:Name>Full Item</tns:Name>
+</tns:Item>

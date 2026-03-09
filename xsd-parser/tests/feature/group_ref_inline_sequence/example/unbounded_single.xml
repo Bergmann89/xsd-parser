@@ -1,0 +1,4 @@
+<tns:Container xmlns:tns="http://example.com">
+    <tns:Identifier>item-001</tns:Identifier>
+    <tns:Name>Single Identity</tns:Name>
+</tns:Container>

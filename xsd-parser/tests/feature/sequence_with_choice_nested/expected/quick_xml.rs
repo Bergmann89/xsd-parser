@@ -164,11 +164,14 @@ pub mod quick_xml_deserialize {
             if artifact.is_none() {
                 if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
-                } else if self.content_2.len() < 1usize {
+                }
+                if let Some(fallback) = fallback.take() {
+                    self.finish_state(helper, fallback)?;
+                }
+                if self.content_2.len() < 1usize {
                     fallback.get_or_insert(S::Content2(None));
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 } else {
-                    fallback.get_or_insert(S::Content2(None));
                     *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -616,11 +619,14 @@ pub mod quick_xml_deserialize {
             if artifact.is_none() {
                 if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
-                } else if self.content_4.len() < 1usize {
+                }
+                if let Some(fallback) = fallback.take() {
+                    self.finish_state(helper, fallback)?;
+                }
+                if self.content_4.len() < 1usize {
                     fallback.get_or_insert(S::Content4(None));
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 } else {
-                    fallback.get_or_insert(S::Content4(None));
                     *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }

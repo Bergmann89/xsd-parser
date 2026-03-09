@@ -1,0 +1,7 @@
+<tns:Widget xmlns:tns="http://example.com">
+    <tns:Identifier>widget-001</tns:Identifier>
+    <tns:Tag>red</tns:Tag>
+    <tns:Tag>large</tns:Tag>
+    <tns:Name>My Widget</tns:Name>
+    <tns:Description>A test widget</tns:Description>
+</tns:Widget>

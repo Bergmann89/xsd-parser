@@ -1514,8 +1514,10 @@ impl<'a, 'state, 'schema> VariantProcessor<'a, 'state, 'schema> {
                     };
 
                     ci.content = Some(content_ident);
-                    ci.min_occurs = ci.min_occurs.min(min_occurs);
-                    ci.max_occurs = ci.max_occurs.max(max_occurs);
+                    // First assignment for this complex content branch: preserve the
+                    // effective cardinality from the schema/group-ref as-is.
+                    ci.min_occurs = min_occurs;
+                    ci.max_occurs = max_occurs;
                 }
                 UpdateContentMode::Update => {
                     let Output::Type(ty) = output else {
@@ -1560,8 +1562,10 @@ impl<'a, 'state, 'schema> VariantProcessor<'a, 'state, 'schema> {
                         )
                     });
 
-                    element.min_occurs = element.min_occurs.min(min_occurs);
-                    element.max_occurs = element.max_occurs.max(max_occurs);
+                    // `insert_checked` always inserts a uniquified element entry here.
+                    // Assign exact occurs to avoid collapsing minOccurs > 1 to 1.
+                    element.min_occurs = min_occurs;
+                    element.max_occurs = max_occurs;
                 }
             },
             Some(
@@ -1588,8 +1592,9 @@ impl<'a, 'state, 'schema> VariantProcessor<'a, 'state, 'schema> {
                     )
                 });
 
-                element.min_occurs = element.min_occurs.min(min_occurs);
-                element.max_occurs = element.max_occurs.max(max_occurs);
+                // Same rationale as above: first insert must keep exact occurs.
+                element.min_occurs = min_occurs;
+                element.max_occurs = max_occurs;
             }
             None => {
                 let content_ident = match output {
@@ -1604,8 +1609,9 @@ impl<'a, 'state, 'schema> VariantProcessor<'a, 'state, 'schema> {
                 let ci = get_or_init_any!(self, ComplexType);
 
                 ci.content = Some(content_ident);
-                ci.min_occurs = ci.min_occurs.min(min_occurs);
-                ci.max_occurs = ci.max_occurs.max(max_occurs);
+                // Initializing previously absent complex content: keep exact occurs.
+                ci.min_occurs = min_occurs;
+                ci.max_occurs = max_occurs;
             }
             e => crate::unreachable!("{:?}", e),
         }

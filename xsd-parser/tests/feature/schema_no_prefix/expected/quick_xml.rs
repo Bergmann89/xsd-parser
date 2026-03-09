@@ -177,7 +177,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::Optional(None));
                 *self.state__ = S::OnceSpecify(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -250,11 +249,14 @@ pub mod quick_xml_deserialize {
             if artifact.is_none() {
                 if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
-                } else if self.twice_or_more.len() < 2usize {
+                }
+                if let Some(fallback) = fallback.take() {
+                    self.finish_state(helper, fallback)?;
+                }
+                if self.twice_or_more.len() < 2usize {
                     fallback.get_or_insert(S::TwiceOrMore(None));
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 } else {
-                    fallback.get_or_insert(S::TwiceOrMore(None));
                     *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }

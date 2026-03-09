@@ -6054,7 +6054,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::GeneratorInfo(None));
                 *self.state__ = S::Catalog(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -6507,11 +6506,14 @@ pub mod quick_xml_deserialize {
             if artifact.is_none() {
                 if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
-                } else if self.product.len() < 1usize {
+                }
+                if let Some(fallback) = fallback.take() {
+                    self.finish_state(helper, fallback)?;
+                }
+                if self.product.len() < 1usize {
                     fallback.get_or_insert(S::Product(None));
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 } else {
-                    fallback.get_or_insert(S::Product(None));
                     *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -6706,11 +6708,14 @@ pub mod quick_xml_deserialize {
             if artifact.is_none() {
                 if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
-                } else if self.product.len() < 1usize {
+                }
+                if let Some(fallback) = fallback.take() {
+                    self.finish_state(helper, fallback)?;
+                }
+                if self.product.len() < 1usize {
                     fallback.get_or_insert(S::Product(None));
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 } else {
-                    fallback.get_or_insert(S::Product(None));
                     *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -6906,11 +6911,14 @@ pub mod quick_xml_deserialize {
             if artifact.is_none() {
                 if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
-                } else if self.product.len() < 1usize {
+                }
+                if let Some(fallback) = fallback.take() {
+                    self.finish_state(helper, fallback)?;
+                }
+                if self.product.len() < 1usize {
                     fallback.get_or_insert(S::Product(None));
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 } else {
-                    fallback.get_or_insert(S::Product(None));
                     *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -7097,11 +7105,14 @@ pub mod quick_xml_deserialize {
             if artifact.is_none() {
                 if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
-                } else if self.product.len() < 1usize {
+                }
+                if let Some(fallback) = fallback.take() {
+                    self.finish_state(helper, fallback)?;
+                }
+                if self.product.len() < 1usize {
                     fallback.get_or_insert(S::Product(None));
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 } else {
-                    fallback.get_or_insert(S::Product(None));
                     *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -7375,11 +7386,14 @@ pub mod quick_xml_deserialize {
             if artifact.is_none() {
                 if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
-                } else if self.language.len() < 1usize {
+                }
+                if let Some(fallback) = fallback.take() {
+                    self.finish_state(helper, fallback)?;
+                }
+                if self.language.len() < 1usize {
                     fallback.get_or_insert(S::Language(None));
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 } else {
-                    fallback.get_or_insert(S::Language(None));
                     *self.state__ = S::CatalogId(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -7490,11 +7504,14 @@ pub mod quick_xml_deserialize {
             if artifact.is_none() {
                 if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
-                } else if self.catalog_name.len() < 1usize {
+                }
+                if let Some(fallback) = fallback.take() {
+                    self.finish_state(helper, fallback)?;
+                }
+                if self.catalog_name.len() < 1usize {
                     fallback.get_or_insert(S::CatalogName(None));
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 } else {
-                    fallback.get_or_insert(S::CatalogName(None));
                     *self.state__ = S::Datetime(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -7566,7 +7583,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::Territory(None));
                 *self.state__ = S::Currency(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -7600,7 +7616,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::Currency(None));
                 *self.state__ = S::MimeRoot(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -7634,7 +7649,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::MimeRoot(None));
                 *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -8035,7 +8049,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::BuyerId(None));
                 *self.state__ = S::BuyerName(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -8331,7 +8344,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::SupplierId(None));
                 *self.state__ = S::SupplierName(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -8410,7 +8422,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::Address(None));
                 *self.state__ = S::MimeInfo(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -8444,7 +8455,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::MimeInfo(None));
                 *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -9103,11 +9113,14 @@ pub mod quick_xml_deserialize {
             if artifact.is_none() {
                 if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
-                } else if self.product_features.len() < 1usize {
+                }
+                if let Some(fallback) = fallback.take() {
+                    self.finish_state(helper, fallback)?;
+                }
+                if self.product_features.len() < 1usize {
                     fallback.get_or_insert(S::ProductFeatures(None));
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 } else {
-                    fallback.get_or_insert(S::ProductFeatures(None));
                     *self.state__ = S::ProductOrderDetails(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -9181,11 +9194,14 @@ pub mod quick_xml_deserialize {
             if artifact.is_none() {
                 if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
-                } else if self.product_price_details.len() < 1usize {
+                }
+                if let Some(fallback) = fallback.take() {
+                    self.finish_state(helper, fallback)?;
+                }
+                if self.product_price_details.len() < 1usize {
                     fallback.get_or_insert(S::ProductPriceDetails(None));
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 } else {
-                    fallback.get_or_insert(S::ProductPriceDetails(None));
                     *self.state__ = S::UserDefinedExtensions(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -9257,7 +9273,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::ProductReference(None));
                 *self.state__ = S::ProductLogisticDetails(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -9291,7 +9306,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::ProductLogisticDetails(None));
                 *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -9901,7 +9915,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::ProductFeatures(None));
                 *self.state__ = S::ProductOrderDetails(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -9974,11 +9987,14 @@ pub mod quick_xml_deserialize {
             if artifact.is_none() {
                 if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
-                } else if self.product_price_details.len() < 1usize {
+                }
+                if let Some(fallback) = fallback.take() {
+                    self.finish_state(helper, fallback)?;
+                }
+                if self.product_price_details.len() < 1usize {
                     fallback.get_or_insert(S::ProductPriceDetails(None));
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 } else {
-                    fallback.get_or_insert(S::ProductPriceDetails(None));
                     *self.state__ = S::UserDefinedExtensions(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -10013,7 +10029,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UserDefinedExtensions(None));
                 *self.state__ = S::ProductReference(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -10047,7 +10062,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::ProductReference(None));
                 *self.state__ = S::ProductLogisticDetails(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -10081,7 +10095,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::ProductLogisticDetails(None));
                 *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -10565,11 +10578,14 @@ pub mod quick_xml_deserialize {
             if artifact.is_none() {
                 if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
-                } else if self.product_price_details.len() < 1usize {
+                }
+                if let Some(fallback) = fallback.take() {
+                    self.finish_state(helper, fallback)?;
+                }
+                if self.product_price_details.len() < 1usize {
                     fallback.get_or_insert(S::ProductPriceDetails(None));
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 } else {
-                    fallback.get_or_insert(S::ProductPriceDetails(None));
                     *self.state__ = S::UserDefinedExtensions(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -10604,7 +10620,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UserDefinedExtensions(None));
                 *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -11007,7 +11022,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::ProductFeatures(None));
                 *self.state__ = S::UserDefinedExtensions(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -11041,7 +11055,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UserDefinedExtensions(None));
                 *self.state__ = S::ProductReference(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -11075,7 +11088,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::ProductReference(None));
                 *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -12047,7 +12059,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::Contact(None));
                 *self.state__ = S::Street(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -12081,7 +12092,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::Street(None));
                 *self.state__ = S::Zip(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -12115,7 +12125,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::Zip(None));
                 *self.state__ = S::City(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -12149,7 +12158,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::City(None));
                 *self.state__ = S::Country(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -12183,7 +12191,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::Country(None));
                 *self.state__ = S::VatId(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -12217,7 +12224,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::VatId(None));
                 *self.state__ = S::Email(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -12288,7 +12294,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::Url(None));
                 *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -12677,11 +12682,14 @@ pub mod quick_xml_deserialize {
             if artifact.is_none() {
                 if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
-                } else if self.mime.len() < 1usize {
+                }
+                if let Some(fallback) = fallback.take() {
+                    self.finish_state(helper, fallback)?;
+                }
+                if self.mime.len() < 1usize {
                     fallback.get_or_insert(S::Mime(None));
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 } else {
-                    fallback.get_or_insert(S::Mime(None));
                     *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -13036,11 +13044,14 @@ pub mod quick_xml_deserialize {
             if artifact.is_none() {
                 if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
-                } else if self.description_short.len() < 1usize {
+                }
+                if let Some(fallback) = fallback.take() {
+                    self.finish_state(helper, fallback)?;
+                }
+                if self.description_short.len() < 1usize {
                     fallback.get_or_insert(S::DescriptionShort(None));
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 } else {
-                    fallback.get_or_insert(S::DescriptionShort(None));
                     *self.state__ = S::DescriptionLong(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -13075,7 +13086,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::DescriptionLong(None));
                 *self.state__ = S::InternationalPid(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -13109,7 +13119,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::InternationalPid(None));
                 *self.state__ = S::SupplierAltPid(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -13151,7 +13160,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::SupplierAltPid(None));
                 *self.state__ = S::BuyerPid(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -13185,7 +13193,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::BuyerPid(None));
                 *self.state__ = S::ManufacturerPid(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -13219,7 +13226,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::ManufacturerPid(None));
                 *self.state__ = S::ManufacturerName(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -13253,7 +13259,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::ManufacturerName(None));
                 *self.state__ = S::ManufacturerTypeDescr(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -13287,7 +13292,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::ManufacturerTypeDescr(None));
                 *self.state__ = S::DeliveryTime(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -13321,7 +13325,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::DeliveryTime(None));
                 *self.state__ = S::SpecialTreatmentClass(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -13355,7 +13358,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::SpecialTreatmentClass(None));
                 *self.state__ = S::Keyword(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -13389,7 +13391,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::Keyword(None));
                 *self.state__ = S::Remarks(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -13423,7 +13424,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::Remarks(None));
                 *self.state__ = S::ProductStatus(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -13457,7 +13457,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::ProductStatus(None));
                 *self.state__ = S::ProductType(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -13491,7 +13490,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::ProductType(None));
                 *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -14174,7 +14172,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::Feature(None));
                 *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -14594,7 +14591,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::NoCuPerOu(None));
                 *self.state__ = S::PriceQuantity(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -14628,7 +14624,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::PriceQuantity(None));
                 *self.state__ = S::QuantityMin(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -14662,7 +14657,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::QuantityMin(None));
                 *self.state__ = S::QuantityInterval(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -14696,7 +14690,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::QuantityInterval(None));
                 *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -15076,11 +15069,14 @@ pub mod quick_xml_deserialize {
             if artifact.is_none() {
                 if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
-                } else if self.datetime.len() < 1usize {
+                }
+                if let Some(fallback) = fallback.take() {
+                    self.finish_state(helper, fallback)?;
+                }
+                if self.datetime.len() < 1usize {
                     fallback.get_or_insert(S::Datetime(None));
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 } else {
-                    fallback.get_or_insert(S::Datetime(None));
                     *self.state__ = S::DailyPrice(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -15123,7 +15119,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::DailyPrice(None));
                 *self.state__ = S::ProductPrice(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -15159,11 +15154,14 @@ pub mod quick_xml_deserialize {
             if artifact.is_none() {
                 if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
-                } else if self.product_price.len() < 1usize {
+                }
+                if let Some(fallback) = fallback.take() {
+                    self.finish_state(helper, fallback)?;
+                }
+                if self.product_price.len() < 1usize {
                     fallback.get_or_insert(S::ProductPrice(None));
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 } else {
-                    fallback.get_or_insert(S::ProductPrice(None));
                     *self.state__ = S::PriceBase(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -15198,7 +15196,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::PriceBase(None));
                 *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -15886,7 +15883,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfMimeInfo(None));
                 *self.state__ = S::UdxEdxfManufacturerAcronym(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -15920,7 +15916,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfManufacturerAcronym(None));
                 *self.state__ = S::UdxEdxfDescriptionVeryShort(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -15954,7 +15949,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfDescriptionVeryShort(None));
                 *self.state__ = S::UdxEdxfBrandName(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -15988,7 +15982,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfBrandName(None));
                 *self.state__ = S::UdxEdxfTenderText(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -16022,7 +16015,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfTenderText(None));
                 *self.state__ = S::UdxEdxfValidFrom(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -16056,7 +16048,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfValidFrom(None));
                 *self.state__ = S::UdxEdxfExpirationDate(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -16090,7 +16081,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfExpirationDate(None));
                 *self.state__ = S::UdxEdxfDiscountGroup(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -16124,7 +16114,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfDiscountGroup(None));
                 *self.state__ = S::UdxEdxfBonusGroupSupplier(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -16158,7 +16147,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfBonusGroupSupplier(None));
                 *self.state__ = S::UdxEdxfAdditionalFactors(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -16192,7 +16180,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfAdditionalFactors(None));
                 *self.state__ = S::UdxEdxfProductToStock(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -16226,7 +16213,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfProductToStock(None));
                 *self.state__ = S::UdxEdxfProductSeries(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -16260,7 +16246,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfProductSeries(None));
                 *self.state__ = S::UdxEdxfProductVariation(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -16294,7 +16279,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfProductVariation(None));
                 *self.state__ = S::UdxEdxfPredecessorPid(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -16328,7 +16312,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfPredecessorPid(None));
                 *self.state__ = S::UdxEdxfCountryBranchNumbers(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -16362,7 +16345,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfCountryBranchNumbers(None));
                 *self.state__ = S::UdxEdxfCountryBranchSupplierIds(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -16396,7 +16378,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfCountryBranchSupplierIds(None));
                 *self.state__ = S::UdxEdxfPackingUnits(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -16430,7 +16411,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfPackingUnits(None));
                 *self.state__ = S::UdxEdxfProductLogisticDetails(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -16464,7 +16444,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfProductLogisticDetails(None));
                 *self.state__ = S::UdxEdxfShelfLifePeriod(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -16498,7 +16477,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfShelfLifePeriod(None));
                 *self.state__ = S::UdxEdxfBatteryContained(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -16532,7 +16510,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfBatteryContained(None));
                 *self.state__ = S::UdxEdxfRohsIndicator(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -16566,7 +16543,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfRohsIndicator(None));
                 *self.state__ = S::UdxEdxfCeMarking(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -16600,7 +16576,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfCeMarking(None));
                 *self.state__ = S::UdxEdxfReach(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -16634,7 +16609,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfReach(None));
                 *self.state__ = S::UdxEdxfSpecialTreatmentClassDetails(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -16668,7 +16642,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfSpecialTreatmentClassDetails(None));
                 *self.state__ = S::UdxEdxfSurchargeList(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -16703,7 +16676,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfSurchargeList(None));
                 *self.state__ = S::UdxEdxfWarranty(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -16737,7 +16709,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfWarranty(None));
                 *self.state__ = S::UdxEdxfProductEtimDynamic(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -16771,7 +16742,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfProductEtimDynamic(None));
                 *self.state__ = S::UdxEdxfProductFeaturesMc(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -16805,7 +16775,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfProductFeaturesMc(None));
                 *self.state__ = S::UdxEdxfProductCharacteristics(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -16839,7 +16808,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfProductCharacteristics(None));
                 *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -18133,7 +18101,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::CatalogId(None));
                 *self.state__ = S::CatalogVersion(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -18167,7 +18134,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::CatalogVersion(None));
                 *self.state__ = S::ReferenceDescr(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -18201,7 +18167,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::ReferenceDescr(None));
                 *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -18501,7 +18466,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::CustomsTariffNumber(None));
                 *self.state__ = S::StatisticsFactor(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -18535,7 +18499,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::StatisticsFactor(None));
                 *self.state__ = S::CountryOfOrigin(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -18569,7 +18532,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::CountryOfOrigin(None));
                 *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -19004,7 +18966,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfMimeInfo(None));
                 *self.state__ = S::UdxEdxfManufacturerAcronym(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -19038,7 +18999,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfManufacturerAcronym(None));
                 *self.state__ = S::UdxEdxfDescriptionVeryShort(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -19072,7 +19032,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfDescriptionVeryShort(None));
                 *self.state__ = S::UdxEdxfBrandName(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -19106,7 +19065,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfBrandName(None));
                 *self.state__ = S::UdxEdxfTenderText(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -19140,7 +19098,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfTenderText(None));
                 *self.state__ = S::UdxEdxfValidFrom(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -19174,7 +19131,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfValidFrom(None));
                 *self.state__ = S::UdxEdxfExpirationDate(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -19208,7 +19164,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfExpirationDate(None));
                 *self.state__ = S::UdxEdxfProductSeries(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -19242,7 +19197,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfProductSeries(None));
                 *self.state__ = S::UdxEdxfProductVariation(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -19276,7 +19230,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfProductVariation(None));
                 *self.state__ = S::UdxEdxfPredecessorPid(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -19310,7 +19263,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfPredecessorPid(None));
                 *self.state__ = S::UdxEdxfCountryBranchNumbers(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -19344,7 +19296,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfCountryBranchNumbers(None));
                 *self.state__ = S::UdxEdxfCountryBranchSupplierIds(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -19378,7 +19329,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfCountryBranchSupplierIds(None));
                 *self.state__ = S::UdxEdxfProductEtimDynamic(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -19412,7 +19362,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfProductEtimDynamic(None));
                 *self.state__ = S::UdxEdxfProductFeaturesMc(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -19446,7 +19395,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfProductFeaturesMc(None));
                 *self.state__ = S::UdxEdxfProductCharacteristics(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -19480,7 +19428,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfProductCharacteristics(None));
                 *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -20195,11 +20142,14 @@ pub mod quick_xml_deserialize {
             if artifact.is_none() {
                 if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
-                } else if self.mime_source.len() < 1usize {
+                }
+                if let Some(fallback) = fallback.take() {
+                    self.finish_state(helper, fallback)?;
+                }
+                if self.mime_source.len() < 1usize {
                     fallback.get_or_insert(S::MimeSource(None));
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 } else {
-                    fallback.get_or_insert(S::MimeSource(None));
                     *self.state__ = S::MimeDescr(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -20234,7 +20184,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::MimeDescr(None));
                 *self.state__ = S::MimeAlt(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -20268,7 +20217,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::MimeAlt(None));
                 *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -21096,11 +21044,14 @@ pub mod quick_xml_deserialize {
             if artifact.is_none() {
                 if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
-                } else if self.fname.len() < 1usize {
+                }
+                if let Some(fallback) = fallback.take() {
+                    self.finish_state(helper, fallback)?;
+                }
+                if self.fname.len() < 1usize {
                     fallback.get_or_insert(S::Fname(None));
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 } else {
-                    fallback.get_or_insert(S::Fname(None));
                     *self.state__ = S::Fvalue(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -21137,11 +21088,14 @@ pub mod quick_xml_deserialize {
             if artifact.is_none() {
                 if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
-                } else if self.fvalue.len() < 1usize {
+                }
+                if let Some(fallback) = fallback.take() {
+                    self.finish_state(helper, fallback)?;
+                }
+                if self.fvalue.len() < 1usize {
                     fallback.get_or_insert(S::Fvalue(None));
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 } else {
-                    fallback.get_or_insert(S::Fvalue(None));
                     *self.state__ = S::Funit(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -21176,7 +21130,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::Funit(None));
                 *self.state__ = S::FvalueDetails(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -21210,7 +21163,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::FvalueDetails(None));
                 *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -21788,7 +21740,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::PriceCurrency(None));
                 *self.state__ = S::Tax(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -21822,7 +21773,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::Tax(None));
                 *self.state__ = S::PriceFactor(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -21856,7 +21806,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::PriceFactor(None));
                 *self.state__ = S::LowerBound(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -21890,7 +21839,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::LowerBound(None));
                 *self.state__ = S::Territory(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -21924,7 +21872,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::Territory(None));
                 *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -22310,7 +22257,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::PriceUnitFactor(None));
                 *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -22521,11 +22467,14 @@ pub mod quick_xml_deserialize {
             if artifact.is_none() {
                 if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
-                } else if self.udx_edxf_mime.len() < 1usize {
+                }
+                if let Some(fallback) = fallback.take() {
+                    self.finish_state(helper, fallback)?;
+                }
+                if self.udx_edxf_mime.len() < 1usize {
                     fallback.get_or_insert(S::UdxEdxfMime(None));
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 } else {
-                    fallback.get_or_insert(S::UdxEdxfMime(None));
                     *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -23248,11 +23197,14 @@ pub mod quick_xml_deserialize {
             if artifact.is_none() {
                 if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
-                } else if self.udx_edxf_additional_factor_info.len() < 1usize {
+                }
+                if let Some(fallback) = fallback.take() {
+                    self.finish_state(helper, fallback)?;
+                }
+                if self.udx_edxf_additional_factor_info.len() < 1usize {
                     fallback.get_or_insert(S::UdxEdxfAdditionalFactorInfo(None));
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 } else {
-                    fallback.get_or_insert(S::UdxEdxfAdditionalFactorInfo(None));
                     *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -23495,11 +23447,14 @@ pub mod quick_xml_deserialize {
             if artifact.is_none() {
                 if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
-                } else if self.udx_edxf_country_branch_number.len() < 1usize {
+                }
+                if let Some(fallback) = fallback.take() {
+                    self.finish_state(helper, fallback)?;
+                }
+                if self.udx_edxf_country_branch_number.len() < 1usize {
                     fallback.get_or_insert(S::UdxEdxfCountryBranchNumber(None));
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 } else {
-                    fallback.get_or_insert(S::UdxEdxfCountryBranchNumber(None));
                     *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -23700,11 +23655,14 @@ pub mod quick_xml_deserialize {
             if artifact.is_none() {
                 if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
-                } else if self.udx_edxf_country_branch_supplier_id.len() < 1usize {
+                }
+                if let Some(fallback) = fallback.take() {
+                    self.finish_state(helper, fallback)?;
+                }
+                if self.udx_edxf_country_branch_supplier_id.len() < 1usize {
                     fallback.get_or_insert(S::UdxEdxfCountryBranchSupplierId(None));
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 } else {
-                    fallback.get_or_insert(S::UdxEdxfCountryBranchSupplierId(None));
                     *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -23905,11 +23863,14 @@ pub mod quick_xml_deserialize {
             if artifact.is_none() {
                 if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
-                } else if self.udx_edxf_packing_unit.len() < 1usize {
+                }
+                if let Some(fallback) = fallback.take() {
+                    self.finish_state(helper, fallback)?;
+                }
+                if self.udx_edxf_packing_unit.len() < 1usize {
                     fallback.get_or_insert(S::UdxEdxfPackingUnit(None));
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 } else {
-                    fallback.get_or_insert(S::UdxEdxfPackingUnit(None));
                     *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -24189,7 +24150,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfNetvolume(None));
                 *self.state__ = S::UdxEdxfNetweight(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -24223,7 +24183,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfNetweight(None));
                 *self.state__ = S::UdxEdxfNetlength(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -24257,7 +24216,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfNetlength(None));
                 *self.state__ = S::UdxEdxfNetwidth(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -24291,7 +24249,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfNetwidth(None));
                 *self.state__ = S::UdxEdxfNetdepth(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -24325,7 +24282,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfNetdepth(None));
                 *self.state__ = S::UdxEdxfNetdiameter(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -24359,7 +24315,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfNetdiameter(None));
                 *self.state__ = S::UdxEdxfRegionOfOrigin(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -24393,7 +24348,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfRegionOfOrigin(None));
                 *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -24817,7 +24771,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfReachListdate(None));
                 *self.state__ = S::UdxEdxfReachInfo(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -24888,7 +24841,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfScipNumber(None));
                 *self.state__ = S::UdxEdxfUfiCode(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -24922,7 +24874,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfUfiCode(None));
                 *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -25528,7 +25479,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfHazardousSubstances(None));
                 *self.state__ = S::UdxEdxfShippingName(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -25562,7 +25512,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfShippingName(None));
                 *self.state__ = S::UdxEdxfPackingGroup(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -25596,7 +25545,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfPackingGroup(None));
                 *self.state__ = S::UdxEdxfTransportCategory(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -25630,7 +25578,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfTransportCategory(None));
                 *self.state__ = S::UdxEdxfMultiplicationFactor(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -25664,7 +25611,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfMultiplicationFactor(None));
                 *self.state__ = S::UdxEdxfLimitedQuantities(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -25698,7 +25644,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfLimitedQuantities(None));
                 *self.state__ = S::UdxEdxfExceptedQuantities(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -25732,7 +25677,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfExceptedQuantities(None));
                 *self.state__ = S::UdxEdxfAggregationState(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -25766,7 +25710,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfAggregationState(None));
                 *self.state__ = S::UdxEdxfSpecialProvisionId(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -25800,7 +25743,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfSpecialProvisionId(None));
                 *self.state__ = S::UdxEdxfHazardClass(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -25834,7 +25776,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfHazardClass(None));
                 *self.state__ = S::UdxEdxfClassificationCode(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -25868,7 +25809,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfClassificationCode(None));
                 *self.state__ = S::UdxEdxfHazardLabel(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -25902,7 +25842,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfHazardLabel(None));
                 *self.state__ = S::UdxEdxfEnvironmentalHazards(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -25936,7 +25875,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfEnvironmentalHazards(None));
                 *self.state__ = S::UdxEdxfTunnelCode(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -25970,7 +25908,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfTunnelCode(None));
                 *self.state__ = S::UdxEdxfGhsLabelCode(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -26004,7 +25941,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfGhsLabelCode(None));
                 *self.state__ = S::UdxEdxfGhsSignalWord(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -26038,7 +25974,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfGhsSignalWord(None));
                 *self.state__ = S::UdxEdxfHazardStatement(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -26072,7 +26007,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfHazardStatement(None));
                 *self.state__ = S::UdxEdxfPrecautionaryStatement(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -26106,7 +26040,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfPrecautionaryStatement(None));
                 *self.state__ = S::UdxEdxfLiIonTested(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -26140,7 +26073,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfLiIonTested(None));
                 *self.state__ = S::UdxEdxfLithiumAmount(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -26174,7 +26106,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfLithiumAmount(None));
                 *self.state__ = S::UdxEdxfBatteryEnergy(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -26208,7 +26139,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfBatteryEnergy(None));
                 *self.state__ = S::UdxEdxfNos274(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -26242,7 +26172,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfNos274(None));
                 *self.state__ = S::UdxEdxfHazardTrigger(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -26276,7 +26205,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfHazardTrigger(None));
                 *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -27256,11 +27184,14 @@ pub mod quick_xml_deserialize {
             if artifact.is_none() {
                 if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
-                } else if self.udx_edxf_surcharge.len() < 1usize {
+                }
+                if let Some(fallback) = fallback.take() {
+                    self.finish_state(helper, fallback)?;
+                }
+                if self.udx_edxf_surcharge.len() < 1usize {
                     fallback.get_or_insert(S::UdxEdxfSurcharge(None));
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 } else {
-                    fallback.get_or_insert(S::UdxEdxfSurcharge(None));
                     *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -27459,7 +27390,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfWarrantyBusiness(None));
                 *self.state__ = S::UdxEdxfWarrantyConsumer(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -27493,7 +27423,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfWarrantyConsumer(None));
                 *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -28052,7 +27981,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfBimStatus(None));
                 *self.state__ = S::UdxEdxfFeatureMc(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -28088,11 +28016,14 @@ pub mod quick_xml_deserialize {
             if artifact.is_none() {
                 if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
-                } else if self.udx_edxf_feature_mc.len() < 1usize {
+                }
+                if let Some(fallback) = fallback.take() {
+                    self.finish_state(helper, fallback)?;
+                }
+                if self.udx_edxf_feature_mc.len() < 1usize {
                     fallback.get_or_insert(S::UdxEdxfFeatureMc(None));
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 } else {
-                    fallback.get_or_insert(S::UdxEdxfFeatureMc(None));
                     *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -28400,11 +28331,14 @@ pub mod quick_xml_deserialize {
             if artifact.is_none() {
                 if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
-                } else if self.udx_edxf_product_characteristic.len() < 1usize {
+                }
+                if let Some(fallback) = fallback.take() {
+                    self.finish_state(helper, fallback)?;
+                }
+                if self.udx_edxf_product_characteristic.len() < 1usize {
                     fallback.get_or_insert(S::UdxEdxfProductCharacteristic(None));
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 } else {
-                    fallback.get_or_insert(S::UdxEdxfProductCharacteristic(None));
                     *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -28884,11 +28818,14 @@ pub mod quick_xml_deserialize {
             if artifact.is_none() {
                 if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
-                } else if self.udx_edxf_mime_source.len() < 1usize {
+                }
+                if let Some(fallback) = fallback.take() {
+                    self.finish_state(helper, fallback)?;
+                }
+                if self.udx_edxf_mime_source.len() < 1usize {
                     fallback.get_or_insert(S::UdxEdxfMimeSource(None));
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 } else {
-                    fallback.get_or_insert(S::UdxEdxfMimeSource(None));
                     *self.state__ = S::UdxEdxfMimeCode(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -28960,7 +28897,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfMimeFilename(None));
                 *self.state__ = S::UdxEdxfMimeDesignation(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -28994,7 +28930,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfMimeDesignation(None));
                 *self.state__ = S::UdxEdxfMimeAlt(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -29028,7 +28963,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfMimeAlt(None));
                 *self.state__ = S::UdxEdxfMimeIssueDate(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -29062,7 +28996,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfMimeIssueDate(None));
                 *self.state__ = S::UdxEdxfMimeExpiryDate(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -29096,7 +29029,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfMimeExpiryDate(None));
                 *self.state__ = S::UdxEdxfMimeOrder(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -29130,7 +29062,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfMimeOrder(None));
                 *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -30077,7 +30008,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfQuantityMax(None));
                 *self.state__ = S::UdxEdxfPackingUnitCode(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -30148,7 +30078,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfPackingUnitName(None));
                 *self.state__ = S::UdxEdxfPackageBreak(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -30182,7 +30111,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfPackageBreak(None));
                 *self.state__ = S::UdxEdxfPackingParts(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -30216,7 +30144,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfPackingParts(None));
                 *self.state__ = S::UdxEdxfVolume(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -30250,7 +30177,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfVolume(None));
                 *self.state__ = S::UdxEdxfWeight(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -30284,7 +30210,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfWeight(None));
                 *self.state__ = S::UdxEdxfLength(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -30318,7 +30243,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfLength(None));
                 *self.state__ = S::UdxEdxfWidth(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -30352,7 +30276,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfWidth(None));
                 *self.state__ = S::UdxEdxfDepth(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -30386,7 +30309,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfDepth(None));
                 *self.state__ = S::UdxEdxfDiameter(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -30420,7 +30342,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfDiameter(None));
                 *self.state__ = S::UdxEdxfGtin(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -30454,7 +30375,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfGtin(None));
                 *self.state__ = S::UdxEdxfGs1128(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -30488,7 +30408,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfGs1128(None));
                 *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -31160,7 +31079,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfNetWeightOfHazardousSubstance(None));
                 *self.state__ = S::UdxEdxfVolumeOfHazardousSubstances(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -31195,7 +31113,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::UdxEdxfVolumeOfHazardousSubstances(None));
                 *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -35459,11 +35376,14 @@ pub mod quick_xml_deserialize {
             if artifact.is_none() {
                 if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
-                } else if self.udx_edxf_matrix_value.len() < 1usize {
+                }
+                if let Some(fallback) = fallback.take() {
+                    self.finish_state(helper, fallback)?;
+                }
+                if self.udx_edxf_matrix_value.len() < 1usize {
                     fallback.get_or_insert(S::UdxEdxfMatrixValue(None));
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 } else {
-                    fallback.get_or_insert(S::UdxEdxfMatrixValue(None));
                     *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
