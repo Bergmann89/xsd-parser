@@ -16,10 +16,10 @@ pub const PREFIX_XS: NamespacePrefix = NamespacePrefix::new_const(b"xs");
 pub const PREFIX_XML: NamespacePrefix = NamespacePrefix::new_const(b"xml");
 pub const PREFIX_XSI: NamespacePrefix = NamespacePrefix::new_const(b"xsi");
 pub const PREFIX_TNS: NamespacePrefix = NamespacePrefix::new_const(b"tns");
-pub type Voltage = VoltageType;
+pub type OperatingMode = OperatingModeType;
 #[derive(Debug)]
-pub struct VoltageType(pub String);
-impl VoltageType {
+pub struct OperatingModeType(pub String);
+impl OperatingModeType {
     pub fn new(inner: String) -> Result<Self, ValidateError> {
         Ok(Self(inner))
     }
@@ -30,9 +30,15 @@ impl VoltageType {
     pub fn validate_str(s: &str) -> Result<(), ValidateError> {
         static PATTERNS: LazyLock<[(&str, Regex); 3usize]> = LazyLock::new(|| {
             [
-                ("\\d+V", Regex::new("^(?:\\d+V)$").unwrap()),
-                ("[0-9]+V", Regex::new("^(?:[0-9]+V)$").unwrap()),
-                ("[0-9]{1,4}V", Regex::new("^(?:[0-9]{1,4}V)$").unwrap()),
+                ("hybrid/auto", Regex::new("^(?:hybrid/auto)$").unwrap()),
+                (
+                    "heat pump only",
+                    Regex::new("^(?:heat pump only)$").unwrap(),
+                ),
+                (
+                    "electric heater only",
+                    Regex::new("^(?:electric heater only)$").unwrap(),
+                ),
             ]
         });
         if !PATTERNS.iter().any(|(_, regex)| regex.is_match(s)) {
@@ -41,30 +47,30 @@ impl VoltageType {
         Ok(())
     }
 }
-impl From<VoltageType> for String {
-    fn from(value: VoltageType) -> String {
+impl From<OperatingModeType> for String {
+    fn from(value: OperatingModeType) -> String {
         value.0
     }
 }
-impl TryFrom<String> for VoltageType {
+impl TryFrom<String> for OperatingModeType {
     type Error = ValidateError;
     fn try_from(value: String) -> Result<Self, ValidateError> {
         Self::new(value)
     }
 }
-impl Deref for VoltageType {
+impl Deref for OperatingModeType {
     type Target = String;
     fn deref(&self) -> &Self::Target {
         &self.0
     }
 }
-impl SerializeBytes for VoltageType {
+impl SerializeBytes for OperatingModeType {
     fn serialize_bytes(&self, helper: &mut SerializeHelper) -> Result<Option<Cow<'_, str>>, Error> {
         self.0.serialize_bytes(helper)
     }
 }
-impl WithSerializeToBytes for VoltageType {}
-impl DeserializeBytes for VoltageType {
+impl WithSerializeToBytes for OperatingModeType {}
+impl DeserializeBytes for OperatingModeType {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         let s = from_utf8(bytes).map_err(Error::from)?;
         Self::validate_str(s).map_err(|error| (bytes, error))?;
@@ -72,4 +78,4 @@ impl DeserializeBytes for VoltageType {
         Ok(Self::new(inner).map_err(|error| (bytes, error))?)
     }
 }
-impl WithDeserializerFromBytes for VoltageType {}
+impl WithDeserializerFromBytes for OperatingModeType {}

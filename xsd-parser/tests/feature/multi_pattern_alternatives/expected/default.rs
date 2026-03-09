@@ -1,12 +1,11 @@
 use core::ops::Deref;
 use regex::Regex;
-use serde::{Deserialize, Serialize};
 use std::sync::LazyLock;
 use xsd_parser_types::quick_xml::ValidateError;
-pub type Voltage = VoltageType;
-#[derive(Debug, Deserialize, Serialize)]
-pub struct VoltageType(pub String);
-impl VoltageType {
+pub type OperatingMode = OperatingModeType;
+#[derive(Debug)]
+pub struct OperatingModeType(pub String);
+impl OperatingModeType {
     pub fn new(inner: String) -> Result<Self, ValidateError> {
         Ok(Self(inner))
     }
@@ -17,9 +16,15 @@ impl VoltageType {
     pub fn validate_str(s: &str) -> Result<(), ValidateError> {
         static PATTERNS: LazyLock<[(&str, Regex); 3usize]> = LazyLock::new(|| {
             [
-                ("\\d+V", Regex::new("^(?:\\d+V)$").unwrap()),
-                ("[0-9]+V", Regex::new("^(?:[0-9]+V)$").unwrap()),
-                ("[0-9]{1,4}V", Regex::new("^(?:[0-9]{1,4}V)$").unwrap()),
+                ("hybrid/auto", Regex::new("^(?:hybrid/auto)$").unwrap()),
+                (
+                    "heat pump only",
+                    Regex::new("^(?:heat pump only)$").unwrap(),
+                ),
+                (
+                    "electric heater only",
+                    Regex::new("^(?:electric heater only)$").unwrap(),
+                ),
             ]
         });
         if !PATTERNS.iter().any(|(_, regex)| regex.is_match(s)) {
@@ -28,18 +33,18 @@ impl VoltageType {
         Ok(())
     }
 }
-impl From<VoltageType> for String {
-    fn from(value: VoltageType) -> String {
+impl From<OperatingModeType> for String {
+    fn from(value: OperatingModeType) -> String {
         value.0
     }
 }
-impl TryFrom<String> for VoltageType {
+impl TryFrom<String> for OperatingModeType {
     type Error = ValidateError;
     fn try_from(value: String) -> Result<Self, ValidateError> {
         Self::new(value)
     }
 }
-impl Deref for VoltageType {
+impl Deref for OperatingModeType {
     type Target = String;
     fn deref(&self) -> &Self::Target {
         &self.0

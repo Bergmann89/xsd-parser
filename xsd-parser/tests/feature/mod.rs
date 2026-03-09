@@ -44,6 +44,7 @@ mod mixed_choice_with_any;
 mod mixed_content;
 mod mixed_content_groups;
 mod mixed_unexpected_text;
+mod multi_pattern_alternatives;
 mod multi_pattern_facets;
 mod namespaces_qualified;
 mod nested_group_reuse;

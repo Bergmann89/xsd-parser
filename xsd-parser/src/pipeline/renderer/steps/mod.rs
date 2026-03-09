@@ -242,10 +242,8 @@ impl ConstrainsData<'_> {
         Some(quote! {
             static PATTERNS: #lazy_lock<[(&#str_, #regex); #sz]> = #lazy_lock::new(|| [ #( #patterns ),* ]);
 
-            for (pattern, regex) in PATTERNS.iter() {
-                if !regex.is_match(s) {
-                    return Err(#validate_error::Pattern(pattern));
-                }
+            if !PATTERNS.iter().any(|(_, regex)| regex.is_match(s)) {
+                return Err(#validate_error::Pattern(PATTERNS[0usize].0));
             }
         })
     }

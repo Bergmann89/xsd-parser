@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:tns="http://example.com"
+           targetNamespace="http://example.com"
+           elementFormDefault="qualified">
+
+    <xs:simpleType name="OperatingModeType">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="hybrid/auto"/>
+            <xs:pattern value="heat pump only"/>
+            <xs:pattern value="electric heater only"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:element name="OperatingMode" type="tns:OperatingModeType"/>
+
+</xs:schema>
