@@ -3887,10 +3887,10 @@ impl ComplexDataElement<'_> {
         let is_defaultable = ctx.is_defaultable_element(self.meta());
         let handler_none = match (is_defaultable, self.occurs, self.meta().min_occurs) {
             (_, Occurs::None, _) => unreachable!(),
-            // If we do not expect any data we continue with the next state
+            // If we do not expect any data we continue with the next state.
+            // No fallback is set here: `from_event` stays in the handler loop,
+            // so a stale fallback would let the epilogue overwrite `next_state`.
             (_, _, 0) | (_, Occurs::Optional, _) => quote! {
-                fallback.get_or_insert(S::#variant_ident(None));
-
                 *self.state__ = #next_state;
 
                 return Ok(#element_handler_output::from_event(event, allow_any));
@@ -3911,22 +3911,30 @@ impl ComplexDataElement<'_> {
             (false, Occurs::DynamicList | Occurs::StaticList(_), min) => quote! {
                 if matches!(&fallback, Some(S::Init__)) {
                     return Ok(#element_handler_output::break_(event, allow_any));
-                } else if self.#field_ident.len() < #min {
+                }
+
+                // Flush any in-flight parsed child before checking minOccurs.
+                // Without this, a fully parsed element buffered in fallback is
+                // not yet counted in the field vec, making len() appear too low
+                // and causing a spurious return_to_root rejection.
+                if let Some(fallback) = fallback.take() {
+                    self.finish_state(helper, fallback)?;
+                }
+
+                if self.#field_ident.len() < #min {
                     fallback.get_or_insert(S::#variant_ident(None));
 
                     return Ok(#element_handler_output::return_to_root(event, allow_any));
                 } else {
-                    fallback.get_or_insert(S::#variant_ident(None));
-
                     *self.state__ = #next_state;
 
                     return Ok(#element_handler_output::from_event(event, allow_any));
                 }
             },
             // If this is a group, we continue, because groups may be default constructed.
+            // No fallback: same rationale as the optional/zero branch above -
+            // `from_event` stays in the loop, so fallback must not be set.
             (true, _, _) => quote! {
-                fallback.get_or_insert(S::#variant_ident(None));
-
                 *self.state__ = #next_state;
 
                 return Ok(#element_handler_output::from_event(event, allow_any));

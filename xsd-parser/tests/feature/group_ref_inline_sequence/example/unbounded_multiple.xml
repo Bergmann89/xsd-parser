@@ -1,0 +1,9 @@
+<tns:Container xmlns:tns="http://example.com">
+    <tns:Identifier>item-001</tns:Identifier>
+    <tns:Tag>alpha</tns:Tag>
+    <tns:Identifier>item-002</tns:Identifier>
+    <tns:Identifier>item-003</tns:Identifier>
+    <tns:Tag>beta</tns:Tag>
+    <tns:Tag>gamma</tns:Tag>
+    <tns:Name>Multiple Identities</tns:Name>
+</tns:Container>

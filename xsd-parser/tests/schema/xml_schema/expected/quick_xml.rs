@@ -2876,7 +2876,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::Annotation(None));
                 *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -3089,7 +3088,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::Annotation(None));
                 *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -5560,7 +5558,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::Annotation(None));
                 *self.state__ = S::Any(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -10676,7 +10673,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::Annotation(None));
                 *self.state__ = S::SimpleType(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -10710,7 +10706,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::SimpleType(None));
                 *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -10966,7 +10961,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::Annotation(None));
                 *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -11175,7 +11169,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::TextBefore(None));
                 *self.state__ = S::Content(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -11209,7 +11202,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::Content(None));
                 *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -11653,7 +11645,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::TextBefore(None));
                 *self.state__ = S::Content(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -11687,7 +11678,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::Content(None));
                 *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -12139,7 +12129,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::Annotation(None));
                 *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -13013,7 +13002,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::Annotation(None));
                 *self.state__ = S::SimpleType(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -13047,7 +13035,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::SimpleType(None));
                 *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -13292,7 +13279,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::Annotation(None));
                 *self.state__ = S::SimpleType(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -13326,7 +13312,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::SimpleType(None));
                 *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -14709,7 +14694,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::Annotation(None));
                 *self.state__ = S::Any(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -14743,7 +14727,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::Any(None));
                 *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -15003,7 +14986,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::Annotation(None));
                 *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -15225,7 +15207,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::Annotation(None));
                 *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -15469,7 +15450,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::Annotation(None));
                 *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -16415,7 +16395,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::Annotation(None));
                 *self.state__ = S::Selector(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -16488,11 +16467,14 @@ pub mod quick_xml_deserialize {
             if artifact.is_none() {
                 if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
-                } else if self.field.len() < 1usize {
+                }
+                if let Some(fallback) = fallback.take() {
+                    self.finish_state(helper, fallback)?;
+                }
+                if self.field.len() < 1usize {
                     fallback.get_or_insert(S::Field(None));
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 } else {
-                    fallback.get_or_insert(S::Field(None));
                     *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -16948,7 +16930,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::Annotation(None));
                 *self.state__ = S::Selector(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -17021,11 +17002,14 @@ pub mod quick_xml_deserialize {
             if artifact.is_none() {
                 if matches!(&fallback, Some(S::Init__)) {
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
-                } else if self.field.len() < 1usize {
+                }
+                if let Some(fallback) = fallback.take() {
+                    self.finish_state(helper, fallback)?;
+                }
+                if self.field.len() < 1usize {
                     fallback.get_or_insert(S::Field(None));
                     return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
                 } else {
-                    fallback.get_or_insert(S::Field(None));
                     *self.state__ = S::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -21417,7 +21401,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::Annotation(None));
                 *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -21631,7 +21614,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::Annotation(None));
                 *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }

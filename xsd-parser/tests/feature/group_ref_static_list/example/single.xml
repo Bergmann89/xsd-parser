@@ -1,0 +1,5 @@
+<tns:Person xmlns:tns="http://example.com">
+    <tns:Street>123 Main St</tns:Street>
+    <tns:City>Springfield</tns:City>
+    <tns:Name>John Doe</tns:Name>
+</tns:Person>

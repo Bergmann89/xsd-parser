@@ -586,7 +586,6 @@ pub mod tns {
                         allow_any,
                     } = output;
                     if artifact.is_none() {
-                        fallback.get_or_insert(S::Person(None));
                         *self.state__ = S::Done__;
                         return Ok(
                             ::xsd_parser_types::quick_xml::ElementHandlerOutput::from_event(
@@ -946,7 +945,6 @@ pub mod tns {
                         allow_any,
                     } = output;
                     if artifact.is_none() {
-                        fallback.get_or_insert(S::Person(None));
                         *self.state__ = S::Done__;
                         return Ok(
                             ::xsd_parser_types::quick_xml::ElementHandlerOutput::from_event(

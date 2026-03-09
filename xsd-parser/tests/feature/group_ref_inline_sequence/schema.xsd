@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://example.com"
+    targetNamespace="http://example.com"
+    elementFormDefault="qualified">
+
+    <!-- A group with a sequence of elements (like HPXML's SystemInfo group) -->
+    <xs:group name="Identity">
+        <xs:sequence>
+            <xs:element name="Identifier" type="xs:string"/>
+            <xs:element name="Tag" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:group>
+
+    <!-- Regression target: xs:group ref with maxOccurs="unbounded" followed by
+         another required element.
+         A single completed group occurrence must still transition to Name
+         correctly (no stale fallback overriding the state advance). -->
+    <xs:element name="Container">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:group ref="tns:Identity" maxOccurs="unbounded"/>
+                <xs:element name="Name" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Control: single-occurrence group ref (should work) -->
+    <xs:element name="Widget">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:group ref="tns:Identity"/>
+                <xs:element name="Name" type="xs:string"/>
+                <xs:element name="Description" type="xs:string" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+</xs:schema>

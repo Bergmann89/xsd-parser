@@ -1,0 +1,5 @@
+<tns:Catalog xmlns:tns="http://example.com">
+    <tns:Title>My Catalog</tns:Title>
+    <tns:Key>color</tns:Key>
+    <tns:Value>red</tns:Value>
+</tns:Catalog>

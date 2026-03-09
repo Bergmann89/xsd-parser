@@ -1053,7 +1053,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::BusinessProcessSpecifiedDocumentContextParameter(None));
                 *self.state__ = S::GuidelineSpecifiedDocumentContextParameter(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -2919,7 +2918,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::BuyerReference(None));
                 *self.state__ = S::SellerTradeParty(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -3027,7 +3025,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::BuyerOrderReferencedDocument(None));
                 *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -4021,7 +4018,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::SpecifiedLegalOrganization(None));
                 *self.state__ = S::PostalTradeAddress(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -4055,7 +4051,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::PostalTradeAddress(None));
                 *self.state__ = S::SpecifiedTaxRegistration(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -4089,7 +4084,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::SpecifiedTaxRegistration(None));
                 *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -4779,7 +4773,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::TaxTotalAmount(None));
                 *self.state__ = S::GrandTotalAmount(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -5133,7 +5126,6 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(S::Id(None));
                 *self.state__ = S::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
