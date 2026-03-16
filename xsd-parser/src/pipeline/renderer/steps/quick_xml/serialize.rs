@@ -100,6 +100,7 @@ impl ValueKey for SerializerConfig {
 #[derive(Default, Debug)]
 struct NamespaceCollector {
     cache: HashMap<TypeIdent, Option<SharedGlobalNamespaces>>,
+    nillable_deps: HashMap<TypeIdent, bool>,
     xsi_namespace: Option<NamespaceId>,
     nillable_type_support: bool,
 }
@@ -751,8 +752,9 @@ impl ComplexBase<'_> {
                     Some(quote!(helper.write_xmlns(&mut bytes, None, &#ns_const);))
                 });
 
-                let need_xsi_namespace =
-                    nillable_type_support && !collector.provides_xsi_namespace();
+                let need_xsi_namespace = nillable_type_support
+                    && !collector.provides_xsi_namespace()
+                    && collector.has_nillable_elements(ctx.types, ctx.ident);
                 let xsi = need_xsi_namespace.then(|| {
                     let namespace = resolve_quick_xml_ident!(ctx, "::xsd_parser_types::misc::Namespace");
                     let namespace_prefix = resolve_quick_xml_ident!(ctx, "::xsd_parser_types::misc::NamespacePrefix");
@@ -1407,6 +1409,7 @@ impl NamespaceCollector {
 
         Rc::new(RefCell::new(Self {
             cache: HashMap::new(),
+            nillable_deps: HashMap::new(),
             xsi_namespace,
             nillable_type_support,
         }))
@@ -1414,6 +1417,88 @@ impl NamespaceCollector {
 
     fn provides_xsi_namespace(&self) -> bool {
         self.xsi_namespace.is_some()
+    }
+
+    fn has_nillable_elements(&mut self, types: &MetaTypes, ident: &TypeIdent) -> bool {
+        if let Some(&cached) = self.nillable_deps.get(ident) {
+            return cached;
+        }
+
+        // Insert false to prevent infinite recursion for self-referential types
+        self.nillable_deps.insert(ident.clone(), false);
+
+        let result = self.has_nillable_elements_impl(types, ident);
+
+        self.nillable_deps.insert(ident.clone(), result);
+        result
+    }
+
+    fn has_nillable_elements_impl(&mut self, types: &MetaTypes, ident: &TypeIdent) -> bool {
+        let ty = match types.items.get(ident) {
+            Some(ty) => ty,
+            None => return false,
+        };
+
+        match &ty.variant {
+            MetaTypeVariant::Reference(x) => {
+                let nillable = x.nillable;
+                let type_ = x.type_.clone();
+                nillable || self.has_nillable_elements(types, &type_)
+            }
+            MetaTypeVariant::All(x) | MetaTypeVariant::Choice(x) | MetaTypeVariant::Sequence(x) => {
+                let elements: Vec<(bool, Option<TypeIdent>)> = x
+                    .elements
+                    .iter()
+                    .map(|el| {
+                        let nillable = el.nillable;
+                        let type_id =
+                            if let ElementMetaVariant::Type { type_, .. } = &el.variant {
+                                Some(type_.clone())
+                            } else {
+                                None
+                            };
+                        (nillable, type_id)
+                    })
+                    .collect();
+                for (nillable, type_id) in elements {
+                    if nillable {
+                        return true;
+                    }
+                    if let Some(t) = type_id {
+                        if self.has_nillable_elements(types, &t) {
+                            return true;
+                        }
+                    }
+                }
+                false
+            }
+            MetaTypeVariant::ComplexType(x) => {
+                let content = x.content.clone();
+                content.is_some_and(|c| self.has_nillable_elements(types, &c))
+            }
+            MetaTypeVariant::Union(x) => {
+                let types_list: Vec<TypeIdent> =
+                    x.types.iter().map(|t| t.type_.clone()).collect();
+                types_list
+                    .iter()
+                    .any(|t| self.has_nillable_elements(types, t))
+            }
+            MetaTypeVariant::Dynamic(x) => {
+                let derived: Vec<TypeIdent> =
+                    x.derived_types.iter().map(|m| m.type_.clone()).collect();
+                derived.iter().any(|t| self.has_nillable_elements(types, t))
+            }
+            MetaTypeVariant::Enumeration(x) => {
+                let variants: Vec<Option<TypeIdent>> =
+                    x.variants.iter().map(|v| v.type_.clone()).collect();
+                variants
+                    .iter()
+                    .any(|t| t.as_ref().is_some_and(|t| self.has_nillable_elements(types, t)))
+            }
+            MetaTypeVariant::Custom(_)
+            | MetaTypeVariant::BuildIn(_)
+            | MetaTypeVariant::SimpleType(_) => false,
+        }
     }
 
     fn get_namespaces(
@@ -1445,12 +1530,6 @@ impl NamespaceCollector {
             let ty = types.items.get(ident).unwrap();
             let mut state = GetNamespaceState::Empty;
 
-            if self.nillable_type_support {
-                if let Some(id) = &self.xsi_namespace {
-                    Self::add_ns(&mut state, types, NamespaceKey::Normal(*id));
-                }
-            }
-
             match &ty.variant {
                 MetaTypeVariant::Union(x) => {
                     for ty in &*x.types {
@@ -1459,6 +1538,11 @@ impl NamespaceCollector {
                 }
                 MetaTypeVariant::Reference(x) => {
                     self.merge(&mut state, types, &x.type_, default_ns);
+                    if self.nillable_type_support && x.nillable {
+                        if let Some(id) = self.xsi_namespace {
+                            Self::add_ns(&mut state, types, NamespaceKey::Normal(id));
+                        }
+                    }
                 }
                 MetaTypeVariant::Enumeration(x) => {
                     for var in &*x.variants {
@@ -1478,6 +1562,11 @@ impl NamespaceCollector {
                     for el in &*x.elements {
                         if let ElementMetaVariant::Type { type_, .. } = &el.variant {
                             self.merge(&mut state, types, type_, default_ns);
+                        }
+                        if self.nillable_type_support && el.nillable {
+                            if let Some(id) = self.xsi_namespace {
+                                Self::add_ns(&mut state, types, NamespaceKey::Normal(id));
+                            }
                         }
                     }
                 }
