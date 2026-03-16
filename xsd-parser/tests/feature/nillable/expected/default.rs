@@ -8,3 +8,9 @@ pub struct FooType {
     pub d: Option<Nillable<i32>>,
 }
 pub type NillableFoo = Nillable<FooType>;
+pub type Bar = BarType;
+#[derive(Debug)]
+pub struct BarType {
+    pub x: i32,
+    pub y: i32,
+}

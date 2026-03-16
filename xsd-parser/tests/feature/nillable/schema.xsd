@@ -13,6 +13,15 @@
         </xs:sequence>
     </xs:complexType>
 
+    <!-- BarType has no nillable elements; it should not emit xmlns:xsi -->
+    <xs:complexType name="BarType">
+        <xs:sequence>
+            <xs:element name="X" type="xs:int" />
+            <xs:element name="Y" type="xs:int" />
+        </xs:sequence>
+    </xs:complexType>
+
     <xs:element name="Foo" type="tns:FooType" />
     <xs:element name="NillableFoo" type="tns:FooType" nillable="true" />
+    <xs:element name="Bar" type="tns:BarType" />
 </xs:schema>

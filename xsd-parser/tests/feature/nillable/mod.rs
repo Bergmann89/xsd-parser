@@ -9,6 +9,7 @@ fn config() -> Config {
         .with_generate([
             (IdentType::Element, "tns:Foo"),
             (IdentType::Element, "tns:NillableFoo"),
+            (IdentType::Element, "tns:Bar"),
         ])
 }
 
@@ -45,7 +46,7 @@ fn generate_quick_xml() {
 #[cfg(not(feature = "update-expectations"))]
 fn read_quick_xml() {
     use crate::utils::quick_xml_read_test;
-    use quick_xml::{Foo, NillableFoo};
+    use quick_xml::{Bar, Foo, NillableFoo};
 
     let obj = quick_xml_read_test::<NillableFoo, _>("tests/feature/nillable/example/nillable.xml");
     assert!(obj.is_none());
@@ -55,13 +56,18 @@ fn read_quick_xml() {
     assert_eq!(&*obj.b, &None);
     assert_eq!(obj.c, None);
     assert_eq!(obj.d.as_deref(), Some(&None));
+
+    // Bar has no nillable elements; verify it can be round-tripped without xmlns:xsi
+    let obj = quick_xml_read_test::<Bar, _>("tests/feature/nillable/example/bar.xml");
+    assert_eq!(obj.x, 1);
+    assert_eq!(obj.y, 2);
 }
 
 #[test]
 #[cfg(not(feature = "update-expectations"))]
 fn write_quick_xml() {
     use crate::utils::quick_xml_write_test;
-    use quick_xml::{Foo, NillableFoo};
+    use quick_xml::{Bar, Foo, NillableFoo};
     use xsd_parser_types::xml::Nillable;
 
     let obj = NillableFoo::nil();
@@ -74,6 +80,11 @@ fn write_quick_xml() {
         d: Some(Nillable::nil()),
     };
     quick_xml_write_test(&obj, "Foo", "tests/feature/nillable/example/serialize.xml");
+
+    // Bar has no nillable elements; verify xmlns:xsi is NOT emitted even though
+    // nillable_type_support is enabled globally.
+    let obj = Bar { x: 1, y: 2 };
+    quick_xml_write_test(&obj, "Bar", "tests/feature/nillable/example/bar.xml");
 }
 
 #[cfg(not(feature = "update-expectations"))]
