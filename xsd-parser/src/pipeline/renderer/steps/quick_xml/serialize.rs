@@ -1441,60 +1441,38 @@ impl NamespaceCollector {
 
         match &ty.variant {
             MetaTypeVariant::Reference(x) => {
-                let nillable = x.nillable;
-                let type_ = x.type_.clone();
-                nillable || self.has_nillable_elements(types, &type_)
+                x.nillable || self.has_nillable_elements(types, &x.type_)
             }
             MetaTypeVariant::All(x) | MetaTypeVariant::Choice(x) | MetaTypeVariant::Sequence(x) => {
-                let elements: Vec<(bool, Option<TypeIdent>)> = x
-                    .elements
-                    .iter()
-                    .map(|el| {
-                        let nillable = el.nillable;
-                        let type_id =
-                            if let ElementMetaVariant::Type { type_, .. } = &el.variant {
-                                Some(type_.clone())
-                            } else {
-                                None
-                            };
-                        (nillable, type_id)
-                    })
-                    .collect();
-                for (nillable, type_id) in elements {
-                    if nillable {
+                for el in &*x.elements {
+                    if el.nillable {
                         return true;
                     }
-                    if let Some(t) = type_id {
-                        if self.has_nillable_elements(types, &t) {
+                    if let ElementMetaVariant::Type { type_, .. } = &el.variant {
+                        if self.has_nillable_elements(types, type_) {
                             return true;
                         }
                     }
                 }
                 false
             }
-            MetaTypeVariant::ComplexType(x) => {
-                let content = x.content.clone();
-                content.is_some_and(|c| self.has_nillable_elements(types, &c))
-            }
-            MetaTypeVariant::Union(x) => {
-                let types_list: Vec<TypeIdent> =
-                    x.types.iter().map(|t| t.type_.clone()).collect();
-                types_list
-                    .iter()
-                    .any(|t| self.has_nillable_elements(types, t))
-            }
-            MetaTypeVariant::Dynamic(x) => {
-                let derived: Vec<TypeIdent> =
-                    x.derived_types.iter().map(|m| m.type_.clone()).collect();
-                derived.iter().any(|t| self.has_nillable_elements(types, t))
-            }
-            MetaTypeVariant::Enumeration(x) => {
-                let variants: Vec<Option<TypeIdent>> =
-                    x.variants.iter().map(|v| v.type_.clone()).collect();
-                variants
-                    .iter()
-                    .any(|t| t.as_ref().is_some_and(|t| self.has_nillable_elements(types, t)))
-            }
+            MetaTypeVariant::ComplexType(x) => x
+                .content
+                .as_ref()
+                .is_some_and(|c| self.has_nillable_elements(types, c)),
+            MetaTypeVariant::Union(x) => x
+                .types
+                .iter()
+                .any(|t| self.has_nillable_elements(types, &t.type_)),
+            MetaTypeVariant::Dynamic(x) => x
+                .derived_types
+                .iter()
+                .any(|m| self.has_nillable_elements(types, &m.type_)),
+            MetaTypeVariant::Enumeration(x) => x.variants.iter().any(|v| {
+                v.type_
+                    .as_ref()
+                    .is_some_and(|t| self.has_nillable_elements(types, t))
+            }),
             MetaTypeVariant::Custom(_)
             | MetaTypeVariant::BuildIn(_)
             | MetaTypeVariant::SimpleType(_) => false,
