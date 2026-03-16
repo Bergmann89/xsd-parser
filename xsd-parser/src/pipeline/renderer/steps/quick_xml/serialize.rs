@@ -100,7 +100,6 @@ impl ValueKey for SerializerConfig {
 #[derive(Default, Debug)]
 struct NamespaceCollector {
     cache: HashMap<TypeIdent, Option<SharedGlobalNamespaces>>,
-    nillable_deps: HashMap<TypeIdent, bool>,
     xsi_namespace: Option<NamespaceId>,
     nillable_type_support: bool,
 }
@@ -752,16 +751,6 @@ impl ComplexBase<'_> {
                     Some(quote!(helper.write_xmlns(&mut bytes, None, &#ns_const);))
                 });
 
-                let need_xsi_namespace = nillable_type_support
-                    && !collector.provides_xsi_namespace()
-                    && collector.has_nillable_elements(ctx.types, ctx.ident);
-                let xsi = need_xsi_namespace.then(|| {
-                    let namespace = resolve_quick_xml_ident!(ctx, "::xsd_parser_types::misc::Namespace");
-                    let namespace_prefix = resolve_quick_xml_ident!(ctx, "::xsd_parser_types::misc::NamespacePrefix");
-
-                    quote!(helper.write_xmlns(&mut bytes, Some(&#namespace_prefix::XSI), &#namespace::XSI);)
-                });
-
                 let global_xmlns = collector
                     .get_namespaces(ctx.types, ctx.ident, default_namespace.as_ref())
                     .values()
@@ -779,8 +768,8 @@ impl ComplexBase<'_> {
                         quote! {
                             helper.write_xmlns(&mut bytes, #prefix_const, &#ns_const);
                         }
-                    });
-                let global_xmlns = xsi.into_iter().chain(global_xmlns).collect::<Vec<_>>();
+                    })
+                    .collect::<Vec<_>>();
                 let global_xmlns = global_xmlns.is_empty().not().then(|| {
                     quote! {
                         if self.is_root {
@@ -1409,74 +1398,9 @@ impl NamespaceCollector {
 
         Rc::new(RefCell::new(Self {
             cache: HashMap::new(),
-            nillable_deps: HashMap::new(),
             xsi_namespace,
             nillable_type_support,
         }))
-    }
-
-    fn provides_xsi_namespace(&self) -> bool {
-        self.xsi_namespace.is_some()
-    }
-
-    fn has_nillable_elements(&mut self, types: &MetaTypes, ident: &TypeIdent) -> bool {
-        if let Some(&cached) = self.nillable_deps.get(ident) {
-            return cached;
-        }
-
-        // Insert false to prevent infinite recursion for self-referential types
-        self.nillable_deps.insert(ident.clone(), false);
-
-        let result = self.has_nillable_elements_impl(types, ident);
-
-        self.nillable_deps.insert(ident.clone(), result);
-        result
-    }
-
-    fn has_nillable_elements_impl(&mut self, types: &MetaTypes, ident: &TypeIdent) -> bool {
-        let ty = match types.items.get(ident) {
-            Some(ty) => ty,
-            None => return false,
-        };
-
-        match &ty.variant {
-            MetaTypeVariant::Reference(x) => {
-                x.nillable || self.has_nillable_elements(types, &x.type_)
-            }
-            MetaTypeVariant::All(x) | MetaTypeVariant::Choice(x) | MetaTypeVariant::Sequence(x) => {
-                for el in &*x.elements {
-                    if el.nillable {
-                        return true;
-                    }
-                    if let ElementMetaVariant::Type { type_, .. } = &el.variant {
-                        if self.has_nillable_elements(types, type_) {
-                            return true;
-                        }
-                    }
-                }
-                false
-            }
-            MetaTypeVariant::ComplexType(x) => x
-                .content
-                .as_ref()
-                .is_some_and(|c| self.has_nillable_elements(types, c)),
-            MetaTypeVariant::Union(x) => x
-                .types
-                .iter()
-                .any(|t| self.has_nillable_elements(types, &t.type_)),
-            MetaTypeVariant::Dynamic(x) => x
-                .derived_types
-                .iter()
-                .any(|m| self.has_nillable_elements(types, &m.type_)),
-            MetaTypeVariant::Enumeration(x) => x.variants.iter().any(|v| {
-                v.type_
-                    .as_ref()
-                    .is_some_and(|t| self.has_nillable_elements(types, t))
-            }),
-            MetaTypeVariant::Custom(_)
-            | MetaTypeVariant::BuildIn(_)
-            | MetaTypeVariant::SimpleType(_) => false,
-        }
     }
 
     fn get_namespaces(
